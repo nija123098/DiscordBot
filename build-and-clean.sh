@@ -1,1 +1,0 @@
-mvn clean process-resources compile assembly:single
