@@ -87,4 +87,7 @@ public class ServiceHandler {
         thread.setDaemon(true);
         thread.run();
     }
+    public static void init(){
+        System.out.println("ServiceHandler inited successfully");
+    }
 }
