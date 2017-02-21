@@ -36,6 +36,11 @@
             <artifactId>Discord4j</artifactId>
             <version>5213b02</version>
         </dependency>
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.9.10</version>
+        </dependency>
     </dependencies>
 
 </project>
