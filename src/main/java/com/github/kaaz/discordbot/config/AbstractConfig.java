@@ -4,18 +4,17 @@ package com.github.kaaz.discordbot.config;
  * Made by nija123098 on 2/20/2017.
  */
 public class AbstractConfig {
-    private String name, defaul, description;
+    private String defaul, description;
     private boolean userCanSet;
     private ConfigLevel configLevel;
-    public AbstractConfig(String name, ConfigLevel configLevel, boolean userCanSet, String defaul, String description) {
-        this.name = name;
+    public AbstractConfig(ConfigLevel configLevel, boolean userCanSet, String defaul, String description) {
         this.configLevel = configLevel;
         this.userCanSet = userCanSet;
         this.defaul = defaul;
         this.description = description;
     }
     public String getName() {
-        return this.name;
+        return this.getClass().getSimpleName();
     }
     public String getDescription() {
         return this.description;

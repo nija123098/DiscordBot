@@ -27,7 +27,11 @@ public class ConfigHandler {
             });
         });
     }
+    private static String getConfig(Configurable configurable, String configName){
+        //TODO SQL stuff goes here, more or less
+        return null;
+    }
     public static void set(Configurable configurable, String configName, String value){
-        //TODO
+        //TODO SQL stuff goes here, more or less
     }
 }
