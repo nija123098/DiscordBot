@@ -7,8 +7,7 @@ public class AbstractConfig {
     private String defaul, description;
     private boolean userCanSet;
     private ConfigLevel configLevel;
-    public AbstractConfig(ConfigLevel configLevel, boolean userCanSet, String defaul, String description) {
-        this.configLevel = configLevel;
+    public AbstractConfig(boolean userCanSet, String defaul, String description) {
         this.userCanSet = userCanSet;
         this.defaul = defaul;
         this.description = description;
@@ -24,6 +23,9 @@ public class AbstractConfig {
     }
     public String getDefault(){
         return this.defaul;
+    }
+    void setConfigLevel(ConfigLevel level){
+        this.configLevel = level;
     }
     public ConfigLevel getConfigLevel(){
         return this.configLevel;

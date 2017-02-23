@@ -1,5 +1,6 @@
 package com.github.kaaz.discordbot.service;
 
+import com.github.kaaz.discordbot.util.Log;
 import org.reflections.Reflections;
 
 import java.util.HashMap;
@@ -14,7 +15,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class ServiceHandler {
     private static final Map<AbstractService, Long> NORMAL_SERVICES;
     static {
-        Reflections reflections = new Reflections("com.github.kaaz.discordbot.service");
+        Reflections reflections = new Reflections("com.github.kaaz.discordbot.service.services");
         Set<Class<? extends AbstractService>> classes = reflections.getSubTypesOf(AbstractService.class);
         NORMAL_SERVICES = new HashMap<>();
         final AtomicInteger mayBlockCount = new AtomicInteger();
@@ -33,16 +34,14 @@ public class ServiceHandler {
                                     try {
                                         Thread.sleep(start);
                                     } catch (InterruptedException e) {
-                                        System.out.println("Error while sleeping for a service");
-                                        e.printStackTrace();
+                                        Log.log("Error while sleeping for a service", e);
                                     }
                                 }
                             }else{
                                 try {
                                     Thread.sleep(service.getDelayBetween());
                                 } catch (InterruptedException e) {
-                                    System.out.println("Error while delaying a service due to should not run");
-                                    e.printStackTrace();
+                                    Log.log("Error while delaying a service due to should not run", e);
                                 }
                             }
                         }
@@ -53,8 +52,7 @@ public class ServiceHandler {
                     NORMAL_SERVICES.put(service, service.getDelayBetween());
                 }
             } catch (Exception e){
-                System.out.println("Failed to init service: " + clazz.getSimpleName());
-                e.printStackTrace();
+                Log.log("Failed to init service: " + clazz.getSimpleName(), e);
             }
         });
         NORMAL_SERVICES.keySet().forEach(Runnable::run);
@@ -79,8 +77,7 @@ public class ServiceHandler {
                 try {
                     Thread.sleep(least.get());
                 } catch (InterruptedException e) {
-                    System.out.println("Error thrown while sleeping time between normal service handler runs");
-                    e.printStackTrace();
+                    Log.log("Error thrown while sleeping time between normal service handler runs", e);
                 }
             }
         }, "Service-Handler-Thread-0");
@@ -88,6 +85,6 @@ public class ServiceHandler {
         thread.run();
     }
     public static void init(){
-        System.out.println("ServiceHandler inited successfully");
+        Log.log("ServiceHandler inited successfully");
     }
 }

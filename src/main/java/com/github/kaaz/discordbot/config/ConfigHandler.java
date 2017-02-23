@@ -1,5 +1,6 @@
 package com.github.kaaz.discordbot.config;
 
+import com.github.kaaz.discordbot.util.Log;
 import org.reflections.Reflections;
 
 import java.util.ArrayList;
@@ -19,19 +20,23 @@ public class ConfigHandler {
             Set<Class<? extends AbstractConfig>> classes = reflections.getSubTypesOf(AbstractConfig.class);
             classes.forEach(clazz -> {
                 try {
-                    ABSTRACT_CONFIGS.add(clazz.newInstance());
+                    AbstractConfig config = clazz.newInstance();
+                    config.setConfigLevel(configLevel);
+                    ABSTRACT_CONFIGS.add(config);
                 } catch (InstantiationException | IllegalAccessException e) {
-                    System.out.println("Exception during init of a config: " + clazz.getSimpleName());
-                    e.printStackTrace();
+                    Log.log("Exception during init of a config: " + clazz.getSimpleName(), e);
                 }
             });
         });
     }
+    // TODO SQL stuff goes here, more or less
     private static String getConfig(Configurable configurable, String configName){
-        //TODO SQL stuff goes here, more or less
         return null;
     }
-    public static void set(Configurable configurable, String configName, String value){
-        //TODO SQL stuff goes here, more or less
+    private static String[] getMulitConfig(Configurable configurable, String configName){
+        return null;
+    }
+    public static void set(Configurable configurable, String configName, String...value){
+
     }
 }

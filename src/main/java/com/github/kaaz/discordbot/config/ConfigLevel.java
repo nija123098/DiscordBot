@@ -6,6 +6,7 @@ package com.github.kaaz.discordbot.config;
 public enum ConfigLevel {
     USER,
     CHANNEL,
+    GUILD_USER,
     GUILD,
     GLOBAL,;
 }
