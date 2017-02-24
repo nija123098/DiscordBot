@@ -11,22 +11,8 @@ public enum FavorLevel {
     LIKED(10),
     FAVORED(100),
     PREFERRED(10000),;
-    private float amount;
+    float amount;
     FavorLevel(float amount) {
         this.amount = amount;
-    }
-    public static FavorLevel getFavorLevel(float value){// this can be made better
-        if (value < DISTRUSTED.amount){
-            return DISTRUSTED;
-        }
-        if (value > PREFERRED.amount){
-            return PREFERRED;
-        }
-        for (int i = 0; i < values().length; i++) {
-            if (value < values()[i].amount){
-                return values()[i - 1];
-            }
-        }
-        return NEUTRAL;
     }
 }

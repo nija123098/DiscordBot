@@ -16,7 +16,7 @@ public class ConfigHandler {
     static {
         ABSTRACT_CONFIGS = new ArrayList<>();
         EnumSet.allOf(ConfigLevel.class).forEach(configLevel -> {
-            Reflections reflections = new Reflections("com.guthub.kaaz.discordbot.config.configs." + configLevel.name().toLowerCase());
+            Reflections reflections = new Reflections("com.guthub.kaaz.discordbot.config.configs." + configLevel.name().replace("_", "").toLowerCase());
             Set<Class<? extends AbstractConfig>> classes = reflections.getSubTypesOf(AbstractConfig.class);
             classes.forEach(clazz -> {
                 try {
@@ -30,10 +30,10 @@ public class ConfigHandler {
         });
     }
     // TODO SQL stuff goes here, more or less
-    private static String getConfig(Configurable configurable, String configName){
+    public static String get(Configurable configurable, String configName){
         return null;
     }
-    private static String[] getMulitConfig(Configurable configurable, String configName){
+    public static List<String> getMulti(Configurable configurable, String configName){
         return null;
     }
     public static void set(Configurable configurable, String configName, String...value){
