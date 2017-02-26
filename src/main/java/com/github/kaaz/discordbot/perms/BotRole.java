@@ -1,10 +1,17 @@
 package com.github.kaaz.discordbot.perms;
 
+import com.github.kaaz.discordbot.config.ConfigHandler;
 import com.github.kaaz.discordbot.config.Configurable;
+import com.github.kaaz.discordbot.config.configs.guilduser.GuildFlagRankConfig;
+import com.github.kaaz.discordbot.config.configs.user.GlobalBotRoleFlagConfig;
+import com.github.kaaz.discordbot.discordwrapperobjects.DiscordPermission;
 import com.github.kaaz.discordbot.discordwrapperobjects.Guild;
 import com.github.kaaz.discordbot.discordwrapperobjects.User;
 import com.github.kaaz.discordbot.util.ConfigHelper;
+import com.github.kaaz.discordbot.util.Holder;
 import com.github.kaaz.discordbot.util.Log;
+
+import java.util.List;
 
 /**
  * Made by nija123098 on 2/20/2017.
@@ -39,29 +46,39 @@ public enum BotRole {
         if (target.isFlagRank()){
             return hasFlagRank(target, user, guild);
         }
-
-        return false;
+        return getStandardBotRole(user, guild).ordinal() >= target.ordinal();
     }
     private static BotRole getStandardBotRole(User user, Guild guild){
         if (user.isBot()){
             return BOT;
         }
         if (guild != null){
-            guild.getOwner().equals(user);
+            if (guild.getOwner().equals(user)){
+                return GUILD_OWNER;
+            }
+            if (guild.getPermissionsForGuild(user).contains(DiscordPermission.ADMINISTRATOR)){
+                return GUILD_ADMIN;
+            }
         }
         return USER;
     }
     private static boolean hasFlagRank(BotRole target, User user, Guild guild){
         if (target.isGlobalFlag){
-            return user.getMulitConfig("global_flag_ranks").contains(target.name().toLowerCase());
+            return ConfigHandler.getSetting(GlobalBotRoleFlagConfig.class, user, new Holder<List<String>>()).contains(target.name().toLowerCase());
         } else if (target.isGuildFlag){
-            return Configurable.getGuildUser(guild, user).getMulitConfig("guild_flag_ranks").contains(target.name().toLowerCase());
+            return Configurable.getGuildUser(guild, user).getSetting(GuildFlagRankConfig.class).contains(target.name().toLowerCase());
         } else {
             Log.log("Tried checking a non-flag rank for having the flag");
             return false;
         }
     }
     public static BotRole getBestBotRole(User user, Guild guild){
-        return null;// TODO TEMP
+        BotRole role = getStandardBotRole(user, guild);
+        for (int i = role.ordinal(); i < values().length; i++) {
+            if (values()[i].isFlagRank()){
+                hasFlagRank(values()[i], user, guild);
+            }
+        }
+        return role;
     }
 }

@@ -2,8 +2,7 @@ package com.github.kaaz.discordbot.config;
 
 import com.github.kaaz.discordbot.discordwrapperobjects.Guild;
 import com.github.kaaz.discordbot.discordwrapperobjects.User;
-
-import java.util.List;
+import com.github.kaaz.discordbot.util.Holder;
 
 /**
  * Made by nija123098 on 2/20/2017.
@@ -11,14 +10,20 @@ import java.util.List;
 public interface Configurable {
     String getID();
     ConfigLevel getConfigLevel();
-    default void setConfig(String configName, String...value){
-        ConfigHandler.set(this, configName, value);
+    // these might be broken due to unchecked args
+    default void setSetting(Class clazz, Object o){
+        ConfigHandler.setSetting(clazz, this, o);
     }
-    default String getConfig(String configName){
-        return ConfigHandler.get(this, configName);
+    default void setSetting(String configName, Object o){
+        ConfigHandler.setSetting(configName, this, o);
     }
-    default List<String> getMulitConfig(String configName){
-        return ConfigHandler.getMulti(this, configName);
+    @SuppressWarnings("unchecked")
+    default  <E> E getSetting(Class<? extends AbstractConfig<E>> clazz, Holder<E>...holder){
+        return ConfigHandler.getSetting(clazz, this, holder);
+    }
+    @SuppressWarnings("unchecked")
+    default <E> E getSetting(String configName, Holder<E>...holder){
+        return ConfigHandler.getSetting(configName, this, holder);
     }
     Configurable GLOBAL = new Configurable() {
         @Override
@@ -39,6 +44,10 @@ public interface Configurable {
             @Override
             public ConfigLevel getConfigLevel() {
                 return ConfigLevel.GUILD_USER;
+            }
+            @Override
+            public boolean equals(Object o){
+                return Configurable.class.isInstance(o) && this.getID().equals(((Configurable) o).getID());
             }
         };
     }

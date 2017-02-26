@@ -6,8 +6,8 @@ import com.github.kaaz.discordbot.perms.BotRole;
 /**
  * Made by nija123098 on 2/22/2017.
  */
-public class FavorConfig extends AbstractConfig {
+public class FavorConfig extends AbstractConfig<Float> {
     public FavorConfig() {
-        super("favor_amount", BotRole.BOT_ADMIN, "0", "How much the bot likes you");
+        super("favor_amount", BotRole.BOT_ADMIN, 0F, "How much the bot likes you");
     }
 }

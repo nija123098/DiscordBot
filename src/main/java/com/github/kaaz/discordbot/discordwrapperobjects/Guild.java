@@ -14,9 +14,9 @@ import java.util.List;
 public class Guild implements Configurable {// todo rewrite
     private static final List<Guild> GUILDS = new ArrayList<>();
     public static synchronized Guild getGuild(IGuild guild){// haven't thought this out quite all the way through
-        for (int i = 0; i < GUILDS.size(); i++) {
-            if (GUILDS.get(i).guild.equals(guild)){
-                return GUILDS.get(i);
+        for (Guild g : GUILDS) {
+            if (g.guild.equals(g)) {
+                return g;
             }
         }
         Guild g = new Guild(guild);
@@ -38,7 +38,7 @@ public class Guild implements Configurable {// todo rewrite
     public User getOwner() {
         return new User(guild.getOwner());// temp
     }
-    public EnumSet<DiscordPermission> getPermissionsForGuild(Guild guild){
+    public EnumSet<DiscordPermission> getPermissionsForGuild(User user){
         return EnumSet.allOf(DiscordPermission.class);// temp
     }
 }

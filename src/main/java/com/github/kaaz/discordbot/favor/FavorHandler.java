@@ -2,6 +2,7 @@ package com.github.kaaz.discordbot.favor;
 
 import com.github.kaaz.discordbot.config.ConfigLevel;
 import com.github.kaaz.discordbot.config.Configurable;
+import com.github.kaaz.discordbot.config.configs.user.FavorConfig;
 
 /**
  * Made by nija123098 on 2/20/2017.
@@ -11,7 +12,7 @@ public class FavorHandler {
         if (configurable.getConfigLevel() != ConfigLevel.USER | configurable.getConfigLevel() != ConfigLevel.GUILD){
             return null;
         }
-        float value = Float.parseFloat(configurable.getConfig("favor_level"));
+        float value = configurable.getSetting(FavorConfig.class);
         if (value < FavorLevel.DISTRUSTED.amount){
             return FavorLevel.DISTRUSTED;
         }
@@ -26,12 +27,12 @@ public class FavorHandler {
         return FavorLevel.NEUTRAL;
     }
     public static void addFavorLevel(Configurable configurable, float amount){
-        setFavorLevel(configurable, amount + Float.parseFloat(configurable.getConfig("favor_level")));
+        setFavorLevel(configurable, amount + configurable.getSetting(FavorConfig.class));
     }
     public static void setFavorLevel(Configurable configurable, float amount){
         if (amount < 0){
             amount *= 2;
         }
-        configurable.setConfig("favor_level", amount + "");
+        configurable.setSetting(FavorConfig.class, amount);
     }
 }

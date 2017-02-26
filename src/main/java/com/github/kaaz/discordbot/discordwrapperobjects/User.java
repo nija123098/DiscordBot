@@ -13,9 +13,9 @@ import java.util.List;
 public class User implements Configurable {// todo rewrite
     private static final List<User> USERS = new ArrayList<>();
     public static synchronized User getGuild(IUser user){// haven't thought this out quite all the way through
-        for (int i = 0; i < USERS.size(); i++) {
-            if (USERS.get(i).user.equals(user)){
-                return USERS.get(i);
+        for (User u : USERS) {
+            if (u.user.equals(u)) {
+                return u;
             }
         }
         User g = new User(user);
