@@ -11,8 +11,6 @@ import com.github.kaaz.discordbot.util.ConfigHelper;
 import com.github.kaaz.discordbot.util.Holder;
 import com.github.kaaz.discordbot.util.Log;
 
-import java.util.List;
-
 /**
  * Made by nija123098 on 2/20/2017.
  */
@@ -64,7 +62,7 @@ public enum BotRole {
     }
     private static boolean hasFlagRank(BotRole target, User user, Guild guild){
         if (target.isGlobalFlag){
-            return ConfigHandler.getSetting(GlobalBotRoleFlagConfig.class, user, new Holder<List<String>>()).contains(target.name().toLowerCase());
+            return ConfigHandler.getSetting(GlobalBotRoleFlagConfig.class, user, new Holder<>()).contains(target.name().toLowerCase());
         } else if (target.isGuildFlag){
             return Configurable.getGuildUser(guild, user).getSetting(GuildFlagRankConfig.class).contains(target.name().toLowerCase());
         } else {

@@ -17,6 +17,7 @@ public class Holder<E> {
     public void set(E value){
         this.e = value;
     }
+    @SafeVarargs
     public static <E> void fillOptional(E value, Holder<E>...optinal){
         if (optinal.length != 0){
             for (Holder<E> holder : optinal) {

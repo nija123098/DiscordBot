@@ -4,27 +4,24 @@ import com.github.kaaz.discordbot.config.ConfigLevel;
 import com.github.kaaz.discordbot.config.Configurable;
 import sx.blah.discord.handle.obj.IUser;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Made by nija123098 on 2/20/2017.
  */
-public class User implements Configurable {// todo rewrite
-    private static final List<User> USERS = new ArrayList<>();
-    public static synchronized User getGuild(IUser user){// haven't thought this out quite all the way through
-        for (User u : USERS) {
-            if (u.user.equals(u)) {
-                return u;
-            }
-        }
-        User g = new User(user);
-        USERS.add(g);
-        return g;
+public class User implements Configurable {// todo rewrite to completely match necessary Discord stuff
+    private static final Map<String, User> MAP = new ConcurrentHashMap<>();
+    static synchronized User getGuild(IUser user){
+        return MAP.computeIfAbsent(user.getID(), s -> new User(user));
     }
-    IUser user;
+    public static synchronized void update(IUser user){// hash is based on id, so no old guild is necessary
+        MAP.get(user.getID()).user.set(user);
+    }
+    final AtomicReference<IUser> user;
     User(IUser user) {
-        this.user = user;
+        this.user = new AtomicReference<>(user);
     }
     @Override
     public String getID() {
@@ -35,6 +32,6 @@ public class User implements Configurable {// todo rewrite
         return ConfigLevel.USER;
     }
     public boolean isBot() {
-        return user.isBot();
+        return user.get().isBot();
     }
 }

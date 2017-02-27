@@ -1,7 +1,5 @@
 package com.github.kaaz.discordbot.discordwrapperobjects;
 
-import sx.blah.discord.handle.obj.Permissions;
-
 /**
  * Made by nija123098 on 2/23/2017.
  */
@@ -34,5 +32,5 @@ public enum DiscordPermission {
     MANAGE_ROLES,
     MANAGE_PERMISSIONS,
     MANAGE_WEBHOOKS,
-    MANAGE_EMOJIS;
+    MANAGE_EMOJIS,;
 }

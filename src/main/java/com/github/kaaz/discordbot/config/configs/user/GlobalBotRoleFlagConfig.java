@@ -4,7 +4,6 @@ import com.github.kaaz.discordbot.config.AbstractConfig;
 import com.github.kaaz.discordbot.perms.BotRole;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**

@@ -11,7 +11,7 @@ public interface Configurable {
     String getID();
     ConfigLevel getConfigLevel();
     // these might be broken due to unchecked args
-    default void setSetting(Class clazz, Object o){
+    default <E> void setSetting(Class<? extends AbstractConfig<E>> clazz, E o){
         ConfigHandler.setSetting(clazz, this, o);
     }
     default void setSetting(String configName, Object o){
