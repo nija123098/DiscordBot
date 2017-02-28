@@ -105,7 +105,7 @@ public class CommandHandler {
                     }
                 }
             }
-            commandReduced = new String(reducedChars).substring(1, index + 1);
+            commandReduced = new String(Arrays.copyOfRange(reducedChars, 1, index + 1));
         }
         String[] strings = commandReduced.split(" ");
         String n;
