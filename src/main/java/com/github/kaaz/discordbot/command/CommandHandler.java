@@ -1,5 +1,9 @@
 package com.github.kaaz.discordbot.command;
 
+import com.github.kaaz.discordbot.discordwrapperobjects.Channel;
+import com.github.kaaz.discordbot.discordwrapperobjects.Message;
+import com.github.kaaz.discordbot.discordwrapperobjects.Reaction;
+import com.github.kaaz.discordbot.discordwrapperobjects.User;
 import com.github.kaaz.discordbot.util.Log;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
@@ -62,7 +66,7 @@ public class CommandHandler {
         for (int i = 0; i < sortedCommands.length; i++) {
             sortedCommands[i] = new HashMap<>();// no modifications will be made after this init
         }
-        commands.forEach(abstractCommand -> abstractCommand.getAliases().forEach(ali -> {
+        commands.forEach(abstractCommand -> abstractCommand.getNames().forEach(ali -> {
             String[] strings = ali.split(" ");
             AbstractCommand repeat = sortedCommands[strings.length].get(ali);
             if (repeat == null){
@@ -132,5 +136,8 @@ public class CommandHandler {
             }
         }
         return null;
+    }
+    public static void invoke(User user, Channel channel, Message message, Reaction reaction){
+        
     }
 }

@@ -28,11 +28,11 @@ public class TemplateHandler {
             return in;
         }
         boolean foundLeft = false;
-        for (int i = ind; i > -1 && (in.charAt(i) != ' ' || !foundLeft) && !(in.charAt(i) == leftBrace && foundLeft); --i) {
-            if (in.charAt(i) == leftBrace){
+        for (; ind > -1 && (in.charAt(ind) != ' ' || !foundLeft) && !(in.charAt(ind) == leftBrace && foundLeft); --ind) {
+            if (in.charAt(ind) == leftBrace){
                 foundLeft = true;
             }
-            builder.append(in.charAt(i));
+            builder.append(in.charAt(ind));
         }
         String rep = builder.reverse().toString();
         String[] repS = rep.split(leftBrace + "");
@@ -40,7 +40,7 @@ public class TemplateHandler {
         return interpret(in.replaceFirst(rep, REPLACEMENT_FUNCTIONS.get(repS[0]).apply(repS[1], caller, channel, guild, shard)), caller, channel, guild, shard);
     }
     @FunctionalInterface
-    public static interface TemplateFunction {
+    public interface TemplateFunction {
         String apply(String in, User caller, Channel channel, Guild guild, Shard shard);
     }
 }

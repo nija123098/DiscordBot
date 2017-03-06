@@ -10,7 +10,14 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Made by nija123098 on 2/20/2017.
+ * The handler for configs values and configurables.
+ * This class is the backbone of getting and setting
+ * config values for configurable objects.
+ *
+ * @author nija123098
+ * @since 2.0.0
+ * @see AbstractConfig
+ * @see Configurable
  */
 public class ConfigHandler {
     private static final Map<Class<? extends AbstractConfig>, AbstractConfig<?>> CLASS_MAP;
@@ -36,9 +43,23 @@ public class ConfigHandler {
             });
         });
     }
+
+    /**
+     * Gets the config object representing a certain config
+     * @param level the config level for the setting being gotten
+     * @param configName the config name for the config being gotten
+     * @return the object representing the config that is being searched for
+     */
     public static AbstractConfig getConfig(ConfigLevel level, String configName){
         return STRING_MAP[level.ordinal()].get(configName);
     }
+
+    /**
+     * Gets the config object representing a certain config
+     *
+     * @param clazz the class object of the config
+     * @return the config that is being represented by the given class
+     */
     public static <E extends AbstractConfig> E getConfig(Class<E> clazz){
         Object e = CLASS_MAP.get(clazz);
         if (e != null){
@@ -46,9 +67,26 @@ public class ConfigHandler {
         }
         throw new RuntimeException("Attempted searching for a non-existent config by using Class search: " + clazz.getClass().getName());
     }
+
+    /**
+     * Sets the config value for the given configurable and config
+     *
+     * @param clazz the class object representing the config
+     * @param configurable the configurable the config is to be set for
+     * @param value the value the config is being set at
+     */
     public static <E extends AbstractConfig<F>, F> void setSetting(Class<E> clazz, Configurable configurable, F value){
         getConfig(clazz).setValue(configurable, value);
     }
+
+    /**
+     * Sets the config value for the given configurable and config
+     *
+     * @param configName the config name of the config to be set
+     * @param configurable the configurable the config is to be set for
+     * @param value the value to be set
+     * @return if the value is set
+     */
     public static boolean setSetting(String configName, Configurable configurable, Object value){
         AbstractConfig config = getConfig(configurable.getConfigLevel(), configName);
         if (config != null){
@@ -62,12 +100,33 @@ public class ConfigHandler {
             return false;
         }
     }
+
+    /**
+     * A setter for a config for a given configurable
+     *
+     * @param clazz the class object that types a config
+     * @param configurable the configurable the config
+     *                     is to be set for
+     * @param holder the optional holder to get the config
+     *               value as the expected type
+     * @return the value of the config for the configurable
+     */
     @SafeVarargs
     public static <E extends AbstractConfig<F>, F> F getSetting(Class<E> clazz, Configurable configurable, Holder<F>...holder){
         Object o = getConfig(clazz).getValue(configurable);
         Holder.fillOptional((F) o, holder);
         return (F) o;
     }
+
+    /**
+     * A setter for a config for a given configurable
+     *
+     * @param configName the name of the config to be gotten
+     * @param configurable the configurable that the config value
+     *                     is to be gotten for
+     * @param holder the holder
+     * @return the value of the config for the configurable
+     */
     @SafeVarargs
     public static <E> E getSetting(String configName, Configurable configurable, Holder<E>...holder){
         AbstractConfig config = getConfig(configurable.getConfigLevel(), configName);

@@ -13,10 +13,13 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class User implements Configurable {// todo rewrite to completely match necessary Discord stuff
     private static final Map<String, User> MAP = new ConcurrentHashMap<>();
-    static synchronized User getGuild(IUser user){
+    public static User getUser(String id){// todo replace null
+        return MAP.computeIfAbsent(id, null);
+    }
+    static User getUser(IUser user){
         return MAP.computeIfAbsent(user.getID(), s -> new User(user));
     }
-    public static synchronized void update(IUser user){// hash is based on id, so no old guild is necessary
+    public static void update(IUser user){// hash is based on id, so no old guild is necessary
         MAP.get(user.getID()).user.set(user);
     }
     final AtomicReference<IUser> user;

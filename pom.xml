@@ -35,6 +35,7 @@
             <groupId>com.github.austinv11</groupId>
             <artifactId>Discord4j</artifactId>
             <version>5213b02</version>
+            <classifier>shaded</classifier>
         </dependency>
         <dependency>
             <groupId>org.reflections</groupId>

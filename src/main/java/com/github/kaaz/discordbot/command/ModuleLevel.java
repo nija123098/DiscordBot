@@ -1,7 +1,10 @@
 package com.github.kaaz.discordbot.command;
 
 /**
- * Made by nija123098 on 2/20/2017.
+ * An enum for every command module
+ *
+ * @author nija123098
+ * @since 2.0.0
  */
 public enum ModuleLevel {
     MUSIC,
@@ -9,5 +12,13 @@ public enum ModuleLevel {
     BOT_AMDINISTRATIVE,
     ADMINISTRATIVE,
     ECONOMY,
-    DEVELOPMENT,;
+    DEVELOPMENT,
+    NONE,;
+    public static ModuleLevel getModualLevel(String s){
+        try {
+            return valueOf(s.replace("_", " ").toUpperCase());
+        } catch (Exception e){
+            return NONE;
+        }
+    }
 }
