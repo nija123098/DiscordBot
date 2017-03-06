@@ -10,7 +10,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Made by nija123098 on 2/20/2017.
+ * The class to handle services,
+ * objects that implement Runnable and
+ * are called at multiple intervals within
+ * a program's runtime.
+ *
+ * @author nija123098
+ * @since 2.0.0
+ * @see AbstractService
  */
 public class ServiceHandler {
     private static final Map<AbstractService, Long> NORMAL_SERVICES;
@@ -84,7 +91,15 @@ public class ServiceHandler {
         thread.setDaemon(true);
         thread.run();
     }
+
+    /**
+     * The method to call to initialize
+     * service handling.  If the class
+     * initializer throws an exception the
+     * thread that calls this method will
+     * handle (or not).
+     */
     public static void init(){
-        Log.log("ServiceHandler inited successfully");
+        Log.log("ServiceHandler initialized successfully");
     }
 }

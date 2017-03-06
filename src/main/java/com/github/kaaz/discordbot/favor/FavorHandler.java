@@ -5,30 +5,55 @@ import com.github.kaaz.discordbot.config.Configurable;
 import com.github.kaaz.discordbot.config.configs.user.FavorConfig;
 
 /**
- * Made by nija123098 on 2/20/2017.
+ * The handler for favor levels for guilds and users.
+ *
+ * @author nija123098
+ * @since 2.0.0
+ * @see FavorLevel
  */
 public class FavorHandler {
-    public static FavorLevel getFavorLevel(Configurable configurable){
-        if (configurable.getConfigLevel() != ConfigLevel.USER | configurable.getConfigLevel() != ConfigLevel.GUILD){
+    /**
+     * A getter for the FavorLevel config.
+     *
+     * @param configurable the guild or user to get the favor amount for
+     * @return the favor amount
+     */
+    public static Float getFavorAmount(Configurable configurable){
+        if (configurable.getConfigLevel() != ConfigLevel.USER || configurable.getConfigLevel() != ConfigLevel.GUILD){
             return null;
         }
-        float value = configurable.getSetting(FavorConfig.class);
-        if (value < FavorLevel.DISTRUSTED.amount){
-            return FavorLevel.DISTRUSTED;
-        }
-        if (value > FavorLevel.PREFERRED.amount){
-            return FavorLevel.PREFERRED;
-        }
-        for (int i = 0; i < FavorLevel.values().length; i++) {
-            if (value < FavorLevel.values()[i].amount){
-                return FavorLevel.values()[i - 1];
-            }
-        }
-        return FavorLevel.NEUTRAL;
+        return configurable.getSetting(FavorConfig.class);
     }
+
+    /**
+     * Gets the enum by the favor amount indicated.
+     *
+     * @param configurable the guild or user to get the favor level
+     * @return the corresponding favor enum
+     */
+    public static FavorLevel getFavorLevel(Configurable configurable){
+        if (configurable.getConfigLevel() != ConfigLevel.USER || configurable.getConfigLevel() != ConfigLevel.GUILD){
+            return null;
+        }
+        return FavorLevel.getFavorLevel(configurable.getSetting(FavorConfig.class));
+    }
+
+    /**
+     * A helper method to add favor to
+     *
+     * @param configurable the configurable to change the favor level for
+     * @param amount the amount to change it by
+     */
     public static void addFavorLevel(Configurable configurable, float amount){
         setFavorLevel(configurable, amount + configurable.getSetting(FavorConfig.class));
     }
+
+    /**
+     * A helper to set the favor level
+     *
+     * @param configurable the configurable to set the favor level for
+     * @param amount the amouth to set it to
+     */
     public static void setFavorLevel(Configurable configurable, float amount){
         if (amount < 0){
             amount *= 2;
