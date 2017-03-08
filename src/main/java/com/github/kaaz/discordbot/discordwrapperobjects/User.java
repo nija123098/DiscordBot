@@ -19,7 +19,7 @@ public class User implements Configurable {// todo rewrite to completely match n
     static User getUser(IUser user){
         return MAP.computeIfAbsent(user.getID(), s -> new User(user));
     }
-    public static void update(IUser user){// hash is based on id, so no old guild is necessary
+    public static void update(IUser user){// hash is based on id, so no old channel is necessary
         MAP.get(user.getID()).user.set(user);
     }
     final AtomicReference<IUser> user;
