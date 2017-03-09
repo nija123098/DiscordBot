@@ -3,14 +3,21 @@ package com.github.kaaz.discordbot.discordwrapperobjects;
 import com.github.kaaz.discordbot.config.ConfigLevel;
 import com.github.kaaz.discordbot.config.Configurable;
 import sx.blah.discord.handle.audio.IAudioManager;
-import sx.blah.discord.handle.obj.*;
+import sx.blah.discord.handle.obj.IChannel;
+import sx.blah.discord.handle.obj.IGuild;
+import sx.blah.discord.handle.obj.IInvite;
+import sx.blah.discord.handle.obj.IRegion;
+import sx.blah.discord.handle.obj.IRole;
+import sx.blah.discord.handle.obj.IUser;
+import sx.blah.discord.handle.obj.IVoiceChannel;
+import sx.blah.discord.handle.obj.VerificationLevel;
 import sx.blah.discord.util.DiscordException;
 import sx.blah.discord.util.Image;
 import sx.blah.discord.util.MissingPermissionsException;
 import sx.blah.discord.util.RateLimitException;
+import sx.blah.discord.util.RequestBuffer;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -71,9 +78,7 @@ public class Guild implements Configurable {// todo rewrite to completely match 
     }
 
     public List<Channel> getChannels() {
-        List<Channel> channels = new ArrayList<>();
-        guild().getChannels().forEach(iChannel -> channels.add(Channel.getChannel(iChannel)));
-        return channels;
+        return Channel.getChannels(guild().getChannels());
     }
 
     public Channel getChannelByID(String s) {
@@ -81,9 +86,7 @@ public class Guild implements Configurable {// todo rewrite to completely match 
     }
 
     public List<User> getUsers() {
-        List<User> users = new ArrayList<>();
-        guild().getUsers().forEach(iUser -> users.add(User.getUser(iUser)));
-        return users;
+        return User.getUsers(guild().getUsers());
     }
 
     public User getUserByID(String s) {
@@ -91,15 +94,11 @@ public class Guild implements Configurable {// todo rewrite to completely match 
     }
 
     public List<Channel> getChannelsByName(String s) {
-        List<Channel> channels = new ArrayList<>();
-        guild().getChannelsByName(s).forEach(iChannel -> channels.add(Channel.getChannel(iChannel)));
-        return channels;
+        return Channel.getChannels(guild().getChannelsByName(s));
     }
 
     public List<VoiceChannel> getVoiceChannelsByName(String s) {
-        List<VoiceChannel> channels = new ArrayList<>();
-        guild().getVoiceChannelsByName(s).forEach(iChannel -> channels.add(VoiceChannel.getVoiceChannel(iChannel)));
-        return channels;
+        return VoiceChannel.getVoiceChannels(guild().getVoiceChannelsByName(s));
     }
 
     public List<User> getUsersByName(String s) {
@@ -107,15 +106,11 @@ public class Guild implements Configurable {// todo rewrite to completely match 
     }
 
     public List<User> getUsersByName(String s, boolean b) {
-        List<User> users = new ArrayList<>();
-        guild().getUsersByName(s, b).forEach(iUser -> users.add(User.getUser(iUser)));
-        return users;
+        return User.getUsers(guild().getUsersByName(s, b));
     }
 
-    public List<User> getUsersByRole(IRole iRole) {
-        List<User> users = new ArrayList<>();
-        guild().getUsersByRole(iRole).forEach(iUser -> users.add(User.getUser(iUser)));
-        return users;
+    public List<User> getUsersByRole(Role role) {
+        return User.getUsers(guild().getUsersByRole(role.role()));
     }
 
     public String getName() {
@@ -123,15 +118,11 @@ public class Guild implements Configurable {// todo rewrite to completely match 
     }
 
     public List<Role> getRoles() {
-        List<Role> roles = new ArrayList<>();
-        guild().getRoles().forEach(iRole -> roles.add(Role.getRole(iRole)));
-        return roles;
+        return Role.getRoles(guild().getRoles());
     }
 
     public List<Role> getRolesForUser(User user) {
-        List<Role> roles = new ArrayList<>();
-        guild().getRolesForUser(user.user.get()).forEach(iRole -> roles.add(Role.getRole(iRole)));
-        return roles;
+        return Role.getRoles(guild().getRolesForUser(user.user.get()));
     }
 
     public Role getRoleByID(String s) {
@@ -139,62 +130,62 @@ public class Guild implements Configurable {// todo rewrite to completely match 
     }
 
     public List<Role> getRolesByName(String s) {
-        return null;
+        return Role.getRoles(guild().getRolesByName(s));
     }
 
-    public List<IVoiceChannel> getVoiceChannels() {
-        return null;
+    public List<VoiceChannel> getVoiceChannels() {
+        return VoiceChannel.getVoiceChannels(guild().getVoiceChannels());
     }
 
-    public IVoiceChannel getVoiceChannelByID(String s) {
-        return null;
+    public VoiceChannel getVoiceChannelByID(String s) {
+        return VoiceChannel.getVoiceChannel(s);
     }
 
-    public IVoiceChannel getConnectedVoiceChannel() {
-        return null;
+    public VoiceChannel getConnectedVoiceChannel() {
+        return VoiceChannel.getVoiceChannel(guild().getConnectedVoiceChannel());
     }
 
-    public IVoiceChannel getAFKChannel() {
-        return null;
+    public VoiceChannel getAFKChannel() {
+        return VoiceChannel.getVoiceChannel(guild().getAFKChannel());
     }
 
     public int getAFKTimeout() {
-        return 0;
+        return guild().getAFKTimeout();
     }
 
-    public IRole createRole() throws DiscordException, RateLimitException, MissingPermissionsException {
-        return null;
+    public Role createRole() {
+        return RequestBuffer.request((RequestBuffer.IRequest<Role>) () -> Role.getRole(guild().createRole())).get();
     }
 
-    public List<IUser> getBannedUsers() throws DiscordException, RateLimitException {
-        return null;
+    public List<User> getBannedUsers() {
+        return RequestBuffer.request((RequestBuffer.IRequest<List<User>>) () -> User.getUsers(guild().getBannedUsers())).get();
     }
 
-    public void banUser(IUser iUser) throws DiscordException, RateLimitException, MissingPermissionsException {
-
+    public void banUser(User user) {
+        RequestBuffer.request(() -> guild().banUser(user.user.get()));
     }
 
-    public void banUser(IUser iUser, int i) throws DiscordException, RateLimitException, MissingPermissionsException {
-
+    public void banUser(User user, int i) {
+        RequestBuffer.request(() -> guild().banUser(user.user.get(), i));
     }
 
-    public void banUser(String s) throws DiscordException, RateLimitException, MissingPermissionsException {
-
+    public void banUser(String s) {
+        RequestBuffer.request(() -> guild().banUser(s));
     }
 
-    public void banUser(String s, int i) throws DiscordException, RateLimitException, MissingPermissionsException {
-
+    public void banUser(String s, int i) {
+        RequestBuffer.request(() -> guild().banUser(s, i));
     }
 
-    public void pardonUser(String s) throws DiscordException, RateLimitException, MissingPermissionsException {
-
+    public void pardonUser(String s) {
+        RequestBuffer.request(() -> guild().pardonUser(s));
     }
 
-    public void kickUser(IUser iUser) throws DiscordException, RateLimitException, MissingPermissionsException {
-
+    public void kickUser(User user) {
+        RequestBuffer.request(() -> guild().kickUser(user.user.get()));
     }
 
-    public void editUserRoles(IUser iUser, IRole[] iRoles) throws DiscordException, RateLimitException, MissingPermissionsException {
+    public void editUserRoles(IUser iUser, IRole[] iRoles) {
 
     }
 
@@ -230,8 +221,8 @@ public class Guild implements Configurable {// todo rewrite to completely match 
 
     }
 
-    public void changeAFKChannel(IVoiceChannel iVoiceChannel) throws DiscordException, RateLimitException, MissingPermissionsException {
-
+    public void changeAFKChannel(VoiceChannel voiceChannel) {
+        RequestBuffer.request(() -> guild().changeAFKChannel(voiceChannel.channel()));
     }
 
     public void changeAFKTimeout(int i) throws DiscordException, RateLimitException, MissingPermissionsException {
@@ -247,7 +238,7 @@ public class Guild implements Configurable {// todo rewrite to completely match 
     }
 
     public void leave() throws DiscordException, RateLimitException {
-
+        RequestBuffer.request(() -> {}).get();
     }
 
     public IChannel createChannel(String s) throws DiscordException, RateLimitException, MissingPermissionsException {
@@ -270,8 +261,8 @@ public class Guild implements Configurable {// todo rewrite to completely match 
         return null;
     }
 
-    public IChannel getGeneralChannel() {
-        return null;
+    public Channel getGeneralChannel() {
+        return Channel.getChannel(guild().getGeneralChannel());
     }
 
     public List<IInvite> getInvites() throws DiscordException, RateLimitException, MissingPermissionsException {
@@ -291,47 +282,23 @@ public class Guild implements Configurable {// todo rewrite to completely match 
     }
 
     public boolean isDeleted() {
-        return false;
+        return guild().isDeleted();
     }
 
     public IAudioManager getAudioManager() {
         return null;
     }
 
-    public LocalDateTime getJoinTimeForUser(IUser iUser) throws DiscordException {
-        return null;
+    public LocalDateTime getJoinTimeForUser(User user) throws DiscordException {
+        return guild().getJoinTimeForUser(user.user.get());
     }
 
-    public IMessage getMessageByID(String s) {
-        return null;
-    }
-
-    public List<IEmoji> getEmojis() {
-        return null;
-    }
-
-    public IEmoji getEmojiByID(String s) {
-        return null;
-    }
-
-    public IEmoji getEmojiByName(String s) {
-        return null;
-    }
-
-    public IWebhook getWebhookByID(String s) {
-        return null;
-    }
-
-    public List<IWebhook> getWebhooksByName(String s) {
-        return null;
-    }
-
-    public List<IWebhook> getWebhooks() {
-        return null;
+    public Message getMessageByID(String s) {
+        return Message.getMessage(s);
     }
 
     public int getTotalMemberCount() {
-        return 0;
+        return guild().getTotalMemberCount();
     }
     /*
     @Override

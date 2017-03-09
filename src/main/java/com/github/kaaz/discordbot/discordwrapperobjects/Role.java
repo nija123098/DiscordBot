@@ -1,7 +1,10 @@
 package com.github.kaaz.discordbot.discordwrapperobjects;
 
 import sx.blah.discord.handle.obj.IRole;
+import sx.blah.discord.handle.obj.IUser;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
@@ -27,5 +30,9 @@ public class Role {
     IRole role(){
         return this.reference.get();
     }
-
+    public static List<Role> getRoles(List<IRole> iRoles) {
+        List<Role> roles = new ArrayList<>(iRoles.size());
+        iRoles.forEach(iUser -> roles.add(getRole(iUser)));
+        return roles;
+    }
 }

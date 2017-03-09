@@ -4,6 +4,8 @@ import com.github.kaaz.discordbot.config.ConfigLevel;
 import com.github.kaaz.discordbot.config.Configurable;
 import sx.blah.discord.handle.obj.IUser;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
@@ -18,6 +20,11 @@ public class User implements Configurable {// todo rewrite to completely match n
     }
     static User getUser(IUser user){
         return MAP.computeIfAbsent(user.getID(), s -> new User(user));
+    }
+    static List<User> getUsers(List<IUser> iUsers){
+        List<User> users = new ArrayList<>(iUsers.size());
+        iUsers.forEach(iUser -> users.add(getUser(iUser)));
+        return users;
     }
     public static void update(IUser user){// hash is based on id, so no old channel is necessary
         MAP.get(user.getID()).user.set(user);

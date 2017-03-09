@@ -4,6 +4,8 @@ import com.github.kaaz.discordbot.config.ConfigLevel;
 import com.github.kaaz.discordbot.config.Configurable;
 import sx.blah.discord.handle.obj.IChannel;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
@@ -18,6 +20,11 @@ public class Channel implements Configurable {
     }
     static Channel getChannel(IChannel channel){
         return MAP.computeIfAbsent(channel.getID(), s -> new Channel(channel));
+    }
+    static List<Channel> getChannels(List<IChannel> iChannels){
+        List<Channel> channels = new ArrayList<>(iChannels.size());
+        iChannels.forEach(iChannel -> channels.add(getChannel(iChannel)));
+        return channels;
     }
     public synchronized void update(IChannel channel){// hash is based on id, so no old channel is necessary
         MAP.get(channel.getID()).reference.set(channel);
