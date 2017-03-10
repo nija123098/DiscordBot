@@ -2,22 +2,13 @@ package com.github.kaaz.discordbot.discordwrapperobjects;
 
 import com.github.kaaz.discordbot.config.ConfigLevel;
 import com.github.kaaz.discordbot.config.Configurable;
+import com.github.kaaz.discordbot.discordwrapperobjects.exception.WraperHelper;
 import sx.blah.discord.handle.audio.IAudioManager;
-import sx.blah.discord.handle.obj.IChannel;
-import sx.blah.discord.handle.obj.IGuild;
-import sx.blah.discord.handle.obj.IInvite;
-import sx.blah.discord.handle.obj.IRegion;
-import sx.blah.discord.handle.obj.IRole;
-import sx.blah.discord.handle.obj.IUser;
-import sx.blah.discord.handle.obj.IVoiceChannel;
-import sx.blah.discord.handle.obj.VerificationLevel;
-import sx.blah.discord.util.DiscordException;
-import sx.blah.discord.util.Image;
-import sx.blah.discord.util.MissingPermissionsException;
-import sx.blah.discord.util.RateLimitException;
-import sx.blah.discord.util.RequestBuffer;
+import sx.blah.discord.handle.obj.*;
+import sx.blah.discord.util.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -26,7 +17,7 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * Made by nija123098 on 2/20/2017.
  */
-public class Guild implements Configurable {// todo rewrite to completely match necessary Discord stuff
+public class Guild implements Configurable {
     private static final Map<String, Guild> MAP = new ConcurrentHashMap<>();
     public static Guild getGuild(String id){// todo replace null
         return MAP.computeIfAbsent(id, s -> null);
@@ -122,7 +113,7 @@ public class Guild implements Configurable {// todo rewrite to completely match 
     }
 
     public List<Role> getRolesForUser(User user) {
-        return Role.getRoles(guild().getRolesForUser(user.user.get()));
+        return Role.getRoles(guild().getRolesForUser(user.user()));
     }
 
     public Role getRoleByID(String s) {
@@ -154,131 +145,111 @@ public class Guild implements Configurable {// todo rewrite to completely match 
     }
 
     public Role createRole() {
-        return RequestBuffer.request((RequestBuffer.IRequest<Role>) () -> Role.getRole(guild().createRole())).get();
+        return WraperHelper.wrap((WraperHelper.Request<Role>) () -> Role.getRole(guild().createRole()));
     }
 
     public List<User> getBannedUsers() {
-        return RequestBuffer.request((RequestBuffer.IRequest<List<User>>) () -> User.getUsers(guild().getBannedUsers())).get();
+        return WraperHelper.wrap((WraperHelper.Request<List<User>>) () -> User.getUsers(guild().getBannedUsers()));
     }
 
     public void banUser(User user) {
-        RequestBuffer.request(() -> guild().banUser(user.user.get()));
+        WraperHelper.wrap(() -> guild().banUser(user.user()));
     }
 
     public void banUser(User user, int i) {
-        RequestBuffer.request(() -> guild().banUser(user.user.get(), i));
+        WraperHelper.wrap(() -> guild().banUser(user.user(), i));
     }
 
     public void banUser(String s) {
-        RequestBuffer.request(() -> guild().banUser(s));
+        WraperHelper.wrap(() -> guild().banUser(s));
     }
 
     public void banUser(String s, int i) {
-        RequestBuffer.request(() -> guild().banUser(s, i));
+        WraperHelper.wrap(() -> guild().banUser(s, i));
     }
 
     public void pardonUser(String s) {
-        RequestBuffer.request(() -> guild().pardonUser(s));
+        WraperHelper.wrap(() -> guild().pardonUser(s));
     }
 
     public void kickUser(User user) {
-        RequestBuffer.request(() -> guild().kickUser(user.user.get()));
+        WraperHelper.wrap(() -> guild().kickUser(user.user()));
     }
 
-    public void editUserRoles(IUser iUser, IRole[] iRoles) {
-
+    public void editUserRoles(User user, Role...roles) {
+        List<IRole> iRoles = new ArrayList<>(roles.length);
+        for (Role role : roles) {
+            iRoles.add(role.role());
+        }
+        WraperHelper.wrap(() -> guild().editUserRoles(user.user(), Role.getRoles(iRoles).toArray(new IRole[roles.length])));
     }
 
-    public void setDeafenUser(IUser iUser, boolean b) throws DiscordException, RateLimitException, MissingPermissionsException {
-
+    public void setDeafenUser(User user, boolean b) {
+        WraperHelper.wrap(() -> guild().setDeafenUser(user.user(), b));
     }
 
-    public void setMuteUser(IUser iUser, boolean b) throws DiscordException, RateLimitException, MissingPermissionsException {
-
+    public void setMuteUser(User user, boolean b) {
+        WraperHelper.wrap(() -> guild().setMuteUser(user.user(), b));
     }
 
-    public void setUserNickname(IUser iUser, String s) throws DiscordException, RateLimitException, MissingPermissionsException {
-
+    public void setUserNickname(User user, String s) {
+        WraperHelper.wrap(() -> guild().setUserNickname(user.user(), s));
     }
 
-    public void edit(String s, IRegion iRegion, VerificationLevel verificationLevel, Image image, IVoiceChannel iVoiceChannel, int i) throws DiscordException, RateLimitException, MissingPermissionsException {
-
+    public void changeName(String s) {
+        WraperHelper.wrap(() -> guild().changeName(s));
     }
 
-    public void changeName(String s) throws DiscordException, RateLimitException, MissingPermissionsException {
-
-    }
-
-    public void changeRegion(IRegion iRegion) throws DiscordException, RateLimitException, MissingPermissionsException {
-
-    }
-
-    public void changeVerificationLevel(VerificationLevel verificationLevel) throws DiscordException, RateLimitException, MissingPermissionsException {
-
-    }
-
-    public void changeIcon(Image image) throws DiscordException, RateLimitException, MissingPermissionsException {
-
+    public void changeRegion(Region region) {
+        WraperHelper.wrap(() -> Region.getRegion(guild().getRegion()));
     }
 
     public void changeAFKChannel(VoiceChannel voiceChannel) {
-        RequestBuffer.request(() -> guild().changeAFKChannel(voiceChannel.channel()));
+        WraperHelper.wrap(() -> guild().changeAFKChannel(voiceChannel.channel()));
     }
 
-    public void changeAFKTimeout(int i) throws DiscordException, RateLimitException, MissingPermissionsException {
-
+    public void changeAFKTimeout(int i) {
+        WraperHelper.wrap(() -> guild().changeAFKTimeout(i));
     }
 
-    public void deleteGuild() throws DiscordException, RateLimitException, MissingPermissionsException {
-
+    public void leave() {
+        WraperHelper.wrap(() -> guild().leave());
     }
 
-    public void leaveGuild() throws DiscordException, RateLimitException {
-
+    public Channel createChannel(String s) {
+        return WraperHelper.wrap((WraperHelper.Request<Channel>) () -> Channel.getChannel(guild().createChannel(s)));
     }
 
-    public void leave() throws DiscordException, RateLimitException {
-        RequestBuffer.request(() -> {}).get();
+    public VoiceChannel createVoiceChannel(String s) {
+        return WraperHelper.wrap((WraperHelper.Request<VoiceChannel>) () -> VoiceChannel.getVoiceChannel(guild().createVoiceChannel(s)));
     }
 
-    public IChannel createChannel(String s) throws DiscordException, RateLimitException, MissingPermissionsException {
-        return null;
+    public Region getRegion() {
+        return Region.getRegion(guild().getRegion());
     }
 
-    public IVoiceChannel createVoiceChannel(String s) throws DiscordException, RateLimitException, MissingPermissionsException {
-        return null;
-    }
-
-    public IRegion getRegion() {
-        return null;
-    }
-
-    public VerificationLevel getVerificationLevel() {
-        return null;
-    }
-
-    public IRole getEveryoneRole() {
-        return null;
+    public Role getEveryoneRole() {
+        return WraperHelper.wrap((WraperHelper.Request<Role>) () -> Role.getRole(guild().getEveryoneRole()));
     }
 
     public Channel getGeneralChannel() {
         return Channel.getChannel(guild().getGeneralChannel());
     }
 
-    public List<IInvite> getInvites() throws DiscordException, RateLimitException, MissingPermissionsException {
-        return null;
+    public void reorderRoles(Role...roles) {
+        List<IRole> iRoles = new ArrayList<>(roles.length);
+        for (Role role : roles) {
+            iRoles.add(role.role());
+        }
+        WraperHelper.wrap(() -> guild().reorderRoles(iRoles.toArray(new IRole[roles.length])));
     }
 
-    public void reorderRoles(IRole... iRoles) throws DiscordException, RateLimitException, MissingPermissionsException {
-
+    public int getUsersToBePruned(int i) {
+        return WraperHelper.wrap((WraperHelper.Request<Integer>) () -> guild().getUsersToBePruned(i));
     }
 
-    public int getUsersToBePruned(int i) throws DiscordException, RateLimitException {
-        return 0;
-    }
-
-    public int pruneUsers(int i) throws DiscordException, RateLimitException {
-        return 0;
+    public int pruneUsers(int i) {
+        return WraperHelper.wrap((WraperHelper.Request<Integer>) () -> guild().pruneUsers(i));
     }
 
     public boolean isDeleted() {
@@ -290,7 +261,7 @@ public class Guild implements Configurable {// todo rewrite to completely match 
     }
 
     public LocalDateTime getJoinTimeForUser(User user) throws DiscordException {
-        return guild().getJoinTimeForUser(user.user.get());
+        return guild().getJoinTimeForUser(user.user());
     }
 
     public Message getMessageByID(String s) {
@@ -300,20 +271,4 @@ public class Guild implements Configurable {// todo rewrite to completely match 
     public int getTotalMemberCount() {
         return guild().getTotalMemberCount();
     }
-    /*
-    @Override
-    public String getID() {
-        return null;
-    }
-    @Override
-    public ConfigLevel getConfigLevel() {
-        return ConfigLevel.GUILD;
-    }
-    public User getOwner() {
-        return new User(channel.get().getOwner());// temp
-    }
-    public EnumSet<DiscordPermission> getPermissionsForGuild(User user){
-        return EnumSet.allOf(DiscordPermission.class);// temp
-    }
-    */
 }

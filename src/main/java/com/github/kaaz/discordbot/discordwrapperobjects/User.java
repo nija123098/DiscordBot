@@ -27,11 +27,14 @@ public class User implements Configurable {// todo rewrite to completely match n
         return users;
     }
     public static void update(IUser user){// hash is based on id, so no old channel is necessary
-        MAP.get(user.getID()).user.set(user);
+        MAP.get(user.getID()).reference.set(user);
     }
-    final AtomicReference<IUser> user;
+    private final AtomicReference<IUser> reference;
+    IUser user(){
+        return reference.get();
+    }
     User(IUser user) {
-        this.user = new AtomicReference<>(user);
+        this.reference = new AtomicReference<>(user);
     }
     @Override
     public String getID() {
@@ -42,6 +45,6 @@ public class User implements Configurable {// todo rewrite to completely match n
         return ConfigLevel.USER;
     }
     public boolean isBot() {
-        return user.get().isBot();
+        return reference.get().isBot();
     }
 }
