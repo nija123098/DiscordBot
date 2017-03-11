@@ -1,9 +1,9 @@
 package com.github.kaaz.discordbot.template;
 
-import com.github.kaaz.discordbot.discordwrapperobjects.Channel;
-import com.github.kaaz.discordbot.discordwrapperobjects.Guild;
-import com.github.kaaz.discordbot.discordwrapperobjects.Shard;
-import com.github.kaaz.discordbot.discordwrapperobjects.User;
+import com.github.kaaz.discordbot.discordobjects.wrappers.Channel;
+import com.github.kaaz.discordbot.discordobjects.wrappers.Guild;
+import com.github.kaaz.discordbot.discordobjects.wrappers.Shard;
+import com.github.kaaz.discordbot.discordobjects.wrappers.User;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,7 +1,7 @@
 package com.github.kaaz.discordbot.command;
 
-import com.github.kaaz.discordbot.discordwrapperobjects.Guild;
-import com.github.kaaz.discordbot.discordwrapperobjects.User;
+import com.github.kaaz.discordbot.discordobjects.wrappers.Guild;
+import com.github.kaaz.discordbot.discordobjects.wrappers.User;
 import com.github.kaaz.discordbot.perms.BotRole;
 import com.github.kaaz.discordbot.util.Log;
 

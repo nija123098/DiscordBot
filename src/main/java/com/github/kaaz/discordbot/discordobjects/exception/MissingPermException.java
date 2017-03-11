@@ -1,6 +1,6 @@
-package com.github.kaaz.discordbot.discordwrapperobjects.exception;
+package com.github.kaaz.discordbot.discordobjects.exception;
 
-import com.github.kaaz.discordbot.discordwrapperobjects.DiscordPermission;
+import com.github.kaaz.discordbot.discordobjects.wrappers.DiscordPermission;
 import sx.blah.discord.util.MissingPermissionsException;
 
 import java.util.EnumSet;
@@ -14,9 +14,7 @@ public class MissingPermException extends RuntimeException {
         super(e);
     }
     public EnumSet<DiscordPermission> getMissingPermission() {
-        EnumSet<DiscordPermission> missing = EnumSet.noneOf(DiscordPermission.class);
-        ((MissingPermissionsException) this.getCause()).getMissingPermissions().forEach(permissions -> missing.add(DiscordPermission.values()[permissions.ordinal()]));
-        return missing;
+        return DiscordPermission.getPermissions(((MissingPermissionsException) this.getCause()).getMissingPermissions());
     }
     public String getErrorMessage() {
         EnumSet<DiscordPermission> missing = getMissingPermission();

@@ -1,4 +1,4 @@
-package com.github.kaaz.discordbot.discordwrapperobjects;
+package com.github.kaaz.discordbot.discordobjects.wrappers;
 
 import com.github.kaaz.discordbot.config.ConfigLevel;
 import com.github.kaaz.discordbot.config.Configurable;

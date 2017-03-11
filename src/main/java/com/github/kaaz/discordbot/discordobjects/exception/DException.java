@@ -1,4 +1,4 @@
-package com.github.kaaz.discordbot.discordwrapperobjects.exception;
+package com.github.kaaz.discordbot.discordobjects.exception;
 
 import sx.blah.discord.util.DiscordException;
 

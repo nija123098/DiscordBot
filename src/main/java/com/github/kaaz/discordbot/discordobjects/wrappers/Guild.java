@@ -1,11 +1,11 @@
-package com.github.kaaz.discordbot.discordwrapperobjects;
+package com.github.kaaz.discordbot.discordobjects.wrappers;
 
 import com.github.kaaz.discordbot.config.ConfigLevel;
 import com.github.kaaz.discordbot.config.Configurable;
-import com.github.kaaz.discordbot.discordwrapperobjects.exception.WraperHelper;
+import com.github.kaaz.discordbot.discordobjects.exception.WrapperHelper;
 import sx.blah.discord.handle.audio.IAudioManager;
-import sx.blah.discord.handle.obj.*;
-import sx.blah.discord.util.*;
+import sx.blah.discord.handle.obj.IGuild;
+import sx.blah.discord.handle.obj.IRole;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -37,13 +37,13 @@ public class Guild implements Configurable {
     }
     @Override
     public ConfigLevel getConfigLevel() {
-        return null;
+        return ConfigLevel.GUILD;
     }
     @Override
     public String getID() {
         return guild().getID();
     }
-    // THE FOLLOWING ARE MIMIC METHODS
+    // THE FOLLOWING ARE WRAPPER METHODS
     public DiscordClient getClient() {
         return DiscordClient.get();
     }
@@ -145,35 +145,35 @@ public class Guild implements Configurable {
     }
 
     public Role createRole() {
-        return WraperHelper.wrap((WraperHelper.Request<Role>) () -> Role.getRole(guild().createRole()));
+        return WrapperHelper.wrap((WrapperHelper.Request<Role>) () -> Role.getRole(guild().createRole()));
     }
 
     public List<User> getBannedUsers() {
-        return WraperHelper.wrap((WraperHelper.Request<List<User>>) () -> User.getUsers(guild().getBannedUsers()));
+        return WrapperHelper.wrap((WrapperHelper.Request<List<User>>) () -> User.getUsers(guild().getBannedUsers()));
     }
 
     public void banUser(User user) {
-        WraperHelper.wrap(() -> guild().banUser(user.user()));
+        WrapperHelper.wrap(() -> guild().banUser(user.user()));
     }
 
     public void banUser(User user, int i) {
-        WraperHelper.wrap(() -> guild().banUser(user.user(), i));
+        WrapperHelper.wrap(() -> guild().banUser(user.user(), i));
     }
 
     public void banUser(String s) {
-        WraperHelper.wrap(() -> guild().banUser(s));
+        WrapperHelper.wrap(() -> guild().banUser(s));
     }
 
     public void banUser(String s, int i) {
-        WraperHelper.wrap(() -> guild().banUser(s, i));
+        WrapperHelper.wrap(() -> guild().banUser(s, i));
     }
 
     public void pardonUser(String s) {
-        WraperHelper.wrap(() -> guild().pardonUser(s));
+        WrapperHelper.wrap(() -> guild().pardonUser(s));
     }
 
     public void kickUser(User user) {
-        WraperHelper.wrap(() -> guild().kickUser(user.user()));
+        WrapperHelper.wrap(() -> guild().kickUser(user.user()));
     }
 
     public void editUserRoles(User user, Role...roles) {
@@ -181,47 +181,47 @@ public class Guild implements Configurable {
         for (Role role : roles) {
             iRoles.add(role.role());
         }
-        WraperHelper.wrap(() -> guild().editUserRoles(user.user(), Role.getRoles(iRoles).toArray(new IRole[roles.length])));
+        WrapperHelper.wrap(() -> guild().editUserRoles(user.user(), Role.getRoles(iRoles).toArray(new IRole[roles.length])));
     }
 
     public void setDeafenUser(User user, boolean b) {
-        WraperHelper.wrap(() -> guild().setDeafenUser(user.user(), b));
+        WrapperHelper.wrap(() -> guild().setDeafenUser(user.user(), b));
     }
 
     public void setMuteUser(User user, boolean b) {
-        WraperHelper.wrap(() -> guild().setMuteUser(user.user(), b));
+        WrapperHelper.wrap(() -> guild().setMuteUser(user.user(), b));
     }
 
     public void setUserNickname(User user, String s) {
-        WraperHelper.wrap(() -> guild().setUserNickname(user.user(), s));
+        WrapperHelper.wrap(() -> guild().setUserNickname(user.user(), s));
     }
 
     public void changeName(String s) {
-        WraperHelper.wrap(() -> guild().changeName(s));
+        WrapperHelper.wrap(() -> guild().changeName(s));
     }
 
     public void changeRegion(Region region) {
-        WraperHelper.wrap(() -> Region.getRegion(guild().getRegion()));
+        WrapperHelper.wrap(() -> Region.getRegion(guild().getRegion()));
     }
 
     public void changeAFKChannel(VoiceChannel voiceChannel) {
-        WraperHelper.wrap(() -> guild().changeAFKChannel(voiceChannel.channel()));
+        WrapperHelper.wrap(() -> guild().changeAFKChannel(voiceChannel.channel()));
     }
 
     public void changeAFKTimeout(int i) {
-        WraperHelper.wrap(() -> guild().changeAFKTimeout(i));
+        WrapperHelper.wrap(() -> guild().changeAFKTimeout(i));
     }
 
     public void leave() {
-        WraperHelper.wrap(() -> guild().leave());
+        WrapperHelper.wrap(() -> guild().leave());
     }
 
     public Channel createChannel(String s) {
-        return WraperHelper.wrap((WraperHelper.Request<Channel>) () -> Channel.getChannel(guild().createChannel(s)));
+        return WrapperHelper.wrap((WrapperHelper.Request<Channel>) () -> Channel.getChannel(guild().createChannel(s)));
     }
 
     public VoiceChannel createVoiceChannel(String s) {
-        return WraperHelper.wrap((WraperHelper.Request<VoiceChannel>) () -> VoiceChannel.getVoiceChannel(guild().createVoiceChannel(s)));
+        return WrapperHelper.wrap((WrapperHelper.Request<VoiceChannel>) () -> VoiceChannel.getVoiceChannel(guild().createVoiceChannel(s)));
     }
 
     public Region getRegion() {
@@ -229,7 +229,7 @@ public class Guild implements Configurable {
     }
 
     public Role getEveryoneRole() {
-        return WraperHelper.wrap((WraperHelper.Request<Role>) () -> Role.getRole(guild().getEveryoneRole()));
+        return WrapperHelper.wrap((WrapperHelper.Request<Role>) () -> Role.getRole(guild().getEveryoneRole()));
     }
 
     public Channel getGeneralChannel() {
@@ -241,15 +241,15 @@ public class Guild implements Configurable {
         for (Role role : roles) {
             iRoles.add(role.role());
         }
-        WraperHelper.wrap(() -> guild().reorderRoles(iRoles.toArray(new IRole[roles.length])));
+        WrapperHelper.wrap(() -> guild().reorderRoles(iRoles.toArray(new IRole[roles.length])));
     }
 
     public int getUsersToBePruned(int i) {
-        return WraperHelper.wrap((WraperHelper.Request<Integer>) () -> guild().getUsersToBePruned(i));
+        return WrapperHelper.wrap((WrapperHelper.Request<Integer>) () -> guild().getUsersToBePruned(i));
     }
 
     public int pruneUsers(int i) {
-        return WraperHelper.wrap((WraperHelper.Request<Integer>) () -> guild().pruneUsers(i));
+        return WrapperHelper.wrap((WrapperHelper.Request<Integer>) () -> guild().pruneUsers(i));
     }
 
     public boolean isDeleted() {
@@ -260,7 +260,7 @@ public class Guild implements Configurable {
         return null;
     }
 
-    public LocalDateTime getJoinTimeForUser(User user) throws DiscordException {
+    public LocalDateTime getJoinTimeForUser(User user) {
         return guild().getJoinTimeForUser(user.user());
     }
 

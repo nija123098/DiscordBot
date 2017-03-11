@@ -1,7 +1,7 @@
 package com.github.kaaz.discordbot.config;
 
-import com.github.kaaz.discordbot.discordwrapperobjects.Guild;
-import com.github.kaaz.discordbot.discordwrapperobjects.User;
+import com.github.kaaz.discordbot.discordobjects.wrappers.Guild;
+import com.github.kaaz.discordbot.discordobjects.wrappers.User;
 import com.github.kaaz.discordbot.util.Holder;
 
 import java.util.HashMap;

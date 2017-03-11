@@ -1,4 +1,4 @@
-package com.github.kaaz.discordbot.discordwrapperobjects;
+package com.github.kaaz.discordbot.discordobjects.wrappers;
 
 import sx.blah.discord.api.IShard;
 

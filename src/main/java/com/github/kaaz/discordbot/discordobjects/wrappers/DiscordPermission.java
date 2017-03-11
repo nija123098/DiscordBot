@@ -1,4 +1,9 @@
-package com.github.kaaz.discordbot.discordwrapperobjects;
+package com.github.kaaz.discordbot.discordobjects.wrappers;
+
+import sx.blah.discord.handle.obj.Permissions;
+
+import java.util.Collection;
+import java.util.EnumSet;
 
 /**
  * Made by nija123098 on 2/23/2017.
@@ -33,4 +38,12 @@ public enum DiscordPermission {
     MANAGE_PERMISSIONS,
     MANAGE_WEBHOOKS,
     MANAGE_EMOJIS,;
+    public static DiscordPermission getPermissions(Permissions permissions){
+        return values()[permissions.ordinal()];
+    }
+    public static EnumSet<DiscordPermission> getPermissions(Collection<Permissions> permissions){
+        EnumSet<DiscordPermission> list = EnumSet.noneOf(DiscordPermission.class);
+        permissions.forEach(perm -> list.add(getPermissions(perm)));
+        return list;
+    }
 }

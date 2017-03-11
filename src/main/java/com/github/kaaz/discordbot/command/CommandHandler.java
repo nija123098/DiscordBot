@@ -1,9 +1,9 @@
 package com.github.kaaz.discordbot.command;
 
-import com.github.kaaz.discordbot.discordwrapperobjects.Channel;
-import com.github.kaaz.discordbot.discordwrapperobjects.Message;
-import com.github.kaaz.discordbot.discordwrapperobjects.Reaction;
-import com.github.kaaz.discordbot.discordwrapperobjects.User;
+import com.github.kaaz.discordbot.discordobjects.wrappers.Channel;
+import com.github.kaaz.discordbot.discordobjects.wrappers.Message;
+import com.github.kaaz.discordbot.discordobjects.wrappers.Reaction;
+import com.github.kaaz.discordbot.discordobjects.wrappers.User;
 import com.github.kaaz.discordbot.util.Log;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;

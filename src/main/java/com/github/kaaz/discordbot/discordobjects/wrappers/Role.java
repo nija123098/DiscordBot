@@ -1,7 +1,6 @@
-package com.github.kaaz.discordbot.discordwrapperobjects;
+package com.github.kaaz.discordbot.discordobjects.wrappers;
 
 import sx.blah.discord.handle.obj.IRole;
-import sx.blah.discord.handle.obj.IUser;
 
 import java.util.ArrayList;
 import java.util.List;

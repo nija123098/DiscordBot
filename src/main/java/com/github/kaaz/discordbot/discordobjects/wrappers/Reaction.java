@@ -1,4 +1,4 @@
-package com.github.kaaz.discordbot.discordwrapperobjects;
+package com.github.kaaz.discordbot.discordobjects.wrappers;
 
 /**
  * Made by nija123098 on 3/4/2017.
