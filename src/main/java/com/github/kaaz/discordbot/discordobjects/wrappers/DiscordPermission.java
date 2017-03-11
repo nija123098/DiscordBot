@@ -38,12 +38,20 @@ public enum DiscordPermission {
     MANAGE_PERMISSIONS,
     MANAGE_WEBHOOKS,
     MANAGE_EMOJIS,;
-    public static DiscordPermission getPermissions(Permissions permissions){
+    public static DiscordPermission getDiscordPermissions(Permissions permissions){
         return values()[permissions.ordinal()];
     }
-    public static EnumSet<DiscordPermission> getPermissions(Collection<Permissions> permissions){
+    public static EnumSet<DiscordPermission> getDiscordPermissions(Collection<Permissions> permissions){
         EnumSet<DiscordPermission> list = EnumSet.noneOf(DiscordPermission.class);
-        permissions.forEach(perm -> list.add(getPermissions(perm)));
+        permissions.forEach(perm -> list.add(getDiscordPermissions(perm)));
+        return list;
+    }
+    public static Permissions getPermission(DiscordPermission permission) {
+        return Permissions.values()[permission.ordinal()];
+    }
+    public static EnumSet<Permissions> getPermissions(Collection<DiscordPermission> permissions){
+        EnumSet<Permissions> list = EnumSet.noneOf(Permissions.class);
+        permissions.forEach(discordPermission -> list.add(getPermission(discordPermission)));
         return list;
     }
 }

@@ -5,9 +5,23 @@ import sx.blah.discord.util.MissingPermissionsException;
 import sx.blah.discord.util.RequestBuffer;
 
 /**
- * Made by nija123098 on 3/8/2017.
+ * An class to assist in error wrapping and rate limiting.
+ *
+ * All Discord API methods that can throw errors should be
+ * wrapped with this class' methods in order to wrap any
+ * errors that those methods throw as well as handle rate
+ * limiting.  In the case of rate limiting the methods will
+ * block until the API throws an error or the API request
+ * is completed.  This is to ensure that at the end of the
+ * method call the action is completed so that a request
+ * will not fail without the bot being notified programmatically.
+ *
+ * @author nija123098
+ * @since 2.0.0
+ * @see MissingPermException
+ * @see DException
  */
-public class WrapperHelper {
+public class ErrorWrapper {
     public static <E> E wrap(Request<E> request) {
         return innerWrap(request);
     }

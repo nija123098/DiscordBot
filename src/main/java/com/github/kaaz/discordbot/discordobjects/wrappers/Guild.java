@@ -2,7 +2,7 @@ package com.github.kaaz.discordbot.discordobjects.wrappers;
 
 import com.github.kaaz.discordbot.config.ConfigLevel;
 import com.github.kaaz.discordbot.config.Configurable;
-import com.github.kaaz.discordbot.discordobjects.exception.WrapperHelper;
+import com.github.kaaz.discordbot.discordobjects.exception.ErrorWrapper;
 import sx.blah.discord.handle.audio.IAudioManager;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IRole;
@@ -145,35 +145,35 @@ public class Guild implements Configurable {
     }
 
     public Role createRole() {
-        return WrapperHelper.wrap((WrapperHelper.Request<Role>) () -> Role.getRole(guild().createRole()));
+        return ErrorWrapper.wrap((ErrorWrapper.Request<Role>) () -> Role.getRole(guild().createRole()));
     }
 
     public List<User> getBannedUsers() {
-        return WrapperHelper.wrap((WrapperHelper.Request<List<User>>) () -> User.getUsers(guild().getBannedUsers()));
+        return ErrorWrapper.wrap((ErrorWrapper.Request<List<User>>) () -> User.getUsers(guild().getBannedUsers()));
     }
 
     public void banUser(User user) {
-        WrapperHelper.wrap(() -> guild().banUser(user.user()));
+        ErrorWrapper.wrap(() -> guild().banUser(user.user()));
     }
 
     public void banUser(User user, int i) {
-        WrapperHelper.wrap(() -> guild().banUser(user.user(), i));
+        ErrorWrapper.wrap(() -> guild().banUser(user.user(), i));
     }
 
     public void banUser(String s) {
-        WrapperHelper.wrap(() -> guild().banUser(s));
+        ErrorWrapper.wrap(() -> guild().banUser(s));
     }
 
     public void banUser(String s, int i) {
-        WrapperHelper.wrap(() -> guild().banUser(s, i));
+        ErrorWrapper.wrap(() -> guild().banUser(s, i));
     }
 
     public void pardonUser(String s) {
-        WrapperHelper.wrap(() -> guild().pardonUser(s));
+        ErrorWrapper.wrap(() -> guild().pardonUser(s));
     }
 
     public void kickUser(User user) {
-        WrapperHelper.wrap(() -> guild().kickUser(user.user()));
+        ErrorWrapper.wrap(() -> guild().kickUser(user.user()));
     }
 
     public void editUserRoles(User user, Role...roles) {
@@ -181,47 +181,47 @@ public class Guild implements Configurable {
         for (Role role : roles) {
             iRoles.add(role.role());
         }
-        WrapperHelper.wrap(() -> guild().editUserRoles(user.user(), Role.getRoles(iRoles).toArray(new IRole[roles.length])));
+        ErrorWrapper.wrap(() -> guild().editUserRoles(user.user(), Role.getRoles(iRoles).toArray(new IRole[roles.length])));
     }
 
     public void setDeafenUser(User user, boolean b) {
-        WrapperHelper.wrap(() -> guild().setDeafenUser(user.user(), b));
+        ErrorWrapper.wrap(() -> guild().setDeafenUser(user.user(), b));
     }
 
     public void setMuteUser(User user, boolean b) {
-        WrapperHelper.wrap(() -> guild().setMuteUser(user.user(), b));
+        ErrorWrapper.wrap(() -> guild().setMuteUser(user.user(), b));
     }
 
     public void setUserNickname(User user, String s) {
-        WrapperHelper.wrap(() -> guild().setUserNickname(user.user(), s));
+        ErrorWrapper.wrap(() -> guild().setUserNickname(user.user(), s));
     }
 
     public void changeName(String s) {
-        WrapperHelper.wrap(() -> guild().changeName(s));
+        ErrorWrapper.wrap(() -> guild().changeName(s));
     }
 
     public void changeRegion(Region region) {
-        WrapperHelper.wrap(() -> Region.getRegion(guild().getRegion()));
+        ErrorWrapper.wrap(() -> Region.getRegion(guild().getRegion()));
     }
 
     public void changeAFKChannel(VoiceChannel voiceChannel) {
-        WrapperHelper.wrap(() -> guild().changeAFKChannel(voiceChannel.channel()));
+        ErrorWrapper.wrap(() -> guild().changeAFKChannel(voiceChannel.channel()));
     }
 
     public void changeAFKTimeout(int i) {
-        WrapperHelper.wrap(() -> guild().changeAFKTimeout(i));
+        ErrorWrapper.wrap(() -> guild().changeAFKTimeout(i));
     }
 
     public void leave() {
-        WrapperHelper.wrap(() -> guild().leave());
+        ErrorWrapper.wrap(() -> guild().leave());
     }
 
     public Channel createChannel(String s) {
-        return WrapperHelper.wrap((WrapperHelper.Request<Channel>) () -> Channel.getChannel(guild().createChannel(s)));
+        return ErrorWrapper.wrap((ErrorWrapper.Request<Channel>) () -> Channel.getChannel(guild().createChannel(s)));
     }
 
     public VoiceChannel createVoiceChannel(String s) {
-        return WrapperHelper.wrap((WrapperHelper.Request<VoiceChannel>) () -> VoiceChannel.getVoiceChannel(guild().createVoiceChannel(s)));
+        return ErrorWrapper.wrap((ErrorWrapper.Request<VoiceChannel>) () -> VoiceChannel.getVoiceChannel(guild().createVoiceChannel(s)));
     }
 
     public Region getRegion() {
@@ -229,7 +229,7 @@ public class Guild implements Configurable {
     }
 
     public Role getEveryoneRole() {
-        return WrapperHelper.wrap((WrapperHelper.Request<Role>) () -> Role.getRole(guild().getEveryoneRole()));
+        return ErrorWrapper.wrap((ErrorWrapper.Request<Role>) () -> Role.getRole(guild().getEveryoneRole()));
     }
 
     public Channel getGeneralChannel() {
@@ -241,15 +241,15 @@ public class Guild implements Configurable {
         for (Role role : roles) {
             iRoles.add(role.role());
         }
-        WrapperHelper.wrap(() -> guild().reorderRoles(iRoles.toArray(new IRole[roles.length])));
+        ErrorWrapper.wrap(() -> guild().reorderRoles(iRoles.toArray(new IRole[roles.length])));
     }
 
     public int getUsersToBePruned(int i) {
-        return WrapperHelper.wrap((WrapperHelper.Request<Integer>) () -> guild().getUsersToBePruned(i));
+        return ErrorWrapper.wrap((ErrorWrapper.Request<Integer>) () -> guild().getUsersToBePruned(i));
     }
 
     public int pruneUsers(int i) {
-        return WrapperHelper.wrap((WrapperHelper.Request<Integer>) () -> guild().pruneUsers(i));
+        return ErrorWrapper.wrap((ErrorWrapper.Request<Integer>) () -> guild().pruneUsers(i));
     }
 
     public boolean isDeleted() {

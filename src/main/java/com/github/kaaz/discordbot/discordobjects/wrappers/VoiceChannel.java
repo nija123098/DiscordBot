@@ -1,6 +1,6 @@
 package com.github.kaaz.discordbot.discordobjects.wrappers;
 
-import com.github.kaaz.discordbot.discordobjects.exception.WrapperHelper;
+import com.github.kaaz.discordbot.discordobjects.exception.ErrorWrapper;
 import sx.blah.discord.handle.obj.IVoiceChannel;
 
 import java.util.ArrayList;
@@ -46,19 +46,19 @@ public class VoiceChannel extends Channel {
     }
 
     public void edit(String name, int position, int bitrate, int userLimit) {
-        WrapperHelper.wrap(() -> channel().edit(name, position, bitrate, userLimit));
+        ErrorWrapper.wrap(() -> channel().edit(name, position, bitrate, userLimit));
     }
 
     public void changeBitrate(int bitrate) {
-        WrapperHelper.wrap(() -> channel().changeBitrate(bitrate));
+        ErrorWrapper.wrap(() -> channel().changeBitrate(bitrate));
     }
 
     public void changeUserLimit(int limit) {
-        WrapperHelper.wrap(() -> channel().changeUserLimit(limit));
+        ErrorWrapper.wrap(() -> channel().changeUserLimit(limit));
     }
 
     public void join() {
-        WrapperHelper.wrap(() -> channel().join());
+        ErrorWrapper.wrap(() -> channel().join());
     }
 
     public void leave() {

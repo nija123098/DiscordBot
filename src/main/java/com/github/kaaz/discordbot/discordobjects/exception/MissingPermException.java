@@ -14,7 +14,7 @@ public class MissingPermException extends RuntimeException {
         super(e);
     }
     public EnumSet<DiscordPermission> getMissingPermission() {
-        return DiscordPermission.getPermissions(((MissingPermissionsException) this.getCause()).getMissingPermissions());
+        return DiscordPermission.getDiscordPermissions(((MissingPermissionsException) this.getCause()).getMissingPermissions());
     }
     public String getErrorMessage() {
         EnumSet<DiscordPermission> missing = getMissingPermission();

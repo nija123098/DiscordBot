@@ -2,7 +2,7 @@ package com.github.kaaz.discordbot.discordobjects.wrappers;
 
 import com.github.kaaz.discordbot.config.ConfigLevel;
 import com.github.kaaz.discordbot.config.Configurable;
-import com.github.kaaz.discordbot.discordobjects.exception.WrapperHelper;
+import com.github.kaaz.discordbot.discordobjects.exception.ErrorWrapper;
 import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.handle.obj.*;
 import sx.blah.discord.util.DiscordException;
@@ -233,19 +233,19 @@ public class Channel implements Configurable {
     }
 
     public void edit(String s, int i, String s1) throws DiscordException, RateLimitException, MissingPermissionsException {
-        WrapperHelper.wrap(() -> channel().edit(s, i, s1));
+        ErrorWrapper.wrap(() -> channel().edit(s, i, s1));
     }
 
     public void changeName(String s) {
-        WrapperHelper.wrap(() -> channel().changeName(s));
+        ErrorWrapper.wrap(() -> channel().changeName(s));
     }
 
     public void changePosition(int i) {
-        WrapperHelper.wrap(() -> channel().changePosition(i));
+        ErrorWrapper.wrap(() -> channel().changePosition(i));
     }
 
     public void changeTopic(String s) {
-        WrapperHelper.wrap(() -> channel().changeTopic(s));
+        ErrorWrapper.wrap(() -> channel().changeTopic(s));
     }
 
     public int getPosition() {
@@ -253,7 +253,7 @@ public class Channel implements Configurable {
     }
 
     public void delete() {
-        WrapperHelper.wrap(() -> channel().delete());
+        ErrorWrapper.wrap(() -> channel().delete());
     }
 
     public Map<User, PermOverride> getUserOverrides() {
@@ -264,28 +264,28 @@ public class Channel implements Configurable {
         return PermOverride.getRoleMap(channel().getRoleOverrides());
     }
 
-    public EnumSet<Permissions> getModifiedPermissions(IUser iUser) {
-        return null;
+    public EnumSet<DiscordPermission> getModifiedPermissions(User user) {
+        return DiscordPermission.getDiscordPermissions(channel().getModifiedPermissions(user.user()));
     }
 
-    public EnumSet<Permissions> getModifiedPermissions(IRole iRole) {
-        return null;
+    public EnumSet<DiscordPermission> getModifiedPermissions(Role role) {
+        return DiscordPermission.getDiscordPermissions(channel().getModifiedPermissions(role.role()));
     }
 
-    public void removePermissionsOverride(IUser iUser) throws DiscordException, RateLimitException, MissingPermissionsException {
-
+    public void removePermissionsOverride(User user) {
+        ErrorWrapper.wrap(() -> channel().removePermissionsOverride(user.user()));
     }
 
-    public void removePermissionsOverride(IRole iRole) throws DiscordException, RateLimitException, MissingPermissionsException {
-
+    public void removePermissionsOverride(Role role) {
+        ErrorWrapper.wrap(() -> channel().removePermissionsOverride(role.role()));
     }
 
-    public void overrideRolePermissions(IRole iRole, EnumSet<Permissions> enumSet, EnumSet<Permissions> enumSet1) throws DiscordException, RateLimitException, MissingPermissionsException {
-
+    public void overrideRolePermissions(Role role, EnumSet<DiscordPermission> enumSet, EnumSet<DiscordPermission> enumSet1) {
+        ErrorWrapper.wrap(() -> channel().overrideRolePermissions(role.role(), DiscordPermission.getPermissions(enumSet), DiscordPermission.getPermissions(enumSet1)));
     }
 
-    public void overrideUserPermissions(IUser iUser, EnumSet<Permissions> enumSet, EnumSet<Permissions> enumSet1) throws DiscordException, RateLimitException, MissingPermissionsException {
-
+    public void overrideUserPermissions(User user, EnumSet<DiscordPermission> enumSet, EnumSet<DiscordPermission> enumSet1) {
+        ErrorWrapper.wrap(() -> channel().overrideUserPermissions(user.user(), DiscordPermission.getPermissions(enumSet), DiscordPermission.getPermissions(enumSet1)));
     }
 
     public List<User> getUsersHere() {
@@ -293,15 +293,15 @@ public class Channel implements Configurable {
     }
 
     public List<Message> getPinnedMessages() {
-        return WrapperHelper.wrap((WrapperHelper.Request<List<Message>>) () -> Message.getMessages(channel().getPinnedMessages()));
+        return ErrorWrapper.wrap((ErrorWrapper.Request<List<Message>>) () -> Message.getMessages(channel().getPinnedMessages()));
     }
 
     public void pin(Message message) {
-        WrapperHelper.wrap(() -> channel().pin(message.message()));
+        ErrorWrapper.wrap(() -> channel().pin(message.message()));
     }
 
     public void unpin(Message message) {
-        WrapperHelper.wrap(() -> channel().unpin(message.message()));
+        ErrorWrapper.wrap(() -> channel().unpin(message.message()));
     }
 
     public boolean isDeleted() {
