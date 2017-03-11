@@ -37,10 +37,10 @@ public class Channel implements Configurable {
         iChannels.forEach(iChannel -> channels.add(getChannel(iChannel)));
         return channels;
     }
-    public synchronized void update(IChannel channel){// hash is based on id, so no old channel is necessary
+    public synchronized void update(IChannel channel){// should handle DirectChannel and VoiceChannel updates as well
         MAP.get(channel.getID()).reference.set(channel);
     }
-    private final AtomicReference<IChannel> reference;
+    final AtomicReference<IChannel> reference;
     Channel(IChannel channel) {
         this.reference = new AtomicReference<>(channel);
     }

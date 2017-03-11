@@ -25,6 +25,11 @@ public class Guild implements Configurable {
     static Guild getGuild(IGuild guild){
         return MAP.computeIfAbsent(guild.getID(), s -> new Guild(guild));
     }
+    static List<Guild> getGuilds(List<IGuild> iGuilds){
+        List<Guild> list = new ArrayList<>(iGuilds.size());
+        iGuilds.forEach(guild -> list.add(getGuild(guild)));
+        return list;
+    }
     public synchronized void update(IGuild guild){// hash is based on id, so no old channel is necessary
         MAP.get(guild.getID()).reference.set(guild);
     }
