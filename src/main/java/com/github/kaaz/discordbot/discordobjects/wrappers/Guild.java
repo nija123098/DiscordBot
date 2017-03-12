@@ -19,8 +19,8 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class Guild implements Configurable {
     private static final Map<String, Guild> MAP = new ConcurrentHashMap<>();
-    public static Guild getGuild(String id){// todo replace null
-        return MAP.computeIfAbsent(id, s -> null);
+    public static Guild getGuild(String id){
+        return MAP.computeIfAbsent(id, s -> new Guild(DiscordClient.get().client().getGuildByID(id)));
     }
     static Guild getGuild(IGuild guild){
         return MAP.computeIfAbsent(guild.getID(), s -> new Guild(guild));

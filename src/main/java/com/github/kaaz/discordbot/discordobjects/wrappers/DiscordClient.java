@@ -3,10 +3,6 @@ package com.github.kaaz.discordbot.discordobjects.wrappers;
 import com.github.kaaz.discordbot.discordobjects.exception.ErrorWrapper;
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.api.events.EventDispatcher;
-import sx.blah.discord.handle.impl.obj.PrivateChannel;
-import sx.blah.discord.handle.obj.IUser;
-import sx.blah.discord.util.DiscordException;
-import sx.blah.discord.util.RateLimitException;
 
 import java.util.List;
 
@@ -135,8 +131,8 @@ public class DiscordClient {
         return Message.getMessage(messageID);
     }
 
-    public PrivateChannel getOrCreatePMChannel(IUser user) throws DiscordException, RateLimitException {
-        return null;// todo
+    public DirectChannel getOrCreatePMChannel(User user) {
+        return user.getOrCreatePMChannel();
     }
 
     public List<Region> getRegions() {
@@ -163,11 +159,11 @@ public class DiscordClient {
         return ErrorWrapper.wrap((ErrorWrapper.Request<String>) () -> client.getApplicationClientID());
     }
 
-    public String getApplicationName() throws DiscordException {
+    public String getApplicationName() {
         return ErrorWrapper.wrap((ErrorWrapper.Request<String>) () -> client.getApplicationName());
     }
 
-    public User getApplicationOwner() throws DiscordException {
+    public User getApplicationOwner() {
         return ErrorWrapper.wrap((ErrorWrapper.Request<User>) () -> User.getUser(client.getApplicationOwner()));
     }
 }

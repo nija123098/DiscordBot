@@ -20,7 +20,16 @@ public class Message {// should not be kept stored, too many are made
         iMessages.forEach(iMessage -> messages.add(getMessage(iMessage)));
         return messages;
     }
+    static List<IMessage> getIMessages(List<Message> messages){
+        List<IMessage> iMessages = new ArrayList<>(messages.size());
+        messages.forEach(message -> iMessages.add(message.message()));
+        return iMessages;
+    }
+    private final IMessage iMessage;
+    private Message(IMessage message){
+        iMessage = message;
+    }
     IMessage message() {
-        return null;
+        return iMessage;
     }
 }

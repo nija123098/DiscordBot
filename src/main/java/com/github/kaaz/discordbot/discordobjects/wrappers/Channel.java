@@ -26,8 +26,8 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class Channel implements Configurable {
     private static final Map<String, Channel> MAP = new ConcurrentHashMap<>();
-    public static Channel getChannel(String id){// todo replace null
-        return MAP.computeIfAbsent(id, s -> null);
+    public static Channel getChannel(String id){
+        return MAP.computeIfAbsent(id, s -> new Channel(DiscordClient.get().client().getChannelByID(id)));
     }
     static Channel getChannel(IChannel channel){
         return MAP.computeIfAbsent(channel.getID(), s -> new Channel(channel));
@@ -84,72 +84,20 @@ public class Channel implements Configurable {
         return new MessagesHistory(channel().getMessageHistoryFrom(localDateTime));
     }
 
-    public MessagesHistory getMessageHistoryFrom(LocalDateTime localDateTime, int i) {
-        return null;
-    }
-
-    public MessagesHistory getMessageHistoryTo(LocalDateTime localDateTime) {
-        return null;
-    }
-
-    public MessagesHistory getMessageHistoryTo(LocalDateTime localDateTime, int i) {
-        return null;
-    }
-
-    public MessagesHistory getMessageHistoryIn(LocalDateTime localDateTime, LocalDateTime localDateTime1) {
-        return null;
-    }
-
-    public MessagesHistory getMessageHistoryIn(LocalDateTime localDateTime, LocalDateTime localDateTime1, int i) {
-        return null;
-    }
-
-    public MessagesHistory getMessageHistoryFrom(String s) {
-        return null;
-    }
-
-    public MessagesHistory getMessageHistoryFrom(String s, int i) {
-        return null;
-    }
-
-    public MessagesHistory getMessageHistoryTo(String s) {
-        return null;
-    }
-
-    public MessagesHistory getMessageHistoryTo(String s, int i) {
-        return null;
-    }
-
-    public MessagesHistory getMessageHistoryIn(String s, String s1) {
-        return null;
-    }
-
-    public MessagesHistory getMessageHistoryIn(String s, String s1, int i) {
-        return null;
-    }
-
     public MessagesHistory getFullMessageHistory() {
-        return null;
+        return new MessagesHistory(channel().getFullMessageHistory());
     }
 
-    public List<IMessage> bulkDelete() {
-        return null;
+    public List<Message> bulkDelete() {
+        return ErrorWrapper.wrap((ErrorWrapper.Request<List<Message>>) () -> Message.getMessages(channel().bulkDelete()));
     }
 
-    public List<IMessage> bulkDelete(List<IMessage> list) {
-        return null;
-    }
-
-    public int getMaxInternalCacheCount() {
-        return 0;
-    }
-
-    public int getInternalCacheCount() {
-        return 0;
+    public List<Message> bulkDelete(List<Message> list) {
+        return ErrorWrapper.wrap((ErrorWrapper.Request<List<Message>>) () -> Message.getMessages(channel().bulkDelete(Message.getIMessages(list))));
     }
 
     public Message getMessageByID(String s) {
-        return null;
+        return Message.getMessage(s);
     }
 
     public Guild getGuild() {
@@ -225,14 +173,14 @@ public class Channel implements Configurable {
     }
 
     public void setTypingStatus(boolean b) {
-        channel().setTypingStatus(b);
+        ErrorWrapper.wrap(() -> channel().setTypingStatus(b));
     }
 
     public boolean getTypingStatus() {
-        return channel().getTypingStatus();
+        return ErrorWrapper.wrap((ErrorWrapper.Request<Boolean>) () -> channel().getTypingStatus());
     }
 
-    public void edit(String s, int i, String s1) throws DiscordException, RateLimitException, MissingPermissionsException {
+    public void edit(String s, int i, String s1) {
         ErrorWrapper.wrap(() -> channel().edit(s, i, s1));
     }
 
