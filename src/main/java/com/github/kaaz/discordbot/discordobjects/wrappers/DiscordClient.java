@@ -2,7 +2,6 @@ package com.github.kaaz.discordbot.discordobjects.wrappers;
 
 import com.github.kaaz.discordbot.discordobjects.exception.ErrorWrapper;
 import sx.blah.discord.api.IDiscordClient;
-import sx.blah.discord.api.events.EventDispatcher;
 
 import java.util.List;
 
@@ -23,147 +22,143 @@ public class DiscordClient {
         return client;
     }
     // WRAPPING METHODS
-    public EventDispatcher getDispatcher() {
-        return null;
-    }
-
-    public List<Shard> getShards() {
+    public static List<Shard> getShards() {
         return Shard.getShards(client.getShards());
     }
 
-    public int getShardCount() {
+    public static int getShardCount() {
         return client.getShardCount();
     }
 
-    public void login() {
+    public static void login() {
         ErrorWrapper.wrap(() -> client.login());
     }
 
-    public void logout() {
+    public static void logout() {
         ErrorWrapper.wrap(() -> client.logout());
     }
 
-    public void changeUsername(String username) {
+    public static void changeUsername(String username) {
         client.changeUsername(username);
     }
 
-    public void changePlayingText(String playingText) {
+    public static void changePlayingText(String playingText) {
         client.changePlayingText(playingText);
     }
 
-    public void online(String playingText) {
+    public static void online(String playingText) {
         client.online(playingText);
     }
 
-    public void online() {
+    public static void online() {
         client.online();
     }
 
-    public void idle(String playingText) {
+    public static void idle(String playingText) {
         client.idle(playingText);
     }
 
-    public void idle() {
+    public static void idle() {
         client.idle();
     }
 
-    public void streaming(String playingText, String streamingUrl) {
+    public static void streaming(String playingText, String streamingUrl) {
         client.streaming(playingText, streamingUrl);
     }
 
-    public boolean isReady() {
+    public static boolean isReady() {
         return client.isReady();
     }
 
-    public boolean isLoggedIn() {
+    public static boolean isLoggedIn() {
         return client.isLoggedIn();
     }
 
-    public User getOurUser() {
+    public static User getOurUser() {
         return User.getUser(client.getOurUser());
     }
 
-    public List<Channel> getChannels(boolean includePrivate) {
+    public static List<Channel> getChannels(boolean includePrivate) {
         return Channel.getChannels(client.getChannels(includePrivate));
     }
 
-    public List<Channel> getChannels() {
+    public static List<Channel> getChannels() {
         return getChannels(true);
     }
 
-    public Channel getChannelByID(String channelID) {
+    public static Channel getChannelByID(String channelID) {
         return Channel.getChannel(channelID);
     }
 
-    public List<VoiceChannel> getVoiceChannels() {
+    public static List<VoiceChannel> getVoiceChannels() {
         return VoiceChannel.getVoiceChannels(client.getVoiceChannels());
     }
 
-    public VoiceChannel getVoiceChannelByID(String id) {
+    public static VoiceChannel getVoiceChannelByID(String id) {
         return VoiceChannel.getVoiceChannel(id);
     }
 
-    public List<Guild> getGuilds() {
+    public static List<Guild> getGuilds() {
         return Guild.getGuilds(client.getGuilds());
     }
 
-    public Guild getGuildByID(String guildID) {
+    public static Guild getGuildByID(String guildID) {
         return Guild.getGuild(guildID);
     }
 
-    public List<User> getUsers() {
+    public static List<User> getUsers() {
         return User.getUsers(client.getUsers());
     }
 
-    public User getUserByID(String userID) {
+    public static User getUserByID(String userID) {
         return User.getUser(userID);
     }
 
-    public List<Role> getRoles() {
+    public static List<Role> getRoles() {
         return Role.getRoles(client.getRoles());
     }
 
-    public Role getRoleByID(String roleID) {
+    public static Role getRoleByID(String roleID) {
         return Role.getRole(roleID);
     }
 
-    public Message getMessageByID(String messageID) {
+    public static Message getMessageByID(String messageID) {
         return Message.getMessage(messageID);
     }
 
-    public DirectChannel getOrCreatePMChannel(User user) {
+    public static DirectChannel getOrCreatePMChannel(User user) {
         return user.getOrCreatePMChannel();
     }
 
-    public List<Region> getRegions() {
+    public static List<Region> getRegions() {
         return ErrorWrapper.wrap((ErrorWrapper.Request<List<Region>>) () -> Region.getRegions(client.getRegions()));
     }
 
-    public Region getRegionByID(String regionID) {
+    public static Region getRegionByID(String regionID) {
         return Region.getRegion(regionID);
     }
 
-    public List<VoiceChannel> getConnectedVoiceChannels() {
+    public static List<VoiceChannel> getConnectedVoiceChannels() {
         return VoiceChannel.getVoiceChannels(client.getConnectedVoiceChannels());
     }
 
-    public String getApplicationDescription() {
+    public static String getApplicationDescription() {
         return ErrorWrapper.wrap((ErrorWrapper.Request<String>) () -> client.getApplicationDescription());
     }
 
-    public String getApplicationIconURL() {
+    public static String getApplicationIconURL() {
         return ErrorWrapper.wrap((ErrorWrapper.Request<String>) () -> client.getApplicationIconURL());
     }
 
-    public String getApplicationClientID() {
+    public static String getApplicationClientID() {
         return ErrorWrapper.wrap((ErrorWrapper.Request<String>) () -> client.getApplicationClientID());
     }
 
-    public String getApplicationName() {
+    public static String getApplicationName() {
         return ErrorWrapper.wrap((ErrorWrapper.Request<String>) () -> client.getApplicationName());
     }
 
-    public User getApplicationOwner() {
+    public static User getApplicationOwner() {
         return ErrorWrapper.wrap((ErrorWrapper.Request<User>) () -> User.getUser(client.getApplicationOwner()));
     }
 }

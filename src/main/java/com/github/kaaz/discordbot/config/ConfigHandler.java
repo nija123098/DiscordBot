@@ -107,14 +107,10 @@ public class ConfigHandler {
      * @param clazz the class object that types a config
      * @param configurable the configurable the config
      *                     is to be set for
-     * @param holder the optional holder to get the config
-     *               value as the expected type
      * @return the value of the config for the configurable
      */
-    @SafeVarargs
-    public static <E extends AbstractConfig<F>, F> F getSetting(Class<E> clazz, Configurable configurable, Holder<F>...holder){
+    public static <E extends AbstractConfig<F>, F> F getSetting(Class<E> clazz, Configurable configurable){
         Object o = getConfig(clazz).getValue(configurable);
-        Holder.fillOptional((F) o, holder);
         return (F) o;
     }
 

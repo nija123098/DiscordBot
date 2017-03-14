@@ -3,7 +3,6 @@ package com.github.kaaz.discordbot.discordobjects.wrappers;
 import com.github.kaaz.discordbot.config.ConfigLevel;
 import com.github.kaaz.discordbot.config.Configurable;
 import com.github.kaaz.discordbot.discordobjects.exception.ErrorWrapper;
-import sx.blah.discord.handle.obj.IPresence;
 import sx.blah.discord.handle.obj.IUser;
 
 import java.util.ArrayList;
@@ -41,7 +40,7 @@ public class User implements Configurable {
     }
     @Override
     public String getID() {
-        return null;
+        return user().getID();
     }
     @Override
     public ConfigLevel getConfigLevel() {
@@ -60,8 +59,8 @@ public class User implements Configurable {
         return user().getAvatarURL();
     }
 
-    public IPresence getPresence() {
-        return null;
+    public Presence getPresence() {
+        return new Presence(user().getPresence());
     }
 
     public String getDisplayName(Guild guild) {

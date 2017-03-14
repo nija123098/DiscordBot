@@ -30,7 +30,7 @@ public class Guild implements Configurable {
         iGuilds.forEach(guild -> list.add(getGuild(guild)));
         return list;
     }
-    public synchronized void update(IGuild guild){// hash is based on id, so no old channel is necessary
+    public static void update(IGuild guild){// hash is based on id, so no old channel is necessary
         MAP.get(guild.getID()).reference.set(guild);
     }
     private final AtomicReference<IGuild> reference;
@@ -49,10 +49,6 @@ public class Guild implements Configurable {
         return guild().getID();
     }
     // THE FOLLOWING ARE WRAPPER METHODS
-    public DiscordClient getClient() {
-        return DiscordClient.get();
-    }
-
     public Shard getShard() {
         return Shard.getShard(guild().getShard());
     }

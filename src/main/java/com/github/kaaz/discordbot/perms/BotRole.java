@@ -4,11 +4,10 @@ import com.github.kaaz.discordbot.config.ConfigHandler;
 import com.github.kaaz.discordbot.config.Configurable;
 import com.github.kaaz.discordbot.config.configs.guilduser.GuildFlagRankConfig;
 import com.github.kaaz.discordbot.config.configs.user.GlobalBotRoleFlagConfig;
+import com.github.kaaz.discordbot.discordobjects.wrappers.DiscordClient;
 import com.github.kaaz.discordbot.discordobjects.wrappers.DiscordPermission;
 import com.github.kaaz.discordbot.discordobjects.wrappers.Guild;
 import com.github.kaaz.discordbot.discordobjects.wrappers.User;
-import com.github.kaaz.discordbot.util.ConfigHelper;
-import com.github.kaaz.discordbot.util.Holder;
 import com.github.kaaz.discordbot.util.Log;
 
 /**
@@ -38,7 +37,7 @@ public enum BotRole {
         return this.isGlobalFlag || this.isGuildFlag;
     }
     public static boolean hasRequiredBotRole(BotRole target, User user, Guild guild){
-        if (ConfigHelper.getValue("bot owner id").equals(user.getID())){
+        if (DiscordClient.getApplicationOwner().equals(user)){
             return true;
         }
         if (target.isFlagRank()){
@@ -54,7 +53,7 @@ public enum BotRole {
             if (guild.getOwner().equals(user)){
                 return GUILD_OWNER;
             }
-            if (guild.getPermissionsForGuild(user).contains(DiscordPermission.ADMINISTRATOR)){
+            if (user.getPermissionsForGuild(guild).contains(DiscordPermission.ADMINISTRATOR)){
                 return GUILD_ADMIN;
             }
         }
@@ -62,7 +61,7 @@ public enum BotRole {
     }
     private static boolean hasFlagRank(BotRole target, User user, Guild guild){
         if (target.isGlobalFlag){
-            return ConfigHandler.getSetting(GlobalBotRoleFlagConfig.class, user, new Holder<>()).contains(target.name().toLowerCase());
+            return ConfigHandler.getSetting(GlobalBotRoleFlagConfig.class, user).contains(target.name().toLowerCase());
         } else if (target.isGuildFlag){
             return Configurable.getGuildUser(guild, user).getSetting(GuildFlagRankConfig.class).contains(target.name().toLowerCase());
         } else {

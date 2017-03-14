@@ -34,7 +34,7 @@
         <dependency>
             <groupId>com.github.austinv11</groupId>
             <artifactId>Discord4j</artifactId>
-            <version>8ce70fd</version>
+            <version>7978407</version>
             <classifier>shaded</classifier>
         </dependency>
         <dependency>
@@ -46,6 +46,11 @@
             <groupId>xstream</groupId>
             <artifactId>xstream</artifactId>
             <version>1.2.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.MaikWezinkhof</groupId>
+            <artifactId>ConfigurationBuilder</artifactId>
+            <version>c05d1a4455</version>
         </dependency>
     </dependencies>
 

@@ -22,7 +22,7 @@ public class Role {
     static Role getRole(IRole guild){
         return MAP.computeIfAbsent(guild.getID(), s -> new Role(guild));
     }
-    public void update(IRole guild){// hash is based on id, so no old channel is necessary
+    public static void update(IRole guild){// hash is based on id, so no old channel is necessary
         MAP.get(guild.getID()).reference.set(guild);
     }
     private final AtomicReference<IRole> reference;

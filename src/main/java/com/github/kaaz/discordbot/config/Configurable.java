@@ -35,9 +35,8 @@ public interface Configurable {
     default void setSetting(String configName, Object o){
         ConfigHandler.setSetting(configName, this, o);
     }
-    @SuppressWarnings("unchecked")
-    default  <E> E getSetting(Class<? extends AbstractConfig<E>> clazz, Holder<E>...holder){
-        return ConfigHandler.getSetting(clazz, this, holder);
+    default <E> E getSetting(Class<? extends AbstractConfig<E>> clazz){
+        return ConfigHandler.getSetting(clazz, this);
     }
     @SuppressWarnings("unchecked")
     default <E> E getSetting(String configName, Holder<E>...holder){

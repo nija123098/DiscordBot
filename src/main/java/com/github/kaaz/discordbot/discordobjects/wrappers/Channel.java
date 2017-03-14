@@ -37,7 +37,7 @@ public class Channel implements Configurable {
         iChannels.forEach(iChannel -> channels.add(getChannel(iChannel)));
         return channels;
     }
-    public synchronized void update(IChannel channel){// should handle DirectChannel and VoiceChannel updates as well
+    public static void update(IChannel channel){// should handle DirectChannel and VoiceChannel updates as well
         MAP.get(channel.getID()).reference.set(channel);
     }
     final AtomicReference<IChannel> reference;
@@ -50,10 +50,6 @@ public class Channel implements Configurable {
     @Override
     public String getID() {
         return channel().getID();
-    }
-
-    public DiscordClient getClient() {
-        return DiscordClient.get();
     }
 
     public Shard getShard() {
