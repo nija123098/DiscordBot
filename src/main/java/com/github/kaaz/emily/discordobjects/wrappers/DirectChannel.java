@@ -24,7 +24,7 @@ public class DirectChannel extends Channel {
     DirectChannel(IPrivateChannel channel) {
         super(channel);
     }
-    IPrivateChannel channel(){
+    public IPrivateChannel channel(){
         return (IPrivateChannel) super.channel();
     }
     public User getRecipient() {

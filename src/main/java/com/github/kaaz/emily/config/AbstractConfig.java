@@ -52,9 +52,21 @@ public class AbstractConfig<E> {
     public E getDefault(){
         return this.defaul;
     }
+
+    /**
+     * A setter for the init stage.
+     *
+     * @param level the level for the config to be set at
+     */
     void setConfigLevel(ConfigLevel level){
         this.configLevel = level;
     }
+
+    /**
+     * A standard getter.
+     *
+     * @return The config level for this config
+     */
     public ConfigLevel getConfigLevel(){
         return this.configLevel;
     }

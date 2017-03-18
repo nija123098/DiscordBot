@@ -23,9 +23,8 @@ public class VoiceChannel extends Channel {
     }
     private VoiceChannel(IVoiceChannel channel) {
         super(channel);
-
     }
-    IVoiceChannel channel(){
+    public IVoiceChannel channel(){
         return (IVoiceChannel) this.reference.get();
     }
     // THE FOLLOWING ARE WRAPPER METHODS

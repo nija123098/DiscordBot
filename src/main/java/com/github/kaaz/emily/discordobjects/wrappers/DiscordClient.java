@@ -18,7 +18,7 @@ public class DiscordClient {
         client = discordClient;
         wrapper = new DiscordClient();
     }
-    IDiscordClient client(){
+    public static IDiscordClient client(){
         return client;
     }
     // WRAPPING METHODS

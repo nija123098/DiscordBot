@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class User implements Configurable {
     private static final Map<String, User> MAP = new ConcurrentHashMap<>();
     public static User getUser(String id){
-        return MAP.computeIfAbsent(id, s -> new User(DiscordClient.get().client().getUserByID(id)));
+        return MAP.computeIfAbsent(id, s -> new User(DiscordClient.client().getUserByID(id)));
     }
     static User getUser(IUser user){
         return MAP.computeIfAbsent(user.getID(), s -> new User(user));
@@ -95,28 +95,16 @@ public class User implements Configurable {
         ErrorWrapper.wrap(() -> user().moveToVoiceChannel(newChannel.channel()));
     }
 
-    public List<VoiceChannel> getConnectedVoiceChannels() {
-        return VoiceChannel.getVoiceChannels(user().getConnectedVoiceChannels());
-    }
-
     public DirectChannel getOrCreatePMChannel() {
         return ErrorWrapper.wrap((ErrorWrapper.Request<DirectChannel>) () -> DirectChannel.getDirectChannel(user().getOrCreatePMChannel()));
     }
 
     public boolean isDeaf(Guild guild) {
-        return user().isDeaf(guild.guild());
+        return user().getVoiceStateForGuild(guild.guild()).isDeafened();
     }
 
     public boolean isMuted(Guild guild) {
-        return user().isMuted(guild.guild());
-    }
-
-    public boolean isDeafLocally() {
-        return user().isDeafLocally();
-    }
-
-    public boolean isMutedLocally() {
-        return user().isMutedLocally();
+        return user().getVoiceStateForGuild(guild.guild()).isMuted();
     }
 
     public void addRole(Role role) {
