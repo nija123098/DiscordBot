@@ -1,20 +1,37 @@
 package com.github.kaaz.emily.config;
 
 import com.github.kaaz.emily.perms.BotRole;
+import com.github.kaaz.emily.util.TypeTranslator;
+
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
 /**
- * Made by nija123098 on 2/20/2017.
+ * @author nija123098
+ * @since 2.0.0
+ * @param <I> The stored type of the config within the database
+ * @param <E> The external value of a config before processing it to the stored type
+ * @param <T> The type of config that this config defines
+ *
  */
-public class AbstractConfig<E> {
-    private E defaul;
+public class AbstractConfig<I, E, T extends Configurable> {// interior, exterior, type
+    private I defaul;
     private String name, description;
     private BotRole botRole;
     private ConfigLevel configLevel;
-    public AbstractConfig(String name, BotRole botRole, E defaul, String description) {
+    private Class<I> internalType;
+    private Class<E> exteriorType;
+    private Class<T> configurableType;
+    public AbstractConfig(String name, BotRole botRole, I defaul, String description) {
         this.name = name;
         this.botRole = botRole;
         this.defaul = defaul;
         this.description = description;
+        Type[] types = ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments();
+        this.internalType = (Class<I>) types[0];
+        this.exteriorType = (Class<E>) types[1];
+        this.configurableType = (Class<T>) types[2];
+        this.configLevel = ConfigLevel.getLevel(this.configurableType);
     }
 
     /**
@@ -49,7 +66,7 @@ public class AbstractConfig<E> {
      *
      * @return the default value of this config
      */
-    public E getDefault(){
+    public I getDefault(){
         return this.defaul;
     }
 
@@ -70,8 +87,17 @@ public class AbstractConfig<E> {
     public ConfigLevel getConfigLevel(){
         return this.configLevel;
     }
+    public I wrapTypeIn(E e){
+        return TypeTranslator.translate(this.internalType, e);
+    }
+    public E wrapTypeOut(I i){
+        return TypeTranslator.translate(this.exteriorType, i);
+    }
+    void setExteriorValue(T configurable, E value){
+        setValue(configurable, wrapTypeIn(value));
+    }
     // TODO SQL stuff goes here, more or less
-    void setValue(Configurable configurable, E value){
+    void setValue(T configurable, I value){
 
     }
 
@@ -82,7 +108,10 @@ public class AbstractConfig<E> {
      *                     setting is being gotten for
      * @return the config's value
      */
-    E getValue(Configurable configurable){
+    I getValue(T configurable){
         return null;
+    }
+    E getExteriorValue(T configurable){
+        return wrapTypeOut(getValue(configurable));
     }
 }

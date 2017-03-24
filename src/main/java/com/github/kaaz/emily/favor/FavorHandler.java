@@ -1,8 +1,8 @@
 package com.github.kaaz.emily.favor;
 
-import com.github.kaaz.emily.config.ConfigLevel;
+import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.Configurable;
-import com.github.kaaz.emily.config.configs.user.FavorConfig;
+import com.github.kaaz.emily.config.configs.FavorConfig;
 
 /**
  * The handler for favor levels for guilds and users.
@@ -19,10 +19,7 @@ public class FavorHandler {
      * @return the favor amount
      */
     public static Float getFavorAmount(Configurable configurable){
-        if (configurable.getConfigLevel() != ConfigLevel.USER || configurable.getConfigLevel() != ConfigLevel.GUILD){
-            return null;
-        }
-        return configurable.getSetting(FavorConfig.class);
+        return ConfigHandler.getSetting(FavorConfig.class, configurable);
     }
 
     /**
@@ -32,10 +29,7 @@ public class FavorHandler {
      * @return the corresponding favor enum
      */
     public static FavorLevel getFavorLevel(Configurable configurable){
-        if (configurable.getConfigLevel() != ConfigLevel.USER || configurable.getConfigLevel() != ConfigLevel.GUILD){
-            return null;
-        }
-        return FavorLevel.getFavorLevel(configurable.getSetting(FavorConfig.class));
+        return FavorLevel.getFavorLevel(ConfigHandler.getSetting(FavorConfig.class, configurable));
     }
 
     /**
@@ -45,7 +39,10 @@ public class FavorHandler {
      * @param amount the amount to change it by
      */
     public static void addFavorLevel(Configurable configurable, float amount){
-        setFavorLevel(configurable, amount + configurable.getSetting(FavorConfig.class));
+        if (amount < 0){
+            amount *= 2;
+        }
+        setFavorLevel(configurable, amount + ConfigHandler.getSetting(FavorConfig.class, configurable));
     }
 
     /**
@@ -55,9 +52,6 @@ public class FavorHandler {
      * @param amount the amouth to set it to
      */
     public static void setFavorLevel(Configurable configurable, float amount){
-        if (amount < 0){
-            amount *= 2;
-        }
-        configurable.setSetting(FavorConfig.class, amount);
+        ConfigHandler.setSetting(FavorConfig.class, configurable, amount);
     }
 }

@@ -1,4 +1,4 @@
-package com.github.kaaz.emily.botconfig;
+package com.github.kaaz.emily.programconfig;
 
 import com.wezinkhof.configuration.ConfigurationOption;
 

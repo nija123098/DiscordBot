@@ -1,6 +1,6 @@
 package com.github.kaaz.emily.discordobjects;
 
-import com.github.kaaz.emily.botconfig.BotConfig;
+import com.github.kaaz.emily.programconfig.BotConfig;
 import com.github.kaaz.emily.discordobjects.wrappers.*;
 import com.github.kaaz.emily.discordobjects.wrappers.event.DiscordEvent;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;

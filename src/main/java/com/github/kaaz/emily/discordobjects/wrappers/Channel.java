@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * Made by nija123098 on 2/20/2017.
  */
-public class Channel implements Configurable {
+public class Channel implements Configurable<Channel> {
     private static final Map<String, Channel> MAP = new ConcurrentHashMap<>();
     public static Channel getChannel(String id){
         return MAP.computeIfAbsent(id, s -> new Channel(DiscordClient.get().client().getChannelByID(id)));

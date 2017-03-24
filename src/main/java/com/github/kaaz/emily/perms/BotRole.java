@@ -63,7 +63,7 @@ public enum BotRole {
         if (target.isGlobalFlag){
             return ConfigHandler.getSetting(GlobalBotRoleFlagConfig.class, user).contains(target.name().toLowerCase());
         } else if (target.isGuildFlag){
-            return Configurable.getGuildUser(guild, user).getSetting(GuildFlagRankConfig.class).contains(target.name().toLowerCase());
+            return ConfigHandler.getSetting(GuildFlagRankConfig.class, Configurable.getGuildUser(guild, user)).contains(target.name().toLowerCase());
         } else {
             Log.log("Tried checking a non-flag rank for having the flag");
             return false;
@@ -73,7 +73,9 @@ public enum BotRole {
         BotRole role = getStandardBotRole(user, guild);
         for (int i = role.ordinal(); i < values().length; i++) {
             if (values()[i].isFlagRank()){
-                hasFlagRank(values()[i], user, guild);
+                if (hasFlagRank(values()[i], user, guild)){
+                    role = values()[i];
+                }
             }
         }
         return role;
