@@ -1,8 +1,13 @@
 package com.github.kaaz.emily.command;
 
+import com.github.kaaz.emily.config.ConfigHandler;
+import com.github.kaaz.emily.config.configs.guild.SpecialPermsGuildEnabledConfig;
+import com.github.kaaz.emily.config.configs.role.*;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
+import com.github.kaaz.emily.discordobjects.wrappers.Role;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.github.kaaz.emily.perms.BotRole;
+import com.github.kaaz.emily.perms.SpecialPermHandler;
 import com.github.kaaz.emily.util.Log;
 
 import java.lang.reflect.Method;
@@ -79,6 +84,15 @@ public abstract class AbstractCommand {
     }
 
     /**
+     * A standard getter.
+     *
+     * @return the name of the command
+     */
+    public String getName(){
+        return this.name;
+    }
+
+    /**
      * The method to get the set off all names
      * by which the command goes by
      *
@@ -98,8 +112,28 @@ public abstract class AbstractCommand {
      * @return if the user can use this command
      * in the guild, if one exists
      */
-    public boolean mayUse(User user, Guild guild){
-        return BotRole.hasRequiredBotRole(this.botRole, user, guild);
+    public boolean mayUse(User user, Guild guild) {
+        boolean hasNormalPerm = BotRole.hasRequiredBotRole(this.botRole, user, guild);
+        if (BotRole.getBestBotRole(user, guild).ordinal() < BotRole.GUILD_TRUSTEE.ordinal()){
+            if (ConfigHandler.getSetting(SpecialPermsGuildEnabledConfig.class, guild)){
+                return hasNormalPerm;
+            }
+            boolean disapproved = false;
+            for (Role role : user.getRolesForGuild(guild)){
+                if (!ConfigHandler.getSetting(SpecialPermsRoleEnable.class, role)){
+                    continue;
+                }
+                if (ConfigHandler.getSetting(PermsCommandWhitelistConfig.class, role).contains(this.getName()) || ConfigHandler.getSetting(PermsModuleWhitelistConfig.class, role).contains(this.getName()) && !ConfigHandler.getSetting(PermsModuleWhitelistExemptionsConfig.class, role).contains(this.getName())){
+                    return true;
+                }
+                if (ConfigHandler.getSetting(PermsCommandBlacklistConfig.class, role).contains(this.getName()) || ConfigHandler.getSetting(PermsModuleWhitelistConfig.class, role).contains(this.getName()) && !ConfigHandler.getSetting(PermsCommandBlacklistConfig.class, role).contains(this.getName())){
+                    disapproved = true;
+                }
+            }
+            return !disapproved && hasNormalPerm;
+        }else{
+            return hasNormalPerm;
+        }
     }
 
     /**

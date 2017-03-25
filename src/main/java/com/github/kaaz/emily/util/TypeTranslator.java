@@ -32,7 +32,11 @@ public class TypeTranslator {
     private static <I, O> void add(Class<I> it, Class<O> ot, Function<I, O> function){
         MAP.computeIfAbsent(it, clazz -> new HashMap<>()).put(ot, function);
     }
+    private static <I, O> void add(Class<I> it, Class<O> ot, Function<I, O> in, Function<O, I> out){
+        MAP.computeIfAbsent(it, clazz -> new HashMap<>()).put(ot, in);
+        MAP.computeIfAbsent(ot, clazz -> new HashMap<>()).put(it, out);
+    }
     static {
-
+        add(String.class, Boolean.class, s -> s.equals("true") || s.equals("yes") || s.equals("1"), bool -> bool ? "true" : "false");
     }
 }

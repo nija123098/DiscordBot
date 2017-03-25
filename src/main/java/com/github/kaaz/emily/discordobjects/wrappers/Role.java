@@ -1,5 +1,7 @@
 package com.github.kaaz.emily.discordobjects.wrappers;
 
+import com.github.kaaz.emily.config.ConfigLevel;
+import com.github.kaaz.emily.config.Configurable;
 import com.github.kaaz.emily.discordobjects.exception.ErrorWrapper;
 import sx.blah.discord.handle.obj.IRole;
 
@@ -14,7 +16,7 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * Made by nija123098 on 3/7/2017.
  */
-public class Role {
+public class Role implements Configurable<Role>{
     private static final Map<String, Role> MAP = new ConcurrentHashMap<>();
     public static Role getRole(String id){
         return MAP.computeIfAbsent(id, s -> new Role(DiscordClient.get().client().getRoleByID(id)));
@@ -36,6 +38,11 @@ public class Role {
         List<Role> roles = new ArrayList<>(iRoles.size());
         iRoles.forEach(iUser -> roles.add(getRole(iUser)));
         return roles;
+    }
+
+    @Override
+    public ConfigLevel getConfigLevel() {
+        return ConfigLevel.ROLE;
     }
     //WRAPPER METHODS
     public int getPosition() {

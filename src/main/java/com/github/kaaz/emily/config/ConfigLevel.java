@@ -2,6 +2,7 @@ package com.github.kaaz.emily.config;
 
 import com.github.kaaz.emily.discordobjects.wrappers.Channel;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
+import com.github.kaaz.emily.discordobjects.wrappers.Role;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
 
 /**
@@ -18,6 +19,8 @@ public enum ConfigLevel {
     CHANNEL(Channel.class),
     /** The type for a user's config within a guild*/
     GUILD_USER(Configurable.GuildUser.class),
+    /** The type for a role within a guild */
+    ROLE(Role.class),
     /** The type for a guild's config */
     GUILD(Guild.class),
     /** The type for global config */
