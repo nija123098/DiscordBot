@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Guild implements Configurable<Guild> {
     private static final Map<String, Guild> MAP = new ConcurrentHashMap<>();
     public static Guild getGuild(String id){
-        return MAP.computeIfAbsent(id, s -> new Guild(DiscordClient.get().client().getGuildByID(id)));
+        return MAP.computeIfAbsent(id, s -> new Guild(DiscordClient.client().getGuildByID(id)));
     }
     static Guild getGuild(IGuild guild){
         return MAP.computeIfAbsent(guild.getID(), s -> new Guild(guild));
@@ -258,7 +258,7 @@ public class Guild implements Configurable<Guild> {
     }
 
     public IAudioManager getAudioManager() {
-        return null;
+        return null;// TODO
     }
 
     public LocalDateTime getJoinTimeForUser(User user) {

@@ -10,7 +10,7 @@ import java.util.List;
  * Made by nija123098 on 3/7/2017.
  */
 public class VoiceChannel extends Channel {
-    public static VoiceChannel getVoiceChannel(String id){// todo replace null
+    public static VoiceChannel getVoiceChannel(String id){
         return (VoiceChannel) Channel.getChannel(id);
     }
     static VoiceChannel getVoiceChannel(IVoiceChannel channel){

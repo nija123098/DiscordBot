@@ -7,7 +7,6 @@ import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.Role;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.github.kaaz.emily.perms.BotRole;
-import com.github.kaaz.emily.perms.SpecialPermHandler;
 import com.github.kaaz.emily.util.Log;
 
 import java.lang.reflect.Method;

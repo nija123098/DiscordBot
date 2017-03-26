@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Role implements Configurable<Role>{
     private static final Map<String, Role> MAP = new ConcurrentHashMap<>();
     public static Role getRole(String id){
-        return MAP.computeIfAbsent(id, s -> new Role(DiscordClient.get().client().getRoleByID(id)));
+        return MAP.computeIfAbsent(id, s -> new Role(DiscordClient.getRoleByID(id).role()));
     }
     static Role getRole(IRole guild){
         return MAP.computeIfAbsent(guild.getID(), s -> new Role(guild));

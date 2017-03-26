@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
  */
 public class Shard {
     private static final Map<String, Shard> MAP = new ConcurrentHashMap<>();
-    public static Shard getShard(String id){// todo replace null
+    public static Shard getShard(String id){
         return MAP.values().stream().filter(shard -> shard.shardID() == Integer.parseInt(id)).collect(Collectors.toList()).get(0);
     }
     static Shard getShard(IShard shard){

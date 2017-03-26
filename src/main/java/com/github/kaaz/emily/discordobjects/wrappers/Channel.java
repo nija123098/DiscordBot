@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Channel implements Configurable<Channel> {
     private static final Map<String, Channel> MAP = new ConcurrentHashMap<>();
     public static Channel getChannel(String id){
-        return MAP.computeIfAbsent(id, s -> new Channel(DiscordClient.get().client().getChannelByID(id)));
+        return MAP.computeIfAbsent(id, s -> new Channel(DiscordClient.client().getChannelByID(id)));
     }
     static Channel getChannel(IChannel channel){
         return MAP.computeIfAbsent(channel.getID(), s -> new Channel(channel));
@@ -58,22 +58,6 @@ public class Channel implements Configurable<Channel> {
 
     public String getName() {
         return channel().getName();
-    }
-
-    public MessagesHistory getMessageHistory() {
-        return new MessagesHistory(channel().getMessageHistory());
-    }
-
-    public MessagesHistory getMessageHistory(int i) {
-        return new MessagesHistory(channel().getMessageHistory(i));
-    }
-
-    public MessagesHistory getMessageHistoryFrom(LocalDateTime localDateTime) {
-        return new MessagesHistory(channel().getMessageHistoryFrom(localDateTime));
-    }
-
-    public MessagesHistory getFullMessageHistory() {
-        return new MessagesHistory(channel().getFullMessageHistory());
     }
 
     public List<Message> bulkDelete() {

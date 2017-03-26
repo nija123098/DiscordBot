@@ -6,6 +6,7 @@ import com.github.kaaz.emily.discordobjects.wrappers.Channel;
 import com.github.kaaz.emily.discordobjects.wrappers.DiscordClient;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.github.kaaz.emily.util.LangString;
+import sx.blah.discord.util.EmbedBuilder;
 import sx.blah.discord.util.MessageBuilder;
 
 import java.io.File;
@@ -15,6 +16,7 @@ import java.io.FileNotFoundException;
  * Made by nija123098 on 3/10/2017.
  */
 public class MessageHelper {
+    private EmbedHelper embeded;
     private LangString message = new LangString();
     private User user;
     private Channel channel;
@@ -60,22 +62,25 @@ public class MessageHelper {
         this.file = file;
         return this;
     }
+    public EmbedHelper getEmbededBuilder(){
+        return this.embeded = new EmbedHelper(this);
+    }
     public void send(){
         if (this.dmCheck){
             ErrorWrapper.wrap(() -> new MessageBuilder(DiscordClient.client()).withChannel(this.channel.channel()).withContent(this.user.mention() + " check your DMs").send());
         }
         try {
             String message = this.message.asBuilt();// todo translate
-            MessageBuilder builder = new MessageBuilder(DiscordClient.client()).withChannel(this.channel.channel()).withContent(message);
-            if (file != null) {
+            MessageBuilder builder = new MessageBuilder(DiscordClient.client()).withChannel(this.channel.channel()).withContent(message).withTTS(tts);
+            if (this.file != null) {
                 try {
                     builder.withFile(this.file);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
             }
-            if (tts) {
-                builder.withTTS();
+            if (this.embeded != null){
+                builder.withEmbed(this.embeded.build());
             }
             ErrorWrapper.wrap(builder::send);
         } catch (MissingPermException e){

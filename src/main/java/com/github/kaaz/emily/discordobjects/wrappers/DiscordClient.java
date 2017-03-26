@@ -10,13 +10,8 @@ import java.util.List;
  */
 public class DiscordClient {
     private static IDiscordClient client;
-    private static DiscordClient wrapper;
-    public static DiscordClient get(){
-        return wrapper;
-    }
     public static void set(IDiscordClient discordClient){
         client = discordClient;
-        wrapper = new DiscordClient();
     }
     public static IDiscordClient client(){
         return client;
