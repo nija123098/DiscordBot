@@ -8,13 +8,13 @@ import java.util.List;
 /**
  * Made by nija123098 on 3/25/2017.
  */
-public class Attachment {// probably don't want to store this
-    public static List<Attachment> getAttachments(List<IMessage.Attachment> attachments){
+public class Attachment {// probably don't want to store this at all
+    static List<Attachment> getAttachments(List<IMessage.Attachment> attachments){
         List<Attachment> attaches = new ArrayList<>();
         attachments.forEach(attachment -> attaches.add(getAttachment(attachment)));
         return attaches;
     }
-    public static Attachment getAttachment(IMessage.Attachment attachment){
+    static Attachment getAttachment(IMessage.Attachment attachment){
         return new Attachment(attachment);
     }
     private IMessage.Attachment attachment;

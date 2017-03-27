@@ -3,6 +3,8 @@ package com.github.kaaz.emily.favor;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.Configurable;
 import com.github.kaaz.emily.config.configs.FavorConfig;
+import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
+import com.github.kaaz.emily.discordobjects.wrappers.event.botevents.FavorLevelChange;
 
 /**
  * The handler for favor levels for guilds and users.
@@ -52,6 +54,10 @@ public class FavorHandler {
      * @param amount the amouth to set it to
      */
     public static void setFavorLevel(Configurable configurable, float amount){
+        FavorLevel oldLevel = getFavorLevel(configurable), newLevel = FavorLevel.getFavorLevel(amount);
+        if (oldLevel != newLevel){
+            EventDistributor.distribute(() -> new FavorLevelChange(oldLevel, newLevel));
+        }
         ConfigHandler.setSetting(FavorConfig.class, configurable, amount);
     }
 }

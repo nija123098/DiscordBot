@@ -5,6 +5,7 @@ import com.github.kaaz.emily.util.Log;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -20,14 +21,14 @@ public class EventDistributor {
     static {
         MAP = new HashMap<>();
     }
-    public static <E extends DiscordEvent> void register(Object o){
+    public static <E extends BotEvent> void register(Object o){
         Class<?> clazz;
         if (o instanceof Class){
             clazz = (Class<?>) o;
         } else {
             clazz = o.getClass();
         }
-        Stream.of(clazz.getMethods()).filter(method -> method.isAnnotationPresent(EventListener.class)).filter(method -> method.getParameterCount() == 1).filter(method -> method.getParameterTypes()[0].equals(DiscordEvent.class)).forEach(method -> {
+        Stream.of(clazz.getMethods()).filter(method -> method.isAnnotationPresent(EventListener.class)).filter(method -> method.getParameterCount() == 1).filter(method -> method.getParameterTypes()[0].equals(BotEvent.class)).forEach(method -> {
             Class<E> peram = (Class<E>) method.getParameterTypes()[0];
             MAP.computeIfAbsent(peram, cl -> new HashSet<>());
             if (Modifier.isStatic(method.getModifiers())){
@@ -37,20 +38,23 @@ public class EventDistributor {
             }
         });
     }
-    public static <E extends DiscordEvent> void distribute(Class clazz, Supplier<E> supplier){
+    public static <E extends BotEvent> void distribute(Supplier<E> supplier){
+        distribute((Class<E>) ((ParameterizedType) supplier.getClass().getGenericSuperclass()).getActualTypeArguments()[0], supplier);
+    }
+    private static <E extends BotEvent> void distribute(Class clazz, Supplier<E> supplier){
         if (clazz == null){
             return;
         }
         Set<Listener> set = MAP.get(clazz);
         if (set != null){
-            DiscordEvent discordEvent = supplier.get();
-            set.forEach(listener -> listener.handle(discordEvent));
-            distribute(clazz.getSuperclass(), () -> discordEvent);
+            BotEvent botEvent = supplier.get();
+            set.forEach(listener -> listener.handle(botEvent));
+            distribute(clazz.getSuperclass(), () -> botEvent);
             return;
         }
         distribute(clazz.getSuperclass(), supplier);
     }
-    private static class Listener<E extends DiscordEvent> {
+    private static class Listener<E extends BotEvent> {
         Method m;
         Object o;
         Listener(Method m, Object o) {

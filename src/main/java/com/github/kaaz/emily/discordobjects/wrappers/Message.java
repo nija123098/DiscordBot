@@ -1,6 +1,7 @@
 package com.github.kaaz.emily.discordobjects.wrappers;
 
 import com.github.kaaz.emily.discordobjects.exception.ErrorWrapper;
+import com.github.kaaz.emily.service.services.MemoryManagementService;
 import sx.blah.discord.handle.obj.*;
 import sx.blah.discord.util.DiscordException;
 import sx.blah.discord.util.MissingPermissionsException;
@@ -9,17 +10,19 @@ import sx.blah.discord.util.RateLimitException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
  * Made by nija123098 on 3/4/2017.
  */
 public class Message {// should not be kept stored, too many are made
-    static Message getMessage(IMessage iMessage){
-        return new Message(iMessage);
+    private static final Map<String, Message> MAP = new MemoryManagementService.ManagedMap<>();
+    public static Message getMessage(IMessage iMessage){
+        return MAP.computeIfAbsent(iMessage.getID(), s -> new Message(iMessage));
     }
     static Message getMessage(String id){
-        return new Message(DiscordClient.client().getMessageByID(id));
+        return getMessage(DiscordClient.client().getMessageByID(id));
     }
     static List<Message> getMessages(List<IMessage> iMessages){
         List<Message> messages = new ArrayList<>(iMessages.size());

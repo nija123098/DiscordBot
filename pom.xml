@@ -52,6 +52,11 @@
             <artifactId>ConfigurationBuilder</artifactId>
             <version>c05d1a4455</version>
         </dependency>
+        <dependency><!-- https://mvnrepository.com/artifact/org.apache.commons/commons-collections4 -->
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>4.1</version>
+        </dependency>
     </dependencies>
 
 </project>

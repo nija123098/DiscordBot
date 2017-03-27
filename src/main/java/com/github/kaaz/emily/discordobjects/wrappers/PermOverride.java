@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * Made by nija123098 on 3/10/2017.
  */
-public class PermOverride {
+public class PermOverride {// no need to store this, it doesn't get used right now
     static Map<User, PermOverride> getUserMap(Map<String, IChannel.PermissionOverride> overrideMap){
         HashMap<User, PermOverride> map = new HashMap<>(overrideMap.size());
         overrideMap.forEach((user, permOverride) -> map.put(User.getUser(user), get(permOverride)));

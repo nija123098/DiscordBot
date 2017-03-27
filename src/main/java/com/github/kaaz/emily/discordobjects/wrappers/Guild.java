@@ -3,6 +3,7 @@ package com.github.kaaz.emily.discordobjects.wrappers;
 import com.github.kaaz.emily.config.ConfigLevel;
 import com.github.kaaz.emily.config.Configurable;
 import com.github.kaaz.emily.discordobjects.exception.ErrorWrapper;
+import com.github.kaaz.emily.service.services.MemoryManagementService;
 import sx.blah.discord.handle.audio.IAudioManager;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IRole;
@@ -18,8 +19,8 @@ import java.util.concurrent.atomic.AtomicReference;
  * Made by nija123098 on 2/20/2017.
  */
 public class Guild implements Configurable<Guild> {
-    private static final Map<String, Guild> MAP = new ConcurrentHashMap<>();
-    public static Guild getGuild(String id){
+    private static final Map<String, Guild> MAP = new MemoryManagementService.ManagedMap<>();
+    static Guild getGuild(String id){
         return MAP.computeIfAbsent(id, s -> new Guild(DiscordClient.client().getGuildByID(id)));
     }
     static Guild getGuild(IGuild guild){

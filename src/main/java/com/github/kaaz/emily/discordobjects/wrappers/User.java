@@ -3,6 +3,7 @@ package com.github.kaaz.emily.discordobjects.wrappers;
 import com.github.kaaz.emily.config.ConfigLevel;
 import com.github.kaaz.emily.config.Configurable;
 import com.github.kaaz.emily.discordobjects.exception.ErrorWrapper;
+import com.github.kaaz.emily.service.services.MemoryManagementService;
 import sx.blah.discord.handle.obj.IUser;
 
 import java.util.ArrayList;
@@ -16,11 +17,11 @@ import java.util.concurrent.atomic.AtomicReference;
  * Made by nija123098 on 2/20/2017.
  */
 public class User implements Configurable<User> {
-    private static final Map<String, User> MAP = new ConcurrentHashMap<>();
-    public static User getUser(String id){
+    private static final Map<String, User> MAP = new MemoryManagementService.ManagedMap<>();
+    static User getUser(String id){
         return MAP.computeIfAbsent(id, s -> new User(DiscordClient.client().getUserByID(id)));
     }
-    static User getUser(IUser user){
+    public static User getUser(IUser user){
         return MAP.computeIfAbsent(user.getID(), s -> new User(user));
     }
     static List<User> getUsers(List<IUser> iUsers){
@@ -60,7 +61,7 @@ public class User implements Configurable<User> {
     }
 
     public Presence getPresence() {
-        return new Presence(user().getPresence());
+        return Presence.getPresence(user().getPresence());
     }
 
     public String getDisplayName(Guild guild) {

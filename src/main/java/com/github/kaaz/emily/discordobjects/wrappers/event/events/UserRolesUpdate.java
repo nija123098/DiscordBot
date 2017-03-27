@@ -1,7 +1,7 @@
 package com.github.kaaz.emily.discordobjects.wrappers.event.events;
 
 import com.github.kaaz.emily.discordobjects.wrappers.Role;
-import com.github.kaaz.emily.discordobjects.wrappers.event.DiscordEvent;
+import com.github.kaaz.emily.discordobjects.wrappers.event.BotEvent;
 import sx.blah.discord.handle.impl.events.guild.member.UserRoleUpdateEvent;
 
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Made by nija123098 on 3/13/2017.
  */
-public class UserRolesUpdate implements DiscordEvent {
+public class UserRolesUpdate implements BotEvent {
     private UserRoleUpdateEvent event;
 
     public UserRolesUpdate(UserRoleUpdateEvent event) {
@@ -17,10 +17,10 @@ public class UserRolesUpdate implements DiscordEvent {
     }
 
     public List<Role> oldRoles(){
-        return Role.getRoles(event.getOldRoles());
+        return Role.getRoles(this.event.getOldRoles());
     }
 
     public List<Role> newRoles(){
-        return Role.getRoles(event.getNewRoles());
+        return Role.getRoles(this.event.getNewRoles());
     }
 }

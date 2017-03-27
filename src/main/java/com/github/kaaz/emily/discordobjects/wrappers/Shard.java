@@ -14,9 +14,6 @@ import java.util.stream.Collectors;
  */
 public class Shard {
     private static final Map<String, Shard> MAP = new ConcurrentHashMap<>();
-    public static Shard getShard(String id){
-        return MAP.values().stream().filter(shard -> shard.shardID() == Integer.parseInt(id)).collect(Collectors.toList()).get(0);
-    }
     static Shard getShard(IShard shard){
         return MAP.computeIfAbsent(shard.getInfo()[0] + "", s -> new Shard(shard));
     }
@@ -26,9 +23,11 @@ public class Shard {
         return shards;
     }
     private final AtomicReference<IShard> shard;
+
     Shard(IShard shard) {
         this.shard = new AtomicReference<>(shard);
     }
+
     IShard shard(){
         return this.shard.get();
     }

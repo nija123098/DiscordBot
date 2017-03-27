@@ -12,9 +12,9 @@ import java.util.concurrent.atomic.AtomicReference;
  * Made by nija123098 on 3/9/2017.
  */
 public class Region {
-    private static final Map<String, Region> MAP = new ConcurrentHashMap<>();
-    public static Region getRegion(String id){
-        return MAP.computeIfAbsent(id, s -> new Region(DiscordClient.client().getRegionByID(id)));
+    private static final Map<String, Region> MAP = new ConcurrentHashMap<>(10);// never needs to be cleared
+    static Region getRegion(String id){
+        return getRegion(DiscordClient.client().getRegionByID(id));
     }
     static Region getRegion(IRegion region){
         return MAP.computeIfAbsent(region.getID(), s -> new Region(region));

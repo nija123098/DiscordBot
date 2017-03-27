@@ -29,6 +29,9 @@ public class ServiceHandler {
         classes.forEach(clazz -> {
             try {
                 AbstractService service = clazz.newInstance();
+                if (service.getDelayBetween() == -1){
+                    return;
+                }
                 if (service.mayBlock()){
                     Thread thread = new Thread(() -> {
                         long start;

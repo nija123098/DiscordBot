@@ -1,6 +1,8 @@
 package com.github.kaaz.emily.discordobjects.wrappers;
 
 import com.github.kaaz.emily.discordobjects.exception.ErrorWrapper;
+import com.github.kaaz.emily.service.services.MemoryManagementService;
+import com.github.kaaz.emily.util.EmoticonHelper;
 import sx.blah.discord.handle.obj.IEmbed;
 import sx.blah.discord.handle.obj.IReaction;
 import sx.blah.discord.handle.obj.IUser;
@@ -8,13 +10,15 @@ import sx.blah.discord.util.EmbedBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Made by nija123098 on 3/4/2017.
  */
 public class Reaction {// should not be saved
-    static Reaction getReaction(IReaction iReaction){
-        return new Reaction(iReaction);
+    private static final Map<IReaction, Reaction> MAP = new MemoryManagementService.ManagedMap<>();
+    public static Reaction getReaction(IReaction iReaction){
+        return MAP.computeIfAbsent(iReaction, r -> new Reaction(iReaction));
     }
     static List<Reaction> getReactions(List<IReaction> reactions){
         List<Reaction> reacts = new ArrayList<>(reactions.size());
@@ -22,6 +26,7 @@ public class Reaction {// should not be saved
         return reacts;
     }
     private IReaction reaction;
+    private String name;
     private Reaction(IReaction reaction) {
         this.reaction = reaction;
     }
@@ -48,5 +53,16 @@ public class Reaction {// should not be saved
 
     public boolean getClientReacted() {
         return reaction().getClientReacted();
+    }
+
+    public String getChars(){
+        return reaction().toString();
+    }
+
+    public String getName() {
+        if (this.name == null){
+            this.name = EmoticonHelper.getName(reaction().toString());
+        }
+        return this.name;
     }
 }

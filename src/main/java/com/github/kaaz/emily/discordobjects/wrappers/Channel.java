@@ -3,6 +3,7 @@ package com.github.kaaz.emily.discordobjects.wrappers;
 import com.github.kaaz.emily.config.ConfigLevel;
 import com.github.kaaz.emily.config.Configurable;
 import com.github.kaaz.emily.discordobjects.exception.ErrorWrapper;
+import com.github.kaaz.emily.service.services.MemoryManagementService;
 import sx.blah.discord.handle.obj.IChannel;
 
 import java.time.LocalDateTime;
@@ -17,9 +18,9 @@ import java.util.concurrent.atomic.AtomicReference;
  * Made by nija123098 on 2/20/2017.
  */
 public class Channel implements Configurable<Channel> {
-    private static final Map<String, Channel> MAP = new ConcurrentHashMap<>();
-    public static Channel getChannel(String id){
-        return MAP.computeIfAbsent(id, s -> new Channel(DiscordClient.client().getChannelByID(id)));
+    private static final Map<String, Channel> MAP = new MemoryManagementService.ManagedMap<>();
+    static Channel getChannel(String id){
+        return getChannel(DiscordClient.client().getChannelByID(id));
     }
     static Channel getChannel(IChannel channel){
         return MAP.computeIfAbsent(channel.getID(), s -> new Channel(channel));
