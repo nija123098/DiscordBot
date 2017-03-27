@@ -2,10 +2,7 @@ package com.github.kaaz.emily.discordobjects.wrappers;
 
 import com.github.kaaz.emily.discordobjects.exception.ErrorWrapper;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
-import sx.blah.discord.handle.obj.*;
-import sx.blah.discord.util.DiscordException;
-import sx.blah.discord.util.MissingPermissionsException;
-import sx.blah.discord.util.RateLimitException;
+import sx.blah.discord.handle.obj.IMessage;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -17,7 +14,7 @@ import java.util.Optional;
  * Made by nija123098 on 3/4/2017.
  */
 public class Message {// should not be kept stored, too many are made
-    private static final Map<String, Message> MAP = new MemoryManagementService.ManagedMap<>();
+    private static final Map<String, Message> MAP = new MemoryManagementService.ManagedMap<>(120000);
     public static Message getMessage(IMessage iMessage){
         return MAP.computeIfAbsent(iMessage.getID(), s -> new Message(iMessage));
     }

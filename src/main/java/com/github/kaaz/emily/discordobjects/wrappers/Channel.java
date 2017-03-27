@@ -6,19 +6,17 @@ import com.github.kaaz.emily.discordobjects.exception.ErrorWrapper;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
 import sx.blah.discord.handle.obj.IChannel;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Made by nija123098 on 2/20/2017.
  */
 public class Channel implements Configurable<Channel> {
-    private static final Map<String, Channel> MAP = new MemoryManagementService.ManagedMap<>();
+    private static final Map<String, Channel> MAP = new MemoryManagementService.ManagedMap<>(180000);
     static Channel getChannel(String id){
         return getChannel(DiscordClient.client().getChannelByID(id));
     }

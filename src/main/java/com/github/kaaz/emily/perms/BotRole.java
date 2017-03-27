@@ -13,7 +13,7 @@ import com.github.kaaz.emily.util.Log;
 /**
  * Made by nija123098 on 2/20/2017.
  */
-public enum BotRole {
+public enum BotRole {// todo clean
     BOT,
     BANNED(true, true, false),
     INTERACTION_BOT(true, true, false),
@@ -39,6 +39,9 @@ public enum BotRole {
     public static boolean hasRequiredBotRole(BotRole target, User user, Guild guild){
         if (DiscordClient.getApplicationOwner().equals(user)){
             return true;
+        }
+        if (hasFlagRank(BANNED, user, null)){
+            return false;
         }
         if (target.isFlagRank()){
             return hasFlagRank(target, user, guild);

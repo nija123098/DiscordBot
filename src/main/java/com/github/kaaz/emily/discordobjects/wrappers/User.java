@@ -10,14 +10,13 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Made by nija123098 on 2/20/2017.
  */
 public class User implements Configurable<User> {
-    private static final Map<String, User> MAP = new MemoryManagementService.ManagedMap<>();
+    private static final Map<String, User> MAP = new MemoryManagementService.ManagedMap<>(180000);
     static User getUser(String id){
         return MAP.computeIfAbsent(id, s -> new User(DiscordClient.client().getUserByID(id)));
     }
@@ -46,6 +45,10 @@ public class User implements Configurable<User> {
     @Override
     public ConfigLevel getConfigLevel() {
         return ConfigLevel.USER;
+    }
+
+    public boolean equals(Object o){
+        return o instanceof User && this.getID().equals(((User) o).getID());
     }
 
     public String getName() {

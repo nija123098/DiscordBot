@@ -3,10 +3,8 @@ package com.github.kaaz.emily.discordobjects.wrappers;
 import com.github.kaaz.emily.discordobjects.exception.ErrorWrapper;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
 import com.github.kaaz.emily.util.EmoticonHelper;
-import sx.blah.discord.handle.obj.IEmbed;
 import sx.blah.discord.handle.obj.IReaction;
 import sx.blah.discord.handle.obj.IUser;
-import sx.blah.discord.util.EmbedBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +14,7 @@ import java.util.Map;
  * Made by nija123098 on 3/4/2017.
  */
 public class Reaction {// should not be saved
-    private static final Map<IReaction, Reaction> MAP = new MemoryManagementService.ManagedMap<>();
+    private static final Map<IReaction, Reaction> MAP = new MemoryManagementService.ManagedMap<>(150000);
     public static Reaction getReaction(IReaction iReaction){
         return MAP.computeIfAbsent(iReaction, r -> new Reaction(iReaction));
     }

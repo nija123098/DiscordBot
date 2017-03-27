@@ -1,9 +1,7 @@
 package com.github.kaaz.emily.config;
 
-import com.github.kaaz.emily.config.configs.guilduser.GuildFlagRankConfig;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
-import com.github.kaaz.emily.util.Holder;
 
 import java.util.HashMap;
 

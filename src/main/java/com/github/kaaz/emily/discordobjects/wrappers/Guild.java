@@ -12,14 +12,13 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Made by nija123098 on 2/20/2017.
  */
 public class Guild implements Configurable<Guild> {
-    private static final Map<String, Guild> MAP = new MemoryManagementService.ManagedMap<>();
+    private static final Map<String, Guild> MAP = new MemoryManagementService.ManagedMap<>(180000);
     static Guild getGuild(String id){
         return MAP.computeIfAbsent(id, s -> new Guild(DiscordClient.client().getGuildByID(id)));
     }
