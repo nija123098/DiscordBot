@@ -11,4 +11,20 @@ public class FormatHelper {
         }
         return s;
     }
+    public static String reduceRepeats(String s, char c){// use index of to optimize
+        final StringBuilder builder = new StringBuilder();
+        boolean repeat = false;
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == c){
+                if (!repeat){
+                    builder.append(c);
+                }
+                repeat = true;
+            }else{
+                repeat = false;
+                builder.append(s.charAt(i));
+            }
+        }
+        return builder.toString();
+    }
 }

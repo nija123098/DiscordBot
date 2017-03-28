@@ -96,6 +96,13 @@ public class ServiceHandler {
     }
 
     /**
+     * Forces the initialization of this class
+     */
+    public static void initialize(){
+        Log.log("Service Handler initialized");
+    }
+
+    /**
      * The method to call to initialize
      * service handling.  If the class
      * initializer throws an exception the

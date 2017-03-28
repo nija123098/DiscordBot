@@ -14,7 +14,7 @@ public enum ModuleLevel {
     ECONOMY,
     DEVELOPMENT,
     NONE,;
-    public static ModuleLevel getModualLevel(String s){
+    public static ModuleLevel getModuleLevel(String s){
         try {
             return valueOf(s.replace("_", " ").toUpperCase());
         } catch (Exception e){

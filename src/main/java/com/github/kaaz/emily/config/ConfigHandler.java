@@ -4,7 +4,10 @@ import com.github.kaaz.emily.util.Holder;
 import com.github.kaaz.emily.util.Log;
 import org.reflections.Reflections;
 
-import java.util.*;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * The handler for configs values and configurables.
@@ -35,6 +38,13 @@ public class ConfigHandler {
                 }
             });
         });
+    }
+
+    /**
+     * Forces the initialization of this class
+     */
+    public static void initialize(){
+        Log.log("Config Handler initialized");
     }
 
     /**

@@ -4,6 +4,7 @@ import com.github.kaaz.emily.discordobjects.wrappers.Channel;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.Shard;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
+import com.github.kaaz.emily.util.Log;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,6 +18,13 @@ public class TemplateHandler {
     static {
         REPLACEMENT_FUNCTIONS = new HashMap<>();
         // addFunction calls here
+    }
+
+    /**
+     * Forces the initialization of this class
+     */
+    public static void initialize(){
+        Log.log("Template Handler initialize");
     }
     private static void addFunction(String name, TemplateFunction function){
         REPLACEMENT_FUNCTIONS.put(name, function);

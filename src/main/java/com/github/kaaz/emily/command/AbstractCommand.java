@@ -2,16 +2,23 @@ package com.github.kaaz.emily.command;
 
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.Configurable;
-import com.github.kaaz.emily.config.configs.guild.SpecialPermsGuildEnabledConfig;
-import com.github.kaaz.emily.config.configs.role.*;
+import com.github.kaaz.emily.config.configs.guild.GuildSpecialPermsEnabledConfig;
+import com.github.kaaz.emily.config.configs.role.PermsCommandBlacklistConfig;
+import com.github.kaaz.emily.config.configs.role.PermsCommandWhitelistConfig;
+import com.github.kaaz.emily.config.configs.role.PermsModuleWhitelistConfig;
+import com.github.kaaz.emily.config.configs.role.PermsModuleWhitelistExemptionsConfig;
+import com.github.kaaz.emily.config.configs.role.SpecialPermsRoleEnable;
 import com.github.kaaz.emily.discordobjects.wrappers.Channel;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
+import com.github.kaaz.emily.discordobjects.wrappers.Message;
+import com.github.kaaz.emily.discordobjects.wrappers.Reaction;
 import com.github.kaaz.emily.discordobjects.wrappers.Role;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
 import com.github.kaaz.emily.util.Log;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashSet;
@@ -33,9 +40,9 @@ import java.util.Set;
  * @see AbstractSuperCommand
  */
 public abstract class AbstractCommand {
-    private String name;
+    String name;
     private Method method;
-    private Class<?>[] args;
+    private Class<?>[] argsTypes;
     private BotRole botRole;
     private Set<String> absoluteAliases, emoticonAliases, allNames;
     private long globalUseTime, globalCoolDownTime;
@@ -61,7 +68,7 @@ public abstract class AbstractCommand {
             Log.log("No method annotated " + Command.class.getSimpleName() + " in command: " + this.getClass().getName());
             return;
         }
-        this.args = this.method.getParameterTypes();
+        this.argsTypes = this.method.getParameterTypes();
         this.allNames = new HashSet<>(this.absoluteAliases.size() + this.emoticonAliases.size() + 1);
         this.allNames.add(this.name);
         this.allNames.addAll(this.absoluteAliases);
@@ -130,6 +137,13 @@ public abstract class AbstractCommand {
     }
 
     /**
+     * Returns the command's module
+     *
+     * @return the module of which the command is part of
+     */
+    public abstract ModuleLevel getModule();
+
+    /**
      * A check if the user can use a command in the context
      *
      * @param user the user that is being checked for permission
@@ -141,7 +155,7 @@ public abstract class AbstractCommand {
     public boolean hasPermission(User user, Guild guild) {
         boolean hasNormalPerm = BotRole.hasRequiredBotRole(this.botRole, user, guild);
         if (BotRole.getBestBotRole(user, guild).ordinal() < BotRole.GUILD_TRUSTEE.ordinal()){
-            if (ConfigHandler.getSetting(SpecialPermsGuildEnabledConfig.class, guild)){
+            if (ConfigHandler.getSetting(GuildSpecialPermsEnabledConfig.class, guild)){
                 return hasNormalPerm;
             }
             boolean disapproved = false;
@@ -162,52 +176,57 @@ public abstract class AbstractCommand {
         }
     }
 
+    /**
+     * A method to check the cool down on a command.
+     *
+     * @param guild the guild checked for rate limiting
+     * @param channel the channel checked for rate limiting
+     * @param user the user checked for rate limiting
+     * @return if the command is not being rate limited
+     */
     public boolean checkCoolDown(Guild guild, Channel channel, User user){
-        if (this.globalUseTime != -1){
-            if (this.globalUseTime < System.currentTimeMillis()){
-                return false;
-            } else {
-                this.globalUseTime = System.currentTimeMillis() + this.globalCoolDownTime;
-            }
+        if (this.globalUseTime != -1 && this.globalUseTime < System.currentTimeMillis()){
+            return false;
         }
-        if (this.guildCoolDowns != null){
-            if (this.guildCoolDowns.contains(guild)){
-                return false;
-            }else{
-                this.guildCoolDowns.add(guild);
-            }
+        if (this.guildCoolDowns != null && this.guildCoolDowns.contains(guild)){
+            return false;
         }
-        if (this.channelCoolDowns != null){
-            if (this.channelCoolDowns.contains(channel)){
-                return false;
-            }else{
-                this.channelCoolDowns.add(channel);
-            }
+        if (this.channelCoolDowns != null && this.channelCoolDowns.contains(channel)){
+            return false;
         }
-        if (this.userCoolDowns != null){
-            if (this.userCoolDowns.contains(user)){
-                return false;
-            }else{
-                this.userCoolDowns.add(user);
-            }
+        if (this.userCoolDowns != null && this.userCoolDowns.contains(user)){
+            return false;
         }
-        Configurable.GuildUser guildUser = Configurable.getGuildUser(guild, user);
-        if (this.guildUserCoolDowns != null){
-            if (this.guildUserCoolDowns.contains(guildUser)){
-                return false;
-            }else{
-                this.guildUserCoolDowns.add(guildUser);
-            }
+        if (this.guildUserCoolDowns != null && this.guildUserCoolDowns.contains(Configurable.getGuildUser(guild, user))){
+            return false;
         }
         return true;
     }
 
     /**
-     * Returns the command's module
+     * Method to be called when the command is invoked
      *
-     * @return the module of which the command is part of
+     * @param guild the guild checked for rate limiting
+     * @param channel the channel checked for rate limiting
+     * @param user the user checked for rate limiting
      */
-    public abstract ModuleLevel getModule();
+    public void invoked(Guild guild, Channel channel, User user){
+        if (this.globalUseTime != -1){
+            this.globalUseTime = System.currentTimeMillis() + this.globalCoolDownTime;
+        }
+        if (this.guildCoolDowns != null){
+            this.guildCoolDowns.add(guild);
+        }
+        if (this.channelCoolDowns != null){
+            this.channelCoolDowns.add(channel);
+        }
+        if (this.userCoolDowns != null){
+            this.userCoolDowns.add(user);
+        }
+        if (this.guildUserCoolDowns != null){
+            this.guildUserCoolDowns.add(Configurable.getGuildUser(guild, user));
+        }
+    }
 
     /**
      * Returns the cool down in millis dependent
@@ -218,5 +237,26 @@ public abstract class AbstractCommand {
      */
     protected long getCoolDown(Class<? extends Configurable<?>> clazz){
         return -1;
+    }
+
+    /**
+     *
+     *
+     * @param user the user that invokes the command
+     * @param message the message sent or reacted to
+     * @param reaction the reaction if the invocation
+     *                 was caused by reacting to a message
+     * @param args the user args for invocation
+     * @return if the command was successful
+     */
+    protected boolean invoke(User user, Message message, Reaction reaction, String args){
+        try {
+            return this.method.invoke(this, InvocationObjectGetter.replace(this.argsTypes, new Object[this.argsTypes.length], user, message, reaction, args)) == null;
+        } catch (IllegalAccessException e) {
+            Log.log("Malformed command: " + getName(), e);
+        } catch (InvocationTargetException e) {
+            Log.log("Exception during method execution: " + getName(), e);
+        }
+        return false;
     }
 }

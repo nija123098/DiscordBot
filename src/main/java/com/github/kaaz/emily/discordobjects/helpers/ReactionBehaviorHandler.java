@@ -2,7 +2,7 @@ package com.github.kaaz.emily.discordobjects.helpers;
 
 import com.github.kaaz.emily.discordobjects.wrappers.Message;
 import com.github.kaaz.emily.discordobjects.wrappers.Reaction;
-import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordReaction;
+import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordReactionEvent;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
 import org.apache.commons.lang3.tuple.MutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
@@ -22,7 +22,7 @@ public class ReactionBehaviorHandler {
     public static void registerListener(Message message, String emoticonName, ReactionBehavior behavior){
         QUADRUPLES.add(new MutableTriple<>(message, emoticonName, behavior));
     }
-    public static void handle(DiscordReaction reaction){
+    public static void handle(DiscordReactionEvent reaction){
         for (Triple<Message, String, ReactionBehavior> quad : QUADRUPLES){
             if (reaction.getMessage().equals(quad.getLeft()) && quad.getMiddle().equals(reaction.getReaction().getName())){
                 quad.getRight().behave(reaction.addingReaction(), reaction.getReaction());

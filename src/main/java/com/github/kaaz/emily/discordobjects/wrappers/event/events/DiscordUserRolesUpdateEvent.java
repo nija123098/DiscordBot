@@ -9,10 +9,10 @@ import java.util.List;
 /**
  * Made by nija123098 on 3/13/2017.
  */
-public class UserRolesUpdate implements BotEvent {
+public class DiscordUserRolesUpdateEvent implements BotEvent {
     private UserRoleUpdateEvent event;
 
-    public UserRolesUpdate(UserRoleUpdateEvent event) {
+    public DiscordUserRolesUpdateEvent(UserRoleUpdateEvent event) {
         this.event = event;
     }
 

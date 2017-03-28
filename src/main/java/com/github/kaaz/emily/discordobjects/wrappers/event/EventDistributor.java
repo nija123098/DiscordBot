@@ -17,10 +17,7 @@ import java.util.stream.Stream;
  * Made by nija123098 on 3/12/2017.
  */
 public class EventDistributor {
-    private static final Map<Class, Set<Listener>> MAP;
-    static {
-        MAP = new HashMap<>();
-    }
+    private static final Map<Class, Set<Listener>> MAP = new HashMap<>();
     public static <E extends BotEvent> void register(Object o){
         Class<?> clazz;
         if (o instanceof Class){

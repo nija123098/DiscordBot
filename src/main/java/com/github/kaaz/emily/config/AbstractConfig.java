@@ -87,14 +87,14 @@ public class AbstractConfig<I, E, T extends Configurable> {// interior, exterior
     public ConfigLevel getConfigLevel(){
         return this.configLevel;
     }
-    public I wrapTypeIn(E e){
-        return TypeTranslator.translate(this.internalType, e);
+    public I wrapTypeIn(E e, T configurable){
+        return TypeTranslator.translate(e, getValue(configurable));
     }
-    public E wrapTypeOut(I i){
-        return TypeTranslator.translate(this.exteriorType, i);
+    public E wrapTypeOut(I i, T configurable){// configurable may be used in over ride methods
+        return TypeTranslator.translate(i, this.exteriorType);
     }
     void setExteriorValue(T configurable, E value){
-        setValue(configurable, wrapTypeIn(value));
+        setValue(configurable, wrapTypeIn(value, configurable));
     }
     // TODO SQL stuff goes here, more or less
     void setValue(T configurable, I value){
@@ -112,6 +112,6 @@ public class AbstractConfig<I, E, T extends Configurable> {// interior, exterior
         return null;
     }
     E getExteriorValue(T configurable){
-        return wrapTypeOut(getValue(configurable));
+        return wrapTypeOut(getValue(configurable), configurable);
     }
 }

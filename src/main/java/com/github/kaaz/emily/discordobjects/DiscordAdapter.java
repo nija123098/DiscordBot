@@ -9,6 +9,7 @@ import com.github.kaaz.emily.discordobjects.wrappers.event.BotEvent;
 import com.github.kaaz.emily.programconfig.BotConfig;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventListener;
+import com.github.kaaz.emily.util.Log;
 import org.reflections.Reflections;
 import sx.blah.discord.api.ClientBuilder;
 import sx.blah.discord.api.events.Event;
@@ -36,6 +37,13 @@ public class DiscordAdapter {
         EVENT_MAP = new HashMap<>();
         Reflections reflections = new Reflections("com.github.kaaz.emily.discordobjects.wrappers.event.events");
         reflections.getSubTypesOf(BotEvent.class).forEach(clazz -> EVENT_MAP.put((Class<Event>) clazz.getConstructors()[0].getParameterTypes()[0], (Constructor<BotEvent>) clazz.getConstructors()[0]));
+    }
+
+    /**
+     * Forces the initialization of this class
+     */
+    public static void initialize(){
+        Log.log("Discord adapter initialized");
     }
     @EventListener
     public static void handle(UserUpdateEvent event){
