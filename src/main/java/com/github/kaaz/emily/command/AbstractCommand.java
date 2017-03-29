@@ -153,11 +153,8 @@ public abstract class AbstractCommand {
      * in the guild, if one exists
      */
     public boolean hasPermission(User user, Guild guild) {
-        boolean hasNormalPerm = BotRole.hasRequiredBotRole(this.botRole, user, guild);
-        if (BotRole.getBestBotRole(user, guild).ordinal() < BotRole.GUILD_TRUSTEE.ordinal()){
-            if (ConfigHandler.getSetting(GuildSpecialPermsEnabledConfig.class, guild)){
-                return hasNormalPerm;
-            }
+        boolean hasNormalPerm = BotRole.hasRequiredRole(this.botRole, user, guild);
+        if (!(this.botRole.ordinal() >= BotRole.GUILD_TRUSTEE.ordinal()) || !ConfigHandler.getSetting(GuildSpecialPermsEnabledConfig.class, guild)){
             boolean disapproved = false;
             for (Role role : user.getRolesForGuild(guild)){
                 if (!ConfigHandler.getSetting(SpecialPermsRoleEnable.class, role)){

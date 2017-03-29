@@ -283,6 +283,6 @@ public class ConfigHandler {
      * ending with the start index plus size
      */
     private static List<String> getTypeIDs(Class<? extends Configurable> type, long start, int size){
-        return null;// todo
+        return new ArrayList<>(0);// todo
     }
 }
