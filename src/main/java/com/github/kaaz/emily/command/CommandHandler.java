@@ -1,5 +1,7 @@
 package com.github.kaaz.emily.command;
 
+import com.github.kaaz.emily.config.ConfigHandler;
+import com.github.kaaz.emily.config.configs.guild.GuildPrefixConfig;
 import com.github.kaaz.emily.discordobjects.helpers.MessageHelper;
 import com.github.kaaz.emily.discordobjects.wrappers.Message;
 import com.github.kaaz.emily.discordobjects.wrappers.Reaction;
@@ -11,10 +13,10 @@ import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordReactio
 import com.github.kaaz.emily.util.FormatHelper;
 import com.github.kaaz.emily.util.Log;
 import javafx.util.Pair;
-import org.eclipse.jetty.util.ConcurrentHashSet;
 import org.reflections.Reflections;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -31,9 +33,12 @@ public class CommandHandler {
     private static final Map<String, Object> COMMANDS_MAP = new HashMap<>();
     static {
         Reflections reflections = new Reflections("com.github.kaaz.emily.command.commands");
-        Set<AbstractSuperCommand> superCommands = new ConcurrentHashSet<>();
-        Set<AbstractSubCommand> subCommands = new ConcurrentHashSet<>();
-        reflections.getSubTypesOf(AbstractCommand.class).forEach(clazz -> {
+        Set<AbstractSuperCommand> superCommands = new HashSet<>();
+        Set<AbstractSubCommand> subCommands = new HashSet<>();
+        Set<Class<? extends AbstractCommand>> set = new HashSet<>();
+        set.addAll(reflections.getSubTypesOf(AbstractSuperCommand.class));
+        set.addAll(reflections.getSubTypesOf(AbstractSubCommand.class));
+        set.forEach(clazz -> {
             try {
                 AbstractCommand command = clazz.newInstance();
                 if (command instanceof AbstractSuperCommand){
@@ -99,14 +104,20 @@ public class CommandHandler {
      */
     public static Pair<AbstractCommand, String> getMessageCommand(String in){
         String[] strings = FormatHelper.reduceRepeats(in, ' ').split(" ");
+        for (int i = 0; i < strings.length; i++) {
+            strings[i] = strings[i].toLowerCase();
+        }
         AbstractCommand command = null;
         int index = -1;
         Map<String, Object> map = COMMANDS_MAP;
-        for (int i = 0; i < strings.length; ++i) {
+        for (int i = 0; true; ++i) {
             AbstractCommand com = (AbstractCommand) map.get("");
             if (com != null){
                 command = com;
                 index = i;
+            }
+            if (i == strings.length){
+                break;
             }
             map = (Map<String, Object>) map.get(strings[i]);
             if (map == null){
@@ -147,6 +158,21 @@ public class CommandHandler {
      * @param reaction the reaction that invoked this command, if applicable
      */
     public static void attemptInvocation(String string, User user, Message message, Reaction reaction){
+        if (string == null){// can happen
+            return;
+        }
+        if (message.getGuild() != null){
+            String pref = ConfigHandler.getSetting(GuildPrefixConfig.class, message.getGuild());
+            if (string.startsWith(pref)){
+                string = string.substring(pref.length());
+                while (true){
+                    if (!string.startsWith(" ")){
+                        break;
+                    }
+                    string = string.substring(1);
+                }
+            }
+        }
         AbstractCommand command;
         Pair<AbstractCommand, String> pair = reaction == null ? getMessageCommand(string) : ((command = getReactionCommand(reaction.getName())) == null ? null : new Pair<>(command, null));
         if (pair != null){

@@ -28,11 +28,17 @@ public enum ConfigLevel {
     ConfigLevel(Class<? extends Configurable> clazz) {
         this.clazz = clazz;
     }
+    public Class<? extends Configurable> getType(){
+        return this.clazz;
+    }
     public static ConfigLevel getLevel(Class<? extends Configurable> clazz){
         for (ConfigLevel level : values()){
             if (level.clazz.isAssignableFrom(clazz)){
                 return level;
             }
+        }
+        if (clazz.equals(Configurable.class)){
+            return null;
         }
         throw new RuntimeException("Class does not have a type: " + clazz.getName());
     }

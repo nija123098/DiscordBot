@@ -13,7 +13,7 @@ import com.github.kaaz.emily.util.Log;
 /**
  * Made by nija123098 on 2/20/2017.
  */
-public enum BotRole {// todo clean
+public enum BotRole {// TODO FIX
     BOT,
     BANNED(true, true, false),
     INTERACTION_BOT(true, true, false),

@@ -185,7 +185,7 @@ public abstract class AbstractCommand {
      * @return if the command is not being rate limited
      */
     public boolean checkCoolDown(Guild guild, Channel channel, User user){
-        if (this.globalUseTime != -1 && this.globalUseTime < System.currentTimeMillis()){
+        if (this.globalUseTime != -1 && this.globalUseTime > System.currentTimeMillis()){
             return false;
         }
         if (this.guildCoolDowns != null && this.guildCoolDowns.contains(guild)){

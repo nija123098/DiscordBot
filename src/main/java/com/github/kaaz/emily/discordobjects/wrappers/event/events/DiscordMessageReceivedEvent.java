@@ -2,7 +2,7 @@ package com.github.kaaz.emily.discordobjects.wrappers.event.events;
 
 import com.github.kaaz.emily.discordobjects.wrappers.Message;
 import com.github.kaaz.emily.discordobjects.wrappers.event.BotEvent;
-import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
+import sx.blah.discord.handle.impl.events.MessageReceivedEvent;
 
 /**
  * Made by nija123098 on 3/27/2017.

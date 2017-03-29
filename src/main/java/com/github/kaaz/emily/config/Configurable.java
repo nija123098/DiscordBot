@@ -4,6 +4,7 @@ import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A helper class that all objects that can
@@ -30,10 +31,19 @@ public interface Configurable {
     ConfigLevel getConfigLevel();
 
     /**
+     * The method to manage a configurable, called periodically
+     */
+    default void manage(){}
+
+    /**
      * The global configurable object
      * for access to global configs
      */
-    Configurable GLOBAL = new GlobalConfigurable();
+    GlobalConfigurable GLOBAL = new GlobalConfigurable();
+
+    /**
+     * The class for the global configurable
+     */
     class GlobalConfigurable implements Configurable {
         private GlobalConfigurable(){}
         @Override
@@ -49,31 +59,40 @@ public interface Configurable {
     /**
      * The map containing guild user configurables
      */
-    HashMap<Guild, HashMap<User, GuildUser>> GUILD_USERS = new HashMap<>();
+    Map<String, GuildUser> GUILD_USERS = new HashMap<>();
 
     /**
      * The getter for a object that represents a guild user
+     *
      * @param guild the guild for a guild user object
      * @param user the user for the guild object
      * @return the guild user object for the guild and user
      */
     static GuildUser getGuildUser(Guild guild, User user){
-        return GUILD_USERS.computeIfAbsent(guild, g -> {
-            HashMap<User, GuildUser> map = new HashMap<>();
-            GUILD_USERS.put(g, map);
-            return map;
-        }).computeIfAbsent(user, u -> new GuildUser(user, guild));
+        return getGuildUser(guild.getID() + "-id-" + user.getID());
     }
+
+    /**
+     * The getter for a object that represents a guild user
+     *
+     * @param id the id of the guild user
+     * @return the guild user object for the guild and user
+     */
+    static GuildUser getGuildUser(String id){
+        return GUILD_USERS.computeIfAbsent(id, s -> new GuildUser(id));
+    }
+
+    /**
+     * The configurable for users within a guild
+     */
     class GuildUser implements Configurable {
-        private User user;
-        private Guild guild;
-        private GuildUser(User user, Guild guild) {
-            this.user = user;
-            this.guild = guild;
+        private String id;
+        private GuildUser(String id) {
+            this.id = id;
         }
         @Override
         public String getID() {
-            return guild.getID() + "-id-" + user.getID();
+            return this.id;
         }
         @Override
         public ConfigLevel getConfigLevel() {
@@ -82,6 +101,12 @@ public interface Configurable {
         @Override
         public boolean equals(Object o){
             return Configurable.class.isInstance(o) && this.getID().equals(((Configurable) o).getID());
+        }
+        public Guild getGuild(){
+            return Guild.getGuild(this.id.split("-id-")[0]);
+        }
+        public User getUser(){
+            return User.getUser(this.id.split("-id-")[1]);
         }
     }
 }

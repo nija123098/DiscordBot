@@ -5,7 +5,10 @@ import com.github.kaaz.emily.util.Holder;
 import com.github.kaaz.emily.util.Log;
 import org.reflections.Reflections;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
@@ -26,18 +29,14 @@ public class ConfigHandler {
     static {
         CLASS_MAP = new HashMap<>();
         STRING_MAP = new HashMap<>();
-        EnumSet.allOf(ConfigLevel.class).forEach(configLevel -> {
-            Reflections reflections = new Reflections("com.guthub.kaaz.emily.config.configs." + configLevel.name().replace("_", "").toLowerCase());
-            Set<Class<? extends AbstractConfig>> classes = reflections.getSubTypesOf(AbstractConfig.class);
-            classes.forEach(clazz -> {
-                try {
-                    AbstractConfig config = clazz.newInstance();
-                    CLASS_MAP.put(clazz, config);
-                    STRING_MAP.put(config.getName(), config);
-                } catch (InstantiationException | IllegalAccessException e) {
-                    Log.log("Exception during init of a config: " + clazz.getSimpleName(), e);
-                }
-            });
+        new Reflections("com.github.kaaz.emily.config.configs").getSubTypesOf(AbstractConfig.class).forEach(clazz -> {
+            try {
+                AbstractConfig config = clazz.newInstance();
+                CLASS_MAP.put(clazz, config);
+                STRING_MAP.put(config.getName(), config);
+            } catch (InstantiationException | IllegalAccessException e) {
+                Log.log("Exception during init of a config: " + clazz.getSimpleName(), e);
+            }
         });
         add(Track.class, Track::getTrack);
         add(User.class, User::getUser);
@@ -51,7 +50,7 @@ public class ConfigHandler {
         add(Configurable.GlobalConfigurable.class, s -> Configurable.GlobalConfigurable.GLOBAL);
     }
 
-    private static <T extends Configurable> void add(Class<T> type, Function<String, ? extends Configurable> function){
+    private static <T extends Configurable> void add(Class<T> type, Function<String, T> function){
         FUNCTION_MAP.put(type, function);
     }
 
@@ -254,7 +253,8 @@ public class ConfigHandler {
      *
      * @param type the type of
      * @param start the start index of the type
-     * @param size the size of the list to get instances of
+     * @param size the size of the list to get instances of.
+     *             The size will be adjusted if it is to big
      * @param <T> the configurable type
      * @return a list of the configurable types
      * starting with the start index and ending
@@ -263,6 +263,10 @@ public class ConfigHandler {
     public static <T extends Configurable> List<T> getTypeInstances(Class<T> type, long start, int size){
         List<T> list = new ArrayList<>(size);
         Function<String, T> function = getIDFunction(type);
+        long typeCount = getTypeCount(type);
+        if (typeCount > (start + size)){
+            size = (int) (typeCount - start);
+        }
         getTypeIDs(type, start, size).forEach(s -> list.add(function.apply(s)));
         return list;
     }
@@ -278,7 +282,7 @@ public class ConfigHandler {
      * type starting with the start index and
      * ending with the start index plus size
      */
-    public static List<String> getTypeIDs(Class<? extends Configurable> type, long start, int size){
+    private static List<String> getTypeIDs(Class<? extends Configurable> type, long start, int size){
         return null;// todo
     }
 }

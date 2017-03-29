@@ -23,7 +23,7 @@ import java.util.Set;
 public abstract class AbstractSubCommand extends AbstractCommand {
     private AbstractSuperCommand superCommand;
     private Set<String> relativeAliases;
-    AbstractSubCommand(String name, BotRole botRole, String[] absoluteAliases, String[] emoticonAliases, String[] relativeAliases) {
+    public AbstractSubCommand(String name, BotRole botRole, String[] absoluteAliases, String[] emoticonAliases, String[] relativeAliases) {
         super(name, botRole, absoluteAliases, emoticonAliases);
         this.relativeAliases = new HashSet<>(relativeAliases.length);
         Collections.addAll(this.relativeAliases, relativeAliases);

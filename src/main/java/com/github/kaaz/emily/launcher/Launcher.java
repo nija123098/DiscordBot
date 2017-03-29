@@ -4,7 +4,6 @@ import com.github.kaaz.emily.command.CommandHandler;
 import com.github.kaaz.emily.command.InvocationObjectGetter;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.discordobjects.DiscordAdapter;
-import com.github.kaaz.emily.service.ServiceHandler;
 import com.github.kaaz.emily.template.TemplateHandler;
 import com.github.kaaz.emily.util.Log;
 
@@ -16,7 +15,7 @@ public class Launcher {
         TemplateHandler.initialize();
         InvocationObjectGetter.initialize();
         ConfigHandler.initialize();
-        ServiceHandler.initialize();
+        // ServiceHandler.initialize();
         CommandHandler.initialize();
         DiscordAdapter.initialize();
         Log.log("Bot finished initializing");

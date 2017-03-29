@@ -3,7 +3,6 @@ package com.github.kaaz.emily.config;
 import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.util.TypeTranslator;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 /**
@@ -27,7 +26,7 @@ public class AbstractConfig<I, E, T extends Configurable> {// interior, exterior
         this.botRole = botRole;
         this.defaul = defaul;
         this.description = description;
-        Type[] types = ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments();
+        Type[] types = TypeTranslator.getRawClasses(this.getClass());
         this.internalType = (Class<I>) types[0];
         this.exteriorType = (Class<E>) types[1];
         this.configurableType = (Class<T>) types[2];
@@ -109,7 +108,7 @@ public class AbstractConfig<I, E, T extends Configurable> {// interior, exterior
      * @return the config's value
      */
     I getValue(T configurable){// slq here as well
-        return null;
+        return this.getDefault();
     }
     E getExteriorValue(T configurable){
         return wrapTypeOut(getValue(configurable), configurable);

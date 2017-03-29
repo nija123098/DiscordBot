@@ -24,7 +24,7 @@ public class EventDistributor {
         } else {
             clazz = o.getClass();
         }
-        Stream.of(clazz.getMethods()).filter(method -> method.isAnnotationPresent(EventListener.class)).filter(method -> method.getParameterCount() == 1).filter(method -> method.getParameterTypes()[0].equals(BotEvent.class)).forEach(method -> {
+        Stream.of(clazz.getMethods()).filter(method -> method.isAnnotationPresent(EventListener.class)).filter(method -> method.getParameterCount() == 1).filter(method -> BotEvent.class.isAssignableFrom(method.getParameterTypes()[0])).forEach(method -> {
             Class<E> peram = (Class<E>) method.getParameterTypes()[0];
             MAP.computeIfAbsent(peram, cl -> new HashSet<>());
             if (Modifier.isStatic(method.getModifiers())){

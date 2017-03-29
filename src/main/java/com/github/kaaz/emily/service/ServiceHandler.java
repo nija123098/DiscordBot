@@ -22,8 +22,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class ServiceHandler {
     private static final Map<AbstractService, Long> NORMAL_SERVICES;
     static {
-        Reflections reflections = new Reflections("com.github.kaaz.emily.service.services");
-        Set<Class<? extends AbstractService>> classes = reflections.getSubTypesOf(AbstractService.class);
+        Set<Class<? extends AbstractService>> classes = new Reflections("com.github.kaaz.emily.service.services").getSubTypesOf(AbstractService.class);
         NORMAL_SERVICES = new HashMap<>();
         final AtomicInteger mayBlockCount = new AtomicInteger();
         classes.forEach(clazz -> {

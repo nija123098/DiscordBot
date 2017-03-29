@@ -9,7 +9,7 @@ import java.io.File;
  */
 public class BotConfig {
     @ConfigurationOption
-    public static String BOT_TOKEN = "Emily's Token";
+    public static String BOT_TOKEN = "MjY0MzgxNjQ4MTU2NjIyODQ5.C50Ayg.b3RvGnxuOYSuWMWRRj2csasYUJg";
     @ConfigurationOption
     public static String BOT_PATH = BotConfig.class.getProtectionDomain().getCodeSource().getLocation().getPath();
     @ConfigurationOption

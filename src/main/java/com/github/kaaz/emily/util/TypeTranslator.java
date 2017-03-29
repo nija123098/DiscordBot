@@ -3,10 +3,9 @@ package com.github.kaaz.emily.util;
 import org.eclipse.jetty.util.ConcurrentHashSet;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -16,6 +15,27 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class TypeTranslator {
     private static final Map<Class<?>, Map<Class<?>, Translation<?, ?>>> TRANSLATION_MAP = new HashMap<>();
+    public static Class<?>[] getRawClasses(Class<?> o){
+        Type[] t = ((ParameterizedType) o.getGenericSuperclass()).getActualTypeArguments();
+        boolean br = true;
+        while (true){
+            for (int i = 0; i < t.length; i++) {
+                if (t[i] instanceof ParameterizedType){
+                    t[i] = ((ParameterizedType) t[i]).getRawType();
+                    br = false;
+                }
+            }
+            if (br){
+                break;
+            }
+            br = true;
+        }
+        Class<?>[] classes = new Class[t.length];
+        for (int i = 0; i < classes.length; i++) {
+            classes[i] = (Class<?>) t[i];
+        }
+        return classes;
+    }
     public static <I, O> O translate(I in, Class<O> type){
         if (in == null){
             return null;

@@ -24,9 +24,6 @@ public class Region {
         iRegions.forEach(iRegion -> list.add(getRegion(iRegion)));
         return list;
     }
-    public synchronized void update(IRegion region){
-        MAP.get(region.getID()).reference.set(region);
-    }
     private final AtomicReference<IRegion> reference;
     private Region(IRegion region) {
         this.reference = new AtomicReference<>(region);

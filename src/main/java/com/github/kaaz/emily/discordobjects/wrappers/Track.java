@@ -3,6 +3,7 @@ package com.github.kaaz.emily.discordobjects.wrappers;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.ConfigLevel;
 import com.github.kaaz.emily.config.Configurable;
+import com.github.kaaz.emily.config.configs.global.TrackDeleteTimeConfig;
 import com.github.kaaz.emily.config.configs.track.TrackTimeExpireConfig;
 import com.github.kaaz.emily.config.configs.track.TrackFileConfig;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
@@ -52,6 +53,12 @@ public class Track implements Configurable{
     public int hashCode(){
         return this.id.hashCode();
     }// id is interned
+    @Override
+    public void manage(){
+        if (MusicDownloadService.isDownloaded(this) && ConfigHandler.getSetting(TrackTimeExpireConfig.class, this) > ConfigHandler.getSetting(TrackDeleteTimeConfig.class, GLOBAL)){
+            ConfigHandler.getSetting(TrackFileConfig.class, this).delete();
+        }
+    }
     public enum Platform{
         YOUTUBE,
         SOUNDCLOUD,;

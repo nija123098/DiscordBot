@@ -1,4 +1,4 @@
-package com.github.kaaz.emily.config.configs;
+package com.github.kaaz.emily.config.configs.global;
 
 import com.github.kaaz.emily.config.AbstractConfig;
 import com.github.kaaz.emily.config.Configurable;

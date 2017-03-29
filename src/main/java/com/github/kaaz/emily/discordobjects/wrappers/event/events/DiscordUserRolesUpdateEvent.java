@@ -2,7 +2,7 @@ package com.github.kaaz.emily.discordobjects.wrappers.event.events;
 
 import com.github.kaaz.emily.discordobjects.wrappers.Role;
 import com.github.kaaz.emily.discordobjects.wrappers.event.BotEvent;
-import sx.blah.discord.handle.impl.events.guild.member.UserRoleUpdateEvent;
+import sx.blah.discord.handle.impl.events.UserRoleUpdateEvent;
 
 import java.util.List;
 

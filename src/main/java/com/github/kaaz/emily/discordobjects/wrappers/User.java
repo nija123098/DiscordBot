@@ -18,7 +18,11 @@ import java.util.concurrent.atomic.AtomicReference;
 public class User implements Configurable {
     private static final Map<String, User> MAP = new MemoryManagementService.ManagedMap<>(180000);
     public static User getUser(String id){
-        return MAP.computeIfAbsent(id, s -> new User(DiscordClient.client().getUserByID(id)));
+        IUser user = DiscordClient.client().getUserByID(id);
+        if (user == null){
+            return null;
+        }
+        return MAP.computeIfAbsent(id, s -> new User(user));
     }
     public static User getUser(IUser user){
         return MAP.computeIfAbsent(user.getID(), s -> new User(user));
@@ -29,7 +33,10 @@ public class User implements Configurable {
         return users;
     }
     public static void update(IUser user){// hash is based on id, so no old channel is necessary
-        MAP.get(user.getID()).reference.set(user);
+        User u = MAP.get(user.getID());
+        if (u != null){
+            u.reference.set(user);
+        }
     }
     private final AtomicReference<IUser> reference;
     IUser user(){

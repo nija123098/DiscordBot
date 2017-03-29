@@ -18,7 +18,11 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Channel implements Configurable {
     private static final Map<String, Channel> MAP = new MemoryManagementService.ManagedMap<>(180000);
     public static Channel getChannel(String id){
-        return getChannel(DiscordClient.client().getChannelByID(id));
+        IChannel channel = DiscordClient.client().getChannelByID(id);
+        if (channel == null){
+            return null;
+        }
+        return getChannel(channel);
     }
     static Channel getChannel(IChannel channel){
         return MAP.computeIfAbsent(channel.getID(), s -> new Channel(channel));
@@ -29,7 +33,10 @@ public class Channel implements Configurable {
         return channels;
     }
     public static void update(IChannel channel){// should handle DirectChannel and VoiceChannel updates as well
-        MAP.get(channel.getID()).reference.set(channel);
+        Channel c = MAP.get(channel.getID());
+        if (c != null){
+            c.reference.set(channel);
+        }
     }
     final AtomicReference<IChannel> reference;
     Channel(IChannel channel) {

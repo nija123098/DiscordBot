@@ -20,7 +20,11 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Guild implements Configurable {
     private static final Map<String, Guild> MAP = new MemoryManagementService.ManagedMap<>(180000);
     public static Guild getGuild(String id){
-        return MAP.computeIfAbsent(id, s -> new Guild(DiscordClient.client().getGuildByID(id)));
+        IGuild guild = DiscordClient.client().getGuildByID(id);
+        if (guild == null){
+            return null;
+        }
+        return MAP.computeIfAbsent(id, s -> new Guild(guild));
     }
     public static Guild getGuild(IGuild guild){
         return MAP.computeIfAbsent(guild.getID(), s -> new Guild(guild));
@@ -31,7 +35,10 @@ public class Guild implements Configurable {
         return list;
     }
     public static void update(IGuild guild){// hash is based on id, so no old channel is necessary
-        MAP.get(guild.getID()).reference.set(guild);
+        Guild g = MAP.get(guild.getID());
+        if (g != null){
+            g.reference.set(guild);
+        }
     }
     private final AtomicReference<IGuild> reference;
     private Guild(IGuild guild) {

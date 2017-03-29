@@ -1,6 +1,7 @@
 package com.github.kaaz.emily.discordobjects.wrappers;
 
 import com.github.kaaz.emily.discordobjects.exception.ErrorWrapper;
+import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
 import sx.blah.discord.api.IDiscordClient;
 
 import java.util.List;
@@ -12,6 +13,7 @@ public class DiscordClient {
     private static IDiscordClient client;
     public static void set(IDiscordClient discordClient){
         client = discordClient;
+        client.getDispatcher().registerListener(EventDistributor.class);
     }
     public static IDiscordClient client(){
         return client;
