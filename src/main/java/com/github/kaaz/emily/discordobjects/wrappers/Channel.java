@@ -15,9 +15,9 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * Made by nija123098 on 2/20/2017.
  */
-public class Channel implements Configurable<Channel> {
+public class Channel implements Configurable {
     private static final Map<String, Channel> MAP = new MemoryManagementService.ManagedMap<>(180000);
-    static Channel getChannel(String id){
+    public static Channel getChannel(String id){
         return getChannel(DiscordClient.client().getChannelByID(id));
     }
     static Channel getChannel(IChannel channel){

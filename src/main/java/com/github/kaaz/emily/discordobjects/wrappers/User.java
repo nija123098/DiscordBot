@@ -15,9 +15,9 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * Made by nija123098 on 2/20/2017.
  */
-public class User implements Configurable<User> {
+public class User implements Configurable {
     private static final Map<String, User> MAP = new MemoryManagementService.ManagedMap<>(180000);
-    static User getUser(String id){
+    public static User getUser(String id){
         return MAP.computeIfAbsent(id, s -> new User(DiscordClient.client().getUserByID(id)));
     }
     public static User getUser(IUser user){

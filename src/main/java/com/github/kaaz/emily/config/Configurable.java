@@ -14,7 +14,7 @@ import java.util.HashMap;
  * @since 2.0.0
  * @see ConfigLevel
  */
-public interface Configurable<T extends Configurable<T>> {
+public interface Configurable {
     /**
      * Gets the snowflake for this object
      *
@@ -34,7 +34,7 @@ public interface Configurable<T extends Configurable<T>> {
      * for access to global configs
      */
     Configurable GLOBAL = new GlobalConfigurable();
-    class GlobalConfigurable implements Configurable<GlobalConfigurable> {
+    class GlobalConfigurable implements Configurable {
         private GlobalConfigurable(){}
         @Override
         public String getID() {
@@ -64,7 +64,7 @@ public interface Configurable<T extends Configurable<T>> {
             return map;
         }).computeIfAbsent(user, u -> new GuildUser(user, guild));
     }
-    class GuildUser implements Configurable<GuildUser> {
+    class GuildUser implements Configurable {
         private User user;
         private Guild guild;
         private GuildUser(User user, Guild guild) {

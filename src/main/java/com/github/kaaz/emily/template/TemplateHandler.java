@@ -17,7 +17,36 @@ public class TemplateHandler {
     private static final Map<String, TemplateFunction> REPLACEMENT_FUNCTIONS;
     static {
         REPLACEMENT_FUNCTIONS = new HashMap<>();
-        // addFunction calls here
+        addFunction("shard", (in, caller, channel, guild, shard) -> {
+            switch (in){
+                case "id":
+                    return shard.getID() + "";
+                default:
+                    return "?";
+            }
+        });
+        addFunction("guild", (in, caller, channel, guild, shard) -> {
+            switch (in){
+                case "name":
+                    return guild.getName();
+                case "id":
+                    return guild.getID();
+                case "users":
+                    return guild.getTotalMemberCount() + "";
+                case "owner":
+                    return guild.getOwner().getDisplayName(guild);
+                case "channels":
+                    return guild.getChannels().size() + "";
+                case "voicechannels":
+                    return guild.getVoiceChannels().size() + "";
+                case "roles":
+                    return guild.getRoles().size() + "";
+                case "region":
+                    return guild.getRegion().getName();
+                default:
+                    return "?";
+            }
+        });
     }
 
     /**

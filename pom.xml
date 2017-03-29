@@ -57,6 +57,11 @@
             <artifactId>commons-collections4</artifactId>
             <version>4.1</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.lkuza2</groupId>
+            <artifactId>java-speech-api</artifactId>
+            <version>v2.02</version>
+        </dependency>
     </dependencies>
 
 </project>

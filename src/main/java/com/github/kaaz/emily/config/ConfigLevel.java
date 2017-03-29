@@ -1,9 +1,6 @@
 package com.github.kaaz.emily.config;
 
-import com.github.kaaz.emily.discordobjects.wrappers.Channel;
-import com.github.kaaz.emily.discordobjects.wrappers.Guild;
-import com.github.kaaz.emily.discordobjects.wrappers.Role;
-import com.github.kaaz.emily.discordobjects.wrappers.User;
+import com.github.kaaz.emily.discordobjects.wrappers.*;
 
 /**
  * The enum to represent a type of configurable object.
@@ -13,6 +10,8 @@ import com.github.kaaz.emily.discordobjects.wrappers.User;
  * @since 2.0.0
  */
 public enum ConfigLevel {
+    /** The type for audio tracks */
+    TRACK(Track.class),
     /** The type for a user's config */
     USER(User.class),
     /** The type for a channel's config */

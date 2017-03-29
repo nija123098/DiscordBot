@@ -57,7 +57,7 @@ public class ServiceHandler {
                         }
                     }, "Service-Handler-Thread-" + mayBlockCount.incrementAndGet());
                     thread.setDaemon(true);
-                    thread.run();
+                    thread.start();
                 } else {
                     NORMAL_SERVICES.put(service, service.getDelayBetween());
                 }
@@ -92,7 +92,7 @@ public class ServiceHandler {
             }
         }, "Service-Handler-Thread-0");
         thread.setDaemon(true);
-        thread.run();
+        thread.start();
     }
 
     /**

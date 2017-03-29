@@ -16,9 +16,9 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * Made by nija123098 on 3/7/2017.
  */
-public class Role implements Configurable<Role>{
+public class Role implements Configurable{
     private static final Map<String, Role> MAP = new ConcurrentHashMap<>();
-    static Role getRole(String id){
+    public static Role getRole(String id){
         return getRole(DiscordClient.getRoleByID(id).role());
     }
     static Role getRole(IRole guild){

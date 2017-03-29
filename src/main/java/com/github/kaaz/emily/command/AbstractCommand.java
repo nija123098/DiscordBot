@@ -235,7 +235,7 @@ public abstract class AbstractCommand {
      * @param clazz the configurable type
      * @return the cool down in millis dependent on the tyoe
      */
-    protected long getCoolDown(Class<? extends Configurable<?>> clazz){
+    protected long getCoolDown(Class<? extends Configurable> clazz){
         return -1;
     }
 

@@ -108,7 +108,7 @@ public class AbstractConfig<I, E, T extends Configurable> {// interior, exterior
      *                     setting is being gotten for
      * @return the config's value
      */
-    I getValue(T configurable){
+    I getValue(T configurable){// slq here as well
         return null;
     }
     E getExteriorValue(T configurable){

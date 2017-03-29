@@ -2,10 +2,12 @@ package com.github.kaaz.emily.util;
 
 import org.eclipse.jetty.util.ConcurrentHashSet;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -59,13 +61,14 @@ public class TypeTranslator {
     }
     static {
         add(String.class, Boolean.class, (s, b) -> s.equals("!") ? !b : s.equals("true") || s.equals("yes") || s.equals("1"), (bool, s) -> bool ? "true" : "false");
+        add(String.class, File.class, (p, f) -> new File(p), (f, s) -> f.getPath());
         add(Set.class, String.class, (set, s) -> {
             final StringBuilder builder = new StringBuilder("");
             set.forEach(o -> builder.append(o).append(", "));
             return builder.toString();
         }, (s, c) -> {
             String[] parts = s.split(" ");
-            String[] strings = parts[1].split(", ");
+            String[] strings = parts[1].split(",");
             switch (parts[0]){
                 case "set":
                     Set<String> setSet = new ConcurrentHashSet<>();
@@ -85,6 +88,41 @@ public class TypeTranslator {
                     return setRemove;
             }
             throw new UnsupportedOperationException("No operation: " + strings[0]);
+        });
+        add(Map.class, String.class, (m, s) -> {
+            final StringBuilder builder = new StringBuilder("set ");
+            m.forEach((s0, s1) -> builder.append("|").append(s0).append(",").append(s1));
+            return builder.toString();
+        }, (s, m) -> {
+            String[] parts = s.split(" ");
+            if (parts.length == 1){
+                return new ConcurrentHashMap();
+            }
+            String[] strings = parts[1].split("|");
+            switch (parts[0]){
+                case "set":
+                    Map<String, String> setMap = new ConcurrentHashMap<>();
+                    String[] set;
+                    for (String st : strings){
+                        set = st.split(",");
+                        setMap.put(set[0], set[1]);
+                    }
+                    return setMap;
+                case "put":
+                    Map<String, String> putMap = new ConcurrentHashMap<>(m);
+                    for (String part : parts){
+                        String[] strs = part.split(",");
+                        putMap.put(strs[0], strs[1]);
+                    }
+                    return putMap;
+                case "remove":
+                    Map<String, String> removeMap = new ConcurrentHashMap<>(m);
+                    for (String part : parts){
+                        removeMap.remove(part);
+                    }
+                    return removeMap;
+            }
+            throw new UnsupportedOperationException("No operation: " + parts[0]);
         });
     }
     @FunctionalInterface

@@ -5,7 +5,6 @@ import com.github.kaaz.emily.util.Log;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -35,10 +34,7 @@ public class EventDistributor {
             }
         });
     }
-    public static <E extends BotEvent> void distribute(Supplier<E> supplier){
-        distribute((Class<E>) ((ParameterizedType) supplier.getClass().getGenericSuperclass()).getActualTypeArguments()[0], supplier);
-    }
-    private static <E extends BotEvent> void distribute(Class clazz, Supplier<E> supplier){
+    public static <E extends BotEvent> void distribute(Class clazz, Supplier<E> supplier){
         if (clazz == null){
             return;
         }

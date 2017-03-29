@@ -65,7 +65,7 @@ public class DiscordAdapter {
     public static void handle(Event event){
         Constructor<BotEvent> constructor = EVENT_MAP.get(event);
         if (constructor != null) {
-            EventDistributor.distribute(() -> {
+            EventDistributor.distribute(constructor.getDeclaringClass(), () -> {
                 try {
                     return constructor.newInstance(event);
                 } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {

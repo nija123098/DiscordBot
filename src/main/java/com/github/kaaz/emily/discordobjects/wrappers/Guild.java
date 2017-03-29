@@ -3,8 +3,8 @@ package com.github.kaaz.emily.discordobjects.wrappers;
 import com.github.kaaz.emily.config.ConfigLevel;
 import com.github.kaaz.emily.config.Configurable;
 import com.github.kaaz.emily.discordobjects.exception.ErrorWrapper;
+import com.github.kaaz.emily.discordobjects.helpers.GuildAudioManager;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
-import sx.blah.discord.handle.audio.IAudioManager;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IRole;
 
@@ -17,15 +17,15 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * Made by nija123098 on 2/20/2017.
  */
-public class Guild implements Configurable<Guild> {
+public class Guild implements Configurable {
     private static final Map<String, Guild> MAP = new MemoryManagementService.ManagedMap<>(180000);
-    static Guild getGuild(String id){
+    public static Guild getGuild(String id){
         return MAP.computeIfAbsent(id, s -> new Guild(DiscordClient.client().getGuildByID(id)));
     }
-    static Guild getGuild(IGuild guild){
+    public static Guild getGuild(IGuild guild){
         return MAP.computeIfAbsent(guild.getID(), s -> new Guild(guild));
     }
-    static List<Guild> getGuilds(List<IGuild> iGuilds){
+    public static List<Guild> getGuilds(List<IGuild> iGuilds){
         List<Guild> list = new ArrayList<>(iGuilds.size());
         iGuilds.forEach(guild -> list.add(getGuild(guild)));
         return list;
@@ -37,7 +37,7 @@ public class Guild implements Configurable<Guild> {
     private Guild(IGuild guild) {
         this.reference = new AtomicReference<>(guild);
     }
-    IGuild guild(){
+    public IGuild guild(){
         return this.reference.get();
     }
     @Override
@@ -257,8 +257,8 @@ public class Guild implements Configurable<Guild> {
         return guild().isDeleted();
     }
 
-    public IAudioManager getAudioManager() {
-        return null;// TODO
+    public GuildAudioManager getAudioManager() {
+        return GuildAudioManager.getManager(this);
     }
 
     public LocalDateTime getJoinTimeForUser(User user) {

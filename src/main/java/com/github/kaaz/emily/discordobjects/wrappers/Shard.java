@@ -7,13 +7,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
 
 /**
  * Made by nija123098 on 2/27/2017.
  */
 public class Shard {
-    private static final Map<String, Shard> MAP = new ConcurrentHashMap<>();
+    private static final Map<String, Shard> MAP = new ConcurrentHashMap<>();// never clear
     static Shard getShard(IShard shard){
         return MAP.computeIfAbsent(shard.getInfo()[0] + "", s -> new Shard(shard));
     }
@@ -33,7 +32,7 @@ public class Shard {
     }
 
     //WRAPPER METHODS
-    public int shardID(){
+    public int getID(){
         return shard().getInfo()[0];
     }
 

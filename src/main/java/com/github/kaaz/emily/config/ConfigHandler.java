@@ -1,13 +1,13 @@
 package com.github.kaaz.emily.config;
 
+import com.github.kaaz.emily.discordobjects.wrappers.*;
 import com.github.kaaz.emily.util.Holder;
 import com.github.kaaz.emily.util.Log;
 import org.reflections.Reflections;
 
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 /**
  * The handler for configs values and configurables.
@@ -22,6 +22,7 @@ import java.util.Set;
 public class ConfigHandler {
     private static final Map<Class<? extends AbstractConfig>, AbstractConfig<?, ?, ? extends Configurable>> CLASS_MAP;
     private static final Map<String, AbstractConfig<?, ?, ? extends Configurable>> STRING_MAP;
+    private static final Map<Class<? extends Configurable>, Function<String, ? extends Configurable>> FUNCTION_MAP = new ConcurrentHashMap<>(7);
     static {
         CLASS_MAP = new HashMap<>();
         STRING_MAP = new HashMap<>();
@@ -38,6 +39,20 @@ public class ConfigHandler {
                 }
             });
         });
+        add(Track.class, Track::getTrack);
+        add(User.class, User::getUser);
+        add(Channel.class, Channel::getChannel);
+        add(Configurable.GuildUser.class, s -> {
+            String[] idParts = s.split("-");
+            return Configurable.getGuildUser(Guild.getGuild(idParts[0]), User.getUser(idParts[1]));
+        });
+        add(Role.class, Role::getRole);
+        add(Guild.class, Guild::getGuild);
+        add(Configurable.GlobalConfigurable.class, s -> Configurable.GlobalConfigurable.GLOBAL);
+    }
+
+    private static <T extends Configurable> void add(Class<T> type, Function<String, ? extends Configurable> function){
+        FUNCTION_MAP.put(type, function);
     }
 
     /**
@@ -209,5 +224,61 @@ public class ConfigHandler {
         } else {
             return null;
         }
+    }
+
+    /**
+     * Gets the count of that type according to database memory
+     *
+     * @param type the type of instance to get the count for
+     * @return the count of the type instances
+     */
+    public static long getTypeCount(Class<? extends Configurable> type){
+        return 0;// todo
+    }
+
+    /**
+     * Gets a function to get a instance
+     * of the specified type from the id
+     *
+     * @param type the class type to get the function for
+     * @param <T> the configurable type
+     * @return the function to get a instance of the type from an id
+     */
+    public static <T extends Configurable> Function<String, T> getIDFunction(Class<T> type){
+        return (Function<String, T>) FUNCTION_MAP.get(type);
+    }
+
+    /**
+     * Gets the list of the type starting at the index
+     * and with the next count of elements specified by size
+     *
+     * @param type the type of
+     * @param start the start index of the type
+     * @param size the size of the list to get instances of
+     * @param <T> the configurable type
+     * @return a list of the configurable types
+     * starting with the start index and ending
+     * with the start index plus size
+     */
+    public static <T extends Configurable> List<T> getTypeInstances(Class<T> type, long start, int size){
+        List<T> list = new ArrayList<>(size);
+        Function<String, T> function = getIDFunction(type);
+        getTypeIDs(type, start, size).forEach(s -> list.add(function.apply(s)));
+        return list;
+    }
+
+    /**
+     * Gets the list of the type starting at the index
+     * and with the next count of elements specified by size
+     *
+     * @param type the type of
+     * @param start the start index of the type
+     * @param size the size of the list to get instances of
+     * @return a list of the string ids to the
+     * type starting with the start index and
+     * ending with the start index plus size
+     */
+    public static List<String> getTypeIDs(Class<? extends Configurable> type, long start, int size){
+        return null;// todo
     }
 }
