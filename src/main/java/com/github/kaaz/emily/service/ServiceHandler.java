@@ -100,15 +100,4 @@ public class ServiceHandler {
     public static void initialize(){
         Log.log("Service Handler initialized");
     }
-
-    /**
-     * The method to call to initialize
-     * service handling.  If the class
-     * initializer throws an exception the
-     * thread that calls this method will
-     * handle (or not).
-     */
-    public static void init(){
-        Log.log("ServiceHandler initialized successfully");
-    }
 }

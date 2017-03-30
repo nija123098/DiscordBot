@@ -11,14 +11,10 @@ import com.github.kaaz.emily.perms.BotRole;
  */
 public class PingCommand extends AbstractSuperCommand {
     public PingCommand() {
-        super("ping", BotRole.BOT_OWNER, new String[]{}, new String[]{});
-    }
-    @Override
-    public ModuleLevel getModule() {
-        return ModuleLevel.NONE;
+        super("ping", ModuleLevel.NONE, BotRole.BOT_ADMIN, null, null);
     }
     @Command
     public void command(MessageHelper helper){
-        helper.appendTranslation("ping").send();
+        helper.appendTranslation("ping");
     }
 }

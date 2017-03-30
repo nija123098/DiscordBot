@@ -23,10 +23,15 @@ import java.util.Set;
 public abstract class AbstractSubCommand extends AbstractCommand {
     private AbstractSuperCommand superCommand;
     private Set<String> relativeAliases;
-    public AbstractSubCommand(String name, BotRole botRole, String[] absoluteAliases, String[] emoticonAliases, String[] relativeAliases) {
+    public AbstractSubCommand(String name, BotRole botRole, String absoluteAliases, String emoticonAliases, String relativeAliases) {
         super(name, botRole, absoluteAliases, emoticonAliases);
-        this.relativeAliases = new HashSet<>(relativeAliases.length);
-        Collections.addAll(this.relativeAliases, relativeAliases);
+        if (relativeAliases != null){
+            String[] rAliases = relativeAliases.split(", ");
+            this.relativeAliases = new HashSet<>(rAliases.length);
+            Collections.addAll(this.relativeAliases, rAliases);
+        }else{
+            this.relativeAliases = new HashSet<>(0);
+        }
     }
 
     /**
@@ -38,9 +43,12 @@ public abstract class AbstractSubCommand extends AbstractCommand {
     void setSuperCommand(AbstractSuperCommand superCommand){
         this.superCommand = superCommand;
         this.name = this.superCommand.name + " " + this.name;
-        Set<String> relativeAliases = new HashSet<>(this.relativeAliases);
-        this.superCommand.getAbsoluteAliases().forEach(abs -> relativeAliases.forEach(rel -> this.relativeAliases.add(abs + " " + rel)));
+        this.getNames().add(this.name);
+        this.superCommand.getNames().forEach(abs -> new HashSet<>(this.relativeAliases).forEach(rel -> this.relativeAliases.add(abs + " " + rel)));
         this.getNames().addAll(this.relativeAliases);
+        if (this.botRole == null){
+            this.botRole = superCommand.botRole;
+        }
     }
 
     /**
@@ -56,6 +64,6 @@ public abstract class AbstractSubCommand extends AbstractCommand {
     }
     @Override
     public ModuleLevel getModule() {
-        return superCommand.getModule();
+        return this.superCommand.getModule();
     }
 }

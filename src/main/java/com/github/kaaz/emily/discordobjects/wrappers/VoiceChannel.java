@@ -21,7 +21,7 @@ public class VoiceChannel extends Channel {
         iVoiceChannel.forEach(iUser -> users.add(getVoiceChannel(iUser)));
         return users;
     }
-    private VoiceChannel(IVoiceChannel channel) {
+    VoiceChannel(IVoiceChannel channel) {
         super(channel);
     }
     public IVoiceChannel channel(){

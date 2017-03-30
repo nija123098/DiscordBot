@@ -5,6 +5,8 @@ import com.github.kaaz.emily.config.Configurable;
 import com.github.kaaz.emily.discordobjects.exception.ErrorWrapper;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
 import sx.blah.discord.handle.obj.IChannel;
+import sx.blah.discord.handle.obj.IPrivateChannel;
+import sx.blah.discord.handle.obj.IVoiceChannel;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -25,7 +27,7 @@ public class Channel implements Configurable {
         return getChannel(channel);
     }
     static Channel getChannel(IChannel channel){
-        return MAP.computeIfAbsent(channel.getID(), s -> new Channel(channel));
+        return MAP.computeIfAbsent(channel.getID(), s -> channel.isPrivate() ? new DirectChannel((IPrivateChannel) channel) : channel instanceof IVoiceChannel ? new VoiceChannel((IVoiceChannel) channel) : new Channel(channel));
     }
     static List<Channel> getChannels(List<IChannel> iChannels){
         List<Channel> channels = new ArrayList<>(iChannels.size());

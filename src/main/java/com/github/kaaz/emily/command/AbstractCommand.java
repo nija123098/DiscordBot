@@ -3,17 +3,10 @@ package com.github.kaaz.emily.command;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.Configurable;
 import com.github.kaaz.emily.config.configs.guild.GuildSpecialPermsEnabledConfig;
-import com.github.kaaz.emily.config.configs.role.PermsCommandBlacklistConfig;
-import com.github.kaaz.emily.config.configs.role.PermsCommandWhitelistConfig;
-import com.github.kaaz.emily.config.configs.role.PermsModuleWhitelistConfig;
-import com.github.kaaz.emily.config.configs.role.PermsModuleWhitelistExemptionsConfig;
-import com.github.kaaz.emily.config.configs.role.SpecialPermsRoleEnable;
-import com.github.kaaz.emily.discordobjects.wrappers.Channel;
-import com.github.kaaz.emily.discordobjects.wrappers.Guild;
-import com.github.kaaz.emily.discordobjects.wrappers.Message;
-import com.github.kaaz.emily.discordobjects.wrappers.Reaction;
-import com.github.kaaz.emily.discordobjects.wrappers.Role;
-import com.github.kaaz.emily.discordobjects.wrappers.User;
+import com.github.kaaz.emily.config.configs.role.*;
+import com.github.kaaz.emily.discordobjects.helpers.MessageHelper;
+import com.github.kaaz.emily.discordobjects.wrappers.*;
+import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
 import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
 import com.github.kaaz.emily.util.Log;
@@ -24,6 +17,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * The representative class for a command
@@ -41,22 +35,32 @@ import java.util.Set;
  */
 public abstract class AbstractCommand {
     String name;
+    BotRole botRole;
     private Method method;
     private Class<?>[] argsTypes;
-    private BotRole botRole;
     private Set<String> absoluteAliases, emoticonAliases, allNames;
     private long globalUseTime, globalCoolDownTime;
     private List<Guild> guildCoolDowns;
     private List<Channel> channelCoolDowns;
     private List<User> userCoolDowns;
     private List<Configurable.GuildUser> guildUserCoolDowns;
-    AbstractCommand(String name, BotRole botRole, String[] absoluteAliases, String[] emoticonAliases){
+    AbstractCommand(String name, BotRole botRole, String absoluteAliases, String emoticonAliases){
         this.name = name;
         this.botRole = botRole;
-        this.absoluteAliases = new HashSet<>(absoluteAliases.length);
-        Collections.addAll(this.absoluteAliases, absoluteAliases);
-        this.emoticonAliases = new HashSet<>(emoticonAliases.length);
-        Collections.addAll(this.emoticonAliases, emoticonAliases);
+        if (absoluteAliases != null){
+            String[] aAliases = absoluteAliases.split(", ");
+            this.absoluteAliases = new HashSet<>(aAliases.length);
+            Collections.addAll(this.absoluteAliases, aAliases);
+        }else{
+            this.absoluteAliases = new HashSet<>(0);
+        }
+        if (emoticonAliases != null){
+            String[] eAliases = emoticonAliases.split(", ");
+            this.emoticonAliases = new HashSet<>(eAliases.length);
+            Collections.addAll(this.emoticonAliases, eAliases);
+        }else{
+            this.emoticonAliases = new HashSet<>(0);
+        }
         Method[] methods = this.getClass().getMethods();
         for (Method m : methods) {
             if (m.isAnnotationPresent(Command.class)) {
@@ -70,11 +74,12 @@ public abstract class AbstractCommand {
         }
         this.argsTypes = this.method.getParameterTypes();
         this.allNames = new HashSet<>(this.absoluteAliases.size() + this.emoticonAliases.size() + 1);
-        this.allNames.add(this.name);
+        if (this instanceof AbstractSuperCommand){
+            this.allNames.add(this.name);
+        }
         this.allNames.addAll(this.absoluteAliases);
         this.allNames.addAll(this.emoticonAliases);
         this.globalCoolDownTime = this.getCoolDown(Configurable.GlobalConfigurable.class);
-        // this.globalUseTime = 0;
         long persistence = this.getCoolDown(Guild.class);
         if (persistence != -1){
             this.guildCoolDowns = new MemoryManagementService.ManagedList<>(persistence);
@@ -91,6 +96,7 @@ public abstract class AbstractCommand {
         if (persistence != -1){
             this.guildUserCoolDowns = new MemoryManagementService.ManagedList<>(persistence);
         }
+        EventDistributor.register(this);
     }
 
     /**
@@ -247,8 +253,11 @@ public abstract class AbstractCommand {
      * @return if the command was successful
      */
     protected boolean invoke(User user, Message message, Reaction reaction, String args){
+        Object[] objects = InvocationObjectGetter.replace(this.argsTypes, new Object[this.argsTypes.length], user, message, reaction, args);
         try {
-            return this.method.invoke(this, InvocationObjectGetter.replace(this.argsTypes, new Object[this.argsTypes.length], user, message, reaction, args)) == null;
+            boolean success = this.method.invoke(this, objects) == null;
+            Stream.of(objects).filter(MessageHelper.class::isInstance).forEach(o -> ((MessageHelper) o).send());
+            return success;
         } catch (IllegalAccessException e) {
             Log.log("Malformed command: " + getName(), e);
         } catch (InvocationTargetException e) {

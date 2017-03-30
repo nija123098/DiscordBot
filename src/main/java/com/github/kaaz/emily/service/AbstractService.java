@@ -1,5 +1,7 @@
 package com.github.kaaz.emily.service;
 
+import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
+
 /**
  * The general class to be extended for any service.
  *
@@ -29,6 +31,7 @@ public abstract class AbstractService implements Runnable {
      */
     public AbstractService(long delayBetween) {
         this.delayBetween = delayBetween;
+        EventDistributor.register(this);
     }
 
     /**

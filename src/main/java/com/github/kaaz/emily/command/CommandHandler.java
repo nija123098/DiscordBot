@@ -60,10 +60,11 @@ public class CommandHandler {
         CLASS_MAP.forEach((clazz, command) -> command.getNames().forEach(s -> {// todo optimize memory as well
             String[] strings = s.split(" ");
             Map map = COMMANDS_MAP;
-            for (int i = 0; i < strings.length; i++) {
-                map = (Map<String, Object>) map.computeIfAbsent(strings[i], st -> new HashMap(2));
+            for (String string : strings) {
+                map = (Map<String, Object>) map.computeIfAbsent(string, st -> new HashMap(2));
             }
             map.put("", command);
+            System.out.println("\"" + s + "\"");
         }));
         EventDistributor.register(CommandHandler.class);
     }
@@ -127,11 +128,16 @@ public class CommandHandler {
         if (index == -1){
             return null;
         }
-        String builder = in;
-        for (int i = 0; i < index; i++) {
-            builder = builder.substring(builder.indexOf(' ') + strings[i].length());
+        for (int i = 0; i < index; ++i) {
+            in = in.substring(strings[i].length());
+            while (true){
+                if (!in.startsWith(" ")){
+                    break;
+                }
+                in = in.substring(1);
+            }
         }
-        return new Pair<>(command, cutCommand(builder.substring(builder.indexOf(' ') + 1)));
+        return new Pair<>(command, in);
     }
 
     /**
@@ -171,6 +177,8 @@ public class CommandHandler {
                     }
                     string = string.substring(1);
                 }
+            }else{
+                return;
             }
         }
         AbstractCommand command;

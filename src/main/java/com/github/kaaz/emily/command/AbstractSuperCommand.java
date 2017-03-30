@@ -19,7 +19,13 @@ import com.github.kaaz.emily.perms.BotRole;
  * @see AbstractCommand
  */
 public abstract class AbstractSuperCommand extends AbstractCommand {
-    public AbstractSuperCommand(String name, BotRole botRole, String[] absoluteAliases, String[] emoticonAliases) {
+    private ModuleLevel module;
+    public AbstractSuperCommand(String name, ModuleLevel module, BotRole botRole, String absoluteAliases, String emoticonAliases) {
         super(name, botRole, absoluteAliases, emoticonAliases);
+        this.module = module;
+    }
+    @Override
+    public ModuleLevel getModule(){
+        return this.module;
     }
 }
