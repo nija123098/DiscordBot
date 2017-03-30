@@ -39,6 +39,7 @@ public class ConfigHandler {
             }
         });
         add(Track.class, Track::getTrack);
+        add(Playlist.class, Playlist::getPlaylist);
         add(User.class, User::getUser);
         add(Channel.class, Channel::getChannel);
         add(Configurable.GuildUser.class, s -> {

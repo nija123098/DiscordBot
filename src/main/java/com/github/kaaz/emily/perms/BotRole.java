@@ -25,7 +25,8 @@ public enum BotRole {
     GUILD_ADMIN(true, (user, guild) -> hasRole(USER, user, guild) && user.getPermissionsForGuild(guild).contains(DiscordPermission.ADMINISTRATOR)),
     GUILD_OWNER(true, (user, guild) -> guild.getOwner().equals(user)),
     BOT_ADMIN(true, true, false),
-    BOT_OWNER(true, (user, guild) -> user.equals(DiscordClient.getApplicationOwner())),;
+    BOT_OWNER(true, (user, guild) -> user.equals(DiscordClient.getApplicationOwner())),
+    SYSTEM(true, (user, guild) -> false),;
     private boolean isTrueRank, isGlobalFlag, isGuildFlag;
     private BiPredicate<User, Guild> predicate;
     BotRole(boolean isTrueRank, BiPredicate<User, Guild> predicate) {

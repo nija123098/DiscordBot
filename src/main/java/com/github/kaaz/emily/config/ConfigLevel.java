@@ -12,6 +12,8 @@ import com.github.kaaz.emily.discordobjects.wrappers.*;
 public enum ConfigLevel {
     /** The type for audio tracks */
     TRACK(Track.class),
+    /** The type for any playlist type */
+    PLAYLIST(Playlist.class),
     /** The type for a user's config */
     USER(User.class),
     /** The type for a channel's config */
