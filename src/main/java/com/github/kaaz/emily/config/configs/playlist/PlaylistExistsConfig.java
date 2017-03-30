@@ -7,7 +7,7 @@ import com.github.kaaz.emily.perms.BotRole;
 /**
  * Made by nija123098 on 3/30/2017.
  */
-public class PlaylistExistsConfig extends AbstractConfig<Boolean, Boolean, Playlist> {
+public class PlaylistExistsConfig extends AbstractConfig<Boolean, Playlist> {
     public PlaylistExistsConfig() {
         super("playlist_exists", BotRole.BOT_ADMIN, false, "If a playlist exists");
     }

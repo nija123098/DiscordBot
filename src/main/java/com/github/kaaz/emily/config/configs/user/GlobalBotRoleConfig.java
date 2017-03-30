@@ -10,7 +10,7 @@ import java.util.Set;
 /**
  * Made by nija123098 on 2/22/2017.
  */
-public class GlobalBotRoleConfig extends AbstractConfig<Set<String>, Set<String>, User> {
+public class GlobalBotRoleConfig extends AbstractConfig<Set<String>, User> {
     public GlobalBotRoleConfig() {
         super("global_flag_ranks", BotRole.BOT_OWNER, new HashSet<>(0), "The config for if an user is a contributor to the bot");
     }

@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Made by nija123098 on 3/25/2017.
  */
-public class PermsModuleBlacklistExemptionsConfig extends AbstractConfig<List<String>, List<String>, Role>{
+public class PermsModuleBlacklistExemptionsConfig extends AbstractConfig<List<String>, Role>{
     public PermsModuleBlacklistExemptionsConfig() {
         super("special_perms_module_blacklist_exemptions", BotRole.GUILD_TRUSTEE, new ArrayList<>(0), "");
     }

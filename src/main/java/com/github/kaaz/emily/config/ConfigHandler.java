@@ -23,8 +23,8 @@ import java.util.function.Function;
  * @see Configurable
  */
 public class ConfigHandler {
-    private static final Map<Class<? extends AbstractConfig>, AbstractConfig<?, ?, ? extends Configurable>> CLASS_MAP;
-    private static final Map<String, AbstractConfig<?, ?, ? extends Configurable>> STRING_MAP;
+    private static final Map<Class<? extends AbstractConfig>, AbstractConfig<?, ? extends Configurable>> CLASS_MAP;
+    private static final Map<String, AbstractConfig<?, ? extends Configurable>> STRING_MAP;
     private static final Map<Class<? extends Configurable>, Function<String, ? extends Configurable>> FUNCTION_MAP = new ConcurrentHashMap<>(7);
     static {
         CLASS_MAP = new HashMap<>();
@@ -68,7 +68,7 @@ public class ConfigHandler {
      * @param configName the config name for the config being gotten
      * @return the object representing the config that is being searched for
      */
-    public static AbstractConfig<?, ?, ? extends Configurable> getConfig(ConfigLevel level, String configName){
+    public static AbstractConfig<?, ? extends Configurable> getConfig(ConfigLevel level, String configName){
         return STRING_MAP.get(configName);
     }
 
@@ -78,7 +78,7 @@ public class ConfigHandler {
      * @param clazz the class object of the config
      * @return the config that is being represented by the given class
      */
-    public static <E extends AbstractConfig<?, ?, ? extends Configurable>> E getConfig(Class<E> clazz){
+    public static <E extends AbstractConfig<?, ? extends Configurable>> E getConfig(Class<E> clazz){
         Object e = CLASS_MAP.get(clazz);
         if (e != null){
             return (E) e;
@@ -93,7 +93,7 @@ public class ConfigHandler {
      * @param configurable the configurable the config is to be set for
      * @param value the value the config is being set at
      */
-    public static <C extends AbstractConfig<I, E, T>, E, I, T extends Configurable> void setExteriorSetting(Class<C> clazz, T configurable, E value){
+    public static <C extends AbstractConfig<I, T>, I, T extends Configurable> void setExteriorSetting(Class<C> clazz, T configurable, String value){
         getConfig(clazz).setExteriorValue(configurable, value);
     }
 
@@ -104,7 +104,7 @@ public class ConfigHandler {
      * @param configurable the configurable the config is to be set for
      * @param value the value the config is being set at
      */
-    public static <I, E, T extends Configurable> void setSetting(Class<? extends AbstractConfig<I, E, T>> clazz, T configurable, I value){
+    public static <I, T extends Configurable> void setSetting(Class<? extends AbstractConfig<I, T>> clazz, T configurable, I value){
         getConfig(clazz).setValue(configurable, value);
     }
 
@@ -138,7 +138,7 @@ public class ConfigHandler {
      * @param value the value to be set
      * @return if the value is set
      */
-    public static boolean setExteriorSetting(String configName, Configurable configurable, Object value){
+    public static boolean setExteriorSetting(String configName, Configurable configurable, String value){
         AbstractConfig config = getConfig(configurable.getConfigLevel(), configName);
         if (config != null){
             try {
@@ -160,7 +160,7 @@ public class ConfigHandler {
      *                     is to be set for
      * @return the value of the config for the configurable
      */
-    public static <I, T extends Configurable> I getSetting(Class<? extends AbstractConfig<I, ?, T>> clazz, T configurable){
+    public static <I, T extends Configurable> I getSetting(Class<? extends AbstractConfig<I, T>> clazz, T configurable){
         return getConfig(clazz).getValue(configurable);
     }
 
@@ -172,7 +172,7 @@ public class ConfigHandler {
      *                     is to be set for
      * @return the value of the config for the configurable
      */
-    public static <I, E, T extends Configurable> E getExteriorSetting(Class<? extends AbstractConfig<I, E, T>> clazz, T configurable){
+    public static <I, T extends Configurable> String getExteriorSetting(Class<? extends AbstractConfig<I, T>> clazz, T configurable){
         return getConfig(clazz).getExteriorValue(configurable);
     }
 
@@ -186,13 +186,13 @@ public class ConfigHandler {
      * @return the value of the config for the configurable
      */
     @SafeVarargs
-    public static <E> E getSetting(String configName, Configurable configurable, Holder<E>...holder){
+    public static <V> V getSetting(String configName, Configurable configurable, Holder<V>...holder){
         AbstractConfig config = getConfig(configurable.getConfigLevel(), configName);
         if (config != null){
             try {
                 Object o = config.getValue(configurable);
-                Holder.fillOptional((E) o, holder);
-                return (E) o;
+                Holder.fillOptional((V) o, holder);
+                return (V) o;
             } catch (ClassCastException e){
                 throw new RuntimeException("Attempted to get a value with the wrong holder type for the config: " + config.getName(), e);
             }
@@ -207,17 +207,13 @@ public class ConfigHandler {
      * @param configName the name of the config to be gotten
      * @param configurable the configurable that the config value
      *                     is to be gotten for
-     * @param holder the holder
      * @return the value of the config for the configurable
      */
-    @SafeVarargs
-    public static <E> E getExteriorSetting(String configName, Configurable configurable, Holder<E>...holder){
+    public static String getExteriorSetting(String configName, Configurable configurable){
         AbstractConfig config = getConfig(configurable.getConfigLevel(), configName);
         if (config != null){
             try {
-                E o = (E) config.getExteriorValue(configurable);
-                Holder.fillOptional(o, holder);
-                return o;
+                return config.getExteriorValue(configurable);
             } catch (ClassCastException e){
                 throw new RuntimeException("Attempted to get a value with the wrong holder type for the config: " + config.getName(), e);
             }

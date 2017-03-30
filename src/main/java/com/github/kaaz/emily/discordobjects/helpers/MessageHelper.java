@@ -1,12 +1,14 @@
 package com.github.kaaz.emily.discordobjects.helpers;
 
+import com.github.kaaz.emily.config.ConfigHandler;
+import com.github.kaaz.emily.config.configs.guild.GuildLanguageConfig;
+import com.github.kaaz.emily.config.configs.user.UserLanguageConfig;
 import com.github.kaaz.emily.discordobjects.exception.ErrorWrapper;
 import com.github.kaaz.emily.discordobjects.exception.MissingPermException;
 import com.github.kaaz.emily.discordobjects.wrappers.Channel;
 import com.github.kaaz.emily.discordobjects.wrappers.DiscordClient;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.github.kaaz.emily.util.LangString;
-import sx.blah.discord.util.EmbedBuilder;
 import sx.blah.discord.util.MessageBuilder;
 
 import java.io.File;
@@ -70,7 +72,14 @@ public class MessageHelper {
             ErrorWrapper.wrap(() -> new MessageBuilder(DiscordClient.client()).withChannel(this.channel.channel()).withContent(this.user.mention() + " check your DMs").send());
         }
         try {
-            String message = this.message.asBuilt();// todo translate
+            String lang = ConfigHandler.getSetting(UserLanguageConfig.class, this.user);
+            if (lang == null && this.channel.getGuild() != null){
+                lang = ConfigHandler.getSetting(GuildLanguageConfig.class, this.channel.getGuild());
+            }
+            if (lang == null){
+                lang = "en";
+            }
+            String message = this.message.translate(lang);
             MessageBuilder builder = new MessageBuilder(DiscordClient.client()).withChannel(this.channel.channel()).withContent(message).withTTS(tts);
             if (this.file != null) {
                 try {

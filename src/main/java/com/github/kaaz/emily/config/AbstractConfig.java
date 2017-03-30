@@ -8,28 +8,26 @@ import java.lang.reflect.Type;
 /**
  * @author nija123098
  * @since 2.0.0
- * @param <I> The stored type of the config within the database
+ * @param <V> The stored type of the config within the database
  * @param <E> The external value of a config before processing it to the stored type
  * @param <T> The type of config that this config defines
  *
  */
-public class AbstractConfig<I, E, T extends Configurable> {// interior, exterior, type
-    private I defaul;
+public class AbstractConfig<V, T extends Configurable> {// interior, exterior, type
+    private V defaul;
     private String name, description;
     private BotRole botRole;
     private ConfigLevel configLevel;
-    private Class<I> internalType;
-    private Class<E> exteriorType;
+    private Class<V> internalType;
     private Class<T> configurableType;
-    public AbstractConfig(String name, BotRole botRole, I defaul, String description) {
+    public AbstractConfig(String name, BotRole botRole, V defaul, String description) {
         this.name = name;
         this.botRole = botRole;
         this.defaul = defaul;
         this.description = description;
         Type[] types = TypeTranslator.getRawClasses(this.getClass());
-        this.internalType = (Class<I>) types[0];
-        this.exteriorType = (Class<E>) types[1];
-        this.configurableType = (Class<T>) types[2];
+        this.internalType = (Class<V>) types[0];
+        this.configurableType = (Class<T>) types[1];
         this.configLevel = ConfigLevel.getLevel(this.configurableType);
     }
 
@@ -65,7 +63,7 @@ public class AbstractConfig<I, E, T extends Configurable> {// interior, exterior
      *
      * @return the default value of this config
      */
-    public I getDefault(){
+    public V getDefault(){
         return this.defaul;
     }
 
@@ -86,17 +84,17 @@ public class AbstractConfig<I, E, T extends Configurable> {// interior, exterior
     public ConfigLevel getConfigLevel(){
         return this.configLevel;
     }
-    public I wrapTypeIn(E e, T configurable){
+    public V wrapTypeIn(String e, T configurable){
         return TypeTranslator.translate(e, getValue(configurable));
     }
-    public E wrapTypeOut(I i, T configurable){// configurable may be used in over ride methods
-        return TypeTranslator.translate(i, this.exteriorType);
+    public String wrapTypeOut(V v, T configurable){// configurable may be used in over ride methods
+        return TypeTranslator.translate(v, String.class);
     }
-    void setExteriorValue(T configurable, E value){
+    void setExteriorValue(T configurable, String value){
         setValue(configurable, wrapTypeIn(value, configurable));
     }
     // TODO SQL stuff goes here, more or less
-    void setValue(T configurable, I value){
+    void setValue(T configurable, V value){
 
     }
 
@@ -107,10 +105,10 @@ public class AbstractConfig<I, E, T extends Configurable> {// interior, exterior
      *                     setting is being gotten for
      * @return the config's value
      */
-    I getValue(T configurable){// slq here as well
+    V getValue(T configurable){// slq here as well
         return this.getDefault();
     }
-    E getExteriorValue(T configurable){
+    String getExteriorValue(T configurable){
         return wrapTypeOut(getValue(configurable), configurable);
     }
 }

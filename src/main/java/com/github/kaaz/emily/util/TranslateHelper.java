@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * Made by nija123098 on 3/17/2017.
  */
-public class TranslateHelper {// <lang to, <content, translated content>>
+public class TranslateHelper {// <lang to, <content, translated content>>, todo move to LangString
     private static final Map<String, Map<String, String>> MAP = new HashMap<>();
     private static String call(String lang, String content) {
         try {
