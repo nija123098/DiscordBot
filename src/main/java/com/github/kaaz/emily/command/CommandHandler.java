@@ -10,11 +10,13 @@ import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventListener;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordMessageReceivedEvent;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordReactionEvent;
+import com.github.kaaz.emily.util.EmoticonHelper;
 import com.github.kaaz.emily.util.FormatHelper;
 import com.github.kaaz.emily.util.Log;
 import javafx.util.Pair;
 import org.reflections.Reflections;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -32,41 +34,45 @@ public class CommandHandler {
     private static final Map<String, AbstractCommand> REACTION_COMMAND_MAP = new HashMap<>();
     private static final Map<String, Object> COMMANDS_MAP = new HashMap<>();
     static {
-        Reflections reflections = new Reflections("com.github.kaaz.emily.command.commands");
-        Set<AbstractSuperCommand> superCommands = new HashSet<>();
-        Set<AbstractSubCommand> subCommands = new HashSet<>();
-        Set<Class<? extends AbstractCommand>> set = new HashSet<>();
-        set.addAll(reflections.getSubTypesOf(AbstractSuperCommand.class));
-        set.addAll(reflections.getSubTypesOf(AbstractSubCommand.class));
-        set.forEach(clazz -> {
-            try {
-                AbstractCommand command = clazz.newInstance();
-                if (command instanceof AbstractSuperCommand){
-                    superCommands.add((AbstractSuperCommand) command);
-                }else{
-                    subCommands.add((AbstractSubCommand) command);
-                }
-                command.getEmoticonAliases().forEach(s -> REACTION_COMMAND_MAP.put(s, command));
-                CLASS_MAP.put(clazz, command);
-            } catch (InstantiationException e) {
-                Log.log("Error while initializing command: " + clazz.getSimpleName(), e);
-            } catch (IllegalAccessException e) {
-                Log.log("Command improperly formed: " + clazz.getSimpleName(), e);
+        Map<Class<? extends AbstractCommand>, Set<Class<? extends AbstractCommand>>> typeMap = new HashMap<>();
+        new Reflections("com.github.kaaz.emily.command.commands").getSubTypesOf(AbstractCommand.class).forEach(clazz -> {
+            Class<?>[] cTypes = clazz.getConstructors()[0].getParameterTypes();
+            if (cTypes.length == 0){
+                typeMap.computeIfAbsent(null, c -> new HashSet<>()).add(clazz);
+            }else{
+                typeMap.computeIfAbsent((Class<? extends AbstractCommand>) cTypes[0], c -> new HashSet<>()).add(clazz);
             }
         });
-        Map<Package, AbstractSuperCommand> packageNameMap = new HashMap<>();
-        superCommands.forEach(command -> packageNameMap.put(command.getClass().getPackage(), command));
-        subCommands.forEach(command -> command.setSuperCommand(packageNameMap.get(command.getClass().getPackage())));
-        CLASS_MAP.forEach((clazz, command) -> command.getNames().forEach(s -> {// todo optimize memory as well
+        load(null, typeMap.get(null), typeMap);
+        CLASS_MAP.values().forEach(command -> command.getNames().forEach(s -> {
             String[] strings = s.split(" ");
             Map map = COMMANDS_MAP;
             for (String string : strings) {
                 map = (Map<String, Object>) map.computeIfAbsent(string, st -> new HashMap(2));
             }
             map.put("", command);
-            System.out.println("\"" + s + "\"");
         }));
         EventDistributor.register(CommandHandler.class);
+    }
+
+    private static <S extends AbstractCommand> void load(S superCommand, Set<Class<? extends AbstractCommand>> subCommands, Map<Class<? extends AbstractCommand>, Set<Class<? extends AbstractCommand>>> typeMap){
+        if (subCommands == null){
+            return;
+        }
+        subCommands.forEach(clazz -> {
+            try {
+                AbstractCommand command = superCommand == null ? clazz.newInstance() : (AbstractCommand) clazz.getConstructors()[0].newInstance(superCommand);
+                CLASS_MAP.put(clazz, command);
+                command.getEmoticonAliases().forEach(s -> REACTION_COMMAND_MAP.put(EmoticonHelper.getChars(s), command));
+                load(command, typeMap.get(command.getClass()), typeMap);
+            } catch (InstantiationException e) {
+                Log.log("Exception attempting to initialize command: " + clazz.getName(), e);
+            } catch (IllegalAccessException e) {
+                Log.log("Malformed root command: " + clazz.getName(), e);
+            } catch (InvocationTargetException e) {
+                Log.log("Exception while initializing command: " + clazz.getName(), e);
+            }
+        });
     }
 
     /**
@@ -182,7 +188,7 @@ public class CommandHandler {
             }
         }
         AbstractCommand command;
-        Pair<AbstractCommand, String> pair = reaction == null ? getMessageCommand(string) : ((command = getReactionCommand(reaction.getName())) == null ? null : new Pair<>(command, null));
+        Pair<AbstractCommand, String> pair = reaction == null ? getMessageCommand(string) : ((command = getReactionCommand(reaction.getChars())) == null ? null : new Pair<>(command, null));
         if (pair != null){
             if (!pair.getKey().hasPermission(user, message.getGuild())){
                 if (reaction == null){

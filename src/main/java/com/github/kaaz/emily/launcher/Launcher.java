@@ -13,12 +13,12 @@ import com.github.kaaz.emily.util.Log;
  */
 public class Launcher {
     static {
+        DiscordAdapter.initialize();
         TemplateHandler.initialize();
         InvocationObjectGetter.initialize();
         ConfigHandler.initialize();
         ServiceHandler.initialize();
         CommandHandler.initialize();
-        DiscordAdapter.initialize();
         Log.log("Bot finished initializing");
     }
     public static void main(String[] args) {

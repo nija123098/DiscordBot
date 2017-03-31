@@ -20,39 +20,31 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 /**
- * The representative class for a command
- * that is subclassed directly by
- * AbstractSubCommand and AbstractSuperCommand,
- * as well as all commands used by the robot.
- *
- * All invocation and identification of commands
- * are contained within this class.
- *
  * @author nija123098
  * @since 2.0.0
- * @see AbstractSubCommand
- * @see AbstractSuperCommand
  */
-public abstract class AbstractCommand {
-    String name;
-    BotRole botRole;
+public class AbstractCommand {
+    private final AbstractCommand superCommand;
+    private final String name;
+    private final BotRole botRole;// can not be private
+    private final ModuleLevel module;
     private Method method;
     private Class<?>[] argsTypes;
-    private Set<String> absoluteAliases, emoticonAliases, allNames;
+    private Set<String> emoticonAliases, allNames;
     private long globalUseTime, globalCoolDownTime;
     private List<Guild> guildCoolDowns;
     private List<Channel> channelCoolDowns;
     private List<User> userCoolDowns;
     private List<Configurable.GuildUser> guildUserCoolDowns;
-    AbstractCommand(String name, BotRole botRole, String absoluteAliases, String emoticonAliases){
-        this.name = name;
-        this.botRole = botRole;
+    public AbstractCommand(AbstractCommand superCommand, String name, ModuleLevel module, BotRole botRole, String absoluteAliases, String emoticonAliases, String relativeAliases){
+        this.superCommand = superCommand;
+        this.name = superCommand == null ? name : superCommand.name + " " + name;
+        this.module = superCommand == null ? module : module == null ? superCommand.module : module;
+        this.botRole = superCommand == null ? (botRole == null ? BotRole.USER : botRole) : botRole == null ? superCommand.botRole : botRole;
+        this.allNames = new HashSet<>();
+        this.allNames.add(this.name);
         if (absoluteAliases != null){
-            String[] aAliases = absoluteAliases.split(", ");
-            this.absoluteAliases = new HashSet<>(aAliases.length);
-            Collections.addAll(this.absoluteAliases, aAliases);
-        }else{
-            this.absoluteAliases = new HashSet<>(0);
+            Collections.addAll(this.allNames, absoluteAliases.split(", "));
         }
         if (emoticonAliases != null){
             String[] eAliases = emoticonAliases.split(", ");
@@ -60,6 +52,12 @@ public abstract class AbstractCommand {
             Collections.addAll(this.emoticonAliases, eAliases);
         }else{
             this.emoticonAliases = new HashSet<>(0);
+        }
+        this.allNames.addAll(this.emoticonAliases);
+        if (relativeAliases != null){
+            for (String rel : relativeAliases.split(", ")){
+                this.superCommand.getNames().forEach(s -> this.allNames.add(s + " " + rel));
+            }
         }
         Method[] methods = this.getClass().getMethods();
         for (Method m : methods) {
@@ -73,12 +71,6 @@ public abstract class AbstractCommand {
             return;
         }
         this.argsTypes = this.method.getParameterTypes();
-        this.allNames = new HashSet<>(this.absoluteAliases.size() + this.emoticonAliases.size() + 1);
-        if (this instanceof AbstractSuperCommand){
-            this.allNames.add(this.name);
-        }
-        this.allNames.addAll(this.absoluteAliases);
-        this.allNames.addAll(this.emoticonAliases);
         this.globalCoolDownTime = this.getCoolDown(Configurable.GlobalConfigurable.class);
         long persistence = this.getCoolDown(Guild.class);
         if (persistence != -1){
@@ -97,18 +89,6 @@ public abstract class AbstractCommand {
             this.guildUserCoolDowns = new MemoryManagementService.ManagedList<>(persistence);
         }
         EventDistributor.register(this);
-    }
-
-    /**
-     * The method to get the set of all strings
-     * that can be used without using a super
-     * command to call it.
-     *
-     * @return the set of all aliases
-     * that require no super command
-     */
-    public Set<String> getAbsoluteAliases() {
-        return this.absoluteAliases;
     }
 
     /**
@@ -147,7 +127,9 @@ public abstract class AbstractCommand {
      *
      * @return the module of which the command is part of
      */
-    public abstract ModuleLevel getModule();
+    public ModuleLevel getModule(){
+        return this.module;
+    }
 
     /**
      * A check if the user can use a command in the context

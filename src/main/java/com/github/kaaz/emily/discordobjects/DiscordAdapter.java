@@ -25,15 +25,27 @@ import java.util.Map;
 public class DiscordAdapter {
     private static final Map<Class<? extends Event>, Constructor<? extends BotEvent>> EVENT_MAP;
     static {
+        EVENT_MAP = new HashMap<>();
+        new Reflections("com.github.kaaz.emily.discordobjects.wrappers.event.events").getSubTypesOf(BotEvent.class).forEach(clazz -> {
+            EVENT_MAP.put((Class<? extends Event>) clazz.getConstructors()[0].getParameterTypes()[0], (Constructor<? extends BotEvent>) clazz.getConstructors()[0]);
+        });
         ClientBuilder builder = new ClientBuilder();
         builder.withToken(BotConfig.BOT_TOKEN);
         builder.withRecommendedShardCount(true);
         builder.registerListener(DiscordAdapter.class);
         DiscordClient.set(builder.login());
-        EVENT_MAP = new HashMap<>();
-        new Reflections("com.github.kaaz.emily.discordobjects.wrappers.event.events").getSubTypesOf(BotEvent.class).forEach(clazz -> {
-            EVENT_MAP.put((Class<? extends Event>) clazz.getConstructors()[0].getParameterTypes()[0], (Constructor<? extends BotEvent>) clazz.getConstructors()[0]);
-        });
+        long targetTime = 20000 + 15000 * DiscordClient.getShardCount() + System.currentTimeMillis();
+        while (true){
+            try{Thread.sleep(1000);
+            } catch (InterruptedException ignored) {}
+            if (DiscordClient.isReady()){
+                break;
+            }
+            if (targetTime < System.currentTimeMillis()){
+                Log.log("Timeout while logging in");
+                System.exit(-1);
+            }
+        }
     }
 
     /**

@@ -27,6 +27,9 @@ public class Guild implements Configurable {
         return MAP.computeIfAbsent(id, s -> new Guild(guild));
     }
     public static Guild getGuild(IGuild guild){
+        if (guild == null){
+            return null;
+        }
         return MAP.computeIfAbsent(guild.getID(), s -> new Guild(guild));
     }
     public static List<Guild> getGuilds(List<IGuild> iGuilds){
