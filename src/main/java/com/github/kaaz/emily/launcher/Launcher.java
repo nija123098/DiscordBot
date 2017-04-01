@@ -4,6 +4,8 @@ import com.github.kaaz.emily.command.CommandHandler;
 import com.github.kaaz.emily.command.InvocationObjectGetter;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.discordobjects.DiscordAdapter;
+import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
+import com.github.kaaz.emily.discordobjects.wrappers.event.botevents.DiscordDataReload;
 import com.github.kaaz.emily.programconfig.BotConfig;
 import com.github.kaaz.emily.service.ServiceHandler;
 import com.github.kaaz.emily.template.TemplateHandler;
@@ -35,6 +37,7 @@ public class Launcher {
         ServiceHandler.initialize();
         CommandHandler.initialize();
         DiscordAdapter.initialize();
+        EventDistributor.distribute(DiscordDataReload.class, () -> null);
         STARTUPS.forEach(Runnable::run);
         Log.log("Bot finished initializing");
     }

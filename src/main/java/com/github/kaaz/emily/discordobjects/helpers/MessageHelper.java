@@ -51,7 +51,7 @@ public class MessageHelper {
         return this;
     }
     public MessageHelper asExceptionMessage(BotException e){
-        this.getEmbededBuilder().withColor(Color.RED).withTitle("Exception").withDescription(e.getMessage());
+        this.getEmbededBuilder().withColor(Color.RED).withTitle(e.getClass().getSimpleName()).withDescription(e.getMessage());
         return this;
     }
     public MessageHelper withChannel(Channel channel){

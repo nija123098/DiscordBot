@@ -77,8 +77,13 @@ public class InvocationObjectGetter {
             throw new ArgumentException("No channel identified by that name");
         });
         addConverter(User.class, (user, message, reaction, args) -> {
+            String arg = args.split(" ")[0].replace("<@", "").replace("!", "").replace(">", "");
+            User u = DiscordClient.getUserByID(arg);
+            if (u != null){
+                return new Pair<>(user, args.split(" ")[0].length());
+            }
             if (message.getGuild() == null){
-                throw new ArgumentException("Commands with user arguments can not be used in private channels");
+                throw new ArgumentException("Commands with user names can not be used in private channels");
             }
             List<User> users = new ArrayList<>();
             Guild guild = message.getGuild();
@@ -195,14 +200,13 @@ public class InvocationObjectGetter {
     }
 
     static Object[] replace(Parameter[] parameters, Object[] objects, User user, Message message, Reaction reaction, String args){
+        int commandArgIndex = 0;
         for (int i = 0; i < parameters.length; i++) {
             try {
                 if (parameters[i].isAnnotationPresent(Context.class) || parameters[i].getAnnotations().length == 0){// null might be an instance of Context
                     objects[i] = CONTEXT_MAP.get(parameters[i].getType()).get(parameters[i].getAnnotations().length == 0 ? "" : parameters[i].getAnnotation(Context.class).value()).getObject(user, message, reaction, args);
                 }else if (parameters[i].isAnnotationPresent(Convert.class)){
-                    System.out.println(parameters[i].getType());
-                    System.out.println("\"" + args + "\"");
-                    System.out.println(CONVERTER_MAP.get(parameters[i].getType()));
+                    ++commandArgIndex;
                     Pair<Object, Integer> pair = (Pair<Object, Integer>) CONVERTER_MAP.get(parameters[i].getType()).getObject(user, message, reaction, args);
                     objects[i] = pair.getKey();
                     args = args.substring(pair.getValue());
@@ -214,7 +218,11 @@ public class InvocationObjectGetter {
                     }
                 }
             } catch (ArgumentException e){
-                e.setParameter(i);
+                if (parameters[i].isAnnotationPresent(Convert.class) && parameters[i].getAnnotation(Convert.class).optional()){
+                    continue;
+                }
+                e.setParameter(commandArgIndex);
+                e.setArgs(parameters);
                 throw e;
             }
         }
