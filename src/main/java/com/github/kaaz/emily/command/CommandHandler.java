@@ -10,6 +10,7 @@ import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventListener;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordMessageReceivedEvent;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordReactionEvent;
+import com.github.kaaz.emily.exeption.BotException;
 import com.github.kaaz.emily.util.EmoticonHelper;
 import com.github.kaaz.emily.util.FormatHelper;
 import com.github.kaaz.emily.util.Log;
@@ -147,21 +148,6 @@ public class CommandHandler {
     }
 
     /**
-     * The method to cut all command aliases from the command parameter
-     *
-     * @param string the full command aliases and parameters
-     * @param strings the command aliases broken up by spaces
-     * @return the command parameters
-     */
-    private static String cutCommand(String string, String...strings){
-        String builder = string;
-        for (String st : strings){
-            builder = builder.substring(builder.indexOf(' ') + st.length());
-        }
-        return builder.substring(builder.indexOf(' ') + 1);
-    }
-
-    /**
      * The method to attempt to run a command.
      *
      * @param string the command user args or reacted message content
@@ -202,8 +188,12 @@ public class CommandHandler {
                 }
                 return;
             }
-            if (pair.getKey().invoke(user, message, reaction, pair.getValue())){
-                pair.getKey().invoked(message.getGuild(), message.getChannel(), user);
+            try {
+                if (pair.getKey().invoke(user, message, reaction, pair.getValue())){
+                    pair.getKey().invoked(message.getGuild(), message.getChannel(), user);
+                }
+            } catch (BotException e){
+                new MessageHelper(user, message.getChannel()).asExceptionMessage(e).send();
             }
         }
     }

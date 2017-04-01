@@ -9,7 +9,7 @@ package com.github.kaaz.emily.command;
 public enum ModuleLevel {
     MUSIC,
     FUN,
-    BOT_AMDINISTRATIVE,
+    BOT_ADMINISTRATIVE,
     ADMINISTRATIVE,
     ECONOMY,
     DEVELOPMENT,

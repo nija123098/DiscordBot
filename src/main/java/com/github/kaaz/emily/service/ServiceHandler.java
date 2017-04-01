@@ -1,5 +1,6 @@
 package com.github.kaaz.emily.service;
 
+import com.github.kaaz.emily.launcher.Launcher;
 import com.github.kaaz.emily.util.Log;
 import org.reflections.Reflections;
 
@@ -56,7 +57,7 @@ public class ServiceHandler {
                         }
                     }, "Service-Handler-Thread-" + mayBlockCount.incrementAndGet());
                     thread.setDaemon(true);
-                    thread.start();
+                    Launcher.registerStartup(thread::start);
                 } else {
                     NORMAL_SERVICES.put(service, service.getDelayBetween());
                 }
@@ -91,7 +92,7 @@ public class ServiceHandler {
             }
         }, "Service-Handler-Thread-0");
         thread.setDaemon(true);
-        thread.start();
+        Launcher.registerStartup(thread::start);
     }
 
     /**

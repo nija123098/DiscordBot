@@ -1,34 +1,34 @@
 package com.github.kaaz.emily.config;
 
+import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
 import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.util.TypeTranslator;
 
 import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author nija123098
  * @since 2.0.0
  * @param <V> The stored type of the config within the database
- * @param <E> The external value of a config before processing it to the stored type
  * @param <T> The type of config that this config defines
- *
  */
 public class AbstractConfig<V, T extends Configurable> {// interior, exterior, type
-    private V defaul;
-    private String name, description;
-    private BotRole botRole;
-    private ConfigLevel configLevel;
-    private Class<V> internalType;
-    private Class<T> configurableType;
+    private final V defaul;
+    private final String name, description;
+    private final BotRole botRole;
+    private final ConfigLevel configLevel;
+    private final Class<V> valueType;
     public AbstractConfig(String name, BotRole botRole, V defaul, String description) {
         this.name = name;
         this.botRole = botRole;
         this.defaul = defaul;
         this.description = description;
         Type[] types = TypeTranslator.getRawClasses(this.getClass());
-        this.internalType = (Class<V>) types[0];
-        this.configurableType = (Class<T>) types[1];
-        this.configLevel = ConfigLevel.getLevel(this.configurableType);
+        this.valueType = (Class<V>) types[0];
+        this.configLevel = ConfigLevel.getLevel((Class<T>) types[1]);
+        EventDistributor.register(this);
     }
 
     /**
@@ -68,15 +68,6 @@ public class AbstractConfig<V, T extends Configurable> {// interior, exterior, t
     }
 
     /**
-     * A setter for the init stage.
-     *
-     * @param level the level for the config to be set at
-     */
-    void setConfigLevel(ConfigLevel level){
-        this.configLevel = level;
-    }
-
-    /**
      * A standard getter.
      *
      * @return The config level for this config
@@ -95,8 +86,9 @@ public class AbstractConfig<V, T extends Configurable> {// interior, exterior, t
     }
     // TODO SQL stuff goes here, more or less
     void setValue(T configurable, V value){
-
+        map.put(configurable, value);
     }
+    private Map<Configurable, Object> map = new HashMap<>();//TODO REMOVE TESTING
 
     /**
      * Gets the value for the given value.
@@ -106,7 +98,7 @@ public class AbstractConfig<V, T extends Configurable> {// interior, exterior, t
      * @return the config's value
      */
     V getValue(T configurable){// slq here as well
-        return this.getDefault();
+        return (V) map.computeIfAbsent(configurable, c -> this.getDefault());
     }
     String getExteriorValue(T configurable){
         return wrapTypeOut(getValue(configurable), configurable);

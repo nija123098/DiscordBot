@@ -60,7 +60,7 @@ public class EventDistributor {
             } catch (IllegalAccessException e) {
                 Log.log("This should never happen", e);
             } catch (InvocationTargetException e) {
-                Log.log("Error while distributing event: " + this.m.getDeclaringClass().getName() + "#" + this.m.getName(), e);
+                Log.log("Error while distributing event: " + this.m.getDeclaringClass().getName() + "#" + this.m.getName() + "\n    " + e.getCause().getMessage(), e);
             }
         }
     }

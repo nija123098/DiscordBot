@@ -1,6 +1,7 @@
 package com.github.kaaz.emily.discordobjects.exception;
 
 import com.github.kaaz.emily.discordobjects.wrappers.DiscordPermission;
+import com.github.kaaz.emily.exeption.BotException;
 import sx.blah.discord.util.MissingPermissionsException;
 
 import java.util.EnumSet;
@@ -9,7 +10,7 @@ import java.util.StringJoiner;
 /**
  * Made by nija123098 on 3/8/2017.
  */
-public class MissingPermException extends RuntimeException {
+public class MissingPermException extends BotException {
     MissingPermException(MissingPermissionsException e){
         super(e);
     }

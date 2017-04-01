@@ -12,10 +12,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Playlist implements Configurable {
     private static final Map<String, Playlist> MAP = new ConcurrentHashMap<>();
     public static Playlist getPlaylist(User user, Guild guild, String args){
-        String id = user + "-id-" + guild + "-id-" + args;
+        args = args.replace(" ", "-");
+        String id = user.getID() + "-i-" + guild.getID() + "-d-" + args;
         return MAP.computeIfAbsent(id, s -> new Playlist(id));
     }
-    public static Playlist getPlaylist(String id){
+    static Playlist getPlaylist(String id){
         return MAP.computeIfAbsent(id, s -> new Playlist(id));
     }
     private String id;

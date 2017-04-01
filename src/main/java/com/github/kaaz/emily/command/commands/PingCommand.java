@@ -1,7 +1,7 @@
 package com.github.kaaz.emily.command.commands;
 
 import com.github.kaaz.emily.command.AbstractCommand;
-import com.github.kaaz.emily.command.Command;
+import com.github.kaaz.emily.command.anotations.Command;
 import com.github.kaaz.emily.command.ModuleLevel;
 import com.github.kaaz.emily.discordobjects.helpers.MessageHelper;
 import com.github.kaaz.emily.perms.BotRole;

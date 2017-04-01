@@ -1,5 +1,6 @@
 package com.github.kaaz.emily.command;
 
+import com.github.kaaz.emily.command.anotations.Command;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.Configurable;
 import com.github.kaaz.emily.config.configs.guild.GuildSpecialPermsEnabledConfig;
@@ -9,10 +10,12 @@ import com.github.kaaz.emily.discordobjects.wrappers.*;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
 import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
+import com.github.kaaz.emily.util.EmoticonHelper;
 import com.github.kaaz.emily.util.Log;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -29,7 +32,7 @@ public class AbstractCommand {
     private final BotRole botRole;// can not be private
     private final ModuleLevel module;
     private Method method;
-    private Class<?>[] argsTypes;
+    private Parameter[] parameters;
     private Set<String> emoticonAliases, allNames;
     private long globalUseTime, globalCoolDownTime;
     private List<Guild> guildCoolDowns;
@@ -54,6 +57,7 @@ public class AbstractCommand {
             this.emoticonAliases = new HashSet<>(0);
         }
         this.allNames.addAll(this.emoticonAliases);
+        this.emoticonAliases.stream().map(EmoticonHelper::getChars).forEach(this.allNames::add);
         if (relativeAliases != null){
             for (String rel : relativeAliases.split(", ")){
                 this.superCommand.getNames().forEach(s -> this.allNames.add(s + " " + rel));
@@ -70,7 +74,7 @@ public class AbstractCommand {
             Log.log("No method annotated " + Command.class.getSimpleName() + " in command: " + this.getClass().getName());
             return;
         }
-        this.argsTypes = this.method.getParameterTypes();
+        this.parameters = this.method.getParameters();
         this.globalCoolDownTime = this.getCoolDown(Configurable.GlobalConfigurable.class);
         long persistence = this.getCoolDown(Guild.class);
         if (persistence != -1){
@@ -89,6 +93,15 @@ public class AbstractCommand {
             this.guildUserCoolDowns = new MemoryManagementService.ManagedList<>(persistence);
         }
         EventDistributor.register(this);
+    }
+
+    /**
+     * A standard getter.
+     *
+     * @return this command's super command
+     */
+    public AbstractCommand getSuperCommand(){
+        return this.superCommand;
     }
 
     /**
@@ -235,7 +248,7 @@ public class AbstractCommand {
      * @return if the command was successful
      */
     protected boolean invoke(User user, Message message, Reaction reaction, String args){
-        Object[] objects = InvocationObjectGetter.replace(this.argsTypes, new Object[this.argsTypes.length], user, message, reaction, args);
+        Object[] objects = InvocationObjectGetter.replace(this.parameters, new Object[this.parameters.length], user, message, reaction, args);
         try {
             boolean success = this.method.invoke(this, objects) == null;
             Stream.of(objects).filter(MessageHelper.class::isInstance).forEach(o -> ((MessageHelper) o).send());

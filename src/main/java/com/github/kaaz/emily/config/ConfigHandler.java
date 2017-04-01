@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * The handler for configs values and configurables.
@@ -228,7 +229,7 @@ public class ConfigHandler {
      * @param type the type of instance to get the count for
      * @return the count of the type instances
      */
-    public static long getTypeCount(Class<? extends Configurable> type){
+    public static int getTypeCount(Class<? extends Configurable> type){
         return 0;// todo
     }
 
@@ -245,6 +246,18 @@ public class ConfigHandler {
     }
 
     /**
+     * Gets the configurable from the type and arguments
+     *
+     * @param type the type of configurable
+     * @param args the id of the configurable
+     * @param <T> the type of configurable
+     * @return the configurable according to the id
+     */
+    public static <T extends Configurable> T getConfigurable(Class<T> type, String args){
+        return getIDFunction(type).apply(args);
+    }
+
+    /**
      * Gets the list of the type starting at the index
      * and with the next count of elements specified by size
      *
@@ -258,14 +271,23 @@ public class ConfigHandler {
      * with the start index plus size
      */
     public static <T extends Configurable> List<T> getTypeInstances(Class<T> type, long start, int size){
-        List<T> list = new ArrayList<>(size);
         Function<String, T> function = getIDFunction(type);
-        long typeCount = getTypeCount(type);
+        int typeCount = getTypeCount(type);
         if (typeCount > (start + size)){
             size = (int) (typeCount - start);
         }
-        getTypeIDs(type, start, size).forEach(s -> list.add(function.apply(s)));
-        return list;
+        return getTypeIDs(type, start, size).stream().map(function).collect(Collectors.toList());
+    }
+
+    /**
+     * Gets a list of all instances of a configurable
+     *
+     * @param type the type of configurable
+     * @param <T> the type of configurable
+     * @return all instances of the configurable
+     */
+    public static <T extends Configurable> List<T> getTypeInstances(Class<T> type){
+        return getTypeInstances(type, 0, getTypeCount(type));
     }
 
     /**

@@ -18,7 +18,7 @@ public class Message {// should not be kept stored, too many are made
     public static Message getMessage(IMessage iMessage){
         return MAP.computeIfAbsent(iMessage.getID(), s -> new Message(iMessage));
     }
-    static Message getMessage(String id){
+    public static Message getMessage(String id){
         return getMessage(DiscordClient.client().getMessageByID(id));
     }
     static List<Message> getMessages(List<IMessage> iMessages){

@@ -3,6 +3,7 @@ package com.github.kaaz.emily.discordobjects;
 import com.github.kaaz.emily.discordobjects.wrappers.*;
 import com.github.kaaz.emily.discordobjects.wrappers.event.BotEvent;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
+import com.github.kaaz.emily.discordobjects.wrappers.event.botevents.DiscordDataReload;
 import com.github.kaaz.emily.programconfig.BotConfig;
 import com.github.kaaz.emily.util.Log;
 import org.reflections.Reflections;
@@ -46,6 +47,7 @@ public class DiscordAdapter {
                 System.exit(-1);
             }
         }
+        EventDistributor.distribute(DiscordDataReload.class, () -> null);
     }
 
     /**

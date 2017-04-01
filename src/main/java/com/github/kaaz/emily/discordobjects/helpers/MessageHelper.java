@@ -8,9 +8,12 @@ import com.github.kaaz.emily.discordobjects.exception.MissingPermException;
 import com.github.kaaz.emily.discordobjects.wrappers.Channel;
 import com.github.kaaz.emily.discordobjects.wrappers.DiscordClient;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
+import com.github.kaaz.emily.discordobjects.wrappers.VoiceChannel;
+import com.github.kaaz.emily.exeption.BotException;
 import com.github.kaaz.emily.util.LangString;
 import sx.blah.discord.util.MessageBuilder;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 
@@ -47,6 +50,14 @@ public class MessageHelper {
         }
         return this;
     }
+    public MessageHelper asExceptionMessage(BotException e){
+        this.getEmbededBuilder().withColor(Color.RED).withTitle("Exception").withDescription(e.getMessage());
+        return this;
+    }
+    public MessageHelper withChannel(Channel channel){
+        this.channel = channel;
+        return this;
+    }
     public MessageHelper withDMCheck(){
         this.dmCheck = true;
         this.withDM();
@@ -68,6 +79,9 @@ public class MessageHelper {
         return this.embeded = new EmbedHelper(this);
     }
     public void send(){
+        if (this.channel instanceof VoiceChannel){
+            return;// planned
+        }
         if (this.dmCheck){
             ErrorWrapper.wrap(() -> new MessageBuilder(DiscordClient.client()).withChannel(this.channel.channel()).withContent(this.user.mention() + " check your DMs").send());
         }
