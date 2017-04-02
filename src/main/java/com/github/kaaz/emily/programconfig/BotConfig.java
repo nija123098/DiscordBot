@@ -10,9 +10,9 @@ import java.io.File;
 public class BotConfig {
     @ConfigurationOption
     public static String BOT_TOKEN = "Emily's Token";
-
+    @ConfigurationOption
     public static String BOT_PATH = BotConfig.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-
+    @ConfigurationOption
     public static String CONTAINER_PATH = new File(BOT_PATH).getParent();
     @ConfigurationOption
     public static String AUDIO_PATH = "musicfiles";

@@ -11,7 +11,8 @@ import java.lang.annotation.Target;
  * A parameter annotated with this argument
  * results in the command method being
  * passed the related context data for that
- * argument type, as assigned in {@link InvocationObjectGetter}.
+ * argument type, as assigned in
+ * {@link InvocationObjectGetter}.
  *
  * By default the values passed is the first
  * conversion assigned to that type.

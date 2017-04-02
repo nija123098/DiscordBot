@@ -32,7 +32,7 @@ public class Guild implements Configurable {
         }
         return MAP.computeIfAbsent(guild.getID(), s -> new Guild(guild));
     }
-    public static List<Guild> getGuilds(List<IGuild> iGuilds){
+    static List<Guild> getGuilds(List<IGuild> iGuilds){
         List<Guild> list = new ArrayList<>(iGuilds.size());
         iGuilds.forEach(guild -> list.add(getGuild(guild)));
         return list;

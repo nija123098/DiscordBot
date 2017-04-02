@@ -14,7 +14,7 @@ import java.util.Map;
  * @param <V> The stored type of the config within the database
  * @param <T> The type of config that this config defines
  */
-public class AbstractConfig<V, T extends Configurable> {// interior, exterior, type
+public class AbstractConfig<V, T extends Configurable> {
     private final V defaul;
     private final String name, description;
     private final BotRole botRole;

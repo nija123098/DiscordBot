@@ -48,7 +48,7 @@ public class UserNamesConfig extends AbstractConfig<Set<String>, Guild> {
         ConfigHandler.setSetting(UserNamesConfig.class, change.getGuild(), set);
     }
     @EventListener
-    public void handle(DiscordDataReload reload){//ConfigHandler.getTypeInstances(Guild.class)
+    public void handle(DiscordDataReload reload){
         DiscordClient.getGuilds().forEach(guild -> ConfigHandler.setSetting(UserNamesConfig.class, guild, guild.getUsers().stream().map(User::getName).collect(Collectors.toSet())));
     }
 }

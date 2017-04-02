@@ -80,7 +80,7 @@ public class InvocationObjectGetter {
             String arg = args.split(" ")[0].replace("<@", "").replace("!", "").replace(">", "");
             User u = DiscordClient.getUserByID(arg);
             if (u != null){
-                return new Pair<>(user, args.split(" ")[0].length());
+                return new Pair<>(u, args.split(" ")[0].length());
             }
             if (message.getGuild() == null){
                 throw new ArgumentException("Commands with user names can not be used in private channels");
@@ -219,6 +219,7 @@ public class InvocationObjectGetter {
                 }
             } catch (ArgumentException e){
                 if (parameters[i].isAnnotationPresent(Convert.class) && parameters[i].getAnnotation(Convert.class).optional()){
+                    objects[i] = CONTEXT_MAP.get(parameters[i].getType()).get(parameters[i].getAnnotation(Convert.class).replacement());
                     continue;
                 }
                 e.setParameter(commandArgIndex);

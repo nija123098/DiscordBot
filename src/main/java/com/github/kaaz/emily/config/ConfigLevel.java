@@ -19,13 +19,13 @@ public enum ConfigLevel {
     /** The type for a channel's config */
     CHANNEL(Channel.class),
     /** The type for a user's config within a guild*/
-    GUILD_USER(Configurable.GuildUser.class),
+    GUILD_USER(GuildUser.class),
     /** The type for a role within a guild */
     ROLE(Role.class),
     /** The type for a guild's config */
     GUILD(Guild.class),
     /** The type for global config */
-    GLOBAL(Configurable.GlobalConfigurable.class),;
+    GLOBAL(GlobalConfigurable.class),;
     private Class<? extends Configurable> clazz;
     ConfigLevel(Class<? extends Configurable> clazz) {
         this.clazz = clazz;

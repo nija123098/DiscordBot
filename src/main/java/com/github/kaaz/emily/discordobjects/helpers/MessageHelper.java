@@ -109,6 +109,7 @@ public class MessageHelper {
         } catch (MissingPermException e){
             if (!this.channel.isPrivate()){
                 this.withDM();
+                this.send();
             }
         }
     }

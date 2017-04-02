@@ -3,6 +3,7 @@ package com.github.kaaz.emily.discordobjects.wrappers;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.ConfigLevel;
 import com.github.kaaz.emily.config.Configurable;
+import com.github.kaaz.emily.config.GlobalConfigurable;
 import com.github.kaaz.emily.config.configs.global.TrackDeleteTimeConfig;
 import com.github.kaaz.emily.config.configs.track.TrackTimeExpireConfig;
 import com.github.kaaz.emily.config.configs.track.TrackFileConfig;
@@ -55,7 +56,7 @@ public class Track implements Configurable{
     }// id is interned
     @Override
     public void manage(){
-        if (MusicDownloadService.isDownloaded(this) && ConfigHandler.getSetting(TrackTimeExpireConfig.class, this) > ConfigHandler.getSetting(TrackDeleteTimeConfig.class, GLOBAL)){
+        if (MusicDownloadService.isDownloaded(this) && ConfigHandler.getSetting(TrackTimeExpireConfig.class, this) > ConfigHandler.getSetting(TrackDeleteTimeConfig.class, GlobalConfigurable.GLOBAL)){
             ConfigHandler.getSetting(TrackFileConfig.class, this).delete();
         }
     }

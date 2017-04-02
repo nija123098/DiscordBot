@@ -21,4 +21,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.PARAMETER)
 public @interface Convert {
     boolean optional() default false;
+    String replacement() default "";
 }

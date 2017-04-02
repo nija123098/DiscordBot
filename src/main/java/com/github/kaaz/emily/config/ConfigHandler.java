@@ -1,6 +1,7 @@
 package com.github.kaaz.emily.config;
 
 import com.github.kaaz.emily.discordobjects.wrappers.*;
+import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.util.Holder;
 import com.github.kaaz.emily.util.Log;
 import org.reflections.Reflections;
@@ -43,13 +44,14 @@ public class ConfigHandler {
         add(Playlist.class, Playlist::getPlaylist);
         add(User.class, User::getUser);
         add(Channel.class, Channel::getChannel);
-        add(Configurable.GuildUser.class, s -> {
+        add(GuildUser.class, s -> {
             String[] idParts = s.split("-");
-            return Configurable.getGuildUser(Guild.getGuild(idParts[0]), User.getUser(idParts[1]));
+            return GuildUser.getGuildUser(Guild.getGuild(idParts[0]), User.getUser(idParts[1]));
         });
         add(Role.class, Role::getRole);
         add(Guild.class, Guild::getGuild);
-        add(Configurable.GlobalConfigurable.class, s -> Configurable.GlobalConfigurable.GLOBAL);
+        add(GuildUser.class, GuildUser::getGuildUser);
+        add(GlobalConfigurable.class, s -> GlobalConfigurable.GLOBAL);
     }
 
     private static <T extends Configurable> void add(Class<T> type, Function<String, T> function){
@@ -84,7 +86,7 @@ public class ConfigHandler {
         if (e != null){
             return (E) e;
         }
-        throw new RuntimeException("Attempted searching for a non-existent config by using Class search: " + clazz.getClass().getName());
+        throw new DevelopmentException("Attempted searching for a non-existent config by using Class search: " + clazz.getClass().getName());
     }
 
     /**
@@ -105,7 +107,7 @@ public class ConfigHandler {
      * @param configurable the configurable the config is to be set for
      * @param value the value the config is being set at
      */
-    public static <I, T extends Configurable> void setSetting(Class<? extends AbstractConfig<I, T>> clazz, T configurable, I value){
+    public static <V, T extends Configurable> void setSetting(Class<? extends AbstractConfig<V, T>> clazz, T configurable, V value){
         getConfig(clazz).setValue(configurable, value);
     }
 
@@ -195,7 +197,7 @@ public class ConfigHandler {
                 Holder.fillOptional((V) o, holder);
                 return (V) o;
             } catch (ClassCastException e){
-                throw new RuntimeException("Attempted to get a value with the wrong holder type for the config: " + config.getName(), e);
+                throw new DevelopmentException("Attempted to get a value with the wrong holder type for the config: " + config.getName(), e);
             }
         } else {
             return null;
@@ -216,7 +218,7 @@ public class ConfigHandler {
             try {
                 return config.getExteriorValue(configurable);
             } catch (ClassCastException e){
-                throw new RuntimeException("Attempted to get a value with the wrong holder type for the config: " + config.getName(), e);
+                throw new DevelopmentException("Attempted to get a value with the wrong holder type for the config: " + config.getName(), e);
             }
         } else {
             return null;
@@ -273,7 +275,7 @@ public class ConfigHandler {
     public static <T extends Configurable> List<T> getTypeInstances(Class<T> type, long start, int size){
         Function<String, T> function = getIDFunction(type);
         int typeCount = getTypeCount(type);
-        if (typeCount > (start + size)){
+        if (typeCount < (start + size)){
             size = (int) (typeCount - start);
         }
         return getTypeIDs(type, start, size).stream().map(function).collect(Collectors.toList());

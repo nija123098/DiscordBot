@@ -1,7 +1,7 @@
 package com.github.kaaz.emily.perms;
 
 import com.github.kaaz.emily.config.ConfigHandler;
-import com.github.kaaz.emily.config.Configurable;
+import com.github.kaaz.emily.config.GuildUser;
 import com.github.kaaz.emily.config.configs.guilduser.GuildBotRoleConfig;
 import com.github.kaaz.emily.config.configs.user.GlobalBotRoleConfig;
 import com.github.kaaz.emily.discordobjects.wrappers.DiscordClient;
@@ -20,6 +20,7 @@ public enum BotRole {
     BANNED(true, true, false),
     INTERACTION_BOT(true, true, false),
     USER(true, (user, guild) -> !hasRole(BOT, user, guild) && !hasRole(BANNED, user, guild)),
+    SUPPORTER(false, false, true),
     CONTRIBUTOR(false, true, false),
     GUILD_TRUSTEE(true, false, true),
     GUILD_ADMIN(true, (user, guild) -> hasRole(USER, user, guild) && user.getPermissionsForGuild(guild).contains(DiscordPermission.ADMINISTRATOR)),
@@ -37,12 +38,15 @@ public enum BotRole {
         this.isTrueRank = isTrueRank;
         this.isGlobalFlag = isGlobalFlag;
         this.isGuildFlag = isGuildFlag;
-        this.predicate = (user, guild) -> (this.isGlobalFlag && ConfigHandler.getSetting(GlobalBotRoleConfig.class, user).contains(this.name())) || (this.isGuildFlag && guild != null && ConfigHandler.getSetting(GuildBotRoleConfig.class, Configurable.getGuildUser(guild, user)).contains(this.name()));
+        this.predicate = (user, guild) -> (this.isGlobalFlag && ConfigHandler.getSetting(GlobalBotRoleConfig.class, user).contains(this.name())) || (this.isGuildFlag && guild != null && ConfigHandler.getSetting(GuildBotRoleConfig.class, GuildUser.getGuildUser(guild, user)).contains(this.name()));
     }
     public static boolean hasRole(BotRole role, User user, Guild guild){
         return role.predicate.test(user, guild);
     }
     public static boolean hasRequiredRole(BotRole role, User user, Guild guild){
+        if (!role.isTrueRank){
+            return role.predicate.test(user, guild);
+        }
         for (int i = role.ordinal(); i < values().length; i++) {
             if (role.isTrueRank && values()[i].predicate.test(user, guild)){
                 return true;

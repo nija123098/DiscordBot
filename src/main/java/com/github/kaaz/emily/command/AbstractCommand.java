@@ -3,6 +3,8 @@ package com.github.kaaz.emily.command;
 import com.github.kaaz.emily.command.anotations.Command;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.Configurable;
+import com.github.kaaz.emily.config.GlobalConfigurable;
+import com.github.kaaz.emily.config.GuildUser;
 import com.github.kaaz.emily.config.configs.guild.GuildSpecialPermsEnabledConfig;
 import com.github.kaaz.emily.config.configs.role.*;
 import com.github.kaaz.emily.discordobjects.helpers.MessageHelper;
@@ -38,7 +40,7 @@ public class AbstractCommand {
     private List<Guild> guildCoolDowns;
     private List<Channel> channelCoolDowns;
     private List<User> userCoolDowns;
-    private List<Configurable.GuildUser> guildUserCoolDowns;
+    private List<GuildUser> guildUserCoolDowns;
     public AbstractCommand(AbstractCommand superCommand, String name, ModuleLevel module, BotRole botRole, String absoluteAliases, String emoticonAliases, String relativeAliases){
         this.superCommand = superCommand;
         this.name = superCommand == null ? name : superCommand.name + " " + name;
@@ -75,7 +77,7 @@ public class AbstractCommand {
             return;
         }
         this.parameters = this.method.getParameters();
-        this.globalCoolDownTime = this.getCoolDown(Configurable.GlobalConfigurable.class);
+        this.globalCoolDownTime = this.getCoolDown(GlobalConfigurable.class);
         long persistence = this.getCoolDown(Guild.class);
         if (persistence != -1){
             this.guildCoolDowns = new MemoryManagementService.ManagedList<>(persistence);
@@ -88,7 +90,7 @@ public class AbstractCommand {
         if (persistence != -1){
             this.userCoolDowns = new MemoryManagementService.ManagedList<>(persistence);
         }
-        persistence = this.getCoolDown(Configurable.GuildUser.class);
+        persistence = this.getCoolDown(GuildUser.class);
         if (persistence != -1){
             this.guildUserCoolDowns = new MemoryManagementService.ManagedList<>(persistence);
         }
@@ -161,10 +163,14 @@ public class AbstractCommand {
                 if (!ConfigHandler.getSetting(SpecialPermsRoleEnable.class, role)){
                     continue;
                 }
-                if (ConfigHandler.getSetting(PermsCommandWhitelistConfig.class, role).contains(this.getName()) || ConfigHandler.getSetting(PermsModuleWhitelistConfig.class, role).contains(this.getName()) && !ConfigHandler.getSetting(PermsModuleWhitelistExemptionsConfig.class, role).contains(this.getName())){
+                if (ConfigHandler.getSetting(PermsCommandWhitelistConfig.class, role).contains(this.getName())
+                        || (ConfigHandler.getSetting(PermsModuleWhitelistConfig.class, role).contains(this.getName())
+                        && !ConfigHandler.getSetting(PermsModuleWhitelistExemptionsConfig.class, role).contains(this.getName()))){
                     return true;
                 }
-                if (ConfigHandler.getSetting(PermsCommandBlacklistConfig.class, role).contains(this.getName()) || ConfigHandler.getSetting(PermsModuleWhitelistConfig.class, role).contains(this.getName()) && !ConfigHandler.getSetting(PermsCommandBlacklistConfig.class, role).contains(this.getName())){
+                if (ConfigHandler.getSetting(PermsCommandBlacklistConfig.class, role).contains(this.getName())
+                        || ConfigHandler.getSetting(PermsModuleBlacklistConfig.class, role).contains(this.getName())
+                        && !ConfigHandler.getSetting(PermsCommandBlacklistConfig.class, role).contains(this.getName())){
                     disapproved = true;
                 }
             }
@@ -195,7 +201,7 @@ public class AbstractCommand {
         if (this.userCoolDowns != null && this.userCoolDowns.contains(user)){
             return false;
         }
-        if (this.guildUserCoolDowns != null && this.guildUserCoolDowns.contains(Configurable.getGuildUser(guild, user))){
+        if (this.guildUserCoolDowns != null && this.guildUserCoolDowns.contains(GuildUser.getGuildUser(guild, user))){
             return false;
         }
         return true;
@@ -222,7 +228,7 @@ public class AbstractCommand {
             this.userCoolDowns.add(user);
         }
         if (this.guildUserCoolDowns != null){
-            this.guildUserCoolDowns.add(Configurable.getGuildUser(guild, user));
+            this.guildUserCoolDowns.add(GuildUser.getGuildUser(guild, user));
         }
     }
 

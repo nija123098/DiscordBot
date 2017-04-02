@@ -27,9 +27,7 @@ public class DiscordAdapter {
     private static final Map<Class<? extends Event>, Constructor<? extends BotEvent>> EVENT_MAP;
     static {
         EVENT_MAP = new HashMap<>();
-        new Reflections("com.github.kaaz.emily.discordobjects.wrappers.event.events").getSubTypesOf(BotEvent.class).forEach(clazz -> {
-            EVENT_MAP.put((Class<? extends Event>) clazz.getConstructors()[0].getParameterTypes()[0], (Constructor<? extends BotEvent>) clazz.getConstructors()[0]);
-        });
+        new Reflections("com.github.kaaz.emily.discordobjects.wrappers.event.events").getSubTypesOf(BotEvent.class).forEach(clazz -> EVENT_MAP.put((Class<? extends Event>) clazz.getConstructors()[0].getParameterTypes()[0], (Constructor<? extends BotEvent>) clazz.getConstructors()[0]));
         ClientBuilder builder = new ClientBuilder();
         builder.withToken(BotConfig.BOT_TOKEN);
         builder.withRecommendedShardCount(true);
