@@ -54,8 +54,14 @@ public class User implements Configurable {
         return ConfigLevel.USER;
     }
 
+    @Override
+    public int hashCode() {
+        return this.getID().hashCode();
+    }
+
+    @Override
     public boolean equals(Object o){
-        return o instanceof User && this.getID().equals(((User) o).getID());
+        return o == this || o instanceof User && this.getID().equals(((User) o).getID());
     }
 
     public String getName() {

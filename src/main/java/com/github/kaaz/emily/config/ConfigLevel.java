@@ -1,6 +1,7 @@
 package com.github.kaaz.emily.config;
 
 import com.github.kaaz.emily.discordobjects.wrappers.*;
+import com.github.kaaz.emily.exeption.DevelopmentException;
 
 /**
  * The enum to represent a type of configurable object.
@@ -18,14 +19,16 @@ public enum ConfigLevel {
     USER(User.class),
     /** The type for a channel's config */
     CHANNEL(Channel.class),
-    /** The type for a user's config within a guild*/
+    /** The type for a user's config within a guild */
     GUILD_USER(GuildUser.class),
     /** The type for a role within a guild */
     ROLE(Role.class),
     /** The type for a guild's config */
     GUILD(Guild.class),
     /** The type for global config */
-    GLOBAL(GlobalConfigurable.class),;
+    GLOBAL(GlobalConfigurable.class),
+    /** The type for a config that applies to all configurable types */
+    ALL(Configurable.class),;
     private Class<? extends Configurable> clazz;
     ConfigLevel(Class<? extends Configurable> clazz) {
         this.clazz = clazz;
@@ -33,15 +36,28 @@ public enum ConfigLevel {
     public Class<? extends Configurable> getType(){
         return this.clazz;
     }
+    public boolean isAssignableFrom(ConfigLevel level){
+        return this == ALL || this == level;
+    }
     public static ConfigLevel getLevel(Class<? extends Configurable> clazz){
         for (ConfigLevel level : values()){
             if (level.clazz.isAssignableFrom(clazz)){
                 return level;
             }
         }
-        if (clazz.equals(Configurable.class)){
-            return null;
+        throw new DevelopmentException("Class does not have a type: " + clazz.getName());
+    }
+    public static ConfigLevel getLevel(String args){
+        String arg = args.split(" ")[0].toUpperCase();
+        try{return ConfigLevel.valueOf(arg);
+        }catch(Exception ignored){}
+        arg = arg.toUpperCase();
+        if (arg.equals("GUILDUSER")){
+            return ConfigLevel.GUILD_USER;
         }
-        throw new RuntimeException("Class does not have a type: " + clazz.getName());
+        if (arg.equals("GUILD USER")){
+            return ConfigLevel.GUILD_USER;
+        }
+        throw new RuntimeException("No such configurable type");
     }
 }

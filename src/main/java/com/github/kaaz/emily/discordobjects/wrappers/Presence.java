@@ -19,6 +19,22 @@ public class Presence {
     private Presence(IPresence iPresence){
         this.iPresence = iPresence;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Presence presence = (Presence) o;
+
+        return iPresence != null ? iPresence.equals(presence.iPresence) : presence.iPresence == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return iPresence != null ? iPresence.hashCode() : 0;
+    }
+
     public Optional<String> getOptionalPlayingText() {
         return iPresence.getPlayingText();
     }

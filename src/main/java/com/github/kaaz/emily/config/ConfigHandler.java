@@ -6,10 +6,7 @@ import com.github.kaaz.emily.util.Holder;
 import com.github.kaaz.emily.util.Log;
 import org.reflections.Reflections;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -25,7 +22,7 @@ import java.util.stream.Collectors;
  * @see Configurable
  */
 public class ConfigHandler {
-    private static final Map<Class<? extends AbstractConfig>, AbstractConfig<?, ? extends Configurable>> CLASS_MAP;
+    private static final Map<Class<? extends AbstractConfig<?, ? extends Configurable>>, AbstractConfig<?, ? extends Configurable>> CLASS_MAP;
     private static final Map<String, AbstractConfig<?, ? extends Configurable>> STRING_MAP;
     private static final Map<Class<? extends Configurable>, Function<String, ? extends Configurable>> FUNCTION_MAP = new ConcurrentHashMap<>(7);
     static {
@@ -34,7 +31,7 @@ public class ConfigHandler {
         new Reflections("com.github.kaaz.emily.config.configs").getSubTypesOf(AbstractConfig.class).forEach(clazz -> {
             try {
                 AbstractConfig config = clazz.newInstance();
-                CLASS_MAP.put(clazz, config);
+                CLASS_MAP.put((Class<? extends AbstractConfig<?, ? extends Configurable>>) clazz, config);
                 STRING_MAP.put(config.getName(), config);
             } catch (InstantiationException | IllegalAccessException e) {
                 Log.log("Exception during init of a config: " + clazz.getSimpleName(), e);
@@ -52,6 +49,15 @@ public class ConfigHandler {
         add(Guild.class, Guild::getGuild);
         add(GuildUser.class, GuildUser::getGuildUser);
         add(GlobalConfigurable.class, s -> GlobalConfigurable.GLOBAL);
+        add(Configurable.class, s -> {
+            for (int i = 0; i < ConfigLevel.values().length; i++) {
+                Configurable configurable = ConfigHandler.getConfigurable(ConfigLevel.values()[i].getType(), s);
+                if (configurable != null){
+                    return configurable;
+                }
+            }
+            return null;
+        });
     }
 
     private static <T extends Configurable> void add(Class<T> type, Function<String, T> function){
@@ -63,6 +69,27 @@ public class ConfigHandler {
      */
     public static void initialize(){
         Log.log("Config Handler initialized");
+    }
+
+    /**
+     * Gets all config instances
+     *
+     * @return the set of configurable instances
+     */
+    public static Set<AbstractConfig<?, ? extends Configurable>> getConfigs(){
+        return new HashSet<>(CLASS_MAP.values());
+    }
+
+    /**
+     * Gets config instances for the type
+     *
+     * @param type the type of configurable
+     * @param <T> the type of configurable
+     * @return the set of Configs for that type
+     */
+    public static <T extends Configurable> Set<AbstractConfig<?, T>> getConfigs(Class<T> type){
+        ConfigLevel level = ConfigLevel.getLevel(type);
+        return getConfigs().stream().filter(config -> config.getConfigLevel() == level || config.getConfigLevel() == ConfigLevel.ALL).map(abstractConfig -> ((AbstractConfig<?, T>) abstractConfig)).collect(Collectors.toSet());
     }
 
     /**

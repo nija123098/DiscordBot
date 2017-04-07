@@ -45,6 +45,7 @@ public class DiscordAdapter {
                 System.exit(-1);
             }
         }
+        DiscordClient.online("with the loading screen!");
         EventDistributor.distribute(DiscordDataReload.class, () -> null);
     }
 

@@ -43,6 +43,9 @@ public class ArgumentException extends BotException {
 
     @Override
     public String getMessage(){
+        if (args == null){
+            return super.getMessage();
+        }
         String s = "Argument " + this.parameter + " - " + super.getMessage() + "\nExpected: ";
         for (int i = 0; i < this.args.length; i++) {
             if (!this.args[i].isAnnotationPresent(Convert.class)){

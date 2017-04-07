@@ -19,16 +19,18 @@ public class SpeechHelper {
     private static final Synthesiser SYNTHESISER = new Synthesiser();
     private static final File PARENT = new File(BotConfig.TEMP_PATH);
     public static File getFile(LangString string, String lang){
-        try {
-            File file = File.createTempFile("audio", "mp3", PARENT);
-            file.deleteOnExit();
-            SYNTHESISER.setLanguage(lang);
-            String content = string.translate(lang);
-            IOUtils.copy(SYNTHESISER.getMP3Data(content), new FileOutputStream(file));
-            MAP.computeIfAbsent(lang, s -> new HashMap<>()).put(content, file);
-            return file;
-        } catch (IOException e) {
-            throw new RuntimeException("Error during audio synthesis", e);
-        }
+        return MAP.computeIfAbsent(lang, s -> new HashMap<>()).computeIfAbsent(lang, s -> {
+            try {
+                File file = File.createTempFile("audio", "mp3", PARENT);
+                file.deleteOnExit();
+                SYNTHESISER.setLanguage(lang);
+                String content = string.translate(lang);
+                IOUtils.copy(SYNTHESISER.getMP3Data(content), new FileOutputStream(file));
+                MAP.computeIfAbsent(lang, st -> new HashMap<>()).put(content, file);
+                return file;
+            } catch (IOException e) {
+                throw new RuntimeException("Error during audio synthesis", e);
+            }
+        });
     }
 }

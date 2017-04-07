@@ -31,14 +31,10 @@ public class ErrorWrapper {
     private static <E> E innerWrap(Request<E> request) {
         try {
             return RequestBuffer.request((RequestBuffer.IRequest<E>) request::request).get();
-        } catch (RuntimeException e) {
-            if (e instanceof MissingPermissionsException) {
-                throw new MissingPermException((MissingPermissionsException) e);
-            }
-            if (e instanceof DiscordException) {
-                throw new DException((DiscordException) e);
-            }
-            throw e;
+        } catch (MissingPermissionsException e){
+            throw new MissingPermException(e);
+        } catch (DiscordException e){
+            throw new DException(e);
         }
     }
     @FunctionalInterface

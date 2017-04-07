@@ -10,6 +10,7 @@ import com.github.kaaz.emily.config.configs.role.*;
 import com.github.kaaz.emily.discordobjects.helpers.MessageHelper;
 import com.github.kaaz.emily.discordobjects.wrappers.*;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
+import com.github.kaaz.emily.exeption.BotException;
 import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
 import com.github.kaaz.emily.util.EmoticonHelper;
@@ -31,7 +32,7 @@ import java.util.stream.Stream;
 public class AbstractCommand {
     private final AbstractCommand superCommand;
     private final String name;
-    private final BotRole botRole;// can not be private
+    private final BotRole botRole;
     private final ModuleLevel module;
     private Method method;
     private Parameter[] parameters;
@@ -147,6 +148,15 @@ public class AbstractCommand {
     }
 
     /**
+     * Gets the bot role required to run this command,
+     * default USER
+     *
+     * @return the required bot role to run this command
+     */
+    public BotRole getBotRole(){
+        return this.botRole;
+    }
+    /**
      * A check if the user can use a command in the context
      *
      * @param user the user that is being checked for permission
@@ -157,7 +167,7 @@ public class AbstractCommand {
      */
     public boolean hasPermission(User user, Guild guild) {
         boolean hasNormalPerm = BotRole.hasRequiredRole(this.botRole, user, guild);
-        if (!(this.botRole.ordinal() >= BotRole.GUILD_TRUSTEE.ordinal()) || !ConfigHandler.getSetting(GuildSpecialPermsEnabledConfig.class, guild)){
+        if (!ConfigHandler.getSetting(GuildSpecialPermsEnabledConfig.class, guild) || !(this.botRole.ordinal() >= BotRole.GUILD_TRUSTEE.ordinal())){
             boolean disapproved = false;
             for (Role role : user.getRolesForGuild(guild)){
                 if (!ConfigHandler.getSetting(SpecialPermsRoleEnable.class, role)){
@@ -262,6 +272,9 @@ public class AbstractCommand {
         } catch (IllegalAccessException e) {
             Log.log("Malformed command: " + getName(), e);
         } catch (InvocationTargetException e) {
+            if (e.getCause() instanceof BotException){
+                new MessageHelper(user, message.getChannel()).asExceptionMessage(((BotException) e.getCause())).send();
+            }
             Log.log("Exception during method execution: " + getName(), e);
         }
         return false;

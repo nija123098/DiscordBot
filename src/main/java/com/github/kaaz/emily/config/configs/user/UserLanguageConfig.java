@@ -9,6 +9,6 @@ import com.github.kaaz.emily.perms.BotRole;
  */
 public class UserLanguageConfig extends AbstractConfig<String, User> {
     public UserLanguageConfig() {
-        super("user_language", BotRole.BANNED, null, "The language the bot uses to communicate with the user");
+        super("user_language", BotRole.USER, "en", "The language the bot uses to communicate with the user");
     }
 }

@@ -35,6 +35,16 @@ public class Region {
         return region().getID();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        return o == this || o instanceof Region && ((Region) o).getID().equals(this.getID());
+    }
+
+    @Override
+    public int hashCode() {
+        return this.getID().hashCode();
+    }
+
     public String getName() {
         return region().getName();
     }

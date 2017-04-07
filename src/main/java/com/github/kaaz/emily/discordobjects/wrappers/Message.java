@@ -39,6 +39,16 @@ public class Message {// should not be kept stored, too many are made
         return iMessage;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        return o == this || o instanceof Message && ((Message) o).getID().equals(this.getID());
+    }
+
+    @Override
+    public int hashCode() {
+        return this.getID().hashCode();
+    }
+
     public String getContent() {
         return message().getContent();
     }

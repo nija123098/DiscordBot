@@ -58,6 +58,17 @@ public class Guild implements Configurable {
     public String getID() {
         return guild().getID();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        return o == this || o instanceof Guild && ((Guild) o).getID().equals(this.getID());
+    }
+
+    @Override
+    public int hashCode() {
+        return this.getID().hashCode();
+    }
+
     // THE FOLLOWING ARE WRAPPER METHODS
     public Shard getShard() {
         return Shard.getShard(guild().getShard());

@@ -48,6 +48,9 @@ public class LangString {
         }
         return this;
     }
+    public boolean hasContents(){
+        return this.value.size() > 0;
+    }
     public String translate(String lang) {
         final StringBuilder builder = new StringBuilder();
         value.forEach(pair -> builder.append(pair.getKey() ? translate(lang, pair.getValue()) : pair.getValue()));
@@ -137,5 +140,8 @@ public class LangString {
         } catch (RuntimeException e) {
             return content;
         }
+    }
+    public static String getLangCode(String s){
+        return s;//todo
     }
 }

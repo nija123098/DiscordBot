@@ -12,17 +12,17 @@ import java.util.concurrent.atomic.AtomicReference;
  * Made by nija123098 on 2/27/2017.
  */
 public class Shard {
-    private static final Map<String, Shard> MAP = new ConcurrentHashMap<>();// never clear
-    public static Shard getShard(int i){
-        for (Shard shard : DiscordClient.getShards()){// list not guaranteed to be in order
-            if (shard.getID() == i){
-                return shard;
-            }
+    private static final Map<Integer, Shard> MAP = new ConcurrentHashMap<>();// never clear
+    /*static {
+        for (IShard shard : DiscordClient.client().getShards()){// list not guaranteed to be in order
+            MAP.put(shard.getInfo()[0], new Shard(shard));
         }
-        return null;
+    }*/
+    public static Shard getShard(int i){
+        return MAP.get(i);
     }
     static Shard getShard(IShard shard){
-        return MAP.computeIfAbsent(shard.getInfo()[0] + "", s -> new Shard(shard));
+        return MAP.get(shard.getInfo()[0]);
     }
     static List<Shard> getShards(List<IShard> iShards){
         List<Shard> shards = new ArrayList<>(iShards.size());
@@ -42,6 +42,16 @@ public class Shard {
     //WRAPPER METHODS
     public int getID(){
         return shard().getInfo()[0];
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o == this || o instanceof Shard && ((Shard) o).getID() == this.getID();
+    }
+
+    @Override
+    public int hashCode() {
+        return this.getID();
     }
 
     public boolean isLoggedIn() {

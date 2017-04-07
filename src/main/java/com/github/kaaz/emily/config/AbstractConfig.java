@@ -2,7 +2,6 @@ package com.github.kaaz.emily.config;
 
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
 import com.github.kaaz.emily.perms.BotRole;
-import com.github.kaaz.emily.util.TypeTranslator;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -76,16 +75,18 @@ public class AbstractConfig<V, T extends Configurable> {
         return this.configLevel;
     }
     public V wrapTypeIn(String e, T configurable){
-        return TypeTranslator.translate(e, getValue(configurable));
+        return TypeTranslator.toType(e, this.valueType, getValue(configurable));
+        //return OTypeTranslator.translate(e, getValue(configurable));
     }
     public String wrapTypeOut(V v, T configurable){// configurable may be used in over ride methods
-        return TypeTranslator.translate(v, String.class);
+        return TypeTranslator.toString(v, this.valueType, null);
+        //return OTypeTranslator.translate(v, String.class);
     }
-    void setExteriorValue(T configurable, String value){
+    public void setExteriorValue(T configurable, String value){
         setValue(configurable, wrapTypeIn(value, configurable));
     }
     // TODO SQL stuff goes here, more or less
-    void setValue(T configurable, V value){
+    public void setValue(T configurable, V value){
         map.put(configurable, value);
     }
     private Map<Configurable, Object> map = new HashMap<>();//TODO REMOVE TESTING
@@ -97,10 +98,10 @@ public class AbstractConfig<V, T extends Configurable> {
      *                     setting is being gotten for
      * @return the config's value
      */
-    V getValue(T configurable){// slq here as well
+    public V getValue(T configurable){// slq here as well
         return (V) map.computeIfAbsent(configurable, c -> this.getDefault());
     }
-    String getExteriorValue(T configurable){
+    public String getExteriorValue(T configurable){
         return wrapTypeOut(getValue(configurable), configurable);
     }
 }

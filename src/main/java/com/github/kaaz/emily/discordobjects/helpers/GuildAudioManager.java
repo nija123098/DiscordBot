@@ -105,10 +105,8 @@ public class GuildAudioManager {
         } else if (this.paused != null){
             this.start(this.paused, (int) this.pausePosition);
         }else if (this.queue.size() > 0){
-            MusicDownloadService.queueDownload(this.queue.get(0), track -> {
-                this.start(this.queue.get(0).file(), 0);
-            });// duplicate download attempt safe
-        }
+            MusicDownloadService.queueDownload(this.queue.get(0), track -> this.start(this.queue.get(0).file(), 0));
+        }// duplicate download attempt safe
     }
     @EventListener
     public static void handle(TrackFinishEvent event){

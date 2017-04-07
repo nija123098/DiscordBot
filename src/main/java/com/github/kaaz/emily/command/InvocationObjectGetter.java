@@ -2,8 +2,8 @@ package com.github.kaaz.emily.command;
 
 import com.github.kaaz.emily.command.anotations.Context;
 import com.github.kaaz.emily.command.anotations.Convert;
-import com.github.kaaz.emily.config.ConfigHandler;
-import com.github.kaaz.emily.config.Playlist;
+import com.github.kaaz.emily.config.*;
+import com.github.kaaz.emily.config.configs.guild.GuildActivePlaylistConfig;
 import com.github.kaaz.emily.config.configs.guild.UserNamesConfig;
 import com.github.kaaz.emily.discordobjects.helpers.MessageHelper;
 import com.github.kaaz.emily.discordobjects.wrappers.*;
@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Made by nija123098 on 3/27/2017.
@@ -42,6 +43,7 @@ public class InvocationObjectGetter {
             List<Attachment> attachments = message.getAttachments();
             return attachments.toArray(new Attachment[attachments.size()]);
         });
+        addContext(Playlist.class, "active", (user, message, reaction, args) -> ConfigHandler.getSetting(GuildActivePlaylistConfig.class, message.getGuild()));
     }
 
     private static <T> void addContext(Class<T> clazz, String label, InvocationGetter<T> invocationGetter){
@@ -181,10 +183,86 @@ public class InvocationObjectGetter {
             }
             return new Pair<>(role, role.getName().length());
         });
+        addConverter(ConfigLevel.class, (user, message, reaction, args) -> {
+            String arg = args.split(" ")[0].toUpperCase();// replace with ConfigLevel.getLevel
+            try{return new Pair<>(ConfigLevel.valueOf(arg), arg.length());
+            }catch(Exception ignored){}
+            arg = arg.toUpperCase();
+            if (arg.equals("GUILDUSER")){
+                return new Pair<>(ConfigLevel.GUILD_USER, 9);
+            }
+            if (arg.equals("GUILD USER")){
+                return new Pair<>(ConfigLevel.GUILD_USER, 10);
+            }
+            throw new ArgumentException("No such Configurable type");
+        });
+        addConverter(Boolean.class, (user, message, reaction, args) -> {
+            try {
+                boolean result = Boolean.valueOf(args.split(" ")[0]);
+                return new Pair<>(result, result ? 4 : 5);
+            } catch (Exception e){// todo add better affirmation and negation parsing
+                throw new ArgumentException("That is not a boolean, use true or false");
+            }
+        });
+        addConverter(Integer.class, (user, message, reaction, args) -> {
+            try {
+                String arg = args.split(" ")[0];
+                Integer result = Integer.parseInt(arg);
+                return new Pair<>(result, arg.length());
+            } catch (Exception e){
+                throw new ArgumentException("That is not a integer");
+            }
+        });
+        addConverter(Float.class, (user, message, reaction, args) -> {
+            try {
+                String arg = args.split(" ")[0];
+                Float result = Float.parseFloat(arg);
+                return new Pair<>(result, arg.length());
+            } catch (Exception e){
+                throw new ArgumentException("That is not a decimal number");
+            }
+        });
+        addConverter(AbstractConfig.class, (user, message, reaction, args) -> {
+            Pair<ConfigLevel, Integer> pair = (Pair<ConfigLevel, Integer>) CONVERTER_MAP.get(ConfigLevel.class).getObject(user, message, reaction, args);
+            args = args.substring(pair.getValue());
+            int space = pair.getValue();
+            while (true){
+                if (!args.startsWith(" ")){
+                    break;
+                }
+                ++space;
+                args = args.substring(1);
+            }
+            args = args.replace("-", "_");
+            AbstractConfig<?, ? extends Configurable> a = ConfigHandler.getConfig(pair.getKey(), args.split(" ")[0]);
+            if (a == null){
+                throw new ArgumentException("No such config");
+            }
+            return new Pair<>(a, space + a.getName().length());
+        });
+        addConverter(Configurable.class, (user, message, reaction, args) -> {
+            AtomicReference<Pair<Configurable, Integer>> pair = new AtomicReference<>();
+            CONVERTER_MAP.forEach((type, converter) -> {
+                if (!Configurable.class.isAssignableFrom(type) || Configurable.class.equals(type) || pair.get() != null){
+                    return;
+                }
+                try {
+                    pair.set((Pair<Configurable, Integer>) converter.getObject(user, message, reaction, args));
+                } catch (Exception ignored){}
+            });
+            if (pair.get() == null){
+                throw new ArgumentException("No configurable instance found");
+            }
+            return pair.get();
+        });
     }
 
     private static <T> void addConverter(Class<T> clazz, ArgumentConverter<T> argumentConverter){
         CONVERTER_MAP.put(clazz, argumentConverter);
+    }
+
+    public static <T> Pair<T, Integer> convert(Class<T> clazz, User user, Message message, Reaction reaction, String args){
+        return (Pair<T, Integer>) CONVERTER_MAP.get(clazz).getObject(user, message, reaction, args);
     }
 
     @FunctionalInterface

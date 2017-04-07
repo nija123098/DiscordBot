@@ -8,7 +8,6 @@ import sx.blah.discord.handle.obj.IRole;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
@@ -19,7 +18,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Role implements Configurable{
     private static final Map<String, Role> MAP = new ConcurrentHashMap<>();
     public static Role getRole(String id){
-        IRole role = DiscordClient.getRoleByID(id).role();
+        IRole role = DiscordClient.client().getRoleByID(id);
         if (role == null){
             return null;
         }
@@ -27,6 +26,11 @@ public class Role implements Configurable{
     }
     static Role getRole(IRole guild){
         return MAP.computeIfAbsent(guild.getID(), s -> new Role(guild));
+    }
+    public static java.util.List<Role> getRoles(java.util.List<IRole> iRoles) {
+        java.util.List<Role> roles = new ArrayList<>(iRoles.size());
+        iRoles.forEach(iUser -> roles.add(getRole(iUser)));
+        return roles;
     }
     public static void update(IRole guild){// hash is based on id, so no old channel is necessary
         MAP.get(guild.getID()).reference.set(guild);
@@ -38,16 +42,22 @@ public class Role implements Configurable{
     IRole role(){
         return this.reference.get();
     }
-    public static List<Role> getRoles(List<IRole> iRoles) {
-        List<Role> roles = new ArrayList<>(iRoles.size());
-        iRoles.forEach(iUser -> roles.add(getRole(iUser)));
-        return roles;
-    }
 
     @Override
     public ConfigLevel getConfigLevel() {
         return ConfigLevel.ROLE;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        return o == this || o instanceof Role && ((Role) o).getID().equals(this.getID());
+    }
+
+    @Override
+    public int hashCode() {
+        return this.getID().hashCode();
+    }
+
     //WRAPPER METHODS
     public int getPosition() {
         return role().getPosition();

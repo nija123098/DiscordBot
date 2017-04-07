@@ -12,6 +12,6 @@ import java.util.List;
  */
 public class GuildBotRoleConfig extends AbstractConfig<List<String>, GuildUser> {
     public GuildBotRoleConfig() {
-        super("guild_flag_ranks", BotRole.GUILD_OWNER, new ArrayList<>(2), "Flags available to guild specific bot roles");
+        super("guild_flag_ranks", BotRole.GUILD_ADMIN, new ArrayList<>(2), "Flags available to guild specific bot roles");
     }
 }

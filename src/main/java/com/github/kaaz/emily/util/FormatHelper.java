@@ -27,4 +27,8 @@ public class FormatHelper {
         }
         return builder.toString();
     }
+    public static String trimFront(String s){
+        int index = s.indexOf(" ");
+        return index == -1 || (s.charAt(0) != ' ') ? s : s.substring(index);
+    }
 }

@@ -93,7 +93,7 @@ public class MessageHelper {
             if (lang == null){
                 lang = "en";
             }
-            String message = this.message.asBuilt();
+            String message = this.message.translate(lang);
             MessageBuilder builder = new MessageBuilder(DiscordClient.client()).withChannel(this.channel.channel()).withContent(message).withTTS(tts);
             if (this.file != null) {
                 try {

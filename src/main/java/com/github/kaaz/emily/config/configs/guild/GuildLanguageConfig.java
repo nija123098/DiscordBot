@@ -9,6 +9,6 @@ import com.github.kaaz.emily.perms.BotRole;
  */
 public class GuildLanguageConfig extends AbstractConfig<String, Guild> {
     public GuildLanguageConfig() {
-        super("guild_language", BotRole.GUILD_TRUSTEE, null, "The language the bot uses to communicate in the guild");
+        super("guild_language", BotRole.GUILD_TRUSTEE, "en", "The language the bot uses to communicate in the guild");
     }
 }

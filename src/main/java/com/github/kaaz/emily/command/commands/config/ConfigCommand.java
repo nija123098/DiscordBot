@@ -1,4 +1,4 @@
-package com.github.kaaz.emily.command.commands;
+package com.github.kaaz.emily.command.commands.config;
 
 import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.ModuleLevel;
@@ -15,6 +15,6 @@ public class ConfigCommand extends AbstractCommand {
     }
     @Command
     public void command(MessageHelper helper){
-
+        helper.appendTranslation("This will do something eventually");
     }
 }

@@ -52,6 +52,16 @@ public class Channel implements Configurable {
         return channel().getID();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        return o == this || o instanceof Channel && ((Channel) o).getID().equals(this.getID());
+    }
+
+    @Override
+    public int hashCode() {
+        return this.getID().hashCode();
+    }
+
     public Shard getShard() {
         return Shard.getShard(channel().getShard());
     }

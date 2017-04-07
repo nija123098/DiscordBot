@@ -33,6 +33,23 @@ public class Reaction {// should not be saved
         return this.reaction;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Reaction reaction1 = (Reaction) o;
+
+        return (reaction != null ? reaction.equals(reaction1.reaction) : reaction1.reaction == null) && (name != null ? name.equals(reaction1.name) : reaction1.name == null);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = reaction != null ? reaction.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        return result;
+    }
+
     public int getCount() {
         return reaction.getCount();
     }
