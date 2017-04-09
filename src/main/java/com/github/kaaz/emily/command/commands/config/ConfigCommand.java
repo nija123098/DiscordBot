@@ -3,7 +3,7 @@ package com.github.kaaz.emily.command.commands.config;
 import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.ModuleLevel;
 import com.github.kaaz.emily.command.anotations.Command;
-import com.github.kaaz.emily.discordobjects.helpers.MessageHelper;
+import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.perms.BotRole;
 
 /**
@@ -14,7 +14,7 @@ public class ConfigCommand extends AbstractCommand {
         super(null, "config", ModuleLevel.ADMINISTRATIVE, BotRole.USER, null, null, null);
     }
     @Command
-    public void command(MessageHelper helper){
-        helper.appendTranslation("This will do something eventually");
+    public void command(MessageMaker helper){
+        helper.appendContent("This will do something eventually");
     }
 }

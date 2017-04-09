@@ -5,7 +5,7 @@ import com.github.kaaz.emily.command.anotations.Convert;
 import com.github.kaaz.emily.config.*;
 import com.github.kaaz.emily.config.configs.guild.GuildActivePlaylistConfig;
 import com.github.kaaz.emily.config.configs.guild.UserNamesConfig;
-import com.github.kaaz.emily.discordobjects.helpers.MessageHelper;
+import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.wrappers.*;
 import com.github.kaaz.emily.exeption.ArgumentException;
 import com.github.kaaz.emily.util.FormatHelper;
@@ -35,7 +35,7 @@ public class InvocationObjectGetter {
         addContext(Presence.class, "invoker", (user, message, reaction, args) -> user.getPresence());
         addContext(String.class, "args", (user, message, reaction, args) -> args);
         addContext(String[].class, "args", (user, message, reaction, args) -> FormatHelper.reduceRepeats(args, ' ').split(" "));
-        addContext(MessageHelper.class, "", (user, message, reaction, args) -> new MessageHelper(user, message.getChannel()));
+        addContext(MessageMaker.class, "", (user, message, reaction, args) -> new MessageMaker(message.getChannel(), user));
         addContext(VoiceChannel.class, "location", (user, message, reaction, args) -> message.getGuild().getConnectedVoiceChannel());
         addContext(Shard.class, "location", (user, message, reaction, args) -> message.getShard());
         addContext(Region.class, "location", (user, message, reaction, args) -> message.getGuild().getRegion());

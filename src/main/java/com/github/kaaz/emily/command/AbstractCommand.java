@@ -7,7 +7,7 @@ import com.github.kaaz.emily.config.GlobalConfigurable;
 import com.github.kaaz.emily.config.GuildUser;
 import com.github.kaaz.emily.config.configs.guild.GuildSpecialPermsEnabledConfig;
 import com.github.kaaz.emily.config.configs.role.*;
-import com.github.kaaz.emily.discordobjects.helpers.MessageHelper;
+import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.wrappers.*;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
 import com.github.kaaz.emily.exeption.BotException;
@@ -267,13 +267,13 @@ public class AbstractCommand {
         Object[] objects = InvocationObjectGetter.replace(this.parameters, new Object[this.parameters.length], user, message, reaction, args);
         try {
             boolean success = this.method.invoke(this, objects) == null;
-            Stream.of(objects).filter(MessageHelper.class::isInstance).forEach(o -> ((MessageHelper) o).send());
+            Stream.of(objects).filter(MessageMaker.class::isInstance).forEach(o -> ((MessageMaker) o).send());
             return success;
         } catch (IllegalAccessException e) {
             Log.log("Malformed command: " + getName(), e);
         } catch (InvocationTargetException e) {
             if (e.getCause() instanceof BotException){
-                new MessageHelper(user, message.getChannel()).asExceptionMessage(((BotException) e.getCause())).send();
+                new MessageMaker(message.getChannel(), user).asExceptionMessage(((BotException) e.getCause())).send();
             }
             Log.log("Exception during method execution: " + getName(), e);
         }

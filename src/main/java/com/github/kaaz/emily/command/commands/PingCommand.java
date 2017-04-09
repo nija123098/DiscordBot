@@ -1,9 +1,9 @@
 package com.github.kaaz.emily.command.commands;
 
 import com.github.kaaz.emily.command.AbstractCommand;
-import com.github.kaaz.emily.command.anotations.Command;
 import com.github.kaaz.emily.command.ModuleLevel;
-import com.github.kaaz.emily.discordobjects.helpers.MessageHelper;
+import com.github.kaaz.emily.command.anotations.Command;
+import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.perms.BotRole;
 
 /**
@@ -14,7 +14,7 @@ public class PingCommand extends AbstractCommand {
         super(null, "ping", ModuleLevel.NONE, BotRole.USER, null, null, null);
     }
     @Command
-    public void command(MessageHelper helper){
-        helper.appendTranslation("ping");
+    public void command(MessageMaker helper){
+        helper.appendContent("red").withUserColor();
     }
 }

@@ -2,7 +2,7 @@ package com.github.kaaz.emily.command;
 
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.configs.guild.GuildPrefixConfig;
-import com.github.kaaz.emily.discordobjects.helpers.MessageHelper;
+import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.wrappers.Message;
 import com.github.kaaz.emily.discordobjects.wrappers.Reaction;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
@@ -178,13 +178,13 @@ public class CommandHandler {
         if (pair != null){
             if (!pair.getKey().hasPermission(user, message.getGuild())){
                 if (reaction == null){
-                    new MessageHelper(user, message.getChannel()).appendTranslation("You do not have permission to use that command.").send();
+                    new MessageMaker(message.getChannel(), user).appendContent("You do not have permission to use that command.").send();
                 }
                 return;
             }
             if (!pair.getKey().checkCoolDown(message.getGuild(), message.getChannel(), user)){
                 if (reaction == null){
-                    new MessageHelper(user, message.getChannel()).appendTranslation("You can not use that command so soon.").send();
+                    new MessageMaker(message.getChannel(), user).appendContent("You can not use that command so soon.").send();
                 }
                 return;
             }
@@ -193,7 +193,7 @@ public class CommandHandler {
                     pair.getKey().invoked(message.getGuild(), message.getChannel(), user);
                 }
             } catch (BotException e){
-                new MessageHelper(user, message.getChannel()).asExceptionMessage(e).send();
+                new MessageMaker(message.getChannel(), user).asExceptionMessage(e).send();
             }
         }
     }

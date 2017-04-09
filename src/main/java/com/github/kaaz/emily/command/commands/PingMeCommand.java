@@ -3,7 +3,7 @@ package com.github.kaaz.emily.command.commands;
 import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.anotations.Command;
 import com.github.kaaz.emily.command.anotations.Convert;
-import com.github.kaaz.emily.discordobjects.helpers.MessageHelper;
+import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
 
 /**
@@ -14,7 +14,7 @@ public class PingMeCommand extends AbstractCommand {
         super(command, "me", null, null, "re", null, "mi");
     }
     @Command
-    public void command(MessageHelper helper, @Convert User user){
-        helper.appendTranslation("ping").withDM();
+    public void command(MessageMaker helper, @Convert User user){
+        helper.appendContent("ping").withDM();
     }
 }

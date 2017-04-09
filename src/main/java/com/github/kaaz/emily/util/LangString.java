@@ -24,6 +24,7 @@ public class LangString {
      * if that string should be translated
      */
     private final List<Pair<Boolean, String>> value = new ArrayList<>();
+    private final Map<String, String> translated = new HashMap<>(1);
     public LangString() {
     }
     public LangString(boolean translate, String content) {
@@ -52,9 +53,11 @@ public class LangString {
         return this.value.size() > 0;
     }
     public String translate(String lang) {
-        final StringBuilder builder = new StringBuilder();
-        value.forEach(pair -> builder.append(pair.getKey() ? translate(lang, pair.getValue()) : pair.getValue()));
-        return builder.toString();
+        return translated.computeIfAbsent(lang, s -> {
+            final StringBuilder builder = new StringBuilder();
+            value.forEach(pair -> builder.append(pair.getKey() ? translate(lang, pair.getValue()) : pair.getValue()));
+            return builder.toString();
+        });
     }
 
     /**

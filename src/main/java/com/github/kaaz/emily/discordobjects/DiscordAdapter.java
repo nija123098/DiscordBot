@@ -1,5 +1,6 @@
 package com.github.kaaz.emily.discordobjects;
 
+import com.github.kaaz.emily.discordobjects.helpers.ReactionBehavior;
 import com.github.kaaz.emily.discordobjects.wrappers.*;
 import com.github.kaaz.emily.discordobjects.wrappers.event.BotEvent;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
@@ -46,6 +47,7 @@ public class DiscordAdapter {
             }
         }
         DiscordClient.online("with the loading screen!");
+        EventDistributor.register(ReactionBehavior.class);
         EventDistributor.distribute(DiscordDataReload.class, () -> null);
     }
 

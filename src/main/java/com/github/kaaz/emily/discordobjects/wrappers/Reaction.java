@@ -16,6 +16,9 @@ import java.util.Map;
 public class Reaction {// should not be saved
     private static final Map<IReaction, Reaction> MAP = new MemoryManagementService.ManagedMap<>(150000);
     public static Reaction getReaction(IReaction iReaction){
+        if (iReaction == null){
+            return null;
+        }
         return MAP.computeIfAbsent(iReaction, r -> new Reaction(iReaction));
     }
     static List<Reaction> getReactions(List<IReaction> reactions){
