@@ -5,8 +5,9 @@ import com.github.kaaz.emily.config.ConfigLevel;
 import com.github.kaaz.emily.config.Configurable;
 import com.github.kaaz.emily.config.GlobalConfigurable;
 import com.github.kaaz.emily.config.configs.global.TrackDeleteTimeConfig;
-import com.github.kaaz.emily.config.configs.track.TrackTimeExpireConfig;
 import com.github.kaaz.emily.config.configs.track.TrackFileConfig;
+import com.github.kaaz.emily.config.configs.track.TrackTimeExpireConfig;
+import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
 import com.github.kaaz.emily.service.services.MusicDownloadService;
 
@@ -57,8 +58,12 @@ public class Track implements Configurable{
     @Override
     public void manage(){
         if (MusicDownloadService.isDownloaded(this) && ConfigHandler.getSetting(TrackTimeExpireConfig.class, this) > ConfigHandler.getSetting(TrackDeleteTimeConfig.class, GlobalConfigurable.GLOBAL)){
-            ConfigHandler.getSetting(TrackFileConfig.class, this).delete();
+            ConfigHandler.getSetting(TrackFileConfig.class, this).delete();// is downloaded ensures that the file is not null
         }
+    }
+    @Override
+    public void checkPermissionToEdit(User user, Guild guild) {
+        BotRole.checkRequiredRole(BotRole.GUILD_TRUSTEE, user, null);
     }
     public enum Platform{
         YOUTUBE,

@@ -34,7 +34,7 @@
         <dependency>
             <groupId>com.github.austinv11</groupId>
             <artifactId>Discord4j</artifactId>
-            <version>7ed3426</version>
+            <version>07b4976</version>
             <classifier>shaded</classifier>
         </dependency>
         <dependency>

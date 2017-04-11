@@ -8,6 +8,7 @@ import com.github.kaaz.emily.discordobjects.wrappers.DiscordClient;
 import com.github.kaaz.emily.discordobjects.wrappers.DiscordPermission;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
+import com.github.kaaz.emily.exeption.PermissionsException;
 
 import java.util.EnumSet;
 import java.util.function.BiPredicate;
@@ -53,6 +54,11 @@ public enum BotRole {
             }
         }
         return false;
+    }
+    public static void checkRequiredRole(BotRole role, User user, Guild guild){
+        if (!hasRequiredRole(role, user, guild)){
+            throw new PermissionsException(role);
+        }
     }
     public static EnumSet<BotRole> getSet(User user, Guild guild){
         EnumSet<BotRole> set = EnumSet.noneOf(BotRole.class);

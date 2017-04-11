@@ -4,6 +4,7 @@ import com.github.kaaz.emily.config.ConfigLevel;
 import com.github.kaaz.emily.config.Configurable;
 import com.github.kaaz.emily.discordobjects.exception.ErrorWrapper;
 import com.github.kaaz.emily.discordobjects.helpers.GuildAudioManager;
+import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IRole;
@@ -57,6 +58,10 @@ public class Guild implements Configurable {
     @Override
     public String getID() {
         return guild().getID();
+    }
+
+    public void checkPermissionToEdit(User user, Guild guild){
+        BotRole.checkRequiredRole(BotRole.GUILD_TRUSTEE, user, guild);
     }
 
     @Override

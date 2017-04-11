@@ -2,6 +2,7 @@ package com.github.kaaz.emily.config;
 
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
+import com.github.kaaz.emily.perms.BotRole;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -46,6 +47,12 @@ public class GuildUser implements Configurable {
     @Override
     public ConfigLevel getConfigLevel() {
         return ConfigLevel.GUILD_USER;
+    }
+    public void checkPermissionToEdit(User user, Guild guild){
+        if (user.equals(this.getUser())){
+            return;
+        }
+        BotRole.checkRequiredRole(BotRole.GUILD_TRUSTEE, user, guild);
     }
     @Override
     public boolean equals(Object o){

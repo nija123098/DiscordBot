@@ -1,5 +1,9 @@
 package com.github.kaaz.emily.config;
 
+import com.github.kaaz.emily.discordobjects.wrappers.Guild;
+import com.github.kaaz.emily.discordobjects.wrappers.User;
+import com.github.kaaz.emily.perms.BotRole;
+
 /**
  * The class for the global configurable
  */
@@ -18,5 +22,10 @@ public class GlobalConfigurable implements Configurable {
     @Override
     public ConfigLevel getConfigLevel() {
         return ConfigLevel.GLOBAL;
+    }
+
+    @Override
+    public void checkPermissionToEdit(User user, Guild guild) {
+        BotRole.checkRequiredRole(BotRole.BOT_ADMIN, user, null);
     }
 }

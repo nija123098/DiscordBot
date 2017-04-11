@@ -3,6 +3,7 @@ package com.github.kaaz.emily.discordobjects.wrappers;
 import com.github.kaaz.emily.config.ConfigLevel;
 import com.github.kaaz.emily.config.Configurable;
 import com.github.kaaz.emily.discordobjects.exception.ErrorWrapper;
+import com.github.kaaz.emily.perms.BotRole;
 import sx.blah.discord.handle.obj.IRole;
 
 import java.awt.*;
@@ -46,6 +47,11 @@ public class Role implements Configurable{
     @Override
     public ConfigLevel getConfigLevel() {
         return ConfigLevel.ROLE;
+    }
+
+    @Override
+    public void checkPermissionToEdit(User user, Guild guild){
+        BotRole.checkRequiredRole(BotRole.GUILD_TRUSTEE, user, guild);
     }
 
     @Override

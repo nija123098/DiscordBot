@@ -3,6 +3,7 @@ package com.github.kaaz.emily.discordobjects.wrappers;
 import com.github.kaaz.emily.config.ConfigLevel;
 import com.github.kaaz.emily.config.Configurable;
 import com.github.kaaz.emily.discordobjects.exception.ErrorWrapper;
+import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
 import sx.blah.discord.handle.obj.IUser;
 
@@ -52,6 +53,13 @@ public class User implements Configurable {
     @Override
     public ConfigLevel getConfigLevel() {
         return ConfigLevel.USER;
+    }
+
+    @Override
+    public void checkPermissionToEdit(User user, Guild guild){
+        if (!this.equals(user)){
+            BotRole.checkRequiredRole(BotRole.BOT_ADMIN, user, null);
+        }
     }
 
     @Override

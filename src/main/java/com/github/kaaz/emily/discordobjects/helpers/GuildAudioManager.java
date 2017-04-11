@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Made by nija123098 on 3/28/2017.
@@ -39,8 +40,9 @@ public class GuildAudioManager {
         return getManager(guild, true);
     }
     private AudioPlayer player;
-    private List<File> speeches = new ArrayList<>(1);
-    private List<Track> queue = new ArrayList<>();
+    private final List<File> speeches = new ArrayList<>(1);
+    private final List<Track> queue = new ArrayList<>();
+    private final AtomicReference<Track> currentTrack = new AtomicReference<>();
     private File paused, current;
     private long pausePosition;
     private boolean downloading;
@@ -106,7 +108,11 @@ public class GuildAudioManager {
             this.start(this.paused, (int) this.pausePosition);
         }else if (this.queue.size() > 0){
             MusicDownloadService.queueDownload(this.queue.get(0), track -> this.start(this.queue.get(0).file(), 0));
+            this.currentTrack.set(this.queue.remove(0));
         }// duplicate download attempt safe
+    }
+    public Track currentTrack() {
+        return this.currentTrack.get();
     }
     @EventListener
     public static void handle(TrackFinishEvent event){

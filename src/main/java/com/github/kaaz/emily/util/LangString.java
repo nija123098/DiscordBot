@@ -106,7 +106,7 @@ public class LangString {
                     }
                     ++after;
                 }
-                building += FormatHelper.repeat(' ', before) + call(lang, contents[i].substring(before, contents[i].length() + after)) + FormatHelper.repeat(' ', after);
+                building += FormatHelper.repeat(' ', before) + call(lang, contents[i].substring(before, contents[i].length() - after)) + FormatHelper.repeat(' ', after);
                 if (i != contents.length - 1){
                     building += "\n";
                 }
@@ -146,5 +146,8 @@ public class LangString {
     }
     public static String getLangCode(String s){
         return s;//todo
+    }
+    public static String getLangName(String code){
+        return code;
     }
 }

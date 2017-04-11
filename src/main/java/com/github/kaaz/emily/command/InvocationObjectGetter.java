@@ -5,9 +5,12 @@ import com.github.kaaz.emily.command.anotations.Convert;
 import com.github.kaaz.emily.config.*;
 import com.github.kaaz.emily.config.configs.guild.GuildActivePlaylistConfig;
 import com.github.kaaz.emily.config.configs.guild.UserNamesConfig;
+import com.github.kaaz.emily.discordobjects.helpers.GuildAudioManager;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.wrappers.*;
 import com.github.kaaz.emily.exeption.ArgumentException;
+import com.github.kaaz.emily.exeption.ContextException;
+import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.util.FormatHelper;
 import com.github.kaaz.emily.util.Log;
 import javafx.util.Pair;
@@ -30,21 +33,45 @@ public class InvocationObjectGetter {
         addContext(User.class, "invoker", (user, message, reaction, args) -> user);
         addContext(Message.class, "invoker", (user, message, reaction, args) -> message);
         addContext(Reaction.class, "invoker", (user, message, reaction, args) -> reaction);
-        addContext(Guild.class, "location", (user, message, reaction, args) -> message.getGuild());
+        addContext(Guild.class, "location", (user, message, reaction, args) -> {
+            ContextException.checkGuild(message.getGuild());
+            return message.getGuild();
+        });
+        addContext(GuildUser.class, "invoker", (user, message, reaction, args) -> {
+            ContextException.checkGuild(message.getGuild(), "Commands with guild user arguments can only be used in a guild");
+            return GuildUser.getGuildUser(message.getGuild(), user);
+        });
         addContext(Channel.class, "location", (user, message, reaction, args) -> message.getChannel());
         addContext(Presence.class, "invoker", (user, message, reaction, args) -> user.getPresence());
         addContext(String.class, "args", (user, message, reaction, args) -> args);
         addContext(String[].class, "args", (user, message, reaction, args) -> FormatHelper.reduceRepeats(args, ' ').split(" "));
         addContext(MessageMaker.class, "", (user, message, reaction, args) -> new MessageMaker(message.getChannel(), user));
-        addContext(VoiceChannel.class, "location", (user, message, reaction, args) -> message.getGuild().getConnectedVoiceChannel());
+        addContext(VoiceChannel.class, "location", (user, message, reaction, args) -> {
+            VoiceChannel channel = message.getGuild().getConnectedVoiceChannel();
+            if (channel == null) throw new ContextException("You must be in a voice channel to use that command");
+            return channel;
+        });
         addContext(Shard.class, "location", (user, message, reaction, args) -> message.getShard());
         addContext(Region.class, "location", (user, message, reaction, args) -> message.getGuild().getRegion());
         addContext(Attachment[].class, "invoker", (user, message, reaction, args) -> {
             List<Attachment> attachments = message.getAttachments();
             return attachments.toArray(new Attachment[attachments.size()]);
         });
-        addContext(Playlist.class, "active", (user, message, reaction, args) -> ConfigHandler.getSetting(GuildActivePlaylistConfig.class, message.getGuild()));
-    }
+        addContext(Playlist.class, "current", (user, message, reaction, args) -> {
+            ContextException.checkGuild(message.getGuild());
+            return ConfigHandler.getSetting(GuildActivePlaylistConfig.class, message.getGuild());
+        });
+        addContext(Track.class, "current", (user, message, reaction, args) -> {
+            ContextException.checkGuild(message.getGuild());
+            GuildAudioManager manager = GuildAudioManager.getManager(message.getGuild(), false);
+            if (manager == null || manager.currentTrack() == null){
+                throw new ContextException("No track is currently playing");
+            }else{
+                return manager.currentTrack();
+            }
+        });
+        addContext(Configurable.class, "", (user, message, reaction, args) -> null);
+    }// ^ is for the optional on configurable conversions
 
     private static <T> void addContext(Class<T> clazz, String label, InvocationGetter<T> invocationGetter){
         CONTEXT_MAP.computeIfAbsent(clazz, c -> {
@@ -79,18 +106,17 @@ public class InvocationObjectGetter {
             throw new ArgumentException("No channel identified by that name");
         });
         addConverter(User.class, (user, message, reaction, args) -> {
-            String arg = args.split(" ")[0].replace("<@", "").replace("!", "").replace(">", "");
-            User u = DiscordClient.getUserByID(arg);
+            User u = DiscordClient.getUserByID(args.split(" ")[0].replace("<@", "").replace("!", "").replace(">", ""));
             if (u != null){
                 return new Pair<>(u, args.split(" ")[0].length());
             }
             if (message.getGuild() == null){
                 throw new ArgumentException("Commands with user names can not be used in private channels");
             }
-            List<User> users = new ArrayList<>();
+            List<User> users = new ArrayList<>(3);
             Guild guild = message.getGuild();
             ConfigHandler.getSetting(UserNamesConfig.class, message.getGuild()).forEach(s -> {
-                if (args.startsWith(s) && (args.length() == s.length() || args.charAt(s.length()) == ' ')){
+                if (args.startsWith(s) && ((args.length() == s.length() || args.charAt(s.length()) == ' '))){
                     users.addAll(guild.getUsersByName(s));
                     if (users.size() > 1){
                         throw new ArgumentException("To many users by that name");
@@ -282,9 +308,17 @@ public class InvocationObjectGetter {
         for (int i = 0; i < parameters.length; i++) {
             try {
                 if (parameters[i].isAnnotationPresent(Context.class) || parameters[i].getAnnotations().length == 0){// null might be an instance of Context
-                    objects[i] = CONTEXT_MAP.get(parameters[i].getType()).get(parameters[i].getAnnotations().length == 0 ? "" : parameters[i].getAnnotation(Context.class).value()).getObject(user, message, reaction, args);
+                    checkContextType(parameters[i].getType());
+                    try {
+                        objects[i] = CONTEXT_MAP.get(parameters[i].getType()).get(parameters[i].getAnnotations().length == 0 ? "" : parameters[i].getAnnotation(Context.class).value()).getObject(user, message, reaction, args);
+                    } catch (Exception e){
+                        if (!(parameters[i].isAnnotationPresent(Context.class) && parameters[i].getAnnotation(Context.class).softFail())){
+                            throw e;
+                        }
+                    }
                 }else if (parameters[i].isAnnotationPresent(Convert.class)){
                     ++commandArgIndex;
+                    checkConvertType(parameters[i].getType());
                     Pair<Object, Integer> pair = (Pair<Object, Integer>) CONVERTER_MAP.get(parameters[i].getType()).getObject(user, message, reaction, args);
                     objects[i] = pair.getKey();
                     args = args.substring(pair.getValue());
@@ -297,7 +331,8 @@ public class InvocationObjectGetter {
                 }
             } catch (ArgumentException e){
                 if (parameters[i].isAnnotationPresent(Convert.class) && parameters[i].getAnnotation(Convert.class).optional()){
-                    objects[i] = CONTEXT_MAP.get(parameters[i].getType()).get(parameters[i].getAnnotation(Convert.class).replacement());
+                    checkContextType(parameters[i].getType());
+                    objects[i] = CONTEXT_MAP.get(parameters[i].getType()).get(parameters[i].getAnnotation(Convert.class).replacement()).getObject(user, message, reaction, args);
                     continue;
                 }
                 e.setParameter(commandArgIndex);
@@ -306,5 +341,32 @@ public class InvocationObjectGetter {
             }
         }
         return objects;
+    }
+
+    public static void checkConvertType(Class<?> type){
+        if (!CONVERTER_MAP.containsKey(type)){
+            throw new DevelopmentException("Can not convert objects of type: " + type.getSimpleName());
+        }
+    }
+
+    public static void checkContextType(Class<?> type){
+        if (!CONTEXT_MAP.containsKey(type)){
+            throw new DevelopmentException("Can not get context for objects of type: " + type.getSimpleName());
+        }
+    }
+
+    public static Object getTypeOf(Object...objects){
+        Map<Class<?>, Object> map = null;
+        for (Object o : objects){
+            if (map == null){
+                 map = new HashMap<>();
+                 continue;
+            }
+            if (o == null){
+                continue;
+            }
+            map.put(o.getClass(), o);
+        }
+        return map.get(objects[0]);
     }
 }

@@ -1,6 +1,7 @@
 package com.github.kaaz.emily.exeption;
 
 import com.github.kaaz.emily.command.anotations.Convert;
+import com.github.kaaz.emily.command.anotations.LaymanName;
 
 import java.lang.reflect.Parameter;
 
@@ -51,11 +52,12 @@ public class ArgumentException extends BotException {
             if (!this.args[i].isAnnotationPresent(Convert.class)){
                 continue;
             }
-            s += this.args[i].getType().getSimpleName();
+            s += this.args[i].getClass().isAnnotationPresent(LaymanName.class) ? this.args[i].getAnnotation(LaymanName.class).value() : this.args[i].getType().getSimpleName();
             if (i != this.args.length - 1){
                 s += ", ";
             }
         }
+        s += "\n" + (this.args[this.parameter].isAnnotationPresent(LaymanName.class) ? this.args[this.parameter].getAnnotation(LaymanName.class).help() : this.args[this.parameter].getClass().getSimpleName() + " in the form of mention, ID, or reference");
         return s;
     }
 }

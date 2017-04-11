@@ -1,5 +1,6 @@
 package com.github.kaaz.emily.config;
 
+import com.github.kaaz.emily.command.anotations.LaymanName;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
 import com.github.kaaz.emily.perms.BotRole;
 
@@ -13,6 +14,7 @@ import java.util.Map;
  * @param <V> The stored type of the config within the database
  * @param <T> The type of config that this config defines
  */
+@LaymanName(value = "Configuration type then name", help = "The type (user, guild, guild user, ect...) followed by the config name of the playlist")
 public class AbstractConfig<V, T extends Configurable> {
     private final V defaul;
     private final String name, description;

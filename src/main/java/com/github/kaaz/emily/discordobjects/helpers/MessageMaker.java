@@ -114,7 +114,7 @@ public class MessageMaker {
         return this;
     }
     public MessageMaker asExceptionMessage(BotException cause) {
-        this.embed.withColor(Color.RED).withDesc(cause.getMessage()).withTitle(cause.getClass().getSimpleName());
+        this.withColor(Color.RED).getHeader().appendContent(cause.getMessage()).getMessageProducer().getTitle().appendRaw(cause.getClass().getSimpleName());
         return this;
     }
     // embed methods

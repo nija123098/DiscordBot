@@ -2,7 +2,6 @@ package com.github.kaaz.emily.config;
 
 import com.github.kaaz.emily.discordobjects.wrappers.*;
 import com.github.kaaz.emily.exeption.DevelopmentException;
-import com.github.kaaz.emily.util.Holder;
 import com.github.kaaz.emily.util.Log;
 import org.reflections.Reflections;
 
@@ -212,20 +211,12 @@ public class ConfigHandler {
      * @param configName the name of the config to be gotten
      * @param configurable the configurable that the config value
      *                     is to be gotten for
-     * @param holder the holder
      * @return the value of the config for the configurable
      */
-    @SafeVarargs
-    public static <V> V getSetting(String configName, Configurable configurable, Holder<V>...holder){
+    public static Object getSetting(String configName, Configurable configurable){
         AbstractConfig config = getConfig(configurable.getConfigLevel(), configName);
         if (config != null){
-            try {
-                Object o = config.getValue(configurable);
-                Holder.fillOptional((V) o, holder);
-                return (V) o;
-            } catch (ClassCastException e){
-                throw new DevelopmentException("Attempted to get a value with the wrong holder type for the config: " + config.getName(), e);
-            }
+            return config.getValue(configurable);
         } else {
             return null;
         }
@@ -242,11 +233,7 @@ public class ConfigHandler {
     public static String getExteriorSetting(String configName, Configurable configurable){
         AbstractConfig config = getConfig(configurable.getConfigLevel(), configName);
         if (config != null){
-            try {
-                return config.getExteriorValue(configurable);
-            } catch (ClassCastException e){
-                throw new DevelopmentException("Attempted to get a value with the wrong holder type for the config: " + config.getName(), e);
-            }
+            return config.getExteriorValue(configurable);
         } else {
             return null;
         }
