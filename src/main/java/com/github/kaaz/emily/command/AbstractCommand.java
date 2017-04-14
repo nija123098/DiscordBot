@@ -42,11 +42,11 @@ public class AbstractCommand {
     private List<Channel> channelCoolDowns;
     private List<User> userCoolDowns;
     private List<GuildUser> guildUserCoolDowns;
-    public AbstractCommand(AbstractCommand superCommand, String name, ModuleLevel module, BotRole botRole, String absoluteAliases, String emoticonAliases, String relativeAliases){
+    public AbstractCommand(AbstractCommand superCommand, String name, String absoluteAliases, String emoticonAliases, String relativeAliases){
         this.superCommand = superCommand;
         this.name = superCommand == null ? name : superCommand.name + " " + name;
-        this.module = superCommand == null ? module : module == null ? superCommand.module : module;
-        this.botRole = superCommand == null ? (botRole == null ? BotRole.USER : botRole) : botRole == null ? superCommand.botRole : botRole;
+        this.module = getModule() == null ? superCommand == null ? ModuleLevel.NONE : superCommand.getModule() : ModuleLevel.NONE;
+        this.botRole = getBotRole() == null ? superCommand == null ? BotRole.USER : superCommand.getBotRole() : BotRole.USER;
         this.allNames = new HashSet<>();
         this.allNames.add(this.name);
         if (absoluteAliases != null){
@@ -61,7 +61,7 @@ public class AbstractCommand {
         }
         this.allNames.addAll(this.emoticonAliases);
         this.emoticonAliases.stream().map(EmoticonHelper::getChars).forEach(this.allNames::add);
-        if (relativeAliases != null){
+        if (relativeAliases != null && this.superCommand != null){
             for (String rel : relativeAliases.split(", ")){
                 this.superCommand.getNames().forEach(s -> this.allNames.add(s + " " + rel));
             }
@@ -273,7 +273,7 @@ public class AbstractCommand {
             Log.log("Malformed command: " + getName(), e);
         } catch (InvocationTargetException e) {
             if (e.getCause() instanceof BotException){
-                new MessageMaker(message.getChannel(), user).asExceptionMessage(((BotException) e.getCause())).send();
+                new MessageMaker(user, message).asExceptionMessage(((BotException) e.getCause())).send();
             }
             Log.log("Exception during method execution: " + getName(), e);
         }

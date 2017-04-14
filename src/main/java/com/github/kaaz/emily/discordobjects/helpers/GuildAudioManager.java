@@ -1,6 +1,7 @@
 package com.github.kaaz.emily.discordobjects.helpers;
 
 import com.github.kaaz.emily.config.ConfigHandler;
+import com.github.kaaz.emily.config.configs.guild.GuildActivePlaylistConfig;
 import com.github.kaaz.emily.config.configs.guild.GuildLanguageConfig;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.Track;
@@ -40,6 +41,7 @@ public class GuildAudioManager {
         return getManager(guild, true);
     }
     private AudioPlayer player;
+    private boolean playlistOn = false;
     private final List<File> speeches = new ArrayList<>(1);
     private final List<Track> queue = new ArrayList<>();
     private final AtomicReference<Track> currentTrack = new AtomicReference<>();
@@ -87,6 +89,9 @@ public class GuildAudioManager {
         this.player.skip();
         start(file, 0);
     }
+    private void setPlaylistOn(boolean on){
+        this.playlistOn = on;
+    }
     private void start(File file, int position){
         this.current = file;
         this.player.setPaused(true);
@@ -104,12 +109,14 @@ public class GuildAudioManager {
     private void onFinish(){
         if (this.speeches.size() > 0){
             this.start(this.speeches.get(0), 0);
-        } else if (this.paused != null){
+        }else if (this.paused != null){
             this.start(this.paused, (int) this.pausePosition);
         }else if (this.queue.size() > 0){
             MusicDownloadService.queueDownload(this.queue.get(0), track -> this.start(this.queue.get(0).file(), 0));
-            this.currentTrack.set(this.queue.remove(0));
-        }// duplicate download attempt safe
+            this.currentTrack.set(this.queue.remove(0));// duplicate download attempt safe
+        }else if (this.playlistOn){
+            this.queueTrack(ConfigHandler.getSetting(GuildActivePlaylistConfig.class, Guild.getGuild(this.player.getGuild())).getNext());
+        }
     }
     public Track currentTrack() {
         return this.currentTrack.get();

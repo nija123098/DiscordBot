@@ -19,7 +19,7 @@ import com.github.kaaz.emily.perms.BotRole;
  */
 public class ConfigSetCommand extends AbstractCommand {
     public ConfigSetCommand(ConfigCommand command) {
-        super(command, "set", null, null, null, null, null);
+        super(command, "set", null, null, null);
     }
     @Command
     public <T extends Configurable> void command(@Convert AbstractConfig<?, T> config, @Convert(optional = true) T target, String arg, @Context(softFail = true) Track track, @Context(softFail = true) Playlist playlist, User user, Channel channel, @Context(softFail = true) GuildUser guildUser, @Context(softFail = true) Guild guild){

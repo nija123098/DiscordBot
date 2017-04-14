@@ -4,14 +4,14 @@ import com.github.kaaz.emily.config.AbstractConfig;
 import com.github.kaaz.emily.config.Playlist;
 import com.github.kaaz.emily.perms.BotRole;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Made by nija123098 on 3/30/2017.
  */
-public class PlaylistContentsConfig extends AbstractConfig<Set<String>, Playlist> {
+public class PlaylistContentsConfig extends AbstractConfig<List<String>, Playlist> {
     public PlaylistContentsConfig() {
-        super("playlist_contents", BotRole.BOT_ADMIN, new HashSet<>(), "The contents of the playlist");
+        super("playlist_contents", BotRole.BOT_ADMIN, new ArrayList<>(), "The contents of the playlist");
     }
 }

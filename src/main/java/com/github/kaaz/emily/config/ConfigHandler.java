@@ -265,12 +265,12 @@ public class ConfigHandler {
      * Gets the configurable from the type and arguments
      *
      * @param type the type of configurable
-     * @param args the id of the configurable
+     * @param id the id of the configurable
      * @param <T> the type of configurable
      * @return the configurable according to the id
      */
-    public static <T extends Configurable> T getConfigurable(Class<T> type, String args){
-        return getIDFunction(type).apply(args);
+    public static <T extends Configurable> T getConfigurable(Class<T> type, String id){
+        return getIDFunction(type).apply(id);
     }
 
     /**
@@ -319,5 +319,17 @@ public class ConfigHandler {
      */
     private static List<String> getTypeIDs(Class<? extends Configurable> type, long start, int size){
         return new ArrayList<>(0);// todo
+    }
+
+    /**
+     * Moves the values of this config to the new ID
+     * and returns the new config for those values
+     *
+     * @param newID the id to move the config's values to
+     * @return the new Configurable instance
+     */
+    public static <T extends Configurable> T moveID(T oldConfig, String newID){// SQL
+
+        return ConfigHandler.getConfigurable((Class<T>) oldConfig.getClass(), newID);
     }
 }

@@ -2,6 +2,7 @@ package com.github.kaaz.emily.discordobjects.wrappers;
 
 import com.github.kaaz.emily.discordobjects.exception.ErrorWrapper;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
+import com.github.kaaz.emily.util.EmoticonHelper;
 import sx.blah.discord.handle.obj.IMessage;
 
 import java.time.LocalDateTime;
@@ -35,7 +36,7 @@ public class Message {// should not be kept stored, too many are made
     private Message(IMessage message){
         iMessage = message;
     }
-    IMessage message() {
+    public IMessage message() {
         return iMessage;
     }
 
@@ -121,9 +122,17 @@ public class Message {// should not be kept stored, too many are made
         return Reaction.getReaction(message().getReactionByName(s));
     }
 
+    public Reaction getReactionByName(String name){
+        return getReaction(EmoticonHelper.getChars(name));
+    }
+
     public Reaction addReaction(String s) {
         ErrorWrapper.wrap(() -> message().addReaction(s));
         return getReaction(s);
+    }
+
+    public Reaction addReactionByName(String name) {
+        return addReaction(EmoticonHelper.getChars(name));
     }
 
     public void removeReaction(Reaction reaction) {
@@ -132,6 +141,10 @@ public class Message {// should not be kept stored, too many are made
 
     public void removeReaction(String s) {
         ErrorWrapper.wrap(() -> message().removeReaction(getReaction(s).reaction()));
+    }
+
+    public void removeReactionByName(String name) {
+        removeReaction(EmoticonHelper.getChars(name));
     }
 
     public boolean isDeleted() {

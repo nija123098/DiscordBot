@@ -9,10 +9,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Made by nija123098 on 3/17/2017.
@@ -53,9 +50,9 @@ public class LangString {
         return this.value.size() > 0;
     }
     public String translate(String lang) {
-        return translated.computeIfAbsent(lang, s -> {
+        return this.translated.computeIfAbsent(lang, s -> {
             final StringBuilder builder = new StringBuilder();
-            value.forEach(pair -> builder.append(pair.getKey() ? translate(lang, pair.getValue()) : pair.getValue()));
+            this.value.forEach(pair -> builder.append(pair.getKey() ? translate(lang, pair.getValue()) : pair.getValue()));
             return builder.toString();
         });
     }
@@ -90,7 +87,11 @@ public class LangString {
      */
     public static String translate(String lang, String content) {
         return MAP.computeIfAbsent(lang, s -> new HashMap<>()).computeIfAbsent(content, s -> {
+            if (content.equals("\n")){
+                return "\n";
+            }
             String building = "";
+            boolean nextLineLast = content.endsWith("\n");
             String[] contents = content.split("\n");
             int before = 0, after = 0;
             for (int i = 0; i < contents.length; i++) {
@@ -107,7 +108,7 @@ public class LangString {
                     ++after;
                 }
                 building += FormatHelper.repeat(' ', before) + call(lang, contents[i].substring(before, contents[i].length() - after)) + FormatHelper.repeat(' ', after);
-                if (i != contents.length - 1){
+                if (i != contents.length - 1 || nextLineLast){
                     building += "\n";
                 }
             }

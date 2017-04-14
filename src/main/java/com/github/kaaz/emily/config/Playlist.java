@@ -1,15 +1,22 @@
 package com.github.kaaz.emily.config;
 
 import com.github.kaaz.emily.command.anotations.LaymanName;
+import com.github.kaaz.emily.config.configs.playlist.PlaylistContentsConfig;
+import com.github.kaaz.emily.config.configs.playlist.PlaylistNowPlayingConfig;
+import com.github.kaaz.emily.config.configs.playlist.PlaylistPlayTypeConfig;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
+import com.github.kaaz.emily.discordobjects.wrappers.Track;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.github.kaaz.emily.exeption.ArgumentException;
 import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.exeption.PermissionsException;
 import com.github.kaaz.emily.perms.BotRole;
+import com.github.kaaz.emily.util.Rand;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 /**
  * Made by nija123098 on 3/30/2017.
@@ -26,12 +33,12 @@ public class Playlist implements Configurable {
         if (a.equals("global")){
             return Playlist.MAP.computeIfAbsent(GLOBAL_PLAYLIST_ID, s -> new Playlist(GLOBAL_PLAYLIST_ID));
         }
-        if (arg.length < 2){
-            throw new RuntimeException("No specified playlist name");
-        }
         String id = null;
-        StringBuilder builder = new StringBuilder();
+        if (arg.length < 2){
+            throw new ArgumentException("Those play lists must have a name");
+        }
         switch (a) {
+            case "server":
             case "guild":
                 if (guild == null) {
                     throw new RuntimeException("Attempted to use a guild playlist outside of a guild");
@@ -39,11 +46,12 @@ public class Playlist implements Configurable {
                 id = "guild-" + guild.getID() + "-id:" + arg[1].toUpperCase();
                 break;
             case "my":
+            case "mine":
             case "user":
                 if (user == null) {
                     throw new RuntimeException("Not sure how you did that, but there is no user for this context");
                 }
-                id = "user-" + user.getID() + "-id:" + arg[1].toUpperCase();
+                id = "user-" + user.getID() + "-id:" + (arg.length == 1 ? "" : arg[1].toUpperCase());
                 break;
         }
         if (id == null){
@@ -51,6 +59,7 @@ public class Playlist implements Configurable {
         }
         return MAP.computeIfAbsent(id, Playlist::new);
     }
+
     public static Playlist getPlaylist(String id){
         return MAP.computeIfAbsent(id, s -> new Playlist(id));
     }
@@ -86,10 +95,48 @@ public class Playlist implements Configurable {
         if (this.id.equals(GLOBAL_PLAYLIST_ID)){
             return "Global Playlist";
         }
-        return this.id.substring(this.id.charAt(':'));
+        String name = this.id.substring(this.id.indexOf(':') + 1);
+        return name.length() == 0 ? (this.getOwner() instanceof User ? (((User) getOwner()).getName() + "'s list") : ((Guild) getOwner()).getName() + "'s list") : name;
+    }
+
+    public boolean hasGivenName(){
+        return this.id.substring(this.id.indexOf(':') + 1).length() != 0;
     }
 
     public Configurable getOwner() {
         return this.id.equals(GLOBAL_PLAYLIST_ID) ? null : this.id.startsWith("user-") ? User.getUser(this.id.split("-")[1]) : Guild.getGuild(this.id.split("-")[1]);
+    }
+
+    public Track getNext(){
+        return PlayType.valueOf(ConfigHandler.getSetting(PlaylistPlayTypeConfig.class, this)).decide.apply(this);
+    }
+
+    public enum PlayType {
+        RANDOM(playlist -> {
+            List<String> list = ConfigHandler.getSetting(PlaylistContentsConfig.class, playlist);
+            switch (list.size()){
+                case 0:
+                    return null;
+                case 1:
+                    return Track.getTrack(list.get(0));
+                default:
+                    Integer current = ConfigHandler.getSetting(PlaylistNowPlayingConfig.class, playlist);
+                    return Track.getTrack(list.get(current == null ? Rand.getRand(list.size() - 1) : Rand.getRand(list.size() - 1, current)));
+            }
+        }), SEQUENTIAL(playlist -> {
+            List<String> list = ConfigHandler.getSetting(PlaylistContentsConfig.class, playlist);
+            switch (list.size()){
+                case 0:
+                    return null;
+                case 1:
+                    return Track.getTrack(list.get(0));
+                default:
+                    return Track.getTrack(list.get(ConfigHandler.getSetting(PlaylistNowPlayingConfig.class, playlist)));
+            }
+        }),;
+        private Function<Playlist, Track> decide;
+        PlayType(Function<Playlist, Track> decide) {
+            this.decide = decide;
+        }
     }
 }

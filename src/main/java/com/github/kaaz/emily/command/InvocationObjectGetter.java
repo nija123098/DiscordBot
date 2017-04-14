@@ -45,7 +45,7 @@ public class InvocationObjectGetter {
         addContext(Presence.class, "invoker", (user, message, reaction, args) -> user.getPresence());
         addContext(String.class, "args", (user, message, reaction, args) -> args);
         addContext(String[].class, "args", (user, message, reaction, args) -> FormatHelper.reduceRepeats(args, ' ').split(" "));
-        addContext(MessageMaker.class, "", (user, message, reaction, args) -> new MessageMaker(message.getChannel(), user));
+        addContext(MessageMaker.class, "", (user, message, reaction, args) -> new MessageMaker(user, message));
         addContext(VoiceChannel.class, "location", (user, message, reaction, args) -> {
             VoiceChannel channel = message.getGuild().getConnectedVoiceChannel();
             if (channel == null) throw new ContextException("You must be in a voice channel to use that command");
@@ -129,12 +129,15 @@ public class InvocationObjectGetter {
             return new Pair<>(users.iterator().next(), users.get(0).getName().length());
         });
         addConverter(Playlist.class, (user, message, reaction, args) -> {
-            String arg = args.split(" ")[0];
-            Playlist playlist = Playlist.getPlaylist(user, message.getGuild(), arg);
+            if (args.toLowerCase().startsWith("global")){
+                return new Pair<>(Playlist.GLOBAL_PLAYLIST, args.equalsIgnoreCase("global playlist") ? 15 : 6);
+            }
+            Playlist playlist = Playlist.getPlaylist(user, message.getGuild(), args);
             if (playlist == null){
                 throw new ArgumentException("No playlist identified with that name");
             }
-            return new Pair<>(playlist, arg.length());
+            String[] strings = args.split(" ");
+            return new Pair<>(playlist, strings[0].length() + strings[1].length() + 1);
         });
         addConverter(Guild.class, (user, message, reaction, args) -> {
             Guild guild = Guild.getGuild(args.split(" ")[0]);

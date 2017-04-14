@@ -3,14 +3,17 @@ package com.github.kaaz.emily.command;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.configs.guild.GuildPrefixConfig;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
+import com.github.kaaz.emily.discordobjects.wrappers.DiscordClient;
 import com.github.kaaz.emily.discordobjects.wrappers.Message;
 import com.github.kaaz.emily.discordobjects.wrappers.Reaction;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventListener;
+import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordMessageEditEvent;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordMessageReceivedEvent;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordReactionEvent;
 import com.github.kaaz.emily.exeption.BotException;
+import com.github.kaaz.emily.service.services.MemoryManagementService;
 import com.github.kaaz.emily.util.EmoticonHelper;
 import com.github.kaaz.emily.util.FormatHelper;
 import com.github.kaaz.emily.util.Log;
@@ -18,10 +21,7 @@ import javafx.util.Pair;
 import org.reflections.Reflections;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Handles all command registration and invocation.
@@ -34,6 +34,7 @@ public class CommandHandler {
     private static final Map<Class<? extends AbstractCommand>, AbstractCommand> CLASS_MAP = new HashMap<>();
     private static final Map<String, AbstractCommand> REACTION_COMMAND_MAP = new HashMap<>();
     private static final Map<String, Object> COMMANDS_MAP = new HashMap<>();
+    private static final List<String> IMPROPER_COMMANDS = new MemoryManagementService.ManagedList<>(15000);
     static {
         Map<Class<? extends AbstractCommand>, Set<Class<? extends AbstractCommand>>> typeMap = new HashMap<>();
         new Reflections("com.github.kaaz.emily.command.commands").getSubTypesOf(AbstractCommand.class).forEach(clazz -> {
@@ -176,15 +177,19 @@ public class CommandHandler {
         AbstractCommand command;
         Pair<AbstractCommand, String> pair = reaction == null ? getMessageCommand(string) : ((command = getReactionCommand(reaction.getChars())) == null ? null : new Pair<>(command, null));
         if (pair != null){
+            Reaction r = message.getReactionByName("grey_question");
+            if (r != null){
+                message.removeReaction(r);
+            }
             if (!pair.getKey().hasPermission(user, message.getGuild())){
                 if (reaction == null){
-                    new MessageMaker(message.getChannel(), user).appendContent("You do not have permission to use that command.").send();
+                    new MessageMaker(user, message).append("You do not have permission to use that command.").send();
                 }
                 return;
             }
             if (!pair.getKey().checkCoolDown(message.getGuild(), message.getChannel(), user)){
                 if (reaction == null){
-                    new MessageMaker(message.getChannel(), user).appendContent("You can not use that command so soon.").send();
+                    new MessageMaker(user, message).append("You can not use that command so soon.").send();
                 }
                 return;
             }
@@ -193,8 +198,11 @@ public class CommandHandler {
                     pair.getKey().invoked(message.getGuild(), message.getChannel(), user);
                 }
             } catch (BotException e){
-                new MessageMaker(message.getChannel(), user).asExceptionMessage(e).send();
+                new MessageMaker(user, message).asExceptionMessage(e).send();
             }
+        }else{
+            IMPROPER_COMMANDS.add(message.getID());
+            message.addReactionByName("grey_question");
         }
     }
 
@@ -215,6 +223,20 @@ public class CommandHandler {
      */
     @EventListener
     public static void handle(DiscordReactionEvent event){
-        attemptInvocation(event.getMessage().getContent(), event.getUser(), event.getMessage(), event.getReaction());
+        if (!event.getUser().equals(DiscordClient.getOurUser())){
+            attemptInvocation(event.getMessage().getContent(), event.getUser(), event.getMessage(), event.getReaction());
+        }
+    }
+
+    /**
+     * Monitoring for a reattempt at a command through editing
+     *
+     * @param event the monitored event
+     */
+    @EventListener
+    public static void handle(DiscordMessageEditEvent event){
+        if (IMPROPER_COMMANDS.contains(event.getMessage().getID())){
+            attemptInvocation(event.getMessage().getContent(), event.getMessage().getAuthor(), event.getMessage(), null);
+        }
     }
 }

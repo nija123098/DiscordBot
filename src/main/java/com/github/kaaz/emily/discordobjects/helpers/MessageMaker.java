@@ -6,8 +6,10 @@ import com.github.kaaz.emily.config.configs.user.UserLanguageConfig;
 import com.github.kaaz.emily.discordobjects.exception.ErrorWrapper;
 import com.github.kaaz.emily.discordobjects.wrappers.*;
 import com.github.kaaz.emily.exeption.BotException;
+import com.github.kaaz.emily.util.EmoticonHelper;
 import com.github.kaaz.emily.util.ImageColorHelper;
 import com.github.kaaz.emily.util.LangString;
+import com.github.kaaz.emily.util.Rand;
 import javafx.util.Pair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
@@ -39,7 +41,13 @@ public class MessageMaker {
     private Channel channel;
     private AtomicInteger currentPage = new AtomicInteger();
     private List<Pair<String, ReactionBehavior>> reactionBehaviors = new ArrayList<>();
-    private IMessage message;
+    private IMessage message, origin;
+    private boolean okHand;
+    public MessageMaker(User user, Message origin) {
+        this.user = user;
+        this.origin = origin.message();
+        this.channel = origin.getChannel();
+    }
     public MessageMaker(Channel channel, User user) {
         this.channel = channel;
         this.user = user;
@@ -59,6 +67,14 @@ public class MessageMaker {
     }
     public MessageMaker withDM(){
         this.channel = this.user.getOrCreatePMChannel();
+        return this;
+    }
+    public MessageMaker withOK(boolean ok){
+        this.okHand = ok;
+        return this;
+    }
+    public MessageMaker withOK(){
+        this.okHand = true;
         return this;
     }
     public MessageMaker ensureListSize(int size){
@@ -101,8 +117,8 @@ public class MessageMaker {
         this.header.appendRaw(s);
         return this;
     }
-    public MessageMaker appendContent(String s){
-        this.header.appendContent(s);
+    public MessageMaker append(String s){
+        this.header.append(s);
         return this;
     }
     public MessageMaker appendAlternate(boolean raw, String...s){
@@ -114,7 +130,7 @@ public class MessageMaker {
         return this;
     }
     public MessageMaker asExceptionMessage(BotException cause) {
-        this.withColor(Color.RED).getHeader().appendContent(cause.getMessage()).getMessageProducer().getTitle().appendRaw(cause.getClass().getSimpleName());
+        this.withColor(Color.RED).getHeader().append(cause.getMessage()).getMaker().getTitle().appendRaw(cause.getClass().getSimpleName());
         return this;
     }
     // embed methods
@@ -124,6 +140,10 @@ public class MessageMaker {
     }
     public MessageMaker withUserColor(){
         this.embed.withColor(ImageColorHelper.getUserColor(this.user));
+        return this;
+    }
+    public MessageMaker withRandomColor(){
+        this.embed.withColor(Rand.getRand(0xFFFFFF));
         return this;
     }
     public MessageMaker withUserColor(User user){
@@ -159,12 +179,15 @@ public class MessageMaker {
         send(0);
     }
     private void send(int page){
+        if (this.origin != null && this.okHand){
+            ErrorWrapper.wrap(() -> this.origin.addReaction(EmoticonHelper.getChars("ok_hand")));
+        }
         compile();
         if (page >= fieldIndices.length){
             throw new RuntimeException("Attempted to get a page that doesn't exit");
         }
         if (this.embed != null){
-            this.embed.clearFields().withDesc(this.header.langString.translate(lang) + "\n\n" + (page >= textVals.length ? "" : textVals[page]) + "\n\n" + this.footer.langString.translate(lang));
+            this.embed.clearFields().withDesc(this.header.langString.translate(this.lang) + "\n\n" + (page >= textVals.length ? "" : textVals[page]) + "\n\n" + this.footer.langString.translate(lang));
             for (Triple<String, String, Boolean> ind : fieldIndices[page]){
                 this.embed.appendField(ind.getLeft(), ind.getMiddle(), ind.getRight());
             }
@@ -313,10 +336,10 @@ public class MessageMaker {
         }
     }
     public class TextPart {
-        private MessageMaker producer;
+        private MessageMaker maker;
         LangString langString;
-        public TextPart(MessageMaker producer) {
-            this.producer = producer;
+        public TextPart(MessageMaker maker) {
+            this.maker = maker;
             this.langString = new LangString();
         }
 
@@ -325,7 +348,7 @@ public class MessageMaker {
             return this;
         }
 
-        public TextPart appendContent(String s){
+        public TextPart append(String s){
             this.langString.appendTranslation(s);
             return this;
         }
@@ -339,8 +362,8 @@ public class MessageMaker {
             this.langString.append(!raw, s);
             return this;
         }
-        public MessageMaker getMessageProducer(){
-            return this.producer;
+        public MessageMaker getMaker(){
+            return this.maker;
         }
     }
     public class FieldTextPart extends TextPart {
@@ -359,8 +382,8 @@ public class MessageMaker {
             return this;
         }
 
-        public FieldTextPart appendContent(String s){
-            super.appendContent(s);
+        public FieldTextPart append(String s){
+            super.append(s);
             return this;
         }
 

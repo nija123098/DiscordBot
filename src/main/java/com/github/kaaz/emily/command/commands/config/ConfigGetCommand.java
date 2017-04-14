@@ -7,16 +7,18 @@ import com.github.kaaz.emily.command.anotations.Context;
 import com.github.kaaz.emily.command.anotations.Convert;
 import com.github.kaaz.emily.config.*;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
-import com.github.kaaz.emily.discordobjects.wrappers.*;
+import com.github.kaaz.emily.discordobjects.wrappers.Channel;
+import com.github.kaaz.emily.discordobjects.wrappers.Guild;
+import com.github.kaaz.emily.discordobjects.wrappers.Track;
+import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.github.kaaz.emily.exeption.ArgumentException;
-import com.github.kaaz.emily.perms.BotRole;
 
 /**
  * Made by nija123098 on 4/2/2017.
  */
 public class ConfigGetCommand extends AbstractCommand {
     public ConfigGetCommand(ConfigCommand command) {
-        super(command, "get", null, BotRole.USER, null, null, null);
+        super(command, "get", null, null, null);
     }
     @Command
     public <T extends Configurable> void command(@Convert AbstractConfig<?, T> config, @Convert(optional = true) T target, MessageMaker maker, @Context(softFail = true) Track track, @Context(softFail = true) Playlist playlist, User user, Channel channel, @Context(softFail = true) GuildUser guildUser, @Context(softFail = true) Guild guild){
