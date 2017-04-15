@@ -24,6 +24,10 @@ public class GuildNamesConfig extends AbstractConfig<Set<String>, GlobalConfigur
         super("guild_names", BotRole.BOT_OWNER, new HashSet<>(),
                 "The list of guild names for optimization which is automatically managed");
     }
+    @Override
+    public boolean shouldSave(){
+        return false;
+    }
     @EventListener
     public void handle(DiscordGuildJoin join){
         Set<String> set = ConfigHandler.getSetting(GuildNamesConfig.class, GlobalConfigurable.GLOBAL);

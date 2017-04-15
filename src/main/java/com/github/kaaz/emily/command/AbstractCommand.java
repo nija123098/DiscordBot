@@ -220,16 +220,15 @@ public class AbstractCommand {
     /**
      * Method to be called when the command is invoked
      *
-     * @param guild the guild checked for rate limiting
      * @param channel the channel checked for rate limiting
      * @param user the user checked for rate limiting
      */
-    public void invoked(Guild guild, Channel channel, User user){
+    public void invoked(Channel channel, User user){
         if (this.globalUseTime != -1){
             this.globalUseTime = System.currentTimeMillis() + this.globalCoolDownTime;
         }
-        if (this.guildCoolDowns != null){
-            this.guildCoolDowns.add(guild);
+        if (this.guildCoolDowns != null && !channel.isPrivate()){
+            this.guildCoolDowns.add(channel.getGuild());
         }
         if (this.channelCoolDowns != null){
             this.channelCoolDowns.add(channel);
@@ -237,8 +236,8 @@ public class AbstractCommand {
         if (this.userCoolDowns != null){
             this.userCoolDowns.add(user);
         }
-        if (this.guildUserCoolDowns != null){
-            this.guildUserCoolDowns.add(GuildUser.getGuildUser(guild, user));
+        if (this.guildUserCoolDowns != null && !channel.isPrivate()){
+            this.guildUserCoolDowns.add(GuildUser.getGuildUser(channel.getGuild(), user));
         }
     }
 
@@ -273,7 +272,7 @@ public class AbstractCommand {
             Log.log("Malformed command: " + getName(), e);
         } catch (InvocationTargetException e) {
             if (e.getCause() instanceof BotException){
-                new MessageMaker(user, message).asExceptionMessage(((BotException) e.getCause())).send();
+                new MessageMaker(user, message).asExceptionMessage(((BotException) e.getCause())).withReaction("grey_exclamation").send();
             }
             Log.log("Exception during method execution: " + getName(), e);
         }

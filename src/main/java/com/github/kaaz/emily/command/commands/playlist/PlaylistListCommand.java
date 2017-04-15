@@ -26,9 +26,9 @@ public class PlaylistListCommand extends AbstractCommand {
         if (Playlist.GLOBAL_PLAYLIST.equals(playlist)){
             maker.append("Whoa, that is way to long to list");
         }
-        List<String> ids = ConfigHandler.getSetting(PlaylistContentsConfig.class, playlist);
+        List<Track> ids = ConfigHandler.getSetting(PlaylistContentsConfig.class, playlist);
         maker.getTitle().appendRaw(playlist.getName());
-        ids.forEach(s -> maker.getNewListPart().appendRaw("`" + s + "` | " + ConfigHandler.getSetting(TrackNameConfig.class, Track.getTrack(s))));
+        ids.forEach(s -> maker.getNewListPart().appendRaw("`" + s + "` | " + ConfigHandler.getSetting(TrackNameConfig.class, s)));
         maker.withOK();
     }
 }

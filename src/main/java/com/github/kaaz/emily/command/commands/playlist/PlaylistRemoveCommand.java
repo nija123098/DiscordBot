@@ -22,12 +22,12 @@ public class PlaylistRemoveCommand extends AbstractCommand {
     @Command
     public void command(User user, Guild guild, Playlist playlist, Track track, MessageMaker maker){
         playlist.checkPermissionToEdit(user, guild);
-        List<String> ids = ConfigHandler.getSetting(PlaylistContentsConfig.class, playlist);
-        if (!ids.contains(track.getID())){
+        List<Track> ids = ConfigHandler.getSetting(PlaylistContentsConfig.class, playlist);
+        if (!ids.contains(track)){
             maker.append("This track is not in the playlist");
             return;
         }
-        ids.remove(track.getID());
+        ids.remove(track);
         ConfigHandler.setSetting(PlaylistContentsConfig.class, playlist, ids);
         maker.withOK();
     }

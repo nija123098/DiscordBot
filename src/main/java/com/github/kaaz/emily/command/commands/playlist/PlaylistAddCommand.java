@@ -22,12 +22,12 @@ public class PlaylistAddCommand extends AbstractCommand {
     @Command
     public void command(User user, Guild guild, Playlist playlist, Track track, MessageMaker maker){
         playlist.checkPermissionToEdit(user, guild);
-        List<String> ids = ConfigHandler.getSetting(PlaylistContentsConfig.class, playlist);
-        if (ids.contains(track.getID())){
+        List<Track> ids = ConfigHandler.getSetting(PlaylistContentsConfig.class, playlist);
+        if (ids.contains(track)){
             maker.append("This track is already in the playlist");
             return;
         }
-        ids.add(track.getID());
+        ids.add(track);
         ConfigHandler.setSetting(PlaylistContentsConfig.class, playlist, ids);
         maker.withOK();
     }

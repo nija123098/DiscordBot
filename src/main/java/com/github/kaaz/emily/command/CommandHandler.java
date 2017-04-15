@@ -34,7 +34,8 @@ public class CommandHandler {
     private static final Map<Class<? extends AbstractCommand>, AbstractCommand> CLASS_MAP = new HashMap<>();
     private static final Map<String, AbstractCommand> REACTION_COMMAND_MAP = new HashMap<>();
     private static final Map<String, Object> COMMANDS_MAP = new HashMap<>();
-    private static final List<String> IMPROPER_COMMANDS = new MemoryManagementService.ManagedList<>(15000);
+    private static final String UNKNOWN_COMMAND_EMOTICON = "grey_question", EXCEPTION_FOR_METHOD = "exclamation";
+    private static final List<String> OPEN_EDIT_MESSAGES = new MemoryManagementService.ManagedList<>(30000);
     static {
         Map<Class<? extends AbstractCommand>, Set<Class<? extends AbstractCommand>>> typeMap = new HashMap<>();
         new Reflections("com.github.kaaz.emily.command.commands").getSubTypesOf(AbstractCommand.class).forEach(clazz -> {
@@ -101,7 +102,7 @@ public class CommandHandler {
      * @return the abstract command whose ailiase is the reaction chars
      */
     public static AbstractCommand getReactionCommand(String reactionName){
-        return REACTION_COMMAND_MAP.get(reactionName);
+        return REACTION_COMMAND_MAP.get(EmoticonHelper.getChars(reactionName));
     }
 
     /**
@@ -156,53 +157,77 @@ public class CommandHandler {
      * @param message the message reacted to or sent to invoke the command
      * @param reaction the reaction that invoked this command, if applicable
      */
-    public static void attemptInvocation(String string, User user, Message message, Reaction reaction){
+    public static boolean attemptInvocation(String string, User user, Message message, Reaction reaction){
         if (string == null){// can happen
-            return;
-        }
-        if (message.getGuild() != null){
-            String pref = ConfigHandler.getSetting(GuildPrefixConfig.class, message.getGuild());
-            if (string.startsWith(pref)){
-                string = string.substring(pref.length());
-                while (true){
-                    if (!string.startsWith(" ")){
-                        break;
-                    }
-                    string = string.substring(1);
-                }
-            }else{
-                return;
-            }
+            return false;
         }
         AbstractCommand command;
+        if (message.getGuild() == null){
+            boolean prefixTrimmingExempt = false;
+            for (int i = 0; i < string.length(); i++) {
+                if (Character.isLetterOrDigit(string.indexOf(i))){
+                    prefixTrimmingExempt = true;
+                    break;
+                }
+            }
+            if (!prefixTrimmingExempt){
+                while (!Character.isLetterOrDigit(string.charAt(0))){
+                    string = string.substring(1);
+                }
+            }
+        }else{
+            String pref = ConfigHandler.getSetting(GuildPrefixConfig.class, message.getGuild());
+            if (string.startsWith(pref)){
+                string = FormatHelper.trimFront(string.substring(pref.length()));
+            }else{
+                if ((command = REACTION_COMMAND_MAP.get(string)) != null){
+                    try{if (command.hasPermission(user, message.getGuild()) && command.checkCoolDown(message.getGuild(), message.getChannel(), user) && command.invoke(user, message, reaction, string)){
+                        command.invoked(message.getChannel(), user);
+                        return true;
+                    }
+                    }catch(Exception ignored){}
+                }
+                return false;
+            }
+        }
         Pair<AbstractCommand, String> pair = reaction == null ? getMessageCommand(string) : ((command = getReactionCommand(reaction.getChars())) == null ? null : new Pair<>(command, null));
         if (pair != null){
-            Reaction r = message.getReactionByName("grey_question");
+            command = pair.getKey();
+            Reaction r = message.getReactionByName(UNKNOWN_COMMAND_EMOTICON);
             if (r != null){
                 message.removeReaction(r);
             }
-            if (!pair.getKey().hasPermission(user, message.getGuild())){
+            if (!command.hasPermission(user, message.getGuild())){
                 if (reaction == null){
                     new MessageMaker(user, message).append("You do not have permission to use that command.").send();
                 }
-                return;
+                return false;
             }
-            if (!pair.getKey().checkCoolDown(message.getGuild(), message.getChannel(), user)){
+            if (!command.checkCoolDown(message.getGuild(), message.getChannel(), user)){
                 if (reaction == null){
                     new MessageMaker(user, message).append("You can not use that command so soon.").send();
                 }
-                return;
+                return false;
             }
             try {
-                if (pair.getKey().invoke(user, message, reaction, pair.getValue())){
-                    pair.getKey().invoked(message.getGuild(), message.getChannel(), user);
+                boolean invoked = false;
+                if (command.invoke(user, message, reaction, pair.getValue())){
+                    invoked = true;
+                    command.invoked(message.getChannel(), user);
                 }
+                if (message.getReactionByName(EXCEPTION_FOR_METHOD) != null){
+                    message.removeReactionByName(EXCEPTION_FOR_METHOD);
+                }
+                return invoked;
             } catch (BotException e){
                 new MessageMaker(user, message).asExceptionMessage(e).send();
+                message.addReactionByName(EXCEPTION_FOR_METHOD);
+                return false;
             }
         }else{
-            IMPROPER_COMMANDS.add(message.getID());
-            message.addReactionByName("grey_question");
+            message.addReactionByName(UNKNOWN_COMMAND_EMOTICON);
+            OPEN_EDIT_MESSAGES.add(message.getID());
+            return false;
         }
     }
 
@@ -235,8 +260,10 @@ public class CommandHandler {
      */
     @EventListener
     public static void handle(DiscordMessageEditEvent event){
-        if (IMPROPER_COMMANDS.contains(event.getMessage().getID())){
-            attemptInvocation(event.getMessage().getContent(), event.getMessage().getAuthor(), event.getMessage(), null);
+        if (OPEN_EDIT_MESSAGES.contains(event.getMessage().getID())){
+            if (attemptInvocation(event.getMessage().getContent(), event.getMessage().getAuthor(), event.getMessage(), null)){
+                OPEN_EDIT_MESSAGES.remove(event.getMessage().getID());
+            }
         }
     }
 }

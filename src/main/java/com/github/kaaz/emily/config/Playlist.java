@@ -108,30 +108,30 @@ public class Playlist implements Configurable {
     }
 
     public Track getNext(){
-        return PlayType.valueOf(ConfigHandler.getSetting(PlaylistPlayTypeConfig.class, this)).decide.apply(this);
+        return ConfigHandler.getSetting(PlaylistPlayTypeConfig.class, this).decide.apply(this);
     }
 
     public enum PlayType {
         RANDOM(playlist -> {
-            List<String> list = ConfigHandler.getSetting(PlaylistContentsConfig.class, playlist);
+            List<Track> list = ConfigHandler.getSetting(PlaylistContentsConfig.class, playlist);
             switch (list.size()){
                 case 0:
                     return null;
                 case 1:
-                    return Track.getTrack(list.get(0));
+                    return list.get(0);
                 default:
                     Integer current = ConfigHandler.getSetting(PlaylistNowPlayingConfig.class, playlist);
-                    return Track.getTrack(list.get(current == null ? Rand.getRand(list.size() - 1) : Rand.getRand(list.size() - 1, current)));
+                    return list.get(current == null ? Rand.getRand(list.size() - 1) : Rand.getRand(list.size() - 1, current));
             }
         }), SEQUENTIAL(playlist -> {
-            List<String> list = ConfigHandler.getSetting(PlaylistContentsConfig.class, playlist);
+            List<Track> list = ConfigHandler.getSetting(PlaylistContentsConfig.class, playlist);
             switch (list.size()){
                 case 0:
                     return null;
                 case 1:
-                    return Track.getTrack(list.get(0));
+                    return list.get(0);
                 default:
-                    return Track.getTrack(list.get(ConfigHandler.getSetting(PlaylistNowPlayingConfig.class, playlist)));
+                    return list.get(ConfigHandler.getSetting(PlaylistNowPlayingConfig.class, playlist));
             }
         }),;
         private Function<Playlist, Track> decide;

@@ -12,6 +12,7 @@ import com.github.kaaz.emily.exeption.ArgumentException;
 import com.github.kaaz.emily.exeption.ContextException;
 import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.util.FormatHelper;
+import com.github.kaaz.emily.util.LanguageHelper;
 import com.github.kaaz.emily.util.Log;
 import javafx.util.Pair;
 
@@ -226,21 +227,12 @@ public class InvocationObjectGetter {
             throw new ArgumentException("No such Configurable type");
         });
         addConverter(Boolean.class, (user, message, reaction, args) -> {
-            try {
-                boolean result = Boolean.valueOf(args.split(" ")[0]);
-                return new Pair<>(result, result ? 4 : 5);
-            } catch (Exception e){// todo add better affirmation and negation parsing
-                throw new ArgumentException("That is not a boolean, use true or false");
-            }
+            String arg = args.split(" ")[0];
+            return new Pair<>(LanguageHelper.getBoolean(arg), arg.length());
         });
         addConverter(Integer.class, (user, message, reaction, args) -> {
-            try {
-                String arg = args.split(" ")[0];
-                Integer result = Integer.parseInt(arg);
-                return new Pair<>(result, arg.length());
-            } catch (Exception e){
-                throw new ArgumentException("That is not a integer");
-            }
+            String arg = args.split(" ")[0];
+            return new Pair<>(LanguageHelper.getInteger(arg), arg.length());
         });
         addConverter(Float.class, (user, message, reaction, args) -> {
             try {

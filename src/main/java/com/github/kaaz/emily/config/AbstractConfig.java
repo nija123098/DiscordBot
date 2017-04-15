@@ -76,9 +76,17 @@ public class AbstractConfig<V, T extends Configurable> {
     public ConfigLevel getConfigLevel(){
         return this.configLevel;
     }
+
+    /**
+     * Gets if the config should be saved across sessions
+     *
+     * @return if this value should be saved across sessions
+     */
+    public boolean shouldSave(){
+        return true;
+    }
     public V wrapTypeIn(String e, T configurable){
         return TypeTranslator.toType(e, this.valueType, getValue(configurable));
-        //return OTypeTranslator.translate(e, getValue(configurable));
     }
     public String wrapTypeOut(V v, T configurable){// configurable may be used in over ride methods
         return TypeTranslator.toString(v, this.valueType, null);

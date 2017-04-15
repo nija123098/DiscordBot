@@ -8,6 +8,9 @@ import com.vdurmont.emoji.EmojiManager;
  */
 public class EmoticonHelper {
     public static String getChars(String name){
+        if (EmojiManager.getForAlias(name) == null){
+            return null;
+        }
         return EmojiManager.getForAlias(name).getUnicode();
     }
     public static String getName(String chars){

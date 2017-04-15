@@ -61,15 +61,23 @@ public class MemoryManagementService extends AbstractService {
             this.persistence = persistence;
             LISTS.add(this);
         }
-        public boolean add(E e){
+        public synchronized boolean add(E e){
             this.times.add(System.currentTimeMillis() + this.persistence);
             return super.add(e);
         }
-        private void manage(){
+        @Override
+        public synchronized boolean remove(Object e){
+            int ind = this.indexOf(e);
+            if (ind > -1){
+                this.times.remove(ind);
+            }
+            return super.remove(e);
+        }
+        private synchronized void manage(){
             long currentTime = System.currentTimeMillis();
             while (true){
                 if (currentTime >= this.times.get(0)){
-                    this.remove(0);
+                    this.remove(0);// index version
                     this.times.remove(0);
                 }else{
                     return;

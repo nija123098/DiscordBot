@@ -84,6 +84,7 @@ public class TypeTranslator {
             }
             return objects;
         });
+        add(Enum.class, (in, context) -> in.name(), (in, context) -> Enum.valueOf(context.getDeclaringClass(), in.toUpperCase().replace("-", "_")));
     }
     private static <T> void add(Class<T> to, TypeTranslation<T, String> fts, TypeTranslation<String, T> ffs){
         TO_STRING_FUNCTIONS.put(to, (TypeTranslation<Object, String>) fts);
@@ -93,6 +94,9 @@ public class TypeTranslator {
         return TO_STRING_FUNCTIONS.get(from).get(in, context);
     }
     public static <T> T toType(String in, Class<T> to, T context){
+        if (to.isEnum()){
+            to = (Class<T>) Enum.class;
+        }
         return (T) FROM_STRING_FUNCTIONS.get(to).get(in, context);
     }
     public static Class<?>[] getRawClasses(Class<?> o){

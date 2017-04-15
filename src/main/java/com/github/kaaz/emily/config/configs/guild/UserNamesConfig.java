@@ -24,6 +24,10 @@ public class UserNamesConfig extends AbstractConfig<Set<String>, Guild> {
         super("user_names", BotRole.BOT_OWNER, new HashSet<>(),
                 "The list of user names and nicknames for that guild for optimization which is automatically managed");
     }
+    @Override
+    public boolean shouldSave(){
+        return false;
+    }
     @EventListener
     public void handle(DiscordUserJoin join){
         Set<String> set = ConfigHandler.getSetting(UserNamesConfig.class, join.getGuild());

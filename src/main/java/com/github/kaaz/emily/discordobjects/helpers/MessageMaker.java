@@ -6,6 +6,7 @@ import com.github.kaaz.emily.config.configs.user.UserLanguageConfig;
 import com.github.kaaz.emily.discordobjects.exception.ErrorWrapper;
 import com.github.kaaz.emily.discordobjects.wrappers.*;
 import com.github.kaaz.emily.exeption.BotException;
+import com.github.kaaz.emily.service.services.DelayService;
 import com.github.kaaz.emily.util.EmoticonHelper;
 import com.github.kaaz.emily.util.ImageColorHelper;
 import com.github.kaaz.emily.util.LangString;
@@ -19,8 +20,7 @@ import sx.blah.discord.util.MessageBuilder;
 
 import java.awt.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -43,6 +43,8 @@ public class MessageMaker {
     private List<Pair<String, ReactionBehavior>> reactionBehaviors = new ArrayList<>();
     private IMessage message, origin;
     private boolean okHand;
+    private final Set<String> reactions = new HashSet<>(1);
+    private Long deleteDelay;
     public MessageMaker(User user, Message origin) {
         this.user = user;
         this.origin = origin.message();
@@ -63,6 +65,10 @@ public class MessageMaker {
     }
     public MessageMaker withReactionBehavior(String reactionName, ReactionBehavior behavior){
         this.reactionBehaviors.add(new Pair<>(reactionName, behavior));
+        return this;
+    }
+    public MessageMaker withReaction(String name){
+        this.reactions.add(EmoticonHelper.getChars(name));
         return this;
     }
     public MessageMaker withDM(){
@@ -87,6 +93,10 @@ public class MessageMaker {
         List<FieldPart> fieldList = new ArrayList<>(size);
         fieldList.addAll(this.fieldList);
         this.fieldList = fieldList;
+        return this;
+    }
+    public MessageMaker withDeleteDelay(Long deleteDelay){
+        this.deleteDelay = deleteDelay;
         return this;
     }
     // text methods
@@ -131,7 +141,7 @@ public class MessageMaker {
     }
     public MessageMaker asExceptionMessage(BotException cause) {
         this.withColor(Color.RED).getHeader().append(cause.getMessage()).getMaker().getTitle().appendRaw(cause.getClass().getSimpleName());
-        return this;
+        return this.withDeleteDelay(60000L);
     }
     // embed methods
     public MessageMaker withColor(Color color){
@@ -196,6 +206,10 @@ public class MessageMaker {
         if (this.message == null){
             this.message = ErrorWrapper.wrap((ErrorWrapper.Request<IMessage>) () -> this.builder.withChannel(channel.channel()).send());
             this.reactionBehaviors.forEach(pair -> ReactionBehavior.registerListener(Message.getMessage(this.message), pair.getKey(), pair.getValue()));
+            this.reactions.forEach(s -> this.message.addReaction(s));
+            if (this.deleteDelay != null){
+                DelayService.schedule(this.deleteDelay, () -> ErrorWrapper.wrap(this.message::delete));
+            }
         } else if (this.embed != null){
             ErrorWrapper.wrap(() -> this.message.edit(this.embed.build()));
         }

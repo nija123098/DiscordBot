@@ -9,10 +9,10 @@ import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
  */
 public class PingCommand extends AbstractCommand {
     public PingCommand() {
-        super(null, "ping", null, null, null);
+        super(null, "ping", null, "ping_pong", null);
     }
     @Command
     public void command(MessageMaker helper){
-        helper.append("red").withUserColor();
+        helper.append("ping").withUserColor();
     }
 }
