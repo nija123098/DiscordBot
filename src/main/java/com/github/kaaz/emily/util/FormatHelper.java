@@ -28,6 +28,9 @@ public class FormatHelper {
         return builder.toString();
     }
     public static String trimFront(String s){
+        if (!s.startsWith(" ")){
+            return s;
+        }
         boolean stop = false;
         for (int i = 0; i < s.length(); i++) {
             if (s.charAt(i) == ' '){

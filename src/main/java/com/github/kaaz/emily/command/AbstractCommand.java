@@ -1,6 +1,7 @@
 package com.github.kaaz.emily.command;
 
 import com.github.kaaz.emily.command.anotations.Command;
+import com.github.kaaz.emily.command.anotations.Context;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.Configurable;
 import com.github.kaaz.emily.config.GlobalConfigurable;
@@ -11,6 +12,7 @@ import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.wrappers.*;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
 import com.github.kaaz.emily.exeption.BotException;
+import com.github.kaaz.emily.exeption.ContextException;
 import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
 import com.github.kaaz.emily.util.EmoticonHelper;
@@ -19,10 +21,7 @@ import com.github.kaaz.emily.util.Log;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Stream;
 
 /**
@@ -42,6 +41,7 @@ public class AbstractCommand {
     private List<Channel> channelCoolDowns;
     private List<User> userCoolDowns;
     private List<GuildUser> guildUserCoolDowns;
+    private Set<ContextRequirement> contextRequirements;
     public AbstractCommand(AbstractCommand superCommand, String name, String absoluteAliases, String emoticonAliases, String relativeAliases){
         this.superCommand = superCommand;
         this.name = superCommand == null ? name : superCommand.name + " " + name;
@@ -78,6 +78,13 @@ public class AbstractCommand {
             return;
         }
         this.parameters = this.method.getParameters();
+        this.contextRequirements = new HashSet<>();
+        for (Parameter parameter : this.parameters) {
+            if (parameter.isAnnotationPresent(Context.class) || parameter.getAnnotations().length == 0) {
+                this.contextRequirements.addAll(InvocationObjectGetter.getContextRequirements(parameter.getType(), parameter.isAnnotationPresent(Context.class) ? parameter.getAnnotation(Context.class).value() : ContextType.DEFAULT));
+            }
+        }// makes it into a more efficient set
+        this.contextRequirements = this.contextRequirements.isEmpty() ? Collections.emptySet() : EnumSet.copyOf(this.contextRequirements);
         this.globalCoolDownTime = this.getCoolDown(GlobalConfigurable.class);
         long persistence = this.getCoolDown(Guild.class);
         if (persistence != -1){
@@ -167,7 +174,7 @@ public class AbstractCommand {
      */
     public boolean hasPermission(User user, Guild guild) {
         boolean hasNormalPerm = BotRole.hasRequiredRole(this.botRole, user, guild);
-        if (!ConfigHandler.getSetting(GuildSpecialPermsEnabledConfig.class, guild) || !(this.botRole.ordinal() >= BotRole.GUILD_TRUSTEE.ordinal())){
+        if (guild != null && (!ConfigHandler.getSetting(GuildSpecialPermsEnabledConfig.class, guild) || !(this.botRole.ordinal() >= BotRole.GUILD_TRUSTEE.ordinal()))){
             boolean disapproved = false;
             for (Role role : user.getRolesForGuild(guild)){
                 if (!ConfigHandler.getSetting(SpecialPermsRoleEnable.class, role)){
@@ -262,12 +269,16 @@ public class AbstractCommand {
      * @param args the user args for invocation
      * @return if the command was successful
      */
-    protected boolean invoke(User user, Message message, Reaction reaction, String args){
-        Object[] objects = InvocationObjectGetter.replace(this.parameters, new Object[this.parameters.length], user, message, reaction, args);
+    protected Object invoke(User user, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, String args){
+        Object[] contexts = new Object[]{user, shard, channel, guild, message, reaction, args};
+        for (int i = 0; i < contexts.length; i++) {
+            if (this.contextRequirements.contains(ContextRequirement.values()[i])) ContextException.checkRequirement(contexts[i], ContextRequirement.values()[i]);
+        }
+        Object[] objects = InvocationObjectGetter.replace(this.parameters, new Object[this.parameters.length], user, shard, channel, guild, message, reaction, args);
         try {
-            boolean success = this.method.invoke(this, objects) == null;
+            Object object = this.method.invoke(this, objects);
             Stream.of(objects).filter(MessageMaker.class::isInstance).forEach(o -> ((MessageMaker) o).send());
-            return success;
+            return object;
         } catch (IllegalAccessException e) {
             Log.log("Malformed command: " + getName(), e);
         } catch (InvocationTargetException e) {
@@ -277,5 +288,9 @@ public class AbstractCommand {
             Log.log("Exception during method execution: " + getName(), e);
         }
         return false;
+    }
+
+    protected boolean interpretSuccess(Object o){
+        return true;
     }
 }

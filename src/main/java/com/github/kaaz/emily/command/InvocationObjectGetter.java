@@ -11,111 +11,94 @@ import com.github.kaaz.emily.discordobjects.wrappers.*;
 import com.github.kaaz.emily.exeption.ArgumentException;
 import com.github.kaaz.emily.exeption.ContextException;
 import com.github.kaaz.emily.exeption.DevelopmentException;
+import com.github.kaaz.emily.util.EnumHelper;
 import com.github.kaaz.emily.util.FormatHelper;
 import com.github.kaaz.emily.util.LanguageHelper;
 import com.github.kaaz.emily.util.Log;
 import javafx.util.Pair;
 
 import java.lang.reflect.Parameter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Made by nija123098 on 3/27/2017.
  */
-public class InvocationObjectGetter {
-    private static final Map<Class<?>, Map<String, InvocationGetter<?>>> CONTEXT_MAP = new HashMap<>();
-    private static final Map<Class<?>, ArgumentConverter<?>> CONVERTER_MAP = new HashMap<>();
+public class InvocationObjectGetter {// TODO WORKING ON IMPLEMENT CONTEXT REQUIREMENT USAGE
+    private static final Map<Class<?>, Map<ContextType, Pair<InvocationGetter<?>, Set<ContextRequirement>>>> CONTEXT_MAP = new HashMap<>();
+    private static final Map<Class<?>, Pair<ArgumentConverter<?>, Set<ContextRequirement>>> CONVERTER_MAP = new HashMap<>();
 
     static {
-        addContext(User.class, "invoker", (user, message, reaction, args) -> user);
-        addContext(Message.class, "invoker", (user, message, reaction, args) -> message);
-        addContext(Reaction.class, "invoker", (user, message, reaction, args) -> reaction);
-        addContext(Guild.class, "location", (user, message, reaction, args) -> {
-            ContextException.checkGuild(message.getGuild());
-            return message.getGuild();
-        });
-        addContext(GuildUser.class, "invoker", (user, message, reaction, args) -> {
-            ContextException.checkGuild(message.getGuild(), "Commands with guild user arguments can only be used in a guild");
-            return GuildUser.getGuildUser(message.getGuild(), user);
-        });
-        addContext(Channel.class, "location", (user, message, reaction, args) -> message.getChannel());
-        addContext(Presence.class, "invoker", (user, message, reaction, args) -> user.getPresence());
-        addContext(String.class, "args", (user, message, reaction, args) -> args);
-        addContext(String[].class, "args", (user, message, reaction, args) -> FormatHelper.reduceRepeats(args, ' ').split(" "));
-        addContext(MessageMaker.class, "", (user, message, reaction, args) -> new MessageMaker(user, message));
-        addContext(VoiceChannel.class, "location", (user, message, reaction, args) -> {
-            VoiceChannel channel = message.getGuild().getConnectedVoiceChannel();
-            if (channel == null) throw new ContextException("You must be in a voice channel to use that command");
-            return channel;
-        });
-        addContext(Shard.class, "location", (user, message, reaction, args) -> message.getShard());
-        addContext(Region.class, "location", (user, message, reaction, args) -> message.getGuild().getRegion());
-        addContext(Attachment[].class, "invoker", (user, message, reaction, args) -> {
+        addContext(User.class, ContextType.INVOKER, (user, shard, channel, guild, message, reaction, args) -> user, ContextRequirement.USER);
+        addContext(Message.class, ContextType.INVOKER, (user, shard, channel, guild, message, reaction, args) -> message, ContextRequirement.MESSAGE);
+        addContext(Reaction.class, ContextType.INVOKER, (user, shard, channel, guild, message, reaction, args) -> reaction, ContextRequirement.REACTION);
+        addContext(Guild.class, ContextType.LOCATION, (user, shard, channel, guild, message, reaction, args) -> guild, ContextRequirement.GUILD);
+        addContext(GuildUser.class, ContextType.INVOKER, (user, shard, channel, guild, message, reaction, args) -> GuildUser.getGuildUser(guild, user), ContextRequirement.GUILD, ContextRequirement.USER);
+        addContext(Channel.class, ContextType.LOCATION, (user, shard, channel, guild, message, reaction, args) -> channel, ContextRequirement.CHANNEL);
+        addContext(Presence.class, ContextType.INVOKER, (user, shard, channel, guild, message, reaction, args) -> user.getPresence(), ContextRequirement.USER);
+        addContext(String.class, ContextType.ARGS, (user, shard, channel, guild, message, reaction, args) -> args, ContextRequirement.STRING);
+        addContext(String[].class, ContextType.ARGS, (user, shard, channel, guild, message, reaction, args) -> FormatHelper.reduceRepeats(args, ' ').split(" "), ContextRequirement.STRING);
+        addContext(MessageMaker.class, ContextType.DEFAULT, (user, shard, channel, guild, message, reaction, args) -> message == null ? new MessageMaker(user, channel) : new MessageMaker(user, message), ContextRequirement.CHANNEL);
+        addContext(VoiceChannel.class, ContextType.LOCATION, (user, shard, channel, guild, message, reaction, args) -> {
+            VoiceChannel target = guild.getConnectedVoiceChannel();
+            if (target == null) throw new ContextException("You must be in a voice channel to use that command");
+            return target;
+        }, ContextRequirement.GUILD, ContextRequirement.USER);
+        addContext(Shard.class, ContextType.LOCATION, (user, shard, channel, guild, message, reaction, args) -> shard, ContextRequirement.SHARD);
+        addContext(Region.class, ContextType.LOCATION, (user, shard, channel, guild, message, reaction, args) -> guild.getRegion(), ContextRequirement.GUILD);
+        addContext(Attachment[].class, ContextType.INVOKER, (user, shard, channel, guild, message, reaction, args) -> {// todo consider using context requirements in stead
             List<Attachment> attachments = message.getAttachments();
             return attachments.toArray(new Attachment[attachments.size()]);
-        });
-        addContext(Playlist.class, "current", (user, message, reaction, args) -> {
-            ContextException.checkGuild(message.getGuild());
-            return ConfigHandler.getSetting(GuildActivePlaylistConfig.class, message.getGuild());
-        });
-        addContext(Track.class, "current", (user, message, reaction, args) -> {
-            ContextException.checkGuild(message.getGuild());
-            GuildAudioManager manager = GuildAudioManager.getManager(message.getGuild(), false);
-            if (manager == null || manager.currentTrack() == null){
-                throw new ContextException("No track is currently playing");
-            }else{
-                return manager.currentTrack();
-            }
-        });
-        addContext(Configurable.class, "", (user, message, reaction, args) -> null);
+        }, ContextRequirement.MESSAGE);
+        addContext(Playlist.class, ContextType.STATUS, (user, shard, channel, guild, message, reaction, args) -> ConfigHandler.getSetting(GuildActivePlaylistConfig.class, guild), ContextRequirement.GUILD);
+        addContext(Track.class, ContextType.STATUS, (user, shard, channel, guild, message, reaction, args) -> {
+            GuildAudioManager manager = GuildAudioManager.getManager(guild, false);
+            if (manager == null || manager.currentTrack() == null) throw new ContextException("No track is currently playing");
+            return manager.currentTrack();
+        }, ContextRequirement.GUILD, ContextRequirement.USER);
+        addContext(Configurable.class, ContextType.DEFAULT, (user, shard, channel, guild, message, reaction, args) -> null);
     }// ^ is for the optional on configurable conversions
 
-    private static <T> void addContext(Class<T> clazz, String label, InvocationGetter<T> invocationGetter){
+    private static <T> void addContext(Class<T> clazz, ContextType contextType, InvocationGetter<T> invocationGetter, ContextRequirement...requirements){
+        Pair<InvocationGetter<?>, Set<ContextRequirement>> pair = new Pair<>(invocationGetter, EnumHelper.getSet(ContextRequirement.class, requirements));
         CONTEXT_MAP.computeIfAbsent(clazz, c -> {
-            Map<String, InvocationGetter<?>> map = new HashMap<>(1);
-            map.put("", invocationGetter);
+            Map<ContextType, Pair<InvocationGetter<?>, Set<ContextRequirement>>> map = new HashMap<>(1);
+            map.put(ContextType.DEFAULT, pair);
             return map;
         });
-        CONTEXT_MAP.get(clazz).put(label, invocationGetter);
+        CONTEXT_MAP.get(clazz).put(contextType, pair);
+    }
+
+    public static Set<ContextRequirement> getContextRequirements(Class<?> type, ContextType contextType){
+        return CONTEXT_MAP.get(type).get(contextType).getValue();
     }
 
     @FunctionalInterface
     private interface InvocationGetter<E>{
-        E getObject(User user, Message message, Reaction reaction, String args);
+        E getObject(User invoker, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, String args);
     }
 
     static {
-        addConverter(Channel.class, (user, message, reaction, args) -> {
+        addConverter(Channel.class, (user, shard, channel, guild, message, reaction, args) -> {
             boolean isMention = args.startsWith("<#");
             String arg = args.split(" ")[0].replace("<#", "").replace(">", "");
             int length = (isMention ? 3 : 0) + arg.length();
-            Channel channel = DiscordClient.getChannelByID(arg);
-            if (channel != null){
-                return new Pair<>(channel, length);
+            Channel target = DiscordClient.getChannelByID(arg);
+            if (target != null){
+                return new Pair<>(target, length);
             }
-            if (message.getGuild() == null){
-                return new Pair<>(message.getChannel(), length);
-            }
-            List<Channel> channels = message.getGuild().getChannelsByName(arg);
+            ContextException.checkGuild(guild);
+            List<Channel> channels = guild.getChannelsByName(arg);
             if (channels.size() == 1){
                 return new Pair<>(channels.get(0), length);
             }
-            throw new ArgumentException("No channel identified by that name");
+            throw new ArgumentException("No channel identified by that name, try using an ID or mention");
         });
-        addConverter(User.class, (user, message, reaction, args) -> {
+        addConverter(User.class, (user, shard, channel, guild, message, reaction, args) -> {
             User u = DiscordClient.getUserByID(args.split(" ")[0].replace("<@", "").replace("!", "").replace(">", ""));
-            if (u != null){
-                return new Pair<>(u, args.split(" ")[0].length());
-            }
-            if (message.getGuild() == null){
-                throw new ArgumentException("Commands with user names can not be used in private channels");
-            }
+            if (u != null) return new Pair<>(u, args.split(" ")[0].length());
+            if (guild == null) throw new ArgumentException("Commands with user names can not be used in private channels");
             List<User> users = new ArrayList<>(3);
-            Guild guild = message.getGuild();
             ConfigHandler.getSetting(UserNamesConfig.class, message.getGuild()).forEach(s -> {
                 if (args.startsWith(s) && ((args.length() == s.length() || args.charAt(s.length()) == ' '))){
                     users.addAll(guild.getUsersByName(s));
@@ -124,82 +107,68 @@ public class InvocationObjectGetter {
                     }
                 }
             });
-            if (users.size() == 0){
-                throw new ArgumentException("No users by that name");
-            }
+            if (users.size() == 0) throw new ArgumentException("No users by that name, try an ID or mention");
             return new Pair<>(users.iterator().next(), users.get(0).getName().length());
         });
-        addConverter(Playlist.class, (user, message, reaction, args) -> {
-            if (args.toLowerCase().startsWith("global")){
-                return new Pair<>(Playlist.GLOBAL_PLAYLIST, args.equalsIgnoreCase("global playlist") ? 15 : 6);
-            }
+        addConverter(Playlist.class, (user, shard, channel, guild, message, reaction, args) -> {
+            if (args.toLowerCase().startsWith("global")) return new Pair<>(Playlist.GLOBAL_PLAYLIST, args.equalsIgnoreCase("global playlist") ? 15 : 6);
             Playlist playlist = Playlist.getPlaylist(user, message.getGuild(), args);
-            if (playlist == null){
-                throw new ArgumentException("No playlist identified with that name");
-            }
+            if (playlist == null) throw new ArgumentException("No playlist identified with that name");
             String[] strings = args.split(" ");
             return new Pair<>(playlist, strings[0].length() + strings[1].length() + 1);
         });
-        addConverter(Guild.class, (user, message, reaction, args) -> {
-            Guild guild = Guild.getGuild(args.split(" ")[0]);
-            if (guild != null){
-                return new Pair<>(guild, guild.getID().length());
-            }
+        addConverter(Guild.class, (user, shard, channel, guild, message, reaction, args) -> {
+            Guild target = Guild.getGuild(args.split(" ")[0]);
+            if (target != null) return new Pair<>(target, target.getID().length());
             for (Guild g : DiscordClient.getGuilds()){
                 String name = g.getName();
                 if (args.startsWith(name) && (args.length() == name.length() || args.charAt(name.length()) == ' ')){
-                    if (guild != null){
+                    if (target != null){
                         throw new ArgumentException("To many guilds are named that");
                     }
-                    guild = g;
+                    target = g;
                 }
             }
-            if (guild == null){
-                throw new ArgumentException("No guilds named that");
-            }
-            return new Pair<>(guild, guild.getName().length());
+            if (target == null) throw new ArgumentException("No guilds named that, try an ID");
+            return new Pair<>(target, target.getName().length());
         });
-        addConverter(Shard.class, (user, message, reaction, args) -> {
+        addConverter(Shard.class, (user, shard, channel, guild, message, reaction, args) -> {
             String arg = args.split(" ")[0];
+            if (arg.toLowerCase().equals("this")){
+                return new Pair<>(shard, 4);
+            }
             try {
-                return new Pair<>(Shard.getShard(Integer.parseInt(arg)), arg.length());
+                int i = Integer.parseInt(arg);
+                Shard s = Shard.getShard(i);
+                if (s == null) throw new ArgumentException("That shard does not exist, try a " + (i < 0 ? "higher" : "lower") + " number");
+                return new Pair<>(s, arg.length());
             } catch (Exception e){
                 throw new ArgumentException("Not a valid shard ID");
             }
         });
-        addConverter(Message.class, (user, message, reaction, args) -> {
-            if (args.startsWith("this")){
-                return new Pair<>(message, 4);
-            }
+        addConverter(Message.class, (user, shard, channel, guild, message, reaction, args) -> {
+            if (args.startsWith("this")) return new Pair<>(message, 4);
             String arg = args.split(" ")[0];
             Message m = Message.getMessage(arg);
-            if (m == null){
-                throw new ArgumentException("No message with that ID");
-            }
+            if (m == null) throw new ArgumentException("No message with that ID");
             return new Pair<>(m, arg.length());
         });
-        addConverter(Region.class, (user, message, reaction, args) -> {
+        addConverter(Region.class, (user, shard, channel, guild, message, reaction, args) -> {
+            if (guild != null && args.toLowerCase().startsWith("this")) return new Pair<>(guild.getRegion(), 4);
             String arg = args.split(" ")[0];
             Region region = Region.getRegion(arg);
-            if (region != null){
-                return new Pair<>(region, arg.length());
-            }
+            if (region != null) return new Pair<>(region, arg.length());
             for (Region r : DiscordClient.getRegions()){
                 if (args.startsWith(r.getName())){
                     return new Pair<>(r, r.getName().length());
                 }// Discord isn't trying to trick us
             }
-            throw new ArgumentException("Not a valid shard ID");
+            throw new ArgumentException("Not a valid region id ID");
         });
-        addConverter(Role.class, (user, message, reaction, args) -> {
-            if (message.getGuild() == null){
-                throw new ArgumentException("No roles are in a DM");
-            }
+        addConverter(Role.class, (user, shard, channel, guild, message, reaction, args) -> {
             String arg = args.split(" ")[0];
             Role role = message.getGuild().getRoleByID(arg);
-            if (role != null){
-                return new Pair<>(role, role.getID().length());
-            }
+            if (role != null) return new Pair<>(role, role.getID().length());
             for (Role r : message.getGuild().getRoles()){
                 if (args.startsWith(r.getName()) && (args.length() == arg.length() || args.charAt(arg.length()) == ' ')){
                     if (role != null){
@@ -208,33 +177,27 @@ public class InvocationObjectGetter {
                     role = r;
                 }
             }
-            if (role == null){
-                throw new ArgumentException("There are no roles by that name");
-            }
+            if (role == null) throw new ArgumentException("There are no roles by that name");
             return new Pair<>(role, role.getName().length());
         });
-        addConverter(ConfigLevel.class, (user, message, reaction, args) -> {
+        addConverter(ConfigLevel.class, (user, shard, channel, guild, message, reaction, args) -> {
             String arg = args.split(" ")[0].toUpperCase();// replace with ConfigLevel.getLevel
             try{return new Pair<>(ConfigLevel.valueOf(arg), arg.length());
             }catch(Exception ignored){}
             arg = arg.toUpperCase();
-            if (arg.equals("GUILDUSER")){
-                return new Pair<>(ConfigLevel.GUILD_USER, 9);
-            }
-            if (arg.equals("GUILD USER")){
-                return new Pair<>(ConfigLevel.GUILD_USER, 10);
-            }
+            if (arg.equals("GUILDUSER")) return new Pair<>(ConfigLevel.GUILD_USER, 9);
+            if (arg.equals("GUILD USER")) return new Pair<>(ConfigLevel.GUILD_USER, 10);
             throw new ArgumentException("No such Configurable type");
         });
-        addConverter(Boolean.class, (user, message, reaction, args) -> {
+        addConverter(Boolean.class, (user, shard, channel, guild, message, reaction, args) -> {
             String arg = args.split(" ")[0];
             return new Pair<>(LanguageHelper.getBoolean(arg), arg.length());
         });
-        addConverter(Integer.class, (user, message, reaction, args) -> {
+        addConverter(Integer.class, (user, shard, channel, guild, message, reaction, args) -> {
             String arg = args.split(" ")[0];
             return new Pair<>(LanguageHelper.getInteger(arg), arg.length());
         });
-        addConverter(Float.class, (user, message, reaction, args) -> {
+        addConverter(Float.class, (user, shard, channel, guild, message, reaction, args) -> {
             try {
                 String arg = args.split(" ")[0];
                 Float result = Float.parseFloat(arg);
@@ -243,8 +206,8 @@ public class InvocationObjectGetter {
                 throw new ArgumentException("That is not a decimal number");
             }
         });
-        addConverter(AbstractConfig.class, (user, message, reaction, args) -> {
-            Pair<ConfigLevel, Integer> pair = (Pair<ConfigLevel, Integer>) CONVERTER_MAP.get(ConfigLevel.class).getObject(user, message, reaction, args);
+        addConverter(AbstractConfig.class, (user, shard, channel, guild, message, reaction, args) -> {
+            Pair<ConfigLevel, Integer> pair = (Pair<ConfigLevel, Integer>) CONVERTER_MAP.get(ConfigLevel.class).getKey().getObject(user, shard, channel, guild, message, reaction, args);
             args = args.substring(pair.getValue());
             int space = pair.getValue();
             while (true){
@@ -256,39 +219,37 @@ public class InvocationObjectGetter {
             }
             args = args.replace("-", "_");
             AbstractConfig<?, ? extends Configurable> a = ConfigHandler.getConfig(pair.getKey(), args.split(" ")[0]);
-            if (a == null){
-                throw new ArgumentException("No such config");
-            }
+            if (a == null) throw new ArgumentException("No such config");
             return new Pair<>(a, space + a.getName().length());
         });
-        addConverter(Configurable.class, (user, message, reaction, args) -> {
+        addConverter(Configurable.class, (user, shard, channel, guild, message, reaction, args) -> {
             AtomicReference<Pair<Configurable, Integer>> pair = new AtomicReference<>();
             CONVERTER_MAP.forEach((type, converter) -> {
                 if (!Configurable.class.isAssignableFrom(type) || Configurable.class.equals(type) || pair.get() != null){
                     return;
                 }
                 try {
-                    pair.set((Pair<Configurable, Integer>) converter.getObject(user, message, reaction, args));
+                    pair.set((Pair<Configurable, Integer>) converter.getKey().getObject(user, shard, channel, guild, message, reaction, args));
                 } catch (Exception ignored){}
             });
-            if (pair.get() == null){
-                throw new ArgumentException("No configurable instance found");
-            }
+            if (pair.get() == null) throw new ArgumentException("No configurable instance found");
             return pair.get();
         });
     }
 
-    private static <T> void addConverter(Class<T> clazz, ArgumentConverter<T> argumentConverter){
-        CONVERTER_MAP.put(clazz, argumentConverter);
+    private static <T> void addConverter(Class<T> clazz, ArgumentConverter<T> argumentConverter, ContextRequirement...requirements){
+        EnumSet<ContextRequirement> req = EnumHelper.getSet(ContextRequirement.class, requirements);
+        req.add(ContextRequirement.STRING);
+        CONVERTER_MAP.put(clazz, new Pair<>(argumentConverter, req));
     }
 
-    public static <T> Pair<T, Integer> convert(Class<T> clazz, User user, Message message, Reaction reaction, String args){
-        return (Pair<T, Integer>) CONVERTER_MAP.get(clazz).getObject(user, message, reaction, args);
+    public static <T> Pair<T, Integer> convert(Class<T> clazz, User user, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, String args){
+        return (Pair<T, Integer>) CONVERTER_MAP.get(clazz).getKey().getObject(user, shard, channel, guild, message, reaction, args);
     }
 
     @FunctionalInterface
     private interface ArgumentConverter<E>{
-        Pair<E, Integer> getObject(User user, Message message, Reaction reaction, String args);
+        Pair<E, Integer> getObject(User invoker, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, String args);
     }
 
     /**
@@ -298,14 +259,14 @@ public class InvocationObjectGetter {
         Log.log("Invocation Object Getter initialized");
     }
 
-    static Object[] replace(Parameter[] parameters, Object[] objects, User user, Message message, Reaction reaction, String args){
+    static Object[] replace(Parameter[] parameters, Object[] objects, User user, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, String args){
         int commandArgIndex = 0;
         for (int i = 0; i < parameters.length; i++) {
             try {
                 if (parameters[i].isAnnotationPresent(Context.class) || parameters[i].getAnnotations().length == 0){// null might be an instance of Context
                     checkContextType(parameters[i].getType());
                     try {
-                        objects[i] = CONTEXT_MAP.get(parameters[i].getType()).get(parameters[i].getAnnotations().length == 0 ? "" : parameters[i].getAnnotation(Context.class).value()).getObject(user, message, reaction, args);
+                        objects[i] = CONTEXT_MAP.get(parameters[i].getType()).get(parameters[i].getAnnotations().length == 0 ? ContextType.DEFAULT : parameters[i].getAnnotation(Context.class).value()).getKey().getObject(user, shard, channel, guild, message, reaction, args);
                     } catch (Exception e){
                         if (!(parameters[i].isAnnotationPresent(Context.class) && parameters[i].getAnnotation(Context.class).softFail())){
                             throw e;
@@ -314,7 +275,7 @@ public class InvocationObjectGetter {
                 }else if (parameters[i].isAnnotationPresent(Convert.class)){
                     ++commandArgIndex;
                     checkConvertType(parameters[i].getType());
-                    Pair<Object, Integer> pair = (Pair<Object, Integer>) CONVERTER_MAP.get(parameters[i].getType()).getObject(user, message, reaction, args);
+                    Pair<Object, Integer> pair = (Pair<Object, Integer>) CONVERTER_MAP.get(parameters[i].getType()).getKey().getObject(user, shard, channel, guild, message, reaction, args);
                     objects[i] = pair.getKey();
                     args = args.substring(pair.getValue());
                     while (true){
@@ -327,7 +288,7 @@ public class InvocationObjectGetter {
             } catch (ArgumentException e){
                 if (parameters[i].isAnnotationPresent(Convert.class) && parameters[i].getAnnotation(Convert.class).optional()){
                     checkContextType(parameters[i].getType());
-                    objects[i] = CONTEXT_MAP.get(parameters[i].getType()).get(parameters[i].getAnnotation(Convert.class).replacement()).getObject(user, message, reaction, args);
+                    objects[i] = CONTEXT_MAP.get(parameters[i].getType()).get(parameters[i].getAnnotation(Convert.class).replacement()).getKey().getObject(user, shard, channel, guild, message, reaction, args);
                     continue;
                 }
                 e.setParameter(commandArgIndex);

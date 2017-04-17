@@ -157,7 +157,7 @@ public class CommandHandler {
      * @param message the message reacted to or sent to invoke the command
      * @param reaction the reaction that invoked this command, if applicable
      */
-    public static boolean attemptInvocation(String string, User user, Message message, Reaction reaction){
+    private static boolean attemptInvocation(String string, User user, Message message, Reaction reaction){
         if (string == null){// can happen
             return false;
         }
@@ -181,7 +181,7 @@ public class CommandHandler {
                 string = FormatHelper.trimFront(string.substring(pref.length()));
             }else{
                 if ((command = REACTION_COMMAND_MAP.get(string)) != null){
-                    try{if (command.hasPermission(user, message.getGuild()) && command.checkCoolDown(message.getGuild(), message.getChannel(), user) && command.invoke(user, message, reaction, string)){
+                    try{if (command.hasPermission(user, message.getGuild()) && command.checkCoolDown(message.getGuild(), message.getChannel(), user) && command.interpretSuccess(command.invoke(user, message.getShard(), message.getChannel(), message.getGuild(), message, reaction, string))){
                         command.invoked(message.getChannel(), user);
                         return true;
                     }
@@ -211,7 +211,7 @@ public class CommandHandler {
             }
             try {
                 boolean invoked = false;
-                if (command.invoke(user, message, reaction, pair.getValue())){
+                if (command.interpretSuccess(command.invoke(user, message.getShard(), message.getChannel(), message.getGuild(), message, reaction, pair.getValue()))){
                     invoked = true;
                     command.invoked(message.getChannel(), user);
                 }

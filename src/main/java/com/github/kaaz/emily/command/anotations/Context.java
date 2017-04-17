@@ -1,5 +1,6 @@
 package com.github.kaaz.emily.command.anotations;
 
+import com.github.kaaz.emily.command.ContextType;
 import com.github.kaaz.emily.command.InvocationObjectGetter;
 
 import java.lang.annotation.ElementType;
@@ -24,6 +25,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
 public @interface Context {
-    String value() default "";
+    ContextType value() default ContextType.DEFAULT;
     boolean softFail() default false;
 }

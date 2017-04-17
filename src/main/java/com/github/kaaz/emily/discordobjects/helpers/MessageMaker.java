@@ -45,14 +45,14 @@ public class MessageMaker {
     private boolean okHand;
     private final Set<String> reactions = new HashSet<>(1);
     private Long deleteDelay;
+    public MessageMaker(User user, Channel origin) {
+        this.user = user;
+        this.channel = origin;
+    }
     public MessageMaker(User user, Message origin) {
         this.user = user;
         this.origin = origin.message();
         this.channel = origin.getChannel();
-    }
-    public MessageMaker(Channel channel, User user) {
-        this.channel = channel;
-        this.user = user;
     }
     // setup methods
     public MessageMaker asNormalMessage(){
