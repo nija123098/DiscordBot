@@ -1,53 +1,21 @@
 package com.github.kaaz.emily.template;
 
-import com.github.kaaz.emily.discordobjects.wrappers.Channel;
-import com.github.kaaz.emily.discordobjects.wrappers.Guild;
-import com.github.kaaz.emily.discordobjects.wrappers.Shard;
-import com.github.kaaz.emily.discordobjects.wrappers.User;
+import com.github.kaaz.emily.command.ContextPack;
+import com.github.kaaz.emily.config.ConfigHandler;
+import com.github.kaaz.emily.config.GlobalConfigurable;
+import com.github.kaaz.emily.config.configs.global.GlobalTemplateConfig;
+import com.github.kaaz.emily.config.configs.guild.GuildTemplatesConfig;
+import com.github.kaaz.emily.discordobjects.wrappers.*;
 import com.github.kaaz.emily.util.Log;
+import com.github.kaaz.emily.util.Rand;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 /**
  * Made by nija123098 on 2/27/2017.
  */
 public class TemplateHandler {
-    private static final char leftBrace = '<', rightBrace = '>';
-    private static final Map<String, TemplateFunction> REPLACEMENT_FUNCTIONS;
-    static {
-        REPLACEMENT_FUNCTIONS = new HashMap<>();
-        addFunction("shard", (in, caller, channel, guild, shard) -> {
-            switch (in){
-                case "id":
-                    return shard.getID() + "";
-                default:
-                    return "?";
-            }
-        });
-        addFunction("guild", (in, caller, channel, guild, shard) -> {
-            switch (in){
-                case "name":
-                    return guild.getName();
-                case "id":
-                    return guild.getID();
-                case "users":
-                    return guild.getTotalMemberCount() + "";
-                case "owner":
-                    return guild.getOwner().getDisplayName(guild);
-                case "channels":
-                    return guild.getChannels().size() + "";
-                case "voicechannels":
-                    return guild.getVoiceChannels().size() + "";
-                case "roles":
-                    return guild.getRoles().size() + "";
-                case "region":
-                    return guild.getRegion().getName();
-                default:
-                    return "?";
-            }
-        });
-    }
+    public static final char LEFT_BRACE = '<', RIGHT_BRACE = '>', ARGUMENT_SPLITTER = '|', ARGUMENT_CHARACTER = '%';
 
     /**
      * Forces the initialization of this class
@@ -55,29 +23,20 @@ public class TemplateHandler {
     public static void initialize(){
         Log.log("Template Handler initialize");
     }
-    private static void addFunction(String name, TemplateFunction function){
-        REPLACEMENT_FUNCTIONS.put(name, function);
+
+    public static String interpret(KeyPhrase keyPhrase, ContextPack pack, Object...args){
+        return interpret(keyPhrase, pack.getUser(), pack.getShard(), pack.getChannel(), pack.getGuild(), pack.getMessage(), pack.getReaction(), args);
     }
-    public static String interpret(String in, User caller, Channel channel, Guild guild, Shard shard){
-        StringBuilder builder = new StringBuilder();
-        int ind = in.indexOf(rightBrace);
-        if (ind == -1){
-            return in;
+
+    public static String interpret(KeyPhrase keyPhrase, User user, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, Object...args){
+        List<Template> templates = ConfigHandler.getSetting(GuildTemplatesConfig.class, guild).get(keyPhrase);
+        if (templates == null || templates.size() == 0){
+            templates = ConfigHandler.getSetting(GlobalTemplateConfig.class, GlobalConfigurable.GLOBAL).get(keyPhrase);
         }
-        boolean foundLeft = false;
-        for (; ind > -1 && (in.charAt(ind) != ' ' || !foundLeft) && !(in.charAt(ind) == leftBrace && foundLeft); --ind) {
-            if (in.charAt(ind) == leftBrace){
-                foundLeft = true;
-            }
-            builder.append(in.charAt(ind));
-        }
-        String rep = builder.reverse().toString();
-        String[] repS = rep.split(leftBrace + "");
-        repS[1] = repS[1].substring(0, repS[1].length() - 1);
-        return interpret(in.replaceFirst(rep, REPLACEMENT_FUNCTIONS.get(repS[0]).apply(repS[1], caller, channel, guild, shard)), caller, channel, guild, shard);
-    }
-    @FunctionalInterface
-    public interface TemplateFunction {
-        String apply(String in, User caller, Channel channel, Guild guild, Shard shard);
+        if (templates == null || templates.size() == 0){
+            Log.log("No templates found for KeyPhrase: " + keyPhrase.name());
+            return "No templates for KeyPhrase: " + keyPhrase.name();
+        }// should not throw an exception since nothing failed
+        return templates.get(Rand.getRand(templates.size() - 1)).interpret(user, shard, channel, guild, message, reaction, args);
     }
 }

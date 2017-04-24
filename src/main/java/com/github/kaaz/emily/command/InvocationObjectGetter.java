@@ -56,6 +56,7 @@ public class InvocationObjectGetter {// TODO WORKING ON IMPLEMENT CONTEXT REQUIR
             if (manager == null || manager.currentTrack() == null) throw new ContextException("No track is currently playing");
             return manager.currentTrack();
         }, ContextRequirement.GUILD, ContextRequirement.USER);
+        addContext(ContextPack.class, ContextType.DEFAULT, ContextPack::new);
         addContext(Configurable.class, ContextType.DEFAULT, (user, shard, channel, guild, message, reaction, args) -> null);
     }// ^ is for the optional on configurable conversions
 
@@ -235,12 +236,17 @@ public class InvocationObjectGetter {// TODO WORKING ON IMPLEMENT CONTEXT REQUIR
             if (pair.get() == null) throw new ArgumentException("No configurable instance found");
             return pair.get();
         });
+        addConverter(String.class, (invoker, shard, channel, guild, message, reaction, args) -> new Pair<>(args, args.length()));
     }
 
     private static <T> void addConverter(Class<T> clazz, ArgumentConverter<T> argumentConverter, ContextRequirement...requirements){
         EnumSet<ContextRequirement> req = EnumHelper.getSet(ContextRequirement.class, requirements);
         req.add(ContextRequirement.STRING);
         CONVERTER_MAP.put(clazz, new Pair<>(argumentConverter, req));
+    }
+
+    public static Set<ContextRequirement> getConvertRequirements(Class<?> type, ContextType contextType){
+        return CONVERTER_MAP.get(type).getValue();
     }
 
     public static <T> Pair<T, Integer> convert(Class<T> clazz, User user, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, String args){
@@ -259,7 +265,7 @@ public class InvocationObjectGetter {// TODO WORKING ON IMPLEMENT CONTEXT REQUIR
         Log.log("Invocation Object Getter initialized");
     }
 
-    static Object[] replace(Parameter[] parameters, Object[] objects, User user, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, String args){
+    static Object[] replace(Parameter[] parameters, Object[] objects, User user, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, String args, boolean[] argOverride){
         int commandArgIndex = 0;
         for (int i = 0; i < parameters.length; i++) {
             try {
@@ -273,7 +279,9 @@ public class InvocationObjectGetter {// TODO WORKING ON IMPLEMENT CONTEXT REQUIR
                         }
                     }
                 }else if (parameters[i].isAnnotationPresent(Convert.class)){
-                    ++commandArgIndex;
+                    if (argOverride[commandArgIndex++]){
+                        continue;
+                    }
                     checkConvertType(parameters[i].getType());
                     Pair<Object, Integer> pair = (Pair<Object, Integer>) CONVERTER_MAP.get(parameters[i].getType()).getKey().getObject(user, shard, channel, guild, message, reaction, args);
                     objects[i] = pair.getKey();

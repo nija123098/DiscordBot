@@ -1,5 +1,6 @@
 package com.github.kaaz.emily.command.anotations;
 
+import com.github.kaaz.emily.command.ContextType;
 import com.github.kaaz.emily.command.InvocationObjectGetter;
 
 import java.lang.annotation.ElementType;
@@ -21,5 +22,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.PARAMETER)
 public @interface Convert {
     boolean optional() default false;
-    String replacement() default "";
+    ContextType replacement() default ContextType.DEFAULT;
 }

@@ -2,6 +2,8 @@ package com.github.kaaz.emily.command;
 
 import com.github.kaaz.emily.command.anotations.Command;
 import com.github.kaaz.emily.command.anotations.Context;
+import com.github.kaaz.emily.command.anotations.Convert;
+import com.github.kaaz.emily.command.anotations.TemplateCommand;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.Configurable;
 import com.github.kaaz.emily.config.GlobalConfigurable;
@@ -13,6 +15,7 @@ import com.github.kaaz.emily.discordobjects.wrappers.*;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
 import com.github.kaaz.emily.exeption.BotException;
 import com.github.kaaz.emily.exeption.ContextException;
+import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
 import com.github.kaaz.emily.util.EmoticonHelper;
@@ -74,14 +77,15 @@ public class AbstractCommand {
             }
         }
         if (this.method == null){
-            Log.log("No method annotated " + Command.class.getSimpleName() + " in command: " + this.getClass().getName());
-            return;
+            throw new DevelopmentException("No method annotated " + Command.class.getSimpleName() + " in command: " + this.getClass().getName());
         }
         this.parameters = this.method.getParameters();
         this.contextRequirements = new HashSet<>();
         for (Parameter parameter : this.parameters) {
-            if (parameter.isAnnotationPresent(Context.class) || parameter.getAnnotations().length == 0) {
+            if (parameter.getAnnotations().length == 0 || (parameter.isAnnotationPresent(Context.class) && !parameter.getAnnotation(Context.class).softFail())) {
                 this.contextRequirements.addAll(InvocationObjectGetter.getContextRequirements(parameter.getType(), parameter.isAnnotationPresent(Context.class) ? parameter.getAnnotation(Context.class).value() : ContextType.DEFAULT));
+            }else if (parameter.isAnnotationPresent(Convert.class) && !parameter.getAnnotation(Convert.class).optional()){
+                this.contextRequirements.addAll(InvocationObjectGetter.getConvertRequirements(parameter.getType(), parameter.getAnnotation(Convert.class).replacement()));
             }
         }// makes it into a more efficient set
         this.contextRequirements = this.contextRequirements.isEmpty() ? Collections.emptySet() : EnumSet.copyOf(this.contextRequirements);
@@ -163,6 +167,34 @@ public class AbstractCommand {
     public BotRole getBotRole(){
         return this.botRole;
     }
+
+    /**
+     * Gets if the current command is a template command
+     *
+     * @return if the command is a template command
+     */
+    public boolean isTemplateCommand(){
+        return this.getClass().isAnnotationPresent(TemplateCommand.class);
+    }
+
+    /**
+     * Gets the return type of the command
+     *
+     * @return the return type of the command
+     */
+    public Class<?> getReturnType(){
+        return this.method.getReturnType();
+    }
+
+    /**
+     * A standard getter
+     *
+     * @return the Java reflection results for getting the paramaters
+     */
+    public Parameter[] getParameters(){
+        return this.parameters;
+    }
+
     /**
      * A check if the user can use a command in the context
      *
@@ -200,16 +232,15 @@ public class AbstractCommand {
     /**
      * A method to check the cool down on a command.
      *
-     * @param guild the guild checked for rate limiting
      * @param channel the channel checked for rate limiting
      * @param user the user checked for rate limiting
      * @return if the command is not being rate limited
      */
-    public boolean checkCoolDown(Guild guild, Channel channel, User user){
+    boolean checkCoolDown(Channel channel, User user){
         if (this.globalUseTime != -1 && this.globalUseTime > System.currentTimeMillis()){
             return false;
         }
-        if (this.guildCoolDowns != null && this.guildCoolDowns.contains(guild)){
+        if (this.guildCoolDowns != null && !channel.isPrivate() && this.guildCoolDowns.contains(channel.getGuild())){
             return false;
         }
         if (this.channelCoolDowns != null && this.channelCoolDowns.contains(channel)){
@@ -218,7 +249,7 @@ public class AbstractCommand {
         if (this.userCoolDowns != null && this.userCoolDowns.contains(user)){
             return false;
         }
-        if (this.guildUserCoolDowns != null && this.guildUserCoolDowns.contains(GuildUser.getGuildUser(guild, user))){
+        if (this.guildUserCoolDowns != null && !channel.isPrivate() && this.guildUserCoolDowns.contains(GuildUser.getGuildUser(channel.getGuild(), user))){
             return false;
         }
         return true;
@@ -255,8 +286,17 @@ public class AbstractCommand {
      * @param clazz the configurable type
      * @return the cool down in millis dependent on the tyoe
      */
-    protected long getCoolDown(Class<? extends Configurable> clazz){
+    public long getCoolDown(Class<? extends Configurable> clazz){
         return -1;
+    }
+
+    /**
+     * A standard getter to get the set of context requirements for the command
+     *
+     * @return The context requirements for the command
+     */
+    public Set<ContextRequirement> getContextRequirements(){
+        return this.contextRequirements;
     }
 
     /**
@@ -269,12 +309,19 @@ public class AbstractCommand {
      * @param args the user args for invocation
      * @return if the command was successful
      */
-    protected Object invoke(User user, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, String args){
+    public Object invoke(User user, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, String args, Object...argOverrides){
         Object[] contexts = new Object[]{user, shard, channel, guild, message, reaction, args};
+        boolean[] overridden = new boolean[argOverrides.length];
+        for (int i = 0; i < overridden.length; i++) {
+            overridden[i] = argOverrides[i] != null;
+        }
         for (int i = 0; i < contexts.length; i++) {
             if (this.contextRequirements.contains(ContextRequirement.values()[i])) ContextException.checkRequirement(contexts[i], ContextRequirement.values()[i]);
         }
-        Object[] objects = InvocationObjectGetter.replace(this.parameters, new Object[this.parameters.length], user, shard, channel, guild, message, reaction, args);
+        Object[] objects = InvocationObjectGetter.replace(this.parameters, new Object[this.parameters.length], user, shard, channel, guild, message, reaction, args, overridden);
+        for (int i = 0; i < overridden.length; i++) {
+            if (argOverrides[i] != null) objects[i] = argOverrides[i];
+        }
         try {
             Object object = this.method.invoke(this, objects);
             Stream.of(objects).filter(MessageMaker.class::isInstance).forEach(o -> ((MessageMaker) o).send());

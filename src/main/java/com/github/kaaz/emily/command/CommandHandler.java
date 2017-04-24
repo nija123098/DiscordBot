@@ -13,6 +13,7 @@ import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordMessage
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordMessageReceivedEvent;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordReactionEvent;
 import com.github.kaaz.emily.exeption.BotException;
+import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
 import com.github.kaaz.emily.util.EmoticonHelper;
 import com.github.kaaz.emily.util.FormatHelper;
@@ -33,6 +34,7 @@ import java.util.*;
 public class CommandHandler {
     private static final Map<Class<? extends AbstractCommand>, AbstractCommand> CLASS_MAP = new HashMap<>();
     private static final Map<String, AbstractCommand> REACTION_COMMAND_MAP = new HashMap<>();
+    private static final Map<String, AbstractCommand> EXACT_COMMAND_MAP = new HashMap<>();
     private static final Map<String, Object> COMMANDS_MAP = new HashMap<>();
     private static final String UNKNOWN_COMMAND_EMOTICON = "grey_question", EXCEPTION_FOR_METHOD = "exclamation";
     private static final List<String> OPEN_EDIT_MESSAGES = new MemoryManagementService.ManagedList<>(30000);
@@ -54,6 +56,7 @@ public class CommandHandler {
                 map = (Map<String, Object>) map.computeIfAbsent(string, st -> new HashMap(2));
             }
             map.put("", command);
+            EXACT_COMMAND_MAP.put(s, command);
         }));
         EventDistributor.register(CommandHandler.class);
     }
@@ -74,6 +77,8 @@ public class CommandHandler {
                 Log.log("Malformed root command: " + clazz.getName(), e);
             } catch (InvocationTargetException e) {
                 Log.log("Exception while initializing command: " + clazz.getName(), e);
+            } catch (DevelopmentException e) {
+                Log.log("DevelopmentException while initializing command: " + clazz.getName(), e);
             }
         });
     }
@@ -103,6 +108,16 @@ public class CommandHandler {
      */
     public static AbstractCommand getReactionCommand(String reactionName){
         return REACTION_COMMAND_MAP.get(EmoticonHelper.getChars(reactionName));
+    }
+
+    /**
+     * Gets the command for the name given expecting no arguments
+     *
+     * @param name the exact name of the command
+     * @return the exact command
+     */
+    public static AbstractCommand getCommand(String name){
+        return EXACT_COMMAND_MAP.get(name);
     }
 
     /**
@@ -181,7 +196,7 @@ public class CommandHandler {
                 string = FormatHelper.trimFront(string.substring(pref.length()));
             }else{
                 if ((command = REACTION_COMMAND_MAP.get(string)) != null){
-                    try{if (command.hasPermission(user, message.getGuild()) && command.checkCoolDown(message.getGuild(), message.getChannel(), user) && command.interpretSuccess(command.invoke(user, message.getShard(), message.getChannel(), message.getGuild(), message, reaction, string))){
+                    try{if (command.hasPermission(user, message.getGuild()) && command.checkCoolDown(message.getChannel(), user) && command.interpretSuccess(command.invoke(user, message.getShard(), message.getChannel(), message.getGuild(), message, reaction, string))){
                         command.invoked(message.getChannel(), user);
                         return true;
                     }
@@ -203,7 +218,7 @@ public class CommandHandler {
                 }
                 return false;
             }
-            if (!command.checkCoolDown(message.getGuild(), message.getChannel(), user)){
+            if (!command.checkCoolDown(message.getChannel(), user)){
                 if (reaction == null){
                     new MessageMaker(user, message).append("You can not use that command so soon.").send();
                 }
@@ -260,7 +275,7 @@ public class CommandHandler {
      */
     @EventListener
     public static void handle(DiscordMessageEditEvent event){
-        if (OPEN_EDIT_MESSAGES.contains(event.getMessage().getID())){
+        if (!event.getMessage().getAuthor().equals(DiscordClient.getOurUser()) && OPEN_EDIT_MESSAGES.contains(event.getMessage().getID())){
             if (attemptInvocation(event.getMessage().getContent(), event.getMessage().getAuthor(), event.getMessage(), null)){
                 OPEN_EDIT_MESSAGES.remove(event.getMessage().getID());
             }
