@@ -10,9 +10,9 @@ import java.util.List;
 /**
  * Made by nija123098 on 4/14/2017.
  */
-public class DelayService extends AbstractService {
+public class ScheduleService extends AbstractService {
     private static final List<Triple<Long, Runnable, ScheduledTask>> TRIPLES = new ArrayList<>();
-    public DelayService() {
+    public ScheduleService() {
         super(0);
     }
     public static synchronized ScheduledTask schedule(long delay, Runnable runnable){

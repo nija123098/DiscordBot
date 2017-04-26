@@ -19,10 +19,10 @@ public class Shard {
         }
     }*/
     public static Shard getShard(int i){
-        return MAP.get(i);
+        return getShard(DiscordClient.client().getShards().get(i));
     }
     static Shard getShard(IShard shard){
-        return MAP.get(shard.getInfo()[0]);
+        return MAP.computeIfAbsent(shard.getInfo()[0], integer -> new Shard(shard));
     }
     static List<Shard> getShards(List<IShard> iShards){
         List<Shard> shards = new ArrayList<>(iShards.size());

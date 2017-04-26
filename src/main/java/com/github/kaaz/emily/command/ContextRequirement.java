@@ -5,7 +5,7 @@ package com.github.kaaz.emily.command;
  */
 public enum ContextRequirement {
     USER("This must have an invoker"),
-    SHARD(""),
+    SHARD("This must have a shard in the context"),
     CHANNEL("You must use this in a channel"),
     GUILD("You must use this in a guild"),
     MESSAGE("You must use this in response to a message"),

@@ -16,8 +16,8 @@ import java.util.List;
  * Made by nija123098 on 4/14/2017.
  */
 public class PlaylistAddCommand extends AbstractCommand {
-    public PlaylistAddCommand(PlaylistCommand command) {
-        super(command, "add", null, null, null);
+    public PlaylistAddCommand() {
+        super(PlaylistCommand.class, "add", null, null, null);
     }
     @Command
     public void command(User user, Guild guild, Playlist playlist, Track track, MessageMaker maker){

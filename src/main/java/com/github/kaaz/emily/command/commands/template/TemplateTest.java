@@ -12,10 +12,14 @@ import com.github.kaaz.emily.template.Template;
  */
 public class TemplateTest extends AbstractCommand {
     public TemplateTest() {
-        super(null, "template", "temp", null, null);
+        super("template", "temp", null);
     }
     @Command
     public void command(MessageMaker maker, String s, User user, Shard shard, Message message, Guild guild, Channel channel, Reaction reaction){
         maker.append(new Template(s, KeyPhrase.TEST).interpret(user, shard, channel, guild, message, reaction));
+    }
+    @Override
+    public boolean isTemplateCommand(){
+        return false;
     }
 }

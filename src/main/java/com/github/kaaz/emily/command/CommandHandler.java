@@ -21,8 +21,11 @@ import com.github.kaaz.emily.util.Log;
 import javafx.util.Pair;
 import org.reflections.Reflections;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Handles all command registration and invocation.
@@ -39,16 +42,25 @@ public class CommandHandler {
     private static final String UNKNOWN_COMMAND_EMOTICON = "grey_question", EXCEPTION_FOR_METHOD = "exclamation";
     private static final List<String> OPEN_EDIT_MESSAGES = new MemoryManagementService.ManagedList<>(30000);
     static {
-        Map<Class<? extends AbstractCommand>, Set<Class<? extends AbstractCommand>>> typeMap = new HashMap<>();
+        Map<Class<? extends AbstractCommand>, Set<AbstractCommand>> typeMap = new HashMap<>();
         new Reflections("com.github.kaaz.emily.command.commands").getSubTypesOf(AbstractCommand.class).forEach(clazz -> {
-            Class<?>[] cTypes = clazz.getConstructors()[0].getParameterTypes();
-            if (cTypes.length == 0){
-                typeMap.computeIfAbsent(null, c -> new HashSet<>()).add(clazz);
-            }else{
-                typeMap.computeIfAbsent((Class<? extends AbstractCommand>) cTypes[0], c -> new HashSet<>()).add(clazz);
+            try {
+                AbstractCommand command = clazz.newInstance();
+                CLASS_MAP.put(clazz, command);
+                typeMap.computeIfAbsent(command.getSuperCommandType(), s -> new HashSet<>()).add(command);
+            } catch (InstantiationException e) {
+                Log.log("Exception attempting to initialize command: " + clazz.getName(), e);
+            } catch (IllegalAccessException e) {
+                Log.log("Malformed root command: " + clazz.getName(), e);
+            } catch (DevelopmentException e) {
+                Log.log("DevelopmentException while initializing command: " + clazz.getName(), e);
+            } catch (RuntimeException e){
+                Log.log("Exception while initializing command: " + clazz.getName(), e);
             }
         });
-        load(null, typeMap.get(null), typeMap);
+        typeMap.get(null).forEach(command -> load(command, typeMap));
+        // alias loading
+        typeMap.values().forEach(commands -> commands.forEach(command -> command.getEmoticonAliases().forEach(s -> REACTION_COMMAND_MAP.put(EmoticonHelper.getChars(s), command))));
         CLASS_MAP.values().forEach(command -> command.getNames().forEach(s -> {
             String[] strings = s.split(" ");
             Map map = COMMANDS_MAP;
@@ -61,26 +73,9 @@ public class CommandHandler {
         EventDistributor.register(CommandHandler.class);
     }
 
-    private static <S extends AbstractCommand> void load(S superCommand, Set<Class<? extends AbstractCommand>> subCommands, Map<Class<? extends AbstractCommand>, Set<Class<? extends AbstractCommand>>> typeMap){
-        if (subCommands == null){
-            return;
-        }
-        subCommands.forEach(clazz -> {
-            try {
-                AbstractCommand command = superCommand == null ? clazz.newInstance() : (AbstractCommand) clazz.getConstructors()[0].newInstance(superCommand);
-                CLASS_MAP.put(clazz, command);
-                command.getEmoticonAliases().forEach(s -> REACTION_COMMAND_MAP.put(EmoticonHelper.getChars(s), command));
-                load(command, typeMap.get(command.getClass()), typeMap);
-            } catch (InstantiationException e) {
-                Log.log("Exception attempting to initialize command: " + clazz.getName(), e);
-            } catch (IllegalAccessException e) {
-                Log.log("Malformed root command: " + clazz.getName(), e);
-            } catch (InvocationTargetException e) {
-                Log.log("Exception while initializing command: " + clazz.getName(), e);
-            } catch (DevelopmentException e) {
-                Log.log("DevelopmentException while initializing command: " + clazz.getName(), e);
-            }
-        });
+    private static void load(AbstractCommand superCommand, Map<Class<? extends AbstractCommand>, Set<AbstractCommand>> typeMap){
+        superCommand.load();
+        if (typeMap.containsKey(superCommand.getClass())) typeMap.get(superCommand.getClass()).forEach(command -> load(command, typeMap));
     }
 
     /**

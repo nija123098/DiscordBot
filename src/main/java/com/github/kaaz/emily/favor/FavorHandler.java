@@ -56,7 +56,7 @@ public class FavorHandler {
     public static void setFavorLevel(Configurable configurable, float amount){
         FavorLevel oldLevel = getFavorLevel(configurable), newLevel = FavorLevel.getFavorLevel(amount);
         if (oldLevel != newLevel){
-            EventDistributor.distribute(FavorLevelChange.class, () -> new FavorLevelChange(oldLevel, newLevel));
+            EventDistributor.distribute(new FavorLevelChange(oldLevel, newLevel));
         }
         ConfigHandler.setSetting(FavorConfig.class, configurable, amount);
     }

@@ -15,8 +15,8 @@ import java.util.ArrayList;
  * Made by nija123098 on 4/14/2017.
  */
 public class PlaylistRemoveAllCommand extends AbstractCommand {
-    public PlaylistRemoveAllCommand(PlaylistCommand command) {
-        super(command, "all", null, null, null);
+    public PlaylistRemoveAllCommand() {
+        super(PlaylistCommand.class, "all", null, null, null);
     }
     @Command
     public void command(User user, Guild guild, Playlist playlist, MessageMaker maker){

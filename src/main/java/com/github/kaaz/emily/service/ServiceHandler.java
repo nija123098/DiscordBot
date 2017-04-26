@@ -51,7 +51,7 @@ public class ServiceHandler {
                                 try {
                                     Thread.sleep(service.getDelayBetween());
                                 } catch (InterruptedException e) {
-                                    Log.log("Error while delaying a service due to should not run", e);
+                                    Log.log("Error while sleeping for a service", e);
                                 }
                             }
                         }
@@ -65,7 +65,7 @@ public class ServiceHandler {
                 Log.log("Failed to init service: " + clazz.getSimpleName(), e);
             }
         });
-        NORMAL_SERVICES.keySet().forEach(Runnable::run);
+        Launcher.registerStartup(() -> NORMAL_SERVICES.keySet().forEach(Runnable::run));
         Thread thread = new Thread(() -> {
             final AtomicLong delta = new AtomicLong(), least = new AtomicLong(Long.MAX_VALUE);
             while (true){
@@ -85,9 +85,9 @@ public class ServiceHandler {
                     }
                 });
                 try {
-                    Thread.sleep(least.get());
+                    if (least.get() > 0) Thread.sleep(least.get());
                 } catch (InterruptedException e) {
-                    Log.log("Error thrown while sleeping time between normal service handler runs", e);
+                    Log.log("Error thrown during sleeping time between normal service handler runs", e);
                 }
             }
         }, "Service-Handler-Thread-0");

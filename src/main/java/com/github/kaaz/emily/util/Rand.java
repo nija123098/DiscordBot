@@ -1,9 +1,6 @@
 package com.github.kaaz.emily.util;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Made by nija123098 on 4/14/2017.
@@ -11,20 +8,20 @@ import java.util.Set;
 public class Rand {
     private static final Random RANDOM = new Random();
     public static int getRand(int max){// 0 inclusive
-        return max == 0 ? 0 : Math.abs(RANDOM.nextInt()) % (max + 1);
+        return max < 1 ? 0 : Math.abs(RANDOM.nextInt()) % (max + 1);
     }
-    public static int getRand(int max, Integer...exclude){// todo optimize
+    public static Integer getRand(int max, Integer...exclude){
+        if (exclude.length == 0 || exclude.length > max) return getRand(max);
+        Map<Integer, Integer> map = new HashMap<>(max - exclude.length);
         Set<Integer> excludes = new HashSet<>();
         Collections.addAll(excludes, exclude);
-        int val;
-        if (exclude.length - 1 > max){
-            return 0;
-        }
-        while (true){
-            val = getRand(max);
-            if (!excludes.contains(val)){
-                return val;
+        int current = -1;
+        for (int i = 0; i < max + 1; ++i) {
+            if (excludes.contains(i)) {
+                continue;
             }
+            map.put(++current, i);
         }
+        return map.get(getRand(map.size() - 1));
     }
 }

@@ -17,8 +17,8 @@ import com.github.kaaz.emily.exeption.ArgumentException;
  * Made by nija123098 on 4/2/2017.
  */
 public class ConfigGetCommand extends AbstractCommand {
-    public ConfigGetCommand(ConfigCommand command) {
-        super(command, "get", null, null, null);
+    public ConfigGetCommand() {
+        super(ConfigCommand.class, "get", null, null, null);
     }
     @Command
     public <T extends Configurable> void command(@Convert AbstractConfig<?, T> config, @Convert(optional = true) T target, MessageMaker maker, @Context(softFail = true) Track track, @Context(softFail = true) Playlist playlist, User user, Channel channel, @Context(softFail = true) GuildUser guildUser, @Context(softFail = true) Guild guild){

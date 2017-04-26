@@ -2,6 +2,7 @@ package com.github.kaaz.emily.template;
 
 import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.CommandHandler;
+import com.github.kaaz.emily.command.ContextPack;
 import com.github.kaaz.emily.command.ContextRequirement;
 import com.github.kaaz.emily.command.anotations.Convert;
 import com.github.kaaz.emily.discordobjects.wrappers.*;
@@ -22,6 +23,9 @@ public class Template {
         this.keyPhrase = keyPhrase;
         this.arg = new CombinedArg(getCalculatedArgs(template, keyPhrase));
         this.contextRequirements = new HashSet<>();
+    }
+    public String interpret(ContextPack pack, Object...args){
+        return this.interpret(pack.getUser(), pack.getShard(), pack.getChannel(), pack.getGuild(), pack.getMessage(), pack.getReaction(), args);
     }
     public String interpret(User user, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, Object...objects){
         this.keyPhrase.checkArgTypes(objects);// if is for testing since in testing it will be null
@@ -69,6 +73,7 @@ public class Template {
         private AbstractCommand command;
         private Arg[] args;
         CalculatedArg(AbstractCommand command, String s, KeyPhrase keyPhrase){
+            keyPhrase.checkAvalibleContext(command.getContextRequirements());
             this.command = command;
             if (!this.command.isTemplateCommand()){
                 throw new ArgumentException("Command is not a valid template command: " + this.command.getName());

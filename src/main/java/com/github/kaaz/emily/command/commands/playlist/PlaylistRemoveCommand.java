@@ -16,8 +16,8 @@ import java.util.List;
  * Made by nija123098 on 4/14/2017.
  */
 public class PlaylistRemoveCommand extends AbstractCommand {
-    public PlaylistRemoveCommand(PlaylistCommand command) {
-        super(command, "remove", null, null, null);
+    public PlaylistRemoveCommand() {
+        super(PlaylistCommand.class, "remove", null, null, null);
     }
     @Command
     public void command(User user, Guild guild, Playlist playlist, Track track, MessageMaker maker){

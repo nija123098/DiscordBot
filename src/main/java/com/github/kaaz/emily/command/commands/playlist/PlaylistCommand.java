@@ -18,7 +18,7 @@ import com.github.kaaz.emily.discordobjects.wrappers.User;
  */
 public class PlaylistCommand extends AbstractCommand {
     public PlaylistCommand() {
-        super(null, "playlist", null, null, "pl");
+        super("playlist", "pl", null);
     }
     @Command
     public void play(@Convert(optional = true) Playlist playlist, Guild guild, MessageMaker maker){

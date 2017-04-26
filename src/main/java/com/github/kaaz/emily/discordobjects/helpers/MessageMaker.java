@@ -6,7 +6,7 @@ import com.github.kaaz.emily.config.configs.user.UserLanguageConfig;
 import com.github.kaaz.emily.discordobjects.exception.ErrorWrapper;
 import com.github.kaaz.emily.discordobjects.wrappers.*;
 import com.github.kaaz.emily.exeption.BotException;
-import com.github.kaaz.emily.service.services.DelayService;
+import com.github.kaaz.emily.service.services.ScheduleService;
 import com.github.kaaz.emily.util.EmoticonHelper;
 import com.github.kaaz.emily.util.ImageColorHelper;
 import com.github.kaaz.emily.util.LangString;
@@ -45,6 +45,7 @@ public class MessageMaker {
     private boolean okHand;
     private final Set<String> reactions = new HashSet<>(1);
     private Long deleteDelay;
+    private boolean maySend;
     public MessageMaker(User user, Channel origin) {
         this.user = user;
         this.channel = origin;
@@ -99,6 +100,13 @@ public class MessageMaker {
         this.deleteDelay = deleteDelay;
         return this;
     }
+    public MessageMaker maySend(boolean maySend){
+        this.maySend = maySend;
+        return this;
+    }
+    public MessageMaker maySend(){
+        return this.maySend(true);
+    }
     // text methods
     public TextPart getAuthorName(){
         return this.authorName;
@@ -140,6 +148,7 @@ public class MessageMaker {
         return this;
     }
     public MessageMaker asExceptionMessage(BotException cause) {
+        this.maySend();
         this.withColor(Color.RED).getHeader().append(cause.getMessage()).getMaker().getTitle().appendRaw(cause.getClass().getSimpleName());
         return this.withDeleteDelay(60000L);
     }
@@ -162,19 +171,19 @@ public class MessageMaker {
     }
     public MessageMaker withFooterIcon(String url){
         this.embed.withFooterIcon(url);
-        return this;
+        return this.maySend();
     }
     public MessageMaker withAuthorIcon(String url){
         this.embed.withAuthorName(url);
-        return this;
+        return this.maySend();
     }
     public MessageMaker withTumb(String url){
         this.embed.withThumbnail(url);
-        return this;
+        return this.maySend();
     }
     public MessageMaker withImage(String url){
         this.embed.withImage(url);
-        return this;
+        return this.maySend();
     }
     public MessageMaker withTimestamp(LocalDateTime time){
         this.embed.withTimestamp(time);
@@ -189,6 +198,9 @@ public class MessageMaker {
         send(0);
     }
     private void send(int page){
+        if (!this.maySend){
+            return;
+        }
         if (this.origin != null && this.okHand){
             ErrorWrapper.wrap(() -> this.origin.addReaction(EmoticonHelper.getChars("ok_hand")));
         }
@@ -203,31 +215,28 @@ public class MessageMaker {
             }
             this.builder.withEmbed(this.embed.build());
         }
-        if (this.message == null){
+        if (this.message == null){// here
             this.message = ErrorWrapper.wrap((ErrorWrapper.Request<IMessage>) () -> this.builder.withChannel(channel.channel()).send());
             this.reactionBehaviors.forEach(pair -> ReactionBehavior.registerListener(Message.getMessage(this.message), pair.getKey(), pair.getValue()));
             this.reactions.forEach(s -> this.message.addReaction(s));
             if (this.deleteDelay != null){
-                DelayService.schedule(this.deleteDelay, () -> ErrorWrapper.wrap(this.message::delete));
+                ScheduleService.schedule(this.deleteDelay, () -> ErrorWrapper.wrap(this.message::delete));
             }
         } else if (this.embed != null){
             ErrorWrapper.wrap(() -> this.message.edit(this.embed.build()));
         }
     }
     private void compile(){
+        if (lang != null) return;
         // multi use
+        if (this.user != null){
+            lang = ConfigHandler.getSetting(UserLanguageConfig.class, this.user);
+        }
+        if (!this.channel.isPrivate() && lang == null){
+            lang = ConfigHandler.getSetting(GuildLanguageConfig.class, this.channel.getGuild());
+        }
         if (lang == null){
-            if (this.user != null){
-                lang = ConfigHandler.getSetting(UserLanguageConfig.class, this.user);
-            }
-            if (!this.channel.isPrivate() && lang == null){
-                lang = ConfigHandler.getSetting(GuildLanguageConfig.class, this.channel.getGuild());
-            }
-            if (lang == null){
-                lang = "en";
-            }
-        }else{
-            return;
+            lang = "en";
         }
         // message
         if (!this.channel.getModifiedPermissions(DiscordClient.getOurUser()).contains(DiscordPermission.SEND_MESSAGES)){
@@ -324,13 +333,13 @@ public class MessageMaker {
         }
     }
     public class FieldPart {
-        private MessageMaker producer;
-        private FieldTextPart title = new FieldTextPart(producer, this), value = new FieldTextPart(producer, this);
+        private MessageMaker maker;
+        private FieldTextPart title = new FieldTextPart(maker, this), value = new FieldTextPart(maker, this);
         private boolean inline;
 
-        public FieldPart(MessageMaker producer) {
-            this.producer = producer;
-            this.producer.fieldList.add(this);
+        private FieldPart(MessageMaker maker) {
+            this.maker = maker;
+            this.maker.fieldList.add(this);
             this.inline = true;
         }
 
@@ -346,33 +355,35 @@ public class MessageMaker {
             return this.value;
         }
         public MessageMaker getMessageProducer(){
-            return this.producer;
+            return this.maker;
         }
     }
     public class TextPart {
         private MessageMaker maker;
         LangString langString;
-        public TextPart(MessageMaker maker) {
+        private TextPart(MessageMaker maker) {
             this.maker = maker;
             this.langString = new LangString();
         }
 
         public TextPart appendRaw(String s){
-            this.langString.appendRaw(s);
+            this.append(true, s);
             return this;
         }
 
         public TextPart append(String s){
-            this.langString.appendTranslation(s);
+            this.append(false, s);
             return this;
         }
 
         public TextPart appendAlternate(boolean raw, String...s){
+            this.maker.maySend();
             this.langString.appendToggle(raw, s);
             return this;
         }
 
         public TextPart append(boolean raw, String s){
+            this.maker.maySend();
             this.langString.append(!raw, s);
             return this;
         }

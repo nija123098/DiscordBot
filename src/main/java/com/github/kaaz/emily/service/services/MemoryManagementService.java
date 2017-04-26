@@ -74,6 +74,7 @@ public class MemoryManagementService extends AbstractService {
             return super.remove(e);
         }
         private synchronized void manage(){
+            if (this.times.size() == 0) return;
             long currentTime = System.currentTimeMillis();
             while (true){
                 if (currentTime >= this.times.get(0)){

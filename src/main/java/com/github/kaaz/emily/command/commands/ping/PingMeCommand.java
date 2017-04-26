@@ -8,8 +8,8 @@ import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
  * Made by nija123098 on 3/30/2017.
  */
 public class PingMeCommand extends AbstractCommand {
-    public PingMeCommand(PingCommand command) {
-        super(command, "me", null, null, null);
+    public PingMeCommand() {
+        super(PingCommand.class, "me", null, null, null);
     }
     @Command
     public void command(MessageMaker helper){

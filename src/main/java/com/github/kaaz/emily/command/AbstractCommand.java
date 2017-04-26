@@ -3,7 +3,6 @@ package com.github.kaaz.emily.command;
 import com.github.kaaz.emily.command.anotations.Command;
 import com.github.kaaz.emily.command.anotations.Context;
 import com.github.kaaz.emily.command.anotations.Convert;
-import com.github.kaaz.emily.command.anotations.TemplateCommand;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.Configurable;
 import com.github.kaaz.emily.config.GlobalConfigurable;
@@ -32,10 +31,10 @@ import java.util.stream.Stream;
  * @since 2.0.0
  */
 public class AbstractCommand {
-    private final AbstractCommand superCommand;
-    private final String name;
-    private final BotRole botRole;
-    private final ModuleLevel module;
+    private final Class<? extends AbstractCommand> superCommand;
+    private String name, aAliases, eAliases, rAliases;
+    private BotRole botRole;
+    private ModuleLevel module;
     private Method method;
     private Parameter[] parameters;
     private Set<String> emoticonAliases, allNames;
@@ -45,18 +44,30 @@ public class AbstractCommand {
     private List<User> userCoolDowns;
     private List<GuildUser> guildUserCoolDowns;
     private Set<ContextRequirement> contextRequirements;
-    public AbstractCommand(AbstractCommand superCommand, String name, String absoluteAliases, String emoticonAliases, String relativeAliases){
+    public AbstractCommand(Class<? extends AbstractCommand> superCommand, String name, String absoluteAliases, String emoticonAliases, String relativeAliases){
         this.superCommand = superCommand;
+        this.name = name;
+        this.aAliases = absoluteAliases;
+        this.eAliases = emoticonAliases;
+        this.rAliases = relativeAliases;
+    }
+
+    public AbstractCommand(String name, String absoluteAliases, String emoticonAliases){
+        this(null, name, absoluteAliases, emoticonAliases, null);
+    }
+
+    void load(){
+        AbstractCommand superCommand = getSuperCommand();
         this.name = superCommand == null ? name : superCommand.name + " " + name;
         this.module = getModule() == null ? superCommand == null ? ModuleLevel.NONE : superCommand.getModule() : ModuleLevel.NONE;
         this.botRole = getBotRole() == null ? superCommand == null ? BotRole.USER : superCommand.getBotRole() : BotRole.USER;
         this.allNames = new HashSet<>();
         this.allNames.add(this.name);
-        if (absoluteAliases != null){
-            Collections.addAll(this.allNames, absoluteAliases.split(", "));
+        if (aAliases != null){
+            Collections.addAll(this.allNames, aAliases.split(", "));
         }
-        if (emoticonAliases != null){
-            String[] eAliases = emoticonAliases.split(", ");
+        if (eAliases != null){
+            String[] eAliases = this.eAliases.split(", ");
             this.emoticonAliases = new HashSet<>(eAliases.length);
             Collections.addAll(this.emoticonAliases, eAliases);
         }else{
@@ -64,9 +75,9 @@ public class AbstractCommand {
         }
         this.allNames.addAll(this.emoticonAliases);
         this.emoticonAliases.stream().map(EmoticonHelper::getChars).forEach(this.allNames::add);
-        if (relativeAliases != null && this.superCommand != null){
-            for (String rel : relativeAliases.split(", ")){
-                this.superCommand.getNames().forEach(s -> this.allNames.add(s + " " + rel));
+        if (rAliases != null && superCommand != null){
+            for (String rel : rAliases.split(", ")){
+                superCommand.getNames().forEach(s -> this.allNames.add(s + " " + rel));
             }
         }
         Method[] methods = this.getClass().getMethods();
@@ -107,14 +118,26 @@ public class AbstractCommand {
             this.guildUserCoolDowns = new MemoryManagementService.ManagedList<>(persistence);
         }
         EventDistributor.register(this);
+        this.aAliases = null;
+        this.eAliases = null;
+        this.rAliases = null;
+    }
+
+    /**
+     * A getter for the object of the super command.
+     *
+     * @return this command's super command
+     */
+    public AbstractCommand getSuperCommand(){
+        return CommandHandler.getCommand(this.superCommand);
     }
 
     /**
      * A standard getter.
      *
-     * @return this command's super command
+     * @return the type of the super command
      */
-    public AbstractCommand getSuperCommand(){
+    public Class<? extends AbstractCommand> getSuperCommandType(){
         return this.superCommand;
     }
 
@@ -174,7 +197,7 @@ public class AbstractCommand {
      * @return if the command is a template command
      */
     public boolean isTemplateCommand(){
-        return this.getClass().isAnnotationPresent(TemplateCommand.class);
+        return this.getClass().getPackage().getName().contains(".template.");
     }
 
     /**

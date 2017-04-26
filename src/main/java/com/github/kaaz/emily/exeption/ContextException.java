@@ -12,7 +12,7 @@ public class ContextException extends BotException {
     }
 
     public static void checkRequirement(Object requirement, ContextRequirement type){
-        if (requirement == null) throw new ContextException(type.getErrorMessage());
+        if (requirement == null) throw new ContextException(type + ": " + type.getErrorMessage());
     }
     public static void checkGuild(Guild guild){
         if (guild == null) throw new ContextException("You need to be in a guild to use that command");
@@ -27,5 +27,6 @@ public class ContextException extends BotException {
 
     public ContextException(String message) {
         super(message);
+        this.printStackTrace();
     }
 }

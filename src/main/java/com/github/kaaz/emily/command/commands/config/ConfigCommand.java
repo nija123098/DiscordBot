@@ -10,7 +10,7 @@ import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
  */
 public class ConfigCommand extends AbstractCommand {
     public ConfigCommand() {
-        super(null, "config", null, null, null);
+        super("config", null, null);
     }
     @Command
     public void command(MessageMaker helper){
