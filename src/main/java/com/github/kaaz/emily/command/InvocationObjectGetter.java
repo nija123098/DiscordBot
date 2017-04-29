@@ -1,5 +1,6 @@
 package com.github.kaaz.emily.command;
 
+import com.github.kaaz.emily.audio.Playlist;
 import com.github.kaaz.emily.command.anotations.Context;
 import com.github.kaaz.emily.command.anotations.Convert;
 import com.github.kaaz.emily.config.*;
@@ -11,6 +12,7 @@ import com.github.kaaz.emily.discordobjects.wrappers.*;
 import com.github.kaaz.emily.exeption.ArgumentException;
 import com.github.kaaz.emily.exeption.ContextException;
 import com.github.kaaz.emily.exeption.DevelopmentException;
+import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.util.EnumHelper;
 import com.github.kaaz.emily.util.FormatHelper;
 import com.github.kaaz.emily.util.LanguageHelper;
@@ -237,6 +239,28 @@ public class InvocationObjectGetter {// TODO WORKING ON IMPLEMENT CONTEXT REQUIR
             return pair.get();
         });
         addConverter(String.class, (invoker, shard, channel, guild, message, reaction, args) -> new Pair<>(args, args.length()));
+        addConverter(BotRole.class, (invoker, shard, channel, guild, message, reaction, args) -> {
+            args = args.toUpperCase();
+            BotRole role = null;
+            try {
+                role = BotRole.valueOf(args.split(" ")[0]);
+            } catch (Exception ignored){}
+            if (role == null) {
+                for (BotRole r : BotRole.values()){
+                    if (r.name().contains("_") && args.startsWith(r.name().replace("_", " "))){
+                        role = r;
+                        break;
+                    }
+                }
+            }
+            if (role != null) return new Pair<>(role, role.name().length());
+            throw new ArgumentException("No BotRole found");
+        });
+        addConverter(AbstractCommand.class, (invoker, shard, channel, guild, message, reaction, args) -> {
+            Pair<AbstractCommand, String> command = CommandHandler.getMessageCommand(args);
+            if (command == null) throw new ArgumentException("No such command found");
+            return new Pair<>(command.getKey(), args.length() - command.getValue().length());
+        });
     }
 
     private static <T> void addConverter(Class<T> clazz, ArgumentConverter<T> argumentConverter, ContextRequirement...requirements){
@@ -279,7 +303,7 @@ public class InvocationObjectGetter {// TODO WORKING ON IMPLEMENT CONTEXT REQUIR
                         }
                     }
                 }else if (parameters[i].isAnnotationPresent(Convert.class)){
-                    if (argOverride[commandArgIndex++]){
+                    if (argOverride.length > i && argOverride[commandArgIndex++]){
                         continue;
                     }
                     checkConvertType(parameters[i].getType());

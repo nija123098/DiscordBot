@@ -3,12 +3,11 @@ package com.github.kaaz.emily.command;
 import com.github.kaaz.emily.command.anotations.Command;
 import com.github.kaaz.emily.command.anotations.Context;
 import com.github.kaaz.emily.command.anotations.Convert;
+import com.github.kaaz.emily.command.anotations.LaymanName;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.Configurable;
 import com.github.kaaz.emily.config.GlobalConfigurable;
 import com.github.kaaz.emily.config.GuildUser;
-import com.github.kaaz.emily.config.configs.guild.GuildSpecialPermsEnabledConfig;
-import com.github.kaaz.emily.config.configs.role.*;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.wrappers.*;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
@@ -16,6 +15,7 @@ import com.github.kaaz.emily.exeption.BotException;
 import com.github.kaaz.emily.exeption.ContextException;
 import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.perms.BotRole;
+import com.github.kaaz.emily.perms.configs.specialperms.*;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
 import com.github.kaaz.emily.util.EmoticonHelper;
 import com.github.kaaz.emily.util.Log;
@@ -30,9 +30,10 @@ import java.util.stream.Stream;
  * @author nija123098
  * @since 2.0.0
  */
+@LaymanName(value = "Command", help = "The command represented by a string or some alias")
 public class AbstractCommand {
     private final Class<? extends AbstractCommand> superCommand;
-    private String name, aAliases, eAliases, rAliases;
+    private String name, aAliases, eAliases, rAliases, help;
     private BotRole botRole;
     private ModuleLevel module;
     private Method method;
@@ -44,16 +45,20 @@ public class AbstractCommand {
     private List<User> userCoolDowns;
     private List<GuildUser> guildUserCoolDowns;
     private Set<ContextRequirement> contextRequirements;
-    public AbstractCommand(Class<? extends AbstractCommand> superCommand, String name, String absoluteAliases, String emoticonAliases, String relativeAliases){
+    public AbstractCommand(Class<? extends AbstractCommand> superCommand, String name, String absoluteAliases, String emoticonAliases, String relativeAliases, String help){
         this.superCommand = superCommand;
         this.name = name;
         this.aAliases = absoluteAliases;
         this.eAliases = emoticonAliases;
         this.rAliases = relativeAliases;
+        this.name = name;
+        this.help = help != null ? help : "No provided help for this command";
     }
 
-    public AbstractCommand(String name, String absoluteAliases, String emoticonAliases){
-        this(null, name, absoluteAliases, emoticonAliases, null);
+    public AbstractCommand(String name, ModuleLevel module, String absoluteAliases, String emoticonAliases, String help){
+        this(null, name, absoluteAliases, emoticonAliases, null, help);
+        this.module = module;
+        this.name = name;
     }
 
     void load(){
@@ -216,6 +221,15 @@ public class AbstractCommand {
      */
     public Parameter[] getParameters(){
         return this.parameters;
+    }
+
+    /**
+     * A standard getter.
+     *
+     * @return gets the help text.
+     */
+    public String getHelp(){
+        return this.help;
     }
 
     /**

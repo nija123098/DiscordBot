@@ -1,7 +1,9 @@
 package com.github.kaaz.emily.config;
 
+import com.github.kaaz.emily.audio.Playlist;
 import com.github.kaaz.emily.discordobjects.wrappers.*;
 import com.github.kaaz.emily.exeption.DevelopmentException;
+import com.github.kaaz.emily.launcher.Reference;
 import com.github.kaaz.emily.util.Log;
 import org.reflections.Reflections;
 
@@ -27,7 +29,7 @@ public class ConfigHandler {
     static {
         CLASS_MAP = new HashMap<>();
         STRING_MAP = new HashMap<>();
-        new Reflections("com.github.kaaz.emily.config.configs").getSubTypesOf(AbstractConfig.class).forEach(clazz -> {
+        new Reflections(Reference.BASE_PACKAGE).getSubTypesOf(AbstractConfig.class).forEach(clazz -> {
             try {
                 AbstractConfig config = clazz.newInstance();
                 CLASS_MAP.put((Class<? extends AbstractConfig<?, ? extends Configurable>>) clazz, config);

@@ -1,7 +1,7 @@
 package com.github.kaaz.emily.config.configs.guild;
 
 import com.github.kaaz.emily.config.AbstractConfig;
-import com.github.kaaz.emily.config.Playlist;
+import com.github.kaaz.emily.audio.Playlist;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.perms.BotRole;
 

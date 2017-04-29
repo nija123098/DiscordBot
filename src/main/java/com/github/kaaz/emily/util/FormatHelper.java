@@ -41,4 +41,7 @@ public class FormatHelper {
         }
         return s;
     }
+    public static String makePleural(String s){
+        return s + "'" + (s.endsWith("s") ? s + "" : "s");
+    }
 }

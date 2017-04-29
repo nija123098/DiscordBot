@@ -14,6 +14,7 @@ import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordMessage
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordReactionEvent;
 import com.github.kaaz.emily.exeption.BotException;
 import com.github.kaaz.emily.exeption.DevelopmentException;
+import com.github.kaaz.emily.launcher.Reference;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
 import com.github.kaaz.emily.util.EmoticonHelper;
 import com.github.kaaz.emily.util.FormatHelper;
@@ -43,7 +44,7 @@ public class CommandHandler {
     private static final List<String> OPEN_EDIT_MESSAGES = new MemoryManagementService.ManagedList<>(30000);
     static {
         Map<Class<? extends AbstractCommand>, Set<AbstractCommand>> typeMap = new HashMap<>();
-        new Reflections("com.github.kaaz.emily.command.commands").getSubTypesOf(AbstractCommand.class).forEach(clazz -> {
+        new Reflections(Reference.BASE_PACKAGE).getSubTypesOf(AbstractCommand.class).forEach(clazz -> {
             try {
                 AbstractCommand command = clazz.newInstance();
                 CLASS_MAP.put(clazz, command);
@@ -122,7 +123,7 @@ public class CommandHandler {
      *           and command parameters from
      * @return the command and parameters for that command
      */
-    public static Pair<AbstractCommand, String> getMessageCommand(String in){
+    public static Pair<AbstractCommand, String> getMessageCommand(String in){// make return Pair<AbstractCommand, Integer>
         String[] strings = FormatHelper.reduceRepeats(in, ' ').split(" ");
         for (int i = 0; i < strings.length; i++) {
             strings[i] = strings[i].toLowerCase();

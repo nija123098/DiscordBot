@@ -3,8 +3,11 @@ package com.github.kaaz.emily.favor;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.Configurable;
 import com.github.kaaz.emily.config.configs.FavorConfig;
+import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
-import com.github.kaaz.emily.discordobjects.wrappers.event.botevents.FavorLevelChange;
+import com.github.kaaz.emily.discordobjects.wrappers.event.EventListener;
+import com.github.kaaz.emily.discordobjects.wrappers.event.botevents.FavorLevelChangeEvent;
+import com.github.kaaz.emily.perms.BotRole;
 
 /**
  * The handler for favor levels for guilds and users.
@@ -56,8 +59,16 @@ public class FavorHandler {
     public static void setFavorLevel(Configurable configurable, float amount){
         FavorLevel oldLevel = getFavorLevel(configurable), newLevel = FavorLevel.getFavorLevel(amount);
         if (oldLevel != newLevel){
-            EventDistributor.distribute(new FavorLevelChange(oldLevel, newLevel));
+            EventDistributor.distribute(new FavorLevelChangeEvent(configurable, oldLevel, newLevel));
         }
         ConfigHandler.setSetting(FavorConfig.class, configurable, amount);
+    }
+
+    static {EventDistributor.register(FavorHandler.class);}
+    @EventListener
+    public static void handle(FavorLevelChangeEvent event){
+        if (event.getNewLevel() == FavorLevel.DISTRUSTED && event.getConfigurable() instanceof User){
+            BotRole.setRole(BotRole.BANNED, true, (User) event.getConfigurable(), null);
+        }
     }
 }

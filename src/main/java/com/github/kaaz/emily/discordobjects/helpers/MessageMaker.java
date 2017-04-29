@@ -29,7 +29,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class MessageMaker {
     private static final int CHAR_LIMIT = 2000;
-    private TextPart authorName = new TextPart(this), title = new TextPart(this), header = new TextPart(this), footer = new TextPart(this), note = new TextPart(this);
+    private static final int EMBED_LIMIT = 1000;
+    private TextPart authorName, title, header, footer, note;
     private List<TextPart> textList = new ArrayList<>();
     private String[] textVals;
     private List<FieldPart> fieldList = new ArrayList<>();
@@ -46,14 +47,27 @@ public class MessageMaker {
     private final Set<String> reactions = new HashSet<>(1);
     private Long deleteDelay;
     private boolean maySend;
+    private boolean embedsOfFront;
+    private MessageMaker(){
+        this.authorName = new TextPart(this);
+        this.title = new TextPart(this);
+        this.header = new TextPart(this);
+        this.footer = new TextPart(this);
+        this.note = new TextPart(this);
+    }
     public MessageMaker(User user, Channel origin) {
+        this();
         this.user = user;
         this.channel = origin;
     }
     public MessageMaker(User user, Message origin) {
+        this();
         this.user = user;
         this.origin = origin.message();
         this.channel = origin.getChannel();
+    }
+    public MessageMaker(Message message){
+        this(message.getAuthor(), message);
     }
     // setup methods
     public MessageMaker asNormalMessage(){
@@ -284,6 +298,7 @@ public class MessageMaker {
             }
             textList = null;
             if (fieldList.size() != 0){
+                this.embedsOfFront = this.embed.getTotalVisibleCharacters() + (this.textVals.length > 0 ? this.textVals[0].length() : 0) < EMBED_LIMIT;
                 int index = -1, size = 0, page = 0;
                 List<List<Triple<String, String, Boolean>>> vals = new ArrayList<>(this.fieldList.size());
                 vals.add(new ArrayList<>());
@@ -301,14 +316,15 @@ public class MessageMaker {
                         vals.get(page).add(new ImmutableTriple<>(fieldList.get(index).title.langString.translate(lang), fieldList.get(index).value.langString.translate(lang), fieldList.get(index).inline));
                     }
                 }
+                int textValLengthAdjust = (this.embedsOfFront ? 0 : textVals.length);
                 fieldIndices = new Triple[textVals.length + vals.size()][];
-                for (int i = 0; i < textVals.length; i++) {
+                for (int i = 0; i < textValLengthAdjust; i++) {
                     fieldIndices[i] = new Triple[0];
                 }
-                for (int i = textVals.length; i < fieldIndices.length; i++) {
-                    fieldIndices[i] = new Triple[vals.get(i - textVals.length).size()];
+                for (int i = textValLengthAdjust; i < fieldIndices.length - (this.embedsOfFront ? 1 : 0); i++) {
+                    fieldIndices[i] = new Triple[vals.get(i - textValLengthAdjust).size()];
                     for (int j = 0; j < fieldIndices[i].length; j++) {
-                        fieldIndices[i][j] = vals.get(i - textVals.length).get(j);
+                        fieldIndices[i][j] = vals.get(i - textValLengthAdjust).get(j);
                     }
                 }
             } else {
@@ -334,13 +350,15 @@ public class MessageMaker {
     }
     public class FieldPart {
         private MessageMaker maker;
-        private FieldTextPart title = new FieldTextPart(maker, this), value = new FieldTextPart(maker, this);
+        private FieldTextPart title , value;
         private boolean inline;
 
         private FieldPart(MessageMaker maker) {
             this.maker = maker;
             this.maker.fieldList.add(this);
             this.inline = true;
+            title = new FieldTextPart(maker, this);
+            value = new FieldTextPart(maker, this);
         }
 
         public FieldPart withInline(boolean inline){

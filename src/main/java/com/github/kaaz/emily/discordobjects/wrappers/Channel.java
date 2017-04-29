@@ -21,14 +21,14 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Channel implements Configurable {
     private static final Map<String, Channel> MAP = new MemoryManagementService.ManagedMap<>(180000);
     public static Channel getChannel(String id){
-        IChannel channel = DiscordClient.client().getChannelByID(id);
-        if (channel == null){
+        try {
+            return getChannel(DiscordClient.client().getChannelByID(id));
+        } catch (NumberFormatException e) {
             return null;
         }
-        return getChannel(channel);
     }
     static Channel getChannel(IChannel channel){
-        return MAP.computeIfAbsent(channel.getID(), s -> channel.isPrivate() ? new DirectChannel((IPrivateChannel) channel) : channel instanceof IVoiceChannel ? new VoiceChannel((IVoiceChannel) channel) : new Channel(channel));
+        return MAP.computeIfAbsent(channel.getStringID(), s -> channel.isPrivate() ? new DirectChannel((IPrivateChannel) channel) : channel instanceof IVoiceChannel ? new VoiceChannel((IVoiceChannel) channel) : new Channel(channel));
     }
     static List<Channel> getChannels(List<IChannel> iChannels){
         List<Channel> channels = new ArrayList<>(iChannels.size());
@@ -36,7 +36,7 @@ public class Channel implements Configurable {
         return channels;
     }
     public static void update(IChannel channel){// should handle DirectChannel and VoiceChannel updates as well
-        Channel c = MAP.get(channel.getID());
+        Channel c = MAP.get(channel.getStringID());
         if (c != null){
             c.reference.set(channel);
         }
@@ -50,7 +50,7 @@ public class Channel implements Configurable {
     }
     @Override
     public String getID() {
-        return channel().getID();
+        return channel().getStringID();
     }
     @Override
     public void checkPermissionToEdit(User user, Guild guild){

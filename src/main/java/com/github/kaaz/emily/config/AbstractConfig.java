@@ -2,6 +2,7 @@ package com.github.kaaz.emily.config;
 
 import com.github.kaaz.emily.command.anotations.LaymanName;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
+import com.github.kaaz.emily.discordobjects.wrappers.event.botevents.ConfigValueChangeEvent;
 import com.github.kaaz.emily.perms.BotRole;
 
 import java.lang.reflect.Type;
@@ -97,6 +98,7 @@ public class AbstractConfig<V, T extends Configurable> {
     }
     // TODO SQL stuff goes here, more or less
     public void setValue(T configurable, V value){
+        EventDistributor.distribute(new ConfigValueChangeEvent(configurable, this, this.getValue(configurable), value));
         map.put(configurable, value);
     }
     private Map<Configurable, Object> map = new HashMap<>();//TODO REMOVE TESTING

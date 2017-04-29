@@ -15,7 +15,7 @@ public class Attachment {// probably don't want to store this at all
         attachments.forEach(attachment -> attaches.add(getAttachment(attachment)));
         return attaches;
     }
-    static Attachment getAttachment(IMessage.Attachment attachment){
+    private static Attachment getAttachment(IMessage.Attachment attachment){
         return new Attachment(attachment);
     }
     private IMessage.Attachment attachment;
@@ -31,7 +31,7 @@ public class Attachment {// probably don't want to store this at all
     }
 
     public String getId() {
-        return this.attachment.getId();
+        return this.attachment.getStringID();
     }
 
     public String getUrl() {

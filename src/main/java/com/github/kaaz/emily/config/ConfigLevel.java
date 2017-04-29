@@ -1,5 +1,6 @@
 package com.github.kaaz.emily.config;
 
+import com.github.kaaz.emily.audio.Playlist;
 import com.github.kaaz.emily.discordobjects.wrappers.*;
 import com.github.kaaz.emily.exeption.DevelopmentException;
 

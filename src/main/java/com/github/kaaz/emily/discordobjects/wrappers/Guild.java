@@ -21,17 +21,17 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Guild implements Configurable {
     private static final Map<String, Guild> MAP = new MemoryManagementService.ManagedMap<>(180000);
     public static Guild getGuild(String id){
-        IGuild guild = DiscordClient.client().getGuildByID(id);
-        if (guild == null){
+        try {
+            return MAP.computeIfAbsent(id, s -> new Guild(DiscordClient.client().getGuildByID(id)));
+        } catch (NumberFormatException e) {
             return null;
         }
-        return MAP.computeIfAbsent(id, s -> new Guild(guild));
     }
     public static Guild getGuild(IGuild guild){
         if (guild == null){
             return null;
         }
-        return MAP.computeIfAbsent(guild.getID(), s -> new Guild(guild));
+        return MAP.computeIfAbsent(guild.getStringID(), s -> new Guild(guild));
     }
     static List<Guild> getGuilds(List<IGuild> iGuilds){
         List<Guild> list = new ArrayList<>(iGuilds.size());
@@ -39,7 +39,7 @@ public class Guild implements Configurable {
         return list;
     }
     public static void update(IGuild guild){// hash is based on id, so no old channel is necessary
-        Guild g = MAP.get(guild.getID());
+        Guild g = MAP.get(guild.getStringID());
         if (g != null){
             g.reference.set(guild);
         }
@@ -57,7 +57,7 @@ public class Guild implements Configurable {
     }
     @Override
     public String getID() {
-        return guild().getID();
+        return guild().getStringID();
     }
 
     public void checkPermissionToEdit(User user, Guild guild){
@@ -84,7 +84,7 @@ public class Guild implements Configurable {
     }
 
     public User getOwner() {
-        return User.getUser(guild().getOwnerID());
+        return User.getUser(guild().getOwner());
     }
 
     public String getIcon() {

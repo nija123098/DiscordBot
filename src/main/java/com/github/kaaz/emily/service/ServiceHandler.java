@@ -1,6 +1,7 @@
 package com.github.kaaz.emily.service;
 
 import com.github.kaaz.emily.launcher.Launcher;
+import com.github.kaaz.emily.launcher.Reference;
 import com.github.kaaz.emily.util.Log;
 import org.reflections.Reflections;
 
@@ -23,7 +24,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class ServiceHandler {
     private static final Map<AbstractService, Long> NORMAL_SERVICES;
     static {
-        Set<Class<? extends AbstractService>> classes = new Reflections("com.github.kaaz.emily.service.services").getSubTypesOf(AbstractService.class);
+        Set<Class<? extends AbstractService>> classes = new Reflections(Reference.BASE_PACKAGE).getSubTypesOf(AbstractService.class);
         NORMAL_SERVICES = new HashMap<>();
         final AtomicInteger mayBlockCount = new AtomicInteger();
         classes.forEach(clazz -> {

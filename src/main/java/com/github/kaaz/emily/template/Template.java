@@ -8,6 +8,7 @@ import com.github.kaaz.emily.command.anotations.Convert;
 import com.github.kaaz.emily.discordobjects.wrappers.*;
 import com.github.kaaz.emily.exeption.ArgumentException;
 import com.github.kaaz.emily.exeption.ContextException;
+import com.github.kaaz.emily.util.StringIterator;
 
 import java.lang.reflect.Parameter;
 import java.util.*;
@@ -180,20 +181,9 @@ public class Template {
             wordBuilder = "";
         }
         Arg[] build(){
-            Iterator<Character> characterIterator = new Iterator<Character>() {
-                int i;
-                @Override
-                public boolean hasNext() {
-                    return i != template.length();
-                }
-                @Override
-                public Character next() {
-                    if (!hasNext()) throw new RuntimeException("No next");
-                    return template.charAt(i++);
-                }
-            };
-            while (characterIterator.hasNext()){
-                forEach(characterIterator);
+            StringIterator iterator = new StringIterator(this.template);
+            while (iterator.hasNext()){
+                forEach(iterator);
             }
             if (!sectionBuilder.equals("")){
                 args.add(new StaticArg(sectionBuilder));

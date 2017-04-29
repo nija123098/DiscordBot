@@ -17,10 +17,14 @@ import java.util.Optional;
 public class Message {// should not be kept stored, too many are made
     private static final Map<String, Message> MAP = new MemoryManagementService.ManagedMap<>(120000);
     public static Message getMessage(IMessage iMessage){
-        return MAP.computeIfAbsent(iMessage.getID(), s -> new Message(iMessage));
+        return MAP.computeIfAbsent(iMessage.getStringID(), s -> new Message(iMessage));
     }
     public static Message getMessage(String id){
-        return getMessage(DiscordClient.client().getMessageByID(id));
+        try {
+            return getMessage(DiscordClient.client().getMessageByID(id));
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
     static List<Message> getMessages(List<IMessage> iMessages){
         List<Message> messages = new ArrayList<>(iMessages.size());
@@ -152,7 +156,7 @@ public class Message {// should not be kept stored, too many are made
     }
 
     public String getID() {
-        return message().getID();
+        return message().getStringID();
     }
 
     public Shard getShard() {

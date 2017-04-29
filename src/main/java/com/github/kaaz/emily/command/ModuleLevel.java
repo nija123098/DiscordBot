@@ -13,6 +13,7 @@ public enum ModuleLevel {
     ADMINISTRATIVE,
     ECONOMY,
     DEVELOPMENT,
+    INFO,
     NONE,;
     public static ModuleLevel getModuleLevel(String s){
         try {
