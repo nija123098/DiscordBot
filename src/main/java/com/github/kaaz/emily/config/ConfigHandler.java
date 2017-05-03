@@ -162,6 +162,17 @@ public class ConfigHandler {
     }
 
     /**
+     * Uses a function to set the value of the config to a new value.
+     *
+     * @param clazz the class object representing the config
+     * @param configurable the configurable the config is to be set for
+     * @param function the function the config gives the old value to and gets a new value from
+     */
+    public static <V, T extends Configurable> void changeSetting(Class<? extends AbstractConfig<V, T>> clazz, T configurable, Function<V, V> function){
+        getConfig(clazz).changeSetting(configurable, function);
+    }
+
+    /**
      * Sets the config value for the given configurable and config
      *
      * @param configName the config name of the config to be set

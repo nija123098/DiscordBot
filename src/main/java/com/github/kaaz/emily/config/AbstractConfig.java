@@ -8,6 +8,7 @@ import com.github.kaaz.emily.perms.BotRole;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * @author nija123098
@@ -93,9 +94,6 @@ public class AbstractConfig<V, T extends Configurable> {
         return TypeTranslator.toString(v, this.valueType, null);
         //return OTypeTranslator.translate(v, String.class);
     }
-    public void setExteriorValue(T configurable, String value){
-        setValue(configurable, wrapTypeIn(value, configurable));
-    }
     // TODO SQL stuff goes here, more or less
     public void setValue(T configurable, V value){
         EventDistributor.distribute(new ConfigValueChangeEvent(configurable, this, this.getValue(configurable), value));
@@ -113,7 +111,22 @@ public class AbstractConfig<V, T extends Configurable> {
     public V getValue(T configurable){// slq here as well
         return (V) map.computeIfAbsent(configurable, c -> this.getDefault());
     }
+
+    /**
+     * Uses a function to set the value of the config to a new value.
+     *
+     * @param configurable the configurable the config is to be set for
+     * @param function the function the config gives the old value to and gets a new value from
+     */
+    public void changeSetting(T configurable, Function<V, V> function){
+        this.setValue(configurable, function.apply(this.getValue(configurable)));
+    }
+
     public String getExteriorValue(T configurable){
         return wrapTypeOut(getValue(configurable), configurable);
+    }
+
+    public void setExteriorValue(T configurable, String value){
+        setValue(configurable, wrapTypeIn(value, configurable));
     }
 }

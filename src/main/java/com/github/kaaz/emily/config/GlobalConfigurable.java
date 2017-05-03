@@ -20,6 +20,10 @@ public class GlobalConfigurable implements Configurable {
         return "GLOBAL-id";
     }
     @Override
+    public String getName() {
+        return "GLOBAL";
+    }
+    @Override
     public ConfigLevel getConfigLevel() {
         return ConfigLevel.GLOBAL;
     }

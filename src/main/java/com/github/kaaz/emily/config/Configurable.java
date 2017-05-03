@@ -20,6 +20,8 @@ public interface Configurable {
      */
     String getID();
 
+    String getName();
+
     /**
      * Gets the config level of this object
      *
@@ -44,4 +46,8 @@ public interface Configurable {
      * @param guild the guild in which the config is trying to be edited
      */
     void checkPermissionToEdit(User user, Guild guild);
+
+    default Configurable getGoverningObject(){
+        return GlobalConfigurable.GLOBAL;
+    }
 }

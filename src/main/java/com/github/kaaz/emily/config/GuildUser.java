@@ -45,6 +45,10 @@ public class GuildUser implements Configurable {
         return this.id;
     }
     @Override
+    public String getName() {
+        return getUser().getDisplayName(getGuild());
+    }
+    @Override
     public ConfigLevel getConfigLevel() {
         return ConfigLevel.GUILD_USER;
     }
@@ -53,6 +57,10 @@ public class GuildUser implements Configurable {
             return;
         }
         BotRole.checkRequiredRole(BotRole.GUILD_TRUSTEE, user, guild);
+    }
+    @Override
+    public Configurable getGoverningObject(){
+        return getGuild();
     }
     @Override
     public boolean equals(Object o){

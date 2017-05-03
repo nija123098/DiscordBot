@@ -1,8 +1,7 @@
-package com.github.kaaz.emily.favor.configs;
+package com.github.kaaz.emily.languagefiltering;
 
 import com.github.kaaz.emily.config.AbstractConfig;
 import com.github.kaaz.emily.config.GlobalConfigurable;
-import com.github.kaaz.emily.languagefiltering.LanguageLevel;
 import com.github.kaaz.emily.perms.BotRole;
 
 import java.util.HashMap;

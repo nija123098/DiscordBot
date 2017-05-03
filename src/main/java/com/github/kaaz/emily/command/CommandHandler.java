@@ -168,7 +168,7 @@ public class CommandHandler {
      * @param message the message reacted to or sent to invoke the command
      * @param reaction the reaction that invoked this command, if applicable
      */
-    private static boolean attemptInvocation(String string, User user, Message message, Reaction reaction){
+    public static boolean attemptInvocation(String string, User user, Message message, Reaction reaction){
         if (string == null){// can happen
             return false;
         }

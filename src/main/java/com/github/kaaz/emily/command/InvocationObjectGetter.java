@@ -13,10 +13,7 @@ import com.github.kaaz.emily.exeption.ArgumentException;
 import com.github.kaaz.emily.exeption.ContextException;
 import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.perms.BotRole;
-import com.github.kaaz.emily.util.EnumHelper;
-import com.github.kaaz.emily.util.FormatHelper;
-import com.github.kaaz.emily.util.LanguageHelper;
-import com.github.kaaz.emily.util.Log;
+import com.github.kaaz.emily.util.*;
 import javafx.util.Pair;
 
 import java.lang.reflect.Parameter;
@@ -260,6 +257,10 @@ public class InvocationObjectGetter {// TODO WORKING ON IMPLEMENT CONTEXT REQUIR
             Pair<AbstractCommand, String> command = CommandHandler.getMessageCommand(args);
             if (command == null) throw new ArgumentException("No such command found");
             return new Pair<>(command.getKey(), args.length() - command.getValue().length());
+        });
+        addConverter(Time.class, (invoker, shard, channel, guild, message, reaction, args) -> {
+            String first = args.split(" ")[0];
+            return new Pair<>(new Time(first), first.length());
         });
     }
 

@@ -36,6 +36,10 @@ public class Track implements Configurable{
     public String getID() {
         return this.id;
     }
+    @Override
+    public String getName() {
+        return this.id.substring(getPlatform().name().length() + 1);// todo upgrade
+    }
     public Platform getPlatform(){
         return Platform.valueOf(this.id.split("-")[0]);
     }

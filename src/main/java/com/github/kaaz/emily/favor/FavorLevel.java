@@ -11,16 +11,18 @@ package com.github.kaaz.emily.favor;
  * @since 2.0.0
  */
 public enum FavorLevel {
-    DISTRUSTED(-5000),
-    DISLIKED(-1000),
-    WORRISOME(-100),
-    NEUTRAL(-10),
-    LIKED(10),
-    FAVORED(100),
-    PREFERRED(10000),;
+    DISTRUSTED(-50000, "Should get banned"),
+    DISLIKED(-25000, "Has deviated from the proper coarse"),
+    WORRISOME(-500, "Leaning toward the dark side"),
+    NEUTRAL(-50, "Is still deciding their path"),
+    LIKED(100, "Leaning toward the good side"),
+    FAVORED(1000, "Has embraced a good nature"),
+    PREFERRED(100000, "Indication of a wonderful human being"),;
     float amount;
-    FavorLevel(float amount) {
+    String description;
+    FavorLevel(float amount, String description) {
         this.amount = amount;
+        this.description = description;
     }
 
     /**

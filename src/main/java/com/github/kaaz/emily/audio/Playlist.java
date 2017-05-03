@@ -80,6 +80,7 @@ public class Playlist implements Configurable {
         return ConfigLevel.PLAYLIST;
     }
 
+    @Override
     public void checkPermissionToEdit(User user, Guild guild){
         if (this == GLOBAL_PLAYLIST){// identity because there is a single instance of the guild playlist
             throw new PermissionsException("You can't edit the global playlist");
@@ -92,6 +93,11 @@ public class Playlist implements Configurable {
             BotRole.checkRequiredRole(BotRole.GUILD_TRUSTEE, user, guild);
         }else throw new DevelopmentException("Unknown playlist owner type");
         BotRole.checkRequiredRole(BotRole.BOT_ADMIN, user, null);
+    }
+
+    @Override
+    public Configurable getGoverningObject(){
+        return getOwner();
     }
 
     public String getName(){

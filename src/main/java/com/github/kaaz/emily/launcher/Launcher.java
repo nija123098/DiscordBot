@@ -31,12 +31,12 @@ public class Launcher {
             Log.log("Failed to initialize configuration", e);
             System.exit(-1);
         }
-        DiscordAdapter.initialize();
         TemplateHandler.initialize();
         InvocationObjectGetter.initialize();
         ConfigHandler.initialize();
         ServiceHandler.initialize();
         CommandHandler.initialize();
+        DiscordAdapter.initialize();
         STARTUPS.forEach(Runnable::run);
         DiscordClient.online("with users!");
         Log.log("Bot finished initializing");

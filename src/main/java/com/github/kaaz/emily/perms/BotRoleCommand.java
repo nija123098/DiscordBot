@@ -10,6 +10,9 @@ import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.github.kaaz.emily.util.EmoticonHelper;
 import com.github.kaaz.emily.util.FormatHelper;
 
+import java.util.Set;
+import java.util.stream.Stream;
+
 /**
  * Made by nija123098 on 4/27/2017.
  */
@@ -20,6 +23,7 @@ public class BotRoleCommand extends AbstractCommand {
     @Command
     public void command(@Convert(optional = true) User user, Guild guild, MessageMaker maker){
         maker.getTitle().appendAlternate(true, FormatHelper.makePleural(user.getDisplayName(guild)) + " BotRoles");
-        BotRole.getSet(user, guild).forEach(role -> maker.getNewFieldPart().getTitle().appendRaw(role.name()).getFieldPart().getValue().appendRaw(EmoticonHelper.getChars("white_check_mark")));
+        Set<BotRole> botRoles = BotRole.getSet(user, guild);
+        Stream.of(BotRole.values()).forEach(role -> maker.getNewFieldPart().getTitle().appendRaw(role.name()).getFieldPart().getValue().appendRaw(EmoticonHelper.getChars(botRoles.contains(role) ? "white_check_mark" : "x")));
     }
 }

@@ -28,14 +28,9 @@ import java.util.concurrent.atomic.AtomicReference;
 public class GuildAudioManager {
     private static final Map<String, GuildAudioManager> MAP = new ConcurrentHashMap<>();
     public static GuildAudioManager getManager(Guild guild, boolean make){
-        if (make){
-            return MAP.computeIfAbsent(guild.getID(), s -> new GuildAudioManager(guild));
-        }else{
-            if (MAP.containsKey(guild.getID())){
-                return MAP.get(guild.getID());
-            }
-            return null;
-        }
+        if (make) return MAP.computeIfAbsent(guild.getID(), s -> new GuildAudioManager(guild));
+        else if (MAP.containsKey(guild.getID())) return MAP.get(guild.getID());
+        return null;
     }
     public static GuildAudioManager getManager(Guild guild){
         return getManager(guild, true);

@@ -3,7 +3,7 @@ package com.github.kaaz.emily.languagefiltering;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.GlobalConfigurable;
 import com.github.kaaz.emily.config.GuildUser;
-import com.github.kaaz.emily.favor.configs.LanguageFilteringLevelWordsConfig;
+import com.github.kaaz.emily.automoderation.LanguageFilteringLevelConfig;
 import com.github.kaaz.emily.favor.configs.LanguageLevelViolationFactorConfig;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.wrappers.Message;

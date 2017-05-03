@@ -74,6 +74,9 @@ public class MessageMaker {
         this.embed = null;
         return this;
     }
+    public boolean couldNormalize(){
+        return this.fieldList.size() == 0 && this.textList.size() == 0 && !this.authorName.appended && !this.title.appended && !this.footer.appended && !this.note.appended;
+    }
     public MessageMaker withChannel(Channel channel){
         this.channel = channel;
         return this;
@@ -219,17 +222,17 @@ public class MessageMaker {
             ErrorWrapper.wrap(() -> this.origin.addReaction(EmoticonHelper.getChars("ok_hand")));
         }
         compile();
-        if (page >= fieldIndices.length){
-            throw new RuntimeException("Attempted to get a page that doesn't exit");
-        }
         if (this.embed != null){
+            if (page >= fieldIndices.length){
+                throw new RuntimeException("Attempted to get a page that doesn't exit");
+            }
             this.embed.clearFields().withDesc(this.header.langString.translate(this.lang) + "\n\n" + (page >= textVals.length ? "" : textVals[page]) + "\n\n" + this.footer.langString.translate(lang));
             for (Triple<String, String, Boolean> ind : fieldIndices[page]){
                 this.embed.appendField(ind.getLeft(), ind.getMiddle(), ind.getRight());
             }
             this.builder.withEmbed(this.embed.build());
         }
-        if (this.message == null){// here
+        if (this.message == null){
             this.message = ErrorWrapper.wrap((ErrorWrapper.Request<IMessage>) () -> this.builder.withChannel(channel.channel()).send());
             this.reactionBehaviors.forEach(pair -> ReactionBehavior.registerListener(Message.getMessage(this.message), pair.getKey(), pair.getValue()));
             this.reactions.forEach(s -> this.message.addReaction(s));
@@ -262,7 +265,8 @@ public class MessageMaker {
                 return;
             }
         }
-        if (this.embed == null){
+        if (this.couldNormalize()) this.asNormalMessage();
+        if (this.embed == null){// do not combine
             this.builder.withContent(this.header.langString.translate(this.lang));
         } else {// embed
             this.embed.withAuthorName(authorName.langString.translate(lang));
@@ -316,15 +320,15 @@ public class MessageMaker {
                         vals.get(page).add(new ImmutableTriple<>(fieldList.get(index).title.langString.translate(lang), fieldList.get(index).value.langString.translate(lang), fieldList.get(index).inline));
                     }
                 }
-                int textValLengthAdjust = (this.embedsOfFront ? 0 : textVals.length);
-                fieldIndices = new Triple[textVals.length + vals.size()][];
-                for (int i = 0; i < textValLengthAdjust; i++) {
+                fieldIndices = new Triple[textVals.length + vals.size() - (this.embedsOfFront ? 1 : 0)][];
+                for (int i = 0; i < textVals.length - (this.embedsOfFront ? 1 : 0); i++) {
                     fieldIndices[i] = new Triple[0];
                 }
-                for (int i = textValLengthAdjust; i < fieldIndices.length - (this.embedsOfFront ? 1 : 0); i++) {
-                    fieldIndices[i] = new Triple[vals.get(i - textValLengthAdjust).size()];
+                int k = 0;
+                for (int i = textVals.length - (this.embedsOfFront ? 1 : 0); i < fieldIndices.length; ++i, ++k) {
+                    fieldIndices[i] = new Triple[vals.get(k).size()];
                     for (int j = 0; j < fieldIndices[i].length; j++) {
-                        fieldIndices[i][j] = vals.get(i - textValLengthAdjust).get(j);
+                        fieldIndices[i][j] = vals.get(k).get(j);
                     }
                 }
             } else {
@@ -332,20 +336,20 @@ public class MessageMaker {
                 Arrays.fill(fieldIndices, new Triple[0]);
             }
             fieldList = null;
-        }
-        if (this.fieldIndices.length > 1){
-            this.withReactionBehavior("arrow_left", (add, reaction) -> {
-                if (currentPage.get() == 0){
-                    return;
-                }
-                this.send(currentPage.decrementAndGet());
-            });
-            this.withReactionBehavior("arrow_right", (add, reaction) -> {
-                if (currentPage.get() == fieldIndices.length - 1){
-                    return;
-                }
-                this.send(currentPage.incrementAndGet());
-            });
+            if (this.embed != null && this.fieldIndices.length > 1){
+                this.withReactionBehavior("arrow_left", (add, reaction) -> {
+                    if (currentPage.get() == 0){
+                        return;
+                    }
+                    this.send(currentPage.decrementAndGet());
+                });
+                this.withReactionBehavior("arrow_right", (add, reaction) -> {
+                    if (currentPage.get() == fieldIndices.length - 1){
+                        return;
+                    }
+                    this.send(currentPage.incrementAndGet());
+                });
+            }
         }
     }
     public class FieldPart {
@@ -379,28 +383,36 @@ public class MessageMaker {
     public class TextPart {
         private MessageMaker maker;
         LangString langString;
+        private boolean appended;
         private TextPart(MessageMaker maker) {
             this.maker = maker;
             this.langString = new LangString();
         }
+        public boolean isAppended(){
+            return this.appended;
+        }
 
         public TextPart appendRaw(String s){
+            this.appended = true;
             this.append(true, s);
             return this;
         }
 
         public TextPart append(String s){
+            this.appended = true;
             this.append(false, s);
             return this;
         }
 
         public TextPart appendAlternate(boolean raw, String...s){
+            this.appended = true;
             this.maker.maySend();
             this.langString.appendToggle(raw, s);
             return this;
         }
 
         public TextPart append(boolean raw, String s){
+            this.appended = true;
             this.maker.maySend();
             this.langString.append(!raw, s);
             return this;

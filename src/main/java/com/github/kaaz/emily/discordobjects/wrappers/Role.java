@@ -55,6 +55,11 @@ public class Role implements Configurable{
     }
 
     @Override
+    public Configurable getGoverningObject(){
+        return getGuild();
+    }
+
+    @Override
     public boolean equals(Object o) {
         return o == this || o instanceof Role && ((Role) o).getID().equals(this.getID());
     }

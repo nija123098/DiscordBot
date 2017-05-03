@@ -53,6 +53,10 @@ public class Reaction {// should not be saved
         return result;
     }
 
+    public EmoticonHelper.Emoticon getEmoticon(){
+        return EmoticonHelper.getEmoticon(this.getChars());
+    }
+
     public int getCount() {
         return reaction.getCount();
     }

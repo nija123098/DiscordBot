@@ -1,5 +1,6 @@
 package com.github.kaaz.emily.config;
 
+import com.github.kaaz.emily.economy.MoneyTransfer;
 import org.eclipse.jetty.util.ConcurrentHashSet;
 
 import java.io.File;
@@ -85,6 +86,10 @@ public class TypeTranslator {
             return objects;
         });
         add(Enum.class, (in, context) -> in.name(), (in, context) -> Enum.valueOf(context.getDeclaringClass(), in.toUpperCase().replace("-", "_")));
+        add(MoneyTransfer.class, (in, context) -> in.getAmount() + ":" + in.getUserID() + ":" + in.getMessage(), (in, context) -> {
+            String[] choped = in.split(":");
+            return new MoneyTransfer(Float.parseFloat(choped[0]), choped[1], in.substring(choped[0].length() + choped[1].length() + 2));
+        });
     }
     private static <T> void add(Class<T> to, TypeTranslation<T, String> fts, TypeTranslation<String, T> ffs){
         TO_STRING_FUNCTIONS.put(to, (TypeTranslation<Object, String>) fts);

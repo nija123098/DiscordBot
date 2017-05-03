@@ -21,14 +21,14 @@ public class HelpCommand extends AbstractCommand {
     }
     @Command
     public void command(@Convert AbstractCommand command, MessageMaker maker){
-        List<Class<?>> types = Stream.of(command.getParameters()).filter(parameter -> parameter.isAnnotationPresent(Convert.class)).map(Parameter::getType).collect(Collectors.toList());
+        List<Parameter> parameters = Stream.of(command.getParameters()).filter(parameter -> parameter.isAnnotationPresent(Convert.class)).collect(Collectors.toList());
         maker.append(command.getHelp()).append("\n\nArguments: \n");
         String argString;
-        if (types.size() == 0){
+        if (parameters.size() == 0){
             argString = "none";
         } else {
             StringBuilder builder = new StringBuilder();
-            types.forEach(clazz -> builder.append(clazz.isAnnotationPresent(LaymanName.class) ? clazz.getAnnotation(LaymanName.class).value() : clazz.getSimpleName()).append(", "));
+            parameters.forEach(parameter -> builder.append(parameter.isAnnotationPresent(LaymanName.class) ? parameter.getAnnotation(LaymanName.class).value() : parameter.getType().getSimpleName()).append(parameter.getAnnotation(Convert.class).optional() ? " (optional)" : "").append(", "));
             argString = builder.toString();
             argString = argString.substring(0,argString.length() - 2);
         }

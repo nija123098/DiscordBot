@@ -9,7 +9,7 @@ import com.github.kaaz.emily.service.services.MemoryManagementService;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IRole;
 
-import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -287,8 +287,8 @@ public class Guild implements Configurable {
         return GuildAudioManager.getManager(this);
     }
 
-    public LocalDateTime getJoinTimeForUser(User user) {
-        return guild().getJoinTimeForUser(user.user());
+    public long getJoinTimeForUser(User user) {// TODO double check this
+        return guild().getJoinTimeForUser(user.user()).toInstant(ZoneOffset.UTC).toEpochMilli();
     }
 
     public Message getMessageByID(String s) {

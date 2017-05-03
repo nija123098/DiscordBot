@@ -1,5 +1,7 @@
 package com.github.kaaz.emily.util;
 
+import java.util.Iterator;
+
 /**
  * Made by nija123098 on 3/18/2017.
  */
@@ -25,6 +27,14 @@ public class FormatHelper {
                 builder.append(s.charAt(i));
             }
         }
+        return builder.toString();
+    }
+    public static String removeChars(String s, char toRemove){
+        StringBuilder builder = new StringBuilder(s.length());
+        Iterator<Character> iterator = new StringIterator(s);
+        iterator.forEachRemaining(character -> {
+            if (character != toRemove) builder.append(character);
+        });
         return builder.toString();
     }
     public static String trimFront(String s){
