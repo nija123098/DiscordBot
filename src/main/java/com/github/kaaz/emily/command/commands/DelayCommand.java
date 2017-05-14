@@ -4,7 +4,7 @@ import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.CommandHandler;
 import com.github.kaaz.emily.command.ModuleLevel;
 import com.github.kaaz.emily.command.anotations.Command;
-import com.github.kaaz.emily.command.anotations.Convert;
+import com.github.kaaz.emily.command.anotations.Argument;
 import com.github.kaaz.emily.discordobjects.wrappers.Message;
 import com.github.kaaz.emily.discordobjects.wrappers.Reaction;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
@@ -19,7 +19,7 @@ public class DelayCommand extends AbstractCommand {
         super("delay", ModuleLevel.NONE, null, null, "Executes a command after a specified delay, this command does not detect exceptions in advance and my soft fail");
     }
     @Command
-    public void command(@Convert Time time, String s, User user, Message message, Reaction reaction){
+    public void command(@Argument Time time, String s, User user, Message message, Reaction reaction){
         ScheduleService.schedule(time.timeUntil(), () -> CommandHandler.attemptInvocation(s, user, message, reaction));
     }
 }

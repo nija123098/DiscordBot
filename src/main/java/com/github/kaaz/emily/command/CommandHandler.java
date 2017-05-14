@@ -231,7 +231,7 @@ public class CommandHandler {
                 }
                 return invoked;
             } catch (BotException e){
-                new MessageMaker(user, message).asExceptionMessage(e).send();
+                e.makeMessage(message.getChannel());
                 message.addReactionByName(EXCEPTION_FOR_METHOD);
                 return false;
             }
@@ -249,7 +249,7 @@ public class CommandHandler {
      */
     @EventListener
     public static void handle(DiscordMessageReceivedEvent event){
-        attemptInvocation(event.getMessage().getContent(), event.getMessage().getAuthor(), event.getMessage(), null);
+        attemptInvocation(event.getMessage().getContent(), event.getAuthor(), event.getMessage(), null);
     }
 
     /**
@@ -271,8 +271,8 @@ public class CommandHandler {
      */
     @EventListener
     public static void handle(DiscordMessageEditEvent event){
-        if (!event.getMessage().getAuthor().equals(DiscordClient.getOurUser()) && OPEN_EDIT_MESSAGES.contains(event.getMessage().getID())){
-            if (attemptInvocation(event.getMessage().getContent(), event.getMessage().getAuthor(), event.getMessage(), null)){
+        if (!event.getAuthor().equals(DiscordClient.getOurUser()) && OPEN_EDIT_MESSAGES.contains(event.getMessage().getID())){
+            if (attemptInvocation(event.getMessage().getContent(), event.getAuthor(), event.getMessage(), null)){
                 OPEN_EDIT_MESSAGES.remove(event.getMessage().getID());
             }
         }

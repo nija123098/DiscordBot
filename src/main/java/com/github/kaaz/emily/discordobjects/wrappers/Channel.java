@@ -6,6 +6,7 @@ import com.github.kaaz.emily.config.GlobalConfigurable;
 import com.github.kaaz.emily.discordobjects.exception.ErrorWrapper;
 import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
+import com.github.kaaz.emily.util.Time;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IPrivateChannel;
 import sx.blah.discord.handle.obj.IVoiceChannel;
@@ -28,7 +29,7 @@ public class Channel implements Configurable {
             return null;
         }
     }
-    static Channel getChannel(IChannel channel){
+    public static Channel getChannel(IChannel channel){
         return MAP.computeIfAbsent(channel.getStringID(), s -> channel.isPrivate() ? new DirectChannel((IPrivateChannel) channel) : channel instanceof IVoiceChannel ? new VoiceChannel((IVoiceChannel) channel) : new Channel(channel));
     }
     static List<Channel> getChannels(List<IChannel> iChannels){
@@ -191,6 +192,14 @@ public class Channel implements Configurable {
 
     public List<Message> getPinnedMessages() {
         return ErrorWrapper.wrap((ErrorWrapper.Request<List<Message>>) () -> Message.getMessages(channel().getPinnedMessages()));
+    }
+
+    public List<Message> getMessages(int count){
+        return Message.getMessages(channel().getMessageHistory(count));
+    }
+
+    public List<Message> getMessagesTo(long date){
+        return Message.getMessages(channel().getMessageHistoryTo(Time.toLocalDateTime(date)));
     }
 
     public void pin(Message message) {

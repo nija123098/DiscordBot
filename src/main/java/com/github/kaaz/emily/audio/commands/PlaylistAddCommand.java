@@ -2,7 +2,7 @@ package com.github.kaaz.emily.audio.commands;
 
 import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.anotations.Command;
-import com.github.kaaz.emily.command.anotations.Convert;
+import com.github.kaaz.emily.command.anotations.Argument;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.audio.Playlist;
 import com.github.kaaz.emily.audio.configs.playlist.PlaylistContentsConfig;
@@ -21,7 +21,7 @@ public class PlaylistAddCommand extends AbstractCommand {
         super(PlaylistCommand.class, "add", null, null, null, "Adds a track playlist, by default the current track and playlist");
     }
     @Command
-    public void command(@Convert(optional = true) Playlist playlist, @Convert(optional = true) Track track, User user, Guild guild, MessageMaker maker){
+    public void command(@Argument(optional = true) Playlist playlist, @Argument(optional = true) Track track, User user, Guild guild, MessageMaker maker){
         playlist.checkPermissionToEdit(user, guild);
         List<Track> ids = ConfigHandler.getSetting(PlaylistContentsConfig.class, playlist);
         if (ids.contains(track)){

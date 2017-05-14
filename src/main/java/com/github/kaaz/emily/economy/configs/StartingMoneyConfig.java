@@ -12,14 +12,14 @@ import com.github.kaaz.emily.perms.BotRole;
 /**
  * Made by nija123098 on 5/1/2017.
  */
-public class StartingMoneyConfig extends AbstractConfig<Integer, Configurable> {
+public class StartingMoneyConfig extends AbstractConfig<Float, Configurable> {
     public StartingMoneyConfig() {
-        super("starting_money", BotRole.BOT_ADMIN, 0, "The amount of money a config starts with");
+        super("starting_money", BotRole.BOT_ADMIN, 0F, "The amount of money a config starts with");
     }
     @EventListener
-    public void handle(DiscordUserJoin join){
-        GuildUser guildUser = GuildUser.getGuildUser(join.getGuild(), join.getUser());
-        if (Math.abs(join.getJoinTime() - ConfigHandler.getSetting(GuildUserJoinTimeConfig.class, guildUser)) > 5000) return;
-        ConfigHandler.changeSetting(CurrentMoneyConfig.class, guildUser, integer -> this.getValue(join.getGuild()));
+    public void handle(DiscordUserJoin event){
+        GuildUser guildUser = GuildUser.getGuildUser(event.getGuild(), event.getUser());
+        if (Math.abs(event.getJoinTime() - ConfigHandler.getSetting(GuildUserJoinTimeConfig.class, guildUser)) < 5000)
+            ConfigHandler.changeSetting(CurrentMoneyConfig.class, guildUser, integer -> this.getValue(event.getGuild()));
     }// integer should be 0, but the change is for safety
 }

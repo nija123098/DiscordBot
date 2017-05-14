@@ -10,10 +10,10 @@ import java.util.List;
  * Made by nija123098 on 3/7/2017.
  */
 public class VoiceChannel extends Channel {
-    public static VoiceChannel getVoiceChannel(String id){
+    static VoiceChannel getVoiceChannel(String id){
         return (VoiceChannel) Channel.getChannel(id);
     }
-    static VoiceChannel getVoiceChannel(IVoiceChannel channel){
+    public static VoiceChannel getVoiceChannel(IVoiceChannel channel){
         return (VoiceChannel) Channel.getChannel(channel);
     }
     static List<VoiceChannel> getVoiceChannels(List<IVoiceChannel> iVoiceChannel){

@@ -8,5 +8,6 @@ public enum ContextType {
     LOCATION,
     ARGS,
     STATUS,
-    DEFAULT,;
+    DEFAULT,
+    NONE,;
 }

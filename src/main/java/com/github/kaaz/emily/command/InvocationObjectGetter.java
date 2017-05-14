@@ -2,11 +2,11 @@ package com.github.kaaz.emily.command;
 
 import com.github.kaaz.emily.audio.Playlist;
 import com.github.kaaz.emily.command.anotations.Context;
-import com.github.kaaz.emily.command.anotations.Convert;
+import com.github.kaaz.emily.command.anotations.Argument;
 import com.github.kaaz.emily.config.*;
 import com.github.kaaz.emily.config.configs.guild.GuildActivePlaylistConfig;
 import com.github.kaaz.emily.config.configs.guild.UserNamesConfig;
-import com.github.kaaz.emily.discordobjects.helpers.GuildAudioManager;
+import com.github.kaaz.emily.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.wrappers.*;
 import com.github.kaaz.emily.exeption.ArgumentException;
@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * Made by nija123098 on 3/27/2017.
  */
-public class InvocationObjectGetter {// TODO WORKING ON IMPLEMENT CONTEXT REQUIREMENT USAGE
+public class InvocationObjectGetter {
     private static final Map<Class<?>, Map<ContextType, Pair<InvocationGetter<?>, Set<ContextRequirement>>>> CONTEXT_MAP = new HashMap<>();
     private static final Map<Class<?>, Pair<ArgumentConverter<?>, Set<ContextRequirement>>> CONVERTER_MAP = new HashMap<>();
 
@@ -39,19 +39,25 @@ public class InvocationObjectGetter {// TODO WORKING ON IMPLEMENT CONTEXT REQUIR
         addContext(String[].class, ContextType.ARGS, (user, shard, channel, guild, message, reaction, args) -> FormatHelper.reduceRepeats(args, ' ').split(" "), ContextRequirement.STRING);
         addContext(MessageMaker.class, ContextType.DEFAULT, (user, shard, channel, guild, message, reaction, args) -> message == null ? new MessageMaker(user, channel) : new MessageMaker(user, message), ContextRequirement.CHANNEL);
         addContext(VoiceChannel.class, ContextType.LOCATION, (user, shard, channel, guild, message, reaction, args) -> {
-            VoiceChannel target = guild.getConnectedVoiceChannel();
+            VoiceChannel target = user.getConnectedVoiceChannel(guild);
             if (target == null) throw new ContextException("You must be in a voice channel to use that command");
             return target;
         }, ContextRequirement.GUILD, ContextRequirement.USER);
         addContext(Shard.class, ContextType.LOCATION, (user, shard, channel, guild, message, reaction, args) -> shard, ContextRequirement.SHARD);
         addContext(Region.class, ContextType.LOCATION, (user, shard, channel, guild, message, reaction, args) -> guild.getRegion(), ContextRequirement.GUILD);
-        addContext(Attachment[].class, ContextType.INVOKER, (user, shard, channel, guild, message, reaction, args) -> {// todo consider using context requirements in stead
+        addContext(Attachment[].class, ContextType.INVOKER, (user, shard, channel, guild, message, reaction, args) -> {
             List<Attachment> attachments = message.getAttachments();
             return attachments.toArray(new Attachment[attachments.size()]);
         }, ContextRequirement.MESSAGE);
         addContext(Playlist.class, ContextType.STATUS, (user, shard, channel, guild, message, reaction, args) -> ConfigHandler.getSetting(GuildActivePlaylistConfig.class, guild), ContextRequirement.GUILD);
+        addContext(GuildAudioManager.class, ContextType.STATUS, (invoker, shard, channel, guild, message, reaction, args) -> {
+            GuildAudioManager manager = GuildAudioManager.getManager(invoker.getConnectedVoiceChannel(guild), false);
+            if (manager == null) throw new ContextException("You must be in a voice channel with Emily to use this command");
+            return manager;
+        });
+        addContext(GuildAudioManager.class, ContextType.LOCATION, (invoker, shard, channel, guild, message, reaction, args) -> GuildAudioManager.getManager(invoker.getConnectedVoiceChannel(guild)));
         addContext(Track.class, ContextType.STATUS, (user, shard, channel, guild, message, reaction, args) -> {
-            GuildAudioManager manager = GuildAudioManager.getManager(guild, false);
+            GuildAudioManager manager = GuildAudioManager.getManager(user.getConnectedVoiceChannel(guild), false);
             if (manager == null || manager.currentTrack() == null) throw new ContextException("No track is currently playing");
             return manager.currentTrack();
         }, ContextRequirement.GUILD, ContextRequirement.USER);
@@ -303,7 +309,7 @@ public class InvocationObjectGetter {// TODO WORKING ON IMPLEMENT CONTEXT REQUIR
                             throw e;
                         }
                     }
-                }else if (parameters[i].isAnnotationPresent(Convert.class)){
+                }else if (parameters[i].isAnnotationPresent(Argument.class)){
                     if (argOverride.length > i && argOverride[commandArgIndex++]){
                         continue;
                     }
@@ -319,9 +325,9 @@ public class InvocationObjectGetter {// TODO WORKING ON IMPLEMENT CONTEXT REQUIR
                     }
                 }
             } catch (ArgumentException e){
-                if (parameters[i].isAnnotationPresent(Convert.class) && parameters[i].getAnnotation(Convert.class).optional()){
-                    checkContextType(parameters[i].getType());
-                    objects[i] = CONTEXT_MAP.get(parameters[i].getType()).get(parameters[i].getAnnotation(Convert.class).replacement()).getKey().getObject(user, shard, channel, guild, message, reaction, args);
+                if (parameters[i].isAnnotationPresent(Argument.class) && parameters[i].getAnnotation(Argument.class).optional()){
+                    if (parameters[i].getAnnotation(Argument.class).replacement() != ContextType.NONE) checkContextType(parameters[i].getType());
+                    objects[i] = parameters[i].getAnnotation(Argument.class).replacement() == ContextType.NONE ? null : CONTEXT_MAP.get(parameters[i].getType()).get(parameters[i].getAnnotation(Argument.class).replacement()).getKey().getObject(user, shard, channel, guild, message, reaction, args);
                     continue;
                 }
                 e.setParameter(commandArgIndex);

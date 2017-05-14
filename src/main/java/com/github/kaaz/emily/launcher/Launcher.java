@@ -49,16 +49,20 @@ public class Launcher {
     }
     public synchronized static void shutdown(Integer code){
         ScheduleService.ScheduledTask task = SHUTDOWN_TASK.get();
-        Log.log("Scheduled shutdown with code: " + code + (task != null ? " canceling another shutdown" : ""));
         if (task != null) {
-            task.cancel(true);
-            SHUTDOWN_TASK.set(null);
+            Log.log("Canceling a shutdown");
+            task.cancel();
+            if (code == null) SHUTDOWN_TASK.set(null);
         }
-        if (code != null) ScheduleService.schedule(30_000, () -> {
-            Log.log("Shutting down with code: " + code);
-            SHUTDOWNS.forEach(Runnable::run);
-            System.exit(code);
-        });
+        if (code != null) {
+            Log.log("Scheduled shutdown with code: " + code);
+            SHUTDOWN_TASK.set(ScheduleService.schedule(30_000, () -> {
+                Log.log("Shutting down with code: " + code);
+                SHUTDOWNS.forEach(Runnable::run);
+                DiscordClient.logout();
+                System.exit(code);
+            }));
+        }
     }
     public static void main(String[] args) {
 

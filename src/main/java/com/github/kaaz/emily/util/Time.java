@@ -2,14 +2,16 @@ package com.github.kaaz.emily.util;
 
 import com.github.kaaz.emily.exeption.ArgumentException;
 
-import java.util.HashMap;
+import java.time.*;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Made by nija123098 on 4/29/2017.
  */
 public class Time {
-    private static final Map<Character, Long> TIME_SYMBOLS = new HashMap<>();
+    private static final Map<Character, Long> TIME_SYMBOLS = new LinkedHashMap<>();
     static {
         TIME_SYMBOLS.put('w', 604800000L);
         TIME_SYMBOLS.put('d', 86400000L);
@@ -42,5 +44,22 @@ public class Time {
     }
     public long timeUntil(){
         return this.time - System.currentTimeMillis();
+    }
+    public static String getAbbreviated(long time){
+        if (time < 1000) return "0s";
+        AtomicLong aTime = new AtomicLong(time);
+        StringBuilder builder = new StringBuilder();
+        TIME_SYMBOLS.forEach((character, aLong) -> {
+            int amount = (int) (aTime.get() / aLong);
+            aTime.addAndGet(-amount * aLong);
+            if (amount != 0) builder.append(amount).append(character);
+        });
+        return builder.toString();
+    }
+    public static long toMillis(LocalDateTime time){
+        return time.toInstant(time.atZone(ZoneId.systemDefault()).getOffset()).toEpochMilli();
+    }
+    public static LocalDateTime toLocalDateTime(long time){
+        return Instant.ofEpochMilli(time).atZone(ZoneId.systemDefault()).toLocalDateTime();
     }
 }

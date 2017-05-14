@@ -20,7 +20,8 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
-public @interface Convert {
+public @interface Argument {
     boolean optional() default false;
     ContextType replacement() default ContextType.DEFAULT;
+    String info() default "";
 }

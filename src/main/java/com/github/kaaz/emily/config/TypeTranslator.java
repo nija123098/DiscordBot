@@ -1,6 +1,9 @@
 package com.github.kaaz.emily.config;
 
 import com.github.kaaz.emily.economy.MoneyTransfer;
+import com.github.kaaz.emily.exeption.DevelopmentException;
+import com.github.kaaz.emily.util.SerialHelper;
+import org.apache.commons.lang3.tuple.Triple;
 import org.eclipse.jetty.util.ConcurrentHashSet;
 
 import java.io.File;
@@ -25,6 +28,26 @@ public class TypeTranslator {
         add(Configurable.class, (in, context) -> in.getID(), (in, context) -> ConfigHandler.getConfigurable(context.getClass(), in));
         add(String.class, (in, context) -> in, (in, context) -> in);
         add(File.class, (in, context) -> in.toString(), (in, context) -> new File(in));
+        add(Triple.class, (in, context) -> {
+            String builder = "";
+            Type type = context.getClass().getGenericSuperclass();
+            Class<?> t = type instanceof ParameterizedType ? (Class<?>) ((ParameterizedType) type).getActualTypeArguments()[0] : String.class;
+            builder += toString(in.getLeft(), t, null) + ";";
+            t = type instanceof ParameterizedType ? (Class<?>) ((ParameterizedType) type).getActualTypeArguments()[1] : String.class;
+            builder += toString(in.getMiddle(), t, null)  + ";";
+            t = type instanceof ParameterizedType ? (Class<?>) ((ParameterizedType) type).getActualTypeArguments()[2] : String.class;
+            return builder + toString(in.getRight(), t, null);
+        }, (in, context) -> {
+            Object[] objects = new Object[3];
+            String[] strings = in.split(";");
+            Type type = context.getClass().getGenericSuperclass();
+            Class<?> t;
+            for (int i = 0; i < objects.length; i++) {
+                t = type instanceof ParameterizedType ? (Class<?>) ((ParameterizedType) type).getActualTypeArguments()[1] : String.class;
+                objects[i] = toType(strings[i], t, null);
+            }
+            return null;
+        });
         add(Set.class, (in, context) -> in.toString(), (in, context) -> {
             Type type = context.getClass().getGenericSuperclass();
             Class<?> t = type instanceof ParameterizedType ? (Class<?>) ((ParameterizedType) type).getActualTypeArguments()[0] : String.class;
@@ -64,8 +87,7 @@ public class TypeTranslator {
                     List<Object> objects = new CopyOnWriteArrayList<>();
                     objects.addAll(context);
                     if (split.length == 2 && !add){
-                        try {
-                            objects.remove(Integer.parseInt(split[1]));
+                        try{objects.remove(Integer.parseInt(split[1]));
                         }catch(NumberFormatException ignored){}// if thrown the user does not mean this option
                     }
                     if (add){
@@ -90,6 +112,7 @@ public class TypeTranslator {
             String[] choped = in.split(":");
             return new MoneyTransfer(Float.parseFloat(choped[0]), choped[1], in.substring(choped[0].length() + choped[1].length() + 2));
         });
+        add(ComplexObject.class, (in, context) -> SerialHelper.stringify(in), (in, context) -> (ComplexObject) SerialHelper.objectify(in));
     }
     private static <T> void add(Class<T> to, TypeTranslation<T, String> fts, TypeTranslation<String, T> ffs){
         TO_STRING_FUNCTIONS.put(to, (TypeTranslation<Object, String>) fts);
@@ -99,10 +122,18 @@ public class TypeTranslator {
         return TO_STRING_FUNCTIONS.get(from).get(in, context);
     }
     public static <T> T toType(String in, Class<T> to, T context){
-        if (to.isEnum()){
-            to = (Class<T>) Enum.class;
+        TypeTranslation<String, Object> translation;
+        if (to.isEnum()) translation = FROM_STRING_FUNCTIONS.get(Enum.class);
+        else {
+            Class<?> type = to;
+            while (true){
+                translation = FROM_STRING_FUNCTIONS.get(type);
+                if (translation != null) break;
+                if (type == null) throw new DevelopmentException("Attempted to translate an unknown type to string: " + to);
+                type = type.getSuperclass();
+            }
         }
-        return (T) FROM_STRING_FUNCTIONS.get(to).get(in, context);
+        return (T) translation.get(in, context);
     }
     public static Class<?>[] getRawClasses(Class<?> o){
         Type[] t = ((ParameterizedType) o.getGenericSuperclass()).getActualTypeArguments();

@@ -2,7 +2,7 @@ package com.github.kaaz.emily.audio.commands;
 
 import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.anotations.Command;
-import com.github.kaaz.emily.command.anotations.Convert;
+import com.github.kaaz.emily.command.anotations.Argument;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.audio.Playlist;
 import com.github.kaaz.emily.audio.configs.playlist.PlaylistContentsConfig;
@@ -22,7 +22,7 @@ public class PlaylistListCommand extends AbstractCommand {
         super(PlaylistCommand.class, "list", null, null, null, "Lists the songs on the playlist, by default the active one");
     }
     @Command
-    public void command(@Convert(optional = true) Playlist playlist, User user, Guild guild, MessageMaker maker){
+    public void command(@Argument(optional = true) Playlist playlist, User user, Guild guild, MessageMaker maker){
         playlist.checkPermissionToEdit(user, guild);
         if (Playlist.GLOBAL_PLAYLIST.equals(playlist)){
             maker.append("Whoa, that is way to long to list");

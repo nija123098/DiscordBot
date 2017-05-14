@@ -1,6 +1,6 @@
 package com.github.kaaz.emily.exeption;
 
-import com.github.kaaz.emily.command.anotations.Convert;
+import com.github.kaaz.emily.command.anotations.Argument;
 import com.github.kaaz.emily.command.anotations.LaymanName;
 
 import java.lang.reflect.Parameter;
@@ -49,7 +49,7 @@ public class ArgumentException extends BotException {
         }
         String s = "Argument " + this.parameter + " - " + super.getMessage() + "\nExpected: ";
         for (int i = 0; i < this.args.length; i++) {
-            if (!this.args[i].isAnnotationPresent(Convert.class)){
+            if (!this.args[i].isAnnotationPresent(Argument.class)){
                 continue;
             }
             s += this.args[i].getClass().isAnnotationPresent(LaymanName.class) ? this.args[i].getAnnotation(LaymanName.class).value() : this.args[i].getType().getSimpleName();

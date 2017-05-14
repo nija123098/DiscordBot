@@ -8,6 +8,7 @@ import com.github.kaaz.emily.perms.BotRole;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -80,6 +81,15 @@ public class AbstractConfig<V, T extends Configurable> {
     }
 
     /**
+     * A standard getter.
+     *
+     * @return The required bot role to edit this config.
+     */
+    public BotRole getBotRole(){
+        return this.botRole;
+    }
+
+    /**
      * Gets if the config should be saved across sessions
      *
      * @return if this value should be saved across sessions
@@ -94,8 +104,10 @@ public class AbstractConfig<V, T extends Configurable> {
         return TypeTranslator.toString(v, this.valueType, null);
         //return OTypeTranslator.translate(v, String.class);
     }
+    protected void validateInput(T configurable, V v) {}
     // TODO SQL stuff goes here, more or less
     public void setValue(T configurable, V value){
+        validateInput(configurable, value);
         EventDistributor.distribute(new ConfigValueChangeEvent(configurable, this, this.getValue(configurable), value));
         map.put(configurable, value);
     }
@@ -122,11 +134,21 @@ public class AbstractConfig<V, T extends Configurable> {
         this.setValue(configurable, function.apply(this.getValue(configurable)));
     }
 
+    public void changeSetting(T configurable, Consumer<V> consumer){
+        V val = this.getValue(configurable);
+        consumer.accept(val);
+        this.setValue(configurable, val);
+    }
+
     public String getExteriorValue(T configurable){
         return wrapTypeOut(getValue(configurable), configurable);
     }
 
     public void setExteriorValue(T configurable, String value){
         setValue(configurable, wrapTypeIn(value, configurable));
+    }
+
+    public Map<T, V> getNonDefaultSettings(){// SQL
+        return new HashMap<>();
     }
 }

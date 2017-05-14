@@ -2,7 +2,7 @@ package com.github.kaaz.emily.command;
 
 import com.github.kaaz.emily.command.anotations.Command;
 import com.github.kaaz.emily.command.anotations.Context;
-import com.github.kaaz.emily.command.anotations.Convert;
+import com.github.kaaz.emily.command.anotations.Argument;
 import com.github.kaaz.emily.command.anotations.LaymanName;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.Configurable;
@@ -61,6 +61,11 @@ public class AbstractCommand {
         this.name = name;
     }
 
+    public AbstractCommand(String name, BotRole botRole, ModuleLevel module, String absoluteAliases, String emoticonAliases, String help){
+        this(name, module, absoluteAliases, emoticonAliases, help);
+        this.botRole = botRole;
+    }
+
     void load(){
         AbstractCommand superCommand = getSuperCommand();
         this.name = superCommand == null ? name : superCommand.name + " " + name;
@@ -100,8 +105,8 @@ public class AbstractCommand {
         for (Parameter parameter : this.parameters) {
             if (parameter.getAnnotations().length == 0 || (parameter.isAnnotationPresent(Context.class) && !parameter.getAnnotation(Context.class).softFail())) {
                 this.contextRequirements.addAll(InvocationObjectGetter.getContextRequirements(parameter.getType(), parameter.isAnnotationPresent(Context.class) ? parameter.getAnnotation(Context.class).value() : ContextType.DEFAULT));
-            }else if (parameter.isAnnotationPresent(Convert.class) && !parameter.getAnnotation(Convert.class).optional()){
-                this.contextRequirements.addAll(InvocationObjectGetter.getConvertRequirements(parameter.getType(), parameter.getAnnotation(Convert.class).replacement()));
+            }else if (parameter.isAnnotationPresent(Argument.class) && !parameter.getAnnotation(Argument.class).optional()){
+                this.contextRequirements.addAll(InvocationObjectGetter.getConvertRequirements(parameter.getType(), parameter.getAnnotation(Argument.class).replacement()));
             }
         }// makes it into a more efficient set
         this.contextRequirements = this.contextRequirements.isEmpty() ? Collections.emptySet() : EnumSet.copyOf(this.contextRequirements);
@@ -336,6 +341,8 @@ public class AbstractCommand {
         return this.contextRequirements;
     }
 
+    protected void checkSetupRequirements(User user, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, String args){}
+
     /**
      *
      *
@@ -347,7 +354,10 @@ public class AbstractCommand {
      * @return if the command was successful
      */
     public Object invoke(User user, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, String args, Object...argOverrides){
+        ProcessingHandler.startProcess(channel);
         Object[] contexts = new Object[]{user, shard, channel, guild, message, reaction, args};
+        try{this.checkSetupRequirements((User) contexts[0], (Shard) contexts[1], (Channel) contexts[2], (Guild) contexts[3], (Message) contexts[4], (Reaction) contexts[5], (String) contexts[6]);
+        } catch (BotException e) {new MessageMaker((Message) contexts[4]);}
         boolean[] overridden = new boolean[argOverrides.length];
         for (int i = 0; i < overridden.length; i++) {
             overridden[i] = argOverrides[i] != null;
@@ -362,15 +372,15 @@ public class AbstractCommand {
         try {
             Object object = this.method.invoke(this, objects);
             Stream.of(objects).filter(MessageMaker.class::isInstance).forEach(o -> ((MessageMaker) o).send());
+            ProcessingHandler.endProcess(channel);
             return object;
         } catch (IllegalAccessException e) {
             Log.log("Malformed command: " + getName(), e);
         } catch (InvocationTargetException e) {
-            if (e.getCause() instanceof BotException){
-                new MessageMaker(user, message).asExceptionMessage(((BotException) e.getCause())).withReaction("grey_exclamation").send();
-            }
+            if (e.getCause() instanceof BotException) new MessageMaker(user, message).asExceptionMessage(((BotException) e.getCause())).withReaction("grey_exclamation").send();
             Log.log("Exception during method execution: " + getName(), e);
         }
+        ProcessingHandler.endProcess(channel);
         return false;
     }
 

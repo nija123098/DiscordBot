@@ -21,6 +21,7 @@ public class EmoticonHelper {
         });
     }
     public static String getChars(String name){
+        name = name.toLowerCase();
         if (EmojiManager.getForAlias(name) == null){
             return null;
         }

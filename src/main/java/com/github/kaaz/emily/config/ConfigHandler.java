@@ -9,6 +9,7 @@ import org.reflections.Reflections;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -173,6 +174,17 @@ public class ConfigHandler {
     }
 
     /**
+     * Uses a consumer to set the value of the config to a new value.
+     *
+     * @param clazz the class object representing the config
+     * @param configurable the configurable the config is to be set for
+     * @param consumer the consumer the config gives the old value to and gets a new value from
+     */
+    public static <V, T extends Configurable> void alterSetting(Class<? extends AbstractConfig<V, T>> clazz, T configurable, Consumer<V> consumer){
+        getConfig(clazz).changeSetting(configurable, consumer);
+    }
+
+    /**
      * Sets the config value for the given configurable and config
      *
      * @param configName the config name of the config to be set
@@ -250,6 +262,10 @@ public class ConfigHandler {
         } else {
             return null;
         }
+    }
+
+    public static <T extends Configurable, V> Map<T, V> getNonDefaultSettings(Class<? extends AbstractConfig<V, T>> config){// SQL
+        return getConfig(config).getNonDefaultSettings();
     }
 
     /**
@@ -342,7 +358,6 @@ public class ConfigHandler {
      * @return the new Configurable instance
      */
     public static <T extends Configurable> T moveID(T oldConfig, String newID){// SQL
-
         return ConfigHandler.getConfigurable((Class<T>) oldConfig.getClass(), newID);
     }
 }

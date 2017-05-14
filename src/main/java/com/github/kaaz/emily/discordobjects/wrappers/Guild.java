@@ -3,7 +3,6 @@ package com.github.kaaz.emily.discordobjects.wrappers;
 import com.github.kaaz.emily.config.ConfigLevel;
 import com.github.kaaz.emily.config.Configurable;
 import com.github.kaaz.emily.discordobjects.exception.ErrorWrapper;
-import com.github.kaaz.emily.discordobjects.helpers.GuildAudioManager;
 import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
 import sx.blah.discord.handle.obj.IGuild;
@@ -281,10 +280,6 @@ public class Guild implements Configurable {
 
     public boolean isDeleted() {
         return guild().isDeleted();
-    }
-
-    public GuildAudioManager getAudioManager() {
-        return GuildAudioManager.getManager(this);
     }
 
     public long getJoinTimeForUser(User user) {// TODO double check this

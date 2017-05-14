@@ -11,23 +11,23 @@ import java.util.StringJoiner;
  * Made by nija123098 on 3/8/2017.
  */
 public class MissingPermException extends BotException {
+    private EnumSet<DiscordPermission> missing;
+    public MissingPermException(DiscordPermission permission){
+        this.missing = EnumSet.of(permission);
+    }
     MissingPermException(MissingPermissionsException e){
-        super(e);
+        this.missing = DiscordPermission.getDiscordPermissions(e.getMissingPermissions());
     }
     public EnumSet<DiscordPermission> getMissingPermission() {
-        return DiscordPermission.getDiscordPermissions(((MissingPermissionsException) this.getCause()).getMissingPermissions());
+        return this.missing;
     }
-    public String getErrorMessage() {
-        EnumSet<DiscordPermission> missing = getMissingPermission();
-        if (missing == null)
-            return getLocalizedMessage();
-        return getMessage(missing);
-    }
-    private static String getMessage(EnumSet<DiscordPermission> permissions) {
+    @Override
+    public String getMessage() {
         StringJoiner joiner = new StringJoiner(", ");
-        permissions.stream()
+        this.missing.stream()
                 .map(Enum::name)
                 .forEach(joiner::add);
-        return "Missing permissions: " + joiner.toString() + "!";
+        String s = joiner.toString();
+        return "Missing permissions: " + s.substring(0, s.length() - 2) + "!";
     }
 }

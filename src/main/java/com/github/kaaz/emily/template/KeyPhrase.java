@@ -39,7 +39,7 @@ public enum KeyPhrase {
             }
         }
     }
-    public void checkAvalibleContext(Set<ContextRequirement> requirements){
+    public void checkAvailableContext(Set<ContextRequirement> requirements){
         if (!this.availableContext.containsAll(requirements)){// todo clarify
             throw new ContextException("KeyPhrase only provides context: " + availableContext + " required " + requirements);
         }

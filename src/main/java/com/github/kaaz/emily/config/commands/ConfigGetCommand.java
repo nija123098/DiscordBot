@@ -5,7 +5,7 @@ import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.InvocationObjectGetter;
 import com.github.kaaz.emily.command.anotations.Command;
 import com.github.kaaz.emily.command.anotations.Context;
-import com.github.kaaz.emily.command.anotations.Convert;
+import com.github.kaaz.emily.command.anotations.Argument;
 import com.github.kaaz.emily.config.*;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.wrappers.Channel;
@@ -22,7 +22,7 @@ public class ConfigGetCommand extends AbstractCommand {
         super(ConfigCommand.class, "get", null, null, null, "Gets the value of a config for a configurable");
     }
     @Command
-    public <T extends Configurable> void command(@Convert AbstractConfig<?, T> config, @Convert(optional = true) T target, MessageMaker maker, @Context(softFail = true) Track track, @Context(softFail = true) Playlist playlist, User user, Channel channel, @Context(softFail = true) GuildUser guildUser, @Context(softFail = true) Guild guild){
+    public <T extends Configurable> void command(@Argument AbstractConfig<?, T> config, @Argument(optional = true) T target, MessageMaker maker, @Context(softFail = true) Track track, @Context(softFail = true) Playlist playlist, User user, Channel channel, @Context(softFail = true) GuildUser guildUser, @Context(softFail = true) Guild guild){
         if (config.getConfigLevel() == ConfigLevel.GLOBAL){
             target = (T) GlobalConfigurable.GLOBAL;
         }

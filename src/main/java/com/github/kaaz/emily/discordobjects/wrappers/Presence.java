@@ -12,7 +12,7 @@ import java.util.Optional;
  */
 public class Presence {
     private static final Map<IPresence, Presence> MAP = new MemoryManagementService.ManagedMap<>(60000);
-    static Presence getPresence(IPresence presence){
+    public static Presence getPresence(IPresence presence){
         return MAP.computeIfAbsent(presence, p -> new Presence(presence));
     }
     private IPresence iPresence;

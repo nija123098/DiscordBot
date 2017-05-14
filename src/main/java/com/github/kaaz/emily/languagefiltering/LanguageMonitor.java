@@ -45,7 +45,7 @@ public class LanguageMonitor {
     @EventListener
     public void handle(DiscordMessageReceivedEvent event){
         if (event.getMessage().getGuild() == null) return;
-        Set<String> contents = new HashSet<>(), blocked = MAP.get().get(ConfigHandler.getSetting(LanguageFilteringLevelConfig.class, event.getMessage().getGuild()));
+        Set<String> contents = new HashSet<>(), blocked = MAP.get().get(ConfigHandler.getSetting(LanguageFilteringLevelConfig.class, event.getGuild()));
         String builder = "";
         StringIterator iterator = new StringIterator(event.getMessage().getContent());
         while (iterator.hasNext()){

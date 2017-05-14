@@ -3,7 +3,7 @@ package com.github.kaaz.emily.audio.commands;
 import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.ModuleLevel;
 import com.github.kaaz.emily.command.anotations.Command;
-import com.github.kaaz.emily.command.anotations.Convert;
+import com.github.kaaz.emily.command.anotations.Argument;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.Configurable;
 import com.github.kaaz.emily.audio.Playlist;
@@ -21,7 +21,7 @@ public class PlaylistCommand extends AbstractCommand {
         super("playlist", ModuleLevel.MUSIC, "pl", null, "Gets information on the current playlist");
     }
     @Command
-    public void play(@Convert(optional = true) Playlist playlist, Guild guild, MessageMaker maker){
+    public void play(@Argument(optional = true) Playlist playlist, Guild guild, MessageMaker maker){
         if (playlist != null){
             ConfigHandler.setSetting(GuildActivePlaylistConfig.class, guild, playlist);
         }

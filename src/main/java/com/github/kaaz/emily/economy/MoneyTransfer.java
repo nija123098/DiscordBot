@@ -28,9 +28,8 @@ public class MoneyTransfer {
         straightTransfer(-toFirstParty, secondParty, firstParty, messageToSecond);
     }
     public static void straightTransfer(float toFirstParty, Configurable firstParty, Configurable secondParty, String message){
-        ConfigHandler.changeSetting(MoneyHistoryConfig.class, firstParty, moneyTransfers -> {
+        ConfigHandler.alterSetting(MoneyHistoryConfig.class, firstParty, moneyTransfers -> {
             moneyTransfers.add(new MoneyTransfer(toFirstParty, secondParty, message));
-            return moneyTransfers;
         });
     }
     private float amount;

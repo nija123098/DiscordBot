@@ -17,6 +17,7 @@ public enum DiscordPermission {
     MANAGE_CHANNEL,
     MANAGE_SERVER,
     ADD_REACTIONS,
+    VIEW_AUDIT_LOG,
     READ_MESSAGES,
     SEND_MESSAGES,
     SEND_TTS_MESSAGES,

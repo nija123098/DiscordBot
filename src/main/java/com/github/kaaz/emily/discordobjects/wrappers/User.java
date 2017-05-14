@@ -76,6 +76,10 @@ public class User implements Configurable {
         return user().getName();
     }
 
+    public String getNameAndDiscrim(){
+        return getName() + "#" + getDiscriminator();
+    }
+
     public String getAvatar() {
         return user().getAvatar();
     }
@@ -114,6 +118,10 @@ public class User implements Configurable {
 
     public boolean isBot() {
         return user().isBot();
+    }
+
+    public VoiceChannel getConnectedVoiceChannel(Guild guild){
+        return VoiceChannel.getVoiceChannel(this.user().getVoiceStateForGuild(guild.guild()).getChannel());
     }
 
     public void moveToVoiceChannel(VoiceChannel newChannel) {

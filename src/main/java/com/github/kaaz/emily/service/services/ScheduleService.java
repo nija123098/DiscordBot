@@ -1,65 +1,76 @@
 package com.github.kaaz.emily.service.services;
 
 import com.github.kaaz.emily.service.AbstractService;
-import org.apache.commons.lang3.tuple.ImmutableTriple;
-import org.apache.commons.lang3.tuple.Triple;
+import org.eclipse.jetty.util.ConcurrentHashSet;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Made by nija123098 on 4/14/2017.
  */
 public class ScheduleService extends AbstractService {
-    private static final List<Triple<Long, Runnable, ScheduledTask>> TRIPLES = new ArrayList<>();
+    private static final Map<Long, Set<ScheduledTask>> SERVICE_MAP = new HashMap<>();
+    private final AtomicLong I = new AtomicLong(System.currentTimeMillis());
     public ScheduleService() {
-        super(0);
+        super(1);// should commit unique thread
     }
-    public static synchronized ScheduledTask schedule(long delay, Runnable runnable){
-        ScheduledTask task = new ScheduledTask();
-        TRIPLES.add(new ImmutableTriple<>(delay + System.currentTimeMillis(), runnable, task));
-        return task;
+    public static ScheduledTask schedule(long delay, Runnable runnable){
+        return new ScheduledTask(delay, runnable);
     }
-    public static synchronized ScheduledRepeatedTask scheduleRepeat(long delay, long delayBetween, Runnable runnable){
-        ScheduledRepeatedTask task = new ScheduledRepeatedTask(delayBetween);
-        TRIPLES.add(new ImmutableTriple<>(delay + System.currentTimeMillis(), runnable, task));
-        return task;
+    public static ScheduledRepeatedTask scheduleRepeat(long delay, long delayBetween, Runnable runnable){
+        return new ScheduledRepeatedTask(delay, runnable, delayBetween);
     }
     @Override
-    public synchronized long getDelayBetween(){
-        return TRIPLES.isEmpty() ? 100 : (TRIPLES.get(0).getLeft() - System.currentTimeMillis());
-    }
-    @Override
-    public synchronized void run() {
-        if (!TRIPLES.isEmpty() && TRIPLES.get(0).getLeft() <= System.currentTimeMillis() && !TRIPLES.get(0).getRight().isCanceled()){
-            TRIPLES.get(0).getMiddle().run();
-            TRIPLES.get(0).getRight().ran();
-            TRIPLES.remove(0);
-        }
+    public void run() {
+        if (I.get() > System.currentTimeMillis()) return;
+        Set<ScheduledTask> tasks = SERVICE_MAP.remove(I.getAndIncrement());
+        if (tasks != null) tasks.forEach(ScheduledTask::run);
     }
     public static class ScheduledTask {
         private boolean cancel;
-        private ScheduledTask(){}
-        public void cancel(boolean cancel){
-            this.cancel = cancel;
+        private long time;
+        Runnable runnable;
+        private ScheduledTask(long time, Runnable runnable) {
+            this.time = time + System.currentTimeMillis();
+            this.runnable = runnable;
+            if (time < 4){
+                this.run();
+                this.cancel = true;
+            }
+            SERVICE_MAP.computeIfAbsent(this.time, l -> new ConcurrentHashSet<>()).add(this);
         }
-        public void chancel(){
+        public void cancel(){
             this.cancel = true;
+            SERVICE_MAP.get(this.time).remove(this);
         }
         public boolean isCanceled(){
             return this.cancel;
         }
-        void ran(){
+        boolean run(){
+            if (!this.cancel){
+                runnable.run();
+                return true;
+            }
+            this.cancel();
+            return false;
         }
     }
     public static class ScheduledRepeatedTask extends ScheduledTask {
         private long delayBetween;
-        private ScheduledRepeatedTask(long delayBetween) {
+        private ScheduledRepeatedTask(long time, Runnable runnable, long delayBetween) {
+            super(time, runnable);
             this.delayBetween = delayBetween;
         }
         @Override
-        void ran(){
-            scheduleRepeat(this.delayBetween, this.delayBetween, TRIPLES.get(0).getMiddle());
+        boolean run(){
+            if (super.run()){
+                scheduleRepeat(this.delayBetween, this.delayBetween, this.runnable);
+                return true;
+            }
+            return false;
         }
     }
 }

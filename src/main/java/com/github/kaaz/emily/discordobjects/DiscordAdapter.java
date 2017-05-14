@@ -1,11 +1,13 @@
 package com.github.kaaz.emily.discordobjects;
 
 import com.github.kaaz.emily.discordobjects.helpers.ReactionBehavior;
+import com.github.kaaz.emily.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 import com.github.kaaz.emily.discordobjects.wrappers.*;
 import com.github.kaaz.emily.discordobjects.wrappers.event.BotEvent;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
 import com.github.kaaz.emily.discordobjects.wrappers.event.botevents.DiscordDataReload;
-import com.github.kaaz.emily.launcher.Launcher;
+import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordVoiceJoin;
+import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordVoiceLeave;
 import com.github.kaaz.emily.programconfig.BotConfig;
 import com.github.kaaz.emily.util.Log;
 import org.reflections.Reflections;
@@ -15,6 +17,7 @@ import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.guild.GuildUpdateEvent;
 import sx.blah.discord.handle.impl.events.guild.channel.ChannelUpdateEvent;
 import sx.blah.discord.handle.impl.events.guild.role.RoleUpdateEvent;
+import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelMoveEvent;
 import sx.blah.discord.handle.impl.events.shard.ShardReadyEvent;
 import sx.blah.discord.handle.impl.events.user.UserUpdateEvent;
 
@@ -47,7 +50,7 @@ public class DiscordAdapter {
                 System.exit(-1);
             }
         }
-        Launcher.registerShutdown(DiscordClient::logout);
+        GuildAudioManager.init();
         EventDistributor.register(ReactionBehavior.class);
         EventDistributor.distribute(DiscordDataReload.class, null);
     }
@@ -77,6 +80,11 @@ public class DiscordAdapter {
     @EventSubscriber
     public static void handle(ChannelUpdateEvent event){
         Channel.update(event.getNewChannel());
+    }
+    @EventSubscriber
+    public static void handle(UserVoiceChannelMoveEvent event){
+        EventDistributor.distribute(new DiscordVoiceLeave(event.getOldChannel(), event.getUser()));
+        EventDistributor.distribute(new DiscordVoiceJoin(event.getNewChannel(), event.getUser()));
     }
     @EventSubscriber
     public static void handle(Event event){

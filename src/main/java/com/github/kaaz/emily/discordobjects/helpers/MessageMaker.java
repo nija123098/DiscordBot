@@ -1,5 +1,6 @@
 package com.github.kaaz.emily.discordobjects.helpers;
 
+import com.github.kaaz.emily.command.ProcessingHandler;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.configs.guild.GuildLanguageConfig;
 import com.github.kaaz.emily.config.configs.user.UserLanguageConfig;
@@ -46,38 +47,49 @@ public class MessageMaker {
     private boolean okHand;
     private final Set<String> reactions = new HashSet<>(1);
     private Long deleteDelay;
-    private boolean maySend;
-    private boolean embedsOfFront;
-    private MessageMaker(){
+    private boolean maySend, mustEmbed;
+    private MessageMaker(User user, Channel channel, Message message){
         this.authorName = new TextPart(this);
         this.title = new TextPart(this);
         this.header = new TextPart(this);
         this.footer = new TextPart(this);
         this.note = new TextPart(this);
+        this.user = user;
+        this.channel = channel;
+        this.origin = message.message();
     }
     public MessageMaker(User user, Channel origin) {
-        this();
-        this.user = user;
-        this.channel = origin;
+        this(user, origin, null);
+    }
+    public MessageMaker(Channel origin){
+        this(null, origin, null);
     }
     public MessageMaker(User user, Message origin) {
-        this();
-        this.user = user;
-        this.origin = origin.message();
-        this.channel = origin.getChannel();
+        this(user, origin.getChannel(), origin);
     }
     public MessageMaker(Message message){
-        this(message.getAuthor(), message);
+        this(message.getAuthor(), message.getChannel(), message);
+    }
+    public MessageMaker(User user) {
+        this(user, user.getOrCreatePMChannel(), null);
     }
     // setup methods
     public MessageMaker asNormalMessage(){
         this.embed = null;
         return this;
     }
+    public MessageMaker mustEmbed(){
+        return this.mustEmbed(true);
+    }
+    public MessageMaker mustEmbed(boolean mustEmbed){
+        this.mustEmbed = mustEmbed;
+        return this;
+    }
     public boolean couldNormalize(){
         return this.fieldList.size() == 0 && this.textList.size() == 0 && !this.authorName.appended && !this.title.appended && !this.footer.appended && !this.note.appended;
     }
     public MessageMaker withChannel(Channel channel){
+        ProcessingHandler.swapProcess(this.channel, channel);
         this.channel = channel;
         return this;
     }
@@ -90,8 +102,7 @@ public class MessageMaker {
         return this;
     }
     public MessageMaker withDM(){
-        this.channel = this.user.getOrCreatePMChannel();
-        return this;
+        return this.withChannel(this.user.getOrCreatePMChannel());
     }
     public MessageMaker withOK(boolean ok){
         this.okHand = ok;
@@ -210,17 +221,17 @@ public class MessageMaker {
         this.embed.withTimestamp(millis);
         return this;
     }
+    // getting
+    public Message sentMessage(){
+        return Message.getMessage(this.message);
+    }
     // building
     public void send(){
         send(0);
     }
     private void send(int page){
-        if (!this.maySend){
-            return;
-        }
-        if (this.origin != null && this.okHand){
-            ErrorWrapper.wrap(() -> this.origin.addReaction(EmoticonHelper.getChars("ok_hand")));
-        }
+        if (!this.maySend) return;
+        if (this.origin != null && this.okHand) ErrorWrapper.wrap(() -> this.origin.addReaction(EmoticonHelper.getChars("ok_hand")));
         compile();
         if (this.embed != null){
             if (page >= fieldIndices.length){
@@ -239,22 +250,14 @@ public class MessageMaker {
             if (this.deleteDelay != null){
                 ScheduleService.schedule(this.deleteDelay, () -> ErrorWrapper.wrap(this.message::delete));
             }
-        } else if (this.embed != null){
-            ErrorWrapper.wrap(() -> this.message.edit(this.embed.build()));
-        }
+        } else if (this.embed != null) ErrorWrapper.wrap(() -> this.message.edit(this.embed.build()));
     }
     private void compile(){
         if (lang != null) return;
         // multi use
-        if (this.user != null){
-            lang = ConfigHandler.getSetting(UserLanguageConfig.class, this.user);
-        }
-        if (!this.channel.isPrivate() && lang == null){
-            lang = ConfigHandler.getSetting(GuildLanguageConfig.class, this.channel.getGuild());
-        }
-        if (lang == null){
-            lang = "en";
-        }
+        if (this.user != null) this.lang = ConfigHandler.getSetting(UserLanguageConfig.class, this.user);
+        if (!this.channel.isPrivate() && this.lang == null) this.lang = ConfigHandler.getSetting(GuildLanguageConfig.class, this.channel.getGuild());
+        if (this.lang == null) this.lang = "en";
         // message
         if (!this.channel.getModifiedPermissions(DiscordClient.getOurUser()).contains(DiscordPermission.SEND_MESSAGES)){
             if (this.channel.isPrivate()){
@@ -265,13 +268,11 @@ public class MessageMaker {
                 return;
             }
         }
-        if (this.couldNormalize()) this.asNormalMessage();
-        if (this.embed == null){// do not combine
-            this.builder.withContent(this.header.langString.translate(this.lang));
-        } else {// embed
+        if (this.couldNormalize()) this.asNormalMessage(); // do not combine
+        if (this.embed == null) this.builder.withContent(this.header.langString.translate(this.lang));
+        else {// embed
             this.embed.withAuthorName(authorName.langString.translate(lang));
             this.embed.withTitle(title.langString.translate(lang));
-            this.embed.withFooterText(note.langString.translate(lang));
             int starterChars = this.embed.getTotalVisibleCharacters() + header.langString.translate(lang).length() + footer.langString.translate(lang).length();
             if (CHAR_LIMIT < starterChars){
                 throw new RuntimeException("Header and footer are too big.");
@@ -302,7 +303,7 @@ public class MessageMaker {
             }
             textList = null;
             if (fieldList.size() != 0){
-                this.embedsOfFront = this.embed.getTotalVisibleCharacters() + (this.textVals.length > 0 ? this.textVals[0].length() : 0) < EMBED_LIMIT;
+                boolean embedsOfFront = this.embed.getTotalVisibleCharacters() + (this.textVals.length > 0 ? this.textVals[0].length() : 0) < EMBED_LIMIT;
                 int index = -1, size = 0, page = 0;
                 List<List<Triple<String, String, Boolean>>> vals = new ArrayList<>(this.fieldList.size());
                 vals.add(new ArrayList<>());
@@ -320,12 +321,12 @@ public class MessageMaker {
                         vals.get(page).add(new ImmutableTriple<>(fieldList.get(index).title.langString.translate(lang), fieldList.get(index).value.langString.translate(lang), fieldList.get(index).inline));
                     }
                 }
-                fieldIndices = new Triple[textVals.length + vals.size() - (this.embedsOfFront ? 1 : 0)][];
-                for (int i = 0; i < textVals.length - (this.embedsOfFront ? 1 : 0); i++) {
+                fieldIndices = new Triple[textVals.length + vals.size() - (embedsOfFront ? 1 : 0)][];
+                for (int i = 0; i < textVals.length - (embedsOfFront ? 1 : 0); i++) {
                     fieldIndices[i] = new Triple[0];
                 }
                 int k = 0;
-                for (int i = textVals.length - (this.embedsOfFront ? 1 : 0); i < fieldIndices.length; ++i, ++k) {
+                for (int i = textVals.length - (embedsOfFront ? 1 : 0); i < fieldIndices.length; ++i, ++k) {
                     fieldIndices[i] = new Triple[vals.get(k).size()];
                     for (int j = 0; j < fieldIndices[i].length; j++) {
                         fieldIndices[i][j] = vals.get(k).get(j);
@@ -338,19 +339,23 @@ public class MessageMaker {
             fieldList = null;
             if (this.embed != null && this.fieldIndices.length > 1){
                 this.withReactionBehavior("arrow_left", (add, reaction) -> {
-                    if (currentPage.get() == 0){
-                        return;
-                    }
-                    this.send(currentPage.decrementAndGet());
+                    if (currentPage.get() == 0) return;
+                    this.embed.withFooterText(generateNote(currentPage.decrementAndGet()));
+                    this.send(currentPage.get());
                 });
                 this.withReactionBehavior("arrow_right", (add, reaction) -> {
-                    if (currentPage.get() == fieldIndices.length - 1){
-                        return;
-                    }
-                    this.send(currentPage.incrementAndGet());
+                    if (currentPage.get() == fieldIndices.length - 1) return;
+                    this.embed.withFooterText(generateNote(currentPage.incrementAndGet()));
+                    this.send(currentPage.get());
                 });
+                this.embed.withFooterText(generateNote(0));
             }
         }
+    }
+    private String generateNote(int page){
+        String note = this.note.langString.translate(lang);
+        if (note.length() != 0) note += " - ";
+        return "Page " + ++page + " of " + this.fieldIndices.length + note;
     }
     public class FieldPart {
         private MessageMaker maker;
@@ -419,6 +424,16 @@ public class MessageMaker {
         }
         public MessageMaker getMaker(){
             return this.maker;
+        }
+
+        public TextPart clear() {
+            this.langString = new LangString();
+            this.appended = false;
+            return this;
+        }
+
+        public String translate(String langCode) {
+            return this.langString.translate(langCode);
         }
     }
     public class FieldTextPart extends TextPart {

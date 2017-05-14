@@ -4,7 +4,7 @@ import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.CommandHandler;
 import com.github.kaaz.emily.command.ContextPack;
 import com.github.kaaz.emily.command.ContextRequirement;
-import com.github.kaaz.emily.command.anotations.Convert;
+import com.github.kaaz.emily.command.anotations.Argument;
 import com.github.kaaz.emily.discordobjects.wrappers.*;
 import com.github.kaaz.emily.exeption.ArgumentException;
 import com.github.kaaz.emily.exeption.ContextException;
@@ -74,7 +74,7 @@ public class Template {
         private AbstractCommand command;
         private Arg[] args;
         CalculatedArg(AbstractCommand command, String s, KeyPhrase keyPhrase){
-            keyPhrase.checkAvalibleContext(command.getContextRequirements());
+            keyPhrase.checkAvailableContext(command.getContextRequirements());
             this.command = command;
             if (!this.command.isTemplateCommand()){
                 throw new ArgumentException("Command is not a valid template command: " + this.command.getName());
@@ -82,7 +82,7 @@ public class Template {
             this.args = getCalculatedArgs(s, keyPhrase);
             int argTotal = 0;
             for (Parameter parameter : command.getParameters()){
-                if (parameter.isAnnotationPresent(Convert.class)){
+                if (parameter.isAnnotationPresent(Argument.class)){
                     ++argTotal;
                 }
             }
@@ -91,10 +91,10 @@ public class Template {
             }
             int arg = 0;
             for (int i = 0; i < this.args.length; i++) {
-                if (command.getParameters()[i].isAnnotationPresent(Convert.class)){
+                if (command.getParameters()[i].isAnnotationPresent(Argument.class)){
                     ++arg;
                 }else continue;
-                if (!command.getParameters()[i].getType().isAssignableFrom(this.args[i].getReturnType()) || command.getParameters()[i].getAnnotation(Convert.class).optional()){
+                if (!command.getParameters()[i].getType().isAssignableFrom(this.args[i].getReturnType()) || command.getParameters()[i].getAnnotation(Argument.class).optional()){
                     throw new ArgumentException("Incorrect argument type for arg: " + arg + (this.args[i] instanceof CombinedArg ? "  Make sure you have argument splitters" : ""));
                 }
             }

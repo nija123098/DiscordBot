@@ -1,4 +1,4 @@
-package com.github.kaaz.emily.command.commands;
+package com.github.kaaz.emily.information;
 
 import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.ModuleLevel;
