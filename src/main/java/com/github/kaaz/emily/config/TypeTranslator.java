@@ -3,6 +3,8 @@ package com.github.kaaz.emily.config;
 import com.github.kaaz.emily.economy.MoneyTransfer;
 import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.util.SerialHelper;
+import javafx.util.Pair;
+import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 import org.eclipse.jetty.util.ConcurrentHashSet;
 
@@ -46,7 +48,25 @@ public class TypeTranslator {
                 t = type instanceof ParameterizedType ? (Class<?>) ((ParameterizedType) type).getActualTypeArguments()[1] : String.class;
                 objects[i] = toType(strings[i], t, null);
             }
-            return null;
+            return new ImmutableTriple(objects[0], objects[1], objects[2]);
+        });
+        add(Pair.class, (in, context) -> {
+            String builder = "";
+            Type type = context.getClass().getGenericSuperclass();
+            Class<?> t = type instanceof ParameterizedType ? (Class<?>) ((ParameterizedType) type).getActualTypeArguments()[0] : String.class;
+            builder += toString(in.getKey(), t, null) + ";";
+            t = type instanceof ParameterizedType ? (Class<?>) ((ParameterizedType) type).getActualTypeArguments()[1] : String.class;
+            return builder + toString(in.getValue(), t, null);
+        }, (in, context) -> {
+            Object[] objects = new Object[1];
+            String[] strings = in.split(";");
+            Type type = context.getClass().getGenericSuperclass();
+            Class<?> t;
+            for (int i = 0; i < objects.length; i++) {
+                t = type instanceof ParameterizedType ? (Class<?>) ((ParameterizedType) type).getActualTypeArguments()[1] : String.class;
+                objects[i] = toType(strings[i], t, null);
+            }
+            return new Pair(objects[0], objects[1]);
         });
         add(Set.class, (in, context) -> in.toString(), (in, context) -> {
             Type type = context.getClass().getGenericSuperclass();

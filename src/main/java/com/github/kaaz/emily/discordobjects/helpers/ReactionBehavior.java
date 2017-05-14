@@ -5,12 +5,11 @@ import com.github.kaaz.emily.discordobjects.wrappers.Message;
 import com.github.kaaz.emily.discordobjects.wrappers.Reaction;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventListener;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordReactionEvent;
-import com.github.kaaz.emily.service.services.MemoryManagementService;
+import com.github.kaaz.emily.service.services.ScheduleService;
 import com.github.kaaz.emily.util.EmoticonHelper;
-import org.apache.commons.lang3.tuple.MutableTriple;
-import org.apache.commons.lang3.tuple.Triple;
 
-import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Made by nija123098 on 3/26/2017.
@@ -18,21 +17,23 @@ import java.util.List;
 @FunctionalInterface
 public interface ReactionBehavior {
     void behave(boolean add, Reaction reaction);
-    long PERSISTENCE = 120000;
-    List<Triple<Message, String, ReactionBehavior>> BEHAVIORS = new MemoryManagementService.ManagedList<>(PERSISTENCE);
+    long PERSISTENCE = 120000;// map entries needn't be cleared, not many reactions are used so it is not worth synchronizing
+    Map<String, Map<Message, ReactionBehavior>> BEHAVIORS = new ConcurrentHashMap<>();
     static void registerListener(Message message, String emoticonName, ReactionBehavior behavior){
-        BEHAVIORS.add(new MutableTriple<>(message, emoticonName, behavior));
+        BEHAVIORS.computeIfAbsent(emoticonName, n -> new ConcurrentHashMap<>()).put(message, behavior);
         message.addReaction(EmoticonHelper.getChars(emoticonName));
+        ScheduleService.schedule(PERSISTENCE + System.currentTimeMillis(), () -> unregisteredListener(message, emoticonName));
+    }
+    static void unregisteredListener(Message message, String emoticonName){
+        BEHAVIORS.computeIfAbsent(emoticonName, s -> new ConcurrentHashMap<>()).remove(message);
+        message.removeReactionByName(emoticonName);
     }
     @EventListener
     static void handle(DiscordReactionEvent reaction){
-        if (DiscordClient.getOurUser().equals(reaction.getUser())){
-            return;
-        }
-        for (Triple<Message, String, ReactionBehavior> triple : BEHAVIORS){
-            if (reaction.getMessage().equals(triple.getLeft()) && triple.getMiddle().equals(reaction.getReaction().getName())){
-                triple.getRight().behave(reaction.addingReaction(), reaction.getReaction());
-            }
-        }
+        if (DiscordClient.getOurUser().equals(reaction.getUser())) return;
+        Map<Message, ReactionBehavior> map = BEHAVIORS.get(reaction.getReaction().getName());
+        if (map == null) return;
+        ReactionBehavior behavior = map.get(reaction.getMessage());
+        if (behavior != null) behavior.behave(reaction.addingReaction(), reaction.getReaction());
     }
 }

@@ -12,7 +12,6 @@ import com.github.kaaz.emily.util.EmoticonHelper;
 import com.github.kaaz.emily.util.ImageColorHelper;
 import com.github.kaaz.emily.util.LangString;
 import com.github.kaaz.emily.util.Rand;
-import javafx.util.Pair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 import sx.blah.discord.handle.obj.IMessage;
@@ -42,12 +41,13 @@ public class MessageMaker {
     private User user;
     private Channel channel;
     private AtomicInteger currentPage = new AtomicInteger();
-    private List<Pair<String, ReactionBehavior>> reactionBehaviors = new ArrayList<>();
+    private Map<String, ReactionBehavior> reactionBehaviors = new HashMap<>();
     private IMessage message, origin;
+    private Message ourMessage;
     private boolean okHand;
     private final Set<String> reactions = new HashSet<>(1);
     private Long deleteDelay;
-    private boolean maySend, mustEmbed;
+    private boolean maySend, mustEmbed, forceCompile;
     private MessageMaker(User user, Channel channel, Message message){
         this.authorName = new TextPart(this);
         this.title = new TextPart(this);
@@ -74,6 +74,10 @@ public class MessageMaker {
         this(user, user.getOrCreatePMChannel(), null);
     }
     // setup methods
+    public MessageMaker forceCompile(){
+        this.forceCompile = true;
+        return this;
+    }
     public MessageMaker asNormalMessage(){
         this.embed = null;
         return this;
@@ -94,7 +98,16 @@ public class MessageMaker {
         return this;
     }
     public MessageMaker withReactionBehavior(String reactionName, ReactionBehavior behavior){
-        this.reactionBehaviors.add(new Pair<>(reactionName, behavior));
+        ReactionBehavior.unregisteredListener(this.ourMessage, reactionName);
+        this.reactionBehaviors.put(reactionName, behavior);
+        return this;
+    }
+    public MessageMaker withoutReactionBehavior(String reactionName){
+        if (this.reactionBehaviors.remove(reactionName) != null) ReactionBehavior.unregisteredListener(this.ourMessage, reactionName);
+        return this;
+    }
+    public MessageMaker clearReactionBehaviors(){
+        this.getReactionBehaved().forEach(this::withoutReactionBehavior);
         return this;
     }
     public MessageMaker withReaction(String name){
@@ -153,6 +166,10 @@ public class MessageMaker {
     }
     public FieldPart getNewFieldPart(){
         return new FieldPart(this);// adds self in the constructor
+    }
+    public MessageMaker clearFieldParts(){
+        this.fieldList.clear();
+        return this;
     }
     public TextPart getNewListPart(){
         TextPart part = new TextPart(this);
@@ -225,6 +242,9 @@ public class MessageMaker {
     public Message sentMessage(){
         return Message.getMessage(this.message);
     }
+    public Set<String> getReactionBehaved(){
+        return this.reactionBehaviors.keySet();
+    }
     // building
     public void send(){
         send(0);
@@ -245,15 +265,16 @@ public class MessageMaker {
         }
         if (this.message == null){
             this.message = ErrorWrapper.wrap((ErrorWrapper.Request<IMessage>) () -> this.builder.withChannel(channel.channel()).send());
-            this.reactionBehaviors.forEach(pair -> ReactionBehavior.registerListener(Message.getMessage(this.message), pair.getKey(), pair.getValue()));
+            this.ourMessage = Message.getMessage(this.message);
             this.reactions.forEach(s -> this.message.addReaction(s));
             if (this.deleteDelay != null){
                 ScheduleService.schedule(this.deleteDelay, () -> ErrorWrapper.wrap(this.message::delete));
             }
         } else if (this.embed != null) ErrorWrapper.wrap(() -> this.message.edit(this.embed.build()));
+        this.reactionBehaviors.forEach((s, behavior) -> ReactionBehavior.registerListener(this.ourMessage, s, behavior));
     }
     private void compile(){
-        if (lang != null) return;
+        if (lang != null && !this.forceCompile) return;
         // multi use
         if (this.user != null) this.lang = ConfigHandler.getSetting(UserLanguageConfig.class, this.user);
         if (!this.channel.isPrivate() && this.lang == null) this.lang = ConfigHandler.getSetting(GuildLanguageConfig.class, this.channel.getGuild());
@@ -301,7 +322,6 @@ public class MessageMaker {
             } else {
                 textVals = new String[]{""};
             }
-            textList = null;
             if (fieldList.size() != 0){
                 boolean embedsOfFront = this.embed.getTotalVisibleCharacters() + (this.textVals.length > 0 ? this.textVals[0].length() : 0) < EMBED_LIMIT;
                 int index = -1, size = 0, page = 0;
@@ -336,7 +356,6 @@ public class MessageMaker {
                 fieldIndices = new Triple[textVals.length][];
                 Arrays.fill(fieldIndices, new Triple[0]);
             }
-            fieldList = null;
             if (this.embed != null && this.fieldIndices.length > 1){
                 this.withReactionBehavior("arrow_left", (add, reaction) -> {
                     if (currentPage.get() == 0) return;
@@ -359,7 +378,7 @@ public class MessageMaker {
     }
     public class FieldPart {
         private MessageMaker maker;
-        private FieldTextPart title , value;
+        private FieldTextPart title, value;
         private boolean inline;
 
         private FieldPart(MessageMaker maker) {

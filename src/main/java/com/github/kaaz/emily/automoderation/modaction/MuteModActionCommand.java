@@ -46,8 +46,8 @@ public class MuteModActionCommand extends AbstractCommand {
         });
     }
     public static void unmute(Guild guild, User user){
-        ConfigHandler.alterSetting(MuteActionConfig.class, GuildUser.getGuildUser(guild, user), map -> {
-            map.getValue().forEach(user::addRole);
+        ConfigHandler.alterSetting(MuteActionConfig.class, GuildUser.getGuildUser(guild, user), pair -> {
+            pair.getValue().forEach(user::addRole);
             user.removeRole(ConfigHandler.getSetting(MuteRoleConfig.class, guild));
         });
     }

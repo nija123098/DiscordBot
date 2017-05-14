@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
  */
 public class MessageDeleteService extends AbstractService {
     private static final List<Message> TO_DELETE = new CopyOnWriteArrayList<>();
-    static void delete(List<Message> messages){
+    public static void delete(List<Message> messages){
         messages = messages.stream().filter(message -> !message.isPinned()).collect(Collectors.toList());
         if (messages.size() == 0) return;
         messages.get(0).getChannel().bulkDelete(messages);
