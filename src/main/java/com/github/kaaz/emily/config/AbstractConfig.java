@@ -35,6 +35,8 @@ public class AbstractConfig<V, T extends Configurable> {
         EventDistributor.register(this);
     }
 
+    protected void onLoad(){}
+
     /**
      * A standard getter
      *

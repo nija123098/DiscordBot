@@ -13,6 +13,9 @@ import com.github.kaaz.emily.service.services.ScheduleService;
 public class TempBanActionConfig extends AbstractConfig<Long, GuildUser> {
     public TempBanActionConfig() {
         super("temp_bans", BotRole.GUILD_TRUSTEE, null, "The temp bans and time they are unbanned");
+    }
+    @Override
+    protected void onLoad(){
         ConfigHandler.getNonDefaultSettings(TempBanActionConfig.class).forEach((guildUser, val) -> ScheduleService.schedule(val, () -> {
             if (!(val > System.currentTimeMillis())) return;
             TempBanModActionCommand.unban(guildUser.getGuild(), guildUser.getUser());

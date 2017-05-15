@@ -5,7 +5,6 @@ import com.github.kaaz.emily.command.InvocationObjectGetter;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.discordobjects.DiscordAdapter;
 import com.github.kaaz.emily.discordobjects.wrappers.DiscordClient;
-import com.github.kaaz.emily.programconfig.BotConfig;
 import com.github.kaaz.emily.service.ServiceHandler;
 import com.github.kaaz.emily.service.services.ScheduleService;
 import com.github.kaaz.emily.template.TemplateHandler;

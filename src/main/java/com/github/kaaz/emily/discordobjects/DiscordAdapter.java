@@ -8,7 +8,8 @@ import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
 import com.github.kaaz.emily.discordobjects.wrappers.event.botevents.DiscordDataReload;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordVoiceJoin;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordVoiceLeave;
-import com.github.kaaz.emily.programconfig.BotConfig;
+import com.github.kaaz.emily.launcher.BotConfig;
+import com.github.kaaz.emily.perms.ContributorMonitor;
 import com.github.kaaz.emily.util.Log;
 import org.reflections.Reflections;
 import sx.blah.discord.api.ClientBuilder;
@@ -51,6 +52,7 @@ public class DiscordAdapter {
             }
         }
         GuildAudioManager.init();
+        ContributorMonitor.init();
         EventDistributor.register(ReactionBehavior.class);
         EventDistributor.distribute(DiscordDataReload.class, null);
     }

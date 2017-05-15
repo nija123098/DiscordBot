@@ -1,4 +1,4 @@
-package com.github.kaaz.emily.programconfig;
+package com.github.kaaz.emily.launcher;
 
 import com.wezinkhof.configuration.ConfigurationOption;
 
@@ -18,4 +18,6 @@ public class BotConfig {
     public static String AUDIO_PATH = "musicfiles";
     @ConfigurationOption
     public static String TEMP_PATH = "tempfiles";
+    @ConfigurationOption
+    public static String CONTRIBUTOR_SIGN_ROLE = "274957607855325184";
 }

@@ -8,6 +8,8 @@ import com.github.kaaz.emily.discordobjects.wrappers.DiscordClient;
 import com.github.kaaz.emily.discordobjects.wrappers.DiscordPermission;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
+import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
+import com.github.kaaz.emily.discordobjects.wrappers.event.botevents.BotRoleChangeEvent;
 import com.github.kaaz.emily.exeption.ArgumentException;
 import com.github.kaaz.emily.exeption.PermissionsException;
 import com.github.kaaz.emily.perms.configs.standard.GlobalBotRoleConfig;
@@ -90,8 +92,10 @@ public enum BotRole {
         Class<? extends AbstractConfig<Set<BotRole>, ? extends Configurable>> config = role.isGlobalFlag ? GlobalBotRoleConfig.class : GuildBotRoleConfig.class;
         Configurable configurable = role.isGlobalFlag ? target : GuildUser.getGuildUser(guild, target);
         Set<BotRole> roles = ConfigHandler.getSetting((Class<? extends AbstractConfig<Set<BotRole>,Configurable>>) config, configurable);
+        if (roles.contains(role)) return;
         if (grant) roles.add(role);
         else roles.remove(role);
         ConfigHandler.setSetting((Class<? extends AbstractConfig<Set<BotRole>,Configurable>>) config, configurable, roles);
+        EventDistributor.distribute(new BotRoleChangeEvent(grant, role, target, guild));
     }
 }

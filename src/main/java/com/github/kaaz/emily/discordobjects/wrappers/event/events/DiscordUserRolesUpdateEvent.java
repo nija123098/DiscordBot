@@ -1,6 +1,7 @@
 package com.github.kaaz.emily.discordobjects.wrappers.event.events;
 
 import com.github.kaaz.emily.discordobjects.wrappers.Role;
+import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.github.kaaz.emily.discordobjects.wrappers.event.BotEvent;
 import sx.blah.discord.handle.impl.events.UserRoleUpdateEvent;
 
@@ -14,6 +15,10 @@ public class DiscordUserRolesUpdateEvent implements BotEvent {
 
     public DiscordUserRolesUpdateEvent(UserRoleUpdateEvent event) {
         this.event = event;
+    }
+
+    public User getUser(){
+        return User.getUser(this.event.getUser());
     }
 
     public List<Role> oldRoles(){

@@ -1,12 +1,10 @@
 package com.github.kaaz.emily.util;
 
 import com.github.kaaz.emily.discordobjects.wrappers.User;
-import com.github.kaaz.emily.programconfig.BotConfig;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;

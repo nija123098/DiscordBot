@@ -360,4 +360,8 @@ public class ConfigHandler {
     public static <T extends Configurable> T moveID(T oldConfig, String newID){// SQL
         return ConfigHandler.getConfigurable((Class<T>) oldConfig.getClass(), newID);
     }
+
+    static {
+        CLASS_MAP.values().forEach(AbstractConfig::onLoad);
+    }
 }

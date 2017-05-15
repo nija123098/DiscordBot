@@ -1,7 +1,7 @@
 package com.github.kaaz.emily.util;
 
 import com.darkprograms.speech.synthesiser.Synthesiser;
-import com.github.kaaz.emily.programconfig.BotConfig;
+import com.github.kaaz.emily.launcher.BotConfig;
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;
