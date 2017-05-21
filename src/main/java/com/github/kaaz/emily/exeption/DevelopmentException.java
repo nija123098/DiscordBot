@@ -9,17 +9,21 @@ package com.github.kaaz.emily.exeption;
  */
 public class DevelopmentException extends BotException {
     public DevelopmentException() {
+        this.printStackTrace();
     }
 
     public DevelopmentException(String message) {
         super(message);
+        this.printStackTrace();
     }
 
     public DevelopmentException(String message, Throwable cause) {
         super(message, cause);
+        this.printStackTrace();
     }
 
     public DevelopmentException(Throwable cause) {
         super(cause);
+        this.printStackTrace();
     }
 }

@@ -371,14 +371,14 @@ public class AbstractCommand {
         }
         try {
             Object object = this.method.invoke(this, objects);
-            Stream.of(objects).filter(MessageMaker.class::isInstance).forEach(o -> ((MessageMaker) o).send());
+            Stream.of(objects).filter(MessageMaker.class::isInstance).forEach(o -> ((MessageMaker) o).send(true));
             ProcessingHandler.endProcess(channel);
             return object;
         } catch (IllegalAccessException e) {
             Log.log("Malformed command: " + getName(), e);
         } catch (InvocationTargetException e) {
             if (e.getCause() instanceof BotException) new MessageMaker(user, message).asExceptionMessage(((BotException) e.getCause())).withReaction("grey_exclamation").send();
-            Log.log("Exception during method execution: " + getName(), e);
+            if (e.getCause() instanceof DevelopmentException) Log.log("Exception during method execution: " + getName(), e);
         }
         ProcessingHandler.endProcess(channel);
         return false;

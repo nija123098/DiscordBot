@@ -2,7 +2,6 @@ package com.github.kaaz.emily.template;
 
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.GlobalConfigurable;
-import com.github.kaaz.emily.config.configs.global.GlobalTemplateConfig;
 import com.github.kaaz.emily.config.configs.guild.GuildTemplatesConfig;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.util.Log;

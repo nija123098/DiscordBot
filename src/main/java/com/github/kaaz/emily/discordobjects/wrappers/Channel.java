@@ -4,6 +4,7 @@ import com.github.kaaz.emily.config.ConfigLevel;
 import com.github.kaaz.emily.config.Configurable;
 import com.github.kaaz.emily.config.GlobalConfigurable;
 import com.github.kaaz.emily.discordobjects.exception.ErrorWrapper;
+import com.github.kaaz.emily.exeption.ConfigurableConvertException;
 import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
 import com.github.kaaz.emily.util.Time;
@@ -43,7 +44,11 @@ public class Channel implements Configurable {
             c.reference.set(channel);
         }
     }
-    final AtomicReference<IChannel> reference;
+    final transient AtomicReference<IChannel> reference;
+    private String ID;
+    protected Channel() {
+        this.reference = new AtomicReference<>(DiscordClient.client().getChannelByID(ID));
+    }
     Channel(IChannel channel) {
         this.reference = new AtomicReference<>(channel);
     }
@@ -62,6 +67,16 @@ public class Channel implements Configurable {
     @Override
     public Configurable getGoverningObject(){
         return isPrivate() ? GlobalConfigurable.GLOBAL : this.getGuild();
+    }
+
+    @Override
+    public <T extends Configurable> Configurable convert(Class<T> t) {
+        if (t.equals(Channel.class)) return this;
+        if (!this.isPrivate() && this.getGuild().getGeneralChannel().equals(this)){
+            if (t.equals(Guild.class)) return this.getGuild();
+            if (t.equals(Role.class)) return this.getGuild().getEveryoneRole();
+        }
+        throw new ConfigurableConvertException(this.getClass(), t);
     }
 
     @Override

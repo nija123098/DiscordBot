@@ -39,12 +39,17 @@ public class User implements Configurable {
             u.reference.set(user);
         }
     }
-    private final AtomicReference<IUser> reference;
+    private transient final AtomicReference<IUser> reference;
+    private String ID;
     IUser user(){
         return reference.get();
     }
+    protected User() {
+        this.reference = new AtomicReference<>(DiscordClient.client().getUserByID(ID));
+    }
     User(IUser user) {
         this.reference = new AtomicReference<>(user);
+        this.ID = this.reference.get().getStringID();
     }
     @Override
     public String getID() {

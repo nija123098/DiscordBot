@@ -2,6 +2,7 @@ package com.github.kaaz.emily.config;
 
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
+import com.github.kaaz.emily.exeption.ConfigurableConvertException;
 import com.github.kaaz.emily.perms.BotRole;
 
 import java.util.HashMap;
@@ -37,6 +38,7 @@ public class GuildUser implements Configurable {
         return getGuildUser(guild.getID() + "-id-" + user.getID());
     }
     private String id;
+    protected GuildUser() {}
     private GuildUser(String id) {
         this.id = id;
     }
@@ -61,6 +63,12 @@ public class GuildUser implements Configurable {
     @Override
     public Configurable getGoverningObject(){
         return getGuild();
+    }
+    @Override
+    public <T extends Configurable> Configurable convert(Class<T> t) {
+        if (t.equals(Guild.class)) return this.getGuild();
+        if (t.equals(User.class)) return this.getUser();
+        throw new ConfigurableConvertException(this.getClass(), t);
     }
     @Override
     public boolean equals(Object o){

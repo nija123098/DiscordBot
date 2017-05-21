@@ -2,6 +2,7 @@ package com.github.kaaz.emily.config;
 
 import com.github.kaaz.emily.audio.Playlist;
 import com.github.kaaz.emily.discordobjects.wrappers.*;
+import com.github.kaaz.emily.exeption.ArgumentException;
 import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.launcher.Reference;
 import com.github.kaaz.emily.util.Log;
@@ -101,6 +102,15 @@ public class ConfigHandler {
      * @return the object representing the config that is being searched for
      */
     public static AbstractConfig<?, ? extends Configurable> getConfig(ConfigLevel level, String configName){
+        return STRING_MAP.get(configName);
+    }
+
+    /**
+     * Gets the config object representing a certain config
+     * @param configName the config name for the config being gotten
+     * @return the object representing the config that is being searched for
+     */
+    public static AbstractConfig<?, ? extends Configurable> getConfig(String configName){
         return STRING_MAP.get(configName);
     }
 
@@ -300,6 +310,20 @@ public class ConfigHandler {
      */
     public static <T extends Configurable> T getConfigurable(Class<T> type, String id){
         return getIDFunction(type).apply(id);
+    }
+
+    /**
+     * Gets the configurable from the type and arguments
+     *
+     * @param id the id of the configurable
+     * @return the configurable according to the id
+     */
+    public static Configurable getConfigurable(String id){
+        Configurable c;
+        for (Function<String, ? extends Configurable> f : FUNCTION_MAP.values()){
+            if ((c = f.apply(id)) != null) return c;
+        }
+        throw new ArgumentException("That ID matches no configurables");
     }
 
     /**

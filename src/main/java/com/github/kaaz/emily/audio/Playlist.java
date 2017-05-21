@@ -29,7 +29,6 @@ public class Playlist implements Configurable {
     public static final String GLOBAL_PLAYLIST_ID = "GLOBAL-PLAYLIST-ID";
     public static final Playlist GLOBAL_PLAYLIST = new Playlist(GLOBAL_PLAYLIST_ID);
     private static final Map<String, Playlist> MAP = new ConcurrentHashMap<>();
-
     public static Playlist getPlaylist(User user, Guild guild, String args){
         String[] arg = args.split(" ");
         String a = arg[0].toLowerCase();
@@ -67,6 +66,7 @@ public class Playlist implements Configurable {
         return MAP.computeIfAbsent(id, s -> new Playlist(id));
     }
     private String id;
+    protected Playlist() {}
     private Playlist(String id) {
         this.id = id;
     }

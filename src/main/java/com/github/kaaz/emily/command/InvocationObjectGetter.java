@@ -12,6 +12,7 @@ import com.github.kaaz.emily.discordobjects.wrappers.*;
 import com.github.kaaz.emily.exeption.ArgumentException;
 import com.github.kaaz.emily.exeption.ContextException;
 import com.github.kaaz.emily.exeption.DevelopmentException;
+import com.github.kaaz.emily.fun.slot.SlotPack;
 import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.util.*;
 import javafx.util.Pair;
@@ -62,6 +63,7 @@ public class InvocationObjectGetter {
             return manager.currentTrack();
         }, ContextRequirement.GUILD, ContextRequirement.USER);
         addContext(ContextPack.class, ContextType.DEFAULT, ContextPack::new);
+        addContext(Float.class, ContextType.NONE, (invoker, shard, channel, guild, message, reaction, args) -> null);
         addContext(Configurable.class, ContextType.DEFAULT, (user, shard, channel, guild, message, reaction, args) -> null);
     }// ^ is for the optional on configurable conversions
 
@@ -213,20 +215,9 @@ public class InvocationObjectGetter {
             }
         });
         addConverter(AbstractConfig.class, (user, shard, channel, guild, message, reaction, args) -> {
-            Pair<ConfigLevel, Integer> pair = (Pair<ConfigLevel, Integer>) CONVERTER_MAP.get(ConfigLevel.class).getKey().getObject(user, shard, channel, guild, message, reaction, args);
-            args = args.substring(pair.getValue());
-            int space = pair.getValue();
-            while (true){
-                if (!args.startsWith(" ")){
-                    break;
-                }
-                ++space;
-                args = args.substring(1);
-            }
-            args = args.replace("-", "_");
-            AbstractConfig<?, ? extends Configurable> a = ConfigHandler.getConfig(pair.getKey(), args.split(" ")[0]);
+            AbstractConfig<?, ? extends Configurable> a = ConfigHandler.getConfig(args.split(" ")[0]);
             if (a == null) throw new ArgumentException("No such config");
-            return new Pair<>(a, space + a.getName().length());
+            return new Pair<>(a, a.getName().length());
         });
         addConverter(Configurable.class, (user, shard, channel, guild, message, reaction, args) -> {
             AtomicReference<Pair<Configurable, Integer>> pair = new AtomicReference<>();
@@ -267,6 +258,12 @@ public class InvocationObjectGetter {
         addConverter(Time.class, (invoker, shard, channel, guild, message, reaction, args) -> {
             String first = args.split(" ")[0];
             return new Pair<>(new Time(first), first.length());
+        });
+        addConverter(SlotPack.class, (invoker, shard, channel, guild, message, reaction, args) -> {
+            try{return new FunctionPair<>(SlotPack.valueOf(args.split(" ")[0].toUpperCase()), pack -> pack.name().length());
+            } catch (Exception e){
+                throw new ArgumentException("Unrecognized pack name");
+            }
         });
     }
 

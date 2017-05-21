@@ -1,10 +1,8 @@
-package com.github.kaaz.emily.config.configs.global;
+package com.github.kaaz.emily.template;
 
 import com.github.kaaz.emily.config.AbstractConfig;
 import com.github.kaaz.emily.config.GlobalConfigurable;
 import com.github.kaaz.emily.perms.BotRole;
-import com.github.kaaz.emily.template.KeyPhrase;
-import com.github.kaaz.emily.template.Template;
 
 import java.util.HashMap;
 import java.util.List;

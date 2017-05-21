@@ -14,6 +14,7 @@ public enum ModuleLevel {
     ECONOMY,
     DEVELOPMENT,
     INFO,
+    HELPER,
     NONE,;
     public static ModuleLevel getModuleLevel(String s){
         try {

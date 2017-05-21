@@ -10,6 +10,11 @@ import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordVoiceJo
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordVoiceLeave;
 import com.github.kaaz.emily.launcher.BotConfig;
 import com.github.kaaz.emily.perms.ContributorMonitor;
+import com.github.kaaz.emily.service.services.MemoryManagementService;
+import com.github.kaaz.emily.service.services.ScheduleService;
+import com.github.kaaz.emily.template.KeyPhrase;
+import com.github.kaaz.emily.template.Template;
+import com.github.kaaz.emily.template.TemplateHandler;
 import com.github.kaaz.emily.util.Log;
 import org.reflections.Reflections;
 import sx.blah.discord.api.ClientBuilder;
@@ -25,6 +30,7 @@ import sx.blah.discord.handle.impl.events.user.UserUpdateEvent;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -32,6 +38,8 @@ import java.util.Map;
  */
 public class DiscordAdapter {
     private static final Map<Class<? extends Event>, Constructor<? extends BotEvent>> EVENT_MAP = new HashMap<>();
+    private static final long PLAY_TEXT_SPEED = 60_000;
+    private static final List<Template> PREVIOUS_TEXTS = new MemoryManagementService.ManagedList<>(PLAY_TEXT_SPEED + 1000);// a second for execution time
     static {
         new Reflections("com.github.kaaz.emily.discordobjects.wrappers.event.events").getSubTypesOf(BotEvent.class).forEach(clazz -> EVENT_MAP.put((Class<? extends Event>) clazz.getConstructors()[0].getParameterTypes()[0], (Constructor<? extends BotEvent>) clazz.getConstructors()[0]));
         ClientBuilder builder = new ClientBuilder();
@@ -55,6 +63,10 @@ public class DiscordAdapter {
         ContributorMonitor.init();
         EventDistributor.register(ReactionBehavior.class);
         EventDistributor.distribute(DiscordDataReload.class, null);
+        ScheduleService.scheduleRepeat(PLAY_TEXT_SPEED, PLAY_TEXT_SPEED, () -> {
+            Template template = TemplateHandler.getTemplate(KeyPhrase.PLAY_TEXT, null, PREVIOUS_TEXTS);
+            if (template != null) DiscordClient.getShards().forEach(shard -> shard.online(template.interpret((User) null, shard, null, null, null, null)));
+        });
     }
 
     /**

@@ -3,6 +3,7 @@ package com.github.kaaz.emily.discordobjects.wrappers;
 import com.github.kaaz.emily.config.ConfigLevel;
 import com.github.kaaz.emily.config.Configurable;
 import com.github.kaaz.emily.discordobjects.exception.ErrorWrapper;
+import com.github.kaaz.emily.exeption.ConfigurableConvertException;
 import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
 import sx.blah.discord.handle.obj.IGuild;
@@ -61,6 +62,14 @@ public class Guild implements Configurable {
 
     public void checkPermissionToEdit(User user, Guild guild){
         BotRole.checkRequiredRole(BotRole.GUILD_TRUSTEE, user, guild);
+    }
+
+    @Override
+    public <T extends Configurable> Configurable convert(Class<T> t) {
+        if (t.equals(Guild.class)) return this;
+        if (t.equals(Channel.class)) return this.getGeneralChannel();
+        if (t.equals(Role.class)) return this.getEveryoneRole();
+        throw new ConfigurableConvertException(this.getClass(), t);
     }
 
     @Override

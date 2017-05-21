@@ -3,6 +3,7 @@ package com.github.kaaz.emily.discordobjects.wrappers;
 import com.github.kaaz.emily.config.ConfigLevel;
 import com.github.kaaz.emily.config.Configurable;
 import com.github.kaaz.emily.discordobjects.exception.ErrorWrapper;
+import com.github.kaaz.emily.exeption.ConfigurableConvertException;
 import com.github.kaaz.emily.perms.BotRole;
 import sx.blah.discord.handle.obj.IRole;
 
@@ -36,7 +37,11 @@ public class Role implements Configurable{
     public static void update(IRole guild){// hash is based on id, so no old channel is necessary
         MAP.get(guild.getID()).reference.set(guild);
     }
-    private final AtomicReference<IRole> reference;
+    private transient final AtomicReference<IRole> reference;
+    private String ID;
+    public Role() {
+        this.reference = new AtomicReference<>(DiscordClient.client().getRoleByID(ID));
+    }
     private Role(IRole guild) {
         this.reference = new AtomicReference<>(guild);
     }
@@ -57,6 +62,16 @@ public class Role implements Configurable{
     @Override
     public Configurable getGoverningObject(){
         return getGuild();
+    }
+
+    @Override
+    public <T extends Configurable> Configurable convert(Class<T> t) {
+        if (t.equals(Role.class)) return this;
+        if (!this.getGuild().getEveryoneRole().equals(this)){
+            if (t.equals(Guild.class)) return this.getGuild();
+            if (t.equals(Channel.class)) return this.getGuild().getGeneralChannel();
+        }
+        throw new ConfigurableConvertException(this.getClass(), t);
     }
 
     @Override

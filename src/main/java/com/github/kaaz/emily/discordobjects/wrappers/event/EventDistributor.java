@@ -1,6 +1,8 @@
 package com.github.kaaz.emily.discordobjects.wrappers.event;
 
+import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.util.Log;
+import com.github.kaaz.emily.util.ReflectionHelper;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -14,7 +16,6 @@ import java.util.stream.Stream;
  */
 public class EventDistributor {
     private static final Map<Class<?>, Set<Listener>> LISTENER_MAP = new ConcurrentHashMap<>();
-    private static final Map<Class<?>, List<Class<?>>> SUPERCLASS_MAP = new ConcurrentHashMap<>();
     public static <E extends BotEvent> void register(Object o){
         Class<?> clazz;
         if (o instanceof Class){
@@ -24,38 +25,21 @@ public class EventDistributor {
         }
         Stream.of(clazz.getMethods()).filter(method -> method.isAnnotationPresent(EventListener.class)).filter(method -> method.getParameterCount() == 1).filter(method -> BotEvent.class.isAssignableFrom(method.getParameterTypes()[0])).forEach(method -> {
             Class<E> peram = (Class<E>) method.getParameterTypes()[0];
-            LISTENER_MAP.computeIfAbsent(peram, cl -> new HashSet<>());
+            Set<Listener> listeners = LISTENER_MAP.computeIfAbsent(peram, cl -> new HashSet<>());
             if (Modifier.isStatic(method.getModifiers())){
-                LISTENER_MAP.get(peram).add(new Listener<E>(method, null));
+                listeners.add(new Listener<E>(method, null));
             } else if (!(o instanceof Class)){
-                LISTENER_MAP.get(peram).add(new Listener<E>(method, o));
-            }
-        });
-    }
-    private static void setAssignableTypes(Class<?> lowest){
-        if (lowest == null) return;
-        SUPERCLASS_MAP.computeIfAbsent(lowest, l -> {
-            List<Class<?>> classes = new ArrayList<>(1);
-            if (lowest.getSuperclass() != null) classes.add(lowest.getSuperclass());
-            Collections.addAll(classes, lowest.getInterfaces());
-            classes.forEach(EventDistributor::setAssignableTypes);
-            return classes;
+                listeners.add(new Listener<E>(method, o));
+            } else throw new DevelopmentException("Unknown event listener type");// I'm not even sure how this would get thrown
         });
     }
     public static <E extends BotEvent> void distribute(BotEvent event){
         distribute((Class<E>) event.getClass(), (E) event);
     }
     public static <E extends BotEvent> void distribute(Class<E> clazz, E event){
-        if (!SUPERCLASS_MAP.containsKey(clazz)){
-            setAssignableTypes(clazz);
-        }
-        if (LISTENER_MAP.containsKey(clazz)) LISTENER_MAP.get(clazz).forEach(listener -> listener.handle(event));
-        distributeInner(clazz, event);
-    }
-    private static <E extends BotEvent> void distributeInner(Class<E> clazz, E event){
-        SUPERCLASS_MAP.get(clazz).forEach(c -> {
-            if (LISTENER_MAP.containsKey(c)) LISTENER_MAP.get(c).forEach(listener -> listener.handle(event));
-            distributeInner((Class<E>) c, event);
+        ReflectionHelper.getAssignableTypes(clazz).forEach(c -> {
+            Set<Listener> listeners = LISTENER_MAP.get(c);
+            if (listeners != null) listeners.forEach(listener -> listener.handle(event));
         });
     }
     private static class Listener<E extends BotEvent> {

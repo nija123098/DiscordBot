@@ -2,6 +2,7 @@ package com.github.kaaz.emily.config;
 
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
+import com.github.kaaz.emily.exeption.ArgumentException;
 
 /**
  * A helper class that all objects that can
@@ -49,5 +50,10 @@ public interface Configurable {
 
     default Configurable getGoverningObject(){
         return GlobalConfigurable.GLOBAL;
+    }
+
+    default <T extends Configurable> Configurable convert(Class<T> t){
+        if (t.equals(this.getClass())) return this;
+        throw new ArgumentException("This configurable can not be morphed into that type of configurable: " + t.getName());
     }
 }

@@ -47,7 +47,7 @@ public class MessageMaker {
     private boolean okHand;
     private final Set<String> reactions = new HashSet<>(1);
     private Long deleteDelay;
-    private boolean maySend, mustEmbed, forceCompile;
+    private boolean maySend, mustEmbed, forceCompile, autoSend = true;
     private MessageMaker(User user, Channel channel, Message message){
         this.authorName = new TextPart(this);
         this.title = new TextPart(this);
@@ -56,7 +56,7 @@ public class MessageMaker {
         this.note = new TextPart(this);
         this.user = user;
         this.channel = channel;
-        this.origin = message.message();
+        this.origin = message == null ? null : message.message();
     }
     public MessageMaker(User user, Channel origin) {
         this(user, origin, null);
@@ -74,6 +74,10 @@ public class MessageMaker {
         this(user, user.getOrCreatePMChannel(), null);
     }
     // setup methods
+    public MessageMaker withAutoSend(boolean autoSend){
+        this.autoSend = autoSend;
+        return this;
+    }
     public MessageMaker forceCompile(){
         this.forceCompile = true;
         return this;
@@ -90,7 +94,7 @@ public class MessageMaker {
         return this;
     }
     public boolean couldNormalize(){
-        return this.fieldList.size() == 0 && this.textList.size() == 0 && !this.authorName.appended && !this.title.appended && !this.footer.appended && !this.note.appended;
+        return !this.mustEmbed && this.fieldList.size() == 0 && this.textList.size() == 0 && !this.authorName.appended && !this.title.appended && !this.footer.appended && !this.note.appended;
     }
     public MessageMaker withChannel(Channel channel){
         ProcessingHandler.swapProcess(this.channel, channel);
@@ -193,9 +197,7 @@ public class MessageMaker {
         return this;
     }
     public MessageMaker asExceptionMessage(BotException cause) {
-        this.maySend();
-        this.withColor(Color.RED).getHeader().append(cause.getMessage()).getMaker().getTitle().appendRaw(cause.getClass().getSimpleName());
-        return this.withDeleteDelay(60000L);
+        return this.maySend().withColor(Color.RED).getHeader().append(cause.getMessage()).getMaker().getTitle().appendRaw(cause.getClass().getSimpleName()).getMaker();
     }
     // embed methods
     public MessageMaker withColor(Color color){
@@ -246,6 +248,9 @@ public class MessageMaker {
         return this.reactionBehaviors.keySet();
     }
     // building
+    public void send(boolean auto){
+        if (this.autoSend && !auto) send();
+    }
     public void send(){
         send(0);
     }
@@ -266,11 +271,14 @@ public class MessageMaker {
         if (this.message == null){
             this.message = ErrorWrapper.wrap((ErrorWrapper.Request<IMessage>) () -> this.builder.withChannel(channel.channel()).send());
             this.ourMessage = Message.getMessage(this.message);
-            this.reactions.forEach(s -> this.message.addReaction(s));
+            this.reactions.forEach(this.message::addReaction);
             if (this.deleteDelay != null){
                 ScheduleService.schedule(this.deleteDelay, () -> ErrorWrapper.wrap(this.message::delete));
             }
-        } else if (this.embed != null) ErrorWrapper.wrap(() -> this.message.edit(this.embed.build()));
+        } else {
+            if (this.embed == null) ErrorWrapper.wrap(() -> this.message.edit(this.builder.getContent()));
+            else ErrorWrapper.wrap(() -> this.message.edit(this.embed.build()));
+        }
         this.reactionBehaviors.forEach((s, behavior) -> ReactionBehavior.registerListener(this.ourMessage, s, behavior));
     }
     private void compile(){

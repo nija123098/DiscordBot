@@ -26,6 +26,7 @@ public class Track implements Configurable{
         return getTrack(platform.name() + "-" + id);
     }
     private String id;
+    protected Track() {}
     private Track(String id) {
         this.id = id.intern();
     }

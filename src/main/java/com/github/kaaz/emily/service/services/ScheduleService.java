@@ -14,13 +14,20 @@ import java.util.concurrent.atomic.AtomicLong;
 public class ScheduleService extends AbstractService {
     private static final Map<Long, Set<ScheduledTask>> SERVICE_MAP = new HashMap<>();
     private final AtomicLong I = new AtomicLong(System.currentTimeMillis());
-    public ScheduleService() {
-        super(1);// should commit unique thread
+    public ScheduleService() {// this should be made a helper
+        super(-1);// should commit unique thread
+        Thread thread = new Thread(() -> {
+            while (true) this.run();
+        }, "Schedule-Service-Thread");
+        thread.setDaemon(true);
+        thread.start();
     }
     public static ScheduledTask schedule(long delay, Runnable runnable){
+        System.out.println("Scheduled " + runnable);
         return new ScheduledTask(delay, runnable);
     }
     public static ScheduledRepeatedTask scheduleRepeat(long delay, long delayBetween, Runnable runnable){
+        System.out.println("Scheduled " + runnable);
         return new ScheduledRepeatedTask(delay, runnable, delayBetween);
     }
     @Override

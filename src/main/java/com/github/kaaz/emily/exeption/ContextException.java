@@ -27,6 +27,5 @@ public class ContextException extends BotException {
 
     public ContextException(String message) {
         super(message);
-        this.printStackTrace();
     }
 }

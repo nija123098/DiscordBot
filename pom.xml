@@ -62,6 +62,11 @@
             <artifactId>java-speech-api</artifactId>
             <version>v2.02</version>
         </dependency>
+        <dependency>
+            <groupId>net.objecthunter</groupId>
+            <artifactId>exp4j</artifactId>
+            <version>0.4.8</version>
+        </dependency>
     </dependencies>
 
 </project>

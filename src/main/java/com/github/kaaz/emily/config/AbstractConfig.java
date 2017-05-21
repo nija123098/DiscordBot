@@ -17,20 +17,22 @@ import java.util.function.Function;
  * @param <V> The stored type of the config within the database
  * @param <T> The type of config that this config defines
  */
-@LaymanName(value = "Configuration type then name", help = "The type (user, guild, guild user, ect...) followed by the config name of the playlist")
+@LaymanName(value = "Configuration name", help = "The config name")
 public class AbstractConfig<V, T extends Configurable> {
     private final V defaul;
     private final String name, description;
     private final BotRole botRole;
     private final ConfigLevel configLevel;
     private final Class<V> valueType;
+    private final boolean normalViewing;
     public AbstractConfig(String name, BotRole botRole, V defaul, String description) {
         this.name = name;
         this.botRole = botRole;
         this.defaul = defaul;
         this.description = description;
-        Type[] types = TypeTranslator.getRawClasses(this.getClass());
+        Type[] types = TypeChanger.getRawClasses(this.getClass());
         this.valueType = (Class<V>) types[0];
+        this.normalViewing = TypeChanger.normalStorage(this.valueType);
         this.configLevel = ConfigLevel.getLevel((Class<T>) types[1]);
         EventDistributor.register(this);
     }
@@ -100,10 +102,10 @@ public class AbstractConfig<V, T extends Configurable> {
         return true;
     }
     public V wrapTypeIn(String e, T configurable){
-        return TypeTranslator.toType(e, this.valueType, getValue(configurable));
+        return TypeChanger.toObject(this.valueType, e);
     }
     public String wrapTypeOut(V v, T configurable){// configurable may be used in over ride methods
-        return TypeTranslator.toString(v, this.valueType, null);
+        return TypeChanger.toString(this.valueType, v);
         //return OTypeTranslator.translate(v, String.class);
     }
     protected void validateInput(T configurable, V v) {}
@@ -111,9 +113,9 @@ public class AbstractConfig<V, T extends Configurable> {
     public void setValue(T configurable, V value){
         validateInput(configurable, value);
         EventDistributor.distribute(new ConfigValueChangeEvent(configurable, this, this.getValue(configurable), value));
-        map.put(configurable, value);
+        map.put(configurable, TypeChanger.toString(value.getClass(), value));
     }
-    private Map<Configurable, Object> map = new HashMap<>();//TODO REMOVE TESTING
+    private Map<Configurable, String> map = new HashMap<>();//TODO REMOVE TESTING
 
     /**
      * Gets the value for the given value.
@@ -123,7 +125,8 @@ public class AbstractConfig<V, T extends Configurable> {
      * @return the config's value
      */
     public V getValue(T configurable){// slq here as well
-        return (V) map.computeIfAbsent(configurable, c -> this.getDefault());
+        return map.containsKey(configurable) ? TypeChanger.toObject(this.valueType, map.get(configurable)) : this.getDefault();
+        //return (V) map.computeIfAbsent(configurable, c -> this.getDefault());
     }
 
     /**
