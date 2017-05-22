@@ -6,6 +6,7 @@ import com.github.kaaz.emily.discordobjects.exception.ErrorWrapper;
 import com.github.kaaz.emily.exeption.ConfigurableConvertException;
 import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
+import com.github.kaaz.emily.util.Time;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IRole;
 
@@ -301,5 +302,9 @@ public class Guild implements Configurable {
 
     public int getTotalMemberCount() {
         return guild().getTotalMemberCount();
+    }
+
+    public long getCreationDate() {
+        return Time.toMillis(guild().getCreationDate());
     }
 }

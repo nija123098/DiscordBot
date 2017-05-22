@@ -17,6 +17,7 @@ import java.util.Optional;
 public class Message {// should not be kept stored, too many are made
     private static final Map<String, Message> MAP = new MemoryManagementService.ManagedMap<>(120000);
     public static Message getMessage(IMessage iMessage){
+        if (iMessage == null) return null;
         return MAP.computeIfAbsent(iMessage.getStringID(), s -> new Message(iMessage));
     }
     public static Message getMessage(String id){

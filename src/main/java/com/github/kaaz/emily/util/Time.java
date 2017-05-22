@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * Made by nija123098 on 4/29/2017.
  */
-public class Time {
+public class Time {// TODO CLEAN
     private static final Map<Character, Long> TIME_SYMBOLS = new LinkedHashMap<>();
     static {
         TIME_SYMBOLS.put('w', 604800000L);
@@ -20,6 +20,9 @@ public class Time {
         TIME_SYMBOLS.put('s', 1000L);
     }
     private long time;
+    public Time(long time){
+        this.time = time;
+    }
     public Time(String s){
         s = FormatHelper.removeChars(s.toLowerCase(), ' ');
         long val = 0;
@@ -46,6 +49,7 @@ public class Time {
         return this.time - System.currentTimeMillis();
     }
     public static String getAbbreviated(long time){
+        if (time < 0) time = -time;
         if (time < 1000) return "0s";
         AtomicLong aTime = new AtomicLong(time);
         StringBuilder builder = new StringBuilder();

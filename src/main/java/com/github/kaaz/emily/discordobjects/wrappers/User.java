@@ -5,6 +5,7 @@ import com.github.kaaz.emily.config.Configurable;
 import com.github.kaaz.emily.discordobjects.exception.ErrorWrapper;
 import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
+import com.github.kaaz.emily.util.Time;
 import sx.blah.discord.handle.obj.IUser;
 
 import java.util.ArrayList;
@@ -91,6 +92,10 @@ public class User implements Configurable {
 
     public String getAvatarURL() {
         return user().getAvatarURL();
+    }
+
+    public long getJoinDate(){
+        return Time.toMillis(this.user().getCreationDate());
     }
 
     public Presence getPresence() {

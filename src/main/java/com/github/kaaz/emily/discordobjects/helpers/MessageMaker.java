@@ -218,26 +218,32 @@ public class MessageMaker {
     }
     public MessageMaker withFooterIcon(String url){
         this.embed.withFooterIcon(url);
+        this.mustEmbed = true;
         return this.maySend();
     }
     public MessageMaker withAuthorIcon(String url){
-        this.embed.withAuthorName(url);
+        this.embed.withAuthorIcon(url);
+        this.mustEmbed = true;
         return this.maySend();
     }
-    public MessageMaker withTumb(String url){
+    public MessageMaker withThumb(String url){
         this.embed.withThumbnail(url);
+        this.mustEmbed = true;
         return this.maySend();
     }
     public MessageMaker withImage(String url){
         this.embed.withImage(url);
+        this.mustEmbed = true;
         return this.maySend();
     }
     public MessageMaker withTimestamp(LocalDateTime time){
         this.embed.withTimestamp(time);
+        this.mustEmbed = true;
         return this;
     }
     public MessageMaker withTimestamp(long millis){
         this.embed.withTimestamp(millis);
+        this.mustEmbed = true;
         return this;
     }
     // getting
@@ -249,7 +255,7 @@ public class MessageMaker {
     }
     // building
     public void send(boolean auto){
-        if (this.autoSend && !auto) send();
+        if (!(!this.autoSend && auto)) send();
     }
     public void send(){
         send(0);
@@ -272,9 +278,7 @@ public class MessageMaker {
             this.message = ErrorWrapper.wrap((ErrorWrapper.Request<IMessage>) () -> this.builder.withChannel(channel.channel()).send());
             this.ourMessage = Message.getMessage(this.message);
             this.reactions.forEach(this.message::addReaction);
-            if (this.deleteDelay != null){
-                ScheduleService.schedule(this.deleteDelay, () -> ErrorWrapper.wrap(this.message::delete));
-            }
+            if (this.deleteDelay != null) ScheduleService.schedule(this.deleteDelay, () -> ErrorWrapper.wrap(this.message::delete));
         } else {
             if (this.embed == null) ErrorWrapper.wrap(() -> this.message.edit(this.builder.getContent()));
             else ErrorWrapper.wrap(() -> this.message.edit(this.embed.build()));
@@ -407,6 +411,11 @@ public class MessageMaker {
         }
         public FieldTextPart getValue(){
             return this.value;
+        }
+        public FieldPart withBoth(String title, String value){
+            this.title.append(title);
+            this.value.append(value);
+            return this;
         }
         public MessageMaker getMessageProducer(){
             return this.maker;

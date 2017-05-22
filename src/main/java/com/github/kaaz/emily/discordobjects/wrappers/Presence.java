@@ -52,7 +52,7 @@ public class Presence {
     }
 
     public Status getStatus() {
-        return null;
+        return get(iPresence.getStatus());
     }
 
     static Status get(StatusType type) {
