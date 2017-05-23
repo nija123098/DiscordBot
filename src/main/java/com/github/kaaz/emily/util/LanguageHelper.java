@@ -10,8 +10,8 @@ import java.util.*;
 public class LanguageHelper {
     private static final Set<String> TRUE = new HashSet<>(), FALSE = new HashSet<>();
     static {
-        Collections.addAll(TRUE, "yes", "ya", "sure", "1", "one", "defiantly", "absolutely", "ya", "ye");
-        Collections.addAll(FALSE, "no", "naw", "nope", "no thanks", "0", "zero", "nein");
+        Collections.addAll(TRUE, "yes", "ya", "sure", "1", "one", "defiantly", "absolutely", "ya", "ye", "enable");
+        Collections.addAll(FALSE, "no", "naw", "nope", "no thanks", "0", "zero", "nein", "disable");
     }
     public static boolean getBoolean(String s){
         s = s.toLowerCase();

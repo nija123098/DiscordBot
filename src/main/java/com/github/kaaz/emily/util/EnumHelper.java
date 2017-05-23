@@ -1,5 +1,8 @@
 package com.github.kaaz.emily.util;
 
+import com.github.kaaz.emily.exeption.ArgumentException;
+import javafx.util.Pair;
+
 import java.util.Arrays;
 import java.util.EnumSet;
 
@@ -16,5 +19,11 @@ public class EnumHelper {
                 return EnumSet.of(es[0]);
         }
         return EnumSet.of(es[0], Arrays.copyOfRange(es, 1, es.length));
+    }
+    public static <E extends Enum<E>> Pair<E, Integer> getValue(Class<E> clazz, String value){
+        for (E e : clazz.getEnumConstants()){
+            if (value.toUpperCase().startsWith(e.name().replace("_", " "))) return new Pair<>(e, e.name().length());
+        }
+        throw new ArgumentException("Unknown " + clazz.getSimpleName());
     }
 }

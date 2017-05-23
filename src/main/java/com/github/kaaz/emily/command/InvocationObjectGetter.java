@@ -265,6 +265,18 @@ public class InvocationObjectGetter {
                 throw new ArgumentException("Unrecognized pack name");
             }
         });
+        addConverter(ModuleLevel.class, (invoker, shard, channel, guild, message, reaction, args) -> EnumHelper.getValue(ModuleLevel.class, args));
+        addConverter(CommandGroup.class, (invoker, shard, channel, guild, message, reaction, args) -> {
+            try {
+                Pair<ModuleLevel, Integer> pair = (Pair<ModuleLevel, Integer>) CONVERTER_MAP.get(ModuleLevel.class).getKey().getObject(invoker, shard, channel, guild, message, reaction, args);
+                return new Pair<>(new CommandGroup(pair.getKey()), pair.getValue());
+            } catch (ArgumentException ignored){}
+            try {
+                Pair<AbstractCommand, Integer> pair = (Pair<AbstractCommand, Integer>) CONVERTER_MAP.get(AbstractCommand.class).getKey().getObject(invoker, shard, channel, guild, message, reaction, args);
+                return new Pair<>(new CommandGroup(pair.getKey()), pair.getValue());
+            } catch (ArgumentException ignored){}
+            throw new ArgumentException("Please indicate a command or a module");
+        });
     }
 
     private static <T> void addConverter(Class<T> clazz, ArgumentConverter<T> argumentConverter, ContextRequirement...requirements){

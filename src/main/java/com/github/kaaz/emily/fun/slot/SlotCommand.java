@@ -62,7 +62,7 @@ public class SlotCommand extends AbstractCommand {
             ScheduleService.schedule(i * 750, () -> maker.getHeader().clear().getMaker().append(strings[r]).forceCompile().send());
         }
         int last = strings.length - 1;
-        ScheduleService.schedule(last * 750, () -> maker.getHeader().clear().getMaker().forceCompile().append(strings[last]).send());//*/
+        ScheduleService.schedule(last * 750, () -> maker.getHeader().clear().getMaker().forceCompile().append(strings[last]).send());
     }
     private String[] getMessage(int[][] ints, SlotPack pack, Float amountWon){
         String[] strings = new String[4];

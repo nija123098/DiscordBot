@@ -10,7 +10,6 @@ import com.github.kaaz.emily.util.Time;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IRole;
 
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -292,8 +291,8 @@ public class Guild implements Configurable {
         return guild().isDeleted();
     }
 
-    public long getJoinTimeForUser(User user) {// TODO double check this
-        return guild().getJoinTimeForUser(user.user()).toInstant(ZoneOffset.UTC).toEpochMilli();
+    public long getJoinTimeForUser(User user) {
+        return Time.toMillis(guild().getJoinTimeForUser(user.user()));
     }
 
     public Message getMessageByID(String s) {

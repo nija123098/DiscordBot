@@ -4,8 +4,10 @@ import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.ModuleLevel;
 import com.github.kaaz.emily.command.anotations.Command;
 import com.github.kaaz.emily.command.anotations.Argument;
+import com.github.kaaz.emily.command.anotations.Context;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.Configurable;
+import com.github.kaaz.emily.config.GuildUser;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.github.kaaz.emily.economy.configs.CurrentMoneyConfig;
@@ -20,12 +22,18 @@ public class BankCommand extends AbstractCommand {
         super("bank", ModuleLevel.ECONOMY, "currency, money, jar", null, "Gets the current balance");
     }
     @Command
-    public void command(@Argument(optional = true) Configurable configurable, User user, MessageMaker maker){
+    public void command(@Argument(optional = true) Configurable configurable, User user, @Context(softFail = true) GuildUser guildUser, MessageMaker maker){
         if (configurable == null) configurable = user;
+        getFormat(maker, "Your bank contains ", configurable);
+        if (user.equals(configurable) && guildUser != null){
+            getFormat(maker, "\nIn this guild you have ", guildUser);
+        }
+    }
+    private static void getFormat(MessageMaker maker, String prefix, Configurable configurable){
         String symbol = ConfigHandler.getSetting(MoneySymbolConfig.class, configurable.getGoverningObject());
         String amount = ConfigHandler.getSetting(CurrentMoneyConfig.class, configurable) + "";
         if (ConfigHandler.getSetting(PrefixMoneySymbolConfig.class, configurable.getGoverningObject())) symbol += amount;
         else symbol = amount + symbol;
-        maker.appendAlternate(true, configurable.getName() + " ", " has ", symbol);
+        maker.appendAlternate(false, prefix, symbol);// symbol appended to
     }
 }

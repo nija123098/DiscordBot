@@ -1,5 +1,6 @@
 package com.github.kaaz.emily.util;
 
+import com.github.kaaz.emily.launcher.Reference;
 import javafx.util.Pair;
 import org.json.JSONArray;
 
@@ -53,7 +54,7 @@ public class LangString {
         return this.translated.computeIfAbsent(lang, s -> {
             final StringBuilder builder = new StringBuilder();
             this.value.forEach(pair -> builder.append(pair.getKey() ? translate(lang, pair.getValue()) : pair.getValue()));
-            return builder.toString();
+            return builder.toString().replace("\n", Reference.NL);
         });
     }
 
