@@ -7,9 +7,11 @@ import com.github.kaaz.emily.config.configs.user.UserLanguageConfig;
 import com.github.kaaz.emily.discordobjects.exception.ErrorWrapper;
 import com.github.kaaz.emily.discordobjects.wrappers.*;
 import com.github.kaaz.emily.exeption.BotException;
-import com.github.kaaz.emily.launcher.Reference;
 import com.github.kaaz.emily.service.services.ScheduleService;
-import com.github.kaaz.emily.util.*;
+import com.github.kaaz.emily.util.EmoticonHelper;
+import com.github.kaaz.emily.util.ImageColorHelper;
+import com.github.kaaz.emily.util.LangString;
+import com.github.kaaz.emily.util.Rand;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 import sx.blah.discord.handle.obj.IMessage;
@@ -72,6 +74,11 @@ public class MessageMaker {
         this(user, user.getOrCreatePMChannel(), null);
     }
     // setup methods
+    public MessageMaker clearMessage(){
+        this.message = null;
+        this.ourMessage = null;
+        return this;
+    }
     public MessageMaker withAutoSend(boolean autoSend){
         this.autoSend = autoSend;
         return this;

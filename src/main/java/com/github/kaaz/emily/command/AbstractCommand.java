@@ -68,10 +68,11 @@ public class AbstractCommand {
 
     void load(){
         AbstractCommand superCommand = getSuperCommand();
+        this.allNames = new HashSet<>();
+        if (superCommand != null) this.getSuperCommand().allNames.forEach(s -> this.allNames.add(s + " " + this.name));
         this.name = superCommand == null ? name : superCommand.name + " " + name;
         this.module = getModule() == null ? superCommand == null ? ModuleLevel.NONE : superCommand.getModule() : ModuleLevel.NONE;
         this.botRole = getBotRole() == null ? superCommand == null ? BotRole.USER : superCommand.getBotRole() : BotRole.USER;
-        this.allNames = new HashSet<>();
         this.allNames.add(this.name);
         if (aAliases != null){
             Collections.addAll(this.allNames, aAliases.split(", "));

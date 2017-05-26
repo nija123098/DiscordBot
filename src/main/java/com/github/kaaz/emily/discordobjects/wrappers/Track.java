@@ -70,6 +70,9 @@ public class Track implements Configurable{
     public void checkPermissionToEdit(User user, Guild guild) {
         BotRole.checkRequiredRole(BotRole.GUILD_TRUSTEE, user, null);
     }
+    public String getSource() {
+        return "Source";// TODO
+    }
     public enum Platform{
         YOUTUBE,
         SOUNDCLOUD,;

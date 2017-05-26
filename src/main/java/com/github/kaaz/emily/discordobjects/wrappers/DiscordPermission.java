@@ -39,6 +39,9 @@ public enum DiscordPermission {
     MANAGE_PERMISSIONS,
     MANAGE_WEBHOOKS,
     MANAGE_EMOJIS,;
+    public boolean hasPermission(User user, Guild guild){
+        return user.getPermissionsForGuild(guild).contains(this);
+    }
     public static DiscordPermission getDiscordPermissions(Permissions permissions){
         return values()[permissions.ordinal()];
     }

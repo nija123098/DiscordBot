@@ -10,8 +10,8 @@ import java.util.*;
 public class LanguageHelper {
     private static final Set<String> TRUE = new HashSet<>(), FALSE = new HashSet<>();
     static {
-        Collections.addAll(TRUE, "yes", "ya", "sure", "1", "one", "defiantly", "absolutely", "ya", "ye", "enable");
-        Collections.addAll(FALSE, "no", "naw", "nope", "no thanks", "0", "zero", "nein", "disable");
+        Collections.addAll(TRUE, "true", "yes", "ya", "sure", "1", "one", "defiantly", "absolutely", "ya", "ye", "enable");
+        Collections.addAll(FALSE, "false", "no", "naw", "nope", "no thanks", "0", "zero", "nein", "disable");
     }
     public static boolean getBoolean(String s){
         s = s.toLowerCase();
@@ -20,7 +20,7 @@ public class LanguageHelper {
         }else if (FALSE.contains(s)){
             return false;
         }
-        throw new ArgumentException("That doesn't appear to be an affirmation or negation, try true or false");
+        throw new ArgumentException("That doesn't appear to be an affirmation or negation, try true or false.  Received: " + s);
     }
     private static final List<String> INTEGERS;
     static {

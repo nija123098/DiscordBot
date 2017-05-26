@@ -66,4 +66,22 @@ public class Time {// TODO CLEAN
     public static LocalDateTime toLocalDateTime(long time){
         return Instant.ofEpochMilli(time).atZone(ZoneId.systemDefault()).toLocalDateTime();
     }
+    public static String getAbbreviatedMusic(long time){
+        int hours = (int) (time / 3_600_000);
+        time -= hours * 3_600_000;
+        int min = (int) (time / 60_000);
+        time -= min * 60_000;
+        int sec = (int) (time / 1000);
+        String builder = "";
+        if (hours > 0) builder = String.valueOf(hours) + ":";
+        String current = String.valueOf(min);
+        if (current.length() == 1) current = 0 + current;
+        builder += current + ":";
+        current = String.valueOf(sec);
+        if (current.length() == 1) current = 0 + current;
+        return builder + current;
+    }
+    public static String getAbbreviatedMusic(long outOf, long current){
+        return getAbbreviatedMusic(outOf) + "/" + getAbbreviatedMusic(current);
+    }
 }

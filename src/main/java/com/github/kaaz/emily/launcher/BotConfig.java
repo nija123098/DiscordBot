@@ -20,4 +20,6 @@ public class BotConfig {
     public static String TEMP_PATH = "tempfiles";
     @ConfigurationOption
     public static String CONTRIBUTOR_SIGN_ROLE = "274957607855325184";
+    @ConfigurationOption
+    public static final String GIPHY_TOKEN = null;
 }

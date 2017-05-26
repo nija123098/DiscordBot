@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 /**
  * Made by nija123098 on 3/26/2017.
@@ -61,6 +62,7 @@ public class MemoryManagementService extends AbstractService {
             this.persistence = persistence;
             LISTS.add(this);
         }
+        @Override
         public synchronized boolean add(E e){
             this.times.add(System.currentTimeMillis() + this.persistence);
             return super.add(e);
@@ -84,6 +86,10 @@ public class MemoryManagementService extends AbstractService {
                     return;
                 }
             }
+        }
+        @Override
+        public synchronized void forEach(Consumer<? super E> action) {
+            super.forEach(action);
         }
     }
 }

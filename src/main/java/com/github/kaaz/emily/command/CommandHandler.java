@@ -169,38 +169,27 @@ public class CommandHandler {
      * @param reaction the reaction that invoked this command, if applicable
      */
     public static boolean attemptInvocation(String string, User user, Message message, Reaction reaction){
-        if (string == null){// can happen
-            return false;
-        }
+        if (string == null) return false;// can happen
         AbstractCommand command;
         if (message.getGuild() == null){
-            boolean prefixTrimmingExempt = false;
-            for (int i = 0; i < string.length(); i++) {
-                if (Character.isLetterOrDigit(string.indexOf(i))){
-                    prefixTrimmingExempt = true;
-                    break;
-                }
-            }
-            if (!prefixTrimmingExempt){
-                while (!Character.isLetterOrDigit(string.charAt(0))){
-                    string = string.substring(1);
-                }
-            }
+            while (!Character.isLetterOrDigit(string.charAt(0))) string = string.substring(1);
+            if (string.toLowerCase().startsWith("emily")) string = string.substring(5);
         }else{
             String pref = ConfigHandler.getSetting(GuildPrefixConfig.class, message.getGuild());
-            if (string.startsWith(pref)){
-                string = FormatHelper.trimFront(string.substring(pref.length()));
-            }else{
+            if (string.startsWith(pref)) string = string.substring(pref.length());
+            else{
                 if ((command = REACTION_COMMAND_MAP.get(string)) != null){
                     try{if (command.hasPermission(user, message.getGuild()) && command.checkCoolDown(message.getChannel(), user) && command.interpretSuccess(command.invoke(user, message.getShard(), message.getChannel(), message.getGuild(), message, reaction, string))){
                         command.invoked(message.getChannel(), user);
                         return true;
                     }
                     }catch(Exception ignored){}
-                }
-                return false;
+                }else if (string.toLowerCase().startsWith("@emily")){
+                    string = string.substring(6);
+                }else return false;
             }
         }
+        string = FormatHelper.trimFront(string);
         Pair<AbstractCommand, String> pair = reaction == null ? getMessageCommand(string) : ((command = getReactionCommand(reaction.getChars())) == null ? null : new Pair<>(command, null));
         if (pair != null){
             command = pair.getKey();

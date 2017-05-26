@@ -171,6 +171,12 @@ public class GuildAudioManager {
     public Track currentTrack() {
         return this.currentTrack.get();
     }
+    public long currentTime(){
+        return this.player.getCurrentTrack().getCurrentTrackTime();
+    }
+    public List<Track> getQueue() {
+        return this.queue;
+    }
     public VoiceChannel voiceChannel() {
         return this.channel;
     }
