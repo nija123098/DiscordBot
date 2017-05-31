@@ -5,6 +5,7 @@ import com.github.kaaz.emily.config.Configurable;
 import com.github.kaaz.emily.discordobjects.exception.ErrorWrapper;
 import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
+import com.github.kaaz.emily.util.FormatHelper;
 import com.github.kaaz.emily.util.Time;
 import sx.blah.discord.handle.obj.IUser;
 
@@ -21,7 +22,7 @@ public class User implements Configurable {
     private static final Map<String, User> MAP = new MemoryManagementService.ManagedMap<>(180000);
     public static User getUser(String id){
         try {
-            return MAP.computeIfAbsent(id, s -> new User(DiscordClient.client().getUserByID(id)));
+            return MAP.computeIfAbsent(id, s -> new User(DiscordClient.client().getUserByID(FormatHelper.removeMention(id))));
         } catch (NumberFormatException e) {
             return null;
         }

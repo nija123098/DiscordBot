@@ -55,9 +55,7 @@ public class ConfigHandler {
         add(Configurable.class, s -> {
             for (int i = 0; i < ConfigLevel.values().length; i++) {
                 Configurable configurable = ConfigHandler.getConfigurable(ConfigLevel.values()[i].getType(), s);
-                if (configurable != null){
-                    return configurable;
-                }
+                if (configurable != null) return configurable;
             }
             return null;
         });

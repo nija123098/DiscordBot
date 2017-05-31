@@ -37,4 +37,7 @@ public class LanguageHelper {
         }
         throw new ArgumentException("Either that is not a number, of you spelled it out and it's value is over 12");
     }
+    public static String makePleral(String s){
+        return s.endsWith("s") ? s + "'s" : s + "s";
+    }
 }

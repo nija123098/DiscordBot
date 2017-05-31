@@ -7,6 +7,7 @@ import com.github.kaaz.emily.discordobjects.exception.ErrorWrapper;
 import com.github.kaaz.emily.exeption.ConfigurableConvertException;
 import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
+import com.github.kaaz.emily.util.FormatHelper;
 import com.github.kaaz.emily.util.Time;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IPrivateChannel;
@@ -25,7 +26,7 @@ public class Channel implements Configurable {
     private static final Map<String, Channel> MAP = new MemoryManagementService.ManagedMap<>(180000);
     public static Channel getChannel(String id){
         try {
-            return getChannel(DiscordClient.client().getChannelByID(id));
+            return getChannel(DiscordClient.client().getChannelByID(FormatHelper.removeMention(id)));
         } catch (NumberFormatException e) {
             return null;
         }

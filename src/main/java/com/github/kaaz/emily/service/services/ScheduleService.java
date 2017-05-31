@@ -23,11 +23,9 @@ public class ScheduleService extends AbstractService {
         thread.start();
     }
     public static ScheduledTask schedule(long delay, Runnable runnable){
-        System.out.println("Scheduled " + runnable);
         return new ScheduledTask(delay, runnable);
     }
     public static ScheduledRepeatedTask scheduleRepeat(long delay, long delayBetween, Runnable runnable){
-        System.out.println("Scheduled " + runnable);
         return new ScheduledRepeatedTask(delay, runnable, delayBetween);
     }
     @Override
@@ -45,7 +43,7 @@ public class ScheduleService extends AbstractService {
             this.runnable = runnable;
             if (time < 4){
                 this.run();
-                this.cancel = true;
+                return;
             }
             SERVICE_MAP.computeIfAbsent(this.time, l -> new ConcurrentHashSet<>()).add(this);
         }
@@ -58,7 +56,11 @@ public class ScheduleService extends AbstractService {
         }
         boolean run(){
             if (!this.cancel){
-                runnable.run();
+                try {
+                    runnable.run();
+                } catch (Throwable t){
+                    t.printStackTrace();
+                }
                 return true;
             }
             this.cancel();
@@ -74,10 +76,14 @@ public class ScheduleService extends AbstractService {
         @Override
         boolean run(){
             if (super.run()){
-                scheduleRepeat(this.delayBetween, this.delayBetween, this.runnable);
+                SERVICE_MAP.computeIfAbsent(this.delayBetween + System.currentTimeMillis(), l -> new ConcurrentHashSet<>()).add(this);
                 return true;
             }
             return false;
+        }
+        @Override
+        public void cancel(){
+            super.cancel = true;
         }
     }
 }

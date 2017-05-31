@@ -18,7 +18,6 @@ public class JoinCommand extends AbstractCommand {
     }
     @Command
     public void command(@Context(value = ContextType.LOCATION) GuildAudioManager manager, VoiceChannel channel, MessageMaker maker){
-        if (manager.voiceChannel().equals(channel)) maker.append("I am already in your voice channel");
-        else maker.append("Sorry, I am already in another channel");
+        if (!manager.voiceChannel().equals(channel)) maker.append("Sorry, I am already in another channel");
     }
 }

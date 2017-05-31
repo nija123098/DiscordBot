@@ -13,6 +13,7 @@ import com.github.kaaz.emily.exeption.ArgumentException;
 import com.github.kaaz.emily.exeption.ContextException;
 import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.fun.slot.SlotPack;
+import com.github.kaaz.emily.fun.starboard.StarLevel;
 import com.github.kaaz.emily.information.subsription.SubscriptionLevel;
 import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.util.*;
@@ -279,6 +280,7 @@ public class InvocationObjectGetter {
             throw new ArgumentException("Please indicate a command or a module");
         });
         addConverter(SubscriptionLevel.class, (invoker, shard, channel, guild, message, reaction, args) -> EnumHelper.getValue(SubscriptionLevel.class, args));
+        addConverter(StarLevel.class, (invoker, shard, channel, guild, message, reaction, args) -> EnumHelper.getValue(StarLevel.class, args));
     }
 
     private static <T> void addConverter(Class<T> clazz, ArgumentConverter<T> argumentConverter, ContextRequirement...requirements){

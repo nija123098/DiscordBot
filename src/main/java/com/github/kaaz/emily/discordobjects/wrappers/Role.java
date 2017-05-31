@@ -5,6 +5,7 @@ import com.github.kaaz.emily.config.Configurable;
 import com.github.kaaz.emily.discordobjects.exception.ErrorWrapper;
 import com.github.kaaz.emily.exeption.ConfigurableConvertException;
 import com.github.kaaz.emily.perms.BotRole;
+import com.github.kaaz.emily.util.FormatHelper;
 import sx.blah.discord.handle.obj.IRole;
 
 import java.awt.*;
@@ -20,7 +21,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Role implements Configurable{
     private static final Map<String, Role> MAP = new ConcurrentHashMap<>();
     public static Role getRole(String id){
-        IRole role = DiscordClient.client().getRoleByID(id);
+        IRole role = DiscordClient.client().getRoleByID(FormatHelper.removeMention(id));
         if (role == null){
             return null;
         }

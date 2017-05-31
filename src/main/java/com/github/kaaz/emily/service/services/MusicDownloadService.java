@@ -1,9 +1,17 @@
 package com.github.kaaz.emily.service.services;
 
+import com.github.kaaz.emily.audio.configs.track.DurrationTimeConfig;
+import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.discordobjects.wrappers.Track;
 import com.github.kaaz.emily.service.AbstractService;
 import org.eclipse.jetty.util.ConcurrentHashSet;
+import org.tritonus.share.sampled.file.TAudioFileFormat;
 
+import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -50,6 +58,7 @@ public class MusicDownloadService extends AbstractService {
             Track track = getNext();
             if (track == null) return;
             download(track);
+            ConfigHandler.setSetting(DurrationTimeConfig.class, track, time(track.file()));
             DOWNLOADING.remove(track);
             CONSUMER_MAP.remove(track).forEach(consumer -> consumer.accept(track));
         }
@@ -60,5 +69,18 @@ public class MusicDownloadService extends AbstractService {
     }
     private static void download(Track track){// will block
 
+    }
+    private static Long time(File file) {
+        try {
+            AudioFileFormat fileFormat = AudioSystem.getAudioFileFormat(file);
+            if (fileFormat instanceof TAudioFileFormat) {
+                Map<?, ?> properties = ((TAudioFileFormat) fileFormat).properties();
+                String key = "duration";
+                return (Long) properties.get(key);
+            }
+        } catch (UnsupportedAudioFileException | IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

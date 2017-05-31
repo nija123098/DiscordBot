@@ -6,13 +6,11 @@ import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.configs.guild.GuildActivePlaylistConfig;
 import com.github.kaaz.emily.config.configs.guild.GuildLanguageConfig;
 import com.github.kaaz.emily.discordobjects.exception.MissingPermException;
-import com.github.kaaz.emily.discordobjects.wrappers.Guild;
-import com.github.kaaz.emily.discordobjects.wrappers.Track;
-import com.github.kaaz.emily.discordobjects.wrappers.User;
-import com.github.kaaz.emily.discordobjects.wrappers.VoiceChannel;
+import com.github.kaaz.emily.discordobjects.wrappers.*;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventListener;
 import com.github.kaaz.emily.discordobjects.wrappers.event.botevents.ConfigValueChangeEvent;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordVoiceLeave;
+import com.github.kaaz.emily.exeption.ArgumentException;
 import com.github.kaaz.emily.exeption.BotException;
 import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.exeption.PermissionsException;
@@ -61,8 +59,11 @@ public class GuildAudioManager {
     }
     public static void init(){}
     public static GuildAudioManager getManager(VoiceChannel channel, boolean make){
-        if (make) return MAP.computeIfAbsent(channel.getGuild().getID(), s -> new GuildAudioManager(channel));
-        else return MAP.get(channel.getGuild().getID());
+        if (make) {
+            GuildAudioManager current = getManager(channel.getGuild());
+            if (current != null && !current.channel.equals(channel)) throw new ArgumentException("You must be in the voice channel with " + DiscordClient.getOurUser().getDisplayName(channel.getGuild()) + " to use that command");
+            return MAP.computeIfAbsent(channel.getGuild().getID(), s -> new GuildAudioManager(channel));
+        } else return MAP.get(channel.getGuild().getID());
     }
     public static GuildAudioManager getManager(VoiceChannel channel){
         return getManager(channel, true);
@@ -146,6 +147,9 @@ public class GuildAudioManager {
         }
         this.player.setPaused(false);
     }
+    public void seek(long time) {
+        this.player.getCurrentTrack().fastForwardTo(time);
+    }
     public void skipTrack() {
         this.onFinish();
     }
@@ -154,6 +158,7 @@ public class GuildAudioManager {
             this.leave();
             return;
         }
+        if (this.player.isLooping()) return;
         if (this.speeches.size() > 0){
             this.start(this.speeches.get(0), 0);
         }else if (this.paused != null){
@@ -167,6 +172,12 @@ public class GuildAudioManager {
     }
     public void leaveAfterThis(){
         this.leaveAfterThis = true;
+    }
+    public void loop(boolean loop){
+        this.player.setLoop(loop);
+    }
+    public boolean isLooping() {
+        return this.player.isLooping();
     }
     public Track currentTrack() {
         return this.currentTrack.get();
