@@ -16,14 +16,30 @@ public class ShutdownCommand extends AbstractCommand {
     }
     @Command
     public void command(@Argument(optional = true, replacement = ContextType.NONE) Integer val, String remaining){
+        remaining = remaining.toLowerCase();
+        if (remaining.contains("now")) System.exit(val == null ? -1 : val);
         Launcher.shutdown(remaining.contains("cancel") ? null : val == null ? 0 : val);
-        if (remaining.contains("firm")) new Thread(() -> {
-            try{Thread.sleep(300_000);
-            } catch (InterruptedException e) {
-                System.err.println("Ended halt sleep early");
-                e.printStackTrace();
-            }
-            Runtime.getRuntime().halt(val == null ? -1 : val);
-        }, "Halt-Thread").start();
+        if (remaining.contains("firm")) {
+            Thread firm = new Thread(() -> {
+                try{Thread.sleep(150_000);
+                } catch (InterruptedException e) {
+                    System.err.println("Ended end sleep early");
+                    e.printStackTrace();
+                }
+                Thread halt = new Thread(() -> {
+                    try{Thread.sleep(150_000);
+                    } catch (InterruptedException e) {
+                        System.err.println("Ended halt sleep early");
+                        e.printStackTrace();
+                    }
+                    Runtime.getRuntime().halt(val == null ? -1 : val);
+                }, "Halt-Thread");
+                halt.setDaemon(true);
+                halt.start();
+                System.exit(val == null ? -1 : val);
+            }, "Firm-Thread");
+            firm.setDaemon(true);
+            firm.start();
+        }
     }
 }

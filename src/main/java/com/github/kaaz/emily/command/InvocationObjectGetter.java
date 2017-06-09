@@ -1,13 +1,13 @@
 package com.github.kaaz.emily.command;
 
 import com.github.kaaz.emily.audio.Playlist;
-import com.github.kaaz.emily.command.anotations.Context;
 import com.github.kaaz.emily.command.anotations.Argument;
+import com.github.kaaz.emily.command.anotations.Context;
 import com.github.kaaz.emily.config.*;
 import com.github.kaaz.emily.config.configs.guild.GuildActivePlaylistConfig;
 import com.github.kaaz.emily.config.configs.guild.UserNamesConfig;
-import com.github.kaaz.emily.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
+import com.github.kaaz.emily.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 import com.github.kaaz.emily.discordobjects.wrappers.*;
 import com.github.kaaz.emily.exeption.ArgumentException;
 import com.github.kaaz.emily.exeption.ContextException;
@@ -19,8 +19,10 @@ import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.util.*;
 import javafx.util.Pair;
 
+import java.awt.*;
 import java.lang.reflect.Parameter;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -39,7 +41,8 @@ public class InvocationObjectGetter {
         addContext(Channel.class, ContextType.LOCATION, (user, shard, channel, guild, message, reaction, args) -> channel, ContextRequirement.CHANNEL);
         addContext(Presence.class, ContextType.INVOKER, (user, shard, channel, guild, message, reaction, args) -> user.getPresence(), ContextRequirement.USER);
         addContext(String.class, ContextType.ARGS, (user, shard, channel, guild, message, reaction, args) -> args, ContextRequirement.STRING);
-        addContext(String[].class, ContextType.ARGS, (user, shard, channel, guild, message, reaction, args) -> FormatHelper.reduceRepeats(args, ' ').split(" "), ContextRequirement.STRING);
+        String[] EMPTY_STRING_ARRAY = new String[0];
+        addContext(String[].class, ContextType.ARGS, (user, shard, channel, guild, message, reaction, args) -> args.isEmpty() ? EMPTY_STRING_ARRAY : FormatHelper.reduceRepeats(args, ' ').split(" "), ContextRequirement.STRING);
         addContext(MessageMaker.class, ContextType.DEFAULT, (user, shard, channel, guild, message, reaction, args) -> message == null ? new MessageMaker(user, channel) : new MessageMaker(user, message), ContextRequirement.CHANNEL);
         addContext(VoiceChannel.class, ContextType.LOCATION, (user, shard, channel, guild, message, reaction, args) -> {
             VoiceChannel target = user.getConnectedVoiceChannel(guild);
@@ -53,11 +56,6 @@ public class InvocationObjectGetter {
             return attachments.toArray(new Attachment[attachments.size()]);
         }, ContextRequirement.MESSAGE);
         addContext(Playlist.class, ContextType.STATUS, (user, shard, channel, guild, message, reaction, args) -> ConfigHandler.getSetting(GuildActivePlaylistConfig.class, guild), ContextRequirement.GUILD);
-        addContext(GuildAudioManager.class, ContextType.STATUS, (invoker, shard, channel, guild, message, reaction, args) -> {
-            GuildAudioManager manager = GuildAudioManager.getManager(invoker.getConnectedVoiceChannel(guild), false);
-            if (manager == null) throw new ContextException("You must be in a voice channel with Emily to use this command");
-            return manager;
-        });
         addContext(GuildAudioManager.class, ContextType.LOCATION, (invoker, shard, channel, guild, message, reaction, args) -> GuildAudioManager.getManager(invoker.getConnectedVoiceChannel(guild)));
         addContext(Track.class, ContextType.STATUS, (user, shard, channel, guild, message, reaction, args) -> {
             GuildAudioManager manager = GuildAudioManager.getManager(user.getConnectedVoiceChannel(guild), false);
@@ -105,7 +103,7 @@ public class InvocationObjectGetter {
             throw new ArgumentException("No channel identified by that name, try using an ID or mention");
         });
         addConverter(User.class, (user, shard, channel, guild, message, reaction, args) -> {
-            User u = DiscordClient.getUserByID(args.split(" ")[0].replace("<@", "").replace("!", "").replace(">", ""));
+            User u = DiscordClient.getUserByID(FormatHelper.removeMention(args.split(" ")[0]));
             if (u != null) return new Pair<>(u, args.split(" ")[0].length());
             if (guild == null) throw new ArgumentException("Commands with user names can not be used in private channels");
             List<User> users = new ArrayList<>(3);
@@ -281,6 +279,33 @@ public class InvocationObjectGetter {
         });
         addConverter(SubscriptionLevel.class, (invoker, shard, channel, guild, message, reaction, args) -> EnumHelper.getValue(SubscriptionLevel.class, args));
         addConverter(StarLevel.class, (invoker, shard, channel, guild, message, reaction, args) -> EnumHelper.getValue(StarLevel.class, args));
+        addConverter(Color.class, (invoker, shard, channel, guild, message, reaction, args) -> {
+            String[] strings = args.split(" ");
+            if (args.startsWith("#")) return new Pair<>(new Color(Integer.parseInt(strings[0].substring(1, 7)), false), 7);
+            Integer reserve = null;
+            try {
+                reserve = Integer.parseInt(strings[0]);
+                if (reserve > 255) return new Pair<>(new Color(reserve), strings[0].length());
+            } catch (Exception ignored){}
+            if (strings.length > 2){
+                try {
+                    int[] vals = new int[3];
+                    for (int i = 0; i < 3; i++) {
+                        vals[i] = Integer.parseInt(strings[i]);
+                    }
+                    return new Pair<>(new Color(vals[0], vals[1], vals[2]), FormatHelper.lengthOf(strings, 3) + 2);
+                } catch (Exception ignored){}
+                try {
+                    float[] vals = new float[3];
+                    for (int i = 0; i < 3; i++) {
+                        vals[i] = Float.parseFloat(strings[i]);
+                    }
+                    return new Pair<>(new Color(vals[0], vals[1], vals[2]), FormatHelper.lengthOf(strings, 3) + 2);
+                } catch (Exception ignored){}
+            }
+            if (reserve != null) return new Pair<>(new Color(reserve), strings[0].length());
+            throw new ArgumentException("Could not find color: for hex: insert a # in front | for rgb place the numbers without commas: r g b | for integer place the integer");
+        });
     }
 
     private static <T> void addConverter(Class<T> clazz, ArgumentConverter<T> argumentConverter, ContextRequirement...requirements){
@@ -329,13 +354,7 @@ public class InvocationObjectGetter {
                     checkConvertType(parameters[i].getType());
                     Pair<Object, Integer> pair = (Pair<Object, Integer>) CONVERTER_MAP.get(parameters[i].getType()).getKey().getObject(user, shard, channel, guild, message, reaction, args);
                     objects[i] = pair.getKey();
-                    args = args.substring(pair.getValue());
-                    while (true){
-                        if (args.length() == 0 || args.charAt(0) != ' '){
-                            break;
-                        }
-                        args = args.substring(1);
-                    }
+                    args = FormatHelper.trimFront(args.substring(pair.getValue()));
                 }
             } catch (ArgumentException e){
                 if (parameters[i].isAnnotationPresent(Argument.class) && parameters[i].getAnnotation(Argument.class).optional()){

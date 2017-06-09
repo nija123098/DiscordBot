@@ -189,7 +189,7 @@ public class ConfigHandler {
      * @param consumer the consumer the config gives the old value to and gets a new value from
      */
     public static <V, T extends Configurable> void alterSetting(Class<? extends AbstractConfig<V, T>> clazz, T configurable, Consumer<V> consumer){
-        getConfig(clazz).changeSetting(configurable, consumer);
+        getConfig(clazz).alterSetting(configurable, consumer);
     }
 
     /**
@@ -343,7 +343,7 @@ public class ConfigHandler {
         if (typeCount < (start + size)){
             size = (int) (typeCount - start);
         }
-        return getTypeIDs(type, start, size).stream().map(function).collect(Collectors.toList());
+        return getTypeIDs(type, start, size).stream().map(function).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     /**

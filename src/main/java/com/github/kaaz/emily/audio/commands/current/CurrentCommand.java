@@ -23,7 +23,7 @@ public class CurrentCommand extends AbstractCommand {
         super("current", ModuleLevel.MUSIC, "playing, nowplaying, np", null, "Retrieves information about the song currently playing");
     }
     @Command
-    public void command(GuildAudioManager manager, Guild guild, MessageMaker maker){
+    public static void command(GuildAudioManager manager, Guild guild, MessageMaker maker){
         Track track = manager.currentTrack();
         if (track == null) {
             maker.append("Nothing is currently playing");

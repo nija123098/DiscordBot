@@ -2,8 +2,8 @@ package com.github.kaaz.emily.automoderation;
 
 import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.ModuleLevel;
+import com.github.kaaz.emily.command.anotations.Argument;
 import com.github.kaaz.emily.command.anotations.Command;
-import com.github.kaaz.emily.command.anotations.Context;
 import com.github.kaaz.emily.discordobjects.wrappers.Channel;
 import com.github.kaaz.emily.perms.BotRole;
 
@@ -15,7 +15,7 @@ public class PurgeCommand extends AbstractCommand {
         super("purge", BotRole.GUILD_TRUSTEE, ModuleLevel.ADMINISTRATIVE, null, null, "Deletes old messages");
     }
     @Command
-    public void command(@Context(softFail = true) Integer count, Channel channel){
+    public void command(@Argument(optional = true) Integer count, Channel channel){
         if (count == null) count = 100;
         if (count > 2500) count = 2500;
         MessageDeleteService.delete(channel.getMessages(count));

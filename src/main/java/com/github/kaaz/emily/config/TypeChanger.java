@@ -46,16 +46,20 @@ public class TypeChanger {
         return clazz.isEnum() || TO_STRING.keySet().contains(clazz);
     }
     public static String toString(Class<?> from, Object o){
+        if (o == null) return "null";
         if (from.isEnum()) return o.toString();
         AtomicReference<String> reference = new AtomicReference<>();
         ReflectionHelper.getAssignableTypes(from).forEach(clazz -> {
             Function<Object, String> f = (Function<Object, String>) TO_STRING.get(clazz);
-            if (reference.get() == null && f != null) reference.set(f.apply(o));
+            if (reference.get() == null && f != null) {
+                reference.set(f.apply(o));
+            }
         });
         if (reference.get() != null) return reference.get();
         return X_STREAM.toXML(o).replace("\n", "");
     }
     public static <T> T toObject(Class<T> to, String s){
+        if (s.equals("null")) return null;
         if (to.isEnum()) return (T) getEnum(to, s);
         AtomicReference<T> reference = new AtomicReference<>();
         ReflectionHelper.getAssignableTypes(to).forEach(clazz -> {

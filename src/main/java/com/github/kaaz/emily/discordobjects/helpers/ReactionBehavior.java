@@ -20,11 +20,13 @@ public interface ReactionBehavior {
     long PERSISTENCE = 120000;// map entries needn't be cleared, not many reactions are used so it is not worth synchronizing
     Map<String, Map<Message, ReactionBehavior>> BEHAVIORS = new ConcurrentHashMap<>();
     static void registerListener(Message message, String emoticonName, ReactionBehavior behavior){
+        if (message == null) return;
         BEHAVIORS.computeIfAbsent(emoticonName, n -> new ConcurrentHashMap<>()).put(message, behavior);
         message.addReaction(EmoticonHelper.getChars(emoticonName));
-        ScheduleService.schedule(PERSISTENCE + System.currentTimeMillis(), () -> unregisteredListener(message, emoticonName));
+        ScheduleService.schedule(PERSISTENCE + System.currentTimeMillis(), () -> deregisterListener(message, emoticonName));
     }
-    static void unregisteredListener(Message message, String emoticonName){
+    static void deregisterListener(Message message, String emoticonName){
+        if (message == null) return;
         BEHAVIORS.computeIfAbsent(emoticonName, s -> new ConcurrentHashMap<>()).remove(message);
         message.removeReactionByName(emoticonName);
     }

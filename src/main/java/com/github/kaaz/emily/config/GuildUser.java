@@ -58,7 +58,7 @@ public class GuildUser implements Configurable {
         if (user.equals(this.getUser())){
             return;
         }
-        BotRole.checkRequiredRole(BotRole.GUILD_TRUSTEE, user, guild);
+        BotRole.GUILD_TRUSTEE.checkRequiredRole(user, guild);
     }
     @Override
     public Configurable getGoverningObject(){

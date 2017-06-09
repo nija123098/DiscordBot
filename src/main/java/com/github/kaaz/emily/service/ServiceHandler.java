@@ -6,6 +6,7 @@ import com.github.kaaz.emily.util.Log;
 import org.reflections.Reflections;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -27,12 +28,11 @@ public class ServiceHandler {
         Set<Class<? extends AbstractService>> classes = new Reflections(Reference.BASE_PACKAGE).getSubTypesOf(AbstractService.class);
         NORMAL_SERVICES = new HashMap<>();
         final AtomicInteger mayBlockCount = new AtomicInteger();
+        long now = System.currentTimeMillis();
         classes.forEach(clazz -> {
             try {
                 AbstractService service = clazz.newInstance();
-                if (service.getDelayBetween() == -1){
-                    return;
-                }
+                if (service.getDelayBetween() == -1) return;
                 if (service.mayBlock()){
                     Thread thread = new Thread(() -> {
                         long start;
@@ -59,32 +59,26 @@ public class ServiceHandler {
                     }, "Service-Handler-Thread-" + mayBlockCount.incrementAndGet());
                     thread.setDaemon(true);
                     Launcher.registerStartup(thread::start);
-                } else {
-                    NORMAL_SERVICES.put(service, service.getDelayBetween());
-                }
+                } else NORMAL_SERVICES.put(service, now + service.getDelayBetween());
             } catch (Exception e){
                 Log.log("Failed to init service: " + clazz.getSimpleName(), e);
             }
         });
         Launcher.registerStartup(() -> NORMAL_SERVICES.keySet().forEach(Runnable::run));
         Thread thread = new Thread(() -> {
-            final AtomicLong delta = new AtomicLong(), least = new AtomicLong(Long.MAX_VALUE);
+            final AtomicLong delta = new AtomicLong(), least = new AtomicLong(Long.MAX_VALUE), current = new AtomicLong(System.currentTimeMillis());
+            Set<AbstractService> toRun = new HashSet<>();
             while (true){
+                toRun.clear();
+                current.set(System.currentTimeMillis());
                 least.set(Long.MAX_VALUE);
-                delta.set(System.currentTimeMillis());
-                NORMAL_SERVICES.forEach((service, nextRun) -> {
-                    if (nextRun <= 0){
-                        service.run();
-                    }
+                NORMAL_SERVICES.forEach((abstractService, nextRun) -> {
+                    delta.set(nextRun - current.get());
+                    if (delta.get() < least.get()) least.set(delta.get());
+                    if (delta.get() <= 0) toRun.add(abstractService);
                 });
-                delta.addAndGet(-System.currentTimeMillis());
-                delta.set(Math.abs(delta.get()));
-                NORMAL_SERVICES.keySet().forEach(service -> NORMAL_SERVICES.put(service, NORMAL_SERVICES.get(service) - delta.get()));
-                NORMAL_SERVICES.values().forEach(lo -> {
-                    if (lo < least.get()){
-                        least.set(lo);
-                    }
-                });
+                toRun.forEach(Runnable::run);
+                toRun.forEach(abstractService -> NORMAL_SERVICES.put(abstractService, current.get() + abstractService.getDelayBetween()));
                 try {
                     if (least.get() > 0) Thread.sleep(least.get());
                 } catch (InterruptedException e) {

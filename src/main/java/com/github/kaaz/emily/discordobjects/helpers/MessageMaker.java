@@ -7,11 +7,9 @@ import com.github.kaaz.emily.config.configs.user.UserLanguageConfig;
 import com.github.kaaz.emily.discordobjects.exception.ErrorWrapper;
 import com.github.kaaz.emily.discordobjects.wrappers.*;
 import com.github.kaaz.emily.exeption.BotException;
+import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.service.services.ScheduleService;
-import com.github.kaaz.emily.util.EmoticonHelper;
-import com.github.kaaz.emily.util.ImageColorHelper;
-import com.github.kaaz.emily.util.LangString;
-import com.github.kaaz.emily.util.Rand;
+import com.github.kaaz.emily.util.*;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 import sx.blah.discord.handle.obj.IMessage;
@@ -19,6 +17,7 @@ import sx.blah.discord.util.EmbedBuilder;
 import sx.blah.discord.util.MessageBuilder;
 
 import java.awt.*;
+import java.io.File;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.List;
@@ -30,7 +29,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class MessageMaker {
     private static final int CHAR_LIMIT = 2000;
     private static final int EMBED_LIMIT = 1000;
-    private TextPart authorName, title, header, footer, note;
+    private TextPart authorName, title, header, footer, note, external;
     private List<TextPart> textList = new ArrayList<>();
     private String[] textVals;
     private List<FieldPart> fieldList = new ArrayList<>();
@@ -54,6 +53,7 @@ public class MessageMaker {
         this.header = new TextPart(this);
         this.footer = new TextPart(this);
         this.note = new TextPart(this);
+        this.external = new TextPart(this);
         this.user = user;
         this.channel = channel;
         this.origin = message == null ? null : message.message();
@@ -107,12 +107,12 @@ public class MessageMaker {
         return this;
     }
     public MessageMaker withReactionBehavior(String reactionName, ReactionBehavior behavior){
-        ReactionBehavior.unregisteredListener(this.ourMessage, reactionName);
+        ReactionBehavior.deregisterListener(this.ourMessage, reactionName);
         this.reactionBehaviors.put(reactionName, behavior);
         return this;
     }
     public MessageMaker withoutReactionBehavior(String reactionName){
-        if (this.reactionBehaviors.remove(reactionName) != null) ReactionBehavior.unregisteredListener(this.ourMessage, reactionName);
+        if (this.reactionBehaviors.remove(reactionName) != null) ReactionBehavior.deregisterListener(this.ourMessage, reactionName);
         return this;
     }
     public MessageMaker clearReactionBehaviors(){
@@ -173,6 +173,9 @@ public class MessageMaker {
     public TextPart getNote(){
         return this.note;
     }
+    public TextPart getExternal(){
+        return this.external;
+    }
     public FieldPart getNewFieldPart(){
         return new FieldPart(this);// adds self in the constructor
     }
@@ -231,6 +234,10 @@ public class MessageMaker {
         this.mustEmbed = true;
         return this.maySend();
     }
+    public MessageMaker withUrl(String url){
+        this.embed.withUrl(url);
+        return this;
+    }
     public MessageMaker withThumb(String url){
         this.embed.withThumbnail(url);
         this.mustEmbed = true;
@@ -240,6 +247,13 @@ public class MessageMaker {
         this.embed.withImage(url);
         this.mustEmbed = true;
         return this.maySend();
+    }
+    public MessageMaker withFile(File file){
+        try{this.builder.withFile(file);
+        }catch(Exception e) {
+            throw new DevelopmentException(e);
+        }
+        return this.appendRaw("");
     }
     public MessageMaker withTimestamp(LocalDateTime time){
         this.embed.withTimestamp(time);
@@ -263,7 +277,11 @@ public class MessageMaker {
         if (!(!this.autoSend && auto)) send();
     }
     public void send(){
-        send(0);
+        try {
+            send(0);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
     }
     private void send(int page){
         if (!this.maySend) return;
@@ -278,9 +296,11 @@ public class MessageMaker {
                 this.embed.appendField(ind.getLeft(), ind.getMiddle(), ind.getRight());
             }
             this.builder.withEmbed(this.embed.build());
+            if (this.external.appended) this.builder.appendContent("\n" + this.external.translate(this.lang));
         }
         if (this.message == null){
-            this.message = ErrorWrapper.wrap((ErrorWrapper.Request<IMessage>) () -> this.builder.withChannel(channel.channel()).send());
+            this.builder.withChannel(this.channel.channel());
+            this.message = ErrorWrapper.wrap((ErrorWrapper.Request<IMessage>) () -> this.builder.send());
             this.ourMessage = Message.getMessage(this.message);
             this.reactions.forEach(this.message::addReaction);
             if (this.deleteDelay != null) ScheduleService.schedule(this.deleteDelay, () -> ErrorWrapper.wrap(this.message::delete));

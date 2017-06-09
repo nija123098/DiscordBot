@@ -31,7 +31,7 @@ public class Time {// TODO CLEAN
             if (Character.isDigit(s.charAt(i))) {
                 working += s.charAt(i);
             } else if (TIME_SYMBOLS.containsKey(s.charAt(i)) && !working.isEmpty()) {
-                val += Integer.parseInt(s) * TIME_SYMBOLS.get(s.charAt(i));
+                val += Integer.parseInt(working) * TIME_SYMBOLS.get(s.charAt(i));
                 working = "";
             }else{
                 throw new ArgumentException("Empty option for time symbol");

@@ -90,9 +90,9 @@ public class Playlist implements Configurable {
                 throw new PermissionsException("You don't own this playlist, " + ((User) this.getOwner()).getDisplayName(guild) + " does");
             }
         }else if (this.id.startsWith("guild-")){
-            BotRole.checkRequiredRole(BotRole.GUILD_TRUSTEE, user, guild);
+            BotRole.GUILD_TRUSTEE.checkRequiredRole(user, guild);
         }else throw new DevelopmentException("Unknown playlist owner type");
-        BotRole.checkRequiredRole(BotRole.BOT_ADMIN, user, null);
+        BotRole.BOT_ADMIN.checkRequiredRole(user, null);
     }
 
     @Override

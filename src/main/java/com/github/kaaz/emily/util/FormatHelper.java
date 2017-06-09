@@ -63,6 +63,13 @@ public class FormatHelper {
         });
         return builder.toString();
     }
+    public static int lengthOf(String[] args, int count){
+        int l = 0;
+        for (int i = 0; i < count; i++) {
+            l += args[i].length();
+        }
+        return l;
+    }
     /**
      * @param headers array containing the headers
      * @param table   array[n size] of array's[header size], containing the rows of the controllers
@@ -135,5 +142,37 @@ public class FormatHelper {
             }
         }
         return ret.append(right).append("\n").toString();
+    }
+
+    /**
+     * @param items items in the controllers
+     * @return formatted controllers
+     */
+    public static String makeTable(List<String> items) {
+        return makeTable(items, 16, 4);
+    }
+
+    /**
+     * Makes a controllers-like display of list of items
+     *
+     * @param items        items in the controllers
+     * @param columnLength length of a column(filled up with whitespace)
+     * @param columns      amount of columns
+     * @return formatted controllers
+     */
+    public static String makeTable(List<String> items, int columnLength, int columns) {
+        String ret = "```xl\n";
+        int counter = 0;
+        for (String item : items) {
+            counter++;
+            ret += String.format("%-" + columnLength + "s", item);
+            if (counter % columns == 0) {
+                ret += "\n";
+            }
+        }
+        if (counter % columns != 0) {
+            ret += "\n";
+        }
+        return ret + "```\n";
     }
 }

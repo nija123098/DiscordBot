@@ -1,11 +1,15 @@
 package com.github.kaaz.emily.discordobjects.helpers.guildaudiomanager;
 
-import com.github.kaaz.emily.audio.configs.guild.PlaylistActiveConfig;
+import com.github.kaaz.emily.audio.commands.current.CurrentCommand;
+import com.github.kaaz.emily.audio.configs.guild.MusicOutputTextChannelConfig;
+import com.github.kaaz.emily.audio.configs.guild.QueueTrackOnlyConfig;
+import com.github.kaaz.emily.audio.configs.track.DurrationTimeConfig;
 import com.github.kaaz.emily.config.AbstractConfig;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.configs.guild.GuildActivePlaylistConfig;
 import com.github.kaaz.emily.config.configs.guild.GuildLanguageConfig;
 import com.github.kaaz.emily.discordobjects.exception.MissingPermException;
+import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.wrappers.*;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventListener;
 import com.github.kaaz.emily.discordobjects.wrappers.event.botevents.ConfigValueChangeEvent;
@@ -130,14 +134,14 @@ public class GuildAudioManager {
         start(file, 0);
     }
     public void setPlaylistOn(boolean on){
-        ConfigHandler.setSetting(PlaylistActiveConfig.class, this.channel.getGuild(), on);
+        ConfigHandler.setSetting(QueueTrackOnlyConfig.class, this.channel.getGuild(), on);
     }
     private void start(File file, int position){
         this.current = file;
         this.player.setPaused(true);
-        this.player.clear();
+        this.player.clear();//        try{this.player.queue(file);
         try{this.player.queue(file);
-        } catch (IOException e) {
+        }catch(IOException e) {
             throw new BotException("IOException", e);
         } catch (UnsupportedAudioFileException e) {
             throw new DevelopmentException("Unsupported file: " + file.getName(), e);
@@ -160,13 +164,18 @@ public class GuildAudioManager {
         }
         if (this.player.isLooping()) return;
         if (this.speeches.size() > 0){
-            this.start(this.speeches.get(0), 0);
+            this.start(this.speeches.remove(0), 0);
         }else if (this.paused != null){
             this.start(this.paused, (int) this.pausePosition);
         }else if (this.queue.size() > 0){
-            MusicDownloadService.ensureDownload(0, this.queue.get(0), track -> this.start(track.file(), 0));
+            MusicDownloadService.ensureDownload(0, this.queue.get(0), track -> {
+                this.start(track.file(), 0);
+                Guild guild = Guild.getGuild(this.player.getGuild());
+                Channel channel = ConfigHandler.getSetting(MusicOutputTextChannelConfig.class, guild);
+                if (channel != null) CurrentCommand.command(this, guild, new MessageMaker(channel).withDeleteDelay(ConfigHandler.getSetting(DurrationTimeConfig.class, track) + 1000));
+            });
             this.currentTrack.set(this.queue.remove(0));// duplicate download attempt safe
-        }else if (ConfigHandler.getSetting(PlaylistActiveConfig.class, this.channel.getGuild())){
+        }else if (ConfigHandler.getSetting(QueueTrackOnlyConfig.class, this.channel.getGuild())){
             this.queueTrack(ConfigHandler.getSetting(GuildActivePlaylistConfig.class, Guild.getGuild(this.player.getGuild())).getNext());
         }
     }

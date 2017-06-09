@@ -1,7 +1,6 @@
 package com.github.kaaz.emily.information.subsription;
 
 import com.github.kaaz.emily.command.AbstractCommand;
-import com.github.kaaz.emily.command.CommandHandler;
 import com.github.kaaz.emily.command.ContextType;
 import com.github.kaaz.emily.command.anotations.Argument;
 import com.github.kaaz.emily.command.anotations.Command;
@@ -23,6 +22,5 @@ public class SubscribeInfoCommand extends AbstractCommand {
                 maker.getNewListPart().appendRaw(l.name() + ": ").append(l.getInfo());
             }
         }
-        CommandHandler.getCommand(SubscribeInfoCommand.class).getNames().forEach(System.out::println);
     }
 }

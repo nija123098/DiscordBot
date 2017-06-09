@@ -1,7 +1,6 @@
 package com.github.kaaz.emily.automoderation.modaction.support;
 
 import com.github.kaaz.emily.automoderation.ModLogConfig;
-import com.github.kaaz.emily.config.ComplexObject;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.GuildUser;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
@@ -9,14 +8,14 @@ import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.github.kaaz.emily.exeption.ArgumentException;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Made by nija123098 on 5/11/2017.
  */
-public class AbstractModAction extends ComplexObject {
+public class AbstractModAction {
     private static final Map<Guild, Integer> OLDEST_CASE_MAP = new ConcurrentHashMap<>();
     private static final Map<GuildUser, Integer> LAST_CASE = new ConcurrentHashMap<>();
     public static int lastCase(GuildUser user){

@@ -3,6 +3,7 @@ package com.github.kaaz.emily.config;
 import com.github.kaaz.emily.command.anotations.LaymanName;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
 import com.github.kaaz.emily.discordobjects.wrappers.event.botevents.ConfigValueChangeEvent;
+import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.perms.BotRole;
 
 import java.lang.reflect.Type;
@@ -32,6 +33,7 @@ public class AbstractConfig<V, T extends Configurable> {
         this.description = description;
         Type[] types = TypeChanger.getRawClasses(this.getClass());
         this.valueType = (Class<V>) types[0];
+        if (!ObjectCloner.supports(this.valueType)) throw new DevelopmentException("Cloner does not support type: " + this.valueType.getName());
         this.normalViewing = TypeChanger.normalStorage(this.valueType);
         this.configLevel = ConfigLevel.getLevel((Class<T>) types[1]);
         EventDistributor.register(this);
@@ -113,7 +115,7 @@ public class AbstractConfig<V, T extends Configurable> {
     public void setValue(T configurable, V value){
         validateInput(configurable, value);
         EventDistributor.distribute(new ConfigValueChangeEvent(configurable, this, this.getValue(configurable), value));
-        map.put(configurable, TypeChanger.toString(value.getClass(), value));
+        map.put(configurable, TypeChanger.toString(this.valueType, value));
     }
     private Map<Configurable, String> map = new HashMap<>();//TODO REMOVE TESTING
 
@@ -139,8 +141,8 @@ public class AbstractConfig<V, T extends Configurable> {
         this.setValue(configurable, function.apply(this.getValue(configurable)));
     }
 
-    public void changeSetting(T configurable, Consumer<V> consumer){
-        V val = this.getValue(configurable);
+    public void alterSetting(T configurable, Consumer<V> consumer){
+        V val = ObjectCloner.clone(this.getValue(configurable));
         consumer.accept(val);
         this.setValue(configurable, val);
     }

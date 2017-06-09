@@ -14,6 +14,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 /**
  * Made by nija123098 on 2/20/2017.
@@ -22,7 +23,9 @@ public class User implements Configurable {
     private static final Map<String, User> MAP = new MemoryManagementService.ManagedMap<>(180000);
     public static User getUser(String id){
         try {
-            return MAP.computeIfAbsent(id, s -> new User(DiscordClient.client().getUserByID(FormatHelper.removeMention(id))));
+            IUser user = DiscordClient.client().getUserByID(FormatHelper.removeMention(id));
+            if (user == null) return null;
+            return MAP.computeIfAbsent(id, s -> new User(user));
         } catch (NumberFormatException e) {
             return null;
         }
@@ -65,7 +68,7 @@ public class User implements Configurable {
     @Override
     public void checkPermissionToEdit(User user, Guild guild){
         if (!this.equals(user)){
-            BotRole.checkRequiredRole(BotRole.BOT_ADMIN, user, null);
+            BotRole.BOT_ADMIN.checkRequiredRole(user, null);
         }
     }
 
@@ -81,6 +84,10 @@ public class User implements Configurable {
 
     public String getName() {
         return user().getName();
+    }
+
+    public List<Guild> getGuilds(){
+        return DiscordClient.getGuilds().stream().filter(guild -> guild.getUsers().contains(this)).collect(Collectors.toList());
     }
 
     public String getNameAndDiscrim(){

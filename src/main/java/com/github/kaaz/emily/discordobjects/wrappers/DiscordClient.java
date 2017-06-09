@@ -44,23 +44,23 @@ public class DiscordClient {
     }
 
     public static void online(String playingText) {
-        client.online(playingText);
+        ErrorWrapper.wrap(() -> client.online(playingText));
     }
 
     public static void online() {
-        client.online();
+        ErrorWrapper.wrap(() -> client.online());
     }
 
     public static void idle(String playingText) {
-        client.idle(playingText);
+        ErrorWrapper.wrap(() -> client.idle(playingText));
     }
 
     public static void idle() {
-        client.idle();
+        ErrorWrapper.wrap(() -> client.idle());
     }
 
     public static void streaming(String playingText, String streamingUrl) {
-        client.streaming(playingText, streamingUrl);
+        ErrorWrapper.wrap(() -> client.streaming(playingText, streamingUrl));
     }
 
     public static boolean isReady() {

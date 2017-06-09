@@ -30,6 +30,6 @@ public class GlobalConfigurable implements Configurable {
 
     @Override
     public void checkPermissionToEdit(User user, Guild guild) {
-        BotRole.checkRequiredRole(BotRole.BOT_ADMIN, user, null);
+        BotRole.BOT_ADMIN.checkRequiredRole(user, null);
     }
 }

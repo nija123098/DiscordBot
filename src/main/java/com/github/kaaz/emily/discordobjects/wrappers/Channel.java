@@ -62,7 +62,7 @@ public class Channel implements Configurable {
     }
     @Override
     public void checkPermissionToEdit(User user, Guild guild){
-        BotRole.checkRequiredRole(BotRole.GUILD_TRUSTEE, user, guild);
+        BotRole.GUILD_TRUSTEE.checkRequiredRole(user, guild);
     }
 
     @Override

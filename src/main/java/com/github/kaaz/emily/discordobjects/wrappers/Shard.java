@@ -1,5 +1,6 @@
 package com.github.kaaz.emily.discordobjects.wrappers;
 
+import com.github.kaaz.emily.discordobjects.exception.ErrorWrapper;
 import sx.blah.discord.api.IShard;
 
 import java.util.ArrayList;
@@ -20,6 +21,9 @@ public class Shard {
     }*/
     public static Shard getShard(int i){
         return getShard(DiscordClient.client().getShards().get(i));
+    }
+    public static long getCount() {
+        return MAP.size();
     }
     static Shard getShard(IShard shard){
         return MAP.computeIfAbsent(shard.getInfo()[0], integer -> new Shard(shard));
@@ -67,23 +71,23 @@ public class Shard {
     }
 
     public void online(String playingText) {
-        shard().online(playingText);
+        ErrorWrapper.wrap(() -> shard().online(playingText));
     }
 
     public void online() {
-        shard().online();
+        ErrorWrapper.wrap(() -> shard().online());
     }
 
     public void idle(String playingText) {
-        shard().idle(playingText);
+        ErrorWrapper.wrap(() -> shard().idle(playingText));
     }
 
     public void idle() {
-        shard().idle();
+        ErrorWrapper.wrap(() -> shard().idle());
     }
 
     public void streaming(String playingText, String streamingUrl) {
-        shard().streaming(playingText, streamingUrl);
+        ErrorWrapper.wrap(() -> shard().streaming(playingText, streamingUrl));
     }
 
     public List<Channel> getChannels(boolean includePrivate) {

@@ -30,7 +30,7 @@ public class EventDistributor {
                 listeners.add(new Listener<E>(method, null));
             } else if (!(o instanceof Class)){
                 listeners.add(new Listener<E>(method, o));
-            } else throw new DevelopmentException("Unknown event listener type");// I'm not even sure how this would get thrown
+            } else throw new DevelopmentException("Unknown event listener type");// Check if the listener is static
         });
     }
     public static <E extends BotEvent> void distribute(BotEvent event){

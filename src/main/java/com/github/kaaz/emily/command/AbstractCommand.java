@@ -1,9 +1,10 @@
 package com.github.kaaz.emily.command;
 
+import com.github.kaaz.emily.command.anotations.Argument;
 import com.github.kaaz.emily.command.anotations.Command;
 import com.github.kaaz.emily.command.anotations.Context;
-import com.github.kaaz.emily.command.anotations.Argument;
 import com.github.kaaz.emily.command.anotations.LaymanName;
+import com.github.kaaz.emily.command.configs.DisabledCommandsConfig;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.Configurable;
 import com.github.kaaz.emily.config.GlobalConfigurable;
@@ -14,6 +15,7 @@ import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
 import com.github.kaaz.emily.exeption.BotException;
 import com.github.kaaz.emily.exeption.ContextException;
 import com.github.kaaz.emily.exeption.DevelopmentException;
+import com.github.kaaz.emily.exeption.PermissionsException;
 import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.perms.configs.specialperms.*;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
@@ -33,6 +35,7 @@ import java.util.stream.Stream;
 @LaymanName(value = "Command", help = "The command represented by a string or some alias")
 public class AbstractCommand {
     private final Class<? extends AbstractCommand> superCommand;
+    private AbstractCommand highCommand;
     private String name, aAliases, eAliases, rAliases, help;
     private BotRole botRole;
     private ModuleLevel module;
@@ -45,6 +48,7 @@ public class AbstractCommand {
     private List<User> userCoolDowns;
     private List<GuildUser> guildUserCoolDowns;
     private Set<ContextRequirement> contextRequirements;
+    private Set<AbstractCommand> subCommands;
     public AbstractCommand(Class<? extends AbstractCommand> superCommand, String name, String absoluteAliases, String emoticonAliases, String relativeAliases, String help){
         this.superCommand = superCommand;
         this.name = name;
@@ -111,6 +115,15 @@ public class AbstractCommand {
             }
         }// makes it into a more efficient set
         this.contextRequirements = this.contextRequirements.isEmpty() ? Collections.emptySet() : EnumSet.copyOf(this.contextRequirements);
+        this.subCommands = new HashSet<>();
+        if (this.superCommand != null) this.getSuperCommand().subCommands.add(this);
+        this.highCommand = this.getSuperCommand();
+        if (this.highCommand == null) this.highCommand = this;
+        else while (true){
+            AbstractCommand command = this.highCommand.getSuperCommand();
+            if (command == null) break;
+            this.highCommand = command;
+        }
         this.globalCoolDownTime = this.getCoolDown(GlobalConfigurable.class);
         long persistence = this.getCoolDown(Guild.class);
         if (persistence != -1){
@@ -141,6 +154,10 @@ public class AbstractCommand {
      */
     public AbstractCommand getSuperCommand(){
         return CommandHandler.getCommand(this.superCommand);
+    }
+
+    public AbstractCommand getHighCommand(){
+        return this.highCommand;
     }
 
     /**
@@ -238,6 +255,28 @@ public class AbstractCommand {
         return this.help;
     }
 
+    protected String getLocalUsages(){
+        StringBuilder builder = new StringBuilder(this.name + " ");
+        Stream.of(this.parameters).filter(parameter -> parameter.isAnnotationPresent(Argument.class)).forEach(parameter -> {
+            boolean optional = parameter.getAnnotation(Argument.class).optional();
+            String info = parameter.getAnnotation(Argument.class).info();
+            if (info.isEmpty()) info = parameter.getType().isAnnotationPresent(LaymanName.class) ? parameter.getType().getAnnotation(LaymanName.class).value() : parameter.getType().getSimpleName();
+            info = info.toLowerCase();
+            builder.append(optional ? "[" : "<").append(info).append(optional ? "] " : "> ");
+        });
+        builder.append("// ").append(this.help);
+        System.out.println(builder.toString());
+        return builder.toString();
+    }
+
+    public String getUsages(){
+        StringBuilder builder = new StringBuilder();
+        builder.append(getLocalUsages()).append("\n");
+        this.subCommands.forEach(command -> builder.append(command.getUsages()).append("\n"));
+        //System.out.println(builder.toString());
+        return builder.toString();
+    }
+
     /**
      * A check if the user can use a command in the context
      *
@@ -248,7 +287,13 @@ public class AbstractCommand {
      * in the guild, if one exists
      */
     public boolean hasPermission(User user, Guild guild) {
-        boolean hasNormalPerm = BotRole.hasRequiredRole(this.botRole, user, guild);
+        Set<String> blocked = ConfigHandler.getSetting(DisabledCommandsConfig.class, GlobalConfigurable.GLOBAL);
+        AbstractCommand command = this;
+        while (command != null){
+            if (blocked.contains(command.getName())) throw new PermissionsException("That command is temporarily disabled");
+            command = command.getSuperCommand();
+        }
+        boolean hasNormalPerm = this.botRole.hasRequiredRole(user, guild);
         if (guild != null && (!ConfigHandler.getSetting(GuildSpecialPermsEnabledConfig.class, guild) || !(this.botRole.ordinal() >= BotRole.GUILD_TRUSTEE.ordinal()))){
             boolean disapproved = false;
             for (Role role : user.getRolesForGuild(guild)){
@@ -380,7 +425,7 @@ public class AbstractCommand {
         } catch (InvocationTargetException e) {
             if (e.getCause() instanceof BotException) new MessageMaker(user, message).asExceptionMessage(((BotException) e.getCause())).withReaction("grey_exclamation").send();
             else if (e.getCause() instanceof DevelopmentException) Log.log("Exception during method execution: " + getName(), e);
-            else new MessageMaker(message).asExceptionMessage(new BotException(e));
+            else new DevelopmentException(e.getCause()).makeMessage(message.getChannel());
         }
         ProcessingHandler.endProcess(channel);
         return false;

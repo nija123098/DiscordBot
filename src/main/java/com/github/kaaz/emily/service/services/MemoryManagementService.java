@@ -4,12 +4,10 @@ import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.ConfigLevel;
 import com.github.kaaz.emily.config.Configurable;
 import com.github.kaaz.emily.service.AbstractService;
-import org.eclipse.jetty.util.ConcurrentHashSet;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
@@ -17,9 +15,9 @@ import java.util.function.Consumer;
  * Made by nija123098 on 3/26/2017.
  */
 public class MemoryManagementService extends AbstractService {
-    private static final long SERVICE_ITERATION_TIME = 60000;// 1 min
-    private static final Set<ManagedMap<?, ?>> MAPS = new ConcurrentHashSet<>();
-    private static final Set<ManagedList<?>> LISTS = new ConcurrentHashSet<>();
+    private static final long SERVICE_ITERATION_TIME = 1_000;// 1 min
+    private static final List<ManagedMap<?, ?>> MAPS = new ArrayList<>();
+    private static final List<ManagedList<?>> LISTS = new ArrayList<>();
     private static final long[] INDICES = new long[ConfigLevel.values().length];
     private static final float[] LEFT_OVER = new float[INDICES.length];
     private static final float[] CONFIG_PER = new float[INDICES.length];
@@ -70,21 +68,17 @@ public class MemoryManagementService extends AbstractService {
         @Override
         public synchronized boolean remove(Object e){
             int ind = this.indexOf(e);
-            if (ind > -1){
-                this.times.remove(ind);
-            }
+            if (ind > -1) this.times.remove(ind);
             return super.remove(e);
         }
         private synchronized void manage(){
             if (this.times.size() == 0) return;
             long currentTime = System.currentTimeMillis();
             while (true){
+                if (this.times.size() == 0) return;
                 if (currentTime >= this.times.get(0)){
-                    this.remove(0);// index version
                     this.times.remove(0);
-                }else{
-                    return;
-                }
+                }else return;
             }
         }
         @Override

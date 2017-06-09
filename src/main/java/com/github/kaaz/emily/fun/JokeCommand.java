@@ -5,6 +5,7 @@ import com.github.kaaz.emily.command.ModuleLevel;
 import com.github.kaaz.emily.command.anotations.Command;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
+import com.github.kaaz.emily.util.RedditLink;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 

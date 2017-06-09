@@ -22,11 +22,7 @@ import com.github.kaaz.emily.util.Log;
 import javafx.util.Pair;
 import org.reflections.Reflections;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Handles all command registration and invocation.
@@ -222,8 +218,10 @@ public class CommandHandler {
             } catch (BotException e){
                 e.makeMessage(message.getChannel());
                 message.addReactionByName(EXCEPTION_FOR_METHOD);
-                return false;
+            } catch (Exception e) {
+                new MessageMaker(message).asExceptionMessage(new DevelopmentException(e));
             }
+            return false;
         }else{
             message.addReactionByName(UNKNOWN_COMMAND_EMOTICON);
             OPEN_EDIT_MESSAGES.add(message.getID());
