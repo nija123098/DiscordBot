@@ -1,6 +1,7 @@
 package com.github.kaaz.emily.config;
 
 import com.github.kaaz.emily.audio.Playlist;
+import com.github.kaaz.emily.audio.Track;
 import com.github.kaaz.emily.discordobjects.wrappers.*;
 import com.github.kaaz.emily.exeption.ArgumentException;
 import com.github.kaaz.emily.exeption.DevelopmentException;
@@ -177,8 +178,8 @@ public class ConfigHandler {
      * @param configurable the configurable the config is to be set for
      * @param function the function the config gives the old value to and gets a new value from
      */
-    public static <V, T extends Configurable> void changeSetting(Class<? extends AbstractConfig<V, T>> clazz, T configurable, Function<V, V> function){
-        getConfig(clazz).changeSetting(configurable, function);
+    public static <V, T extends Configurable> V changeSetting(Class<? extends AbstractConfig<V, T>> clazz, T configurable, Function<V, V> function){
+        return getConfig(clazz).changeSetting(configurable, function);
     }
 
     /**
@@ -188,8 +189,8 @@ public class ConfigHandler {
      * @param configurable the configurable the config is to be set for
      * @param consumer the consumer the config gives the old value to and gets a new value from
      */
-    public static <V, T extends Configurable> void alterSetting(Class<? extends AbstractConfig<V, T>> clazz, T configurable, Consumer<V> consumer){
-        getConfig(clazz).alterSetting(configurable, consumer);
+    public static <V, T extends Configurable> V alterSetting(Class<? extends AbstractConfig<V, T>> clazz, T configurable, Consumer<V> consumer){
+        return getConfig(clazz).alterSetting(configurable, consumer);
     }
 
     /**

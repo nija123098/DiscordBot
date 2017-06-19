@@ -6,6 +6,7 @@ import com.github.kaaz.emily.config.GlobalConfigurable;
 import com.github.kaaz.emily.config.GuildUser;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.wrappers.Message;
+import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventListener;
 import com.github.kaaz.emily.discordobjects.wrappers.event.botevents.ConfigValueChangeEvent;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordMessageReceivedEvent;
@@ -37,6 +38,7 @@ public class LanguageMonitor {
         int length = LanguageLevel.values().length;
         for (int i = 1; i < length; i++) outMap.get(LanguageLevel.values()[i]).addAll(outMap.get(LanguageLevel.values()[i - 1]));
         MAP.set(outMap);
+        EventDistributor.register(LanguageMonitor.class);
     }
     @EventListener
     public static void handle(ConfigValueChangeEvent event){
@@ -59,7 +61,7 @@ public class LanguageMonitor {
     private static void onBlocked(Message message, String blocked){
         message.delete();
         FavorHandler.addFavorLevel(GuildUser.getGuildUser(message.getGuild(), message.getAuthor()), -Math.abs(ConfigHandler.getSetting(LanguageLevelViolationFactorConfig.class, message.getGuild())));
-        FavorHandler.addFavorLevel(message.getAuthor(), -ConfigHandler.getConfig(LanguageLevelViolationFactorConfig.class).getDefault());
+        FavorHandler.addFavorLevel(message.getAuthor(), -ConfigHandler.getConfig(LanguageLevelViolationFactorConfig.class).getDefault(message.getGuild()));
         new MessageMaker(message).withDM().append("Words used in a recent message you sent have been blocked in " + message.getGuild().getName()).withColor(Color.RED).send();
     }
     private static class CheckingString {

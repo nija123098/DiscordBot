@@ -14,16 +14,15 @@ import com.github.kaaz.emily.util.Time;
 /**
  * Made by nija123098 on 5/16/2017.
  */
-public class SubscribeRoleCommand extends AbstractCommand {
-    public SubscribeRoleCommand() {
+public class RentRoleCommand extends AbstractCommand {
+    public RentRoleCommand() {
         super("rent", ModuleLevel.ECONOMY, "subscriberole, subrole", null, "Rents a role from a server");
     }
     @Command
     public void command(@Argument Role role, @Argument Time time, GuildUser guildUser){
         int hours = (int) (time.timeUntil() / 3600);
         Float currency = ConfigHandler.getSetting(CurrentMoneyConfig.class, guildUser);
-        //Float requiredCurrency =
-        //if (currency >= time.)
+        MoneyTransfer.transact(guildUser, guildUser.getGuild(), -currency * hours, 0, "The purchase of the role " + role.getName() + " for " + hours + " hours");
         ConfigHandler.alterSetting(RoleSubscriptionsConfig.class, guildUser, map -> map.compute(role, (r, lon) -> lon == null ? time.schedualed() : time.timeUntil() + lon));
         RoleSubscriptionsConfig.scheduleRemoval(time.timeUntil(), guildUser, role);
     }

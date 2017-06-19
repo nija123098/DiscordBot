@@ -1,6 +1,8 @@
 package com.github.kaaz.emily.config;
 
 import com.github.kaaz.emily.exeption.ArgumentException;
+import com.github.kaaz.emily.perms.configs.specialperms.GuildSpecialPermsConfig;
+import com.github.kaaz.emily.perms.configs.specialperms.SpecialPermsContainer;
 import com.github.kaaz.emily.util.ReflectionHelper;
 import javafx.util.Pair;
 import org.eclipse.jetty.util.ConcurrentHashSet;
@@ -38,6 +40,7 @@ public class ObjectCloner {
             return map;
         });
         add(Pair.class, or -> new Pair(or.getKey(), or.getValue()));
+        add(SpecialPermsContainer.class, SpecialPermsContainer::copy);
     }
     private static <T> void add(Class<T> clazz, Function<T, T> function){
         MAP.put(clazz, (Function<Object, Object>) function);

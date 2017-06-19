@@ -288,9 +288,7 @@ public class MessageMaker {
         if (this.origin != null && this.okHand) ErrorWrapper.wrap(() -> this.origin.addReaction(EmoticonHelper.getChars("ok_hand")));
         compile();
         if (this.embed != null){
-            if (page >= fieldIndices.length){
-                throw new RuntimeException("Attempted to get a page that doesn't exit");
-            }
+            if (page >= this.fieldIndices.length) throw new RuntimeException("Attempted to get a page that doesn't exit");
             this.embed.clearFields().withDesc(this.header.langString.translate(this.lang) + "\n\n" + (page >= textVals.length ? "" : textVals[page]) + "\n\n" + this.footer.langString.translate(lang));
             for (Triple<String, String, Boolean> ind : fieldIndices[page]){
                 this.embed.appendField(ind.getLeft(), ind.getMiddle(), ind.getRight());
@@ -310,13 +308,16 @@ public class MessageMaker {
         }
         this.reactionBehaviors.forEach((s, behavior) -> ReactionBehavior.registerListener(this.ourMessage, s, behavior));
     }
+    public static String getLang(User user, Channel channel){
+        String lang = null;
+        if (user != null) lang = ConfigHandler.getSetting(UserLanguageConfig.class, user);
+        if (!channel.isPrivate() && lang == null) lang = ConfigHandler.getSetting(GuildLanguageConfig.class, channel.getGuild());
+        return lang == null ? "en" : lang;
+    }
     private void compile(){
-        if (lang != null && !this.forceCompile) return;
-        // multi use
-        if (this.user != null) this.lang = ConfigHandler.getSetting(UserLanguageConfig.class, this.user);
-        if (!this.channel.isPrivate() && this.lang == null) this.lang = ConfigHandler.getSetting(GuildLanguageConfig.class, this.channel.getGuild());
-        if (this.lang == null) this.lang = "en";
+        if (this.lang != null && !this.forceCompile) return;
         // message
+        this.lang = getLang(this.user, this.channel);
         if (!this.channel.getModifiedPermissions(DiscordClient.getOurUser()).contains(DiscordPermission.SEND_MESSAGES)){
             if (this.channel.isPrivate()){
                 throw new RuntimeException("Could not send message to user due to lacking permissions: " + this.user.getName());
@@ -325,6 +326,9 @@ public class MessageMaker {
                 this.compile();
                 return;
             }
+        }
+        if (!this.header.appended) {
+            this.withOK();
         }
         if (this.couldNormalize()) this.asNormalMessage(); // do not combine
         if (this.embed == null) this.builder.withContent(this.header.langString.translate(this.lang));
@@ -457,36 +461,35 @@ public class MessageMaker {
         public boolean isAppended(){
             return this.appended;
         }
-
         public TextPart appendRaw(String s){
             this.appended = true;
             this.append(true, s);
             return this;
         }
-
         public TextPart append(String s){
             this.appended = true;
             this.append(false, s);
             return this;
         }
-
         public TextPart appendAlternate(boolean raw, String...s){
             this.appended = true;
             this.maker.maySend();
             this.langString.appendToggle(raw, s);
             return this;
         }
-
         public TextPart append(boolean raw, String s){
             this.appended = true;
             this.maker.maySend();
             this.langString.append(!raw, s);
             return this;
         }
+        public TextPart append(LangString langString){
+            this.langString.append(langString);
+            return this;
+        }
         public MessageMaker getMaker(){
             return this.maker;
         }
-
         public TextPart clear() {
             this.langString = new LangString();
             this.appended = false;

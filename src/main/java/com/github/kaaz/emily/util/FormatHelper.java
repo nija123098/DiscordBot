@@ -175,4 +175,16 @@ public class FormatHelper {
         }
         return ret + "```\n";
     }
+
+    private static final String DASH = EmoticonHelper.getChars("wavy_dash");
+    public static String makeStackedBar(int max, int bar, String barChar) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < bar; i++) {
+            sb.append(barChar);
+        }
+        for (int i = bar; i < max; i++) {
+            sb.append(DASH);
+        }
+        return sb.toString();
+    }
 }

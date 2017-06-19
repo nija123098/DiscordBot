@@ -1,6 +1,7 @@
 package com.github.kaaz.emily.command;
 
 import com.github.kaaz.emily.audio.Playlist;
+import com.github.kaaz.emily.audio.Track;
 import com.github.kaaz.emily.command.anotations.Argument;
 import com.github.kaaz.emily.command.anotations.Context;
 import com.github.kaaz.emily.config.*;
@@ -56,7 +57,7 @@ public class InvocationObjectGetter {
             return attachments.toArray(new Attachment[attachments.size()]);
         }, ContextRequirement.MESSAGE);
         addContext(Playlist.class, ContextType.STATUS, (user, shard, channel, guild, message, reaction, args) -> ConfigHandler.getSetting(GuildActivePlaylistConfig.class, guild), ContextRequirement.GUILD);
-        addContext(GuildAudioManager.class, ContextType.LOCATION, (invoker, shard, channel, guild, message, reaction, args) -> GuildAudioManager.getManager(invoker.getConnectedVoiceChannel(guild)));
+        addContext(GuildAudioManager.class, ContextType.LOCATION, (invoker, shard, channel, guild, message, reaction, args) -> GuildAudioManager.getManager(invoker.getConnectedVoiceChannel(guild), true));
         addContext(Track.class, ContextType.STATUS, (user, shard, channel, guild, message, reaction, args) -> {
             GuildAudioManager manager = GuildAudioManager.getManager(user.getConnectedVoiceChannel(guild), false);
             if (manager == null || manager.currentTrack() == null) throw new ContextException("No track is currently playing");
@@ -281,7 +282,7 @@ public class InvocationObjectGetter {
         addConverter(StarLevel.class, (invoker, shard, channel, guild, message, reaction, args) -> EnumHelper.getValue(StarLevel.class, args));
         addConverter(Color.class, (invoker, shard, channel, guild, message, reaction, args) -> {
             String[] strings = args.split(" ");
-            if (args.startsWith("#")) return new Pair<>(new Color(Integer.parseInt(strings[0].substring(1, 7)), false), 7);
+            if (args.startsWith("#")) return new Pair<>(new Color(Integer.parseInt(strings[0].substring(1)), false), 7);
             Integer reserve = null;
             try {
                 reserve = Integer.parseInt(strings[0]);

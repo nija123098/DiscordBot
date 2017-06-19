@@ -112,6 +112,26 @@
             <artifactId>google-api-services-youtube</artifactId>
             <version>v3-rev178-1.22.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.sedmelluq</groupId>
+            <artifactId>lavaplayer</artifactId>
+            <version>1.2.39</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.rometools</groupId>
+            <artifactId>rome</artifactId>
+            <version>1.7.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.rithms</groupId>
+            <artifactId>riot-api-java</artifactId>
+            <version>master-v3.9.0-g8c63cae-136</version>
+        </dependency>
+        <dependency><!-- https://mvnrepository.com/artifact/org.jscience/jscience -->
+            <groupId>org.jscience</groupId>
+            <artifactId>jscience</artifactId>
+            <version>4.3.1</version>
+        </dependency>
     </dependencies>
 
 </project>

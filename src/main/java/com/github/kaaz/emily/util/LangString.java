@@ -51,6 +51,10 @@ public class LangString {
         }
         return this;
     }
+    public LangString append(LangString langString){
+        this.value.addAll(langString.value);
+        return this;
+    }
     public boolean hasContents(){
         return this.value.size() > 0;
     }
@@ -116,6 +120,7 @@ public class LangString {
                 if (i != contents.length - 1 || nextLineLast){
                     building += "\n";
                 }
+                after = 0;
             }
             return building;
         });

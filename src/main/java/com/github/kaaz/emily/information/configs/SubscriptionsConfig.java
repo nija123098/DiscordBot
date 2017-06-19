@@ -13,6 +13,6 @@ import java.util.Set;
  */
 public class SubscriptionsConfig extends AbstractConfig<Set<SubscriptionLevel>, Channel> {
     public SubscriptionsConfig() {
-        super("channel_subscriptions", BotRole.GUILD_TRUSTEE, new HashSet<>(0), "The subscriptions a channel has");
+        super("channel_subscriptions", BotRole.GUILD_TRUSTEE, new HashSet<>(), "The subscriptions a channel has");
     }
 }

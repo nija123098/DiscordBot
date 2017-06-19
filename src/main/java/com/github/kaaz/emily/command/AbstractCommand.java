@@ -75,7 +75,8 @@ public class AbstractCommand {
         this.allNames = new HashSet<>();
         if (superCommand != null) this.getSuperCommand().allNames.forEach(s -> this.allNames.add(s + " " + this.name));
         this.name = superCommand == null ? name : superCommand.name + " " + name;
-        this.module = getModule() == null ? superCommand == null ? ModuleLevel.NONE : superCommand.getModule() : ModuleLevel.NONE;
+        this.module = getModule() == null ? superCommand == null ? ModuleLevel.NONE : superCommand.getModule() : getModule();
+        this.module.addCommand(this);
         this.botRole = getBotRole() == null ? superCommand == null ? BotRole.USER : superCommand.getBotRole() : BotRole.USER;
         this.allNames.add(this.name);
         if (aAliases != null){
@@ -158,6 +159,10 @@ public class AbstractCommand {
 
     public AbstractCommand getHighCommand(){
         return this.highCommand;
+    }
+
+    public boolean isHighCommand() {
+        return this.highCommand == this;
     }
 
     /**
@@ -265,7 +270,6 @@ public class AbstractCommand {
             builder.append(optional ? "[" : "<").append(info).append(optional ? "] " : "> ");
         });
         builder.append("// ").append(this.help);
-        System.out.println(builder.toString());
         return builder.toString();
     }
 
@@ -273,45 +277,29 @@ public class AbstractCommand {
         StringBuilder builder = new StringBuilder();
         builder.append(getLocalUsages()).append("\n");
         this.subCommands.forEach(command -> builder.append(command.getUsages()).append("\n"));
-        //System.out.println(builder.toString());
-        return builder.toString();
+        return builder.substring(0, builder.length() - 1);
     }
 
     /**
      * A check if the user can use a command in the context
      *
      * @param user the user that is being checked for permission
-     * @param guild the guild in which permissions are being checked,
-     *              null if there is no guild in the context
+     * @param channel the channel in which permissions are being checked,
      * @return if the user can use this command
      * in the guild, if one exists
      */
-    public boolean hasPermission(User user, Guild guild) {
+    public boolean hasPermission(User user, Channel channel) {
         Set<String> blocked = ConfigHandler.getSetting(DisabledCommandsConfig.class, GlobalConfigurable.GLOBAL);
         AbstractCommand command = this;
         while (command != null){
-            if (blocked.contains(command.getName())) throw new PermissionsException("That command is temporarily disabled");
+            if (blocked.contains(command.getName())) throw new PermissionsException("That command has been temporarily globally disabled");
             command = command.getSuperCommand();
         }
-        boolean hasNormalPerm = this.botRole.hasRequiredRole(user, guild);
-        if (guild != null && (!ConfigHandler.getSetting(GuildSpecialPermsEnabledConfig.class, guild) || !(this.botRole.ordinal() >= BotRole.GUILD_TRUSTEE.ordinal()))){
-            boolean disapproved = false;
-            for (Role role : user.getRolesForGuild(guild)){
-                if (!ConfigHandler.getSetting(SpecialPermsRoleEnable.class, role)){
-                    continue;
-                }
-                if (ConfigHandler.getSetting(PermsCommandWhitelistConfig.class, role).contains(this.getName())
-                        || (ConfigHandler.getSetting(PermsModuleWhitelistConfig.class, role).contains(this.getName())
-                        && !ConfigHandler.getSetting(PermsModuleWhitelistExemptionsConfig.class, role).contains(this.getName()))){
-                    return true;
-                }
-                if (ConfigHandler.getSetting(PermsCommandBlacklistConfig.class, role).contains(this.getName())
-                        || ConfigHandler.getSetting(PermsModuleBlacklistConfig.class, role).contains(this.getName())
-                        && !ConfigHandler.getSetting(PermsCommandBlacklistConfig.class, role).contains(this.getName())){
-                    disapproved = true;
-                }
-            }
-            return !disapproved && hasNormalPerm;
+        boolean hasNormalPerm = this.botRole.hasRequiredRole(user, channel.getGuild());
+        SpecialPermsContainer container = ConfigHandler.getSetting(GuildSpecialPermsConfig.class, channel.getGuild());
+        if (channel.getGuild() != null && container != null && BotRole.GUILD_TRUSTEE.hasRequiredRole(user, channel.getGuild())){
+            Boolean allow = container.getSpecialPermission(this, channel, user);
+            return allow == null ? hasNormalPerm : allow;
         }else{
             return hasNormalPerm;
         }

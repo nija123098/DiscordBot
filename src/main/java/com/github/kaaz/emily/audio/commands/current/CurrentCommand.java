@@ -9,7 +9,7 @@ import com.github.kaaz.emily.config.configs.guild.GuildActivePlaylistConfig;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
-import com.github.kaaz.emily.discordobjects.wrappers.Track;
+import com.github.kaaz.emily.audio.Track;
 import com.github.kaaz.emily.util.EmoticonHelper;
 import com.github.kaaz.emily.util.FormatHelper;
 import com.github.kaaz.emily.util.Time;

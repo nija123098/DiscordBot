@@ -7,7 +7,7 @@ import com.github.kaaz.emily.command.anotations.Command;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
-import com.github.kaaz.emily.discordobjects.wrappers.Track;
+import com.github.kaaz.emily.audio.Track;
 import com.github.kaaz.emily.exeption.ArgumentException;
 import com.github.kaaz.emily.util.Time;
 

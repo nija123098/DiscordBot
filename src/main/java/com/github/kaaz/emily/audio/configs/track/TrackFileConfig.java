@@ -1,7 +1,7 @@
 package com.github.kaaz.emily.audio.configs.track;
 
 import com.github.kaaz.emily.config.AbstractConfig;
-import com.github.kaaz.emily.discordobjects.wrappers.Track;
+import com.github.kaaz.emily.audio.Track;
 import com.github.kaaz.emily.perms.BotRole;
 
 import java.io.File;

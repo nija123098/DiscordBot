@@ -13,7 +13,7 @@ public class BotConfig {
     @ConfigurationOption
     public static String CONTAINER_PATH = new File(BotConfig.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getParent() + "\\";
     @ConfigurationOption
-    public static String  AUDIO_PATH = CONTAINER_PATH + "musicfiles\\";
+    public static String AUDIO_PATH = CONTAINER_PATH + "musicfiles\\";
     @ConfigurationOption
     public static String TEMP_PATH = CONTAINER_PATH + "tempfiles\\";
     @ConfigurationOption
@@ -27,7 +27,11 @@ public class BotConfig {
     @ConfigurationOption
     public static String YT_DL_PATH = CONTAINER_PATH + "youtube-dl.exe";
     @ConfigurationOption
-    public static int MUSIC_DOWNLOAD_THREAD_COUNT = 4;
+    public static int MUSIC_DOWNLOAD_THREAD_COUNT = 1;
     @ConfigurationOption
     public static String AUDIO_FORMAT = "vorbis";
+    @ConfigurationOption
+    public static String CAT_API_TOKEN = null;
+    @ConfigurationOption
+    public static final String RIOT_GAMES_TOKEN = null;
 }

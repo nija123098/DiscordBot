@@ -32,7 +32,10 @@ public class Channel implements Configurable {
         }
     }
     public static Channel getChannel(IChannel channel){
-        return MAP.computeIfAbsent(channel.getStringID(), s -> channel.isPrivate() ? new DirectChannel((IPrivateChannel) channel) : channel instanceof IVoiceChannel ? new VoiceChannel((IVoiceChannel) channel) : new Channel(channel));
+        if (channel == null) return null;
+        return MAP.computeIfAbsent(channel.getStringID(), s -> {
+            return channel.isPrivate() ? new DirectChannel((IPrivateChannel) channel) : channel instanceof IVoiceChannel ? new VoiceChannel((IVoiceChannel) channel) : new Channel(channel);
+        });
     }
     static List<Channel> getChannels(List<IChannel> iChannels){
         List<Channel> channels = new ArrayList<>(iChannels.size());

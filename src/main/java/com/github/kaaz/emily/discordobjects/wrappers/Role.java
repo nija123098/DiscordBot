@@ -21,10 +21,10 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Role implements Configurable{
     private static final Map<String, Role> MAP = new ConcurrentHashMap<>();
     public static Role getRole(String id){
-        IRole role = DiscordClient.client().getRoleByID(FormatHelper.removeMention(id));
-        if (role == null){
-            return null;
-        }
+        IRole role;
+        try{role = DiscordClient.client().getRoleByID(FormatHelper.removeMention(id));
+        }catch(NumberFormatException e){return null;}
+        if (role == null) return null;
         return getRole(role);
     }
     static Role getRole(IRole guild){

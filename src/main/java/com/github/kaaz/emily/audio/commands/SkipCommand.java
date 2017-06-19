@@ -1,17 +1,16 @@
 package com.github.kaaz.emily.audio.commands;
 
+import com.github.kaaz.emily.audio.configs.guild.SkipPercentConfig;
 import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.ModuleLevel;
 import com.github.kaaz.emily.command.anotations.Command;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
-import com.github.kaaz.emily.discordobjects.wrappers.DiscordClient;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.github.kaaz.emily.discordobjects.wrappers.VoiceChannel;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventListener;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordTrackEnd;
-import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordVoiceLeave;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -42,15 +41,5 @@ public class SkipCommand extends AbstractCommand {
     public void handle(DiscordTrackEnd end){
         GuildAudioManager manager = GuildAudioManager.getManager(end.getGuild());
         if (manager != null) MAP.remove(manager);
-    }
-    @EventListener
-    public void handle(DiscordVoiceLeave leave){
-        GuildAudioManager manager = GuildAudioManager.getManager(leave.getGuild());
-        if (leave.getUser().equals(DiscordClient.getOurUser())) MAP.remove(manager);
-        else {
-            float percent = MAP.get(manager).size() / (float) leave.getChannel().getConnectedUsers().stream().filter(User::isBot).filter(u -> u.isDeaf(leave.getChannel().getGuild())).count() * 100;
-            int required = ConfigHandler.getSetting(SkipPercentConfig.class, leave.getChannel().getGuild());
-            if (percent > required) manager.skipTrack();
-        }
     }
 }

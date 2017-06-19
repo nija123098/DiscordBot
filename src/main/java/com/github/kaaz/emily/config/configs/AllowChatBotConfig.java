@@ -9,10 +9,6 @@ import com.github.kaaz.emily.perms.BotRole;
  */
 public class AllowChatBotConfig extends AbstractConfig<Boolean, Channel> {
     public AllowChatBotConfig() {
-        super("allow_chat", BotRole.GUILD_TRUSTEE, false, "If the bot may chat in a channel");
-    }
-    @Override
-    public Boolean getValue(Channel configurable) {
-        return configurable.isPrivate() ? true : super.getValue(configurable);
+        super("allow_unprompted_chat", BotRole.GUILD_TRUSTEE, "If the bot may chat in a channel", Channel::isPrivate);
     }
 }

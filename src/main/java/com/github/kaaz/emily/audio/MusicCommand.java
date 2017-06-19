@@ -1,6 +1,6 @@
 package com.github.kaaz.emily.audio;
 
-import com.github.kaaz.emily.audio.commands.SkipPercentConfig;
+import com.github.kaaz.emily.audio.configs.guild.SkipPercentConfig;
 import com.github.kaaz.emily.audio.configs.guild.AutoMusicChannelConfig;
 import com.github.kaaz.emily.audio.configs.guild.MusicOutputTextChannelConfig;
 import com.github.kaaz.emily.audio.configs.guild.QueueTrackOnlyConfig;

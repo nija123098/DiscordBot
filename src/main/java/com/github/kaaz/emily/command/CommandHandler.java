@@ -175,7 +175,7 @@ public class CommandHandler {
             if (string.startsWith(pref)) string = string.substring(pref.length());
             else{
                 if ((command = REACTION_COMMAND_MAP.get(string)) != null){
-                    try{if (command.hasPermission(user, message.getGuild()) && command.checkCoolDown(message.getChannel(), user) && command.interpretSuccess(command.invoke(user, message.getShard(), message.getChannel(), message.getGuild(), message, reaction, string))){
+                    try{if (command.hasPermission(user, message.getChannel()) && command.checkCoolDown(message.getChannel(), user) && command.interpretSuccess(command.invoke(user, message.getShard(), message.getChannel(), message.getGuild(), message, reaction, string))){
                         command.invoked(message.getChannel(), user);
                         return true;
                     }
@@ -193,7 +193,7 @@ public class CommandHandler {
             if (r != null){
                 message.removeReaction(r);
             }
-            if (!command.hasPermission(user, message.getGuild())){
+            if (!command.hasPermission(user, message.getChannel())){
                 if (reaction == null){
                     new MessageMaker(user, message).append("You do not have permission to use that command.").send();
                 }
@@ -236,7 +236,7 @@ public class CommandHandler {
      */
     @EventListener
     public static void handle(DiscordMessageReceivedEvent event){
-        attemptInvocation(event.getMessage().getContent(), event.getAuthor(), event.getMessage(), null);
+        attemptInvocation(event.getMessage().getContent(), event.getAuthor(), event.getMessage(), null);// new MessageMaker(event.getMessage()).append(ChatBot.getChatBot(event.getChannel()).think(event.getMessage().getContent())).send();
     }
 
     /**

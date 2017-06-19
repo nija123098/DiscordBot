@@ -31,8 +31,12 @@ public class UDCommand extends AbstractCommand {
             JSONObject jsonObject = (JSONObject) jsonParser.parse(reader);
             reader.close();
             JSONArray listObject = (JSONArray) jsonObject.get("list");
+            if (listObject.isEmpty()) {
+                maker.getTitle().append("There is no definition for that term!");
+                maker.append("[You could go define it!](http://www.urbandictionary.com/add.php?word=" + URLEncoder.encode(arg, "UTF-8") + ")");
+                return;
+            }
             JSONObject firstResult = (JSONObject) listObject.get(0);
-            System.out.println(firstResult);
             maker.getTitle().append(firstResult.get("word").toString());
             maker.append(firstResult.get("definition").toString());
             maker.append("\n\n*" + firstResult.get("example") + "*\n");

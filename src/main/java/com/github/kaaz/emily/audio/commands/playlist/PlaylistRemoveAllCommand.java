@@ -1,4 +1,4 @@
-package com.github.kaaz.emily.audio.commands;
+package com.github.kaaz.emily.audio.commands.playlist;
 
 import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.anotations.Command;

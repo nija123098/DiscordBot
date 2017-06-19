@@ -1,4 +1,4 @@
-package com.github.kaaz.emily.audio.commands;
+package com.github.kaaz.emily.audio.configs.guild;
 
 import com.github.kaaz.emily.config.AbstractConfig;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;

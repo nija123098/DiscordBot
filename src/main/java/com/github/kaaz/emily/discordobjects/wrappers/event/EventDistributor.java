@@ -3,6 +3,7 @@ package com.github.kaaz.emily.discordobjects.wrappers.event;
 import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.util.Log;
 import com.github.kaaz.emily.util.ReflectionHelper;
+import org.eclipse.jetty.util.ConcurrentHashSet;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -25,7 +26,7 @@ public class EventDistributor {
         }
         Stream.of(clazz.getMethods()).filter(method -> method.isAnnotationPresent(EventListener.class)).filter(method -> method.getParameterCount() == 1).filter(method -> BotEvent.class.isAssignableFrom(method.getParameterTypes()[0])).forEach(method -> {
             Class<E> peram = (Class<E>) method.getParameterTypes()[0];
-            Set<Listener> listeners = LISTENER_MAP.computeIfAbsent(peram, cl -> new HashSet<>());
+            Set<Listener> listeners = LISTENER_MAP.computeIfAbsent(peram, cl -> new ConcurrentHashSet<>());
             if (Modifier.isStatic(method.getModifiers())){
                 listeners.add(new Listener<E>(method, null));
             } else if (!(o instanceof Class)){

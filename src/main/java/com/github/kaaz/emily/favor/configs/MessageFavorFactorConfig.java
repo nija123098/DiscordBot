@@ -18,7 +18,7 @@ public class MessageFavorFactorConfig extends AbstractConfig<Float, Guild> {
     }
     @EventListener
     public void handle(DiscordMessageReceivedEvent event){
-        FavorHandler.addFavorLevel(GuildUser.getGuildUser(event.getGuild(), event.getAuthor()), this.getValue(event.getGuild()));
+        if (event.getGuild() != null) FavorHandler.addFavorLevel(GuildUser.getGuildUser(event.getGuild(), event.getAuthor()), this.getValue(event.getGuild()));
     }
     @EventListener
     public void handle(DiscordMessageDeleteEvent event){

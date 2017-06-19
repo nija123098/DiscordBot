@@ -5,14 +5,12 @@ import com.github.kaaz.emily.config.Configurable;
 import com.github.kaaz.emily.discordobjects.exception.ErrorWrapper;
 import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
+import com.github.kaaz.emily.service.services.ScheduleService;
 import com.github.kaaz.emily.util.FormatHelper;
 import com.github.kaaz.emily.util.Time;
 import sx.blah.discord.handle.obj.IUser;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -86,8 +84,19 @@ public class User implements Configurable {
         return user().getName();
     }
 
-    public List<Guild> getGuilds(){
-        return DiscordClient.getGuilds().stream().filter(guild -> guild.getUsers().contains(this)).collect(Collectors.toList());
+    private final AtomicReference<Set<Guild>> guilds = new AtomicReference<>();
+    public Set<Guild> getGuilds(){
+        synchronized (this.guilds){
+            if (this.guilds.get() == null) {
+                this.guilds.set(DiscordClient.getGuilds().stream().filter(guild -> guild.getUsers().contains(this)).collect(Collectors.toSet()));
+                ScheduleService.schedule(120_000, () -> {
+                    synchronized (this.guilds){
+                        this.guilds.set(null);
+                    }
+                });
+            }
+        }
+        return this.guilds.get();
     }
 
     public String getNameAndDiscrim(){

@@ -4,8 +4,9 @@ import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.ModuleLevel;
 import com.github.kaaz.emily.command.anotations.Command;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
+import com.github.kaaz.emily.discordobjects.wrappers.DiscordClient;
+import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.util.EmoticonHelper;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.apache.commons.lang3.StringEscapeUtils;
 
@@ -22,25 +23,25 @@ public class CatFactCommand extends AbstractCommand {
         super("catfact", ModuleLevel.FUN, null, null, "Cat Facts!");
     }
     @Command
-    public void command(MessageMaker maker){
+    public void command(MessageMaker maker, Guild guild){
         String fact = getCatFact();
         if (fact != null) maker.appendRaw(EmoticonHelper.getChars("cat") + "  " + StringEscapeUtils.escapeHtml4(fact));
         else maker.append("Unable to get cat fact, try again later");
     }
     private static String getCatFact() {
+        return getFact("http://catfacts-api.appspot.com/api/facts");
+    }
+    public static String getFact(String url){
         try {
-            URL loginurl = new URL("http://catfacts-api.appspot.com/api/facts");
+            URL loginurl = new URL(url);
             URLConnection yc = loginurl.openConnection();
-            yc.setConnectTimeout(10 * 1000);
+            yc.setConnectTimeout(10_000);
             BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
             String inputLine = in.readLine();
-            JsonParser parser = new JsonParser();
-            JsonObject array = parser.parse(inputLine).getAsJsonObject();
-            return array.get("facts").getAsString();
+            return new JsonParser().parse(inputLine).getAsJsonObject().get("facts").getAsString();
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
-
 }

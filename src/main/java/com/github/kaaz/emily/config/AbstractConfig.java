@@ -20,13 +20,16 @@ import java.util.function.Function;
  */
 @LaymanName(value = "Configuration name", help = "The config name")
 public class AbstractConfig<V, T extends Configurable> {
-    private final V defaul;
+    private final Function<T, V> defaul;
     private final String name, description;
     private final BotRole botRole;
     private final ConfigLevel configLevel;
     private final Class<V> valueType;
     private final boolean normalViewing;
     public AbstractConfig(String name, BotRole botRole, V defaul, String description) {
+        this(name, botRole, description, v -> defaul);
+    }
+    public AbstractConfig(String name, BotRole botRole, String description, Function<T, V> defaul) {
         this.name = name;
         this.botRole = botRole;
         this.defaul = defaul;
@@ -73,8 +76,8 @@ public class AbstractConfig<V, T extends Configurable> {
      *
      * @return the default value of this config
      */
-    public V getDefault(){
-        return this.defaul;
+    public V getDefault(T t){
+        return this.defaul.apply(t);
     }
 
     /**
@@ -112,10 +115,11 @@ public class AbstractConfig<V, T extends Configurable> {
     }
     protected void validateInput(T configurable, V v) {}
     // TODO SQL stuff goes here, more or less
-    public void setValue(T configurable, V value){
+    public V setValue(T configurable, V value){
         validateInput(configurable, value);
         EventDistributor.distribute(new ConfigValueChangeEvent(configurable, this, this.getValue(configurable), value));
         map.put(configurable, TypeChanger.toString(this.valueType, value));
+        return value;
     }
     private Map<Configurable, String> map = new HashMap<>();//TODO REMOVE TESTING
 
@@ -127,7 +131,7 @@ public class AbstractConfig<V, T extends Configurable> {
      * @return the config's value
      */
     public V getValue(T configurable){// slq here as well
-        return map.containsKey(configurable) ? TypeChanger.toObject(this.valueType, map.get(configurable)) : this.getDefault();
+        return map.containsKey(configurable) ? TypeChanger.toObject(this.valueType, map.get(configurable)) : this.getDefault(configurable);
         //return (V) map.computeIfAbsent(configurable, c -> this.getDefault());
     }
 
@@ -137,14 +141,14 @@ public class AbstractConfig<V, T extends Configurable> {
      * @param configurable the configurable the config is to be set for
      * @param function the function the config gives the old value to and gets a new value from
      */
-    public void changeSetting(T configurable, Function<V, V> function){
-        this.setValue(configurable, function.apply(this.getValue(configurable)));
+    public V changeSetting(T configurable, Function<V, V> function){
+        return this.setValue(configurable, function.apply(this.getValue(configurable)));
     }
 
-    public void alterSetting(T configurable, Consumer<V> consumer){
+    public V alterSetting(T configurable, Consumer<V> consumer){
         V val = ObjectCloner.clone(this.getValue(configurable));
         consumer.accept(val);
-        this.setValue(configurable, val);
+        return this.setValue(configurable, val);
     }
 
     public String getExteriorValue(T configurable){

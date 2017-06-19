@@ -44,9 +44,13 @@ public class Guild implements Configurable {
             g.reference.set(guild);
         }
     }
-    private final AtomicReference<IGuild> reference;
+    private String ID;
+    private transient final AtomicReference<IGuild> reference;
     private Guild(IGuild guild) {
         this.reference = new AtomicReference<>(guild);
+    }
+    public Guild() {
+        this.reference = new AtomicReference<>(DiscordClient.client().getGuildByID(ID));
     }
     public IGuild guild(){
         return this.reference.get();

@@ -39,7 +39,7 @@ public class BlackJackGame {
     }
     @Override
     public String toString(){
-        return "Dealer's hand (" + value(this.dealerHand) + ")\n" + this.dealerHand.toString() + "\n\n" + LanguageHelper.makePleral(this.player.getName()) + " hand (" + value(this.playerHand) + ")\n" + this.playerHand.toString();
+        return "Dealer's hand (" + value(this.dealerHand) + ")\n" + this.dealerHand.toString() + "\n\n" + LanguageHelper.makePleural(this.player.getName()) + " hand (" + value(this.playerHand) + ")\n" + this.playerHand.toString();
     }
     public boolean playerBlackJack(){
         return blackJack(this.playerHand);
