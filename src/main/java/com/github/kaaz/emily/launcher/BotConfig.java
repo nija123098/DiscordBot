@@ -34,4 +34,12 @@ public class BotConfig {
     public static String CAT_API_TOKEN = null;
     @ConfigurationOption
     public static final String RIOT_GAMES_TOKEN = null;
+    @ConfigurationOption
+    public static String DB_HOST = "test";
+    @ConfigurationOption
+    public static String DB_USER = "emily";
+    @ConfigurationOption
+    public static String DB_PASS = "insert password here";
+    @ConfigurationOption
+    public static String DB_NAME = "emilybot";
 }

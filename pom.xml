@@ -132,6 +132,11 @@
             <artifactId>jscience</artifactId>
             <version>4.3.1</version>
         </dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.40</version>
+		</dependency>
     </dependencies>
 
 </project>
