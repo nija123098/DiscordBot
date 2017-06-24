@@ -17,6 +17,5 @@ public class StarBoardLevelCommand extends AbstractCommand {
     @Command
     public void command(@Argument StarLevel level, @Argument Integer integer, Guild guild, MessageMaker maker){
         ConfigHandler.alterSetting(StarLevelRequirementConfig.class, guild, map -> map.put(level, integer));
-        maker.withOK();
     }
 }

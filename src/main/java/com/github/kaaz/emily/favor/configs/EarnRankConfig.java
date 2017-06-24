@@ -15,7 +15,7 @@ import com.github.kaaz.emily.perms.BotRole;
  */
 public class EarnRankConfig extends AbstractConfig<Float, Role> {
     public EarnRankConfig() {
-        super("favor_earn_amount", BotRole.GUILD_TRUSTEE, null, "A map of roles earned by users due to their favor in a guild");
+        super("favor_requirement", BotRole.GUILD_TRUSTEE, null, "A map of roles earned by users due to their favor in a guild");
     }
     @EventListener
     public void handle(ConfigValueChangeEvent<Float, Configurable> event){// change to config change event

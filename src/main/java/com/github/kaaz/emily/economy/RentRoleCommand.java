@@ -16,7 +16,7 @@ import com.github.kaaz.emily.util.Time;
  */
 public class RentRoleCommand extends AbstractCommand {
     public RentRoleCommand() {
-        super("rent", ModuleLevel.ECONOMY, "subscriberole, subrole", null, "Rents a role from a server");
+        super("rentrole", ModuleLevel.ECONOMY, "subscriberole, subrole", null, "Rents a role from a server");
     }
     @Command
     public void command(@Argument Role role, @Argument Time time, GuildUser guildUser){

@@ -14,6 +14,5 @@ public class MemeTypesLoadCommand extends AbstractCommand {
     @Command
     public void command(MessageMaker maker){
         MemeTypesCommand.loadMemeTypes();
-        maker.withOK();
     }
 }

@@ -34,7 +34,7 @@
         <dependency>
             <groupId>com.github.austinv11</groupId>
             <artifactId>Discord4j</artifactId>
-            <version>18bface</version>
+            <version>48ad1ca</version>
             <classifier>shaded</classifier>
         </dependency>
         <dependency>
@@ -137,6 +137,11 @@
 			<artifactId>mysql-connector-java</artifactId>
 			<version>5.1.40</version>
 		</dependency>
+        <dependency>
+            <groupId>com.github.cmusphinx</groupId>
+            <artifactId>sphinx4</artifactId>
+            <version>c59a4b0be3</version>
+        </dependency>
     </dependencies>
 
 </project>

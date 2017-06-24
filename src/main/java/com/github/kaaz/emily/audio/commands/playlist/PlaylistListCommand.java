@@ -30,6 +30,5 @@ public class PlaylistListCommand extends AbstractCommand {
         List<Track> ids = ConfigHandler.getSetting(PlaylistContentsConfig.class, playlist);
         maker.getTitle().appendRaw(playlist.getName());
         ids.forEach(s -> maker.getNewListPart().appendRaw("`" + s + "` | " + ConfigHandler.getSetting(TrackNameConfig.class, s)));
-        maker.withOK();
     }
 }

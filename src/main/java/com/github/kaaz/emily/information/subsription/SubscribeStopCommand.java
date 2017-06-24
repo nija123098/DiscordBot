@@ -18,6 +18,5 @@ public class SubscribeStopCommand extends AbstractCommand {
     @Command
     public static void command(@Argument(optional = true, info = "The thing to subscribe to") SubscriptionLevel level, Channel channel, MessageMaker maker){
         ConfigHandler.alterSetting(SubscriptionsConfig.class, channel, levels -> levels.remove(level));
-        maker.withOK();
     }
 }

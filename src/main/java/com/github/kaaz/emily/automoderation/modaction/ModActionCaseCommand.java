@@ -20,6 +20,5 @@ public class ModActionCaseCommand extends AbstractCommand {
     public void command(MessageMaker maker, Guild guild, User user, @Argument(optional = true, info = "The case number") Integer integer, @Argument(info = "The reason") String reason){
         if (integer == null) integer = AbstractModAction.lastCase(GuildUser.getGuildUser(guild, user));
         AbstractModAction.updateCase(guild, integer, reason);
-        maker.withOK();
     }
 }

@@ -20,6 +20,5 @@ public class StopAfterCommand extends AbstractCommand {
             return;
         }
         manager.leaveAfterThis();
-        maker.withOK();
     }
 }

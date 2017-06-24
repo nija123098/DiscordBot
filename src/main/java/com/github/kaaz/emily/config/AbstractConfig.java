@@ -20,6 +20,7 @@ import java.util.function.Function;
  */
 @LaymanName(value = "Configuration name", help = "The config name")
 public class AbstractConfig<V, T extends Configurable> {
+    private Map<T, V> noSaveValues = new HashMap<>();
     private final Function<T, V> defaul;
     private final String name, description;
     private final BotRole botRole;
@@ -98,14 +99,10 @@ public class AbstractConfig<V, T extends Configurable> {
         return this.botRole;
     }
 
-    /**
-     * Gets if the config should be saved across sessions
-     *
-     * @return if this value should be saved across sessions
-     */
-    public boolean shouldSave(){
-        return true;
+    public boolean isNormalViewing() {
+        return this.normalViewing;
     }
+
     public V wrapTypeIn(String e, T configurable){
         return TypeChanger.toObject(this.valueType, e);
     }

@@ -2,9 +2,7 @@ package com.github.kaaz.emily.automoderation;
 
 import com.github.kaaz.emily.config.AbstractConfig;
 import com.github.kaaz.emily.config.GuildUser;
-import com.github.kaaz.emily.discordobjects.wrappers.DiscordClient;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventListener;
-import com.github.kaaz.emily.discordobjects.wrappers.event.botevents.DiscordDataReload;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordUserJoin;
 import com.github.kaaz.emily.perms.BotRole;
 
@@ -20,9 +18,5 @@ public class GuildUserJoinTimeConfig extends AbstractConfig<Long, GuildUser> {
         GuildUser guildUser = GuildUser.getGuildUser(event.getGuild(), event.getUser());
         if (this.getValue(guildUser) != null) return;
         this.setValue(guildUser, event.getJoinTime());
-    }
-    @EventListener
-    public void handle(DiscordDataReload reload){
-        DiscordClient.getGuilds().forEach(guild -> guild.getUsers().stream().filter(user -> this.getValue(GuildUser.getGuildUser(guild, user)) == null).forEach(user -> this.setValue(GuildUser.getGuildUser(guild, user), guild.getJoinTimeForUser(user))));
     }
 }

@@ -26,11 +26,13 @@ public class StreamingAssignRoleConfig extends AbstractConfig<Role, Guild>{
                     try{user.addRole(role);
                     } catch (Exception ignored){}// more role order moved
                 });
-            } else {
+                ConfigHandler.setSetting(StreamingBeforeShutdownConfig.class, user, false);
+            } else if (ConfigHandler.getSetting(StreamingBeforeShutdownConfig.class, user) && user.getPresence().getStatus() != Presence.Status.STREAMING) {
                 rolesForGuilds(user.getGuilds()).forEach(role -> {
                     try{user.removeRole(role);
                     } catch (Exception ignored){}// more role order moved
                 });
+                ConfigHandler.setSetting(StreamingBeforeShutdownConfig.class, user, false);
             }
         }));
     }
@@ -44,8 +46,9 @@ public class StreamingAssignRoleConfig extends AbstractConfig<Role, Guild>{
             rolesForGuilds(event.getUser().getGuilds()).forEach(role -> {
                 try{event.getUser().addRole(role);
                 } catch (Exception ignored){}// todo role order moved
+                ConfigHandler.setSetting(StreamingBeforeShutdownConfig.class, event.getUser(), false);
             });
-        } else if (event.getOldPresence().getStatus() == Presence.Status.STREAMING){
+        } else if (ConfigHandler.getSetting(StreamingBeforeShutdownConfig.class, event.getUser())){
             rolesForGuilds(event.getUser().getGuilds()).forEach(role -> {
                 try{event.getUser().removeRole(role);
                 } catch (Exception ignored){}// more role order moved here

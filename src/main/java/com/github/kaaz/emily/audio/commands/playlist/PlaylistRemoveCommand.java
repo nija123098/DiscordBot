@@ -30,6 +30,5 @@ public class PlaylistRemoveCommand extends AbstractCommand {
         }
         ids.remove(track);
         ConfigHandler.setSetting(PlaylistContentsConfig.class, playlist, ids);
-        maker.withOK();
     }
 }

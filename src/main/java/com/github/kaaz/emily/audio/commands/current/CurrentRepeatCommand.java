@@ -16,6 +16,5 @@ public class CurrentRepeatCommand extends AbstractCommand {
     @Command
     public void command(MessageMaker maker, GuildAudioManager manager, @Argument(optional = true) Boolean loop){
         manager.loop(loop == null ? !manager.isLooping() : loop);
-        maker.withOK();
     }
 }

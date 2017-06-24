@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 /**
  * Made by nija123098 on 2/20/2017.
@@ -136,7 +137,13 @@ public class Guild implements Configurable {
     }
 
     public List<User> getUsersByName(String s, boolean b) {
-        return User.getUsers(guild().getUsersByName(s, b));
+        AtomicReference<String> nick = new AtomicReference<>();
+        return this.getUsers().stream().filter(user -> {
+            if (user.getName().equals(s)) return true;
+            if (!b) return false;
+            nick.set(user.getDisplayName(this));
+            return !nick.get().equals(user.getName()) && nick.get().equals(s);
+        }).collect(Collectors.toList());
     }
 
     public List<User> getUsersByRole(Role role) {

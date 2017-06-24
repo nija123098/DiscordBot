@@ -17,6 +17,5 @@ public class TodoRemoveCommand extends AbstractCommand {
     @Command
     public void command(User user, MessageMaker maker, @Argument(info = "The todo number") Integer item){
         ConfigHandler.alterSetting(TodoListConfig.class, user, todoItems -> todoItems.remove((int) item));
-        maker.withOK();
     }
 }

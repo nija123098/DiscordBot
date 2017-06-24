@@ -2,11 +2,10 @@ package com.github.kaaz.emily.command;
 
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.configs.guild.GuildPrefixConfig;
+import com.github.kaaz.emily.config.configs.user.VoicePrefixConfig;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
-import com.github.kaaz.emily.discordobjects.wrappers.DiscordClient;
-import com.github.kaaz.emily.discordobjects.wrappers.Message;
-import com.github.kaaz.emily.discordobjects.wrappers.Reaction;
-import com.github.kaaz.emily.discordobjects.wrappers.User;
+import com.github.kaaz.emily.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
+import com.github.kaaz.emily.discordobjects.wrappers.*;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventListener;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordMessageEditEvent;
@@ -18,6 +17,7 @@ import com.github.kaaz.emily.launcher.Reference;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
 import com.github.kaaz.emily.util.EmoticonHelper;
 import com.github.kaaz.emily.util.FormatHelper;
+import com.github.kaaz.emily.util.LangString;
 import com.github.kaaz.emily.util.Log;
 import javafx.util.Pair;
 import org.reflections.Reflections;
@@ -219,7 +219,7 @@ public class CommandHandler {
                 e.makeMessage(message.getChannel());
                 message.addReactionByName(EXCEPTION_FOR_METHOD);
             } catch (Exception e) {
-                new MessageMaker(message).asExceptionMessage(new DevelopmentException(e));
+                new MessageMaker(message).asExceptionMessage(new DevelopmentException(e)).send();
             }
             return false;
         }else{
@@ -227,6 +227,39 @@ public class CommandHandler {
             OPEN_EDIT_MESSAGES.add(message.getID());
             return false;
         }
+    }
+
+    public static boolean attemptInvocation(String s, User user, GuildAudioManager manager){
+        if (s == null || s.isEmpty()) return false;
+        String prefix = ConfigHandler.getSetting(VoicePrefixConfig.class, user);
+        boolean prefixFound = true;
+        if (!s.startsWith(prefix)) prefixFound = false;
+        else s = FormatHelper.trimFront(s.substring(prefix.length()));
+        Pair<AbstractCommand, String> pair = getMessageCommand(s);
+        if (pair == null) manager.interrupt(new LangString(true, "Invalid command " + s));
+        else {
+            if (pair.getKey().prefixRequired() && !prefixFound) return false;
+            VoiceChannel channel = manager.voiceChannel();
+            if (!pair.getKey().hasPermission(user, channel)){
+                manager.interrupt(new LangString(true, "You do not have permission to use that command"));
+                return false;
+            }
+            if (!pair.getKey().checkCoolDown(channel, user)){
+                manager.interrupt(new LangString(true, "You can not use that command so soon"));
+                return false;
+            }
+            try {
+                if (pair.getKey().interpretSuccess(pair.getKey().invoke(user, manager.getGuild().getShard(), manager.voiceChannel(), manager.getGuild(), null, null, pair.getValue()))){
+                    pair.getKey().invoked(channel, user);
+                    return true;
+                }
+            } catch (BotException e){
+                e.makeMessage(channel);
+            } catch (Exception e) {
+                new MessageMaker(channel).asExceptionMessage(new DevelopmentException(e)).send();
+            }
+        }
+        return false;
     }
 
     /**

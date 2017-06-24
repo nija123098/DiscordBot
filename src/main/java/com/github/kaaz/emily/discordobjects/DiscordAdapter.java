@@ -10,7 +10,6 @@ import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordVoiceJo
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordVoiceLeave;
 import com.github.kaaz.emily.languagefiltering.LanguageMonitor;
 import com.github.kaaz.emily.launcher.BotConfig;
-import com.github.kaaz.emily.perms.ContributorMonitor;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
 import com.github.kaaz.emily.service.services.ScheduleService;
 import com.github.kaaz.emily.template.KeyPhrase;
@@ -27,7 +26,6 @@ import sx.blah.discord.handle.impl.events.guild.role.RoleUpdateEvent;
 import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelMoveEvent;
 import sx.blah.discord.handle.impl.events.shard.ShardReadyEvent;
 import sx.blah.discord.handle.impl.events.user.UserUpdateEvent;
-import sx.blah.discord.util.MessageBuilder;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -62,7 +60,6 @@ public class DiscordAdapter {
             }
         }
         GuildAudioManager.init();
-        ContributorMonitor.init();
         EventDistributor.register(ReactionBehavior.class);
         EventDistributor.register(LanguageMonitor.class);
         EventDistributor.distribute(DiscordDataReload.class, null);

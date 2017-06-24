@@ -4,7 +4,6 @@ import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.anotations.Argument;
 import com.github.kaaz.emily.command.anotations.Command;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
-import com.github.kaaz.emily.discordobjects.wrappers.Channel;
 import com.rometools.rome.io.FeedException;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
@@ -20,10 +19,9 @@ public class RSSSubscribeCommand extends AbstractCommand {
         super(RSSCommand.class, "subscribe", null, null, "sub", "Subscribes to an rss feed");
     }
     @Command
-    public void command(Channel channel, @Argument(info = "The rss to subscribe to") String arg, MessageMaker maker){
+    public void command(@Argument(info = "The rss to subscribe to") String arg, MessageMaker maker){
         try{
             new SyndFeedInput().build(new XmlReader(new URL(arg)));
-            maker.withOK();
         } catch (FeedException | IOException e) {
             maker.append("Invalid rss feed: " + arg);
         }

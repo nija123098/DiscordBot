@@ -15,6 +15,5 @@ public class QueueClearCommand extends AbstractCommand {
     @Command
     public void command(GuildAudioManager manager, MessageMaker maker){
         manager.clearQueue();
-        maker.withOK();
     }
 }

@@ -37,6 +37,5 @@ public class PlaylistAddCommand extends AbstractCommand {
                 else maker.append("This url doesn't point to a supported playlist");
             }
         });
-        maker.withOK();
     }
 }

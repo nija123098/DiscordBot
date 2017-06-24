@@ -6,10 +6,10 @@ import com.github.kaaz.emily.command.anotations.Argument;
 import com.github.kaaz.emily.command.anotations.Context;
 import com.github.kaaz.emily.config.*;
 import com.github.kaaz.emily.config.configs.guild.GuildActivePlaylistConfig;
-import com.github.kaaz.emily.config.configs.guild.UserNamesConfig;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 import com.github.kaaz.emily.discordobjects.wrappers.*;
+import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
 import com.github.kaaz.emily.exeption.ArgumentException;
 import com.github.kaaz.emily.exeption.ContextException;
 import com.github.kaaz.emily.exeption.DevelopmentException;
@@ -34,6 +34,7 @@ public class InvocationObjectGetter {
     private static final Map<Class<?>, Pair<ArgumentConverter<?>, Set<ContextRequirement>>> CONVERTER_MAP = new HashMap<>();
 
     static {
+        EventDistributor.register(UserNameMonitor.class);
         addContext(User.class, ContextType.INVOKER, (user, shard, channel, guild, message, reaction, args) -> user, ContextRequirement.USER);
         addContext(Message.class, ContextType.INVOKER, (user, shard, channel, guild, message, reaction, args) -> message, ContextRequirement.MESSAGE);
         addContext(Reaction.class, ContextType.INVOKER, (user, shard, channel, guild, message, reaction, args) -> reaction, ContextRequirement.REACTION);
@@ -108,7 +109,7 @@ public class InvocationObjectGetter {
             if (u != null) return new Pair<>(u, args.split(" ")[0].length());
             if (guild == null) throw new ArgumentException("Commands with user names can not be used in private channels");
             List<User> users = new ArrayList<>(3);
-            ConfigHandler.getSetting(UserNamesConfig.class, message.getGuild()).forEach(s -> {
+            UserNameMonitor.getNames(guild).forEach(s -> {
                 if (args.startsWith(s) && ((args.length() == s.length() || args.charAt(s.length()) == ' '))){
                     users.addAll(guild.getUsersByName(s));
                     if (users.size() > 1){
@@ -181,7 +182,7 @@ public class InvocationObjectGetter {
             for (Role r : message.getGuild().getRoles()){
                 if (args.startsWith(r.getName()) && (args.length() == arg.length() || args.charAt(arg.length()) == ' ')){
                     if (role != null){
-                        throw new ArgumentException("To many roles named that");
+                        throw new ArgumentException("To many roles named that, mention the role or provide an ID");
                     }
                     role = r;
                 }
@@ -234,23 +235,7 @@ public class InvocationObjectGetter {
             return pair.get();
         });
         addConverter(String.class, (invoker, shard, channel, guild, message, reaction, args) -> new Pair<>(args, args.length()));
-        addConverter(BotRole.class, (invoker, shard, channel, guild, message, reaction, args) -> {
-            args = args.toUpperCase();
-            BotRole role = null;
-            try {
-                role = BotRole.valueOf(args.split(" ")[0]);
-            } catch (Exception ignored){}
-            if (role == null) {
-                for (BotRole r : BotRole.values()){
-                    if (r.name().contains("_") && args.startsWith(r.name().replace("_", " "))){
-                        role = r;
-                        break;
-                    }
-                }
-            }
-            if (role != null) return new Pair<>(role, role.name().length());
-            throw new ArgumentException("No BotRole found");
-        });
+        addConverter(BotRole.class, (invoker, shard, channel, guild, message, reaction, args) -> EnumHelper.getValue(BotRole.class, args));
         addConverter(AbstractCommand.class, (invoker, shard, channel, guild, message, reaction, args) -> {
             Pair<AbstractCommand, String> command = CommandHandler.getMessageCommand(args);
             if (command == null) throw new ArgumentException("No such command found");
@@ -260,12 +245,7 @@ public class InvocationObjectGetter {
             String first = args.split(" ")[0];
             return new Pair<>(new Time(first), first.length());
         });
-        addConverter(SlotPack.class, (invoker, shard, channel, guild, message, reaction, args) -> {
-            try{return new FunctionPair<>(SlotPack.valueOf(args.split(" ")[0].toUpperCase()), pack -> pack.name().length());
-            } catch (Exception e){
-                throw new ArgumentException("Unrecognized pack name");
-            }
-        });
+        addConverter(SlotPack.class, (invoker, shard, channel, guild, message, reaction, args) -> EnumHelper.getValue(SlotPack.class, args));
         addConverter(ModuleLevel.class, (invoker, shard, channel, guild, message, reaction, args) -> EnumHelper.getValue(ModuleLevel.class, args));
         addConverter(CommandGroup.class, (invoker, shard, channel, guild, message, reaction, args) -> {
             try {

@@ -86,15 +86,9 @@ public class User implements Configurable {
 
     private final AtomicReference<Set<Guild>> guilds = new AtomicReference<>();
     public Set<Guild> getGuilds(){
-        synchronized (this.guilds){
-            if (this.guilds.get() == null) {
-                this.guilds.set(DiscordClient.getGuilds().stream().filter(guild -> guild.getUsers().contains(this)).collect(Collectors.toSet()));
-                ScheduleService.schedule(120_000, () -> {
-                    synchronized (this.guilds){
-                        this.guilds.set(null);
-                    }
-                });
-            }
+        if (this.guilds.get() == null) {
+            this.guilds.set(DiscordClient.getGuilds().stream().filter(guild -> guild.getUsers().contains(this)).collect(Collectors.toSet()));
+            ScheduleService.schedule(120_000, () -> this.guilds.set(null));
         }
         return this.guilds.get();
     }
@@ -121,6 +115,11 @@ public class User implements Configurable {
 
     public String getDisplayName(Guild guild) {
         return user().getDisplayName(guild.guild());
+    }
+
+    public String getNickname(Guild guild) {
+        String nick = this.getDisplayName(guild);
+        return this.getName().equals(nick) ? null : nick;
     }
 
     public String mention() {

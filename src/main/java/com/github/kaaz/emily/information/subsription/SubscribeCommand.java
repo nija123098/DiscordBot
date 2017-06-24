@@ -20,9 +20,6 @@ public class SubscribeCommand extends AbstractCommand {
     @Command
     public void command(@Argument(optional = true, replacement = ContextType.NONE, info = "The thing to subscribe to") SubscriptionLevel level, @Argument String arg, Channel channel, MessageMaker maker){
         if (level == null) SubscribeCurrentCommand.command(channel, maker);
-        else{
-            ConfigHandler.alterSetting(SubscriptionsConfig.class, channel, levels -> levels.add(level));
-            maker.withOK();
-        }
+        else ConfigHandler.alterSetting(SubscriptionsConfig.class, channel, levels -> levels.add(level));
     }
 }

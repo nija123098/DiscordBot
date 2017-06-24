@@ -23,6 +23,5 @@ public class GlobalNicknameChangeCommand extends AbstractCommand {
             String display = DiscordClient.getOurUser().getDisplayName(guild);
             return display.equals(DiscordClient.getOurUser().getName()) || display.equals(global);
         }).forEach(guild -> guild.setUserNickname(DiscordClient.getOurUser(), arg));
-        maker.withOK();
     }
 }

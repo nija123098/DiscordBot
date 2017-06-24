@@ -11,7 +11,6 @@ import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.github.kaaz.emily.util.EmoticonHelper;
 import com.github.kaaz.emily.util.FormatHelper;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,14 +29,11 @@ public class HelpCommand extends AbstractCommand {
     public void command(@Argument(optional = true, replacement = ContextType.NONE) AbstractCommand command, MessageMaker maker, User user, Channel channel){
         if (command == null) {
             maker.append("I'll show you the following commands:\n");
-            List<AbstractCommand> commands = new ArrayList<>();
             for (ModuleLevel level : ModuleLevel.values()){
                 if (level == ModuleLevel.NONE) continue;
-                level.getCommands().forEach(c -> {
-                    if (c.hasPermission(user, channel)) commands.add(c);
-                });
+                List<AbstractCommand> commands = level.getCommands().stream().filter(AbstractCommand::isHighCommand).filter(c -> c.hasPermission(user, channel)).collect(Collectors.toList());
                 if (!commands.isEmpty()) {
-                    maker.appendRaw(level.getIcon() + " " + level.name() + "\n" + FormatHelper.makeTable(commands.stream().filter(AbstractCommand::isHighCommand).map(AbstractCommand::getName).collect(Collectors.toList())));
+                    maker.appendRaw(level.getIcon() + " " + level.name() + "\n" + FormatHelper.makeTable(commands.stream().map(AbstractCommand::getName).collect(Collectors.toList())));
                     commands.clear();
                 }
             }

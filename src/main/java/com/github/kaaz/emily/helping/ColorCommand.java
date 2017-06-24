@@ -5,9 +5,14 @@ import com.github.kaaz.emily.command.ContextType;
 import com.github.kaaz.emily.command.ModuleLevel;
 import com.github.kaaz.emily.command.anotations.Argument;
 import com.github.kaaz.emily.command.anotations.Command;
+import com.github.kaaz.emily.command.anotations.Context;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
+import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.Role;
+import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.github.kaaz.emily.exeption.ArgumentException;
+import com.github.kaaz.emily.exeption.ContextException;
+import com.github.kaaz.emily.util.LogicHelper;
 
 import java.awt.*;
 
@@ -19,8 +24,10 @@ public class ColorCommand extends AbstractCommand {
         super("color", ModuleLevel.HELPER, null, null, "Displays information on a color");
     }
     @Command
-    public void command(MessageMaker maker, @Argument(optional = true, replacement = ContextType.NONE) Color color, @Argument(optional = true, replacement = ContextType.NONE) Role role) {
-        if ((color == null) == (role == null)) throw new ArgumentException("Please provide either a color or role");
+    public void command(MessageMaker maker, @Argument(optional = true, replacement = ContextType.NONE) Color color, @Argument(optional = true, replacement = ContextType.NONE) Role role, @Argument(optional = true, replacement = ContextType.NONE) User user, @Context(softFail = true) Guild guild) {
+        if (!LogicHelper.oneNotNull(color, role, user)) throw new ArgumentException("Please provide either a color or a role or a user");
+        if (user != null && guild == null) throw new ContextException("To check a user's color you must be in a guild");
+        if (user != null) color = user.getRolesForGuild(guild).get(0).getColor();
         if (role != null) color = role.getColor();
         maker.withColor(color);
         maker.getNewFieldPart().withBoth("Hex", "#" + Integer.toHexString(color.getRGB()).toUpperCase());

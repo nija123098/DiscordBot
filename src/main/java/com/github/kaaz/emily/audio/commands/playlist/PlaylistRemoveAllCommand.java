@@ -23,6 +23,5 @@ public class PlaylistRemoveAllCommand extends AbstractCommand {
     public void command(@Argument(optional = true) Playlist playlist, User user, Guild guild, MessageMaker maker){
         playlist.checkPermissionToEdit(user, guild);
         ConfigHandler.setSetting(PlaylistContentsConfig.class, playlist, new ArrayList<>(0));
-        maker.withOK();
     }
 }

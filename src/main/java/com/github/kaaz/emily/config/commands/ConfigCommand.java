@@ -4,6 +4,7 @@ import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.ModuleLevel;
 import com.github.kaaz.emily.command.anotations.Argument;
 import com.github.kaaz.emily.command.anotations.Command;
+import com.github.kaaz.emily.config.AbstractConfig;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.Configurable;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
@@ -21,12 +22,8 @@ public class ConfigCommand extends AbstractCommand {
     public <C extends Configurable> void command(@Argument(optional = true) C configurable, User user, Guild guild, MessageMaker helper){
         if (configurable == null) configurable = (C) (guild == null ? user : guild);
         C finalConfigurable = configurable;
-        ConfigHandler.getConfigs().stream().filter(config -> finalConfigurable.getConfigLevel().isAssignableFrom(config.getConfigLevel())).filter(config -> config.getBotRole().hasRequiredRole(user, guild)).forEach(config -> {
-            helper.getNewFieldPart().getValue().append(config.getName()).getFieldPart().getValue().append(ConfigHandler.getExteriorSetting(config.getName(), finalConfigurable));// find a casting way to do this
+        ConfigHandler.getConfigs().stream().filter(config -> finalConfigurable.getConfigLevel().isAssignableFrom(config.getConfigLevel())).filter(config -> config.getBotRole().hasRequiredRole(user, guild)).filter(AbstractConfig::isNormalViewing).forEach(config -> {
+            helper.getNewFieldPart().withBoth(config.getName(), ConfigHandler.getExteriorSetting(config.getName(), finalConfigurable));// find a casting way to do this
         });
-    }
-    @Override
-    public ModuleLevel getModule(){
-        return ModuleLevel.ADMINISTRATIVE;
     }
 }

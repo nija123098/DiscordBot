@@ -4,6 +4,7 @@ import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.ModuleLevel;
 import com.github.kaaz.emily.command.anotations.Command;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
+import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.launcher.BotConfig;
 import com.github.kaaz.emily.util.EmoticonHelper;
 import com.github.kaaz.emily.util.FormatHelper;
@@ -29,13 +30,14 @@ public class LoLChampCommand extends AbstractCommand {
     private static String SWORDS = EmoticonHelper.getChars("crossed_swords"), EXPLOSION = EmoticonHelper.getChars("diamond_shape_with_a_dot_inside"), DEFENSE = EmoticonHelper.getChars("shield"), QUESTION_MARK = EmoticonHelper.getChars("question"), P = EmoticonHelper.getChars("regional_indicator_p");
     public LoLChampCommand() {
         super("lolchamp", ModuleLevel.INFO, null, null, "check out a league of legends champion");
-        this.api = new RiotApi(new ApiConfig().setKey(BotConfig.RIOT_GAMES_TOKEN));
+        this.api = BotConfig.RIOT_GAMES_TOKEN != null ? new RiotApi(new ApiConfig().setKey(BotConfig.RIOT_GAMES_TOKEN)) : null;
     }
     private String getImage(Image img) {
         return baseUrl + img.getGroup() + "/" + img.getFull();
     }
     @Command
     public void execute(String args, MessageMaker maker) {
+        if (this.api == null) throw new DevelopmentException("This command is currently unavailable");
         try {
             if (gameVersion == null) {
                 gameVersion = api.getDataVersions(Region.EUW).get(0);

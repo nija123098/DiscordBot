@@ -49,6 +49,7 @@ public class AbstractCommand {
     private List<GuildUser> guildUserCoolDowns;
     private Set<ContextRequirement> contextRequirements;
     private Set<AbstractCommand> subCommands;
+    private boolean prefixRequired = true;
     public AbstractCommand(Class<? extends AbstractCommand> superCommand, String name, String absoluteAliases, String emoticonAliases, String relativeAliases, String help){
         this.superCommand = superCommand;
         this.name = name;
@@ -75,9 +76,10 @@ public class AbstractCommand {
         this.allNames = new HashSet<>();
         if (superCommand != null) this.getSuperCommand().allNames.forEach(s -> this.allNames.add(s + " " + this.name));
         this.name = superCommand == null ? name : superCommand.name + " " + name;
-        this.module = getModule() == null ? superCommand == null ? ModuleLevel.NONE : superCommand.getModule() : getModule();
+        this.module = this.getModule() == null ? superCommand == null ? ModuleLevel.NONE : superCommand.getModule() : this.module;
         this.module.addCommand(this);
         this.botRole = getBotRole() == null ? superCommand == null ? BotRole.USER : superCommand.getBotRole() : BotRole.USER;
+        this.prefixRequired = superCommand == null ? this.prefixRequired : superCommand.prefixRequired();
         this.allNames.add(this.name);
         if (aAliases != null){
             Collections.addAll(this.allNames, aAliases.split(", "));
@@ -278,6 +280,14 @@ public class AbstractCommand {
         builder.append(getLocalUsages()).append("\n");
         this.subCommands.forEach(command -> builder.append(command.getUsages()).append("\n"));
         return builder.substring(0, builder.length() - 1);
+    }
+
+    public boolean prefixRequired(){
+        return this.prefixRequired;
+    }
+
+    public Set<AbstractCommand> getSubCommands(){
+        return this.subCommands;
     }
 
     /**

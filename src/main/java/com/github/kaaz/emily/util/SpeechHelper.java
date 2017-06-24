@@ -1,7 +1,6 @@
 package com.github.kaaz.emily.util;
 
 import com.darkprograms.speech.synthesiser.Synthesiser;
-import com.github.kaaz.emily.launcher.BotConfig;
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;
@@ -17,16 +16,14 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SpeechHelper {
     private static final Map<String, Map<String, File>> MAP = new ConcurrentHashMap<>();
     private static final Synthesiser SYNTHESISER = new Synthesiser();
-    private static final File PARENT = new File(BotConfig.TEMP_PATH);
     public static File getFile(LangString string, String lang){
-        return MAP.computeIfAbsent(lang, s -> new HashMap<>()).computeIfAbsent(lang, s -> {
+        String content = string.translate(lang);
+        return MAP.computeIfAbsent(lang, s -> new HashMap<>()).computeIfAbsent(content, s -> {
             try {
-                File file = File.createTempFile("audio", "mp3", PARENT);
-                file.deleteOnExit();
+                File file = FileHelper.getTempFile("speech", "mp3");
                 SYNTHESISER.setLanguage(lang);
-                String content = string.translate(lang);
                 IOUtils.copy(SYNTHESISER.getMP3Data(content), new FileOutputStream(file));
-                MAP.computeIfAbsent(lang, st -> new HashMap<>()).put(content, file);
+                MAP.get(lang).put(content, file);
                 return file;
             } catch (IOException e) {
                 throw new RuntimeException("Error during audio synthesis", e);

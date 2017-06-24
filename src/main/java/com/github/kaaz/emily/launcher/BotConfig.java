@@ -27,6 +27,8 @@ public class BotConfig {
     @ConfigurationOption
     public static String YT_DL_PATH = CONTAINER_PATH + "youtube-dl.exe";
     @ConfigurationOption
+    public static String FFM_PEG_PATH = CONTAINER_PATH + "ffmpeg.exe";
+    @ConfigurationOption
     public static int MUSIC_DOWNLOAD_THREAD_COUNT = 1;
     @ConfigurationOption
     public static String AUDIO_FORMAT = "vorbis";

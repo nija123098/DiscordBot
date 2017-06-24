@@ -27,8 +27,7 @@ public class TagDeleteCommand extends AbstractCommand {
                 else throw new ArgumentException("No such tag called: " + s);
             });
         } else {
-            if (TagConfig.deleteOfUser(user, guild)) maker.withOK();
-            else maker.append("That user doesn't own any tags");
+            if (!TagConfig.deleteOfUser(user, guild)) maker.append("That user doesn't own any tags");
         }
     }
 }

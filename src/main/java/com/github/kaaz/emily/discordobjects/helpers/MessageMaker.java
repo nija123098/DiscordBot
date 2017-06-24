@@ -1,15 +1,20 @@
 package com.github.kaaz.emily.discordobjects.helpers;
 
+import com.github.kaaz.emily.automoderation.VoiceCommandPrintChannelConfig;
 import com.github.kaaz.emily.command.ProcessingHandler;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.configs.guild.GuildLanguageConfig;
 import com.github.kaaz.emily.config.configs.user.UserLanguageConfig;
 import com.github.kaaz.emily.discordobjects.exception.ErrorWrapper;
+import com.github.kaaz.emily.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 import com.github.kaaz.emily.discordobjects.wrappers.*;
 import com.github.kaaz.emily.exeption.BotException;
 import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.service.services.ScheduleService;
-import com.github.kaaz.emily.util.*;
+import com.github.kaaz.emily.util.EmoticonHelper;
+import com.github.kaaz.emily.util.ImageColorHelper;
+import com.github.kaaz.emily.util.LangString;
+import com.github.kaaz.emily.util.Rand;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 import sx.blah.discord.handle.obj.IMessage;
@@ -284,9 +289,12 @@ public class MessageMaker {
         }
     }
     private void send(int page){
-        if (!this.maySend) return;
+        if (!this.maySend) {
+            if (this.origin != null) ErrorWrapper.wrap(() -> this.origin.addReaction(EmoticonHelper.getChars("ok_hand")));
+            return;
+        }
         if (this.origin != null && this.okHand) ErrorWrapper.wrap(() -> this.origin.addReaction(EmoticonHelper.getChars("ok_hand")));
-        compile();
+        this.compile();
         if (this.embed != null){
             if (page >= this.fieldIndices.length) throw new RuntimeException("Attempted to get a page that doesn't exit");
             this.embed.clearFields().withDesc(this.header.langString.translate(this.lang) + "\n\n" + (page >= textVals.length ? "" : textVals[page]) + "\n\n" + this.footer.langString.translate(lang));
@@ -297,6 +305,10 @@ public class MessageMaker {
             if (this.external.appended) this.builder.appendContent("\n" + this.external.translate(this.lang));
         }
         if (this.message == null){
+            if (this.channel instanceof VoiceChannel){
+                GuildAudioManager.getManager(this.channel.getGuild()).interrupt(this.header.langString);
+                return;
+            }
             this.builder.withChannel(this.channel.channel());
             this.message = ErrorWrapper.wrap((ErrorWrapper.Request<IMessage>) () -> this.builder.send());
             this.ourMessage = Message.getMessage(this.message);
@@ -327,10 +339,8 @@ public class MessageMaker {
                 return;
             }
         }
-        if (!this.header.appended) {
-            this.withOK();
-        }
-        if (this.couldNormalize()) this.asNormalMessage(); // do not combine
+        if (this.couldNormalize()) this.asNormalMessage();
+        else if (this.channel instanceof VoiceChannel) this.channel = ConfigHandler.getSetting(VoiceCommandPrintChannelConfig.class, this.channel.getGuild());
         if (this.embed == null) this.builder.withContent(this.header.langString.translate(this.lang));
         else {// embed
             this.embed.withAuthorName(authorName.langString.translate(lang));
@@ -452,7 +462,7 @@ public class MessageMaker {
     }
     public class TextPart {
         private MessageMaker maker;
-        LangString langString;
+        public LangString langString;
         private boolean appended;
         private TextPart(MessageMaker maker) {
             this.maker = maker;

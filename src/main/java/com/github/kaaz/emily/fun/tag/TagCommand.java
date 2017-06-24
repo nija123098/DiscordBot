@@ -25,10 +25,7 @@ public class TagCommand extends AbstractCommand {
                 Tag t = ConfigHandler.getSetting(TagConfig.class, guild).get(s);
                 if (t == null) throw new ArgumentException("No tag called: " + s);
                 maker.appendRaw(t.getContent());
-            }else{
-                ConfigHandler.alterSetting(TagConfig.class, guild, stringTagMap -> stringTagMap.put(split[0], new Tag(user.getID(), split[0], FormatHelper.trimFront(s.substring(split[0].length())))));
-                maker.withOK();
-            }
+            }else ConfigHandler.alterSetting(TagConfig.class, guild, stringTagMap -> stringTagMap.put(split[0], new Tag(user.getID(), split[0], FormatHelper.trimFront(s.substring(split[0].length())))));
         }else{
             maker.append("Available tags:");
             ConfigHandler.getSetting(TagConfig.class, guild).forEach((s1, tag) -> maker.getNewListPart().appendRaw(s1));

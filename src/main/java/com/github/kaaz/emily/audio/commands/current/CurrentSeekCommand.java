@@ -23,6 +23,5 @@ public class CurrentSeekCommand extends AbstractCommand {
         Track track = manager.currentTrack();
         if (ConfigHandler.getSetting(DurrationTimeConfig.class, track) < time.schedualed()) throw new ArgumentException("The track is not that long");
         manager.seek(time.timeUntil());
-        maker.withOK();
     }
 }

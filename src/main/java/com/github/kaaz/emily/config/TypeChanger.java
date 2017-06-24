@@ -8,6 +8,7 @@ import com.thoughtworks.xstream.XStream;
 import java.io.File;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -43,11 +44,12 @@ public class TypeChanger {
         });
     }
     public static boolean normalStorage(Class<?> clazz){
-        return clazz.isEnum() || TO_STRING.keySet().contains(clazz);
+        return clazz.isEnum() || clazz.equals(String.class) || !Collections.disjoint(TO_STRING.keySet(), ReflectionHelper.getAssignableTypes(clazz));
     }
     public static String toString(Class<?> from, Object o){
         if (o == null) return "null";
         if (from.isEnum()) return o.toString();
+        if (from.equals(String.class)) return (String) o;
         AtomicReference<String> reference = new AtomicReference<>();
         ReflectionHelper.getAssignableTypes(from).forEach(clazz -> {
             Function<Object, String> f = (Function<Object, String>) TO_STRING.get(clazz);
@@ -61,6 +63,7 @@ public class TypeChanger {
     public static <T> T toObject(Class<T> to, String s){
         if (s.equals("null")) return null;
         if (to.isEnum()) return (T) getEnum(to, s);
+        if (to.equals(String.class)) return (T) s;
         AtomicReference<T> reference = new AtomicReference<>();
         ReflectionHelper.getAssignableTypes(to).forEach(clazz -> {
             Function<String, Object> f = (Function<String, Object>) FROM_STRING.get(to);
