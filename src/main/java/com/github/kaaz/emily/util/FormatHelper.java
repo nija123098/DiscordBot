@@ -1,5 +1,6 @@
 package com.github.kaaz.emily.util;
 
+import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.google.common.base.Strings;
 
 import java.util.Arrays;
@@ -186,5 +187,21 @@ public class FormatHelper {
             sb.append(DASH);
         }
         return sb.toString();
+    }
+    public static String getList(List<String> strings){
+        switch (strings.size()) {
+            case 0:
+                throw new DevelopmentException("List provided is empty");
+            case 1:
+                return strings.get(0);
+            case 2:
+                return strings.get(0) + " and " + strings.get(1);
+            default:
+                String builder = "";
+                for (int i = 0; i < strings.size() - 1; i++) {
+                    builder += strings.get(i) + ", ";
+                }
+                return builder + "and " + strings.get(strings.size() - 1);
+        }
     }
 }

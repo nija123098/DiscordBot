@@ -6,7 +6,7 @@ import com.github.kaaz.emily.audio.configs.guild.MusicOutputTextChannelConfig;
 import com.github.kaaz.emily.audio.configs.guild.QueueTrackOnlyConfig;
 import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.ModuleLevel;
-import com.github.kaaz.emily.command.anotations.Command;
+import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.configs.guild.GuildActivePlaylistConfig;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;

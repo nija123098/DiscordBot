@@ -1,8 +1,8 @@
 package com.github.kaaz.emily.helping.poll;
 
 import com.github.kaaz.emily.command.AbstractCommand;
-import com.github.kaaz.emily.command.anotations.Argument;
-import com.github.kaaz.emily.command.anotations.Command;
+import com.github.kaaz.emily.command.annotations.Argument;
+import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.github.kaaz.emily.exeption.ArgumentException;
 

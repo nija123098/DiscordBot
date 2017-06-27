@@ -1,8 +1,8 @@
 package com.github.kaaz.emily.command.commands;
 
 import com.github.kaaz.emily.command.*;
-import com.github.kaaz.emily.command.anotations.Command;
-import com.github.kaaz.emily.command.anotations.Context;
+import com.github.kaaz.emily.command.annotations.Command;
+import com.github.kaaz.emily.command.annotations.Context;
 import com.github.kaaz.emily.discordobjects.wrappers.*;
 import com.github.kaaz.emily.exeption.ArgumentException;
 import com.github.kaaz.emily.exeption.PermissionsException;

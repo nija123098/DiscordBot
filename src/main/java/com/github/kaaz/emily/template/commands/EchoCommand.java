@@ -2,8 +2,8 @@ package com.github.kaaz.emily.template.commands;
 
 import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.ModuleLevel;
-import com.github.kaaz.emily.command.anotations.Command;
-import com.github.kaaz.emily.command.anotations.Argument;
+import com.github.kaaz.emily.command.annotations.Command;
+import com.github.kaaz.emily.command.annotations.Argument;
 
 /**
  * Made by nija123098 on 4/23/2017.

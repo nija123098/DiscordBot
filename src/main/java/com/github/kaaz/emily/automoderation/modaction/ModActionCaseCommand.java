@@ -2,8 +2,8 @@ package com.github.kaaz.emily.automoderation.modaction;
 
 import com.github.kaaz.emily.automoderation.modaction.support.AbstractModAction;
 import com.github.kaaz.emily.command.AbstractCommand;
-import com.github.kaaz.emily.command.anotations.Argument;
-import com.github.kaaz.emily.command.anotations.Command;
+import com.github.kaaz.emily.command.annotations.Argument;
+import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.config.GuildUser;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;

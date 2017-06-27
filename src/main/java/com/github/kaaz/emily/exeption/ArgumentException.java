@@ -1,7 +1,7 @@
 package com.github.kaaz.emily.exeption;
 
-import com.github.kaaz.emily.command.anotations.Argument;
-import com.github.kaaz.emily.command.anotations.LaymanName;
+import com.github.kaaz.emily.command.annotations.Argument;
+import com.github.kaaz.emily.command.annotations.LaymanName;
 
 import java.lang.reflect.Parameter;
 

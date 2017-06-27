@@ -1,6 +1,6 @@
 package com.github.kaaz.emily.command;
 
-import com.github.kaaz.emily.command.anotations.LaymanName;
+import com.github.kaaz.emily.command.annotations.LaymanName;
 import com.github.kaaz.emily.util.EmoticonHelper;
 
 import java.util.ArrayList;

@@ -2,7 +2,7 @@ package com.github.kaaz.emily.audio.commands.current;
 
 import com.github.kaaz.emily.audio.configs.track.DurrationTimeConfig;
 import com.github.kaaz.emily.command.AbstractCommand;
-import com.github.kaaz.emily.command.anotations.Command;
+import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.helpers.guildaudiomanager.GuildAudioManager;

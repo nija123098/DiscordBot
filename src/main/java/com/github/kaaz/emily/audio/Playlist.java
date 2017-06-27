@@ -1,6 +1,6 @@
 package com.github.kaaz.emily.audio;
 
-import com.github.kaaz.emily.command.anotations.LaymanName;
+import com.github.kaaz.emily.command.annotations.LaymanName;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.ConfigLevel;
 import com.github.kaaz.emily.config.Configurable;
@@ -14,13 +14,7 @@ import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.exeption.PermissionsException;
 import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.util.Rand;
-import com.sun.java.browser.net.ProxyService;
 
-import javax.net.SocketFactory;
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

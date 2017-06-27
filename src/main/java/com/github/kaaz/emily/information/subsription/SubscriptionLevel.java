@@ -1,6 +1,6 @@
 package com.github.kaaz.emily.information.subsription;
 
-import com.github.kaaz.emily.command.anotations.LaymanName;
+import com.github.kaaz.emily.command.annotations.LaymanName;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.information.configs.SubscriptionsConfig;

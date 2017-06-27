@@ -1,9 +1,9 @@
 package com.github.kaaz.emily.command;
 
-import com.github.kaaz.emily.command.anotations.Argument;
-import com.github.kaaz.emily.command.anotations.Command;
-import com.github.kaaz.emily.command.anotations.Context;
-import com.github.kaaz.emily.command.anotations.LaymanName;
+import com.github.kaaz.emily.command.annotations.Argument;
+import com.github.kaaz.emily.command.annotations.Command;
+import com.github.kaaz.emily.command.annotations.Context;
+import com.github.kaaz.emily.command.annotations.LaymanName;
 import com.github.kaaz.emily.command.configs.DisabledCommandsConfig;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.Configurable;
@@ -98,8 +98,7 @@ public class AbstractCommand {
                 superCommand.getNames().forEach(s -> this.allNames.add(s + " " + rel));
             }
         }
-        Method[] methods = this.getClass().getMethods();
-        for (Method m : methods) {
+        for (Method m : this.getClass().getMethods()) {
             if (m.isAnnotationPresent(Command.class)) {
                 this.method = m;
                 break;
@@ -292,6 +291,10 @@ public class AbstractCommand {
 
     public Set<AbstractCommand> getSubCommands(){
         return this.subCommands;
+    }
+
+    public Set<String> getNaturalTriggers(){
+        return Collections.emptySet();
     }
 
     /**

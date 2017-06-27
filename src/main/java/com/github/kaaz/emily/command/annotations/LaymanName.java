@@ -1,4 +1,4 @@
-package com.github.kaaz.emily.command.anotations;
+package com.github.kaaz.emily.command.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

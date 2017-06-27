@@ -1,24 +1,33 @@
 package com.github.kaaz.emily.helping.presence;
 
 import com.github.kaaz.emily.command.AbstractCommand;
-import com.github.kaaz.emily.command.ContextType;
-import com.github.kaaz.emily.command.anotations.Argument;
-import com.github.kaaz.emily.command.anotations.Command;
+import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
-import com.github.kaaz.emily.util.Time;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Made by nija123098 on 6/23/2017.
  */
 public class AfkCommand extends AbstractCommand {
     public AfkCommand() {
-        super(PresenceCommand.class, "afk", "brb, i'll be right back, i will be right back", null, null, "Marks you afk for a period of time");
+        super(PresenceCommand.class, "afk", "brb", null, null, "Marks you afk for a period of time");
     }
     @Command
-    public void command(@Argument(optional = true, replacement = ContextType.NONE) Time time, User user, MessageMaker maker){
-        if (time == null) ConfigHandler.setSetting(SelfMarkedAwayConfig.class, user, null);
-        else ConfigHandler.setSetting(SelfMarkedAwayConfig.class, user, time.schedualed());
+    public void command(User user, MessageMaker maker){
+        ConfigHandler.setSetting(SelfMarkedAwayConfig.class, user, false);
+    }
+    private static final Set<String> NATURAL_TRIGGERS = new HashSet<>(Arrays.asList("afk", "brb", "ill be right back", "i will be right back"));
+    @Override
+    public Set<String> getNaturalTriggers(){
+        return NATURAL_TRIGGERS;
+    }
+    @Override
+    public boolean prefixRequired() {
+        return true;
     }
 }

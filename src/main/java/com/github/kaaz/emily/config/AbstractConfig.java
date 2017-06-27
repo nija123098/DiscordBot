@@ -1,6 +1,6 @@
 package com.github.kaaz.emily.config;
 
-import com.github.kaaz.emily.command.anotations.LaymanName;
+import com.github.kaaz.emily.command.annotations.LaymanName;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
 import com.github.kaaz.emily.discordobjects.wrappers.event.botevents.ConfigValueChangeEvent;
 import com.github.kaaz.emily.exeption.DevelopmentException;

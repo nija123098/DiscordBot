@@ -22,8 +22,7 @@ public class MentionResponseConfig extends AbstractConfig<Boolean, Guild> {
     }
     @EventListener
     public void handle(DiscordMessageReceivedEvent event){
-        long current = System.currentTimeMillis();
-        Set<String> set = event.getMessage().getMentions().stream().filter(user -> user.getPresence().getStatus() != Presence.Status.ONLINE || ConfigHandler.getSetting(SelfMarkedAwayConfig.class, user) == null || ConfigHandler.getSetting(SelfMarkedAwayConfig.class, user) > current).map(user -> user.getDisplayName(event.getGuild()) + " is " + (user.getPresence().getStatus() == Presence.Status.ONLINE ? "AFK" : user.getPresence().getStatus())).collect(Collectors.toSet());
+        Set<String> set = event.getMessage().getMentions().stream().filter(user -> user.getPresence().getStatus() != Presence.Status.ONLINE || ConfigHandler.getSetting(SelfMarkedAwayConfig.class, user)).map(user -> user.getDisplayName(event.getGuild()) + " is " + (user.getPresence().getStatus() == Presence.Status.ONLINE ? "AFK" : user.getPresence().getStatus())).collect(Collectors.toSet());
         if (set.isEmpty()) return;
         new MessageMaker(event.getMessage()).append(Joiner.on(", ").join(set)).send();
     }

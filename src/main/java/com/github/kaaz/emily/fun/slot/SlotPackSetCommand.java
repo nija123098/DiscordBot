@@ -1,8 +1,8 @@
 package com.github.kaaz.emily.fun.slot;
 
 import com.github.kaaz.emily.command.AbstractCommand;
-import com.github.kaaz.emily.command.anotations.Argument;
-import com.github.kaaz.emily.command.anotations.Command;
+import com.github.kaaz.emily.command.annotations.Argument;
+import com.github.kaaz.emily.command.annotations.Command;
 
 /**
  * Made by nija123098 on 5/17/2017.

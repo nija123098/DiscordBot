@@ -2,9 +2,12 @@ package com.github.kaaz.emily.command;
 
 import com.github.kaaz.emily.audio.Playlist;
 import com.github.kaaz.emily.audio.Track;
-import com.github.kaaz.emily.command.anotations.Argument;
-import com.github.kaaz.emily.command.anotations.Context;
-import com.github.kaaz.emily.config.*;
+import com.github.kaaz.emily.command.annotations.Argument;
+import com.github.kaaz.emily.command.annotations.Context;
+import com.github.kaaz.emily.config.AbstractConfig;
+import com.github.kaaz.emily.config.ConfigHandler;
+import com.github.kaaz.emily.config.Configurable;
+import com.github.kaaz.emily.config.GuildUser;
 import com.github.kaaz.emily.config.configs.guild.GuildActivePlaylistConfig;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
@@ -13,10 +16,6 @@ import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
 import com.github.kaaz.emily.exeption.ArgumentException;
 import com.github.kaaz.emily.exeption.ContextException;
 import com.github.kaaz.emily.exeption.DevelopmentException;
-import com.github.kaaz.emily.fun.slot.SlotPack;
-import com.github.kaaz.emily.fun.starboard.StarLevel;
-import com.github.kaaz.emily.information.subsription.SubscriptionLevel;
-import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.util.*;
 import javafx.util.Pair;
 
@@ -190,15 +189,6 @@ public class InvocationObjectGetter {
             if (role == null) throw new ArgumentException("There are no roles by that name");
             return new Pair<>(role, role.getName().length());
         });
-        addConverter(ConfigLevel.class, (user, shard, channel, guild, message, reaction, args) -> {
-            String arg = args.split(" ")[0].toUpperCase();// replace with ConfigLevel.getLevel
-            try{return new Pair<>(ConfigLevel.valueOf(arg), arg.length());
-            }catch(Exception ignored){}
-            arg = arg.toUpperCase();
-            if (arg.equals("GUILDUSER")) return new Pair<>(ConfigLevel.GUILD_USER, 9);
-            if (arg.equals("GUILD USER")) return new Pair<>(ConfigLevel.GUILD_USER, 10);
-            throw new ArgumentException("No such Configurable type");
-        });
         addConverter(Boolean.class, (user, shard, channel, guild, message, reaction, args) -> {
             String arg = args.split(" ")[0];
             return new Pair<>(LanguageHelper.getBoolean(arg), arg.length());
@@ -235,7 +225,6 @@ public class InvocationObjectGetter {
             return pair.get();
         });
         addConverter(String.class, (invoker, shard, channel, guild, message, reaction, args) -> new Pair<>(args, args.length()));
-        addConverter(BotRole.class, (invoker, shard, channel, guild, message, reaction, args) -> EnumHelper.getValue(BotRole.class, args));
         addConverter(AbstractCommand.class, (invoker, shard, channel, guild, message, reaction, args) -> {
             Pair<AbstractCommand, String> command = CommandHandler.getMessageCommand(args);
             if (command == null) throw new ArgumentException("No such command found");
@@ -245,8 +234,6 @@ public class InvocationObjectGetter {
             String first = args.split(" ")[0];
             return new Pair<>(new Time(first), first.length());
         });
-        addConverter(SlotPack.class, (invoker, shard, channel, guild, message, reaction, args) -> EnumHelper.getValue(SlotPack.class, args));
-        addConverter(ModuleLevel.class, (invoker, shard, channel, guild, message, reaction, args) -> EnumHelper.getValue(ModuleLevel.class, args));
         addConverter(CommandGroup.class, (invoker, shard, channel, guild, message, reaction, args) -> {
             try {
                 Pair<ModuleLevel, Integer> pair = (Pair<ModuleLevel, Integer>) CONVERTER_MAP.get(ModuleLevel.class).getKey().getObject(invoker, shard, channel, guild, message, reaction, args);
@@ -258,8 +245,6 @@ public class InvocationObjectGetter {
             } catch (ArgumentException ignored){}
             throw new ArgumentException("Please indicate a command or a module");
         });
-        addConverter(SubscriptionLevel.class, (invoker, shard, channel, guild, message, reaction, args) -> EnumHelper.getValue(SubscriptionLevel.class, args));
-        addConverter(StarLevel.class, (invoker, shard, channel, guild, message, reaction, args) -> EnumHelper.getValue(StarLevel.class, args));
         addConverter(Color.class, (invoker, shard, channel, guild, message, reaction, args) -> {
             String[] strings = args.split(" ");
             if (args.startsWith("#")) return new Pair<>(new Color(Integer.parseInt(strings[0].substring(1)), false), 7);

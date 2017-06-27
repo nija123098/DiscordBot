@@ -4,7 +4,7 @@ import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.CommandHandler;
 import com.github.kaaz.emily.command.ContextPack;
 import com.github.kaaz.emily.command.ContextRequirement;
-import com.github.kaaz.emily.command.anotations.Argument;
+import com.github.kaaz.emily.command.annotations.Argument;
 import com.github.kaaz.emily.discordobjects.wrappers.*;
 import com.github.kaaz.emily.exeption.ArgumentException;
 import com.github.kaaz.emily.exeption.ContextException;

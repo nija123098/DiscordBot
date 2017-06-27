@@ -1,8 +1,8 @@
 package com.github.kaaz.emily.automoderation;
 
 import com.github.kaaz.emily.command.AbstractCommand;
-import com.github.kaaz.emily.command.anotations.Command;
-import com.github.kaaz.emily.command.anotations.Argument;
+import com.github.kaaz.emily.command.annotations.Command;
+import com.github.kaaz.emily.command.annotations.Argument;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.GuildUser;
 import com.github.kaaz.emily.discordobjects.wrappers.Channel;
