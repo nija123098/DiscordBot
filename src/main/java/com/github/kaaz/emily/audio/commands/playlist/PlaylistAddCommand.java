@@ -1,15 +1,14 @@
 package com.github.kaaz.emily.audio.commands.playlist;
 
-import com.github.kaaz.emily.audio.commands.PlayCommand;
-import com.github.kaaz.emily.command.AbstractCommand;
-import com.github.kaaz.emily.command.annotations.Command;
-import com.github.kaaz.emily.command.annotations.Argument;
-import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.audio.Playlist;
+import com.github.kaaz.emily.audio.Track;
 import com.github.kaaz.emily.audio.configs.playlist.PlaylistContentsConfig;
+import com.github.kaaz.emily.command.AbstractCommand;
+import com.github.kaaz.emily.command.annotations.Argument;
+import com.github.kaaz.emily.command.annotations.Command;
+import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
-import com.github.kaaz.emily.audio.Track;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
 
 import java.util.List;
@@ -32,7 +31,7 @@ public class PlaylistAddCommand extends AbstractCommand {
                 }
                 ids.add(track);
             }else{
-                List<Track> tracks = PlayCommand.getTracksToPlay(args);
+                List<Track> tracks = Track.getTracks(args);
                 if (track != null) ids.addAll(tracks);
                 else maker.append("This url doesn't point to a supported playlist");
             }

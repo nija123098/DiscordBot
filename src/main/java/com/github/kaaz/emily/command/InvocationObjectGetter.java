@@ -272,6 +272,18 @@ public class InvocationObjectGetter {
             if (reserve != null) return new Pair<>(new Color(reserve), strings[0].length());
             throw new ArgumentException("Could not find color: for hex: insert a # in front | for rgb place the numbers without commas: r g b | for integer place the integer");
         });
+        addConverter(Long.class, (invoker, shard, channel, guild, message, reaction, args) -> {
+            String[] strings = args.split(" ");
+            try {
+                long l = Long.parseLong(strings[0]);
+                return new Pair<>(l, strings[0].length());
+            } catch (NumberFormatException e) {throw new ArgumentException(e);}
+        });
+        addConverter(Track.class, (invoker, shard, channel, guild, message, reaction, args) -> {
+            List<Track> tracks = Track.getTracks(args);
+            if (tracks.isEmpty()) throw new ArgumentException("No tracks found");
+            return new Pair<>(tracks.get(0), args.length());
+        });
     }
 
     private static <T> void addConverter(Class<T> clazz, ArgumentConverter<T> argumentConverter, ContextRequirement...requirements){
@@ -281,7 +293,7 @@ public class InvocationObjectGetter {
     }
 
     public static Set<ContextRequirement> getConvertRequirements(Class<?> type, ContextType contextType){
-        return CONVERTER_MAP.get(type).getValue();
+        return type.isEnum() ? Collections.emptySet() :  CONVERTER_MAP.get(type).getValue();
     }
 
     public static <T> Pair<T, Integer> convert(Class<T> clazz, User user, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, String args){

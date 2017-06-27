@@ -21,11 +21,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * Made by nija123098 on 6/19/2017.
@@ -33,19 +29,12 @@ import java.util.concurrent.TimeUnit;
 public class SpeechParser implements IAudioReceiver {
     private static final Map<GuildAudioManager, Map<User, SpeechParser>> PARSER_MAP = new ConcurrentHashMap<>();
     private static final Set<GuildAudioManager> ACTIVE = new HashSet<>();
-    private static final StreamSpeechRecognizer RECOGNIZER;
+    private static final Configuration CONFIGURATION;
     static {
-        Configuration configuration = new Configuration();
-        configuration.setAcousticModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us");
-        configuration.setDictionaryPath("resource:/edu/cmu/sphinx/models/en-us/cmudict-en-us.dict");
-        configuration.setLanguageModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us.lm.bin");
-        StreamSpeechRecognizer recognizer = null;
-        try {
-            recognizer = new StreamSpeechRecognizer(configuration);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        RECOGNIZER = recognizer;
+        CONFIGURATION = new Configuration();
+        CONFIGURATION.setAcousticModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us");
+        CONFIGURATION.setDictionaryPath("resource:/edu/cmu/sphinx/models/en-us/cmudict-en-us.dict");
+        CONFIGURATION.setLanguageModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us.lm.bin");
         EventDistributor.register(SpeechParser.class);
     }
     public static void registerParser(User user, GuildAudioManager manager){
@@ -65,9 +54,17 @@ public class SpeechParser implements IAudioReceiver {
     }
     private final User user;
     private final GuildAudioManager audioManager;
+    private final StreamSpeechRecognizer recognizer;
     private SpeechParser(User user, GuildAudioManager audioManager) {
         this.user = user;
         this.audioManager = audioManager;
+        StreamSpeechRecognizer recognizer = null;
+        try {
+            recognizer = new StreamSpeechRecognizer(CONFIGURATION);
+        } catch (IOException e) {
+            Log.log("Exception while initing speech recognition", e);
+        }
+        this.recognizer = recognizer;
     }
     private final List<Byte> bytes = new ArrayList<>();
     @Override
@@ -132,14 +129,14 @@ public class SpeechParser implements IAudioReceiver {
         file.delete();
         return ret;
     }
-    private static String scan(File file){
+    private String scan(File file){
         String ret = null;
         synchronized (SpeechParser.class){
             try {
-                RECOGNIZER.startRecognition(new FileInputStream(file));
-                SpeechResult result = RECOGNIZER.getResult();
+                this.recognizer.startRecognition(new FileInputStream(file));
+                SpeechResult result = this.recognizer.getResult();
                 if (result != null) ret = result.getHypothesis();
-                RECOGNIZER.stopRecognition();
+                this.recognizer.stopRecognition();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -154,6 +151,7 @@ public class SpeechParser implements IAudioReceiver {
     private static final ExecutorService EXECUTOR_SERVICE = new ScheduledThreadPoolExecutor(1, (ThreadFactory) Thread::new);
     @EventListener
     public static void handle(DiscordSpeakingEvent event){
+        if (!ACTIVE.contains(GuildAudioManager.getManager(event.getChannel(), false))) return;
         EXECUTOR_SERVICE.submit(() -> {
             SpeechParser parser = PARSER_MAP.computeIfAbsent(GuildAudioManager.getManager(event.getGuild()), c -> new ConcurrentHashMap<>()).get(event.getUser());
             if (parser != null) {

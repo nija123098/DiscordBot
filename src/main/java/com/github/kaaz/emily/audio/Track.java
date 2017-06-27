@@ -6,11 +6,13 @@ import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.github.kaaz.emily.launcher.Reference;
 import com.github.kaaz.emily.perms.BotRole;
-import com.github.kaaz.emily.util.Log;
+import com.github.kaaz.emily.util.*;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import org.reflections.Reflections;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -35,11 +37,38 @@ public abstract class Track implements Configurable{
         ID_MAP.put(clazz, fromID);
     }
     public static Track getTrack(String id){
+        if (id == null) return null;
         String[] split = id.split("-");
+        if (split.length == 1) return null;
         return ID_MAP.get(CLASS_MAP.get(split[0].toUpperCase())).apply(id);
     }
     public static Track getTrack(Class<? extends Track> clazz, String code){
         return CODE_MAP.get(clazz).apply(code);
+    }
+    public static List<Track> getTracks(String s){// may want to move
+        Track track = getTrack(s);
+        if (track != null) return Collections.singletonList(track);
+        String code = YTUtil.extractVideoCode(s);
+        if (code == null) {
+            YTSearch.SimpleResult result = YTSearch.getResults(s);
+            if (result != null) code = result.getCode();
+        }
+        if (code != null) {
+            return Collections.singletonList(Track.getTrack(YoutubeTrack.class, code));
+        }
+        code = YTUtil.extractPlaylistCode(s);
+        if (code != null){
+            return YTUtil.getTracksFromPlaylist(s);
+        }
+        List<Track> tracks = SCUtil.extractTracks(s);
+        if (tracks != null){
+            return tracks;
+        }
+        code = TwitchUtil.extractCode(s);
+        if (code != null){
+            Collections.singletonList(Track.getTrack(TwitchTrack.class, code));
+        }
+        return Collections.emptyList();
     }
     private String id;
     protected Track() {}

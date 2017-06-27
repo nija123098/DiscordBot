@@ -36,6 +36,10 @@ public enum BotRole {
     BOT_ADMIN(true, true, false, WorkAroundReferences.B_O),
     BOT_OWNER(true, (user, guild) -> user.equals(DiscordClient.getApplicationOwner())),
     SYSTEM(true, (user, guild) -> false),;
+    static {
+        WorkAroundReferences.set();
+        System.out.println();
+    }
     private boolean isTrueRank, isGlobalFlag, isGuildFlag;
     private BiPredicate<User, Guild> detect, change;
     BotRole(boolean isTrueRank, BiPredicate<User, Guild> detect, BiPredicate<User, Guild> change) {
@@ -61,7 +65,7 @@ public enum BotRole {
     }
     public boolean hasRequiredRole(User user, Guild guild){
         if (!this.isTrueRank) return this.detect.test(user, guild);
-        for (int i = this.ordinal(); i < values().length; i++) if (this.isTrueRank && values()[i].detect.test(user, guild)) return true;
+        for (int i = this.ordinal(); i < values().length; i++) if (values()[i].detect.test(user, guild)) return true;
         return false;
     }
     public void checkRequiredRole(User user, Guild guild){
@@ -78,7 +82,7 @@ public enum BotRole {
     }
     public static void setRole(BotRole role, boolean grant, User target, User setter, Guild guild){
         if (!role.isFlagRank()) throw new ArgumentException("You can not set non-flag roles though a bot");
-        if (role.change.test(setter, guild)) throw new PermissionsException("You can not change that role");
+        if (!role.change.test(setter, guild)) throw new PermissionsException("You can not change that role");
         setRole(role, grant, target, guild);
     }// this might just get moved to a command
     public static void setRole(BotRole role, boolean grant, User target, Guild guild){
