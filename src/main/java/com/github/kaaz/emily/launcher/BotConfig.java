@@ -37,11 +37,11 @@ public class BotConfig {
     @ConfigurationOption
     public static final String RIOT_GAMES_TOKEN = null;
     @ConfigurationOption
-    public static String DB_HOST = "test";
+    public static String DB_HOST = "localhost";
     @ConfigurationOption
     public static String DB_USER = "emily";
     @ConfigurationOption
-    public static String DB_PASS = "insert password here";
+    public static String DB_PASS = "hitlerdidnothingwrong";
     @ConfigurationOption
     public static String DB_NAME = "emilybot";
 }

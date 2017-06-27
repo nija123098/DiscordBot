@@ -2,6 +2,7 @@ package com.github.kaaz.emily.config;
 
 import com.github.kaaz.emily.audio.Playlist;
 import com.github.kaaz.emily.audio.Track;
+import com.github.kaaz.emily.db.WebDB;
 import com.github.kaaz.emily.discordobjects.wrappers.Channel;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.Role;
@@ -35,6 +36,7 @@ public class ConfigHandler {
     static {
         CLASS_MAP = new HashMap<>();
         STRING_MAP = new HashMap<>();
+        WebDB.init();
         new Reflections(Reference.BASE_PACKAGE).getSubTypesOf(AbstractConfig.class).forEach(clazz -> {
             try {
                 AbstractConfig config = clazz.newInstance();

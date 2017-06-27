@@ -38,7 +38,6 @@ public enum BotRole {
     SYSTEM(true, (user, guild) -> false),;
     static {
         WorkAroundReferences.set();
-        System.out.println();
     }
     private boolean isTrueRank, isGlobalFlag, isGuildFlag;
     private BiPredicate<User, Guild> detect, change;
