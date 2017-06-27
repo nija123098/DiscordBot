@@ -26,4 +26,7 @@ public class EnumHelper {
         }
         throw new ArgumentException("Unknown " + clazz.getSimpleName());
     }
+    public static <E extends Enum<E>> Pair<E, Integer> getValue(Object o, String value){
+        return getValue(((Class<E>) o), value);
+    }
 }

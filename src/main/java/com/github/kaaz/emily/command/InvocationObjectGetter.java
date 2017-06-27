@@ -300,6 +300,7 @@ public class InvocationObjectGetter {
     }
 
     public static <T> Pair<T, Integer> convert(Class<T> clazz, User user, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, String args){
+        if (clazz.isEnum()) return (Pair<T, Integer>) EnumHelper.getValue(clazz, args);
         return (Pair<T, Integer>) CONVERTER_MAP.get(clazz).getKey().getObject(user, shard, channel, guild, message, reaction, args);
     }
 
@@ -320,7 +321,6 @@ public class InvocationObjectGetter {
         for (int i = 0; i < parameters.length; i++) {
             try {
                 if (parameters[i].isAnnotationPresent(Context.class) || parameters[i].getAnnotations().length == 0){// null might be an instance of Context
-                    checkContextType(parameters[i].getType());
                     try {
                         objects[i] = CONTEXT_MAP.get(parameters[i].getType()).get(parameters[i].getAnnotations().length == 0 ? ContextType.DEFAULT : parameters[i].getAnnotation(Context.class).value()).getKey().getObject(user, shard, channel, guild, message, reaction, args);
                     } catch (Exception e){
@@ -332,8 +332,7 @@ public class InvocationObjectGetter {
                     if (argOverride.length > i && argOverride[commandArgIndex++]){
                         continue;
                     }
-                    checkConvertType(parameters[i].getType());
-                    Pair<Object, Integer> pair = (Pair<Object, Integer>) CONVERTER_MAP.get(parameters[i].getType()).getKey().getObject(user, shard, channel, guild, message, reaction, args);
+                    Pair<Object, Integer> pair = convert((Class<Object>) parameters[i].getType(), user, shard, channel, guild, message, reaction, args);
                     objects[i] = pair.getKey();
                     args = FormatHelper.trimFront(args.substring(pair.getValue()));
                 }
@@ -352,7 +351,7 @@ public class InvocationObjectGetter {
     }
 
     public static void checkConvertType(Class<?> type){
-        if (!CONVERTER_MAP.containsKey(type)){
+        if (!CONVERTER_MAP.containsKey(type) && !type.isEnum()){
             throw new DevelopmentException("Can not convert objects of type: " + type.getSimpleName());
         }
     }

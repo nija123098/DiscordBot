@@ -26,6 +26,7 @@ public class MemeTypesCommand extends AbstractCommand {
     }
     @Command
     public static void command(MessageMaker maker){
+        if (MEME_TYPES.isEmpty()) loadMemeTypes();
         maker.appendRaw(FormatHelper.makeTable(new ArrayList<>(MEME_TYPES)));
     }
     static void loadMemeTypes() {

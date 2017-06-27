@@ -11,10 +11,14 @@ import com.github.kaaz.emily.discordobjects.wrappers.User;
  */
 public class BackCommand extends AbstractCommand {
     public BackCommand() {
-        super(PresenceCommand.class, "back", "i'm back, i am back", null, null, "Marks you as no longer afk");
+        super(PresenceCommand.class, "back", "present, i'm back, i am back", null, null, "Marks you as no longer afk");
     }
     @Command
     public void command(MessageMaker maker, User user){
         ConfigHandler.setSetting(SelfMarkedAwayConfig.class, user, 0L);
+    }
+    @Override
+    public boolean prefixRequired() {
+        return false;
     }
 }

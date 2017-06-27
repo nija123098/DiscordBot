@@ -6,7 +6,10 @@ import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventListener;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordSpeakingEvent;
+import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordVoiceJoin;
+import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordVoiceLeave;
 import com.github.kaaz.emily.launcher.BotConfig;
+import com.github.kaaz.emily.perms.BotRole;
 import edu.cmu.sphinx.api.Configuration;
 import edu.cmu.sphinx.api.SpeechResult;
 import edu.cmu.sphinx.api.StreamSpeechRecognizer;
@@ -17,10 +20,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -28,6 +32,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class SpeechParser implements IAudioReceiver {
     private static final Map<GuildAudioManager, Map<User, SpeechParser>> PARSER_MAP = new ConcurrentHashMap<>();
+    private static final Set<GuildAudioManager> ACTIVE = new HashSet<>();
     private static final StreamSpeechRecognizer RECOGNIZER;
     static {
         Configuration configuration = new Configuration();
@@ -52,11 +57,16 @@ public class SpeechParser implements IAudioReceiver {
     public static void unregister(GuildAudioManager manager){
         PARSER_MAP.get(manager).forEach((user1, speechParser) -> unregisterParser(user1, manager));
     }
+    public static void activeate(GuildAudioManager manager, boolean activate){
+        if (ACTIVE.contains(manager) == activate) return;
+        if (activate) ACTIVE.add(manager);
+        else ACTIVE.remove(manager);
+        PARSER_MAP.get(manager).forEach((u, parser) -> parser.activate(activate));
+    }
     private final User user;
     private final GuildAudioManager audioManager;
     private SpeechParser(User user, GuildAudioManager audioManager) {
         this.user = user;
-        audioManager.getGuild().guild().getAudioManager().subscribeReceiver(this);
         this.audioManager = audioManager;
     }
     private final List<Byte> bytes = new ArrayList<>();
@@ -69,6 +79,10 @@ public class SpeechParser implements IAudioReceiver {
     private synchronized void onStop(){
         process(scan(alter(write(FileHelper.getTempFile("voiceparsing", "pcm")))));// this might need to be more condiment
         this.bytes.clear();
+    }
+    private void activate(boolean activate){
+        if (activate) this.audioManager.getGuild().guild().getAudioManager().subscribeReceiver(this);
+        else this.audioManager.getGuild().guild().getAudioManager().unsubscribeReceiver(this);
     }
     private File write(File file){
         byte[] bytes = new byte[this.bytes.size()];
@@ -134,16 +148,31 @@ public class SpeechParser implements IAudioReceiver {
         return ret;
     }
     private void process(String s){
-        System.out.println(s);
-        if (s == null) return;
+        if (s == null || s.isEmpty()) return;
         CommandHandler.attemptInvocation(s, this.user, this.audioManager);
     }
+    private static final ExecutorService EXECUTOR_SERVICE = new ScheduledThreadPoolExecutor(1, (ThreadFactory) Thread::new);
     @EventListener
     public static void handle(DiscordSpeakingEvent event){
-        SpeechParser parser = PARSER_MAP.computeIfAbsent(GuildAudioManager.getManager(event.getGuild()), c -> new ConcurrentHashMap<>()).get(event.getUser());
-        if (parser != null) {
-            if (event.isSpeaking()) parser.onStart();
-            else parser.onStop();
+        EXECUTOR_SERVICE.submit(() -> {
+            SpeechParser parser = PARSER_MAP.computeIfAbsent(GuildAudioManager.getManager(event.getGuild()), c -> new ConcurrentHashMap<>()).get(event.getUser());
+            if (parser != null) {
+                if (event.isSpeaking()) parser.onStart();
+                else parser.onStop();
+            }
+        });
+    }
+    @EventListener
+    public static void handle(DiscordVoiceJoin event){
+        if (BotRole.SUPPORTER.hasRole(event.getUser(), null)) {
+            GuildAudioManager manager = GuildAudioManager.getManager(event.getChannel(), false);
+            if (manager != null) activeate(manager, true);
         }
+    }
+    @EventListener
+    public static void handle(DiscordVoiceLeave event){
+        for (User user : event.getChannel().getConnectedUsers()) if (BotRole.SUPPORTER.hasRole(user, null)) return;
+        GuildAudioManager manager = GuildAudioManager.getManager(event.getChannel(), false);
+        if (manager != null) activeate(manager, false);
     }
 }

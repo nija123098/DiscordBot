@@ -109,6 +109,10 @@ public class AbstractCommand {
             throw new DevelopmentException("No method annotated " + Command.class.getSimpleName() + " in command: " + this.getClass().getName());
         }
         this.parameters = this.method.getParameters();
+        for (Parameter parameter : this.parameters){
+            if (parameter.isAnnotationPresent(Argument.class)) InvocationObjectGetter.checkConvertType(parameter.getType());
+            else if (parameter.isAnnotationPresent(Argument.class) || parameter.getAnnotations().length == 0) InvocationObjectGetter.checkContextType(parameter.getType());
+        }
         this.contextRequirements = new HashSet<>();
         for (Parameter parameter : this.parameters) {
             if (parameter.getAnnotations().length == 0 || (parameter.isAnnotationPresent(Context.class) && !parameter.getAnnotation(Context.class).softFail())) {
