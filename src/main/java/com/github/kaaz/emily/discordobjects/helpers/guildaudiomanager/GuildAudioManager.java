@@ -23,7 +23,6 @@ import com.github.kaaz.emily.launcher.Launcher;
 import com.github.kaaz.emily.service.services.ScheduleService;
 import com.github.kaaz.emily.util.LangString;
 import com.github.kaaz.emily.util.SpeechHelper;
-import com.github.kaaz.emily.util.SpeechParser;
 import com.sedmelluq.discord.lavaplayer.player.AudioConfiguration;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
@@ -114,16 +113,11 @@ public class GuildAudioManager extends AudioEventAdapter{
         this.channel.channel().getGuild().getAudioManager().setAudioProvider(new AudioProvider(this.lavaPlayer));
         this.lavaPlayer.setVolume(ConfigHandler.getSetting(VolumeConfig.class, channel.getGuild()));
         if (this.channel.getGuild().getConnectedVoiceChannel() == null) this.channel.join();
-        for (User user : this.channel.getConnectedUsers()){
-            if (user.equals(DiscordClient.getOurUser())) continue;
-            SpeechParser.registerParser(user, this);
-        }
     }
     public void leave(){
         MAP.remove(this.channel.getGuild().getID());
         this.lavaPlayer.destroy();
         this.channel.leave();
-        SpeechParser.unregister(this);
     }
     public void pause(boolean pause){
         this.lavaPlayer.setPaused(pause);
@@ -233,23 +227,15 @@ public class GuildAudioManager extends AudioEventAdapter{
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
         this.onFinish();
     }
-    private void regiserAudioListener(User user){
-        SpeechParser.registerParser(user, this);
-    }
-    private void deregiserAudioListener(User user){
-        SpeechParser.unregisterParser(user, this);
-    }
     @EventListener
     public static void handle(DiscordVoiceJoin event){
         GuildAudioManager manager = MAP.get(event.getGuild().getID());
         if (manager == null || event.getUser().isBot()) return;
-        manager.regiserAudioListener(event.getUser());
     }
     @EventListener
     public static void handle(DiscordVoiceLeave event){
         GuildAudioManager manager = MAP.get(event.getGuild().getID());
         if (manager == null) return;
-        if (!event.getUser().isBot()) manager.deregiserAudioListener(event.getUser());
         for (User user : event.getChannel().getConnectedUsers()){
             if (!user.isBot()) {
                 manager.skipSet.remove(user);

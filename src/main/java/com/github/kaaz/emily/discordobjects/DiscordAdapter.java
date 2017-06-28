@@ -1,5 +1,6 @@
 package com.github.kaaz.emily.discordobjects;
 
+import com.github.kaaz.emily.audio.SpeechParser;
 import com.github.kaaz.emily.discordobjects.helpers.ReactionBehavior;
 import com.github.kaaz.emily.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 import com.github.kaaz.emily.discordobjects.wrappers.*;
@@ -60,6 +61,7 @@ public class DiscordAdapter {
             }
         }
         GuildAudioManager.init();
+        SpeechParser.init();
         EventDistributor.register(ReactionBehavior.class);
         EventDistributor.register(LanguageMonitor.class);
         EventDistributor.distribute(DiscordDataReload.class, null);

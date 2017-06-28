@@ -19,7 +19,8 @@ public class AutoMusicChannelConfig extends AbstractConfig<Channel, Guild> {
     }
     @EventListener
     public void listen(DiscordVoiceJoin event){
-        try{JoinCommand.command(GuildAudioManager.getManager(event.getChannel(), true), event.getChannel(), new MessageMaker(event.getChannel()));
-        }catch(Exception ignored){}
+        if (event.getChannel().equals(this.getValue(event.getGuild())) && event.getGuild().getConnectedVoiceChannel() == null){
+            JoinCommand.command(GuildAudioManager.getManager(event.getChannel(), true), event.getChannel(), new MessageMaker(event.getChannel()));
+        }
     }
 }
