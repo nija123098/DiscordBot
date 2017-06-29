@@ -12,9 +12,12 @@ import com.github.kaaz.emily.launcher.BotConfig;
  */
 public class ContributorMonitor {
     private static final Role CONTRIB_SIGN_ROLE = Role.getRole(BotConfig.CONTRIBUTOR_SIGN_ROLE);
-    public static void init(){}
+    private static final Role SUPPORT_SIGN_ROLE = Role.getRole(BotConfig.SUPPORTER_SIGN_ROLE);
+    public static void init(){
+
+    }
     @EventListener
-    public void handle(DiscordDataReload reload){
+    public static void handle(DiscordDataReload reload){
         Role role = Role.getRole(BotConfig.CONTRIBUTOR_SIGN_ROLE);
         if (role == null) return;
         Guild guild = role.getGuild();
@@ -25,8 +28,10 @@ public class ContributorMonitor {
         });
     }
     @EventListener
-    public void handle(DiscordUserRolesUpdateEvent event){
-        if (event.newRoles().contains(CONTRIB_SIGN_ROLE) && !event.oldRoles().contains(CONTRIB_SIGN_ROLE)) BotRole.setRole(BotRole.SUPPORTER, true, event.getUser(), null);
-        else if (!event.newRoles().contains(CONTRIB_SIGN_ROLE) && event.oldRoles().contains(CONTRIB_SIGN_ROLE)) BotRole.setRole(BotRole.SUPPORTER, false, event.getUser(), null);
+    public static void handle(DiscordUserRolesUpdateEvent event){
+        if (event.newRoles().contains(CONTRIB_SIGN_ROLE) && !event.oldRoles().contains(CONTRIB_SIGN_ROLE)) BotRole.setRole(BotRole.CONTRIBUTOR, true, event.getUser(), null);
+        else if (!event.newRoles().contains(CONTRIB_SIGN_ROLE) && event.oldRoles().contains(CONTRIB_SIGN_ROLE)) BotRole.setRole(BotRole.CONTRIBUTOR, false, event.getUser(), null);
+        if (event.newRoles().contains(SUPPORT_SIGN_ROLE) && !event.oldRoles().contains(SUPPORT_SIGN_ROLE)) BotRole.setRole(BotRole.SUPPORTER, true, event.getUser(), null);
+        else if (!event.newRoles().contains(SUPPORT_SIGN_ROLE) && event.oldRoles().contains(SUPPORT_SIGN_ROLE)) BotRole.setRole(BotRole.SUPPORTER, false, event.getUser(), null);
     }
 }

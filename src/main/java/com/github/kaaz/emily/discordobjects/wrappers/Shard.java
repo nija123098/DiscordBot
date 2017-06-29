@@ -14,11 +14,6 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class Shard {
     private static final Map<Integer, Shard> MAP = new ConcurrentHashMap<>();// never clear
-    /*static {
-        for (IShard shard : DiscordClient.client().getShards()){// list not guaranteed to be in order
-            MAP.put(shard.getInfo()[0], new Shard(shard));
-        }
-    }*/
     public static Shard getShard(int i){
         return getShard(DiscordClient.client().getShards().get(i));
     }

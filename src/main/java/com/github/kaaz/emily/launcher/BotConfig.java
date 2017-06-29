@@ -9,6 +9,8 @@ import java.io.File;
  */
 public class BotConfig {
     @ConfigurationOption
+    public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36";
+    @ConfigurationOption
     public static String BOT_TOKEN = "Emily's Token";
     @ConfigurationOption
     public static String CONTAINER_PATH = new File(BotConfig.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getParent() + "\\";
@@ -18,6 +20,8 @@ public class BotConfig {
     public static String TEMP_PATH = CONTAINER_PATH + "tempfiles\\";
     @ConfigurationOption
     public static String CONTRIBUTOR_SIGN_ROLE = "274957607855325184";
+    @ConfigurationOption
+    public static String SUPPORTER_SIGN_ROLE = "329718304002539531";
     @ConfigurationOption
     public static String GIPHY_TOKEN = null;
     @ConfigurationOption
@@ -41,7 +45,7 @@ public class BotConfig {
     @ConfigurationOption
     public static String DB_USER = "emily";
     @ConfigurationOption
-    public static String DB_PASS = "hitlerdidnothingwrong";
+    public static String DB_PASS = "p@$$w0rd";
     @ConfigurationOption
     public static String DB_NAME = "emilybot";
 }

@@ -11,6 +11,7 @@ import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordSpeakin
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordVoiceJoin;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordVoiceLeave;
 import com.github.kaaz.emily.launcher.BotConfig;
+import com.github.kaaz.emily.launcher.Launcher;
 import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.util.*;
 import edu.cmu.sphinx.api.Configuration;
@@ -23,6 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,6 +53,7 @@ public class SpeechParser implements IAudioReceiver {
             }
         });
         EventDistributor.register(SpeechParser.class);
+        Launcher.registerStartup(() -> DiscordClient.getRoleByID(BotConfig.CONTRIBUTOR_SIGN_ROLE));
     }
     public static void init(){}
     private final User user;
@@ -65,11 +68,8 @@ public class SpeechParser implements IAudioReceiver {
     public synchronized void receive(byte[] audio, IUser user, char sequence, int timestamp) {
         for (byte anAudio : audio) this.bytes.add(anAudio);
     }
-    private synchronized void onStart(){
-    }
     private synchronized void onStop(){
         process(scan(alter(write(FileHelper.getTempFile("voiceparsing", "pcm")))));// this might need to be more condiment
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>" + this.bytes.size());
         this.bytes.clear();
     }
     private void close(){
@@ -135,24 +135,20 @@ public class SpeechParser implements IAudioReceiver {
                 e.printStackTrace();
             }
         });
-        file.delete();
+        try{Files.delete(file.toPath());
+        }catch(IOException e) {e.printStackTrace();}
         return reference.get();
     }
     private void process(String s){
-        System.out.println(s);
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>> " + s);
         if (s == null || s.isEmpty()) return;
         CommandHandler.attemptInvocation(s, this.user, this.audioManager);
     }
     @EventListener
     public static void handle(DiscordSpeakingEvent event){
         if (!PARSER_MAP.containsKey(event.getGuild())) return;
-        ThreadProvider.submit(() -> {
-            SpeechParser parser = PARSER_MAP.computeIfAbsent(event.getGuild(), c -> new ConcurrentHashMap<>()).get(event.getUser());
-            if (parser != null) {
-                if (event.isSpeaking()) parser.onStart();
-                else parser.onStop();
-            }
-        });
+        SpeechParser parser = PARSER_MAP.computeIfAbsent(event.getGuild(), c -> new ConcurrentHashMap<>()).get(event.getUser());
+        if (parser != null && !event.isSpeaking()) ThreadProvider.submit(parser::onStop);
     }
     @EventListener
     public static void handle(DiscordVoiceJoin event){
@@ -162,7 +158,6 @@ public class SpeechParser implements IAudioReceiver {
             List<User> connected = event.getChannel().getConnectedUsers();
             for (User user : connected){
                 if (user.isBot()) continue;
-                System.out.println("Checking " + user.getName());
                 if (BotRole.SUPPORTER.hasRole(user, null)){
                     found = true;
                     break;
