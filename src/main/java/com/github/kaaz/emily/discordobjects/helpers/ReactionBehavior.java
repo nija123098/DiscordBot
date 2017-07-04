@@ -6,7 +6,8 @@ import com.github.kaaz.emily.discordobjects.wrappers.Reaction;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventListener;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordReactionEvent;
 import com.github.kaaz.emily.service.services.ScheduleService;
-import com.github.kaaz.emily.util.EmoticonHelper;
+import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,12 +19,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public interface ReactionBehavior {
     void behave(boolean add, Reaction reaction);
     long PERSISTENCE = 120000;// map entries needn't be cleared, not many reactions are used so it is not worth synchronizing
-    Map<String, Map<Message, ReactionBehavior>> BEHAVIORS = new ConcurrentHashMap<>();
+    Map<String, Map<Message, Pair<ReactionBehavior, ScheduleService.ScheduledTask>>> BEHAVIORS = new ConcurrentHashMap<>();
     static void registerListener(Message message, String emoticonName, ReactionBehavior behavior){
         if (message == null) return;
-        BEHAVIORS.computeIfAbsent(emoticonName, n -> new ConcurrentHashMap<>()).put(message, behavior);
-        message.addReaction(EmoticonHelper.getChars(emoticonName));
-        ScheduleService.schedule(PERSISTENCE + System.currentTimeMillis(), () -> deregisterListener(message, emoticonName));
+        BEHAVIORS.computeIfAbsent(emoticonName, n -> new ConcurrentHashMap<>()).put(message, new MutablePair<>(behavior, ScheduleService.schedule(PERSISTENCE, () -> deregisterListener(message, emoticonName))));
+        message.addReactionByName(emoticonName);
     }
     static void deregisterListener(Message message, String emoticonName){
         if (message == null) return;
@@ -33,9 +33,13 @@ public interface ReactionBehavior {
     @EventListener
     static void handle(DiscordReactionEvent reaction){
         if (DiscordClient.getOurUser().equals(reaction.getUser())) return;
-        Map<Message, ReactionBehavior> map = BEHAVIORS.get(reaction.getReaction().getName());
+        Map<Message, Pair<ReactionBehavior, ScheduleService.ScheduledTask>> map = BEHAVIORS.get(reaction.getReaction().getName());
         if (map == null) return;
-        ReactionBehavior behavior = map.get(reaction.getMessage());
-        if (behavior != null) behavior.behave(reaction.addingReaction(), reaction.getReaction());
+        Pair<ReactionBehavior, ScheduleService.ScheduledTask> pair = map.get(reaction.getMessage());
+        if (pair != null) {
+            pair.getKey().behave(reaction.addingReaction(), reaction.getReaction());
+            pair.getValue().cancel();
+            pair.setValue(ScheduleService.schedule(PERSISTENCE, () -> deregisterListener(reaction.getMessage(), reaction.getReaction().getName())));
+        }
     }
 }

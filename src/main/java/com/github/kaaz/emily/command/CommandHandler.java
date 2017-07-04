@@ -268,8 +268,8 @@ public class CommandHandler {
      * @param event the monitored event
      */
     @EventListener
-    public static void handle(DiscordMessageReceivedEvent event){
-        attemptInvocation(event.getMessage().getContent(), event.getAuthor(), event.getMessage(), null);// new MessageMaker(event.getMessage()).append(ChatBot.getChatBot(event.getChannel()).think(event.getMessage().getContent())).send();
+    public static boolean handle(DiscordMessageReceivedEvent event){
+        return attemptInvocation(event.getMessage().getContent(), event.getAuthor(), event.getMessage(), null);// new MessageMaker(event.getMessage()).append(ChatBot.getChatBot(event.getChannel()).think(event.getMessage().getContent())).send();
     }
 
     /**

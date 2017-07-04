@@ -2,7 +2,7 @@ package com.github.kaaz.emily.automoderation;
 
 import com.github.kaaz.emily.config.AbstractConfig;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
-import com.github.kaaz.emily.languagefiltering.LanguageLevel;
+import com.github.kaaz.emily.automoderation.languagefiltering.LanguageLevel;
 import com.github.kaaz.emily.perms.BotRole;
 
 /**

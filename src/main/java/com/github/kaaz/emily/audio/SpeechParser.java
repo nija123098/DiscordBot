@@ -13,6 +13,7 @@ import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordVoiceLe
 import com.github.kaaz.emily.launcher.BotConfig;
 import com.github.kaaz.emily.launcher.Launcher;
 import com.github.kaaz.emily.perms.BotRole;
+import com.github.kaaz.emily.service.services.ScheduleService;
 import com.github.kaaz.emily.util.*;
 import edu.cmu.sphinx.api.Configuration;
 import edu.cmu.sphinx.api.SpeechResult;
@@ -56,20 +57,33 @@ public class SpeechParser implements IAudioReceiver {
         Launcher.registerStartup(() -> DiscordClient.getRoleByID(BotConfig.CONTRIBUTOR_SIGN_ROLE));
     }
     public static void init(){}
+    private boolean lon;
     private final User user;
     private final GuildAudioManager audioManager;
+    private final List<Byte> bytes = new ArrayList<>();
     private SpeechParser(User user, GuildAudioManager audioManager) {
         this.user = user;
         this.audioManager = audioManager;
         this.audioManager.getGuild().guild().getAudioManager().subscribeReceiver(this);
     }
-    private final List<Byte> bytes = new ArrayList<>();
     @Override
     public synchronized void receive(byte[] audio, IUser user, char sequence, int timestamp) {
+        if (this.lon) return;
+        if (this.bytes.size() > 100_000){
+            this.bytes.clear();
+            this.lon = true;
+            return;
+        }
         for (byte anAudio : audio) this.bytes.add(anAudio);
     }
     private synchronized void onStop(){
-        process(scan(alter(write(FileHelper.getTempFile("voiceparsing", "pcm")))));// this might need to be more condiment
+        if (this.lon) {
+            this.lon = false;
+            return;
+        }
+        if (this.bytes.size() > 2000) {
+            process(scan(alter(write(FileHelper.getTempFile("voiceparsing", "pcm")))));// this might need to be more condiment
+        }
         this.bytes.clear();
     }
     private void close(){
@@ -134,9 +148,11 @@ public class SpeechParser implements IAudioReceiver {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            ScheduleService.schedule(file.length() * 5, () -> {
+                try{Files.delete(file.toPath());
+                }catch(IOException e) {e.printStackTrace();}
+            });
         });
-        try{Files.delete(file.toPath());
-        }catch(IOException e) {e.printStackTrace();}
         return reference.get();
     }
     private void process(String s){

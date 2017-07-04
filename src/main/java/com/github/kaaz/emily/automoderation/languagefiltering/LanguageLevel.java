@@ -1,4 +1,4 @@
-package com.github.kaaz.emily.languagefiltering;
+package com.github.kaaz.emily.automoderation.languagefiltering;
 
 /**
  * Made by nija123098 on 4/27/2017.

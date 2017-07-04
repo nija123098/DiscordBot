@@ -11,6 +11,7 @@ import sx.blah.discord.handle.impl.events.MessageReceivedEvent;
  * Made by nija123098 on 3/27/2017.
  */
 public class DiscordMessageReceivedEvent implements BotEvent {
+    private boolean command;
     private MessageReceivedEvent event;
     public DiscordMessageReceivedEvent(MessageReceivedEvent event) {
         this.event = event;
@@ -26,5 +27,11 @@ public class DiscordMessageReceivedEvent implements BotEvent {
     }
     public Guild getGuild(){
         return Guild.getGuild(this.event.getGuild());
+    }
+    public void setCommand(boolean command){
+        this.command = command;
+    }
+    public boolean isCommand() {
+        return this.command;
     }
 }

@@ -5,14 +5,13 @@ import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.ModuleLevel;
 import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
-import com.github.kaaz.emily.perms.BotRole;
 
 /**
  * Made by nija123098 on 5/11/2017.
  */
 public class ModActionCommand extends AbstractCommand {
     public ModActionCommand() {
-        super("modaction", BotRole.GUILD_TRUSTEE, ModuleLevel.ADMINISTRATIVE, "ma", null, "Provides information on various disciplinary actions");
+        super("modaction", ModuleLevel.ADMINISTRATIVE, "ma", null, "Provides information on various disciplinary actions");
     }
     @Command
     public void command(MessageMaker maker){

@@ -20,7 +20,6 @@ import java.util.function.Function;
  */
 @LaymanName(value = "Configuration name", help = "The config name")
 public class AbstractConfig<V, T extends Configurable> {
-    private Map<T, V> noSaveValues = new HashMap<>();
     private final Function<T, V> defaul;
     private final String name, description;
     private final BotRole botRole;

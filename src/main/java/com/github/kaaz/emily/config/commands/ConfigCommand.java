@@ -10,13 +10,14 @@ import com.github.kaaz.emily.config.Configurable;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
+import com.github.kaaz.emily.perms.BotRole;
 
 /**
  * Made by nija123098 on 4/1/2017.
  */
 public class ConfigCommand extends AbstractCommand {
     public ConfigCommand() {
-        super("config", ModuleLevel.ADMINISTRATIVE, "cfg", null, "Gets information on config values");
+        super("config", BotRole.USER, ModuleLevel.ADMINISTRATIVE, "cfg", null, "Gets information on config values");
     }
     @Command
     public <C extends Configurable> void command(@Argument(optional = true) C configurable, User user, Guild guild, MessageMaker helper){

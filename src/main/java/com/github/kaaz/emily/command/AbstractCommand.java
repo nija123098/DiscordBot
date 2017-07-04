@@ -78,7 +78,7 @@ public class AbstractCommand {
         this.name = superCommand == null ? name : superCommand.name + " " + name;
         this.module = this.getModule() == null ? superCommand == null ? ModuleLevel.NONE : superCommand.getModule() : this.module;
         this.module.addCommand(this);
-        this.botRole = getBotRole() == null ? superCommand == null ? BotRole.USER : superCommand.getBotRole() : BotRole.USER;
+        this.botRole = getBotRole() == null ? superCommand == null ? BotRole.USER : superCommand.getBotRole() : this.getModule().getDefaultRole();
         this.prefixRequired = superCommand == null ? this.prefixRequired : superCommand.prefixRequired();
         this.allNames.add(this.name);
         if (aAliases != null){

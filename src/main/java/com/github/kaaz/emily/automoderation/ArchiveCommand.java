@@ -8,6 +8,7 @@ import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.wrappers.Channel;
 import com.github.kaaz.emily.discordobjects.wrappers.Message;
 import com.github.kaaz.emily.exeption.DevelopmentException;
+import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.util.FileHelper;
 import com.github.kaaz.emily.util.Time;
 import com.google.common.collect.Lists;
@@ -25,7 +26,7 @@ import java.util.List;
  */
 public class ArchiveCommand extends AbstractCommand {
     public ArchiveCommand() {
-        super("archive", ModuleLevel.ADMINISTRATIVE, null, null, "Archives all data to a txt file");
+        super("archive", BotRole.USER, ModuleLevel.ADMINISTRATIVE, null, null, "Archives all data to a txt file");
     }
     @Command
     public void command(@Argument Time time, MessageMaker maker, Channel channel){

@@ -1,4 +1,4 @@
-package com.github.kaaz.emily.languagefiltering;
+package com.github.kaaz.emily.automoderation.languagefiltering;
 
 import com.github.kaaz.emily.automoderation.LanguageFilteringLevelConfig;
 import com.github.kaaz.emily.config.ConfigHandler;

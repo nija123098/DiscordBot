@@ -28,11 +28,11 @@ public enum BotRole {
     BANNED(true, true, false, WorkAroundReferences.B_A),
     INTERACTION_BOT(true, true, false, WorkAroundReferences.B_A),
     USER(true, (user, guild) -> !BOT.hasRole(user, guild) && !BANNED.hasRole(user, guild)),
-    SUPPORTER(false, true, false, WorkAroundReferences.B_A),
-    CONTRIBUTOR(false, true, false, WorkAroundReferences.B_A),
     GUILD_TRUSTEE(true, false, true, WorkAroundReferences.G_A),
     GUILD_ADMIN(true, (user, guild) -> USER.hasRole(user, guild) && user.getPermissionsForGuild(guild).contains(DiscordPermission.ADMINISTRATOR)),
     GUILD_OWNER(true, (user, guild) -> guild.getOwner().equals(user)),
+    SUPPORTER(false, true, false, WorkAroundReferences.B_A),
+    CONTRIBUTOR(false, true, false, WorkAroundReferences.B_A),
     BOT_ADMIN(true, true, false, WorkAroundReferences.B_O),
     BOT_OWNER(true, (user, guild) -> user.equals(DiscordClient.getApplicationOwner())),
     SYSTEM(true, (user, guild) -> false),;

@@ -55,7 +55,7 @@ public class Presence {
         return get(iPresence.getStatus());
     }
 
-    static Status get(StatusType type) {
+    private static Status get(StatusType type) {
         return Status.values()[type.ordinal()];
     }
 
