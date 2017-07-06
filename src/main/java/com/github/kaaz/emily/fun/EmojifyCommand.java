@@ -17,8 +17,8 @@ public class EmojifyCommand extends AbstractCommand {
     @Command
     public void command(String args, MessageMaker maker){
         StringBuilder builder = new StringBuilder();
-        new StringIterator(args).forEachRemaining(builder::append);
-        maker.append(builder.toString());
+        new StringIterator(args).forEachRemaining(character -> builder.append(getChars(character)));
+        maker.appendRaw(builder.toString());
     }
     private String getChars(char c){
         if (Character.isLetter(c)) return EmoticonHelper.getChars("regional_indicator_" + c);

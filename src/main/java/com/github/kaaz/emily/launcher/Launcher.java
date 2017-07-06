@@ -37,7 +37,7 @@ public class Launcher {
         CommandHandler.initialize();
         DiscordAdapter.initialize();
         STARTUPS.forEach(Runnable::run);
-        DiscordClient.online("with users!");
+        ScheduleService.schedule(10_000, () -> DiscordClient.online("with users!"));
         Log.log("Bot finished initializing");
     }
     public static void registerStartup(Runnable runnable){

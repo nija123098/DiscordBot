@@ -15,8 +15,11 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
 import java.io.File;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Made by nija123098 on 6/10/2017.
@@ -54,7 +57,7 @@ public abstract class DownloadableTrack extends Track {
         super.manage();
         if (MusicDownloadService.isDownloaded(this) && ConfigHandler.getSetting(TrackTimeExpireConfig.class, this) > ConfigHandler.getSetting(TrackDeleteTimeConfig.class, GlobalConfigurable.GLOBAL) + System.currentTimeMillis()){
             ConfigHandler.getSetting(TrackFileConfig.class, this).delete();
-            ConfigHandler.setSetting(DurrationTimeConfig.class, this, null);
+            ConfigHandler.setSetting(DurationTimeConfig.class, this, null);
         }
     }
     public boolean download() {
@@ -66,5 +69,8 @@ public abstract class DownloadableTrack extends Track {
     }
     public String getPreferredType(){
         return "opus";
+    }
+    public static List<Track> getDownloadedTracks(){// optimize
+        return Stream.of(new File(BotConfig.AUDIO_PATH).listFiles()).filter(File::isFile).map(file -> Track.getTrack(file.getName())).filter(track -> MusicDownloadService.isDownloaded(((DownloadableTrack) track))).collect(Collectors.toList());
     }
 }

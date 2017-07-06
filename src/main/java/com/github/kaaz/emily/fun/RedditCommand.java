@@ -29,10 +29,11 @@ public class RedditCommand extends AbstractCommand {
         RedditApi api = RedditApi.getRedditInstance();
         Subreddit subReddit = api.getSubreddit(args.length > 0 ? args[0] : "funny");
         List<Link> list = subReddit.getTop(50).stream().filter(link -> !link.getOver18()).collect(Collectors.toList());
-        RedditLink redditLink = new RedditLink(list.get(Rand.getRand(list.size() - 1)));
+        RedditLink redditLink;
+        while (!(redditLink = new RedditLink(list.get(Rand.getRand(list.size() - 1)))).getFileURL().endsWith(".figv")){}
         if (redditLink.getContent() == null) {
             if (redditLink.getFileType() == null) maker.append(redditLink.getTitle()).appendRaw("\n" + redditLink.getPointerUrl());
-            else maker.withFile(redditLink.getFile()).getTitle().append(redditLink.getTitle());
+            else maker.withImage(redditLink.getFileURL()).getTitle().append(redditLink.getTitle());
         } else maker.append(redditLink.getTitle()).append(redditLink.getContent());
     }
 }

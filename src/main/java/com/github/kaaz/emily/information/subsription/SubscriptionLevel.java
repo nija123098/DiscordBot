@@ -12,8 +12,7 @@ import com.github.kaaz.emily.information.configs.SubscriptionsConfig;
 public enum SubscriptionLevel {
     CODE_UPDATES("Updates related to the code of the bot, this may include minor changes"),
     BOT_VERSION("Updates on feature changes and additions to the bot"),
-    BOT_STATUS("Updates to the status of the bot regarding restarts and maintenance times"),
-    RSS("Follows a RSS feed"),;
+    BOT_STATUS("Updates to the status of the bot regarding restarts and maintenance times"),;
     private String info;
     SubscriptionLevel(String info) {
         this.info = info;

@@ -31,7 +31,7 @@ public class MemeTypesCommand extends AbstractCommand {
     }
     static void loadMemeTypes() {
         try {
-            Document document = Jsoup.connect("https://memegen.link/").userAgent(Reference.USER_AGENT).get();
+            Document document = Jsoup.connect("https://memegen.link/").userAgent(Reference.USER_AGENT).timeout(5_000).get();
             if (document != null) {
                 Elements fmls = document.select(".js-meme-selector option");
                 if (!fmls.isEmpty()) {

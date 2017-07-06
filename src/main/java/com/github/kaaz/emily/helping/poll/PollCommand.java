@@ -20,7 +20,7 @@ public class PollCommand extends AbstractCommand {
         super("poll", ModuleLevel.HELPER, "poll create", null, "Propose a question and choices for the chat to vote on");
     }
     @Command
-    public void command(Message message, @Argument(optional = true, replacement = ContextType.NONE, info = "secret voting") Boolean secret, @Argument Time time, @Argument(optional = true, info = "the max votes a user may have", replacement = ContextType.NONE) Integer maxVotes, @Argument(info = "the question and options separated by ;") String s){
+    public void command(Message message, @Argument(optional = true, replacement = ContextType.NONE) Time time, @Argument(optional = true, info = "the max votes a user may have", replacement = ContextType.NONE) Integer maxVotes, @Argument(info = "the question and options separated by ;") String s){
         String[] strings = s.split(";");
         if (strings.length < 2) throw new ArgumentException("Polls must have at least 2 options");
         for (int i = 0; i < strings.length; i++) {

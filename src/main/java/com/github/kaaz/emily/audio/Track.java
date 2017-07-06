@@ -40,7 +40,10 @@ public abstract class Track implements Configurable{
         if (id == null) return null;
         String[] split = id.split("-");
         if (split.length == 1) return null;
-        return ID_MAP.get(CLASS_MAP.get(split[0].toUpperCase())).apply(id);
+        Class<?> clazz = CLASS_MAP.get(split[0].toUpperCase());
+        if (clazz == null) return null;
+        Function<String, Track> function = ID_MAP.get(clazz);
+        return function == null ? null : function.apply(id);
     }
     public static Track getTrack(Class<? extends Track> clazz, String code){
         return CODE_MAP.get(clazz).apply(code);

@@ -24,13 +24,13 @@ public class UserCommand extends AbstractCommand {
     }
     @Command
     public void command(@Argument(optional = true) User user, @Context(softFail = true) Guild guild, MessageMaker maker){
-        maker.appendAlternate(false, "Querying for ", (guild == null ? user.getName() : user.getDisplayName(guild)) + "\n")
+        maker.appendAlternate(false, "Querying for **", (guild == null ? user.getName() : user.getDisplayName(guild)) + "**\n")
                 .withImage(user.getAvatarURL());
         addAtrib(maker, "bust_in_silhouette", "User", user.getNameAndDiscrim());
         addAtrib(maker, "id", "Discord id", user.getID());
         addAtrib(maker, "keyboard", "Commands used", ConfigHandler.getSetting(CommandsUsedCountConfig.class, user) + "");
-        addAtrib(maker, "date", "Joined guild", Time.getAbbreviated(ConfigHandler.getSetting(GuildUserJoinTimeConfig.class, GuildUser.getGuildUser(guild, user))) + " ago");
-        addAtrib(maker, "calendar_spiral", "Joined discord", Time.getAbbreviated(user.getJoinDate()) + " ago");
+        addAtrib(maker, "date", "Joined guild", Time.getAbbreviated(System.currentTimeMillis() - ConfigHandler.getSetting(GuildUserJoinTimeConfig.class, GuildUser.getGuildUser(guild, user))) + " ago");
+        addAtrib(maker, "calendar_spiral", "Joined discord", Time.getAbbreviated(System.currentTimeMillis() - user.getJoinDate()) + " ago");
     }
     private static void addAtrib(MessageMaker maker, String icon, String info, String content){
         maker.appendAlternate(true, EmoticonHelper.getChars(icon), "  " + info, ": " + content + "\n");

@@ -23,7 +23,7 @@ public class BlackJackHitCommand extends AbstractCommand {
         }else{
             int value = game.playerHit();
             if (value > 21) {
-                maker.append("You busted\n");
+                maker.append("__You busted__\n");
                 BlackJackGame.setGame(user, null);
             }else if (game.playerBlackJack()) {
                 maker.append("Black Jack\n");

@@ -494,6 +494,8 @@ public class MessageMaker {
             return this;
         }
         public TextPart append(LangString langString){
+            this.appended = true;
+            this.maker.maySend();
             this.langString.append(langString);
             return this;
         }

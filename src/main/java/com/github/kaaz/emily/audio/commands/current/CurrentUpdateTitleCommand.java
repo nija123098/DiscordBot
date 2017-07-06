@@ -1,6 +1,6 @@
 package com.github.kaaz.emily.audio.commands.current;
 
-import com.github.kaaz.emily.audio.configs.track.DurrationTimeConfig;
+import com.github.kaaz.emily.audio.configs.track.DurationTimeConfig;
 import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.config.ConfigHandler;
@@ -18,7 +18,7 @@ public class CurrentUpdateTitleCommand extends AbstractCommand {
     @Command
     public void command(GuildAudioManager manager, Channel channel){
         ScheduleService.scheduleRepeat(0, 10_000, () -> {
-            if (manager.currentTrack() != null) channel.changeTopic(CurrentCommand.getPlayBar(manager.isPaused(), manager.currentTime(), ConfigHandler.getSetting(DurrationTimeConfig.class, manager.currentTrack())) + " " + manager.currentTrack().getName());
+            if (manager.currentTrack() != null) channel.changeTopic(CurrentCommand.getPlayBar(manager.isPaused(), manager.currentTime(), ConfigHandler.getSetting(DurationTimeConfig.class, manager.currentTrack())) + " " + manager.currentTrack().getName());
         });
     }
 }

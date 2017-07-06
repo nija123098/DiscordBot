@@ -1,11 +1,12 @@
 package com.github.kaaz.emily.service.services;
 
 import com.github.kaaz.emily.audio.DownloadableTrack;
-import com.github.kaaz.emily.audio.configs.track.DurrationTimeConfig;
+import com.github.kaaz.emily.audio.configs.track.DurationTimeConfig;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.launcher.BotConfig;
 import com.github.kaaz.emily.service.AbstractService;
 import com.github.kaaz.emily.util.Care;
+import com.github.kaaz.emily.util.Log;
 import org.eclipse.jetty.util.ConcurrentHashSet;
 import org.json.JSONObject;
 import sun.misc.IOUtils;
@@ -78,7 +79,7 @@ public class MusicDownloadService extends AbstractService {
             }
             DOWNLOADING.add(track);
             track.download();
-            ConfigHandler.setSetting(DurrationTimeConfig.class, track, time(track.file()));
+            ConfigHandler.setSetting(DurationTimeConfig.class, track, time(track.file()));
             DOWNLOADING.remove(track);
             CONSUMER_MAP.remove(track).forEach(consumer -> consumer.accept(track));
         }
@@ -101,7 +102,6 @@ public class MusicDownloadService extends AbstractService {
             byte[] infoData = IOUtils.readFully(ffprobeStream, -1, false);
             ffprobeProcess.waitFor(30, TimeUnit.SECONDS);
             if (infoData != null && infoData.length > 0) {
-                System.out.println(new String(infoData));
                 JSONObject json = new JSONObject(new String(infoData)).getJSONObject("format");
                 int duration = (int) json.optDouble("duration", 0);
                 if (duration != 0) {
@@ -110,6 +110,7 @@ public class MusicDownloadService extends AbstractService {
                 }
             }
         } catch (IOException | InterruptedException ignored) {
+            Log.log("Could not get duration time from track: " + file.getName());
         } finally {
             if (ffprobeProcess != null) {
                 ffprobeProcess.destroyForcibly();

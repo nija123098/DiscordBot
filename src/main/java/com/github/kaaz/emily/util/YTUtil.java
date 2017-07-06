@@ -13,10 +13,7 @@ public class YTUtil {
     private static final String BASE_VIDEO_URL = "https://www.youtube.com/watch?v=";
     private static final String BASE_PLAYLIST_URL = "https://www.youtube.com/playlist?list=";
     private static boolean isYoutubeVideoCode(String s){
-        if (s.length() != 11) return false;
-        for (int i = 0; i < 11; i++) if (!Character.isLetterOrDigit(s.charAt(i)) || s.charAt(i) == '-' || s.charAt(i) == '_') return false;
-        URLHelper.isValid(BASE_VIDEO_URL + s);
-        return true;
+        return s.length() == 11 && URLHelper.isValid(BASE_VIDEO_URL + s);
     }
     public static String extractVideoCode(String s){
         s = NetworkHelper.stripProtocol(s);

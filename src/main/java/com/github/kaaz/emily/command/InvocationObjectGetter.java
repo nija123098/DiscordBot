@@ -348,9 +348,9 @@ public class InvocationObjectGetter {
     }
 
     public static void checkConvertType(Class<?> type){
-        if (!CONVERTER_MAP.containsKey(type) && !type.isEnum()){
-            throw new DevelopmentException("Can not convert objects of type: " + type.getSimpleName());
-        }
+        if (type.isEnum()) return;
+        for (Class<?> clazz : ReflectionHelper.getAssignableTypes(type)) if (CONVERTER_MAP.containsKey(clazz) && !clazz.isEnum()) return;
+        throw new DevelopmentException("Can not convert objects of type: " + type.getSimpleName());
     }
 
     public static void checkContextType(Class<?> type){

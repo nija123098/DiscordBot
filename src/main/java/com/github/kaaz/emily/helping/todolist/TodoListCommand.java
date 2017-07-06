@@ -15,15 +15,13 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class TodoListCommand extends AbstractCommand {
     public TodoListCommand() {
-        super("todo", ModuleLevel.HELPER, null, null, "");
+        super("todo", ModuleLevel.HELPER, null, null, "Helps you remember things!");
     }
     @Command
     public void command(User user, MessageMaker maker){
         maker.append("Your todo list!");
         AtomicInteger integer = new AtomicInteger();
-        ConfigHandler.getSetting(TodoListConfig.class, user).forEach(todoItem -> {
-            maker.getNewListPart().append(integer + ". " + todoItem.getTodo());
-        });
+        ConfigHandler.getSetting(TodoListConfig.class, user).forEach(todoItem -> maker.getNewListPart().append(integer + ". " + todoItem.getTodo()));
     }
     static void remind(long delay, User user, TodoItem todoItem){
         ScheduleService.schedule(delay, () -> new MessageMaker(user).appendAlternate(true, "You put a item on your todo list for me to remind you of.\n", todoItem.getTodo()).send());

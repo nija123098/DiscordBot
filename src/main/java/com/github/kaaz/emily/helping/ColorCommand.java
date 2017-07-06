@@ -25,7 +25,7 @@ public class ColorCommand extends AbstractCommand {
     }
     @Command
     public void command(MessageMaker maker, @Argument(optional = true, replacement = ContextType.NONE) Color color, @Argument(optional = true, replacement = ContextType.NONE) Role role, @Argument(optional = true, replacement = ContextType.NONE) User user, @Context(softFail = true) Guild guild) {
-        if (!LogicHelper.oneNotNull(color, role, user)) throw new ArgumentException("Please provide either a color or a role or a user");
+        if (LogicHelper.oneNotNull(color, role, user)) throw new ArgumentException("Please provide either a color or a role or a user");
         if (user != null && guild == null) throw new ContextException("To check a user's color you must be in a guild");
         if (user != null) color = user.getRolesForGuild(guild).get(0).getColor();
         if (role != null) color = role.getColor();

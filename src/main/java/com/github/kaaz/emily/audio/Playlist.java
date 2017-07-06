@@ -28,11 +28,14 @@ public class Playlist implements Configurable {
     public static final String GLOBAL_PLAYLIST_ID = "GLOBAL-PLAYLIST-ID";
     public static final Playlist GLOBAL_PLAYLIST = new Playlist(GLOBAL_PLAYLIST_ID);
     private static final Map<String, Playlist> MAP = new ConcurrentHashMap<>();
+    static {
+        MAP.put(GLOBAL_PLAYLIST_ID, GLOBAL_PLAYLIST);
+    }
     public static Playlist getPlaylist(User user, Guild guild, String args){
         String[] arg = args.split(" ");
         String a = arg[0].toLowerCase();
         if (a.equals("global")){
-            return Playlist.MAP.computeIfAbsent(GLOBAL_PLAYLIST_ID, s -> new Playlist(GLOBAL_PLAYLIST_ID));
+            return GLOBAL_PLAYLIST;
         }
         String id = null;
         if (arg.length < 2){
@@ -81,17 +84,14 @@ public class Playlist implements Configurable {
 
     @Override
     public void checkPermissionToEdit(User user, Guild guild){
-        if (this == GLOBAL_PLAYLIST){// identity because there is a single instance of the guild playlist
-            throw new PermissionsException("You can't edit the global playlist");
-        }
         if (this.id.startsWith("user-")){
             if (!this.getOwner().equals(user)){
                 throw new PermissionsException("You don't own this playlist, " + ((User) this.getOwner()).getDisplayName(guild) + " does");
             }
+            BotRole.BOT_ADMIN.checkRequiredRole(user, null);
         }else if (this.id.startsWith("guild-")){
             BotRole.GUILD_TRUSTEE.checkRequiredRole(user, guild);
         }else throw new DevelopmentException("Unknown playlist owner type");
-        BotRole.BOT_ADMIN.checkRequiredRole(user, null);
     }
 
     @Override
@@ -100,19 +100,16 @@ public class Playlist implements Configurable {
     }
 
     public String getName(){
-        if (this.id.equals(GLOBAL_PLAYLIST_ID)){
-            return "Global Playlist";
-        }
         String name = this.id.substring(this.id.indexOf(':') + 1);
-        return name.length() == 0 ? (this.getOwner() instanceof User ? (((User) getOwner()).getName() + "'s list") : ((Guild) getOwner()).getName() + "'s list") : name;
+        return name.length() == 0 ? (this.getOwner() instanceof User ? (getOwner().getName() + "'s list") : getOwner().getName() + "'s list") : name;
     }
 
     public boolean hasGivenName(){
-        return this.id.substring(this.id.indexOf(':') + 1).length() != 0;
+        return !this.id.substring(this.id.indexOf(':') + 1).isEmpty();
     }
 
     public Configurable getOwner() {
-        return this.id.equals(GLOBAL_PLAYLIST_ID) ? null : this.id.startsWith("user-") ? User.getUser(this.id.split("-")[1]) : Guild.getGuild(this.id.split("-")[1]);
+        return this.id.startsWith("user-") ? User.getUser(this.id.split("-")[1]) : Guild.getGuild(this.id.split("-")[1]);
     }
 
     public Track getNext(){

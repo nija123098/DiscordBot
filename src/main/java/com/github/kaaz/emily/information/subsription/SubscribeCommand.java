@@ -15,10 +15,10 @@ import com.github.kaaz.emily.information.configs.SubscriptionsConfig;
  */
 public class SubscribeCommand extends AbstractCommand {
     public SubscribeCommand() {
-        super("subscribe", ModuleLevel.INFO, "sub", null, "Subscribe this channel to certain events");
+        super("subscribe", ModuleLevel.INFO, "sub", null, "Subscribe this channel to certain events, take a look at @Emily rss");
     }
     @Command
-    public void command(@Argument(optional = true, replacement = ContextType.NONE, info = "The thing to subscribe to") SubscriptionLevel level, @Argument String arg, Channel channel, MessageMaker maker){
+    public void command(@Argument(optional = true, replacement = ContextType.NONE, info = "The thing to subscribe to") SubscriptionLevel level, String args, Channel channel, MessageMaker maker){
         if (level == null) SubscribeCurrentCommand.command(channel, maker);
         else ConfigHandler.alterSetting(SubscriptionsConfig.class, channel, levels -> levels.add(level));
     }

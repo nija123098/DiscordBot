@@ -6,6 +6,7 @@ package com.github.kaaz.emily.helping.todolist;
 public class TodoItem {
     private Long scheduledTime;
     private String todo;
+    protected TodoItem() {}
     TodoItem(Long scheduledTime, String todo) {
         this.scheduledTime = scheduledTime;
         this.todo = todo;

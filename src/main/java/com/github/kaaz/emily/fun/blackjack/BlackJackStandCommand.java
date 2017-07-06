@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class BlackJackStandCommand extends AbstractCommand {
     public BlackJackStandCommand() {
-        super(BlackJackCommand.class, "stand, stay", "stand, stay", null, null, "Stands");
+        super(BlackJackCommand.class, "stand", "stand, stay", null, "stay", "Stands in a game of blackjack");
     }
     @Command
     public void command(MessageMaker maker, User user){

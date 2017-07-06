@@ -8,9 +8,12 @@ import com.thoughtworks.xstream.XStream;
 import java.io.File;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
@@ -20,10 +23,11 @@ import java.util.function.Function;
 public class TypeChanger {
     private static final XStream X_STREAM = new XStream();
     private static final Map<Class<?>, Function<?, String>> TO_STRING = new HashMap<>();
-    private static final Map<Class<?>, Function<String, ?>> FROM_STRING = new HashMap<>();
+    private static final Map<String, Function<String, ?>> FROM_STRING = new HashMap<>();
+    private static final Map<Class<?>, Function<?, ?>> XSTREAM_OBJECT_ALTERING = new HashMap<>();
     private static <T> void add(Class<T> clazz, Function<T, String> toString, Function<String, T> toType){
         TO_STRING.put(clazz, toString);
-        FROM_STRING.put(clazz, toType);
+        FROM_STRING.put(clazz.getName(), toType);
     }
     private static <T> void add(Class<T> clazz, Function<String, T> toType){
         add(clazz, Object::toString, toType);
@@ -32,7 +36,7 @@ public class TypeChanger {
         add(Float.class, Float::parseFloat);
         add(Boolean.class, LanguageHelper::getBoolean);
         add(Integer.class, LanguageHelper::getInteger);
-        add(Configurable.class, ConfigHandler::getConfigurable);
+        add(Configurable.class, Configurable::getID, ConfigHandler::getConfigurable);
         add(File.class, File::new);
         add(Long.class, Long::parseLong);
         add(Class.class, s -> {
@@ -42,6 +46,18 @@ public class TypeChanger {
                 return null;
             }// Should not happen
         });
+    }
+    private static <T> void alter(Class<T> clazz, Function<T, Object> function){
+        XSTREAM_OBJECT_ALTERING.put(clazz, function);
+    }
+    static {
+        alter(CopyOnWriteArrayList.class, ArrayList::new);
+        alter(ConcurrentHashMap.class, HashMap::new);
+    }
+    private static <T> Object alter(T o){
+        Function<T, Object> function = (Function<T, Object>) XSTREAM_OBJECT_ALTERING.get(o.getClass());
+        if (function == null) return o;
+        return function.apply(o);
     }
     public static boolean normalStorage(Class<?> clazz){
         return clazz.isEnum() || clazz.equals(String.class) || !Collections.disjoint(TO_STRING.keySet(), ReflectionHelper.getAssignableTypes(clazz));
@@ -58,7 +74,7 @@ public class TypeChanger {
             }
         });
         if (reference.get() != null) return reference.get();
-        return X_STREAM.toXML(o).replace("\n", "");
+        return X_STREAM.toXML(alter(o)).replace("\n", "");
     }
     public static <T> T toObject(Class<T> to, String s){
         if (s.equals("null")) return null;
@@ -66,7 +82,7 @@ public class TypeChanger {
         if (to.equals(String.class)) return (T) s;
         AtomicReference<T> reference = new AtomicReference<>();
         ReflectionHelper.getAssignableTypes(to).forEach(clazz -> {
-            Function<String, Object> f = (Function<String, Object>) FROM_STRING.get(to);
+            Function<String, Object> f = (Function<String, Object>) FROM_STRING.get(clazz.getName());
             if (reference.get() == null && f != null) reference.set((T) f.apply(s));
         });
         return reference.get() == null ? (T) X_STREAM.fromXML(s) : reference.get();

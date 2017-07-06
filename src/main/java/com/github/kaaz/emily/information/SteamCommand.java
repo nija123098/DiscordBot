@@ -10,6 +10,7 @@ import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.configs.user.UserLanguageConfig;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
+import com.github.kaaz.emily.exeption.ArgumentException;
 import com.github.kaaz.emily.util.EmoticonHelper;
 import com.github.kaaz.emily.util.LangString;
 import com.github.kaaz.emily.util.StringHelper;
@@ -26,6 +27,7 @@ public class SteamCommand extends AbstractCommand {
     }
     @Command
     public void command(MessageMaker maker, String name, User user){
+        if (name.isEmpty()) throw new ArgumentException("Please give me the name of a game");
         try {
             SteamApp app = STEAM_API.retrieve(name);
             maker.getAuthorName().appendRaw(app.getName());

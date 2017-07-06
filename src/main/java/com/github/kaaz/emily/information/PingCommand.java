@@ -4,6 +4,7 @@ import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.ModuleLevel;
 import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
+import com.github.kaaz.emily.util.EmoticonHelper;
 
 /**
  * Made by nija123098 on 3/30/2017.
@@ -14,6 +15,9 @@ public class PingCommand extends AbstractCommand {
     }
     @Command
     public void command(MessageMaker helper){
-        helper.append("ping").withUserColor();
+        long time = System.currentTimeMillis();
+        helper.appendRaw(EmoticonHelper.getChars("outbox_tray") + " ").append("Checking ping").send();
+        helper.forceCompile().getHeader().clear();
+        helper.appendRaw(EmoticonHelper.getChars("inbox_tray") + " ").append("ping is " + (System.currentTimeMillis() - time) + "ms");
     }
 }

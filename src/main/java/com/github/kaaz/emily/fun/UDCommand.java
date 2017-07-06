@@ -5,6 +5,7 @@ import com.github.kaaz.emily.command.ModuleLevel;
 import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.util.EmoticonHelper;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -38,7 +39,7 @@ public class UDCommand extends AbstractCommand {
             }
             JSONObject firstResult = (JSONObject) listObject.get(0);
             maker.getTitle().append(firstResult.get("word").toString());
-            maker.append(firstResult.get("definition").toString());
+            maker.append(StringEscapeUtils.escapeHtml4(firstResult.get("definition").toString()));
             maker.append("\n\n*" + firstResult.get("example") + "*\n");
             maker.append(EmoticonHelper.getChars("thumbs_up") + " " + firstResult.get("thumbs_up") + "  " + EmoticonHelper.getChars("thumbs_down") + " " + firstResult.get("thumbs_down"));
             maker.getNote().appendRaw("by " + firstResult.get("author").toString());

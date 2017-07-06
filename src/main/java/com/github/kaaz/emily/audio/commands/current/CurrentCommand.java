@@ -1,6 +1,6 @@
 package com.github.kaaz.emily.audio.commands.current;
 
-import com.github.kaaz.emily.audio.configs.track.DurrationTimeConfig;
+import com.github.kaaz.emily.audio.configs.track.DurationTimeConfig;
 import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.ModuleLevel;
 import com.github.kaaz.emily.command.annotations.Command;
@@ -32,7 +32,7 @@ public class CurrentCommand extends AbstractCommand {
         long time = manager.currentTime();
         maker.getAuthorName().appendRaw(NOTES + " " + track.getName());
         maker.appendRaw("[source](" + track.getSource() + ") - " + ConfigHandler.getSetting(GuildActivePlaylistConfig.class, guild).getName());
-        maker.getNewFieldPart().withBoth("Duration", Time.getAbbreviatedMusic(ConfigHandler.getSetting(DurrationTimeConfig.class, track), time));
+        maker.getNewFieldPart().withBoth("Duration", Time.getAbbreviatedMusic(ConfigHandler.getSetting(DurationTimeConfig.class, track), time));
     }
     static String getPlayBar(boolean paused, long current, long total){
         int first = (int) ((float) current/total * 10);

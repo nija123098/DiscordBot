@@ -68,7 +68,7 @@ public class DiscordAdapter {
         EventDistributor.register(ReactionBehavior.class);
         EventDistributor.register(LanguageMonitor.class);
         EventDistributor.distribute(DiscordDataReload.class, null);
-        ScheduleService.scheduleRepeat(PLAY_TEXT_SPEED, PLAY_TEXT_SPEED, () -> {
+        ScheduleService.scheduleRepeat(PLAY_TEXT_SPEED + 10_000, PLAY_TEXT_SPEED, () -> {
             Template template = TemplateHandler.getTemplate(KeyPhrase.PLAY_TEXT, null, PREVIOUS_TEXTS);
             if (template != null) DiscordClient.getShards().forEach(shard -> shard.online(template.interpret((User) null, shard, null, null, null, null)));
         });

@@ -59,6 +59,7 @@ public class CommandHandler {
         // alias loading
         typeMap.values().forEach(commands -> commands.forEach(command -> command.getEmoticonAliases().forEach(s -> REACTION_COMMAND_MAP.put(EmoticonHelper.getChars(s), command))));
         CLASS_MAP.values().forEach(command -> command.getNames().forEach(s -> {
+            if (s == null) return;
             String[] strings = s.split(" ");
             Map map = COMMANDS_MAP;
             for (String string : strings) {
@@ -267,7 +268,7 @@ public class CommandHandler {
      *
      * @param event the monitored event
      */
-    @EventListener
+    // @EventListener
     public static boolean handle(DiscordMessageReceivedEvent event){
         return attemptInvocation(event.getMessage().getContent(), event.getAuthor(), event.getMessage(), null);// new MessageMaker(event.getMessage()).append(ChatBot.getChatBot(event.getChannel()).think(event.getMessage().getContent())).send();
     }

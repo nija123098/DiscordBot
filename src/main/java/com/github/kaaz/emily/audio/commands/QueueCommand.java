@@ -1,6 +1,6 @@
 package com.github.kaaz.emily.audio.commands;
 
-import com.github.kaaz.emily.audio.configs.track.DurrationTimeConfig;
+import com.github.kaaz.emily.audio.configs.track.DurationTimeConfig;
 import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.ModuleLevel;
 import com.github.kaaz.emily.command.annotations.Command;
@@ -28,8 +28,8 @@ public class QueueCommand extends AbstractCommand {
             return;
         }
         AtomicLong time = new AtomicLong();
-        tracks.forEach(track -> time.addAndGet(ConfigHandler.getSetting(DurrationTimeConfig.class, track)));
+        tracks.forEach(track -> time.addAndGet(ConfigHandler.getSetting(DurationTimeConfig.class, track)));
         maker.append("There are " + tracks.size() + " items with a estimated play time of ").appendRaw(Time.getAbbreviated(time.get()) + "\n");
-        tracks.forEach(track -> maker.getNewListPart().append(track.getID() + " | " + Time.getAbbreviatedMusic(ConfigHandler.getSetting(DurrationTimeConfig.class, track)) + " | " + track.getName()));
+        tracks.forEach(track -> maker.getNewListPart().append(track.getID() + " | " + Time.getAbbreviatedMusic(ConfigHandler.getSetting(DurationTimeConfig.class, track)) + " | " + track.getName()));
     }
 }

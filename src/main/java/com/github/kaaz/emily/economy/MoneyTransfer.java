@@ -1,11 +1,15 @@
 package com.github.kaaz.emily.economy;
 
 import com.github.kaaz.emily.config.ConfigHandler;
+import com.github.kaaz.emily.config.ConfigLevel;
 import com.github.kaaz.emily.config.Configurable;
+import com.github.kaaz.emily.config.GuildUser;
+import com.github.kaaz.emily.discordobjects.wrappers.DiscordClient;
 import com.github.kaaz.emily.economy.configs.CurrentComponentsConfig;
 import com.github.kaaz.emily.economy.configs.CurrentMoneyConfig;
 import com.github.kaaz.emily.economy.configs.MoneyHistoryConfig;
 import com.github.kaaz.emily.exeption.TransactionException;
+import javafx.util.Pair;
 
 import java.util.Collections;
 import java.util.Map;
@@ -20,13 +24,17 @@ public class MoneyTransfer {
         transact(firstParty, secondParty, EMPTY, EMPTY, firstPartyMoney, secondPartyMoney, note);
     }
     public static void transact(Configurable firstParty, Configurable secondParty, Map<ItemComponent, Integer> firstPartyComponents, Map<ItemComponent, Integer> secondPartyComponents, float firstPartyMoney, float secondPartyMoney, String note){
+        if (firstParty.getConfigLevel() == ConfigLevel.GUILD_USER && secondParty.equals(DiscordClient.getOurUser())) {
+            transact(((GuildUser) firstParty).getUser(), DiscordClient.getOurUser(), firstPartyMoney, secondPartyMoney, note + " copy");
+            transact(((GuildUser) firstParty).getGuild(), DiscordClient.getOurUser(), firstPartyMoney, secondPartyMoney, note + " copy");
+        }
         MoneyTransfer moneyTransfer = new MoneyTransfer(firstParty, secondParty, firstPartyComponents, secondPartyComponents, firstPartyMoney, secondPartyMoney, note);
-        float money = ConfigHandler.getSetting(CurrentMoneyConfig.class, firstParty) - moneyTransfer.firstPartyMoney;
+        float money = ConfigHandler.getSetting(CurrentMoneyConfig.class, firstParty) + moneyTransfer.firstPartyMoney;
         if (money < 0) throw new TransactionException(firstParty, -money);
-        float secondMoney = ConfigHandler.getSetting(CurrentMoneyConfig.class, firstParty) - moneyTransfer.secondPartyMoney;
-        if (secondMoney < 0) throw new TransactionException(firstParty, -secondMoney);
+        float secondMoney = ConfigHandler.getSetting(CurrentMoneyConfig.class, firstParty) + moneyTransfer.secondPartyMoney;
+        if (secondMoney < 0) throw new TransactionException(secondParty, -secondMoney);
         Map<ItemComponent, Integer> components = ConfigHandler.getSetting(CurrentComponentsConfig.class, firstParty);
-        moneyTransfer.getFirstPartyComponents().forEach((itemComponent, integer) -> components.compute(itemComponent, (c, i) -> {
+        moneyTransfer.firstPartyComponents.forEach((itemComponent, integer) -> components.compute(itemComponent, (c, i) -> {
             if (i == null) i = 0;
             return i - integer;
         }));
@@ -34,7 +42,7 @@ public class MoneyTransfer {
             if (integer < 0) throw new TransactionException(firstParty, itemComponent, -integer);
         });
         Map<ItemComponent, Integer> secondComponents = ConfigHandler.getSetting(CurrentComponentsConfig.class, firstParty);
-        moneyTransfer.getFirstPartyComponents().forEach((itemComponent, integer) -> secondComponents.compute(itemComponent, (c, i) -> {
+        moneyTransfer.secondPartyComponents.forEach((itemComponent, integer) -> secondComponents.compute(itemComponent, (c, i) -> {
             if (i == null) i = 0;
             return i - integer;
         }));
@@ -48,6 +56,7 @@ public class MoneyTransfer {
         ConfigHandler.alterSetting(MoneyHistoryConfig.class, firstParty, moneyMovements -> moneyMovements.add(moneyTransfer));
         ConfigHandler.alterSetting(MoneyHistoryConfig.class, secondParty, moneyMovements -> moneyMovements.add(moneyTransfer.getReverse()));
     }
+    private static final Pair<Float, Float> ZEROS = new Pair<>(0F, 0F);
     private Configurable firstParty, secondParty;
     private Map<ItemComponent, Integer> firstPartyComponents, secondPartyComponents;
     private float firstPartyMoney, secondPartyMoney;// items are the offers, not gains
@@ -59,14 +68,14 @@ public class MoneyTransfer {
         this.firstPartyComponents = firstPartyComponents;
         this.secondPartyComponents = secondPartyComponents;
         this.note = note;
-        Stream.of(ItemComponent.values()).filter(this.firstPartyComponents::containsKey).filter(this.secondPartyComponents::containsKey).filter(itemComponent -> this.firstPartyComponents.get(itemComponent) != 0 && this.secondPartyComponents.get(itemComponent) != 0).forEach(itemComponent -> {
-            int diff = this.firstPartyComponents.get(itemComponent) - this.secondPartyComponents.get(itemComponent);
+        Stream.of(ItemComponent.values()).forEach(itemComponent -> {
+            int diff = this.firstPartyComponents.getOrDefault(itemComponent, 0) - this.secondPartyComponents.getOrDefault(itemComponent, 0);
             if (diff == 0){
                 this.firstPartyComponents.remove(itemComponent);
                 this.secondPartyComponents.remove(itemComponent);
             }else{
-                this.firstPartyComponents.put(itemComponent, diff > 0 ? diff : -diff);
-                this.secondPartyComponents.put(itemComponent, diff > 0 ? -diff : diff);
+                this.firstPartyComponents.put(itemComponent, diff);
+                this.secondPartyComponents.put(itemComponent, -diff);
             }
         });
         this.firstPartyMoney = firstPartyMoney;
@@ -75,9 +84,9 @@ public class MoneyTransfer {
         if (diff == 0) {
             this.firstPartyMoney = 0;
             this.secondPartyMoney = 0;
-        }else{
-            this.firstPartyMoney = diff > 0 ? diff : -diff;
-            this.secondPartyMoney = diff > 0 ? -diff : diff;
+        } else {
+            this.firstPartyMoney = diff;
+            this.secondPartyMoney = -diff;
         }
     }
     private MoneyTransfer getReverse(){

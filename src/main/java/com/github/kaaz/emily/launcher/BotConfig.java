@@ -35,7 +35,7 @@ public class BotConfig {
     @ConfigurationOption
     public static int MUSIC_DOWNLOAD_THREAD_COUNT = 1;
     @ConfigurationOption
-    public static String AUDIO_FORMAT = "vorbis";
+    public static String AUDIO_FORMAT = "opus";
     @ConfigurationOption
     public static String CAT_API_TOKEN = null;
     @ConfigurationOption
