@@ -1,5 +1,6 @@
 package com.github.kaaz.emily.audio.commands.playlist;
 
+import com.github.kaaz.emily.audio.GlobalPlaylist;
 import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.command.annotations.Argument;
@@ -24,7 +25,7 @@ public class PlaylistListCommand extends AbstractCommand {
     @Command
     public void command(@Argument(optional = true) Playlist playlist, User user, Guild guild, MessageMaker maker){
         playlist.checkPermissionToEdit(user, guild);
-        if (Playlist.GLOBAL_PLAYLIST.equals(playlist)){
+        if (GlobalPlaylist.GLOBAL_PLAYLIST.equals(playlist)){
             maker.append("Whoa, that is way to long to list");
         }
         List<Track> ids = ConfigHandler.getSetting(PlaylistContentsConfig.class, playlist);

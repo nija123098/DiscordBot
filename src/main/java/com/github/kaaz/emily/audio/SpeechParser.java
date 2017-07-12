@@ -39,22 +39,28 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class SpeechParser implements IAudioReceiver {
     private static final InitBuffer<StreamSpeechRecognizer> SPEECH_RECOGNIZER_BUFFER;
-    private static final Map<Guild, Map<User, SpeechParser>> PARSER_MAP = new ConcurrentHashMap<>();
+    private static final Map<Guild, Map<User, SpeechParser>> PARSER_MAP;
     static {
-        Configuration configuration = new Configuration();
-        configuration.setAcousticModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us");
-        configuration.setDictionaryPath("resource:/edu/cmu/sphinx/models/en-us/cmudict-en-us.dict");
-        configuration.setLanguageModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us.lm.bin");
-        SPEECH_RECOGNIZER_BUFFER = new InitBuffer<>(2, () -> {
-            try {
-                return new StreamSpeechRecognizer(configuration);
-            } catch (IOException e){
-                Log.log("IOException while making speech recognizer instance", e);
-                return null;
-            }
-        });
-        EventDistributor.register(SpeechParser.class);
-        Launcher.registerStartup(() -> DiscordClient.getRoleByID(BotConfig.CONTRIBUTOR_SIGN_ROLE));
+        if (BotConfig.VOICE_COMMANDS_ENABLED){
+            PARSER_MAP = new ConcurrentHashMap<>();
+            Configuration configuration = new Configuration();
+            configuration.setAcousticModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us");
+            configuration.setDictionaryPath("resource:/edu/cmu/sphinx/models/en-us/cmudict-en-us.dict");
+            configuration.setLanguageModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us.lm.bin");
+            SPEECH_RECOGNIZER_BUFFER = new InitBuffer<>(2, () -> {
+                try {
+                    return new StreamSpeechRecognizer(configuration);
+                } catch (IOException e){
+                    Log.log("IOException while making speech recognizer instance", e);
+                    return null;
+                }
+            });
+            EventDistributor.register(SpeechParser.class);
+            Launcher.registerStartup(() -> DiscordClient.getRoleByID(BotConfig.CONTRIBUTOR_SIGN_ROLE));
+        }else{
+            SPEECH_RECOGNIZER_BUFFER = null;
+            PARSER_MAP = null;
+        }
     }
     public static void init(){}
     private boolean lon;
@@ -156,7 +162,6 @@ public class SpeechParser implements IAudioReceiver {
         return reference.get();
     }
     private void process(String s){
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>>> " + s);
         if (s == null || s.isEmpty()) return;
         CommandHandler.attemptInvocation(s, this.user, this.audioManager);
     }

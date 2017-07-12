@@ -1,6 +1,6 @@
 package com.github.kaaz.emily.audio.commands.current;
 
-import com.github.kaaz.emily.audio.configs.track.DurationTimeConfig;
+import com.github.kaaz.emily.audio.Track;
 import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.ModuleLevel;
 import com.github.kaaz.emily.command.annotations.Command;
@@ -9,7 +9,6 @@ import com.github.kaaz.emily.config.configs.guild.GuildActivePlaylistConfig;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
-import com.github.kaaz.emily.audio.Track;
 import com.github.kaaz.emily.util.EmoticonHelper;
 import com.github.kaaz.emily.util.FormatHelper;
 import com.github.kaaz.emily.util.Time;
@@ -30,9 +29,11 @@ public class CurrentCommand extends AbstractCommand {
             return;
         }
         long time = manager.currentTime();
-        maker.getAuthorName().appendRaw(NOTES + " " + track.getName());
+        maker.getTitle().appendRaw(NOTES + " " + track.getName());
         maker.appendRaw("[source](" + track.getSource() + ") - " + ConfigHandler.getSetting(GuildActivePlaylistConfig.class, guild).getName());
-        maker.getNewFieldPart().withBoth("Duration", Time.getAbbreviatedMusic(ConfigHandler.getSetting(DurationTimeConfig.class, track), time));
+        maker.withUrl(track.previewURL());
+        Long length = track.getLength();
+        if (length != null) maker.getNewFieldPart().withBoth("Duration", Time.getAbbreviatedMusic(length, time));
     }
     static String getPlayBar(boolean paused, long current, long total){
         int first = (int) ((float) current/total * 10);

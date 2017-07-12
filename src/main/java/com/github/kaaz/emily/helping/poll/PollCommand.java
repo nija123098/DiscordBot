@@ -26,6 +26,6 @@ public class PollCommand extends AbstractCommand {
         for (int i = 0; i < strings.length; i++) {
             strings[i] = FormatHelper.trimFront(strings[i].trim());
         }
-        new Poll(strings[0], Arrays.copyOfRange(strings, 1, strings.length), time.schedualed(), maxVotes == null ? strings.length - 1 : maxVotes, message);
+        new Poll(strings[0], Arrays.copyOfRange(strings, 1, strings.length), time == null ? System.currentTimeMillis() + 300_000 : time.schedualed(), maxVotes == null ? strings.length - 1 : maxVotes, message);
     }
 }

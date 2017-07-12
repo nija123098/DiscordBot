@@ -46,7 +46,7 @@ public class MySQLAdapter {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             System.out.println("Can't connect to the database! Make sure the database settings are correct and the database server is running AND the database `" + DB_NAME + "` exists");
-            Launcher.shutdown(1337);
+            Launcher.shutdown(1337, 1337);
         }
         return null;
     }

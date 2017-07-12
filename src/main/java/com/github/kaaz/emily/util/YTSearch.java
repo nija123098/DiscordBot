@@ -41,9 +41,8 @@ public class YTSearch {
             tmp = YOUTUBE.search().list("id,snippet");
             tmp.setOrder("relevance");
             tmp.setVideoCategoryId("10");
-
         } catch (IOException ex) {
-            throw new DevelopmentException("Failed to initialize search: " + ex);
+            throw new DevelopmentException("Failed to initialize search", ex);
         }
 
         SEARCH = tmp;
@@ -76,8 +75,9 @@ public class YTSearch {
 
     public static SimpleResult getResults(String query) {
         String queryName = query.trim().toLowerCase();
-        if (CACHE.containsKey(queryName)) {
-            return CACHE.get(queryName);
+        SimpleResult result = CACHE.get(queryName);
+        if (result != null) {
+            return result;
         }
         List<SimpleResult> results = getResults(query, 1);
         if (results != null && !results.isEmpty()) {

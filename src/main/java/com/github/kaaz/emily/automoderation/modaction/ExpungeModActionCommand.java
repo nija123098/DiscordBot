@@ -46,9 +46,9 @@ public class ExpungeModActionCommand extends AbstractCommand {
         Set<String> removes = new HashSet<>();
         computeRound(maker, nameSet.get(0), removes);
         AtomicInteger set = new AtomicInteger(0);
-        maker.withReactionBehavior("ok_hand", (add, reaction) -> {
+        maker.withReactionBehavior("ok_hand", (add, reaction, u) -> {
             if (set.incrementAndGet() > setSize){
-                maker.clearReactionBehaviors().withReactionBehavior("+1", (a, r) -> {
+                maker.clearReactionBehaviors().withReactionBehavior("+1", (a, r, us) -> {
                     maker.clearReactionBehaviors().send();
                     long joinDate = ConfigHandler.getSetting(GuildUserJoinTimeConfig.class, GuildUser.getGuildUser(guild, target));
                     guild.getChannels().forEach(channel -> {
@@ -78,7 +78,7 @@ public class ExpungeModActionCommand extends AbstractCommand {
     private static void computeRound(MessageMaker maker, List<String> names, Set<String> removes){
         maker.clearReactionBehaviors();
         int code = 97;
-        names.forEach(s -> maker.getNewFieldPart().getTitle().append(String.valueOf(code)).getFieldPart().getValue().append(s).getMaker().withReactionBehavior("regional_indicator_" + String.valueOf(code), (add, reaction) -> {
+        names.forEach(s -> maker.getNewFieldPart().getTitle().append(String.valueOf(code)).getFieldPart().getValue().append(s).getMaker().withReactionBehavior("regional_indicator_" + String.valueOf(code), (add, reaction, u) -> {
             if (add) removes.add(s);
             else removes.remove(s);
         }));

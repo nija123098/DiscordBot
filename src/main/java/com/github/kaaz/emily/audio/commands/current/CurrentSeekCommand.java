@@ -1,14 +1,13 @@
 package com.github.kaaz.emily.audio.commands.current;
 
-import com.github.kaaz.emily.audio.configs.track.DurationTimeConfig;
+import com.github.kaaz.emily.audio.Track;
 import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.annotations.Argument;
 import com.github.kaaz.emily.command.annotations.Command;
-import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
-import com.github.kaaz.emily.audio.Track;
 import com.github.kaaz.emily.exeption.ArgumentException;
+import com.github.kaaz.emily.exeption.ContextException;
 import com.github.kaaz.emily.util.Time;
 
 /**
@@ -21,7 +20,9 @@ public class CurrentSeekCommand extends AbstractCommand {
     @Command
     public void command(@Argument Time time, GuildAudioManager manager, MessageMaker maker){
         Track track = manager.currentTrack();
-        if (ConfigHandler.getSetting(DurationTimeConfig.class, track) < time.schedualed()) throw new ArgumentException("The track is not that long");
+        Long length = track.getLength();
+        if (length == null) throw new ContextException("You can't seek on this track");
+        if (length < time.schedualed()) throw new ArgumentException("The track is not that long");
         manager.seek(time.timeUntil());
     }
 }

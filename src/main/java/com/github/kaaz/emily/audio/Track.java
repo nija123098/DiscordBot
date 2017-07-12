@@ -112,5 +112,7 @@ public abstract class Track implements Configurable{
         BotRole.GUILD_TRUSTEE.checkRequiredRole(user, null);
     }
     public abstract String getSource();
+    public abstract String previewURL();
     public abstract AudioTrack getTrack();
+    public abstract Long getLength();
 }

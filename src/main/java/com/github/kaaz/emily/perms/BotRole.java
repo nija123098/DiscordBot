@@ -30,7 +30,7 @@ public enum BotRole {
     USER(true, (user, guild) -> !BOT.hasRole(user, guild) && !BANNED.hasRole(user, guild)),
     GUILD_TRUSTEE(true, false, true, WorkAroundReferences.G_A),
     GUILD_ADMIN(true, (user, guild) -> guild != null && USER.hasRole(user, null) && user.getPermissionsForGuild(guild).contains(DiscordPermission.ADMINISTRATOR)),
-    GUILD_OWNER(true, (user, guild) -> guild.getOwner().equals(user)),
+    GUILD_OWNER(true, (user, guild) -> guild != null && guild.getOwner().equals(user)),
     SUPPORTER(false, true, false, WorkAroundReferences.B_A),
     CONTRIBUTOR(false, true, false, WorkAroundReferences.B_A),
     BOT_ADMIN(true, true, false, WorkAroundReferences.B_O),

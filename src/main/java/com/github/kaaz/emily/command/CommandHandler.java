@@ -13,6 +13,7 @@ import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordMessage
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordReactionEvent;
 import com.github.kaaz.emily.exeption.BotException;
 import com.github.kaaz.emily.exeption.DevelopmentException;
+import com.github.kaaz.emily.launcher.Launcher;
 import com.github.kaaz.emily.launcher.Reference;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
 import com.github.kaaz.emily.util.EmoticonHelper;
@@ -23,6 +24,7 @@ import javafx.util.Pair;
 import org.reflections.Reflections;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Handles all command registration and invocation.
@@ -36,8 +38,9 @@ public class CommandHandler {
     private static final Map<String, AbstractCommand> REACTION_COMMAND_MAP = new HashMap<>();
     private static final Map<String, AbstractCommand> EXACT_COMMAND_MAP = new HashMap<>();
     private static final Map<String, Object> COMMANDS_MAP = new HashMap<>();
-    private static final String UNKNOWN_COMMAND_EMOTICON = "grey_question", EXCEPTION_FOR_METHOD = "exclamation";
+    public static final String UNKNOWN_COMMAND_EMOTICON = "grey_question", EXCEPTION_FOR_METHOD = "exclamation";
     private static final List<String> OPEN_EDIT_MESSAGES = new MemoryManagementService.ManagedList<>(30000);
+    private static final AtomicReference<String> MENTION = new AtomicReference<>(), MENTION_NICK = new AtomicReference<>();
     static {
         Map<Class<? extends AbstractCommand>, Set<AbstractCommand>> typeMap = new HashMap<>();
         new Reflections(Reference.BASE_PACKAGE).getSubTypesOf(AbstractCommand.class).forEach(clazz -> {
@@ -69,6 +72,10 @@ public class CommandHandler {
             EXACT_COMMAND_MAP.put(s, command);
         }));
         EventDistributor.register(CommandHandler.class);
+        Launcher.registerStartup(() -> {
+            MENTION.set(DiscordClient.getOurUser().mention(false));
+            MENTION_NICK.set(DiscordClient.getOurUser().mention(true));
+        });
     }
 
     private static void load(AbstractCommand superCommand, Map<Class<? extends AbstractCommand>, Set<AbstractCommand>> typeMap){
@@ -181,9 +188,12 @@ public class CommandHandler {
                         return true;
                     }
                     }catch(Exception ignored){}
-                }else if (string.toLowerCase().startsWith("@emily")){
-                    string = string.substring(6);
-                }else return false;
+                }else if (string.toLowerCase().startsWith("@emily")) string = string.substring(6);
+                else if (DiscordClient.getOurUser().getNickname(message.getGuild()) != null && string.toLowerCase().startsWith("@" + DiscordClient.getOurUser().getNickname(message.getGuild()))){
+                    string = string.substring(1 + DiscordClient.getOurUser().getNickname(message.getGuild()).length());
+                }else if (string.startsWith(MENTION.get())) string = string.substring(MENTION.get().length());
+                else if (string.startsWith(MENTION_NICK.get())) string = string.substring(MENTION_NICK.get().length());
+                else return false;
             }
         }
         string = FormatHelper.trimFront(string);

@@ -1,18 +1,19 @@
 package com.github.kaaz.emily.audio;
 
+import com.github.kaaz.emily.audio.configs.playlist.PlaylistContentsConfig;
+import com.github.kaaz.emily.audio.configs.playlist.PlaylistNowPlayingConfig;
+import com.github.kaaz.emily.audio.configs.playlist.PlaylistPlayTypeConfig;
 import com.github.kaaz.emily.command.annotations.LaymanName;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.ConfigLevel;
 import com.github.kaaz.emily.config.Configurable;
-import com.github.kaaz.emily.audio.configs.playlist.PlaylistContentsConfig;
-import com.github.kaaz.emily.audio.configs.playlist.PlaylistNowPlayingConfig;
-import com.github.kaaz.emily.audio.configs.playlist.PlaylistPlayTypeConfig;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.github.kaaz.emily.exeption.ArgumentException;
 import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.exeption.PermissionsException;
 import com.github.kaaz.emily.perms.BotRole;
+import com.github.kaaz.emily.service.services.ScheduleService;
 import com.github.kaaz.emily.util.Rand;
 
 import java.util.List;
@@ -25,17 +26,16 @@ import java.util.function.Function;
  */
 @LaymanName(value = "Playlist", help = "The playlist type (global, guild, user) followed by the name")
 public class Playlist implements Configurable {
-    public static final String GLOBAL_PLAYLIST_ID = "GLOBAL-PLAYLIST-ID";
-    public static final Playlist GLOBAL_PLAYLIST = new Playlist(GLOBAL_PLAYLIST_ID);
+    static final String GLOBAL_PLAYLIST_ID = "GLOBAL-PLAYLIST-ID";
     private static final Map<String, Playlist> MAP = new ConcurrentHashMap<>();
     static {
-        MAP.put(GLOBAL_PLAYLIST_ID, GLOBAL_PLAYLIST);
+        ScheduleService.schedule(1000, () -> MAP.put(GLOBAL_PLAYLIST_ID, GlobalPlaylist.GLOBAL_PLAYLIST));
     }
     public static Playlist getPlaylist(User user, Guild guild, String args){
         String[] arg = args.split(" ");
         String a = arg[0].toLowerCase();
         if (a.equals("global")){
-            return GLOBAL_PLAYLIST;
+            return GlobalPlaylist.GLOBAL_PLAYLIST;
         }
         String id = null;
         if (arg.length < 2){
@@ -68,7 +68,7 @@ public class Playlist implements Configurable {
         return MAP.computeIfAbsent(id, s -> new Playlist(id));
     }
     private String id;
-    protected Playlist() {}
+    Playlist() {}
     private Playlist(String id) {
         this.id = id;
     }

@@ -37,10 +37,9 @@ public class YTDLHelper {
         try {
             File file = new File(location + "." + format);
             file.getParentFile().mkdirs();
-            //file.createNewFile();
             Process process = builder.start();
-            new Gobler(process.getInputStream(), System.out).start();
-            new Gobler(process.getErrorStream(), System.err).start();
+            new StreamGobler(process.getInputStream(), System.out).start();
+            new StreamGobler(process.getErrorStream(), System.err).start();
             if (!process.waitFor(2, TimeUnit.MINUTES)){
                 if (file.exists()) file.delete();
                 ret = false;
@@ -54,25 +53,5 @@ public class YTDLHelper {
             if (malformed.exists()) malformed.delete();
         }
         return ret;
-    }
-    public static class Gobler extends Thread {
-        private InputStream stream;
-        private PrintStream printStream;
-        private Gobler(InputStream stream, PrintStream printStream) {
-            this.stream = stream;
-            this.printStream = printStream;
-        }
-        @Override
-        public void run(){
-            BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-            String in;
-            try {
-                while ((in = reader.readLine()) != null){
-                    this.printStream.println(in);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
     }
 }

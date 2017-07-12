@@ -1,7 +1,5 @@
 package com.github.kaaz.emily.util;
 
-import com.github.kaaz.emily.exeption.PermissionsException;
-import com.github.kaaz.emily.launcher.BotConfig;
 import com.github.kaaz.emily.launcher.Reference;
 import ga.dryco.redditjerk.implementation.RedditApi;
 import ga.dryco.redditjerk.wrappers.Link;
@@ -20,7 +18,7 @@ import java.util.function.Function;
  * Made by nija123098 on 6/4/2017.
  */
 public class RedditLink {
-    public static final Map<String, LinkOrigin> LINK_ORIGINS;
+    private static final Map<String, LinkOrigin> LINK_ORIGINS;
     static {
         RedditApi.getRedditInstance(Reference.USER_AGENT);
         LINK_ORIGINS = new HashMap<>(LinkOrigin.values().length);
@@ -28,6 +26,7 @@ public class RedditLink {
     }//"imgur.com", "i.reddituploads.com", "youtube.com"
     private String url, title, content, fileURL, fileType, pointerUrl;
     private File file;
+    private boolean linkApproved;
     public RedditLink(Link link) {
         this.url = "https://www.reddit.com/" + link.getPermalink();
         this.title = link.getTitle();
@@ -37,8 +36,8 @@ public class RedditLink {
         this.fileURL = !link.getUrl().contains("www.reddit.com") ? link.getUrl() : null;
         if (this.fileURL != null){
             LinkOrigin approved = LINK_ORIGINS.get(this.fileURL.split("/")[2]);
-            if (approved == null) throw new PermissionsException("Not allowed URL in post");
-            if (approved.downloadSupported){
+            this.linkApproved = approved != null;
+            if (this.linkApproved && approved.downloadSupported){
                 this.fileURL = approved.sourceFunction.apply(this.fileURL);
                 this.fileType = StringHelper.getFileType(this.fileURL);
             }
@@ -61,6 +60,9 @@ public class RedditLink {
     }
     public String getPointerUrl() {
         return this.pointerUrl;
+    }
+    public boolean getLinkApproved(){
+        return this.linkApproved;
     }
     public File getFile() {
         if (this.file == null && this.fileType != null){

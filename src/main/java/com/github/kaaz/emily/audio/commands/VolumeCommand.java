@@ -21,6 +21,6 @@ public class VolumeCommand extends AbstractCommand {
     @Command// manager for requirement
     public void command(GuildAudioManager manager, Guild guild, @Argument(optional = true, replacement = ContextType.NONE) Integer value, MessageMaker maker){
         if (value == null) maker.append(ConfigHandler.getSetting(VolumeConfig.class, guild) + "").appendRaw("%");
-        else ConfigHandler.setSetting(VolumeConfig.class, guild, value);
+        else ConfigHandler.changeSetting(VolumeConfig.class, guild, integer -> value < 0 ? integer + value : value);
     }
 }

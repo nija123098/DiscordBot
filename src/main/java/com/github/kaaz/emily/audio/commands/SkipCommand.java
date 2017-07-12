@@ -34,7 +34,11 @@ public class SkipCommand extends AbstractCommand {
         });
         float percent = MAP.get(manager).size() / (float) channel.getConnectedUsers().stream().filter(User::isBot).filter(u -> u.isDeaf(channel.getGuild())).count() * 100;
         int required = ConfigHandler.getSetting(SkipPercentConfig.class, channel.getGuild());
-        if (percent > required) manager.skipTrack();
+        if (percent >= required) {
+            int size = manager.skipTrack();
+            if (size > 0) maker.append("There are " + size + " more songs");
+            else maker.append("There are no more songs to play");
+        }
         else maker.append((percent - required) + "% is required to skip this track");
     }
     @EventListener

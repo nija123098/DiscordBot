@@ -18,7 +18,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Made by nija123098 on 7/4/2017.
  */
 public class GlobalPlaylist extends Playlist {
-    GlobalPlaylist() {}
+    public static final GlobalPlaylist GLOBAL_PLAYLIST = new GlobalPlaylist();
+    private GlobalPlaylist() {}
     @Override
     public String getID() {
         return Playlist.GLOBAL_PLAYLIST_ID;
@@ -42,14 +43,12 @@ public class GlobalPlaylist extends Playlist {
     @Override
     public Track getNext() {
         if (TRACKS.size() < 50) loadTracks();
-        return TRACKS.remove(Rand.getRand(TRACKS.size() - 1));
+        return TRACKS.isEmpty() ? null : TRACKS.remove(Rand.getRand(TRACKS.size() - 1));
     }
     private static final List<Track> TRACKS = new CopyOnWriteArrayList<>();
-    private static final FavorConfig FAVOR_CONFIG = ConfigHandler.getConfig(FavorConfig.class);
-    private static final BannedTrackConfig BAN_CONFIG = ConfigHandler.getConfig(BannedTrackConfig.class);
     private static void loadTracks(){
         Map<Track, Float> map = new HashMap<>();
-        DownloadableTrack.getDownloadedTracks().stream().filter(track -> !BAN_CONFIG.getValue(track)).forEach(track -> map.put(track, FAVOR_CONFIG.getValue(track)));
+        DownloadableTrack.getDownloadedTracks().stream().filter(track -> !ConfigHandler.getSetting(BannedTrackConfig.class, track)).forEach(track -> map.put(track, ConfigHandler.getSetting(FavorConfig.class, track)));
         AtomicDouble favor = new AtomicDouble();
         map.values().forEach(favor::addAndGet);
         favor.set(favor.get() / map.size() * 2);

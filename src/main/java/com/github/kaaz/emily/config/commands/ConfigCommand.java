@@ -23,8 +23,8 @@ public class ConfigCommand extends AbstractCommand {
         super("config", BotRole.USER, ModuleLevel.ADMINISTRATIVE, "cfg", null, "Gets information on config values");
     }
     @Command
-    public <C extends Configurable> void command(@Argument(optional = true) C configurable, String s, User user, Guild guild, MessageMaker helper, @Context(softFail = true) Message message){
-        if (s == null){
+    public <C extends Configurable> void command(@Argument(optional = true) C configurable, @Argument String s, User user, Guild guild, MessageMaker helper, @Context(softFail = true) Message message){
+        if (s == null || s.isEmpty()){
             if (configurable == null) configurable = (C) (guild == null ? user : guild);
             C finalConfigurable = configurable;
             ConfigHandler.getConfigs().stream().filter(config -> finalConfigurable.getConfigLevel().isAssignableFrom(config.getConfigLevel())).filter(config -> config.getBotRole().hasRequiredRole(user, guild)).filter(AbstractConfig::isNormalViewing).forEach(config -> {

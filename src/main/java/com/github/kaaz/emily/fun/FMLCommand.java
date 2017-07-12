@@ -38,7 +38,7 @@ public class FMLCommand extends AbstractCommand {
     private void getItems(){
         try {
             Document document = Jsoup.connect("http://fmylife.com/random").timeout(30_000).userAgent(Reference.USER_AGENT).get();
-            if (document != null) items.addAll(document.select("p.block a[href^=/article/]").stream().map(Element::text).map(String::trim).map(StringEscapeUtils::escapeHtml4).map(s -> s.length() > 2000 ? s.substring(0, 1999) : s).filter(s -> !s.endsWith("...")).collect(Collectors.toSet()));
+            if (document != null) items.addAll(document.select("p.block a[href^=/article/]").stream().map(Element::text).map(String::trim).map(s -> s.length() > 2000 ? s.substring(0, 1999) : s).filter(s -> s.endsWith("FML")).map(StringEscapeUtils::unescapeHtml4).collect(Collectors.toSet()));
         } catch (IOException e) {
             throw new DevelopmentException(e);
         }

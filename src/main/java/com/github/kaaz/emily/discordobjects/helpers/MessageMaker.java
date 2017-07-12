@@ -240,7 +240,7 @@ public class MessageMaker {
         return this.maySend();
     }
     public MessageMaker withUrl(String url){
-        this.embed.withUrl(url);
+        if (url != null) this.embed.withUrl(url);
         return this;
     }
     public MessageMaker withThumb(String url){
@@ -296,7 +296,7 @@ public class MessageMaker {
         if (this.origin != null && this.okHand) ErrorWrapper.wrap(() -> this.origin.addReaction(EmoticonHelper.getChars("ok_hand")));
         this.compile();
         if (this.embed != null){
-            if (page >= this.fieldIndices.length) throw new RuntimeException("Attempted to get a page that doesn't exit");
+            if (page < 0 || page >= this.fieldIndices.length) throw new DevelopmentException("Attempted to get a page that doesn't exit");
             this.embed.clearFields().withDesc(this.header.langString.translate(this.lang) + "\n\n" + (page >= textVals.length ? "" : textVals[page]) + "\n\n" + this.footer.langString.translate(lang));
             for (Triple<String, String, Boolean> ind : fieldIndices[page]){
                 this.embed.appendField(ind.getLeft(), ind.getMiddle(), ind.getRight());
@@ -408,12 +408,12 @@ public class MessageMaker {
                 Arrays.fill(fieldIndices, new Triple[0]);
             }
             if (this.embed != null && this.fieldIndices.length > 1){
-                this.withReactionBehavior("arrow_left", (add, reaction) -> {
+                this.withReactionBehavior("arrow_left", (add, reaction, user) -> {
                     if (currentPage.get() == 0) return;
                     this.embed.withFooterText(generateNote(currentPage.decrementAndGet()));
                     this.send(currentPage.get());
                 });
-                this.withReactionBehavior("arrow_right", (add, reaction) -> {
+                this.withReactionBehavior("arrow_right", (add, reaction, user) -> {
                     if (currentPage.get() == fieldIndices.length - 1) return;
                     this.embed.withFooterText(generateNote(currentPage.incrementAndGet()));
                     this.send(currentPage.get());
@@ -434,6 +434,7 @@ public class MessageMaker {
 
         private FieldPart(MessageMaker maker) {
             this.maker = maker;
+            this.maker.maySend();
             this.maker.fieldList.add(this);
             this.inline = true;
             title = new FieldTextPart(maker, this);

@@ -51,7 +51,7 @@ public class SlotCommand extends AbstractCommand {
             }
         }
         String[] strings = getMessage(ints, slotPack, amount);
-        MoneyTransfer.transact(DiscordClient.getOurUser(), user, 0, amount == null ? -bet : amount, "A slot bet");
+        if (bet != 0) MoneyTransfer.transact(user, DiscordClient.getOurUser(), 0, amount == null ? -bet : amount, "A slot bet");
         if (amount == null) {
             Float finalBet = bet;
             ConfigHandler.changeSetting(SlotJackpotConfig.class, GlobalConfigurable.GLOBAL, aFloat -> aFloat + finalBet / 2);

@@ -1,5 +1,6 @@
 package com.github.kaaz.emily.command;
 
+import com.github.kaaz.emily.audio.GlobalPlaylist;
 import com.github.kaaz.emily.audio.Playlist;
 import com.github.kaaz.emily.audio.Track;
 import com.github.kaaz.emily.command.annotations.Argument;
@@ -57,7 +58,11 @@ public class InvocationObjectGetter {
             return attachments.toArray(new Attachment[attachments.size()]);
         }, ContextRequirement.MESSAGE);
         addContext(Playlist.class, ContextType.STATUS, (user, shard, channel, guild, message, reaction, args) -> ConfigHandler.getSetting(GuildActivePlaylistConfig.class, guild), ContextRequirement.GUILD);
-        addContext(GuildAudioManager.class, ContextType.LOCATION, (invoker, shard, channel, guild, message, reaction, args) -> GuildAudioManager.getManager(invoker.getConnectedVoiceChannel(guild), true));
+        addContext(GuildAudioManager.class, ContextType.LOCATION, (invoker, shard, channel, guild, message, reaction, args) -> {
+            VoiceChannel voiceChannel = invoker.getConnectedVoiceChannel(guild);
+            if (voiceChannel == null) throw new ContextException("You must be in a voice channel to use that command");
+            return GuildAudioManager.getManager(voiceChannel, true);
+        });
         addContext(Track.class, ContextType.STATUS, (user, shard, channel, guild, message, reaction, args) -> {
             GuildAudioManager manager = GuildAudioManager.getManager(user.getConnectedVoiceChannel(guild), false);
             if (manager == null || manager.currentTrack() == null) throw new ContextException("No track is currently playing");
@@ -103,6 +108,7 @@ public class InvocationObjectGetter {
             }
             throw new ArgumentException("No channel identified by that name, try using an ID or mention");
         });
+        addConverter(VoiceChannel.class, (invoker, shard, channel, guild, message, reaction, args) -> (Pair<VoiceChannel, Integer>) CONVERTER_MAP.get(Channel.class).getKey().getObject(invoker, shard, channel, guild, message, reaction, args));
         addConverter(User.class, (user, shard, channel, guild, message, reaction, args) -> {
             User u = DiscordClient.getUserByID(FormatHelper.removeMention(args.split(" ")[0]));
             if (u != null) return new Pair<>(u, args.split(" ")[0].length());
@@ -120,7 +126,7 @@ public class InvocationObjectGetter {
             return new Pair<>(users.iterator().next(), users.get(0).getName().length());
         });
         addConverter(Playlist.class, (user, shard, channel, guild, message, reaction, args) -> {
-            if (args.toLowerCase().startsWith("global")) return new Pair<>(Playlist.GLOBAL_PLAYLIST, args.equalsIgnoreCase("global playlist") ? 15 : 6);
+            if (args.toLowerCase().startsWith("global")) return new Pair<>(GlobalPlaylist.GLOBAL_PLAYLIST, args.equalsIgnoreCase("global playlist") ? 15 : 6);
             Playlist playlist = Playlist.getPlaylist(user, message.getGuild(), args);
             if (playlist == null) throw new ArgumentException("No playlist identified with that name");
             String[] strings = args.split(" ");
@@ -203,7 +209,7 @@ public class InvocationObjectGetter {
                 Float result = Float.parseFloat(arg);
                 return new Pair<>(result, arg.length());
             } catch (Exception e){
-                throw new ArgumentException("That is not a decimal number");
+                throw new ArgumentException("That is not a decimal number", e);
             }
         });
         addConverter(AbstractConfig.class, (user, shard, channel, guild, message, reaction, args) -> {
@@ -214,11 +220,8 @@ public class InvocationObjectGetter {
         addConverter(Configurable.class, (user, shard, channel, guild, message, reaction, args) -> {
             AtomicReference<Pair<Configurable, Integer>> pair = new AtomicReference<>();
             CONVERTER_MAP.forEach((type, converter) -> {
-                if (!Configurable.class.isAssignableFrom(type) || Configurable.class.equals(type) || pair.get() != null){
-                    return;
-                }
-                try {
-                    pair.set((Pair<Configurable, Integer>) converter.getKey().getObject(user, shard, channel, guild, message, reaction, args));
+                if (!Configurable.class.isAssignableFrom(type) || Configurable.class.equals(type) || pair.get() != null) return;
+                try{pair.set((Pair<Configurable, Integer>) converter.getKey().getObject(user, shard, channel, guild, message, reaction, args));
                 } catch (Exception ignored){}
             });
             if (pair.get() == null) throw new ArgumentException("No configurable instance found");
@@ -247,10 +250,14 @@ public class InvocationObjectGetter {
         });
         addConverter(Color.class, (invoker, shard, channel, guild, message, reaction, args) -> {
             String[] strings = args.split(" ");
-            if (args.startsWith("#")) return new Pair<>(new Color(Integer.parseInt(strings[0].substring(1)), false), 7);
+            try{return new Pair<>((Color) Color.class.getField(strings[0].toUpperCase()).get(null), strings[0].length());
+            }catch(IllegalAccessException | NoSuchFieldException ignored) {
+                ignored.printStackTrace();
+            }
+            if (args.startsWith("#")) return new Pair<>(new Color(Integer.parseInt(strings[0].substring(1), 16), false), 7);
             Integer reserve = null;
             try {
-                reserve = Integer.parseInt(strings[0]);
+                reserve = Integer.parseInt(strings[0].toUpperCase(), 16);
                 if (reserve > 255) return new Pair<>(new Color(reserve), strings[0].length());
             } catch (Exception ignored){}
             if (strings.length > 2){

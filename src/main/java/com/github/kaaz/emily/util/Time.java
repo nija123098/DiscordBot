@@ -82,6 +82,6 @@ public class Time {// TODO CLEAN
         return builder + current;
     }
     public static String getAbbreviatedMusic(long outOf, long current){
-        return getAbbreviatedMusic(outOf) + "/" + getAbbreviatedMusic(current);
+        return getAbbreviatedMusic(current) + "/" + getAbbreviatedMusic(outOf);
     }
 }

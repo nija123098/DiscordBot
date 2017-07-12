@@ -6,6 +6,8 @@ import com.github.kaaz.emily.command.ModuleLevel;
 import com.github.kaaz.emily.command.annotations.Argument;
 import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.command.annotations.Context;
+import com.github.kaaz.emily.config.ConfigHandler;
+import com.github.kaaz.emily.config.configs.guild.GuildPrefixConfig;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.wrappers.Channel;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
@@ -13,6 +15,7 @@ import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.github.kaaz.emily.util.EmoticonHelper;
 import com.github.kaaz.emily.util.FormatHelper;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +28,7 @@ import java.util.stream.Stream;
  */
 public class HelpCommand extends AbstractCommand {
     public HelpCommand() {
-        super("help", ModuleLevel.INFO, null, null, "Gives information about a command");
+        super("help", ModuleLevel.INFO, "helpme, he, ?, halp, commands", null, "Gives information about a command");
     }
     @Command
     public static void command(@Argument(optional = true, replacement = ContextType.NONE) AbstractCommand command, MessageMaker maker, User user, Channel channel, @Context(softFail = true) Guild guild){
@@ -39,15 +42,15 @@ public class HelpCommand extends AbstractCommand {
                     commands.clear();
                 }
             }
-            maker.append("For more details about a command use ").appendRaw("!help <command>");
+            maker.append("For more details about a command use ").appendRaw((guild == null ? "" : ConfigHandler.getSetting(GuildPrefixConfig.class, guild)) + "help <command>");
         } else {
             command = command.getHighCommand();
             if (!command.hasPermission(user, channel)) {
                 maker.append("You don't have permission to look at that command!");
                 return;
             }
-            maker.appendRaw(EmoticonHelper.getChars("keyboard")).append("**Accessible Through:**").appendRaw("```\n");
-            maker.appendRaw(command.getName() + "\n```\n" + EmoticonHelper.getChars("notepad_spiral") + "**Description:**\n```\n");
+            maker.appendRaw(EmoticonHelper.getChars("keyboard")).append("**Accessible Through:**");
+            maker.appendRaw(FormatHelper.makeTable(new ArrayList<>(command.getNames())) + "\n" + EmoticonHelper.getChars("notepad_spiral") + "**Description:**\n```\n");
             maker.append(command.getHelp()).appendRaw("\n```\n" + EmoticonHelper.getChars("gear") + "**Usages:**\n```\n");
             String[] strings = normalizeUsages(command.getUsages()).split("\n");
             for (int i = 0; i < strings.length; i++) {
@@ -56,7 +59,7 @@ public class HelpCommand extends AbstractCommand {
                 maker.appendRaw("\n");
             }
             maker.appendRaw("```");
-            maker.append("\n<> indicates an argument, [] indicates an optional argument");
+            maker.append("\n<> indicates an argument, [] indicates an optional argument.  Do not use `<>` or `[]` in a command.");
         }
     }
     private static String normalizeUsages(String help){

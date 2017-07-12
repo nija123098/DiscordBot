@@ -6,7 +6,6 @@ import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.wrappers.Message;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
-import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordReactionEvent;
 import com.github.kaaz.emily.exeption.ArgumentException;
 import com.github.kaaz.emily.launcher.Launcher;
 import com.github.kaaz.emily.service.services.ScheduleService;
@@ -33,15 +32,6 @@ public class Poll {
         EventDistributor.register(Poll.class);
         Launcher.registerShutdown(() -> ConfigHandler.setSetting(PollStorageConfig.class, GlobalConfigurable.GLOBAL, new HashSet<>(MESSAGE_ID_MAP.values())));
     }
-    public static void handle(DiscordReactionEvent event){
-        Poll object = MESSAGE_ID_MAP.get(event.getMessage().getID());
-        if (object == null) return;
-        try{
-            int val = LanguageHelper.getInteger(event.getReaction().getName());
-            if (event.addingReaction()) object.vote(event.getUser(), val);
-            else object.retractVote(event.getUser(), val);
-        }catch(ArgumentException ignored){}
-    }
     private Integer pollID;
     private Message origin;
     private String question, lang;
@@ -51,7 +41,7 @@ public class Poll {
     private int maxVotes;
     public Poll(String question, String[] options, long expiration, int maxVotes, Message origin) {
         if (options.length < 1) throw new ArgumentException("A poll must have more than two options");
-        if (expiration - System.currentTimeMillis() < MIN_POLL_DURATION) throw new ArgumentException("Polls must be open for at least one minuet");
+        if (expiration - System.currentTimeMillis() < MIN_POLL_DURATION) throw new ArgumentException("Polls must be open for at least one minute");
         if (expiration - System.currentTimeMillis() > MAX_POLL_DURATION) throw new ArgumentException("That poll time exceeds two weeks");
         this.pollID = PollIDCountConfig.getNewID();
         this.question = question;
@@ -64,6 +54,15 @@ public class Poll {
         setUp();
         MessageMaker maker = new MessageMaker(origin);
         maker.getHeader().append(this.getMessageContent());
+        for (int i = 0; i < this.options.length; i++) {
+            maker.withReactionBehavior(LanguageHelper.getInteger(i + 1), (add, reaction, user) -> {
+                try {
+                    int val = LanguageHelper.getInteger(reaction.getName());
+                    if (add) this.vote(user, val);
+                    else this.retractVote(user, val);
+                }catch(ArgumentException ignored){}
+            });
+        }
         maker.send();
     }
     protected Poll() {
@@ -96,7 +95,7 @@ public class Poll {
         LangString string = new LangString();
         string.appendTranslation("Poll by ").appendRaw(this.origin.getAuthor().getDisplayName(this.origin.getGuild()) + "\n**" + this.question + "**\n");
         for (int i = 0; i < this.options.length; i++) {
-            string.appendRaw(EmoticonHelper.getChars(LanguageHelper.getInteger(i)) + this.options[i] + "\n");
+            string.appendRaw(EmoticonHelper.getChars(LanguageHelper.getInteger(i + 1)) + " " + this.options[i] + "\n");
         }
         string.appendTranslation("Poll ID: " + this.pollID);
         return string;

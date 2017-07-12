@@ -66,7 +66,7 @@ public class CardDeck {
         CLUBS,;
         private String symbol;
         Suit() {
-            this.symbol = EmoticonHelper.getChars(this.name());
+            this.symbol = EmoticonHelper.getChars(this.name().toLowerCase());
         }
         public String getSymbol() {
             return this.symbol;

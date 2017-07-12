@@ -3,9 +3,7 @@ package com.github.kaaz.emily.fun.meme;
 import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.ModuleLevel;
 import com.github.kaaz.emily.command.annotations.Command;
-import com.github.kaaz.emily.config.Configurable;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
-import com.github.kaaz.emily.discordobjects.wrappers.Channel;
 import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.launcher.BotConfig;
 import com.google.common.base.Joiner;
@@ -59,10 +57,5 @@ public class MemeCommand extends AbstractCommand {
             e.printStackTrace();
             throw new DevelopmentException("Our meme service is having trouble right now", e);
         }
-    }
-    @Override
-    public long getCoolDown(Class<? extends Configurable> clazz) {
-        if (clazz.equals(Channel.class)) return 5_000;
-        return super.getCoolDown(clazz);
     }
 }

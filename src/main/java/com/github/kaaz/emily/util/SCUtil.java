@@ -35,6 +35,8 @@ public class SCUtil {
         return getTracksFromList(code);
     }
     public static List<Track> extractTracks(String s){
+        int ind = s.indexOf('&');
+        if (ind != -1) s = s.substring(0, ind);
         s = extractCode(s);
         if (s == null) return null;
         return s.contains("/sets/") ? getTracksFromList(s) : Collections.singletonList(new SoundCloudTrack(s));

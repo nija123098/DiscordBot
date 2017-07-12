@@ -12,9 +12,10 @@ import com.github.kaaz.emily.discordobjects.wrappers.Role;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.github.kaaz.emily.exeption.ArgumentException;
 import com.github.kaaz.emily.exeption.ContextException;
-import com.github.kaaz.emily.util.LogicHelper;
 
 import java.awt.*;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
  * Made by nija123098 on 6/8/2017.
@@ -25,7 +26,7 @@ public class ColorCommand extends AbstractCommand {
     }
     @Command
     public void command(MessageMaker maker, @Argument(optional = true, replacement = ContextType.NONE) Color color, @Argument(optional = true, replacement = ContextType.NONE) Role role, @Argument(optional = true, replacement = ContextType.NONE) User user, @Context(softFail = true) Guild guild) {
-        if (LogicHelper.oneNotNull(color, role, user)) throw new ArgumentException("Please provide either a color or a role or a user");
+        if (Stream.of(color, role, user).filter(Objects::nonNull).count() != 1) throw new ArgumentException("Please provide either a hex, float, or integer representation, a role, a user, or a name");
         if (user != null && guild == null) throw new ContextException("To check a user's color you must be in a guild");
         if (user != null) color = user.getRolesForGuild(guild).get(0).getColor();
         if (role != null) color = role.getColor();

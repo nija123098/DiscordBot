@@ -6,6 +6,8 @@ import com.google.common.base.Strings;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 /**
  * Made by nija123098 on 3/18/2017.
@@ -203,5 +205,24 @@ public class FormatHelper {
                 }
                 return builder + "and " + strings.get(strings.size() - 1);
         }
+    }
+    public static String cleanOfXML(String s){
+        StringBuilder builder = new StringBuilder();
+        AtomicBoolean in = new AtomicBoolean();
+        new StringIterator(s).forEachRemaining(character -> {
+            if (character == '<') {
+                in.set(true);
+                return;
+            }
+            if (character == '>') {
+                in.set(false);
+                return;
+            }
+            if (!in.get()) builder.append(character);
+        });
+        return builder.toString();
+    }
+    public static List<String> cleanOfXML(List<String> strings){
+        return strings.stream().map(FormatHelper::cleanOfXML).collect(Collectors.toList());
     }
 }

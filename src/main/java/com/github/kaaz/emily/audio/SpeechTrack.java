@@ -18,7 +18,15 @@ public class SpeechTrack extends Track {
         return "Emily Herself";
     }
     @Override
+    public String previewURL() {
+        return null;
+    }
+    @Override
     public AudioTrack getTrack() {
         return AudioHelper.makeAudioTrack(this.file);
+    }
+    @Override
+    public Long getLength() {
+        return 0L;// todo?
     }
 }

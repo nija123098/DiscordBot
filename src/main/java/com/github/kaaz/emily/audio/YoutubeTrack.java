@@ -14,4 +14,8 @@ public class YoutubeTrack extends DownloadableTrack {
     public String getSource() {
         return "https://www.youtube.com/watch?v=" + this.getCode();
     }
+    @Override
+    public String previewURL() {
+        return "https://i3.ytimg.com/vi/" + this.getCode() + "/0.jpg";
+    }
 }

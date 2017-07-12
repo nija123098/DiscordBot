@@ -21,6 +21,7 @@ import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordVoiceLe
 import com.github.kaaz.emily.exeption.ArgumentException;
 import com.github.kaaz.emily.launcher.Launcher;
 import com.github.kaaz.emily.service.services.ScheduleService;
+import com.github.kaaz.emily.util.Care;
 import com.github.kaaz.emily.util.LangString;
 import com.github.kaaz.emily.util.SpeechHelper;
 import com.sedmelluq.discord.lavaplayer.player.AudioConfiguration;
@@ -112,9 +113,14 @@ public class GuildAudioManager extends AudioEventAdapter{
         this.lavaPlayer.addListener(this);
         this.channel.channel().getGuild().getAudioManager().setAudioProvider(new AudioProvider(this.lavaPlayer));
         this.lavaPlayer.setVolume(ConfigHandler.getSetting(VolumeConfig.class, channel.getGuild()));
-        if (this.channel.getGuild().getConnectedVoiceChannel() == null) this.channel.join();
+        this.channel.join();
+        this.queueSpeech(new LangString(true, "Hello"));
     }
     public void leave(){
+        this.clearQueue();
+        if (this.current != null) this.skipTrack();
+        this.queueSpeech(new LangString(true, "Goodbye"));// todo make leave right after end of speech and clear queue first
+        Care.less(() -> Thread.sleep(3_000));
         MAP.remove(this.channel.getGuild().getID());
         this.lavaPlayer.destroy();
         this.channel.leave();
@@ -167,8 +173,10 @@ public class GuildAudioManager extends AudioEventAdapter{
     public void seek(long time) {
         this.lavaPlayer.getPlayingTrack().setPosition(time);
     }
-    public void skipTrack() {
+    public int skipTrack() {
+        int size = this.queue.size();
         this.lavaPlayer.stopTrack();
+        return size;
     }
     private void onFinish(){
         if (!this.interups.isEmpty()) {
@@ -187,7 +195,7 @@ public class GuildAudioManager extends AudioEventAdapter{
             this.paused = null;
         }else if (!this.queue.isEmpty()){
             this.start(this.queue.remove(0), 0);
-        }else if (ConfigHandler.getSetting(QueueTrackOnlyConfig.class, this.channel.getGuild())){
+        }else if (!ConfigHandler.getSetting(QueueTrackOnlyConfig.class, this.channel.getGuild())){
             this.queueTrack(ConfigHandler.getSetting(GuildActivePlaylistConfig.class, this.channel.getGuild()).getNext());
         }else this.current = null;
     }

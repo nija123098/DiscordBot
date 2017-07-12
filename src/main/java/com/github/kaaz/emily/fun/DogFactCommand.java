@@ -24,7 +24,7 @@ public class DogFactCommand extends AbstractCommand {
     @Command
     public void command(MessageMaker maker){//
         String fact = getDogFact();
-        if (fact != null) maker.appendRaw(DOG + StringEscapeUtils.escapeHtml4(fact));
+        if (fact != null) maker.appendRaw(DOG + StringEscapeUtils.unescapeHtml4(fact));
         else maker.append("Unable to get dog fact, try again later");
     }
     private static String getDogFact(){

@@ -23,8 +23,16 @@ public class TwitchTrack extends Track {
         return "https://www.twitch.tv/" + this.getCode();
     }
     @Override
+    public String previewURL() {
+        return null;
+    }
+    @Override
     public AudioTrack getTrack() {
         AudioItem audioItem = TWITCH_AUDIO_SOURCE_MANAGER.loadItem(GuildAudioManager.PLAYER_MANAGER, new AudioReference(this.getSource(), null));
         return (AudioTrack) audioItem;
+    }
+    @Override
+    public Long getLength() {
+        return null;
     }
 }

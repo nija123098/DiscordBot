@@ -19,9 +19,8 @@ public class SubscribeCurrentCommand extends AbstractCommand {
     @Command
     public static void command(Channel channel, MessageMaker maker){
         Set<SubscriptionLevel> levels = ConfigHandler.getSetting(SubscriptionsConfig.class, channel);
-        if (levels.isEmpty()){
-            maker.append("You are currently not subscribed to anything in this channel, use `@Emily subscribe` to find ");
-        }else{
+        if (levels.isEmpty()) maker.append("You are currently not subscribed to anything in this channel, use `@Emily subscribe info` to find possible subscriptions, or use @Emily rss");
+        else {
             maker.append("You are currently subscribed to the following:\n").appendRaw("```\n");
             levels.forEach(subscriptionLevel -> maker.appendRaw(subscriptionLevel.name() + "\n"));
             maker.appendRaw("```");

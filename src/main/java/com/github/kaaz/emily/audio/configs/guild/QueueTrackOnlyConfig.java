@@ -9,6 +9,6 @@ import com.github.kaaz.emily.perms.BotRole;
  */
 public class QueueTrackOnlyConfig extends AbstractConfig<Boolean, Guild> {
     public QueueTrackOnlyConfig() {
-        super("queue_only", BotRole.GUILD_TRUSTEE, true, "If the playlist should play after the queue is empty");
+        super("queue_only", BotRole.GUILD_TRUSTEE, true, "If no playlist should play after the queue is empty");
     }
 }

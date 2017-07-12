@@ -21,9 +21,9 @@ public class EmojifyCommand extends AbstractCommand {
         maker.appendRaw(builder.toString());
     }
     private String getChars(char c){
-        if (Character.isLetter(c)) return EmoticonHelper.getChars("regional_indicator_" + c);
+        if (Character.isLetter(c)) return EmoticonHelper.getChars("regional_indicator_" + Character.toLowerCase(c));
         if (Character.isDigit(c)) return EmoticonHelper.getChars(Character.getName(c).substring(6));
-        if (c == ' ') return EmoticonHelper.getChars("small_white_square");
+        if (c == ' ') return EmoticonHelper.getChars("white_small_square");
         if (c == '?') return EmoticonHelper.getChars("grey_question");
         if (c == '!') return EmoticonHelper.getChars("grey_exclamation");
         return String.valueOf(c);

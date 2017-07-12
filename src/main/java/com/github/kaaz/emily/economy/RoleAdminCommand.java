@@ -10,7 +10,7 @@ import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
  */
 public class RoleAdminCommand extends AbstractCommand {
     public RoleAdminCommand() {
-        super("roleadmin", ModuleLevel.ECONOMY, null, null, "Management of buy-able roles");
+        super("roleadmin", ModuleLevel.ADMINISTRATIVE, null, null, "Management of buy-able roles");
     }
     @Command
     public void command(MessageMaker maker){

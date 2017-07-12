@@ -17,6 +17,6 @@ public class PresenceCommand extends AbstractCommand {
     }
     @Command
     public void command(MessageMaker maker){
-        maker.append("Please use one of these sub-commands\n").appendRaw(FormatHelper.makeTable(this.getSubCommands().stream().map(AbstractCommand::getName).collect(Collectors.toList())));
+        maker.append("Please use one of these sub-commands:\n").appendRaw(FormatHelper.makeTable(this.getSubCommands().stream().map(abstractCommand -> abstractCommand.getName() + "    ").collect(Collectors.toList())));
     }
 }

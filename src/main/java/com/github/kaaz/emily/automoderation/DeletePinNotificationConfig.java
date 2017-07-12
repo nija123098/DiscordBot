@@ -20,7 +20,7 @@ public class DeletePinNotificationConfig extends AbstractConfig<Boolean, Guild> 
     private static final List<DiscordMessagePin> PIN_ENTRIES = new MemoryManagementService.ManagedList<>(5_000);
     private static final List<DiscordMessageReceivedEvent> MESSAGE_ENTRIES = new MemoryManagementService.ManagedList<>(5_000);
     public DeletePinNotificationConfig() {
-        super("delete_pin_notification", BotRole.GUILD_TRUSTEE, false, "Deletes the <user> has pined a message notification");
+        super("delete_pin_notification", BotRole.GUILD_TRUSTEE, true, "Deletes the <user> has pined a message notification");
     }
     @EventListener
     public synchronized void handle(DiscordMessageReceivedEvent event){

@@ -25,6 +25,6 @@ public class MentionResponseConfig extends AbstractConfig<Boolean, Guild> {
         if (!BotRole.USER.hasRequiredRole(event.getAuthor(), event.getGuild())) return;
         Set<String> set = event.getMessage().getMentions().stream().filter(user -> user.getPresence().getStatus() != Presence.Status.ONLINE || ConfigHandler.getSetting(SelfMarkedAwayConfig.class, user)).map(user -> user.getDisplayName(event.getGuild()) + " is " + (user.getPresence().getStatus() == Presence.Status.ONLINE ? "AFK" : user.getPresence().getStatus())).collect(Collectors.toSet());
         if (set.isEmpty()) return;
-        new MessageMaker(event.getMessage()).appendRaw(Joiner.on(", ").join(set)).send();
+        new MessageMaker(event.getMessage()).appendRaw(Joiner.on(", ").join(set)).withDeleteDelay(5_000L).send();
     }
 }

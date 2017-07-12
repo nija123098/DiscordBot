@@ -20,16 +20,10 @@ public class RollCommand extends AbstractCommand {
     public void command(@Argument(optional = true, replacement = ContextType.NONE) Integer first, @Argument(optional = true, replacement = ContextType.NONE) Integer second, String arg, MessageMaker maker){
         int value;
         if (first != null){
-            if (second == null){
-                value = Rand.getRand(first);
-            }else{
-                value = Rand.getRand(second - first) + first;
-            }
-        }else if (arg.isEmpty()){
-            value = Rand.getRand(5) + 1;
-        }else{
-            value = (int) CalculateCommand.eval(arg);
-        }
+            if (second == null) value = Rand.getRand(first - 1) + 1;
+            else value = Rand.getRand(second - first - 1) + first + 1;
+        }else if (arg.isEmpty()) value = Rand.getRand(5) + 1;
+        else value = (int) CalculateCommand.eval(arg);
         maker.append(value + "");
     }
 }

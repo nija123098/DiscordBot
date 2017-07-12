@@ -32,7 +32,8 @@ public class UserNameMonitor {
     public static void handle(DiscordUserLeave leave){
         Set<String> set = MAP.computeIfAbsent(leave.getGuild(), guild -> new ConcurrentHashSet<>());
         set.remove(leave.getUser().getName());
-        set.remove(leave.getUser().getNickname(leave.getGuild()));
+        String nick = leave.getUser().getNickname(leave.getGuild());
+        if (nick != null) set.remove(nick);
     }
     @EventListener
     public static void handler(DiscordNicknameChange change){

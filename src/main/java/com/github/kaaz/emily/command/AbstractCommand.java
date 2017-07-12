@@ -428,7 +428,7 @@ public class AbstractCommand {
         } catch (IllegalAccessException e) {
             Log.log("Malformed command: " + getName(), e);
         } catch (InvocationTargetException e) {
-            if (e.getCause() instanceof BotException) new MessageMaker(user, message).asExceptionMessage(((BotException) e.getCause())).withReaction("grey_exclamation").send();
+            if (e.getCause() instanceof BotException) new MessageMaker(user, message).asExceptionMessage(((BotException) e.getCause())).withReaction(CommandHandler.EXCEPTION_FOR_METHOD).send();
             else if (e.getCause() instanceof DevelopmentException) Log.log("Exception during method execution: " + getName(), e);
             else new DevelopmentException(e.getCause()).makeMessage(message.getChannel());
         }

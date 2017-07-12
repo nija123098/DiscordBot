@@ -46,7 +46,7 @@ public class Launcher {
     public static void registerShutdown(Runnable runnable){
         SHUTDOWNS.add(runnable);
     }
-    public synchronized static void shutdown(Integer code){
+    public synchronized static void shutdown(Integer code, long delay){
         ScheduleService.ScheduledTask task = SHUTDOWN_TASK.get();
         if (task != null) {
             Log.log("Canceling a shutdown");
@@ -55,7 +55,7 @@ public class Launcher {
         }
         if (code != null) {
             Log.log("Scheduled shutdown with code: " + code);
-            SHUTDOWN_TASK.set(ScheduleService.schedule(30_000, () -> {
+            SHUTDOWN_TASK.set(ScheduleService.schedule(delay, () -> {
                 Log.log("Shutting down with code: " + code);
                 SHUTDOWNS.forEach(Runnable::run);
                 DiscordClient.logout();

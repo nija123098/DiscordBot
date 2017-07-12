@@ -7,6 +7,6 @@ import com.github.kaaz.emily.fun.slot.AbstractSlotPack;
  */
 public class DefaultSlotPack extends AbstractSlotPack {
     public DefaultSlotPack() {
-        super(new String[]{"seven", "crown", "bell", "chocolate_bar", "cherries", "mellon"}, 25, 15, 15, 10, 10, 10);
+        super(new String[]{"seven", "crown", "bell", "chocolate_bar", "cherries", "melon"}, 25, 15, 15, 10, 10, 10);
     }
 }

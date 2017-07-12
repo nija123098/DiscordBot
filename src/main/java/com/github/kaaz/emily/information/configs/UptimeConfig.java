@@ -13,11 +13,18 @@ import com.github.kaaz.emily.perms.BotRole;
  */
 public class UptimeConfig extends AbstractConfig<Long, User> {
     public UptimeConfig() {
-        super("up_time", BotRole.BOT_ADMIN, null, "How long a user has been on or off line");
+        super("up_time", BotRole.BOT_ADMIN, "How long a user has been on or off line", user -> System.currentTimeMillis());
     }
     @EventListener
     public void handle(DiscordPresenceUpdate event){
-        this.setValue(event.getUser(), System.currentTimeMillis());
+        long current = System.currentTimeMillis();
+        this.changeSetting(event.getUser(), previous -> {
+            ConfigHandler.alterSetting(UptimeStatsConfig.class, event.getUser(), statusLongMap -> statusLongMap.compute(event.getOldPresence().getStatus(), (status, aLong) -> {
+                if (aLong == null) aLong = 0L;
+                return aLong + (current - previous);
+            }));
+            return current;
+        });
     }
     @EventListener
     public void handle(DiscordDataReload reload){

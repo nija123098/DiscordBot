@@ -2,6 +2,7 @@ package com.github.kaaz.emily.information;
 
 import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.ModuleLevel;
+import com.github.kaaz.emily.command.annotations.Argument;
 import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.exeption.DevelopmentException;
@@ -36,7 +37,7 @@ public class LoLChampCommand extends AbstractCommand {
         return baseUrl + img.getGroup() + "/" + img.getFull();
     }
     @Command
-    public void execute(String args, MessageMaker maker) {
+    public void execute(@Argument(info = "champion name") String args, MessageMaker maker) {
         if (this.api == null) throw new DevelopmentException("This command is currently unavailable");
         try {
             if (gameVersion == null) {

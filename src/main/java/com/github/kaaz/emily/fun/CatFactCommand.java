@@ -24,7 +24,7 @@ public class CatFactCommand extends AbstractCommand {
     @Command
     public void command(MessageMaker maker, Guild guild){
         String fact = getCatFact();
-        if (fact != null) maker.appendRaw(EmoticonHelper.getChars("cat") + "  " + StringEscapeUtils.escapeHtml4(fact));
+        if (fact != null) maker.appendRaw(EmoticonHelper.getChars("cat") + "  " + StringEscapeUtils.unescapeHtml4(fact));
         else maker.append("Unable to get cat fact, try again later");
     }
     private static String getCatFact() {

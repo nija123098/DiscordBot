@@ -12,14 +12,14 @@ import com.github.kaaz.emily.launcher.Launcher;
  */
 public class ShutdownCommand extends AbstractCommand {
     public ShutdownCommand() {
-        super("reboot", ModuleLevel.BOT_ADMINISTRATIVE, "restart, shutdown", null, "Restarts the bot");
+        super("reboot", ModuleLevel.BOT_ADMINISTRATIVE, "restart, shutdown, logout", null, "Restarts the bot");
     }
     @Command
     public void command(@Argument(optional = true, replacement = ContextType.NONE) Integer val, String remaining){
         remaining = remaining.toLowerCase();
         if (remaining.contains("now")) System.exit(val == null ? -1 : val);
-        Launcher.shutdown(remaining.contains("cancel") ? null : val == null ? 0 : val);
-        if (remaining.contains("firm")) {
+        Launcher.shutdown(remaining.contains("cancel") ? null : val == null ? 0 : val, remaining.contains("prop") ? 5_000 : 30_000);
+        if (!remaining.contains("soft")) {
             Thread firm = new Thread(() -> {
                 try{Thread.sleep(150_000);
                 } catch (InterruptedException e) {

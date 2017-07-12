@@ -33,9 +33,13 @@ public class BotConfig {
     @ConfigurationOption
     public static String FFM_PEG_PATH = CONTAINER_PATH + "ffmpeg.exe";
     @ConfigurationOption
+    public static String FF_PROBE_PATH = CONTAINER_PATH + "ffprobe.exe";
+    @ConfigurationOption
     public static int MUSIC_DOWNLOAD_THREAD_COUNT = 1;
     @ConfigurationOption
-    public static String AUDIO_FORMAT = "opus";
+    public static String AUDIO_FORMAT = "mp3";
+    @ConfigurationOption
+    public static String AUDIO_FILE_TYPES = "opus, mp3";
     @ConfigurationOption
     public static String CAT_API_TOKEN = null;
     @ConfigurationOption
@@ -48,4 +52,6 @@ public class BotConfig {
     public static String DB_PASS = "p@$$w0rd";
     @ConfigurationOption
     public static String DB_NAME = "emilybot";
+    @ConfigurationOption
+    public static Boolean VOICE_COMMANDS_ENABLED = false;
 }

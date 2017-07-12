@@ -24,7 +24,7 @@ public class LanguageHelper {
     }
     private static final List<String> INTEGERS;
     static {
-        INTEGERS = Arrays.asList("one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve");
+        INTEGERS = Arrays.asList("zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve");
     }
     public static int getInteger(String s){
         s = s.replace(",", "").replace(".", "").replace("_", "");
@@ -35,12 +35,12 @@ public class LanguageHelper {
         if (wordVal != -1){
             return wordVal;
         }
-        throw new ArgumentException("Either that is not a number, of you spelled it out and it's value is over 12");
+        throw new ArgumentException("Either that is not a number or you spelled it out and it's value is over 12");
     }
     public static String makePleural(String s){
         return s.endsWith("s") ? s + "'s" : s + "s";
     }
     public static String getInteger(int val){
-        return INTEGERS.size() > val ? "number" : INTEGERS.get(val);
+        return INTEGERS.size() > val ? INTEGERS.get(val) : "number";
     }
 }

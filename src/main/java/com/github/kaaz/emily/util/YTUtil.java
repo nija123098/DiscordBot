@@ -16,10 +16,12 @@ public class YTUtil {
         return s.length() == 11 && URLHelper.isValid(BASE_VIDEO_URL + s);
     }
     public static String extractVideoCode(String s){
+        int ind = s.indexOf('&');
+        if (ind != -1) s = s.substring(0, ind);
         s = NetworkHelper.stripProtocol(s);
         if (s.startsWith("www.youtube.com/watch?v=")) s = s.substring(24);
         else if (s.startsWith("youtu.be/")) s = s.substring(9);
-        else if (isYoutubeVideoCode(s.substring(0, 11))) return s;
+        else if (s.length() == 11 && isYoutubeVideoCode(s)) return s;
         else return null;
         if (isYoutubeVideoCode(s.substring(0, 11))) return s;
         return null;
@@ -30,6 +32,8 @@ public class YTUtil {
         return URLHelper.isValid(BASE_PLAYLIST_URL + s);
     }
     public static String extractPlaylistCode(String s){
+        int ind = s.indexOf('&');
+        if (ind != -1) s = s.substring(0, ind);
         s = NetworkHelper.stripProtocol(s);
         if (s.startsWith("www.youtube.com/playlist?list=")) {
             s = s.substring(30);

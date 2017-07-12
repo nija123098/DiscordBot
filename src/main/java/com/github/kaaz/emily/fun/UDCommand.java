@@ -22,7 +22,7 @@ import java.net.URLEncoder;
  */
 public class UDCommand extends AbstractCommand {
     public UDCommand() {
-        super("urbandictionary", ModuleLevel.FUN, "ud", null, "Searches Urban Dictionary");
+        super("ud", ModuleLevel.FUN, "urbandictionary", null, "Searches Urban Dictionary");
     }
     @Command
     public void command(MessageMaker maker, String arg){
@@ -39,9 +39,9 @@ public class UDCommand extends AbstractCommand {
             }
             JSONObject firstResult = (JSONObject) listObject.get(0);
             maker.getTitle().append(firstResult.get("word").toString());
-            maker.append(StringEscapeUtils.escapeHtml4(firstResult.get("definition").toString()));
+            maker.append(StringEscapeUtils.unescapeHtml4(firstResult.get("definition").toString()));
             maker.append("\n\n*" + firstResult.get("example") + "*\n");
-            maker.append(EmoticonHelper.getChars("thumbs_up") + " " + firstResult.get("thumbs_up") + "  " + EmoticonHelper.getChars("thumbs_down") + " " + firstResult.get("thumbs_down"));
+            maker.append(EmoticonHelper.getChars("+1") + firstResult.get("thumbs_up") + "  " + EmoticonHelper.getChars("-1") + firstResult.get("thumbs_down"));
             maker.getNote().appendRaw("by " + firstResult.get("author").toString());
         } catch (IOException | ParseException e) {
             e.printStackTrace();

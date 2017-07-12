@@ -7,6 +7,8 @@ import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
 
+import java.util.Map;
+
 /**
  * Made by nija123098 on 5/30/2017.
  */
@@ -16,10 +18,14 @@ public class TagMineCommand extends AbstractCommand {
     }
     @Command
     public void command(User user, Guild guild, MessageMaker maker){
-        maker.append("Your tags:\n").appendRaw("```");
-        ConfigHandler.getSetting(TagConfig.class, guild).forEach((s, tag) -> {
-            if (tag.getUser().equals(user)) maker.getNewListPart().appendRaw(tag.getName());
-        });
+        Map<String, Tag> list = ConfigHandler.getSetting(TagConfig.class, guild);
+        if (list.isEmpty()) maker.append("You don't have any tags.");
+        else{
+            maker.append("Your tags:\n").appendRaw("```");
+            list.forEach((s, tag) -> {
+                if (tag.getUser().equals(user)) maker.getNewListPart().appendRaw(tag.getName());
+            });
+        }
         maker.append("```");
     }
 }

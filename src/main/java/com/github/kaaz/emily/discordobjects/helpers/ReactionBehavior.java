@@ -3,6 +3,7 @@ package com.github.kaaz.emily.discordobjects.helpers;
 import com.github.kaaz.emily.discordobjects.wrappers.DiscordClient;
 import com.github.kaaz.emily.discordobjects.wrappers.Message;
 import com.github.kaaz.emily.discordobjects.wrappers.Reaction;
+import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventListener;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordReactionEvent;
 import com.github.kaaz.emily.service.services.ScheduleService;
@@ -17,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @FunctionalInterface
 public interface ReactionBehavior {
-    void behave(boolean add, Reaction reaction);
+    void behave(boolean add, Reaction reaction, User user);
     long PERSISTENCE = 120000;// map entries needn't be cleared, not many reactions are used so it is not worth synchronizing
     Map<String, Map<Message, Pair<ReactionBehavior, ScheduleService.ScheduledTask>>> BEHAVIORS = new ConcurrentHashMap<>();
     static void registerListener(Message message, String emoticonName, ReactionBehavior behavior){
@@ -37,7 +38,7 @@ public interface ReactionBehavior {
         if (map == null) return;
         Pair<ReactionBehavior, ScheduleService.ScheduledTask> pair = map.get(reaction.getMessage());
         if (pair != null) {
-            pair.getKey().behave(reaction.addingReaction(), reaction.getReaction());
+            pair.getKey().behave(reaction.addingReaction(), reaction.getReaction(), reaction.getUser());
             pair.getValue().cancel();
             pair.setValue(ScheduleService.schedule(PERSISTENCE, () -> deregisterListener(reaction.getMessage(), reaction.getReaction().getName())));
         }

@@ -3,6 +3,7 @@ package com.github.kaaz.emily.discordobjects.wrappers;
 import com.github.kaaz.emily.discordobjects.exception.ErrorWrapper;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
 import com.github.kaaz.emily.util.EmoticonHelper;
+import sx.blah.discord.handle.impl.obj.ReactionEmoji;
 import sx.blah.discord.handle.obj.IMessage;
 
 import java.time.LocalDateTime;
@@ -124,7 +125,7 @@ public class Message {// should not be kept stored, too many are made
     }
 
     public Reaction getReaction(String s){
-        return Reaction.getReaction(message().getReactionByName(s));
+        return Reaction.getReaction(message().getReactionByEmoji(ReactionEmoji.of(s)));
     }
 
     public Reaction getReactionByName(String name){
@@ -132,7 +133,8 @@ public class Message {// should not be kept stored, too many are made
     }
 
     public Reaction addReaction(String s) {
-        ErrorWrapper.wrap(() -> message().addReaction(s));
+        if (s.endsWith("\u200B")) return addReaction(s.substring(0, s.length() - 1));
+        ErrorWrapper.wrap(() -> message().addReaction(ReactionEmoji.of(s)));
         return getReaction(s);
     }
 
@@ -141,11 +143,11 @@ public class Message {// should not be kept stored, too many are made
     }
 
     public void removeReaction(Reaction reaction) {
-        ErrorWrapper.wrap(() -> message().removeReaction(reaction.reaction()));
+        ErrorWrapper.wrap(() -> message().removeReaction(DiscordClient.getOurUser().user(), reaction.reaction()));
     }
 
     public void removeReaction(String s) {
-        ErrorWrapper.wrap(() -> message().removeReaction(getReaction(s).reaction()));
+        ErrorWrapper.wrap(() -> message().removeReaction(DiscordClient.getOurUser().user(), getReaction(s).reaction()));
     }
 
     public void removeReactionByName(String name) {
