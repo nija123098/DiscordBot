@@ -27,7 +27,6 @@ public class YTUtil {
         return null;
     }
     private static boolean isYoutubePlaylistCode(String s){
-        if (s.length() != 34) return false;
         for (int i = 0; i < 34; i++) if (!Character.isLetterOrDigit(s.charAt(i)) || s.charAt(i) == '-' || s.charAt(i) == '_') return false;
         return URLHelper.isValid(BASE_PLAYLIST_URL + s);
     }
@@ -37,8 +36,8 @@ public class YTUtil {
         s = NetworkHelper.stripProtocol(s);
         if (s.startsWith("www.youtube.com/playlist?list=")) {
             s = s.substring(30);
-            if (isYoutubePlaylistCode(s.substring(0, 30))) return s;
         }
+        if (s.length() == 34 && isYoutubePlaylistCode(s.substring(0, 30))) return s;
         return null;
     }
     public static List<Track> getTracksFromPlaylist(String code){

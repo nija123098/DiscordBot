@@ -15,7 +15,11 @@ public class SoundCloudTrack extends DownloadableTrack {
         return "https://soundcloud.com/" + this.getCode();
     }
     @Override
-    public String previewURL() {
+    public String getPreviewURL() {
+        return null;
+    }
+    @Override
+    public String getInfo() {
         return null;
     }
     @Override

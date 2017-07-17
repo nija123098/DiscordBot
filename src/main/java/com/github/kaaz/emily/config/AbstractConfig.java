@@ -9,6 +9,7 @@ import com.github.kaaz.emily.perms.BotRole;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -102,6 +103,10 @@ public class AbstractConfig<V, T extends Configurable> {
         return this.normalViewing;
     }
 
+    public long getAge(Configurable configurable){
+        return ageMap.getOrDefault(configurable, 0L);
+    }
+
     public V wrapTypeIn(String e, T configurable){
         return TypeChanger.toObject(this.valueType, e);
     }
@@ -115,9 +120,11 @@ public class AbstractConfig<V, T extends Configurable> {
         validateInput(configurable, value);
         EventDistributor.distribute(new ConfigValueChangeEvent(configurable, this, this.getValue(configurable), value));
         map.put(configurable, TypeChanger.toString(this.valueType, value));
+        ageMap.put(configurable, System.currentTimeMillis());
         return value;
     }
     private Map<Configurable, String> map = new HashMap<>();//TODO REMOVE TESTING
+    private Map<Configurable, Long> ageMap = new HashMap<>();
 
     /**
      * Gets the value for the given value.
@@ -145,6 +152,18 @@ public class AbstractConfig<V, T extends Configurable> {
         V val = ObjectCloner.clone(this.getValue(configurable));
         consumer.accept(val);
         return this.setValue(configurable, val);
+    }
+
+    public V setIfDefault(T configurable, Function<V, V> function){
+        V value = getValue(configurable);
+        if (Objects.equals(value, this.getDefault(configurable))) value = this.setValue(configurable, function.apply(value));
+        return value;
+    }
+
+    public V setIfOld(T configurable, long age, Function<V, V> function){
+        V val = this.getValue(configurable);
+        if (System.currentTimeMillis() - ageMap.get(configurable) >= age) val = function.apply(val);
+        return val;
     }
 
     public String getExteriorValue(T configurable){

@@ -31,7 +31,8 @@ public class CurrentCommand extends AbstractCommand {
         long time = manager.currentTime();
         maker.getTitle().appendRaw(NOTES + " " + track.getName());
         maker.appendRaw("[source](" + track.getSource() + ") - " + ConfigHandler.getSetting(GuildActivePlaylistConfig.class, guild).getName());
-        maker.withUrl(track.previewURL());
+        maker.withUrl(track.getSource());
+        maker.withThumb(track.getPreviewURL());
         Long length = track.getLength();
         if (length != null) maker.getNewFieldPart().withBoth("Duration", Time.getAbbreviatedMusic(length, time));
     }

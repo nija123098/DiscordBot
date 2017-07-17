@@ -19,7 +19,7 @@ public class PurgeUserCommand extends AbstractCommand {
         super(PurgeCommand.class, "user", null, null, null, "Deletes a user's messages in the channel");
     }
     @Command
-    public void command(@Argument User user, @Argument(optional = true) Integer integer, Channel channel, Guild guild){// ensures guild context
-        MessageDeleteService.delete(channel.getMessagesTo(ConfigHandler.getSetting(GuildUserJoinTimeConfig.class, GuildUser.getGuildUser(guild, user))).stream().filter(message -> message.getAuthor().equals(user)).collect(Collectors.toList()));
+    public void command(@Argument User user, @Argument(optional = true) Integer integer, Channel channel, Guild guild, String options){// ensures guild context
+        MessageDeleteService.delete(options.contains("all") ? channel.getMessages() : channel.getMessagesTo(ConfigHandler.getSetting(GuildUserJoinTimeConfig.class, GuildUser.getGuildUser(guild, user))).stream().filter(message -> message.getAuthor().equals(user)).collect(Collectors.toList()));
     }
 }

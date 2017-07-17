@@ -19,7 +19,6 @@ public class PurgeCommand extends AbstractCommand {
     @Command
     public void command(@Argument(optional = true, replacement = ContextType.NONE) Integer count, Channel channel){
         if (count == null) count = 100;
-        if (count > 2499) count = 2499;
         MessageDeleteService.delete(channel.getMessages(count + 1).stream().filter(message -> !message.isPinned()).collect(Collectors.toList()));
     }
 }

@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 /**
  * Made by nija123098 on 4/27/2017.
  */
-public class LanguageMonitor {
+public class MessageMonitor {
     private static final AtomicReference<Map<LanguageLevel, Set<CheckingString>>> MAP = new AtomicReference<>();
     static {
         load(ConfigHandler.getSetting(LanguageFilteringLevelWordsConfig.class, GlobalConfigurable.GLOBAL));
@@ -38,7 +38,7 @@ public class LanguageMonitor {
         int length = LanguageLevel.values().length;
         for (int i = 1; i < length; i++) outMap.get(LanguageLevel.values()[i]).addAll(outMap.get(LanguageLevel.values()[i - 1]));
         MAP.set(outMap);
-        EventDistributor.register(LanguageMonitor.class);
+        EventDistributor.register(MessageMonitor.class);
     }
     @EventListener
     public static void handle(ConfigValueChangeEvent event){

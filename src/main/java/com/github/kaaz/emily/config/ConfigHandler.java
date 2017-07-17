@@ -133,6 +133,10 @@ public class ConfigHandler {
         throw new DevelopmentException("Attempted searching for a non-existent config by using Class search: " + clazz.getClass().getName());
     }
 
+    public static <E extends AbstractConfig<?, ? extends Configurable>> long getAge(Class<E> clazz, Configurable configurable){
+        return getConfig(clazz).getAge(configurable);
+    }
+
     /**
      * Sets the config value for the given configurable and config
      *
@@ -197,6 +201,14 @@ public class ConfigHandler {
      */
     public static <V, T extends Configurable> V alterSetting(Class<? extends AbstractConfig<V, T>> clazz, T configurable, Consumer<V> consumer){
         return getConfig(clazz).alterSetting(configurable, consumer);
+    }
+
+    public static <V, T extends Configurable> V setIfDefault(Class<? extends AbstractConfig<V, T>> clazz, T configurable, Function<V, V> function){
+        return getConfig(clazz).setIfDefault(configurable, function);
+    }
+
+    public static <V, T extends Configurable> V setIfOld(Class<? extends AbstractConfig<V, T>> clazz, T configurable, long age, Function<V, V> function){
+        return getConfig(clazz).setIfOld(configurable, age, function);
     }
 
     /**

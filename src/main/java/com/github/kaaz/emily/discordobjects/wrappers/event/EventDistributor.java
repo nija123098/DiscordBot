@@ -3,6 +3,7 @@ package com.github.kaaz.emily.discordobjects.wrappers.event;
 import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.util.Log;
 import com.github.kaaz.emily.util.ReflectionHelper;
+import com.github.kaaz.emily.util.ThreadProvider;
 import org.eclipse.jetty.util.ConcurrentHashSet;
 
 import java.lang.reflect.InvocationTargetException;
@@ -35,14 +36,14 @@ public class EventDistributor {
             } else throw new DevelopmentException("Unknown event listener type");// Check if the listener is static
         });
     }
-    public static <E extends BotEvent> void distribute(BotEvent event){
-        distribute((Class<E>) event.getClass(), (E) event);
+    public static <E extends BotEvent> void distribute(E event){
+        distribute((Class<E>) event.getClass(), event);
     }
     public static <E extends BotEvent> void distribute(Class<E> clazz, E event){
-        ReflectionHelper.getAssignableTypes(clazz).forEach(c -> {
+        ThreadProvider.submit(() -> ReflectionHelper.getAssignableTypes(clazz).forEach(c -> {
             Set<Listener> listeners = LISTENER_MAP.get(c);
             if (listeners != null) listeners.forEach(listener -> listener.handle(event));
-        });
+        }));
     }
     private static class Listener<E extends BotEvent> {
         Method m;

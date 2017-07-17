@@ -1,6 +1,7 @@
 package com.github.kaaz.emily.discordobjects;
 
 import com.github.kaaz.emily.audio.SpeechParser;
+import com.github.kaaz.emily.automoderation.languagefiltering.MessageMonitor;
 import com.github.kaaz.emily.command.CommandHandler;
 import com.github.kaaz.emily.discordobjects.helpers.ReactionBehavior;
 import com.github.kaaz.emily.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
@@ -11,7 +12,6 @@ import com.github.kaaz.emily.discordobjects.wrappers.event.botevents.DiscordData
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordMessageReceivedEvent;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordVoiceJoin;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordVoiceLeave;
-import com.github.kaaz.emily.automoderation.languagefiltering.LanguageMonitor;
 import com.github.kaaz.emily.launcher.BotConfig;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
 import com.github.kaaz.emily.service.services.ScheduleService;
@@ -48,7 +48,8 @@ public class DiscordAdapter {
         new Reflections("com.github.kaaz.emily.discordobjects.wrappers.event.events").getSubTypesOf(BotEvent.class).stream().filter(clazz -> !clazz.equals(DiscordMessageReceivedEvent.class)).forEach(clazz -> EVENT_MAP.put((Class<? extends Event>) clazz.getConstructors()[0].getParameterTypes()[0], (Constructor<? extends BotEvent>) clazz.getConstructors()[0]));
         ClientBuilder builder = new ClientBuilder();
         builder.withToken(BotConfig.BOT_TOKEN);
-        builder.withRecommendedShardCount(true);
+        builder.withShards(16);
+        // builder.withRecommendedShardCount(true);
         builder.registerListener(DiscordAdapter.class);
         DiscordClient.set(builder.login());
         long targetTime = 20000 + 15000 * DiscordClient.getShardCount() + System.currentTimeMillis();
@@ -66,9 +67,9 @@ public class DiscordAdapter {
         GuildAudioManager.init();
         SpeechParser.init();
         EventDistributor.register(ReactionBehavior.class);
-        EventDistributor.register(LanguageMonitor.class);
+        EventDistributor.register(MessageMonitor.class);
         EventDistributor.distribute(DiscordDataReload.class, null);
-        ScheduleService.scheduleRepeat(PLAY_TEXT_SPEED + 10_000, PLAY_TEXT_SPEED, () -> {
+        if (!BotConfig.GHOST_MODE) ScheduleService.scheduleRepeat(PLAY_TEXT_SPEED + 10_000, PLAY_TEXT_SPEED, () -> {
             Template template = TemplateHandler.getTemplate(KeyPhrase.PLAY_TEXT, null, PREVIOUS_TEXTS);
             if (template != null) DiscordClient.getShards().forEach(shard -> shard.online(template.interpret((User) null, shard, null, null, null, null)));
         });
@@ -113,7 +114,7 @@ public class DiscordAdapter {
     }
     @EventSubscriber
     public static void handle(Event event){
-        Constructor<? extends BotEvent> constructor = EVENT_MAP.get(event.getClass());
+        Constructor<? extends BotEvent> constructor = EVENT_MAP.get(event.getClass());// check this won't be duplicating messages received
         if (constructor != null) {
             try{EventDistributor.distribute(constructor.newInstance(event));
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {

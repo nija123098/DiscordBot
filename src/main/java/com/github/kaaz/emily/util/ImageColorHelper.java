@@ -1,7 +1,5 @@
 package com.github.kaaz.emily.util;
 
-import com.github.kaaz.emily.discordobjects.wrappers.User;
-
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -15,9 +13,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ImageColorHelper {
     private static final Map<String, Color> URL_COLOR_MAP = new ConcurrentHashMap<>();
-    public static Color getUserColor(User user){
+    public static Color getColor(String url){
         try {
-            return URL_COLOR_MAP.computeIfAbsent(user.getAvatarURL(), s -> {
+            return URL_COLOR_MAP.computeIfAbsent(url, s -> {
                 try {
                     HttpURLConnection connection = ((HttpURLConnection) new URL(s.replace(".webp", ".png")).openConnection());
                     connection.setRequestProperty("User-Agent", "");
@@ -33,9 +31,8 @@ public class ImageColorHelper {
                     }
                     int pixels = image.getHeight() * image.getWidth();
                     return new Color(r / pixels, g / pixels, b / pixels);
-
                 } catch (Exception e){
-                    throw new RuntimeException();
+                    throw new RuntimeException(e);
                 }
             });
         } catch (RuntimeException e){

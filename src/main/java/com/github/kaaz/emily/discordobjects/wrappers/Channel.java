@@ -211,6 +211,10 @@ public class Channel implements Configurable {
         return ErrorWrapper.wrap((ErrorWrapper.Request<List<Message>>) () -> Message.getMessages(channel().getPinnedMessages()));
     }
 
+    public List<Message> getMessages(){
+        return Message.getMessages(this.channel().getMessages());
+    }
+
     public List<Message> getMessages(int count){
         return Message.getMessages(channel().getMessageHistory(count));
     }

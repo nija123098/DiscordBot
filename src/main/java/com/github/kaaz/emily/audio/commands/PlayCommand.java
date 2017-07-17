@@ -7,6 +7,7 @@ import com.github.kaaz.emily.command.annotations.Argument;
 import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
+import com.github.kaaz.emily.exeption.DevelopmentException;
 
 import java.util.List;
 
@@ -19,8 +20,9 @@ public class PlayCommand extends AbstractCommand {
     }
     @Command
     public void command(GuildAudioManager manager, @Argument(info = "a song name or url") String s, MessageMaker maker) {
+        if (s.isEmpty()) manager.onFinish();
         List<Track> tracks = Track.getTracks(s);
-        if (tracks != null) tracks.forEach(manager::queueTrack);
-        else maker.append("I don't even know what you could have even entered to get this result");
+        if (!tracks.isEmpty()) tracks.forEach(manager::queueTrack);
+        else throw new DevelopmentException("How did you get here?");
     }
 }

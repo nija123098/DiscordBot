@@ -18,8 +18,12 @@ public class SpeechTrack extends Track {
         return "Emily Herself";
     }
     @Override
-    public String previewURL() {
+    public String getPreviewURL() {
         return null;
+    }
+    @Override
+    public String getInfo() {
+        return "Emily saying stuff";
     }
     @Override
     public AudioTrack getTrack() {

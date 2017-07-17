@@ -10,6 +10,7 @@ import com.github.kaaz.emily.discordobjects.helpers.guildaudiomanager.GuildAudio
 import com.github.kaaz.emily.discordobjects.wrappers.*;
 import com.github.kaaz.emily.exeption.BotException;
 import com.github.kaaz.emily.exeption.DevelopmentException;
+import com.github.kaaz.emily.launcher.BotConfig;
 import com.github.kaaz.emily.service.services.ScheduleService;
 import com.github.kaaz.emily.util.EmoticonHelper;
 import com.github.kaaz.emily.util.ImageColorHelper;
@@ -218,7 +219,7 @@ public class MessageMaker {
         return this;
     }
     public MessageMaker withUserColor(){
-        this.embed.withColor(ImageColorHelper.getUserColor(this.user));
+        this.embed.withColor(ImageColorHelper.getColor(this.user.getAvatarURL()));
         return this;
     }
     public MessageMaker withRandomColor(){
@@ -226,7 +227,7 @@ public class MessageMaker {
         return this;
     }
     public MessageMaker withUserColor(User user){
-        this.embed.withColor(ImageColorHelper.getUserColor(user));
+        this.embed.withColor(ImageColorHelper.getColor(user.getAvatarURL()));
         return this;
     }
     public MessageMaker withFooterIcon(String url){
@@ -241,6 +242,7 @@ public class MessageMaker {
     }
     public MessageMaker withUrl(String url){
         if (url != null) this.embed.withUrl(url);
+        this.mustEmbed = true;
         return this;
     }
     public MessageMaker withThumb(String url){
@@ -289,6 +291,7 @@ public class MessageMaker {
         }
     }
     private void send(int page){
+        if (BotConfig.GHOST_MODE) return;
         if (!this.maySend) {
             if (this.origin != null) ErrorWrapper.wrap(() -> this.origin.addReaction(EmoticonHelper.getChars("ok_hand")));
             return;

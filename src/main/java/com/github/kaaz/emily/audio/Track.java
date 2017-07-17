@@ -109,10 +109,11 @@ public abstract class Track implements Configurable{
     public void manage(){}
     @Override
     public void checkPermissionToEdit(User user, Guild guild) {
-        BotRole.GUILD_TRUSTEE.checkRequiredRole(user, null);
+        BotRole.BOT_ADMIN.checkRequiredRole(user, null);
     }
     public abstract String getSource();
-    public abstract String previewURL();
+    public abstract String getPreviewURL();
+    public abstract String getInfo();
     public abstract AudioTrack getTrack();
     public abstract Long getLength();
 }

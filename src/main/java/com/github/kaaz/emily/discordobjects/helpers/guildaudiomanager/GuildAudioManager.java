@@ -19,6 +19,7 @@ import com.github.kaaz.emily.discordobjects.wrappers.event.botevents.ConfigValue
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordVoiceJoin;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordVoiceLeave;
 import com.github.kaaz.emily.exeption.ArgumentException;
+import com.github.kaaz.emily.launcher.BotConfig;
 import com.github.kaaz.emily.launcher.Launcher;
 import com.github.kaaz.emily.service.services.ScheduleService;
 import com.github.kaaz.emily.util.Care;
@@ -84,7 +85,7 @@ public class GuildAudioManager extends AudioEventAdapter{
     }
     public static void init(){}
     public static GuildAudioManager getManager(VoiceChannel channel, boolean make){
-        if (channel == null) return null;
+        if (channel == null || BotConfig.GHOST_MODE) return null;
         if (make) {
             GuildAudioManager current = getManager(channel.getGuild());
             if (current != null && !current.channel.equals(channel)) throw new ArgumentException("You must be in the voice channel with " + DiscordClient.getOurUser().getDisplayName(channel.getGuild()) + " to use that command");
@@ -143,19 +144,21 @@ public class GuildAudioManager extends AudioEventAdapter{
         }else this.current = null;
     }
     public void interrupt(LangString langString){// must fully exist
-        File file = SpeechHelper.getFile(langString, MessageMaker.getLang(null, this.channel));
+        SpeechTrack track = new SpeechTrack(SpeechHelper.getFile(langString, MessageMaker.getLang(null, this.channel)));
+        if (this.current == null && this.queue.isEmpty()) {
+            this.queueTrack(track);
+            return;
+        }
         if (this.paused != null){
             this.interups.add(langString);
             return;
         }
         this.lavaPlayer.setPaused(true);
-        if (this.current != null){
-            this.pausePosition = this.lavaPlayer.getPlayingTrack().getPosition();
-            this.paused = this.current;
-            this.current = null;
-            this.lavaPlayer.stopTrack();
-        }
-        start(new SpeechTrack(file), 0);
+        this.pausePosition = this.lavaPlayer.getPlayingTrack().getPosition();
+        this.paused = this.current;
+        this.current = null;
+        this.lavaPlayer.stopTrack();
+        start(track, 0);
         this.paused = null;
     }
     public void setPlaylistOn(boolean on){
@@ -178,7 +181,7 @@ public class GuildAudioManager extends AudioEventAdapter{
         this.lavaPlayer.stopTrack();
         return size;
     }
-    private void onFinish(){
+    public void onFinish(){
         if (!this.interups.isEmpty()) {
             this.interrupt(this.interups.remove(0));
             return;

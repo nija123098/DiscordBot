@@ -15,8 +15,8 @@ public class MessageDeleteService extends AbstractService {
     public static void delete(List<Message> messages){
         messages = messages.stream().filter(message -> !message.isPinned()).collect(Collectors.toList());
         if (messages.size() == 0) return;
-        messages.get(0).getChannel().bulkDelete(messages);
-        TO_DELETE.addAll(messages.stream().filter(message -> !message.isDeleted()).collect(Collectors.toSet()));
+        if (messages.size() > 100) messages.removeAll(messages.get(0).getChannel().bulkDelete(messages.subList(0, 100)));
+        TO_DELETE.addAll(messages);
     }
     public MessageDeleteService() {
         super(500);

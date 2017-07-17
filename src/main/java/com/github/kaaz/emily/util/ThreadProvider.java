@@ -7,7 +7,7 @@ import java.util.List;
  * Made by nija123098 on 6/28/2017.
  */
 public class ThreadProvider {
-    private static int size = -1, available;
+    private static int index = -1, available;
     private static final List<Runnable> TASKS;
     static {
         TASKS = new ArrayList<>();
@@ -27,13 +27,13 @@ public class ThreadProvider {
                     ++available;
                 }
             }
-        }, "ThreadProviderThread-" + ++size);
+        }, "ThreadProviderThread-" + ++index);
         thread.setDaemon(true);
         thread.start();
-        Log.log("Making thread " + size + " for thread provider");
+        Log.log("Making thread " + index + " for thread provider");
     }
     public static synchronized void submit(Runnable task){
-        if (available == 0) make();
         TASKS.add(task);
+        if (available == 0) make();
     }
 }

@@ -29,6 +29,8 @@ public class BotConfig {
     @ConfigurationOption
     public static String GOOGLE_API_KEY = null;
     @ConfigurationOption
+    public static String TWITCH_ID = null;
+    @ConfigurationOption
     public static String YT_DL_PATH = CONTAINER_PATH + "youtube-dl.exe";
     @ConfigurationOption
     public static String FFM_PEG_PATH = CONTAINER_PATH + "ffmpeg.exe";
@@ -54,4 +56,10 @@ public class BotConfig {
     public static String DB_NAME = "emilybot";
     @ConfigurationOption
     public static Boolean VOICE_COMMANDS_ENABLED = false;
+    @ConfigurationOption
+    public static String TWITTER_KEY = "twitter-key";
+    @ConfigurationOption
+    public static String TWITTER_SECRET = "twitter-secret";
+    @ConfigurationOption
+    public static Boolean GHOST_MODE = false;
 }

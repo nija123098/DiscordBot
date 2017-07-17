@@ -78,6 +78,7 @@ public class MemoryManagementService extends AbstractService {
                 if (this.times.size() == 0) return;
                 if (currentTime >= this.times.get(0)){
                     this.times.remove(0);
+                    this.remove(0);
                 }else return;
             }
         }

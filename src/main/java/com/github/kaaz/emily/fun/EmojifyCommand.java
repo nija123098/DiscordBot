@@ -6,18 +6,33 @@ import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.util.EmoticonHelper;
 import com.github.kaaz.emily.util.StringIterator;
+import javafx.util.Pair;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * Made by nija123098 on 5/11/2017.
  */
 public class EmojifyCommand extends AbstractCommand {
+    private static final Map<String, String> EXTRAPOLATED = new HashMap<>();
+    static {
+        Map<String, Pair<Integer, String>> map = new HashMap<>();
+        EmoticonHelper.getAll().forEach((s, strings) -> strings.forEach(string -> Stream.of(string.split("_")).forEach(split -> map.compute(split, (sp, pair) -> pair == null || pair.getKey() > split.length() ? new Pair<>(split.length(), s) : pair))));
+        map.forEach((s, pair) -> EXTRAPOLATED.put(s, pair.getValue()));
+    }
     public EmojifyCommand() {
         super("emojify", ModuleLevel.FUN, null, null, "Turns you input into emojies");
     }
     @Command
     public void command(String args, MessageMaker maker){
         StringBuilder builder = new StringBuilder();
-        new StringIterator(args).forEachRemaining(character -> builder.append(getChars(character)));
+        Stream.of(args.split(" ")).forEach(word -> {
+            String extrapolation = EXTRAPOLATED.get(word);
+            if (extrapolation == null) new StringIterator(word + " ").forEachRemaining(character -> builder.append(getChars(character)));
+            else builder.append(extrapolation);
+        });
         maker.appendRaw(builder.toString());
     }
     private String getChars(char c){

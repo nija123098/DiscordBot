@@ -34,7 +34,7 @@
         <dependency>
             <groupId>com.github.austinv11</groupId>
             <artifactId>Discord4j</artifactId>
-            <version>a7bfd57</version>
+            <version>da43f8c</version>
             <classifier>shaded</classifier>
         </dependency>
         <dependency>
@@ -141,6 +141,26 @@
             <groupId>com.github.cmusphinx</groupId>
             <artifactId>sphinx4</artifactId>
             <version>c59a4b0be3</version>
+        </dependency>
+        <!--<dependency>
+            <groupId>com.github.nija123098</groupId>
+            <artifactId>soundcloud_java_library</artifactId>
+            <version>ce05aac18a</version>
+        </dependency>-->
+        <dependency>
+            <groupId>com.github.nija123098</groupId>
+            <artifactId>Java_Twitch_Api_Wrapper</artifactId>
+            <version>ff3b8af</version>
+        </dependency>
+        <!--<dependency>
+            <groupId>com.github.mkbrv</groupId>
+            <artifactId>orange.api</artifactId>
+            <version>6d2083b</version>
+        </dependency>-->
+        <dependency><!-- https://mvnrepository.com/artifact/org.twitter4j/twitter4j -->
+            <groupId>org.twitter4j</groupId>
+            <artifactId>twitter4j-core</artifactId>
+            <version>4.0.6</version>
         </dependency>
     </dependencies>
 

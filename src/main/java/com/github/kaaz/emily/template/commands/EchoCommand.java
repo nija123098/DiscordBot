@@ -2,18 +2,18 @@ package com.github.kaaz.emily.template.commands;
 
 import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.ModuleLevel;
-import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.command.annotations.Argument;
+import com.github.kaaz.emily.command.annotations.Command;
 
 /**
  * Made by nija123098 on 4/23/2017.
  */
 public class EchoCommand extends AbstractCommand {
     public EchoCommand() {
-        super("echo", ModuleLevel.NONE, null, null, "Repeats the argument back");
+        super("echo", ModuleLevel.NONE, "say", null, "Repeats the argument back");
     }
     @Command
-    public String echo(@Argument(optional = true) String s){
+    public String echo(@Argument String s){
         return s;
     }
 }
