@@ -18,7 +18,7 @@ import com.github.kaaz.emily.discordobjects.wrappers.event.EventListener;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordVoiceJoin;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordVoiceLeave;
 import com.github.kaaz.emily.exeption.ArgumentException;
-import com.github.kaaz.emily.exeption.DevelopmentException;
+import com.github.kaaz.emily.exeption.GhostException;
 import com.github.kaaz.emily.launcher.BotConfig;
 import com.github.kaaz.emily.launcher.Launcher;
 import com.github.kaaz.emily.service.services.ScheduleService;
@@ -86,7 +86,7 @@ public class GuildAudioManager extends AudioEventAdapter{
     public static void init(){}
     public static GuildAudioManager getManager(VoiceChannel channel, boolean make){
         if (channel == null) return null;// this might not happen anymore
-        if (BotConfig.GHOST_MODE) throw new DevelopmentException("If this gets out contact a dev");
+        if (BotConfig.GHOST_MODE) throw new GhostException();
         if (make) {
             GuildAudioManager current = getManager(channel.getGuild());
             if (current != null && !current.channel.equals(channel)) throw new ArgumentException("You must be in the voice channel with " + DiscordClient.getOurUser().getDisplayName(channel.getGuild()) + " to use that command");
@@ -121,8 +121,10 @@ public class GuildAudioManager extends AudioEventAdapter{
     public void leave(){
         this.clearQueue();
         if (this.current != null) this.skipTrack();
-        this.queueSpeech(new LangString(true, "Goodbye"));// todo make leave right after end of speech and clear queue first
-        Care.less(() -> Thread.sleep(3_000));
+        if (!this.channel.getConnectedUsers().isEmpty()){
+            this.queueSpeech(new LangString(true, "Goodbye"));// todo make leave right after end of speech and clear queue first
+            Care.less(() -> Thread.sleep(3_000));
+        }
         MAP.remove(this.channel.getGuild().getID());
         this.lavaPlayer.destroy();
         this.channel.leave();

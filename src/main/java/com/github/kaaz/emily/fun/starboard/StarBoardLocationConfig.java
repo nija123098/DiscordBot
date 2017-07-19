@@ -12,7 +12,7 @@ import com.github.kaaz.emily.util.FormatHelper;
 public class StarBoardLocationConfig extends AbstractConfig<Channel, Guild> {
     public StarBoardLocationConfig() {
         super("star_board", BotRole.GUILD_TRUSTEE, "The location of the starboard", guild -> {
-            for (Channel channel : guild.getChannels()) if (FormatHelper.alphaNumeric(channel.getName()).toLowerCase().equals("starboard")) return channel;
+            for (Channel channel : guild.getChannels()) if (FormatHelper.filtering(channel.getName(), Character::isLetterOrDigit).toLowerCase().equals("starboard")) return channel;
             return null;
         });
     }

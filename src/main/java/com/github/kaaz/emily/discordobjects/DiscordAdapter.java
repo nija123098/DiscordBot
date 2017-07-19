@@ -1,7 +1,7 @@
 package com.github.kaaz.emily.discordobjects;
 
 import com.github.kaaz.emily.audio.SpeechParser;
-import com.github.kaaz.emily.automoderation.languagefiltering.MessageMonitor;
+import com.github.kaaz.emily.automoderation.messagefiltering.MessageMonitor;
 import com.github.kaaz.emily.command.CommandHandler;
 import com.github.kaaz.emily.discordobjects.helpers.ReactionBehavior;
 import com.github.kaaz.emily.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
@@ -9,7 +9,7 @@ import com.github.kaaz.emily.discordobjects.wrappers.*;
 import com.github.kaaz.emily.discordobjects.wrappers.event.BotEvent;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
 import com.github.kaaz.emily.discordobjects.wrappers.event.botevents.DiscordDataReload;
-import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordMessageReceivedEvent;
+import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordMessageReceived;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordVoiceJoin;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordVoiceLeave;
 import com.github.kaaz.emily.launcher.BotConfig;
@@ -20,6 +20,7 @@ import com.github.kaaz.emily.template.KeyPhrase;
 import com.github.kaaz.emily.template.Template;
 import com.github.kaaz.emily.template.TemplateHandler;
 import com.github.kaaz.emily.util.Log;
+import com.github.kaaz.emily.util.ThreadProvider;
 import org.reflections.Reflections;
 import sx.blah.discord.api.ClientBuilder;
 import sx.blah.discord.api.events.Event;
@@ -48,7 +49,7 @@ public class DiscordAdapter {
     private static final long PLAY_TEXT_SPEED = 60_000;
     private static final List<Template> PREVIOUS_TEXTS = new MemoryManagementService.ManagedList<>(PLAY_TEXT_SPEED + 1000);// a second for execution time
     static {
-        new Reflections("com.github.kaaz.emily.discordobjects.wrappers.event.events").getSubTypesOf(BotEvent.class).stream().filter(clazz -> !clazz.equals(DiscordMessageReceivedEvent.class)).forEach(clazz -> EVENT_MAP.put((Class<? extends Event>) clazz.getConstructors()[0].getParameterTypes()[0], (Constructor<? extends BotEvent>) clazz.getConstructors()[0]));
+        new Reflections("com.github.kaaz.emily.discordobjects.wrappers.event.events").getSubTypesOf(BotEvent.class).stream().filter(clazz -> !clazz.equals(DiscordMessageReceived.class)).forEach(clazz -> EVENT_MAP.put((Class<? extends Event>) clazz.getConstructors()[0].getParameterTypes()[0], (Constructor<? extends BotEvent>) clazz.getConstructors()[0]));
         ClientBuilder builder = new ClientBuilder();
         builder.withToken(BotConfig.BOT_TOKEN);
         builder.withRecommendedShardCount();
@@ -104,9 +105,12 @@ public class DiscordAdapter {
     @EventSubscriber
     public static void handle(MessageReceivedEvent event){
         if (!Launcher.isReady()) return;
-        DiscordMessageReceivedEvent receivedEvent = new DiscordMessageReceivedEvent((sx.blah.discord.handle.impl.events.MessageReceivedEvent) event);
-        receivedEvent.setCommand(CommandHandler.handle(receivedEvent));
-        EventDistributor.distribute(receivedEvent);
+        ThreadProvider.submit(() -> {
+            DiscordMessageReceived receivedEvent = new DiscordMessageReceived((sx.blah.discord.handle.impl.events.MessageReceivedEvent) event);
+            if (MessageMonitor.monitor(receivedEvent)) return;
+            receivedEvent.setCommand(CommandHandler.handle(receivedEvent));
+            EventDistributor.distribute(receivedEvent);
+        });
     }
     @EventSubscriber
     public static void handle(Event event){

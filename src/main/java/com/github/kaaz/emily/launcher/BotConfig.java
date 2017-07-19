@@ -37,6 +37,8 @@ public class BotConfig {
     @ConfigurationOption
     public static String FF_PROBE_PATH = CONTAINER_PATH + "ffprobe.exe";
     @ConfigurationOption
+    public static String LANGUAGE_FILTERING_PATH = CONTAINER_PATH + "LanguageFiltering.txt";
+    @ConfigurationOption
     public static int MUSIC_DOWNLOAD_THREAD_COUNT = 1;
     @ConfigurationOption
     public static String AUDIO_FORMAT = "mp3";

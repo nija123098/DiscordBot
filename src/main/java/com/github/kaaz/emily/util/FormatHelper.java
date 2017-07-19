@@ -1,6 +1,7 @@
 package com.github.kaaz.emily.util;
 
 import com.github.kaaz.emily.exeption.DevelopmentException;
+import com.google.common.base.Function;
 import com.google.common.base.Strings;
 
 import java.util.Arrays;
@@ -225,10 +226,10 @@ public class FormatHelper {
     public static List<String> cleanOfXML(List<String> strings){
         return strings.stream().map(FormatHelper::cleanOfXML).collect(Collectors.toList());
     }
-    public static String alphaNumeric(String s){
+    public static String filtering(String s, Function<Character, Boolean> filter){
         StringBuilder builder = new StringBuilder();
         new StringIterator(s).forEachRemaining(character -> {
-            if (Character.isLetterOrDigit(character)) builder.append(character);
+            if (filter.apply(character)) builder.append(character);
         });
         return builder.toString();
     }

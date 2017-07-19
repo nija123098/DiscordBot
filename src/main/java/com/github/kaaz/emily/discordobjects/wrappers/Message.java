@@ -1,6 +1,8 @@
 package com.github.kaaz.emily.discordobjects.wrappers;
 
 import com.github.kaaz.emily.discordobjects.exception.ErrorWrapper;
+import com.github.kaaz.emily.exeption.GhostException;
+import com.github.kaaz.emily.launcher.BotConfig;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
 import com.github.kaaz.emily.util.EmoticonHelper;
 import sx.blah.discord.handle.impl.obj.ReactionEmoji;
@@ -11,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Made by nija123098 on 3/4/2017.
@@ -101,6 +104,7 @@ public class Message {// should not be kept stored, too many are made
     }
 
     public void delete() {
+        if (BotConfig.GHOST_MODE) return;
         ErrorWrapper.wrap(() -> message().delete());
     }
 
@@ -133,7 +137,9 @@ public class Message {// should not be kept stored, too many are made
     }
 
     public Reaction addReaction(String s) {
-        if (s.endsWith("\u200B")) return addReaction(s.substring(0, s.length() - 1));
+        if (BotConfig.GHOST_MODE) throw new GhostException();
+        AtomicReference<String> reference = new AtomicReference<>(s);
+        if (s.endsWith("\u200B")) reference.set(s.substring(0, s.length() - 1));
         ErrorWrapper.wrap(() -> message().addReaction(ReactionEmoji.of(s)));
         return getReaction(s);
     }

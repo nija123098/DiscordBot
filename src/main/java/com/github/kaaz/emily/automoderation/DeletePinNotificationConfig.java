@@ -6,7 +6,7 @@ import com.github.kaaz.emily.discordobjects.wrappers.DiscordPermission;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventListener;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordMessagePin;
-import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordMessageReceivedEvent;
+import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordMessageReceived;
 import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
 
@@ -18,12 +18,12 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class DeletePinNotificationConfig extends AbstractConfig<Boolean, Guild> {
     private static final List<DiscordMessagePin> PIN_ENTRIES = new MemoryManagementService.ManagedList<>(5_000);
-    private static final List<DiscordMessageReceivedEvent> MESSAGE_ENTRIES = new MemoryManagementService.ManagedList<>(5_000);
+    private static final List<DiscordMessageReceived> MESSAGE_ENTRIES = new MemoryManagementService.ManagedList<>(5_000);
     public DeletePinNotificationConfig() {
         super("delete_pin_notification", BotRole.GUILD_TRUSTEE, true, "Deletes the <user> has pined a message notification");
     }
     @EventListener
-    public synchronized void handle(DiscordMessageReceivedEvent event){
+    public synchronized void handle(DiscordMessageReceived event){
         if (!event.getMessage().getContent().equals("") || !this.getValue(event.getGuild()) || !DiscordPermission.MANAGE_MESSAGES.hasPermission(event.getAuthor(), event.getGuild()) || !DiscordPermission.MANAGE_MESSAGES.hasPermission(DiscordClient.getOurUser(), event.getGuild())) return;
         AtomicReference<DiscordMessagePin> reference = new AtomicReference<>();
         PIN_ENTRIES.forEach(messages -> {
@@ -38,7 +38,7 @@ public class DeletePinNotificationConfig extends AbstractConfig<Boolean, Guild> 
     @EventListener
     public synchronized void handle(DiscordMessagePin event){
         if (!this.getValue(event.getGuild()) || !DiscordPermission.MANAGE_MESSAGES.hasPermission(event.getAuthor(), event.getGuild()) || !DiscordPermission.MANAGE_MESSAGES.hasPermission(DiscordClient.getOurUser(), event.getGuild())) return;
-        AtomicReference<DiscordMessageReceivedEvent> reference = new AtomicReference<>();
+        AtomicReference<DiscordMessageReceived> reference = new AtomicReference<>();
         MESSAGE_ENTRIES.forEach(pin -> {
             if (reference.get() == null && event.getAuthor().equals(pin.getAuthor())){
                 reference.set(pin);

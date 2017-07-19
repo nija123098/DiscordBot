@@ -1,5 +1,7 @@
 package com.github.kaaz.emily.util;
 
+import com.github.kaaz.emily.exeption.GhostException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,14 +25,18 @@ public class ThreadProvider {// upgrade?
                 if (runnable == null) Care.less(() -> Thread.sleep(500));
                 else {
                     --available;
-                    runnable.run();
+                    try{runnable.run();
+                    }catch(Exception e){
+                        if (e.getClass().equals(GhostException.class)) return;
+                        Log.log("Caught exception while running task", e);
+                    }
                     ++available;
                 }
             }
         }, "ThreadProviderThread-" + ++index);
         thread.setDaemon(true);
         thread.start();
-        Log.log("Making thread " + index + " for thread provider", new Exception());
+        Log.log("Making thread " + index + " for thread provider");
     }
     public static synchronized void submit(Runnable task){
         TASKS.add(task);

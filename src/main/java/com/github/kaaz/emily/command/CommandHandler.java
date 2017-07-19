@@ -9,7 +9,7 @@ import com.github.kaaz.emily.discordobjects.wrappers.*;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventListener;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordMessageEditEvent;
-import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordMessageReceivedEvent;
+import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordMessageReceived;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordReactionEvent;
 import com.github.kaaz.emily.exeption.BotException;
 import com.github.kaaz.emily.exeption.DevelopmentException;
@@ -282,7 +282,7 @@ public class CommandHandler {
      * @param event the monitored event
      */
     // @EventListener
-    public static boolean handle(DiscordMessageReceivedEvent event){
+    public static boolean handle(DiscordMessageReceived event){
         return attemptInvocation(event.getMessage().getContent(), event.getAuthor(), event.getMessage(), null);// new MessageMaker(event.getMessage()).append(ChatBot.getChatBot(event.getChannel()).think(event.getMessage().getContent())).send();
     }
 

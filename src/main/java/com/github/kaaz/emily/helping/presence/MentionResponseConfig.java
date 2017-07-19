@@ -6,7 +6,7 @@ import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.Presence;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventListener;
-import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordMessageReceivedEvent;
+import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordMessageReceived;
 import com.github.kaaz.emily.perms.BotRole;
 import com.google.api.client.repackaged.com.google.common.base.Joiner;
 
@@ -21,7 +21,7 @@ public class MentionResponseConfig extends AbstractConfig<Boolean, Guild> {
         super("afk_mention_response", BotRole.GUILD_TRUSTEE, true, "The bot responds mentioning the stasis of a user if they are marked NDN, AWAY, OFFLINE, or self marked AFK or AWAY");
     }
     @EventListener
-    public void handle(DiscordMessageReceivedEvent event){
+    public void handle(DiscordMessageReceived event){
         if (event.getAuthor().isBot()) return;
         if (event.getGuild() == null) return;
         Set<String> set = event.getMessage().getMentions().stream().filter(user -> user.getPresence().getStatus() != Presence.Status.ONLINE || ConfigHandler.getSetting(SelfMarkedAwayConfig.class, user)).map(user -> user.getDisplayName(event.getGuild()) + " is " + (user.getPresence().getStatus() == Presence.Status.ONLINE ? "AFK" : user.getPresence().getStatus())).collect(Collectors.toSet());

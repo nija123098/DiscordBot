@@ -10,7 +10,7 @@ import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.wrappers.Channel;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventListener;
-import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordMessageReceivedEvent;
+import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordMessageReceived;
 import com.github.kaaz.emily.exeption.ArgumentException;
 import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.util.EmoticonHelper;
@@ -57,7 +57,7 @@ public class CallCommand extends AbstractCommand {
         CALLS.get(callID).add(channel);
     }
     @EventListener
-    public static void handle(DiscordMessageReceivedEvent send){
+    public static void handle(DiscordMessageReceived send){
         if (send.getAuthor().isBot()) return;
         Integer callID = CALL_IDS.get(send.getChannel());
         if (callID == null) return;
