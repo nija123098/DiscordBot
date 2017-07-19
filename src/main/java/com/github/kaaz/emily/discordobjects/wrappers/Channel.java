@@ -53,6 +53,7 @@ public class Channel implements Configurable {
     }
     Channel(IChannel channel) {
         this.reference = new AtomicReference<>(channel);
+        this.ID = channel.getID();
     }
     public IChannel channel(){
         return this.reference.get();

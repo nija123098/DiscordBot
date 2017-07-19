@@ -225,4 +225,11 @@ public class FormatHelper {
     public static List<String> cleanOfXML(List<String> strings){
         return strings.stream().map(FormatHelper::cleanOfXML).collect(Collectors.toList());
     }
+    public static String alphaNumeric(String s){
+        StringBuilder builder = new StringBuilder();
+        new StringIterator(s).forEachRemaining(character -> {
+            if (Character.isLetterOrDigit(character)) builder.append(character);
+        });
+        return builder.toString();
+    }
 }

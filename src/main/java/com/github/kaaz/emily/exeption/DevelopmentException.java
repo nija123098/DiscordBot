@@ -1,5 +1,8 @@
 package com.github.kaaz.emily.exeption;
 
+import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
+import com.github.kaaz.emily.discordobjects.wrappers.Channel;
+
 /**
  * The exception thrown when there is an internal
  * error that is the developer's fault.
@@ -25,5 +28,10 @@ public class DevelopmentException extends BotException {
     public DevelopmentException(Throwable cause) {
         super(cause);
         this.printStackTrace();
+    }
+
+    @Override
+    public MessageMaker makeMessage(Channel channel) {
+        return super.makeMessage(channel).getNote().append("The developers have been notified").getMaker();
     }
 }

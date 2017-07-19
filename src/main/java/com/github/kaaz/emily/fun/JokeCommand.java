@@ -7,6 +7,7 @@ import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -27,7 +28,7 @@ public class JokeCommand extends AbstractCommand {
     }
     private String getJokeFromWeb(String username) {
         try {
-            URL loginurl = new URL("http://api.icndb.com/jokes/random?firstName=&lastName=" + username);
+            URL loginurl = new URL("http://api.icndb.com/jokes/random?firstName=&lastName=" + StringEscapeUtils.escapeHtml4(username));
             URLConnection yc = loginurl.openConnection();
             yc.setConnectTimeout(10_000);
             BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()));

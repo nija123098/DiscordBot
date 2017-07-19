@@ -8,7 +8,6 @@ import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
-import com.github.kaaz.emily.discordobjects.wrappers.VoiceChannel;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventListener;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordTrackEnd;
 
@@ -26,14 +25,14 @@ public class SkipCommand extends AbstractCommand {
         super("skip", ModuleLevel.MUSIC, null, "track_next", "Skips the currently playing track");
     }
     @Command
-    public void command(GuildAudioManager manager, User user, VoiceChannel channel, MessageMaker maker){
+    public static void command(GuildAudioManager manager, User user, MessageMaker maker){
         MAP.compute(manager, (m, users) -> {
             if (users == null) users = new HashSet<>();
             users.add(user);
             return users;
         });
-        float percent = MAP.get(manager).size() / (float) channel.getConnectedUsers().stream().filter(User::isBot).filter(u -> u.isDeaf(channel.getGuild())).count() * 100;
-        int required = ConfigHandler.getSetting(SkipPercentConfig.class, channel.getGuild());
+        float percent = MAP.get(manager).size() / (float) manager.voiceChannel().getConnectedUsers().stream().filter(User::isBot).filter(u -> u.isDeaf(manager.voiceChannel().getGuild())).count() * 100;
+        int required = ConfigHandler.getSetting(SkipPercentConfig.class, manager.voiceChannel().getGuild());
         if (percent >= required) {
             int size = manager.skipTrack();
             if (size > 0) maker.append("There are " + size + " more songs");

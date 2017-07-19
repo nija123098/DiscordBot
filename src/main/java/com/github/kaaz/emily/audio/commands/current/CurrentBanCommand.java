@@ -12,7 +12,7 @@ import com.github.kaaz.emily.perms.BotRole;
  */
 public class CurrentBanCommand extends AbstractCommand {
     public CurrentBanCommand() {
-        super(CurrentCommand.class, "ban", null, null, null, "Bans a track from the global playlist");
+        super(CurrentCommand.class, "ban", "no_entry_sign", null, null, "Bans a track from the global playlist");
     }
     @Override
     public BotRole getBotRole() {

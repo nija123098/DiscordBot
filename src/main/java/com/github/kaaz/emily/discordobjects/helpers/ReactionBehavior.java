@@ -1,6 +1,5 @@
 package com.github.kaaz.emily.discordobjects.helpers;
 
-import com.github.kaaz.emily.discordobjects.wrappers.DiscordClient;
 import com.github.kaaz.emily.discordobjects.wrappers.Message;
 import com.github.kaaz.emily.discordobjects.wrappers.Reaction;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
@@ -33,14 +32,13 @@ public interface ReactionBehavior {
     }
     @EventListener
     static void handle(DiscordReactionEvent reaction){
-        if (DiscordClient.getOurUser().equals(reaction.getUser())) return;
+        if (reaction.getUser().isBot()) return;
         Map<Message, Pair<ReactionBehavior, ScheduleService.ScheduledTask>> map = BEHAVIORS.get(reaction.getReaction().getName());
         if (map == null) return;
         Pair<ReactionBehavior, ScheduleService.ScheduledTask> pair = map.get(reaction.getMessage());
         if (pair != null) {
             pair.getKey().behave(reaction.addingReaction(), reaction.getReaction(), reaction.getUser());
-            pair.getValue().cancel();
-            pair.setValue(ScheduleService.schedule(PERSISTENCE, () -> deregisterListener(reaction.getMessage(), reaction.getReaction().getName())));
+            pair.setValue(ScheduleService.schedule(PERSISTENCE, () -> deregisterListener(reaction.getMessage(), reaction.getReaction().getName()))).cancel();
         }
     }
 }

@@ -14,6 +14,7 @@ import com.wezinkhof.configuration.ConfigurationBuilder;
 import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -22,6 +23,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Launcher {
     private static final Set<Runnable> STARTUPS = new HashSet<>();
     private static final Set<Runnable> SHUTDOWNS = new HashSet<>();
+    private static final AtomicBoolean IS_READY = new AtomicBoolean();
     private static final AtomicReference<ScheduleService.ScheduledTask> SHUTDOWN_TASK = new AtomicReference<>();
     static {
         try {
@@ -37,6 +39,7 @@ public class Launcher {
         CommandHandler.initialize();
         DiscordAdapter.initialize();
         STARTUPS.forEach(Runnable::run);
+        IS_READY.set(true);
         ScheduleService.schedule(10_000, () -> DiscordClient.online("with users!"));
         Log.log("Bot finished initializing");
     }
@@ -45,6 +48,9 @@ public class Launcher {
     }
     public static void registerShutdown(Runnable runnable){
         SHUTDOWNS.add(runnable);
+    }
+    public static boolean isReady(){
+        return IS_READY.get();
     }
     public synchronized static void shutdown(Integer code, long delay){
         ScheduleService.ScheduledTask task = SHUTDOWN_TASK.get();
@@ -57,6 +63,7 @@ public class Launcher {
             Log.log("Scheduled shutdown with code: " + code);
             SHUTDOWN_TASK.set(ScheduleService.schedule(delay, () -> {
                 Log.log("Shutting down with code: " + code);
+                IS_READY.set(false);
                 SHUTDOWNS.forEach(Runnable::run);
                 DiscordClient.logout();
                 System.exit(code);

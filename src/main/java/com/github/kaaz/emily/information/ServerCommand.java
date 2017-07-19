@@ -29,7 +29,7 @@ public class ServerCommand extends AbstractCommand {
         addAtrib(maker, "Members", users.stream().filter(user -> user.getPresence().getStatus() != Presence.Status.OFFLINE).count() + " online\n" + users.size() + " total");
         addAtrib(maker, "Channels", guild.getChannels().size() + " text channels\n" + guild.getVoiceChannels().size() + " voice channels");
         addAtrib(maker, "Guild Owner", guild.getOwner().getNameAndDiscrim());
-        addAtrib(maker, "Made", Time.getAbbreviated(guild.getCreationDate()) + " ago");
+        addAtrib(maker, "Made", Time.getAbbreviated(System.currentTimeMillis() - guild.getCreationDate()) + " ago");
         addAtrib(maker, "My prefix", ConfigHandler.getSetting(GuildPrefixConfig.class, guild));
         addAtrib(maker, "ID", guild.getID());
     }

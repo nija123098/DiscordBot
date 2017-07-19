@@ -11,7 +11,7 @@ import java.util.Map;
  * Made by nija123098 on 5/31/2017.
  */
 public class StarLevelRequirementConfig extends AbstractConfig<Map<StarLevel, Integer>, Guild> {
-    private static final Map<StarLevel, Integer> DEFAULT = new HashMap<>();
+    private static final Map<StarLevel, Integer> DEFAULT = new HashMap<>(StarLevel.values().length);
     static {
         DEFAULT.put(StarLevel.SPARKLE, 1);
         DEFAULT.put(StarLevel.DWARF, 4);

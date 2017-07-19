@@ -96,6 +96,12 @@
             <groupId>com.github.go-ive</groupId>
             <artifactId>steam-api</artifactId>
             <version>5.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>ca.pjer</groupId>
@@ -132,11 +138,11 @@
             <artifactId>jscience</artifactId>
             <version>4.3.1</version>
         </dependency>
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.40</version>
-		</dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.40</version>
+        </dependency>
         <dependency>
             <groupId>com.github.cmusphinx</groupId>
             <artifactId>sphinx4</artifactId>

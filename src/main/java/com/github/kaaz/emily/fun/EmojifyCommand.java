@@ -30,15 +30,14 @@ public class EmojifyCommand extends AbstractCommand {
         StringBuilder builder = new StringBuilder();
         Stream.of(args.split(" ")).forEach(word -> {
             String extrapolation = EXTRAPOLATED.get(word);
-            if (extrapolation == null) new StringIterator(word + " ").forEachRemaining(character -> builder.append(getChars(character)));
+            if (extrapolation == null) new StringIterator(word).forEachRemaining(character -> builder.append(getChars(character)));
             else builder.append(extrapolation);
         });
-        maker.appendRaw(builder.toString());
+        maker.appendRaw(builder.substring(0, builder.length() - 2));
     }
     private String getChars(char c){
         if (Character.isLetter(c)) return EmoticonHelper.getChars("regional_indicator_" + Character.toLowerCase(c));
         if (Character.isDigit(c)) return EmoticonHelper.getChars(Character.getName(c).substring(6));
-        if (c == ' ') return EmoticonHelper.getChars("white_small_square");
         if (c == '?') return EmoticonHelper.getChars("grey_question");
         if (c == '!') return EmoticonHelper.getChars("grey_exclamation");
         return String.valueOf(c);

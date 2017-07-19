@@ -13,6 +13,7 @@ import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordMessage
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordVoiceJoin;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordVoiceLeave;
 import com.github.kaaz.emily.launcher.BotConfig;
+import com.github.kaaz.emily.launcher.Launcher;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
 import com.github.kaaz.emily.service.services.ScheduleService;
 import com.github.kaaz.emily.template.KeyPhrase;
@@ -23,6 +24,7 @@ import org.reflections.Reflections;
 import sx.blah.discord.api.ClientBuilder;
 import sx.blah.discord.api.events.Event;
 import sx.blah.discord.api.events.EventSubscriber;
+import sx.blah.discord.handle.impl.events.ReadyEvent;
 import sx.blah.discord.handle.impl.events.guild.GuildUpdateEvent;
 import sx.blah.discord.handle.impl.events.guild.channel.ChannelUpdateEvent;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
@@ -36,6 +38,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Made by nija123098 on 3/12/2017.
@@ -48,24 +51,16 @@ public class DiscordAdapter {
         new Reflections("com.github.kaaz.emily.discordobjects.wrappers.event.events").getSubTypesOf(BotEvent.class).stream().filter(clazz -> !clazz.equals(DiscordMessageReceivedEvent.class)).forEach(clazz -> EVENT_MAP.put((Class<? extends Event>) clazz.getConstructors()[0].getParameterTypes()[0], (Constructor<? extends BotEvent>) clazz.getConstructors()[0]));
         ClientBuilder builder = new ClientBuilder();
         builder.withToken(BotConfig.BOT_TOKEN);
-        builder.withShards(16);
-        // builder.withRecommendedShardCount(true);
-        builder.registerListener(DiscordAdapter.class);
+        builder.withRecommendedShardCount();
         DiscordClient.set(builder.login());
-        long targetTime = 20000 + 15000 * DiscordClient.getShardCount() + System.currentTimeMillis();
-        while (true){
-            try{Thread.sleep(1000);
-            } catch (InterruptedException ignored) {}
-            if (DiscordClient.isReady()){
-                break;
-            }
-            if (targetTime < System.currentTimeMillis()){
-                Log.log("Timeout while logging in");
-                System.exit(-1);
-            }
+        try{DiscordClient.client().getDispatcher().waitFor(ReadyEvent.class, 20 + 25 * DiscordClient.getShardCount(), TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+            Log.log("Could not launch in time", e);
         }
         GuildAudioManager.init();
         SpeechParser.init();
+        DiscordClient.client().getDispatcher().registerListener(EventDistributor.class);
+        DiscordClient.client().getDispatcher().registerListener(DiscordAdapter.class);
         EventDistributor.register(ReactionBehavior.class);
         EventDistributor.register(MessageMonitor.class);
         EventDistributor.distribute(DiscordDataReload.class, null);
@@ -108,6 +103,7 @@ public class DiscordAdapter {
     }
     @EventSubscriber
     public static void handle(MessageReceivedEvent event){
+        if (!Launcher.isReady()) return;
         DiscordMessageReceivedEvent receivedEvent = new DiscordMessageReceivedEvent((sx.blah.discord.handle.impl.events.MessageReceivedEvent) event);
         receivedEvent.setCommand(CommandHandler.handle(receivedEvent));
         EventDistributor.distribute(receivedEvent);

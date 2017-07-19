@@ -28,7 +28,8 @@ public class EmoticonHelper {
         }
     }
     public static String getChars(String name){
-        return EMOTICON_MAP.get(name) + '\u200B';
+        String chars = EMOTICON_MAP.get(name);
+        return chars == null ? null : chars + '\u200B';
     }
     public static String getName(String chars){
         return NAME_MAP.get(chars);

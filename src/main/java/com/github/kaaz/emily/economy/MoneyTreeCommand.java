@@ -17,7 +17,7 @@ public class MoneyTreeCommand extends AbstractCommand {
         super("moneytree", BotRole.BOT_ADMIN, ModuleLevel.ECONOMY, "mt", null, "Gives free money");
     }
     @Command
-    public void handle(@Argument Configurable configurable, @Argument Float amount){
+    public void handle(@Argument Float amount, @Argument Configurable configurable){
         ConfigHandler.changeSetting(CurrentMoneyConfig.class, configurable, aFloat -> aFloat + amount);
     }
 }

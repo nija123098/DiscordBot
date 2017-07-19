@@ -9,6 +9,7 @@ import com.github.kaaz.emily.config.configs.guild.GuildActivePlaylistConfig;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
+import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.util.EmoticonHelper;
 import com.github.kaaz.emily.util.FormatHelper;
 import com.github.kaaz.emily.util.Time;
@@ -33,6 +34,8 @@ public class CurrentCommand extends AbstractCommand {
         maker.appendRaw("[source](" + track.getSource() + ") - " + ConfigHandler.getSetting(GuildActivePlaylistConfig.class, guild).getName());
         maker.withUrl(track.getSource());
         maker.withThumb(track.getPreviewURL());
+        maker.withReaction("track_next");
+        if (manager.voiceChannel().getConnectedUsers().stream().filter(user -> BotRole.BOT_ADMIN.hasRequiredRole(user, null)).count() != 0) maker.withReaction("no_entry_sign");
         Long length = track.getLength();
         if (length != null) maker.getNewFieldPart().withBoth("Duration", Time.getAbbreviatedMusic(length, time));
     }

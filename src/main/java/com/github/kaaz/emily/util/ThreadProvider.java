@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Made by nija123098 on 6/28/2017.
  */
-public class ThreadProvider {
+public class ThreadProvider {// upgrade?
     private static int index = -1, available;
     private static final List<Runnable> TASKS;
     static {
@@ -30,7 +30,7 @@ public class ThreadProvider {
         }, "ThreadProviderThread-" + ++index);
         thread.setDaemon(true);
         thread.start();
-        Log.log("Making thread " + index + " for thread provider");
+        Log.log("Making thread " + index + " for thread provider", new Exception());
     }
     public static synchronized void submit(Runnable task){
         TASKS.add(task);

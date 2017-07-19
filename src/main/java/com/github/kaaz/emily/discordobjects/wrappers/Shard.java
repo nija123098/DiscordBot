@@ -57,6 +57,10 @@ public class Shard {
         return shard().isLoggedIn();
     }
 
+    public boolean isReady(){
+        return shard().isReady();
+    }
+
     public long getResponseTime() {
         return shard().getResponseTime();
     }

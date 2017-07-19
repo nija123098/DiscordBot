@@ -1,6 +1,7 @@
 package com.github.kaaz.emily.perms.commands;
 
 import com.github.kaaz.emily.command.AbstractCommand;
+import com.github.kaaz.emily.command.ContextType;
 import com.github.kaaz.emily.command.ModuleLevel;
 import com.github.kaaz.emily.command.annotations.Argument;
 import com.github.kaaz.emily.command.annotations.Command;
@@ -20,7 +21,7 @@ public class SpecialPermsModuleCommand extends AbstractCommand {
         super(SpecialPermsCommand.class, "module", null, null, null, "Manages special permissions for modules");
     }
     @Command
-    public void command(Guild guild, MessageMaker maker, @Argument(optional = true) Role role, @Argument(optional = true) Channel channel, @Argument Boolean allow, @Argument ModuleLevel level){
+    public void command(Guild guild, MessageMaker maker, @Argument(optional = true, replacement = ContextType.NONE) Role role, @Argument(optional = true, replacement = ContextType.NONE) Channel channel, @Argument Boolean allow, @Argument ModuleLevel level){
         SpecialPermsContainer container = ConfigHandler.getSetting(GuildSpecialPermsConfig.class, guild);
         if (container == null) {
             maker.append("You must enable special perms using @Emily commandadmin enable");

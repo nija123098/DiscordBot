@@ -60,7 +60,10 @@ public class CommandHandler {
         });
         typeMap.get(null).forEach(command -> load(command, typeMap));
         // alias loading
-        typeMap.values().forEach(commands -> commands.forEach(command -> command.getEmoticonAliases().forEach(s -> REACTION_COMMAND_MAP.put(EmoticonHelper.getChars(s), command))));
+        typeMap.values().forEach(commands -> commands.forEach(command -> command.getEmoticonAliases().forEach(s -> {
+            String chars = EmoticonHelper.getChars(s);
+            REACTION_COMMAND_MAP.put(chars.substring(0, chars.length() - 1), command);
+        })));
         CLASS_MAP.values().forEach(command -> command.getNames().forEach(s -> {
             if (s == null) return;
             String[] strings = s.split(" ");

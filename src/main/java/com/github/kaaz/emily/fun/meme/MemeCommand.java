@@ -5,7 +5,7 @@ import com.github.kaaz.emily.command.ModuleLevel;
 import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.exeption.DevelopmentException;
-import com.github.kaaz.emily.launcher.BotConfig;
+import com.github.kaaz.emily.util.FileHelper;
 import com.google.common.base.Joiner;
 import com.mashape.unirest.http.Unirest;
 
@@ -48,9 +48,7 @@ public class MemeCommand extends AbstractCommand {
         }
         try {// let exceptions get thrown
             BufferedImage image = ImageIO.read(Unirest.get("https://memegen.link/" + type + "/" + URLEncoder.encode(topText, "UTF-8") + "/" + URLEncoder.encode(botText, "UTF-8") + ".jpg").asStringAsync().get().getRawBody());
-            File memeFile = new File(BotConfig.CONTAINER_PATH + "\\memes\\" + type + "_" + URLEncoder.encode(topText, "UTF-8") + "_" + URLEncoder.encode(botText, "UTF-8") + ".jpg");
-            memeFile.getParentFile().mkdirs();
-            if (memeFile.exists()) memeFile.delete();
+            File memeFile = FileHelper.getTempFile("memes", "jpg", type + "_" + URLEncoder.encode(topText, "UTF-8") + "_" + URLEncoder.encode(botText, "UTF-8"));
             ImageIO.write(image, "png", memeFile);
             maker.withFile(memeFile);
         } catch (IOException | ExecutionException | InterruptedException e) {

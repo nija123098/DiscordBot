@@ -35,8 +35,8 @@ public class Role implements Configurable{
         iRoles.forEach(iUser -> roles.add(getRole(iUser)));
         return roles;
     }
-    public static void update(IRole guild){// hash is based on id, so no old channel is necessary
-        MAP.get(guild.getID()).reference.set(guild);
+    public static void update(IRole role){// hash is based on id, so no old channel is necessary
+        MAP.computeIfAbsent(role.getID(), s -> new Role(role)).reference.set(role);
     }
     private transient final AtomicReference<IRole> reference;
     private String ID;
@@ -45,6 +45,7 @@ public class Role implements Configurable{
     }
     private Role(IRole guild) {
         this.reference = new AtomicReference<>(guild);
+        this.ID = guild.getID();
     }
     IRole role(){
         return this.reference.get();

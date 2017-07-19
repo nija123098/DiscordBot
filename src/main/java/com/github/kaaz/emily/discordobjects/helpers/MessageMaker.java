@@ -18,6 +18,7 @@ import com.github.kaaz.emily.util.LangString;
 import com.github.kaaz.emily.util.Rand;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
+import sx.blah.discord.handle.impl.obj.ReactionEmoji;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.util.EmbedBuilder;
 import sx.blah.discord.util.MessageBuilder;
@@ -126,7 +127,9 @@ public class MessageMaker {
         return this;
     }
     public MessageMaker withReaction(String name){
-        this.reactions.add(EmoticonHelper.getChars(name));
+        String chars = EmoticonHelper.getChars(name);
+        if (chars == null) throw new DevelopmentException("Invalid emoticon name name");
+        this.reactions.add(chars.endsWith("\u200B") ? chars.substring(0, chars.length() - 1) : chars);
         return this;
     }
     public MessageMaker withDM(){
@@ -216,6 +219,10 @@ public class MessageMaker {
     // embed methods
     public MessageMaker withColor(Color color){
         this.embed.withColor(color);
+        return this;
+    }
+    public MessageMaker withColor(String url){
+        this.embed.withColor(ImageColorHelper.getColor(url));
         return this;
     }
     public MessageMaker withUserColor(){
@@ -315,7 +322,7 @@ public class MessageMaker {
             this.builder.withChannel(this.channel.channel());
             this.message = ErrorWrapper.wrap((ErrorWrapper.Request<IMessage>) () -> this.builder.send());
             this.ourMessage = Message.getMessage(this.message);
-            this.reactions.forEach(this.message::addReaction);
+            this.reactions.forEach(s -> this.message.addReaction(ReactionEmoji.of(s)));
             if (this.deleteDelay != null) ScheduleService.schedule(this.deleteDelay, () -> ErrorWrapper.wrap(this.message::delete));
         } else {
             if (this.embed == null) ErrorWrapper.wrap(() -> this.message.edit(this.builder.getContent()));
