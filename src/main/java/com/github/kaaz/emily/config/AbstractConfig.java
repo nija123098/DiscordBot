@@ -2,7 +2,6 @@ package com.github.kaaz.emily.config;
 
 import com.github.kaaz.emily.command.annotations.LaymanName;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
-import com.github.kaaz.emily.discordobjects.wrappers.event.botevents.ConfigValueChangeEvent;
 import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.perms.BotRole;
 
@@ -118,7 +117,6 @@ public class AbstractConfig<V, T extends Configurable> {
     // TODO SQL stuff goes here, more or less
     public V setValue(T configurable, V value){
         validateInput(configurable, value);
-        EventDistributor.distribute(new ConfigValueChangeEvent(configurable, this, this.getValue(configurable), value));
         map.put(configurable, TypeChanger.toString(this.valueType, value));
         ageMap.put(configurable, System.currentTimeMillis());
         return value;

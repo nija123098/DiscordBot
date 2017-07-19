@@ -2,11 +2,11 @@ package com.github.kaaz.emily.favor;
 
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.Configurable;
-import com.github.kaaz.emily.config.configs.FavorConfig;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventListener;
 import com.github.kaaz.emily.discordobjects.wrappers.event.botevents.FavorLevelChangeEvent;
+import com.github.kaaz.emily.favor.configs.FavorConfig;
 import com.github.kaaz.emily.perms.BotRole;
 
 /**
@@ -54,13 +54,12 @@ public class FavorHandler {
      * A helper to set the favor level
      *
      * @param configurable the configurable to set the favor level for
-     * @param amount the amouth to set it to
+     * @param amount the amount to set it to
      */
     public static void setFavorLevel(Configurable configurable, float amount){
         FavorLevel oldLevel = getFavorLevel(configurable), newLevel = FavorLevel.getFavorLevel(amount);
-        if (oldLevel != newLevel){
-            EventDistributor.distribute(new FavorLevelChangeEvent(configurable, oldLevel, newLevel));
-        }
+        EventDistributor.distribute(new FavorChangeEvent(configurable, getFavorAmount(configurable), amount));
+        if (oldLevel != newLevel) EventDistributor.distribute(new FavorLevelChangeEvent(configurable, oldLevel, newLevel));
         ConfigHandler.setSetting(FavorConfig.class, configurable, amount);
     }
 

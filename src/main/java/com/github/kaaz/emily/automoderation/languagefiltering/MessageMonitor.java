@@ -8,7 +8,6 @@ import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.wrappers.Message;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventListener;
-import com.github.kaaz.emily.discordobjects.wrappers.event.botevents.ConfigValueChangeEvent;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordMessageReceivedEvent;
 import com.github.kaaz.emily.favor.FavorHandler;
 import com.github.kaaz.emily.favor.configs.LanguageLevelViolationFactorConfig;
@@ -26,7 +25,7 @@ import java.util.stream.Collectors;
 /**
  * Made by nija123098 on 4/27/2017.
  */
-public class MessageMonitor {
+public class MessageMonitor {// todo redo
     private static final AtomicReference<Map<LanguageLevel, Set<CheckingString>>> MAP = new AtomicReference<>();
     static {
         load(ConfigHandler.getSetting(LanguageFilteringLevelWordsConfig.class, GlobalConfigurable.GLOBAL));
@@ -40,10 +39,10 @@ public class MessageMonitor {
         MAP.set(outMap);
         EventDistributor.register(MessageMonitor.class);
     }
-    @EventListener
+    /*@EventListener
     public static void handle(ConfigValueChangeEvent event){
         if (event.getConfigType().equals(LanguageFilteringLevelWordsConfig.class)) load((Map<LanguageLevel, Set<String>>) event.getNewValue());
-    }
+    }*/
     @EventListener
     public static synchronized void handle(DiscordMessageReceivedEvent event){
         if (event.getMessage().getGuild() == null || event.getAuthor().isBot() || BotRole.GUILD_TRUSTEE.hasRequiredRole(event.getAuthor(), event.getGuild())) return;

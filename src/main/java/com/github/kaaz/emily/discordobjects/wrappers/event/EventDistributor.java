@@ -5,6 +5,7 @@ import com.github.kaaz.emily.util.Log;
 import com.github.kaaz.emily.util.ReflectionHelper;
 import com.github.kaaz.emily.util.ThreadProvider;
 import org.eclipse.jetty.util.ConcurrentHashSet;
+import sx.blah.discord.api.ClientBuilder;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -37,13 +38,13 @@ public class EventDistributor {
         });
     }
     public static <E extends BotEvent> void distribute(E event){
-        distribute((Class<E>) event.getClass(), event);
+        ThreadProvider.submit(() -> distribute((Class<E>) event.getClass(), event));
     }
     public static <E extends BotEvent> void distribute(Class<E> clazz, E event){
-        ThreadProvider.submit(() -> ReflectionHelper.getAssignableTypes(clazz).forEach(c -> {
+        ReflectionHelper.getAssignableTypes(clazz).forEach(c -> {
             Set<Listener> listeners = LISTENER_MAP.get(c);
             if (listeners != null) listeners.forEach(listener -> listener.handle(event));
-        }));
+        });
     }
     private static class Listener<E extends BotEvent> {
         Method m;

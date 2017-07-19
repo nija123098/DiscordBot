@@ -15,7 +15,6 @@ import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.github.kaaz.emily.discordobjects.wrappers.VoiceChannel;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventListener;
-import com.github.kaaz.emily.discordobjects.wrappers.event.botevents.ConfigValueChangeEvent;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordVoiceJoin;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordVoiceLeave;
 import com.github.kaaz.emily.exeption.ArgumentException;
@@ -236,6 +235,13 @@ public class GuildAudioManager extends AudioEventAdapter{
     public Guild getGuild() {
         return this.channel.getGuild();
     }
+    public void setVolume(int val){
+        ConfigHandler.setSetting(VolumeConfig.class, this.getGuild(), this.lavaPlayer.getVolume());
+        this.lavaPlayer.setVolume(val);
+    }
+    public int getVolume(){
+        return this.lavaPlayer.getVolume();
+    }
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
         this.onFinish();
@@ -257,12 +263,6 @@ public class GuildAudioManager extends AudioEventAdapter{
             }
         }
         manager.leave();
-    }
-    @EventListener
-    public static void handle(ConfigValueChangeEvent event){
-        if (!event.getConfigType().equals(VolumeConfig.class)) return;
-        GuildAudioManager manager = getManager(((Guild) event.getConfigurable()));
-        if (manager != null) manager.lavaPlayer.setVolume((int) event.getNewValue());
     }
     public class AudioProvider implements IAudioProvider {
         private final AudioPlayer audioPlayer;

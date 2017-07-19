@@ -3,15 +3,17 @@ package com.github.kaaz.emily.audio;
 import com.github.kaaz.emily.audio.configs.track.BannedTrackConfig;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.Configurable;
-import com.github.kaaz.emily.config.configs.FavorConfig;
 import com.github.kaaz.emily.discordobjects.wrappers.DiscordClient;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.github.kaaz.emily.exeption.PermissionsException;
+import com.github.kaaz.emily.favor.FavorHandler;
 import com.github.kaaz.emily.util.Rand;
 import com.google.common.util.concurrent.AtomicDouble;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -48,7 +50,7 @@ public class GlobalPlaylist extends Playlist {
     private static final List<Track> TRACKS = new CopyOnWriteArrayList<>();
     private static void loadTracks(){
         Map<Track, Float> map = new HashMap<>();
-        DownloadableTrack.getDownloadedTracks().stream().filter(track -> !ConfigHandler.getSetting(BannedTrackConfig.class, track)).forEach(track -> map.put(track, ConfigHandler.getSetting(FavorConfig.class, track)));
+        DownloadableTrack.getDownloadedTracks().stream().filter(track -> !ConfigHandler.getSetting(BannedTrackConfig.class, track)).forEach(track -> map.put(track, FavorHandler.getFavorAmount(track)));
         AtomicDouble favor = new AtomicDouble();
         map.values().forEach(favor::addAndGet);
         favor.set(favor.get() / map.size() * 2);
