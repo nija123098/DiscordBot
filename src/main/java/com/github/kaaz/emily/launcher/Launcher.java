@@ -8,6 +8,7 @@ import com.github.kaaz.emily.discordobjects.wrappers.DiscordClient;
 import com.github.kaaz.emily.service.ServiceHandler;
 import com.github.kaaz.emily.service.services.ScheduleService;
 import com.github.kaaz.emily.template.TemplateHandler;
+import com.github.kaaz.emily.util.Care;
 import com.github.kaaz.emily.util.Log;
 import com.wezinkhof.configuration.ConfigurationBuilder;
 
@@ -66,6 +67,7 @@ public class Launcher {
                 IS_READY.set(false);
                 SHUTDOWNS.forEach(Runnable::run);
                 DiscordClient.logout();
+                Care.less(() -> Thread.sleep(1_000));
                 System.exit(code);
             }));
         }

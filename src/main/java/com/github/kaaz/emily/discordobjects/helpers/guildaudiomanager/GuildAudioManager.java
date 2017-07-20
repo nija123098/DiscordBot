@@ -92,7 +92,10 @@ public class GuildAudioManager extends AudioEventAdapter{
             if (current != null && !current.channel.equals(channel)) throw new ArgumentException("You must be in the voice channel with " + DiscordClient.getOurUser().getDisplayName(channel.getGuild()) + " to use that command");
             AtomicReference<VoiceChannel> reference = new AtomicReference<>(channel);
             return MAP.computeIfAbsent(channel.getGuild().getID(), s -> new GuildAudioManager(reference.get()));
-        } else return MAP.get(channel.getGuild().getID());
+        } else {
+            GuildAudioManager manager = MAP.get(channel.getGuild().getID());
+            return manager != null && manager.channel.equals(channel) ? manager : null;
+        }
     }
     public static GuildAudioManager getManager(VoiceChannel channel){
         return getManager(channel, true);

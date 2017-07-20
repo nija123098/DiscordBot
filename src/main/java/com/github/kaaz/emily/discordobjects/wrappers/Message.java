@@ -140,7 +140,7 @@ public class Message {// should not be kept stored, too many are made
         if (BotConfig.GHOST_MODE) throw new GhostException();
         AtomicReference<String> reference = new AtomicReference<>(s);
         if (s.endsWith("\u200B")) reference.set(s.substring(0, s.length() - 1));
-        ErrorWrapper.wrap(() -> message().addReaction(ReactionEmoji.of(s)));
+        ErrorWrapper.wrap(() -> message().addReaction(ReactionEmoji.of(reference.get())));
         return getReaction(s);
     }
 

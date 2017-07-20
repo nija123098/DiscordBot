@@ -20,9 +20,8 @@ public class OldNicknameConfig extends AbstractConfig<Set<String>, GuildUser> {
     }
     @EventListener
     public void handle(DiscordNicknameChange event){
-        this.alterSetting(GuildUser.getGuildUser(event.getGuild(), event.getUser()), strings -> {
-            strings.add(event.getNewUsername());
-        });
+        if (event.getNewUsername() == null) return;
+        this.alterSetting(GuildUser.getGuildUser(event.getGuild(), event.getUser()), strings -> strings.add(event.getNewUsername()));
     }
     @EventListener
     public void handle(DiscordDataReload reload){

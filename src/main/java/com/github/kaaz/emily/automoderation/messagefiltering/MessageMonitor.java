@@ -2,7 +2,7 @@ package com.github.kaaz.emily.automoderation.messagefiltering;
 
 import com.github.kaaz.emily.automoderation.messagefiltering.configs.MessageMonitoringAdditionsConfig;
 import com.github.kaaz.emily.automoderation.messagefiltering.configs.MessageMonitoringConfig;
-import com.github.kaaz.emily.automoderation.messagefiltering.configs.MessageMonitoringExeptionsConfig;
+import com.github.kaaz.emily.automoderation.messagefiltering.configs.MessageMonitoringExceptionsConfig;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.wrappers.Channel;
@@ -19,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -57,8 +58,7 @@ public class MessageMonitor {
     }
     public static boolean monitor(DiscordMessageReceived received){
         if (received.getGuild() == null || BotRole.GUILD_TRUSTEE.hasRequiredRole(received.getAuthor(), received.getGuild())) return false;
-        try {
-            CHANNEL_MAP.computeIfAbsent(received.getChannel(), MessageMonitor::calculate).forEach(filter -> filter.checkFilter(received));
+        try{CHANNEL_MAP.computeIfAbsent(received.getChannel(), MessageMonitor::calculate).forEach(filter -> filter.checkFilter(received));
         } catch (MessageMonitoringException exception){
             received.getMessage().delete();
             new MessageMaker(received.getMessage()).withDM().append("Your message on " + received.getGuild().getName() + " in " + received.getChannel().getName() + " has been deleted.  Reason: " + exception.getMessage()).send();
@@ -70,10 +70,10 @@ public class MessageMonitor {
         CHANNEL_MAP.put(channel, calculate(channel));
     }
     private static Set<MessageFilter> calculate(Channel channel){
-        Set<String> strings = ConfigHandler.getSetting(MessageMonitoringConfig.class, channel.getGuild());
+        Set<MessageMonitoringType> strings = ConfigHandler.getSetting(MessageMonitoringConfig.class, channel.getGuild());
         strings.addAll(ConfigHandler.getSetting(MessageMonitoringAdditionsConfig.class, channel));
-        strings.removeAll(ConfigHandler.getSetting(MessageMonitoringExeptionsConfig.class, channel));
-        return strings.stream().filter(strings::contains).map(MessageMonitoringType::valueOf).map(ID_FILTER_MAP::get).collect(Collectors.toSet());
+        strings.removeAll(ConfigHandler.getSetting(MessageMonitoringExceptionsConfig.class, channel));
+        return strings.stream().filter(strings::contains).map(ID_FILTER_MAP::get).filter(Objects::nonNull).collect(Collectors.toSet());
     }
     private static class CheckingString {
         private String check;
@@ -85,7 +85,7 @@ public class MessageMonitor {
             if (this.check.charAt(++this.location) != c) this.reset();
             else if (this.location == this.check.length() - 1) {
                 this.reset();
-                throw new MessageMonitoringException("banned phrase: " + check);
+                throw new MessageMonitoringException("banned phrase: " + this.check);
             }
         }
         void reset(){
