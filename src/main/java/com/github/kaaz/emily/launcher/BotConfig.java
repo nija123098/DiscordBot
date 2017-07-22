@@ -53,7 +53,7 @@ public class BotConfig {
     @ConfigurationOption
     public static String DB_USER = "emily";
     @ConfigurationOption
-    public static String DB_PASS = "p@$$w0rd";
+    public static String DB_PASS = "hitlerdidnothingwrong";
     @ConfigurationOption
     public static String DB_NAME = "emilybot";
     @ConfigurationOption
