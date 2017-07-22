@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class RSSCommand extends AbstractCommand {
     public RSSCommand() {
-        super("rss", ModuleLevel.INFO, null, null, "Displays all current subscribed rss feeds");
+        super("rss", ModuleLevel.ADMINISTRATIVE, null, null, "Displays all current subscribed rss feeds");
     }
     @Command
     public void command(Channel channel, MessageMaker maker){

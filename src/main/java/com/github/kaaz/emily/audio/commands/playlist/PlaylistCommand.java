@@ -22,10 +22,8 @@ public class PlaylistCommand extends AbstractCommand {
     }
     @Command
     public void play(@Argument(optional = true) Playlist playlist, Guild guild, MessageMaker maker){
-        if (playlist != null){
-            ConfigHandler.setSetting(GuildActivePlaylistConfig.class, guild, playlist);
-        }
-        playlist = ConfigHandler.getSetting(GuildActivePlaylistConfig.class, guild);
+        if (playlist != null) ConfigHandler.setSetting(GuildActivePlaylistConfig.class, guild, playlist);
+        else playlist = ConfigHandler.getSetting(GuildActivePlaylistConfig.class, guild);
         Configurable owner = playlist.getOwner();
         maker.getTitle().appendRaw(playlist.getName()).getMaker().getHeader()
                 .appendAlternate(false, "Is owned by ", (owner == null ? "Emily" : ("the " + (owner instanceof User ? "user " + ((User) owner).getDisplayName(guild) : "guild " + ((Guild) owner).getName()))))

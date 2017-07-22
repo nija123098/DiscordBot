@@ -19,6 +19,7 @@ import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordVoiceJo
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordVoiceLeave;
 import com.github.kaaz.emily.exeption.ArgumentException;
 import com.github.kaaz.emily.exeption.GhostException;
+import com.github.kaaz.emily.favor.FavorHandler;
 import com.github.kaaz.emily.launcher.BotConfig;
 import com.github.kaaz.emily.launcher.Launcher;
 import com.github.kaaz.emily.service.services.ScheduleService;
@@ -39,7 +40,6 @@ import org.eclipse.jetty.util.ConcurrentHashSet;
 import sx.blah.discord.handle.audio.AudioEncodingType;
 import sx.blah.discord.handle.audio.IAudioProvider;
 
-import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -106,7 +106,7 @@ public class GuildAudioManager extends AudioEventAdapter{
     private VoiceChannel channel;
     private AudioPlayer lavaPlayer;
     private final Set<User> skipSet = new ConcurrentHashSet<>();
-    private final List<File> speeches = new CopyOnWriteArrayList<>();
+    private final List<LangString> speeches = new CopyOnWriteArrayList<>();
     private final List<Track> queue = new CopyOnWriteArrayList<>();
     private final List<LangString> interups = new CopyOnWriteArrayList<>();
     private Track paused, current;
@@ -139,15 +139,15 @@ public class GuildAudioManager extends AudioEventAdapter{
         this.queue.clear();
     }
     public void queueSpeech(LangString string){
-        File file = SpeechHelper.getFile(string, MessageMaker.getLang(null, this.channel));
-        this.queueTrack(new SpeechTrack(file));
+        if (this.current == null) this.queueTrack(new SpeechTrack(string, MessageMaker.getLang(null, this.channel)));
+        else this.speeches.add(string);
     }
     public void queueTrack(Track track){
-        if (this.current == null){
-            this.start(track, 0);
-        }else if (track != null){
-            this.queue.add(track);
-        }else this.current = null;
+        if (track == null) this.current = null;
+        else {
+            if (this.current == null) this.start(track, 0);
+            else this.queue.add(track);
+        }
     }
     public void interrupt(LangString langString){// must fully exist
         SpeechTrack track = new SpeechTrack(SpeechHelper.getFile(langString, MessageMaker.getLang(null, this.channel)));
@@ -164,7 +164,7 @@ public class GuildAudioManager extends AudioEventAdapter{
         this.paused = this.current;
         this.current = null;
         this.lavaPlayer.stopTrack();
-        start(track, 0);
+        this.start(track, 0);
         this.paused = null;
     }
     public void setPlaylistOn(boolean on){
@@ -188,8 +188,9 @@ public class GuildAudioManager extends AudioEventAdapter{
         return size;
     }
     public void onFinish(){
+        FavorHandler.addFavorLevel(this.current, this.voiceChannel().getConnectedUsers().size());
         if (!this.interups.isEmpty()) {
-            this.interrupt(this.interups.remove(0));
+            this.start(new SpeechTrack(this.interups.remove(0), MessageMaker.getLang(null, this.channel)), 0);
             return;
         }
         if (this.leaveAfterThis){
@@ -198,7 +199,7 @@ public class GuildAudioManager extends AudioEventAdapter{
         }
         if (this.loop) this.lavaPlayer.playTrack(this.current.getTrack());
         else if (!this.speeches.isEmpty()){
-            this.start(new SpeechTrack(this.speeches.remove(0)), 0);
+            this.start(new SpeechTrack(this.speeches.remove(0), MessageMaker.getLang(null, this.channel)), 0);
         }else if (this.paused != null){
             this.start(this.paused, (int) this.pausePosition);
             this.paused = null;

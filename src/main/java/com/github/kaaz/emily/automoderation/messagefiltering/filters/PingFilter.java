@@ -16,7 +16,7 @@ public class PingFilter implements MessageFilter {
     private static final List<GuildUser> PINGERS = new MemoryManagementService.ManagedList<>(120_000);
     @Override
     public void checkFilter(DiscordMessageReceived event) {
-        if (!(!event.getMessage().getMentions().isEmpty() || event.getMessage().mentionsEveryone() || event.getMessage().mentionsHere())) return;
+        if (!(event.getMessage().getMentions().stream().filter(user -> !user.isBot()).count() != 0 || event.getMessage().mentionsEveryone() || event.getMessage().mentionsHere())) return;
         GuildUser guildUser = GuildUser.getGuildUser(event.getGuild(), event.getAuthor());
         if (PINGERS.contains(guildUser)) {
             PINGERS.add(guildUser);

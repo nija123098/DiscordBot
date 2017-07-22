@@ -29,7 +29,7 @@ public class UserCommand extends AbstractCommand {
         addAtrib(maker, "bust_in_silhouette", "User", user.getNameAndDiscrim());
         addAtrib(maker, "id", "Discord id", user.getID());
         addAtrib(maker, "keyboard", "Commands used", ConfigHandler.getSetting(CommandsUsedCountConfig.class, user) + "");
-        addAtrib(maker, "date", "Joined guild", Time.getAbbreviated(System.currentTimeMillis() - ConfigHandler.getSetting(GuildUserJoinTimeConfig.class, GuildUser.getGuildUser(guild, user))) + " ago");
+        addAtrib(maker, "date", "Joined guild", Time.getAbbreviated(System.currentTimeMillis() - GuildUserJoinTimeConfig.get(GuildUser.getGuildUser(guild, user))) + " ago");
         addAtrib(maker, "calendar_spiral", "Joined discord", Time.getAbbreviated(System.currentTimeMillis() - user.getJoinDate()) + " ago");
     }
     private static void addAtrib(MessageMaker maker, String icon, String info, String content){

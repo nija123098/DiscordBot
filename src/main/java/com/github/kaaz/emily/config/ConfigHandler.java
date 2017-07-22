@@ -2,7 +2,6 @@ package com.github.kaaz.emily.config;
 
 import com.github.kaaz.emily.audio.Playlist;
 import com.github.kaaz.emily.audio.Track;
-import com.github.kaaz.emily.db.MySQLMain;
 import com.github.kaaz.emily.discordobjects.wrappers.Channel;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.Role;
@@ -32,12 +31,13 @@ import java.util.stream.Collectors;
 public class ConfigHandler {
     private static final Map<Class<? extends AbstractConfig<?, ? extends Configurable>>, AbstractConfig<?, ? extends Configurable>> CLASS_MAP;
     private static final Map<String, AbstractConfig<?, ? extends Configurable>> STRING_MAP;
-    private static final Map<Class<? extends Configurable>, Function<String, ? extends Configurable>> FUNCTION_MAP = new ConcurrentHashMap<>(7);
+    private static final Map<Class<? extends Configurable>, Function<String, ? extends Configurable>> FUNCTION_MAP = new ConcurrentHashMap<>(10);
     static {
-        CLASS_MAP = new HashMap<>();
-        STRING_MAP = new HashMap<>();
-        MySQLMain.init();
-        new Reflections(Reference.BASE_PACKAGE).getSubTypesOf(AbstractConfig.class).forEach(clazz -> {
+        // MySQLMain.init();
+        Set<Class<? extends AbstractConfig>> classes = new Reflections(Reference.BASE_PACKAGE).getSubTypesOf(AbstractConfig.class);
+        CLASS_MAP = new HashMap<>(classes.size() + 2, 1);
+        STRING_MAP = new HashMap<>(classes.size() + 2, 1);
+        classes.forEach(clazz -> {
             try {
                 AbstractConfig config = clazz.newInstance();
                 CLASS_MAP.put((Class<? extends AbstractConfig<?, ? extends Configurable>>) clazz, config);
@@ -65,8 +65,6 @@ public class ConfigHandler {
             }
             return null;
         });
-        //
-        //
     }
 
     private static <T extends Configurable> void add(Class<T> type, Function<String, T> function){

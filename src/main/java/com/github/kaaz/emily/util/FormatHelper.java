@@ -180,7 +180,7 @@ public class FormatHelper {
         return ret + "```\n";
     }
 
-    private static final String DASH = EmoticonHelper.getChars("wavy_dash");
+    private static final String DASH = EmoticonHelper.getChars("wavy_dash", true);
     public static String makeStackedBar(int max, int bar, String barChar) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < bar; i++) {

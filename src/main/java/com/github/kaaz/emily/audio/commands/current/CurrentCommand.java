@@ -1,5 +1,6 @@
 package com.github.kaaz.emily.audio.commands.current;
 
+import com.github.kaaz.emily.audio.SpeechTrack;
 import com.github.kaaz.emily.audio.Track;
 import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.ModuleLevel;
@@ -27,6 +28,10 @@ public class CurrentCommand extends AbstractCommand {
         Track track = manager.currentTrack();
         if (track == null) {
             maker.append("Nothing is currently playing");
+            return;
+        }
+        if (track instanceof SpeechTrack){
+            maker.append("Don't you recognize my voice?");
             return;
         }
         long time = manager.currentTime();

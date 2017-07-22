@@ -1,45 +1,13 @@
 package com.github.kaaz.emily.util;
 
-import com.github.kaaz.emily.exeption.GhostException;
-
-import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.*;
 
 /**
  * Made by nija123098 on 6/28/2017.
  */
 public class ThreadProvider {// upgrade?
-    private static int index = -1, available;
-    private static final List<Runnable> TASKS;
-    static {
-        TASKS = new ArrayList<>();
-    }
-    private static synchronized Runnable getNextTask(){
-        return TASKS.isEmpty() ? null : TASKS.remove(0);
-    }
-    private static void make(){
-        ++available;
-        Thread thread = new Thread(() -> {
-            while (true){
-                Runnable runnable = getNextTask();
-                if (runnable == null) Care.less(() -> Thread.sleep(500));
-                else {
-                    --available;
-                    try{runnable.run();
-                    }catch(Exception e){
-                        if (e.getClass().equals(GhostException.class)) return;
-                        Log.log("Caught exception while running task", e);
-                    }
-                    ++available;
-                }
-            }
-        }, "ThreadProviderThread-" + ++index);
-        thread.setDaemon(true);
-        thread.start();
-        Log.log("Making thread " + index + " for thread provider");
-    }
+    private static final ExecutorService EXECUTOR_SERVICE = new ThreadPoolExecutor(64, 256, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(10000), (ThreadFactory) Thread::new, (r, executor) -> r.run());
     public static synchronized void submit(Runnable task){
-        TASKS.add(task);
-        if (available == 0) make();
+        EXECUTOR_SERVICE.submit(task);
     }
 }

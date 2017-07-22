@@ -50,7 +50,7 @@ public class ExpungeModActionCommand extends AbstractCommand {
             if (set.incrementAndGet() > setSize){
                 maker.clearReactionBehaviors().withReactionBehavior("+1", (a, r, us) -> {
                     maker.clearReactionBehaviors().send();
-                    long joinDate = ConfigHandler.getSetting(GuildUserJoinTimeConfig.class, GuildUser.getGuildUser(guild, target));
+                    long joinDate = GuildUserJoinTimeConfig.get(GuildUser.getGuildUser(guild, target));
                     guild.getChannels().forEach(channel -> {
                         Set<Message> messagesToRemove = new HashSet<>();
                         channel.getMessagesTo(joinDate).forEach(message -> {

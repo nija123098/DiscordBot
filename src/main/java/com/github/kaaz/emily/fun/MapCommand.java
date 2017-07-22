@@ -45,7 +45,7 @@ public class MapCommand extends AbstractCommand {
                 List<Pair<Integer, Integer>> list = setMap.get(getColorAria(region.getName()));
                 if (list == null) return;
                 for (int i = 0; i < integer; i++) {
-                    Pair<Integer, Integer> pair = list.remove(Rand.getRand(list.size()));
+                    Pair<Integer, Integer> pair = list.remove(Rand.getRand(list.size()) - 1);
                     for (int x = 0; x < DOT_SIZE; x++) {
                         for (int y = 0; y < DOT_SIZE; y++) {
                             pairs.add(new Pair<>(pair.getKey() + x, pair.getValue() + y));

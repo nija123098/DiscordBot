@@ -34,16 +34,18 @@ import java.util.concurrent.atomic.AtomicReference;
  * @see AbstractCommand
  */
 public class CommandHandler {
-    private static final Map<Class<? extends AbstractCommand>, AbstractCommand> CLASS_MAP = new HashMap<>();
-    private static final Map<String, AbstractCommand> REACTION_COMMAND_MAP = new HashMap<>();
-    private static final Map<String, AbstractCommand> EXACT_COMMAND_MAP = new HashMap<>();
-    private static final Map<String, Object> COMMANDS_MAP = new HashMap<>();
+    private static final Map<Class<? extends AbstractCommand>, AbstractCommand> CLASS_MAP;
+    private static final Map<String, AbstractCommand> REACTION_COMMAND_MAP;
+    private static final Map<String, AbstractCommand> EXACT_COMMAND_MAP;
+    private static final Map<String, Object> COMMANDS_MAP;
     public static final String UNKNOWN_COMMAND_EMOTICON = "grey_question", EXCEPTION_FOR_METHOD = "exclamation";
     private static final List<String> OPEN_EDIT_MESSAGES = new MemoryManagementService.ManagedList<>(30000);
     private static final AtomicReference<String> MENTION = new AtomicReference<>(), MENTION_NICK = new AtomicReference<>();
     static {
         Map<Class<? extends AbstractCommand>, Set<AbstractCommand>> typeMap = new HashMap<>();
-        new Reflections(Reference.BASE_PACKAGE).getSubTypesOf(AbstractCommand.class).forEach(clazz -> {
+        Set<Class<? extends AbstractCommand>> classes = new Reflections(Reference.BASE_PACKAGE).getSubTypesOf(AbstractCommand.class);
+        CLASS_MAP = new HashMap<>(classes.size() + 10, 1);
+        classes.forEach(clazz -> {
             try {
                 AbstractCommand command = clazz.newInstance();
                 CLASS_MAP.put(clazz, command);
@@ -58,19 +60,20 @@ public class CommandHandler {
                 Log.log("Exception while initializing command: " + clazz.getName(), e);
             }
         });
+        COMMANDS_MAP = new HashMap<>(CLASS_MAP.size(), 1);
+        EXACT_COMMAND_MAP = new HashMap<>(CLASS_MAP.size(), 1);
+        REACTION_COMMAND_MAP = new HashMap<>(CLASS_MAP.size() / 2, 1);
         typeMap.get(null).forEach(command -> load(command, typeMap));
         // alias loading
         typeMap.values().forEach(commands -> commands.forEach(command -> command.getEmoticonAliases().forEach(s -> {
-            String chars = EmoticonHelper.getChars(s);
-            REACTION_COMMAND_MAP.put(chars.substring(0, chars.length() - 1), command);
+            String chars = EmoticonHelper.getChars(s, false);
+            REACTION_COMMAND_MAP.put(chars, command);
         })));
         CLASS_MAP.values().forEach(command -> command.getNames().forEach(s -> {
             if (s == null) return;
             String[] strings = s.split(" ");
             Map map = COMMANDS_MAP;
-            for (String string : strings) {
-                map = (Map<String, Object>) map.computeIfAbsent(string, st -> new HashMap(2));
-            }
+            for (String string : strings) map = (Map<String, Object>) map.computeIfAbsent(string, st -> new HashMap(strings.length + 2, 1));
             map.put("", command);
             EXACT_COMMAND_MAP.put(s, command);
         }));
@@ -80,6 +83,7 @@ public class CommandHandler {
             MENTION_NICK.set(DiscordClient.getOurUser().mention(true));
         });
     }
+
 
     private static void load(AbstractCommand superCommand, Map<Class<? extends AbstractCommand>, Set<AbstractCommand>> typeMap){
         superCommand.load();
@@ -201,6 +205,7 @@ public class CommandHandler {
         }
         string = FormatHelper.trimFront(string);
         Pair<AbstractCommand, String> pair = reaction == null ? getMessageCommand(string) : ((command = getReactionCommand(reaction.getChars())) == null ? null : new Pair<>(command, null));
+        if (pair == null && REACTION_COMMAND_MAP.containsKey(string)) pair = new Pair<>(REACTION_COMMAND_MAP.get(string), "");
         if (pair != null){
             command = pair.getKey();
             Reaction r = message.getReactionByName(UNKNOWN_COMMAND_EMOTICON);

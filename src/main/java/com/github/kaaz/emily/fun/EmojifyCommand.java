@@ -4,6 +4,7 @@ import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.ModuleLevel;
 import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
+import com.github.kaaz.emily.exeption.ArgumentException;
 import com.github.kaaz.emily.util.EmoticonHelper;
 import com.github.kaaz.emily.util.StringIterator;
 import javafx.util.Pair;
@@ -27,19 +28,20 @@ public class EmojifyCommand extends AbstractCommand {
     }
     @Command
     public void command(String args, MessageMaker maker){
+        if (args.isEmpty()) throw new ArgumentException("Please insert some text for me to emojify");
         StringBuilder builder = new StringBuilder();
         Stream.of(args.split(" ")).forEach(word -> {
             String extrapolation = EXTRAPOLATED.get(word);
             if (extrapolation == null) new StringIterator(word).forEachRemaining(character -> builder.append(getChars(character)));
             else builder.append(extrapolation);
         });
-        maker.appendRaw(builder.substring(0, builder.length() - 2));
+        maker.appendRaw(builder.toString());
     }
     private String getChars(char c){
-        if (Character.isLetter(c)) return EmoticonHelper.getChars("regional_indicator_" + Character.toLowerCase(c));
-        if (Character.isDigit(c)) return EmoticonHelper.getChars(Character.getName(c).substring(6));
-        if (c == '?') return EmoticonHelper.getChars("grey_question");
-        if (c == '!') return EmoticonHelper.getChars("grey_exclamation");
+        if (Character.isLetter(c)) return EmoticonHelper.getChars("regional_indicator_" + Character.toLowerCase(c), true);
+        if (Character.isDigit(c)) return EmoticonHelper.getChars(Character.getName(c).substring(6), true);
+        if (c == '?') return EmoticonHelper.getChars("grey_question", true);
+        if (c == '!') return EmoticonHelper.getChars("grey_exclamation", true);
         return String.valueOf(c);
     }
 }

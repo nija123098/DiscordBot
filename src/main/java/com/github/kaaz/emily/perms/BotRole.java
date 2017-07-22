@@ -14,9 +14,12 @@ import com.github.kaaz.emily.exeption.ArgumentException;
 import com.github.kaaz.emily.exeption.PermissionsException;
 import com.github.kaaz.emily.perms.configs.standard.GlobalBotRoleConfig;
 import com.github.kaaz.emily.perms.configs.standard.GuildBotRoleConfig;
+import com.github.kaaz.emily.service.services.ScheduleService;
 
 import java.util.EnumSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiPredicate;
 
@@ -62,10 +65,14 @@ public enum BotRole {
     public boolean hasRole(User user, Guild guild){
         return this.detect.test(user, guild);
     }
+    private final Map<Guild, Map<User, Boolean>> PERMISSIONS_CASHE = new ConcurrentHashMap<>();
     public boolean hasRequiredRole(User user, Guild guild){
         if (!this.isTrueRank) return this.detect.test(user, guild);
-        for (int i = this.ordinal(); i < values().length; i++) if (values()[i].detect.test(user, guild)) return true;
-        return false;
+        return PERMISSIONS_CASHE.computeIfAbsent(guild, g -> new ConcurrentHashMap<>()).computeIfAbsent(user, u -> {
+            ScheduleService.schedule(120_000, () -> PERMISSIONS_CASHE.get(guild).remove(u));
+            for (int i = this.ordinal(); i < values().length; i++) if (values()[i].detect.test(u, guild)) return true;
+            return false;
+        });
     }
     public void checkRequiredRole(User user, Guild guild){
         if (!this.hasRequiredRole(user, guild)) throw new PermissionsException(this);

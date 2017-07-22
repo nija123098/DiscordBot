@@ -1,9 +1,8 @@
 package com.github.kaaz.emily.automoderation;
 
 import com.github.kaaz.emily.command.AbstractCommand;
-import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.command.annotations.Argument;
-import com.github.kaaz.emily.config.ConfigHandler;
+import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.config.GuildUser;
 import com.github.kaaz.emily.discordobjects.wrappers.Channel;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
@@ -20,6 +19,6 @@ public class PurgeUserCommand extends AbstractCommand {
     }
     @Command
     public void command(@Argument User user, @Argument(optional = true) Integer integer, Channel channel, Guild guild, String options){// ensures guild context
-        MessageDeleteService.delete(options.contains("all") ? channel.getMessages() : channel.getMessagesTo(ConfigHandler.getSetting(GuildUserJoinTimeConfig.class, GuildUser.getGuildUser(guild, user))).stream().filter(message -> message.getAuthor().equals(user)).collect(Collectors.toList()));
+        MessageDeleteService.delete(options.contains("all") ? channel.getMessages() : channel.getMessagesTo(GuildUserJoinTimeConfig.get(GuildUser.getGuildUser(guild, user))).stream().filter(message -> message.getAuthor().equals(user)).collect(Collectors.toList()));
     }
 }

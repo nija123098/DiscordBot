@@ -1,6 +1,5 @@
 package com.github.kaaz.emily.config;
 
-import com.github.kaaz.emily.automoderation.GuildUserJoinTimeConfig;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.github.kaaz.emily.exeption.ConfigurableConvertException;
@@ -42,7 +41,6 @@ public class GuildUser implements Configurable {
     protected GuildUser() {}
     private GuildUser(String id) {
         this.id = id;
-        if (ConfigHandler.getSetting(GuildUserJoinTimeConfig.class, this) == null) ConfigHandler.setSetting(GuildUserJoinTimeConfig.class, this, this.getGuild().getJoinTimeForUser(this.getUser()));
     }
     @Override
     public String getID() {

@@ -19,7 +19,7 @@ public class StartingMoneyConfig extends AbstractConfig<Float, Configurable> {
     @EventListener
     public void handle(DiscordUserJoin event){
         GuildUser guildUser = GuildUser.getGuildUser(event.getGuild(), event.getUser());
-        if (Math.abs(event.getJoinTime() - ConfigHandler.getSetting(GuildUserJoinTimeConfig.class, guildUser)) < 5000)
+        if (Math.abs(event.getJoinTime() - GuildUserJoinTimeConfig.get(guildUser)) < 5000)
             ConfigHandler.changeSetting(CurrentMoneyConfig.class, guildUser, integer -> this.getValue(event.getGuild()));
     }// integer should be 0, but the change is for safety
 }

@@ -14,6 +14,7 @@ import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordVoiceJo
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordVoiceLeave;
 import com.github.kaaz.emily.launcher.BotConfig;
 import com.github.kaaz.emily.launcher.Launcher;
+import com.github.kaaz.emily.launcher.Reference;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
 import com.github.kaaz.emily.service.services.ScheduleService;
 import com.github.kaaz.emily.template.KeyPhrase;
@@ -49,12 +50,14 @@ public class DiscordAdapter {
     private static final long PLAY_TEXT_SPEED = 60_000;
     private static final List<Template> PREVIOUS_TEXTS = new MemoryManagementService.ManagedList<>(PLAY_TEXT_SPEED + 1000);// a second for execution time
     static {
-        new Reflections("com.github.kaaz.emily.discordobjects.wrappers.event.events").getSubTypesOf(BotEvent.class).stream().filter(clazz -> !clazz.equals(DiscordMessageReceived.class)).forEach(clazz -> EVENT_MAP.put((Class<? extends Event>) clazz.getConstructors()[0].getParameterTypes()[0], (Constructor<? extends BotEvent>) clazz.getConstructors()[0]));
+        new Reflections(Reference.BASE_PACKAGE + ".discordobjects.wrappers.event.events").getSubTypesOf(BotEvent.class).stream().filter(clazz -> !clazz.equals(DiscordMessageReceived.class)).forEach(clazz -> EVENT_MAP.put((Class<? extends Event>) clazz.getConstructors()[0].getParameterTypes()[0], (Constructor<? extends BotEvent>) clazz.getConstructors()[0]));
         ClientBuilder builder = new ClientBuilder();
         builder.withToken(BotConfig.BOT_TOKEN);
         builder.withRecommendedShardCount();
+        builder.withMaximumDispatchThreads(64);
         DiscordClient.set(builder.login());
         try{DiscordClient.client().getDispatcher().waitFor(ReadyEvent.class, 20 + 25 * DiscordClient.getShardCount(), TimeUnit.MINUTES);
+            Thread.sleep(10_000);
         } catch (InterruptedException e) {
             Log.log("Could not launch in time", e);
         }
@@ -104,7 +107,8 @@ public class DiscordAdapter {
     }
     @EventSubscriber
     public static void handle(MessageReceivedEvent event){
-        if (!Launcher.isReady()) return;
+        if (event.getAuthor().isBot() || !Launcher.isReady()) return;
+        long l = System.currentTimeMillis();
         ThreadProvider.submit(() -> {
             DiscordMessageReceived receivedEvent = new DiscordMessageReceived((sx.blah.discord.handle.impl.events.MessageReceivedEvent) event);
             if (MessageMonitor.monitor(receivedEvent)) return;

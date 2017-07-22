@@ -19,16 +19,11 @@ public class RollCommand extends AbstractCommand {
     @Command
     public void command(@Argument(optional = true, replacement = ContextType.NONE) Integer first, @Argument(optional = true, replacement = ContextType.NONE) Integer second, String arg, MessageMaker maker){
         int value;
-        int roller = Rand.getRand(100);
-        System.out.println(roller);
         if (first != null){
             if (second == null) value = Rand.getRand(first - 1) + 1;
             else value = Rand.getRand(second - first - 1) + first + 1;
-            System.out.println(value);
         }else if (arg.isEmpty()) value = Rand.getRand(5) + 1;
         else value = (int) CalculateCommand.eval(arg);
-        if (roller != 2)
-            maker.append("Rolling " + first + "dice: " + value + "");
-        else maker.append("https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstleyVEVO");
+        maker.append(value + "");
     }
 }

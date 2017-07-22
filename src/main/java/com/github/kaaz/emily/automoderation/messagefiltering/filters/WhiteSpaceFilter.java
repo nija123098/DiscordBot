@@ -4,7 +4,9 @@ import com.github.kaaz.emily.automoderation.messagefiltering.MessageFilter;
 import com.github.kaaz.emily.automoderation.messagefiltering.MessageMonitoringException;
 import com.github.kaaz.emily.automoderation.messagefiltering.MessageMonitoringType;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordMessageReceived;
+import com.github.kaaz.emily.util.StringIterator;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 /**

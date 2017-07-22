@@ -53,6 +53,10 @@ public class Reaction {// should not be saved
         return result;
     }
 
+    public Message getMessage(){
+        return Message.getMessage(this.reaction.getMessage());
+    }
+
     public int getCount() {
         return reaction.getCount();
     }

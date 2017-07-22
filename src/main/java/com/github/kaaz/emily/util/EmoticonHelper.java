@@ -31,6 +31,12 @@ public class EmoticonHelper {
         String chars = EMOTICON_MAP.get(name);
         return chars == null ? null : chars + '\u200B';
     }
+    public static String getChars(String name, boolean noSpace){
+        String chars = EMOTICON_MAP.get(name);
+        if (chars == null) return null;
+        if (noSpace) chars += '\u200B';
+        return chars;
+    }
     public static String getName(String chars){
         return NAME_MAP.get(chars);
     }

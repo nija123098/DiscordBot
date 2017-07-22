@@ -1,11 +1,11 @@
 package com.github.kaaz.emily.discordobjects.wrappers.event;
 
 import com.github.kaaz.emily.exeption.DevelopmentException;
+import com.github.kaaz.emily.exeption.GhostException;
 import com.github.kaaz.emily.util.Log;
 import com.github.kaaz.emily.util.ReflectionHelper;
 import com.github.kaaz.emily.util.ThreadProvider;
 import org.eclipse.jetty.util.ConcurrentHashSet;
-import sx.blah.discord.api.ClientBuilder;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -59,6 +59,7 @@ public class EventDistributor {
             } catch (IllegalAccessException e) {
                 Log.log("This should never happen", e);
             } catch (InvocationTargetException e) {
+                if (GhostException.isGhostCaused(e.getCause())) return;
                 Log.log("Error while distributing event: " + this.m.getDeclaringClass().getName() + "#" + this.m.getName() + "\n    " + e.getCause().getMessage(), e);
             }
         }

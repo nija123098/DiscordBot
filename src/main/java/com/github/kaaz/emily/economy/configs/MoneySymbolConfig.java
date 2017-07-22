@@ -10,6 +10,6 @@ import com.github.kaaz.emily.util.EmoticonHelper;
  */
 public class MoneySymbolConfig extends AbstractConfig<String, Configurable> {
     public MoneySymbolConfig() {
-        super("money_symbol", BotRole.BOT_ADMIN, EmoticonHelper.getChars("cookie"), "The symbol money is represented by");
+        super("money_symbol", BotRole.BOT_ADMIN, EmoticonHelper.getChars("cookie", true), "The symbol money is represented by");
     }
 }

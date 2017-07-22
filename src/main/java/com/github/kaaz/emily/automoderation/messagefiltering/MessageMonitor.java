@@ -9,7 +9,6 @@ import com.github.kaaz.emily.discordobjects.wrappers.Channel;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordMessageReceived;
 import com.github.kaaz.emily.launcher.BotConfig;
 import com.github.kaaz.emily.launcher.Reference;
-import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.util.FormatHelper;
 import com.github.kaaz.emily.util.Log;
 import com.github.kaaz.emily.util.StringIterator;
@@ -39,6 +38,7 @@ public class MessageMonitor {
                     @Override
                     public void checkFilter(DiscordMessageReceived event) {
                         new StringIterator(FormatHelper.filtering(event.getMessage().getContent(), Character::isLetterOrDigit).toLowerCase()).forEachRemaining(character -> checkingStrings.forEach(checkingString -> checkingString.check(character)));
+                        checkingStrings.forEach(CheckingString::reset);
                     }
                     @Override
                     public MessageMonitoringType getType() {return type;}
@@ -57,7 +57,7 @@ public class MessageMonitor {
         });
     }
     public static boolean monitor(DiscordMessageReceived received){
-        if (received.getGuild() == null || BotRole.GUILD_TRUSTEE.hasRequiredRole(received.getAuthor(), received.getGuild())) return false;
+        if (received.getGuild() == null) return false;
         try{CHANNEL_MAP.computeIfAbsent(received.getChannel(), MessageMonitor::calculate).forEach(filter -> filter.checkFilter(received));
         } catch (MessageMonitoringException exception){
             received.getMessage().delete();
