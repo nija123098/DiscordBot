@@ -59,6 +59,23 @@ public class MySQLAccess {
         return c;
     }
 
+    public boolean tableExist(String tableName) {
+        boolean tExists = false;
+        try (ResultSet rs = getConnection().getMetaData().getTables(null, null, tableName, null)) {
+            while (rs.next()) {
+                String tName = rs.getString("TABLE_NAME");
+                if (tName != null && tName.equals(tableName)) {
+                    tExists = true;
+                    //System.out.println("Table " + tName + " does exist");
+                    break;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return tExists;
+    }
+
     public ResultSet select(String sql) throws SQLException {
         PreparedStatement query;
         query = getConnection().prepareStatement(sql);
@@ -75,7 +92,6 @@ public class MySQLAccess {
         try (PreparedStatement query = getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             query.executeUpdate();
             ResultSet rs = query.getGeneratedKeys();
-
             if (rs.next()) {
                 return rs.getInt(1);
             }

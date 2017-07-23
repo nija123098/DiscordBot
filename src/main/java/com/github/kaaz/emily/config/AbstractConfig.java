@@ -4,8 +4,11 @@ import com.github.kaaz.emily.command.annotations.LaymanName;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
 import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.perms.BotRole;
+import com.github.kaaz.emily.db.MySQLMain;
 
 import java.lang.reflect.Type;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -40,6 +43,18 @@ public class AbstractConfig<V, T extends Configurable> {
         this.normalViewing = TypeChanger.normalStorage(this.valueType);
         this.configLevel = ConfigLevel.getLevel((Class<T>) types[1]);
         EventDistributor.register(this);
+        //System.out.println("can you reach this?");
+        if (!MySQLMain.get().tableExist(name)) {
+            System.out.println("Table " + name + " doesn't exist. Creating table now");
+            try {
+                MySQLMain.get().query("CREATE TABLE `" + name + "`(id VARCHAR(1000), value VARCHAR(1000))");
+            }catch (SQLException e){
+                e.getErrorCode();
+                e.printStackTrace();
+            }
+        } else {
+            //System.out.println("Can confirm table exists :thumbsup:");
+        }
     }
 
     protected void onLoad(){}
@@ -103,7 +118,16 @@ public class AbstractConfig<V, T extends Configurable> {
     }
 
     public long getAge(Configurable configurable){
-        return ageMap.getOrDefault(configurable, 0L);
+        long value = 0;
+        try {
+            ResultSet rs = MySQLMain.get().select("SELECT * FROM " + this.getName() + "WHERE id = " + configurable.getID());
+            //System.out.println(rs);
+            //System.out.println(rs.getLong(2));
+            value = rs.getLong(2);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return value;
     }
 
     public V wrapTypeIn(String e, T configurable){
@@ -117,9 +141,15 @@ public class AbstractConfig<V, T extends Configurable> {
     // TODO SQL stuff goes here, more or less
     public V setValue(T configurable, V value){
         validateInput(configurable, value);
-        map.put(configurable, TypeChanger.toString(this.valueType, value));
-        ageMap.put(configurable, System.currentTimeMillis());
+        try {
+            //System.out.println("Trying to insert id: " + configurable.getID() + " & value: " + TypeChanger.toString(this.valueType, value) + " into the " + this.getName() + " table");
+            MySQLMain.get().insert("INSERT INTO " + this.getName() + " (`id`, `value`) VALUES ('" + configurable.getID() + "','" + TypeChanger.toString(this.valueType, value) + "');");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println(e.getErrorCode());
+        }
         return value;
+        //ageMap.put(configurable, System.currentTimeMillis());
     }
     private Map<Configurable, String> map = new HashMap<>();//TODO REMOVE TESTING
     private Map<Configurable, Long> ageMap = new HashMap<>();
@@ -142,33 +172,33 @@ public class AbstractConfig<V, T extends Configurable> {
      * @param configurable the configurable the config is to be set for
      * @param function the function the config gives the old value to and gets a new value from
      */
-    public V changeSetting(T configurable, Function<V, V> function){
+    public V changeSetting(T configurable, Function<V, V> function) {
         return this.setValue(configurable, function.apply(this.getValue(configurable)));
     }
 
-    public V alterSetting(T configurable, Consumer<V> consumer){
+    public V alterSetting(T configurable, Consumer<V> consumer) {
         V val = ObjectCloner.clone(this.getValue(configurable));
         consumer.accept(val);
         return this.setValue(configurable, val);
     }
 
-    public V setIfDefault(T configurable, Function<V, V> function){
+    public V setIfDefault(T configurable, Function<V, V> function) {
         V value = getValue(configurable);
         if (Objects.equals(value, this.getDefault(configurable))) value = this.setValue(configurable, function.apply(value));
         return value;
     }
 
-    public V setIfOld(T configurable, long age, Function<V, V> function){
+    public V setIfOld(T configurable, long age, Function<V, V> function) {
         V val = this.getValue(configurable);
         if (System.currentTimeMillis() - ageMap.get(configurable) >= age) val = function.apply(val);
         return val;
     }
 
-    public String getExteriorValue(T configurable){
+    public String getExteriorValue(T configurable) {
         return wrapTypeOut(getValue(configurable), configurable);
     }
 
-    public void setExteriorValue(T configurable, String value){
+    public void setExteriorValue(T configurable, String value) {
         setValue(configurable, wrapTypeIn(value, configurable));
     }
 
