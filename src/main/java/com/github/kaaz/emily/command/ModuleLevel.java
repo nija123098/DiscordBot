@@ -35,7 +35,7 @@ public enum ModuleLevel {
     }
     ModuleLevel(BotRole role, String icon) {
         this.botRole = role;
-        this.icon = EmoticonHelper.getChars(icon);
+        this.icon = EmoticonHelper.getChars(icon, true);
     }
     public String getIcon() {
         return this.icon;

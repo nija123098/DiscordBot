@@ -22,7 +22,7 @@ public class SCUtil {
         if (s.startsWith("soundcloud.com/")){
             s = s.substring(15).split(Pattern.quote("?"))[0];
         }
-        return URLHelper.isValid("https://soundcloud.com/" + s) ? s : null;
+        return !s.isEmpty() && URLHelper.isValid("https://soundcloud.com/" + s) ? s : null;
     }
     public static Track extractVideoCode(String code){
         code = extractCode(code);

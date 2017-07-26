@@ -19,7 +19,7 @@ public enum StarLevel {
     private String emoticon;
     StarLevel(Color color, String emoticon) {
         this.color = color;
-        this.emoticon = EmoticonHelper.getChars(emoticon);
+        this.emoticon = EmoticonHelper.getChars(emoticon, false);
     }
     public Color getColor() {
         return this.color;

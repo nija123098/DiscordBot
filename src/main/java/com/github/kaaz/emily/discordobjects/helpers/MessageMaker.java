@@ -127,7 +127,7 @@ public class MessageMaker {
         return this;
     }
     public MessageMaker withReaction(String name){
-        String chars = EmoticonHelper.getChars(name);
+        String chars = EmoticonHelper.getChars(name, false);
         if (chars == null) throw new DevelopmentException("Invalid emoticon name name");
         this.reactions.add(chars.endsWith("\u200B") ? chars.substring(0, chars.length() - 1) : chars);
         return this;
@@ -300,10 +300,10 @@ public class MessageMaker {
     private void send(int page){
         if (BotConfig.GHOST_MODE) return;
         if (!this.maySend) {
-            if (this.origin != null) ErrorWrapper.wrap(() -> this.origin.addReaction(EmoticonHelper.getChars("ok_hand")));
+            if (this.origin != null) ErrorWrapper.wrap(() -> this.origin.addReaction(EmoticonHelper.getChars("ok_hand", false)));
             return;
         }
-        if (this.origin != null && this.okHand) ErrorWrapper.wrap(() -> this.origin.addReaction(EmoticonHelper.getChars("ok_hand")));
+        if (this.origin != null && this.okHand) ErrorWrapper.wrap(() -> this.origin.addReaction(EmoticonHelper.getChars("ok_hand", false)));
         this.compile();
         if (this.embed != null){
             if (page < 0 || page >= this.fieldIndices.length) throw new DevelopmentException("Attempted to get a page that doesn't exit");

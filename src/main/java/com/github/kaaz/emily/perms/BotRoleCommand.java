@@ -24,6 +24,6 @@ public class BotRoleCommand extends AbstractCommand {
     public void command(@Argument(optional = true) User user, Guild guild, MessageMaker maker){
         maker.getTitle().appendAlternate(true, FormatHelper.makePleural(user.getDisplayName(guild)) + " BotRoles");
         Set<BotRole> botRoles = BotRole.getSet(user, guild);
-        Stream.of(BotRole.values()).forEach(role -> maker.getNewFieldPart().getTitle().appendRaw(role.name()).getFieldPart().getValue().appendRaw(EmoticonHelper.getChars(botRoles.contains(role) ? "white_check_mark" : "x")));
+        Stream.of(BotRole.values()).forEach(role -> maker.getNewFieldPart().getTitle().appendRaw(role.name()).getFieldPart().getValue().appendRaw(EmoticonHelper.getChars(botRoles.contains(role) ? "white_check_mark" : "x", false)));
     }
 }

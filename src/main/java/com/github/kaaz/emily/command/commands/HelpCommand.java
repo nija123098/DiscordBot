@@ -49,9 +49,9 @@ public class HelpCommand extends AbstractCommand {
                 maker.append("You don't have permission to look at that command!");
                 return;
             }
-            maker.appendRaw(EmoticonHelper.getChars("keyboard")).append("**Accessible Through:**");
-            maker.appendRaw(FormatHelper.makeTable(new ArrayList<>(command.getNames())) + "\n" + EmoticonHelper.getChars("notepad_spiral") + "**Description:**\n```\n");
-            maker.append(command.getHelp()).appendRaw("\n```\n" + EmoticonHelper.getChars("gear") + "**Usages:**\n```\n");
+            maker.appendRaw(EmoticonHelper.getChars("keyboard", false)).append("**Accessible Through:**");
+            maker.appendRaw(FormatHelper.makeTable(new ArrayList<>(command.getNames())) + "\n" + EmoticonHelper.getChars("notepad_spiral", false) + "**Description:**\n```\n");
+            maker.append(command.getHelp()).appendRaw("\n```\n" + EmoticonHelper.getChars("gear", false) + "**Usages:**\n```\n");
             String[] strings = normalizeUsages(command.getUsages()).split("\n");
             for (int i = 0; i < strings.length; i++) {
                 if (i % 2 == 0) maker.append(strings[i]);

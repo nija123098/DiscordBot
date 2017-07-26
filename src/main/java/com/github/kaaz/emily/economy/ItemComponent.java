@@ -13,10 +13,10 @@ public enum ItemComponent {
     BRIEFCASE,;
     private String icon;
     ItemComponent(){
-        this.icon = EmoticonHelper.getChars(this.name().toLowerCase());
+        this.icon = EmoticonHelper.getChars(this.name().toLowerCase(), true);
     }
     ItemComponent(String icon) {
-        this.icon = EmoticonHelper.getChars(icon);
+        this.icon = EmoticonHelper.getChars(icon, true);
     }
     public String getIcon() {
         return this.icon;

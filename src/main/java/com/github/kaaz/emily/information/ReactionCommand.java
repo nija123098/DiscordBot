@@ -16,7 +16,7 @@ public class ReactionCommand extends AbstractCommand {
     }
     @Command
     public void command(String s, MessageMaker maker){
-        String display = EmoticonHelper.getChars(s);
+        String display = EmoticonHelper.getChars(s, false);
         if (display == null) {
             display = EmoticonHelper.getName(s);
             if (display == null) throw new ArgumentException("Please specify a reaction by name or symbol");

@@ -21,7 +21,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class GlobalPlaylist extends Playlist {
     public static final GlobalPlaylist GLOBAL_PLAYLIST = new GlobalPlaylist();
-    private GlobalPlaylist() {}
+    private GlobalPlaylist() {
+        super(Playlist.GLOBAL_PLAYLIST_ID);
+    }
     @Override
     public String getID() {
         return Playlist.GLOBAL_PLAYLIST_ID;
@@ -43,14 +45,16 @@ public class GlobalPlaylist extends Playlist {
         return DiscordClient.getOurUser();
     }
     @Override
-    public Track getNext() {
+    public Track getNext(Guild guild) {
         if (TRACKS.size() < 50) loadTracks();
         return TRACKS.isEmpty() ? null : TRACKS.remove(Rand.getRand(TRACKS.size() - 1));
     }
     private static final List<Track> TRACKS = new CopyOnWriteArrayList<>();
     private static void loadTracks(){
         Map<Track, Float> map = new HashMap<>();
-        DownloadableTrack.getDownloadedTracks().stream().filter(track -> !ConfigHandler.getSetting(BannedTrackConfig.class, track)).forEach(track -> map.put(track, FavorHandler.getFavorAmount(track)));
+        List<Track> list = DownloadableTrack.getDownloadedTracks();
+        list.forEach(System.out::println);
+        list.stream().filter(track -> !ConfigHandler.getSetting(BannedTrackConfig.class, track)).forEach(track -> map.put(track, FavorHandler.getFavorAmount(track)));
         AtomicDouble favor = new AtomicDouble();
         map.values().forEach(favor::addAndGet);
         favor.set(favor.get() / map.size() * 2);

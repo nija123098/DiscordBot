@@ -1,10 +1,10 @@
 package com.github.kaaz.emily.config;
 
 import com.github.kaaz.emily.command.annotations.LaymanName;
+import com.github.kaaz.emily.db.Database;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
 import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.perms.BotRole;
-import com.github.kaaz.emily.db.MySQLMain;
 
 import java.lang.reflect.Type;
 import java.sql.ResultSet;
@@ -42,19 +42,16 @@ public class AbstractConfig<V, T extends Configurable> {
         if (!ObjectCloner.supports(this.valueType)) throw new DevelopmentException("Cloner does not support type: " + this.valueType.getName());
         this.normalViewing = TypeChanger.normalStorage(this.valueType);
         this.configLevel = ConfigLevel.getLevel((Class<T>) types[1]);
-        EventDistributor.register(this);
-        //System.out.println("can you reach this?");
-        if (!MySQLMain.get().tableExist(name)) {
-            System.out.println("Table " + name + " doesn't exist. Creating table now");
-            try {
-                MySQLMain.get().query("CREATE TABLE `" + name + "`(id VARCHAR(1000), value VARCHAR(1000))");
-            }catch (SQLException e){
-                e.getErrorCode();
-                e.printStackTrace();
+        try (ResultSet rs = Database.getConnection().getMetaData().getTables(null, null, name, null)) {
+            while (rs.next()) {
+                String tName = rs.getString("TABLE_NAME");
+                if (tName != null && tName.equals(name)) return;
             }
-        } else {
-            //System.out.println("Can confirm table exists :thumbsup:");
+            Database.query("CREATE TABLE `" + name + "` (id VARCHAR(50), value VARCHAR(" + (this.normalViewing ? 100 : 1000) + "), millis BIGINT)");
+        } catch (SQLException e) {
+            throw new DevelopmentException("Could not ensure table existence", e);
         }
+        EventDistributor.register(this);
     }
 
     protected void onLoad(){}
@@ -118,16 +115,14 @@ public class AbstractConfig<V, T extends Configurable> {
     }
 
     public long getAge(Configurable configurable){
-        long value = 0;
-        try {
-            ResultSet rs = MySQLMain.get().select("SELECT * FROM " + this.getName() + "WHERE id = " + configurable.getID());
-            //System.out.println(rs);
-            //System.out.println(rs.getLong(2));
-            value = rs.getLong(2);
+        if (configurable == null) throw new DevelopmentException("Attempted passing null as a configurable");
+        try{ResultSet set = Database.select("SELECT * FROM " + this.getName() + "WHERE id = " + Database.quote(configurable.getID()));
+            if (!set.next()) return -1;
+            set.getLong(3);
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace();// check
         }
-        return value;
+        return -1;
     }
 
     public V wrapTypeIn(String e, T configurable){
@@ -135,24 +130,18 @@ public class AbstractConfig<V, T extends Configurable> {
     }
     public String wrapTypeOut(V v, T configurable){// configurable may be used in over ride methods
         return TypeChanger.toString(this.valueType, v);
-        //return OTypeTranslator.translate(v, String.class);
     }
     protected void validateInput(T configurable, V v) {}
-    // TODO SQL stuff goes here, more or less
     public V setValue(T configurable, V value){
+        if (configurable == null) throw new DevelopmentException("Attempted passing null as a configurable");
         validateInput(configurable, value);
-        try {
-            //System.out.println("Trying to insert id: " + configurable.getID() + " & value: " + TypeChanger.toString(this.valueType, value) + " into the " + this.getName() + " table");
-            MySQLMain.get().insert("INSERT INTO " + this.getName() + " (`id`, `value`) VALUES ('" + configurable.getID() + "','" + TypeChanger.toString(this.valueType, value) + "');");
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println(e.getErrorCode());
+        if (this.getDefault(configurable).equals(value)) Database.query("DELETE FROM " + this.name + " WHERE id = " + Database.quote(configurable.getID()));
+        else {
+            Database.query("DELETE FROM " + this.name + " WHERE id = " + Database.quote(configurable.getID()));
+            Database.insert("INSERT INTO " + this.getName() + " (`id`, `value`, `millis`) VALUES ('" + configurable.getID() + "','" + TypeChanger.toString(this.valueType, value) + "','" + System.currentTimeMillis() + "');");
         }
         return value;
-        //ageMap.put(configurable, System.currentTimeMillis());
     }
-    private Map<Configurable, String> map = new HashMap<>();//TODO REMOVE TESTING
-    private Map<Configurable, Long> ageMap = new HashMap<>();
 
     /**
      * Gets the value for the given value.
@@ -162,8 +151,13 @@ public class AbstractConfig<V, T extends Configurable> {
      * @return the config's value
      */
     public V getValue(T configurable){// slq here as well
-        return map.containsKey(configurable) ? TypeChanger.toObject(this.valueType, map.get(configurable)) : this.getDefault(configurable);
-        //return (V) map.computeIfAbsent(configurable, c -> this.getDefault());
+        if (configurable == null) throw new DevelopmentException("Attempted passing null as a configurable");
+        ResultSet resultSet = Database.select("SELECT * FROM " + this.getName() + " WHERE id = " + Database.quote(configurable.getID()));
+        try{resultSet.next();
+            return TypeChanger.toObject(this.valueType, resultSet.getString(2));
+        } catch (SQLException e) {
+            return this.getDefault(configurable);
+        }
     }
 
     /**
@@ -190,7 +184,7 @@ public class AbstractConfig<V, T extends Configurable> {
 
     public V setIfOld(T configurable, long age, Function<V, V> function) {
         V val = this.getValue(configurable);
-        if (System.currentTimeMillis() - ageMap.get(configurable) >= age) val = function.apply(val);
+        if (System.currentTimeMillis() - getAge(configurable) >= age) val = function.apply(val);
         return val;
     }
 

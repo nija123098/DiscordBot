@@ -19,7 +19,7 @@ import com.github.kaaz.emily.util.Time;
  * Made by nija123098 on 5/24/2017.
  */
 public class CurrentCommand extends AbstractCommand {
-    private static final String NOTES = EmoticonHelper.getChars("notes");
+    private static final String NOTES = EmoticonHelper.getChars("notes", true);
     public CurrentCommand() {
         super("current", ModuleLevel.MUSIC, "playing, nowplaying, np", null, "Retrieves information about the song currently playing");
     }
@@ -46,9 +46,9 @@ public class CurrentCommand extends AbstractCommand {
     }
     static String getPlayBar(boolean paused, long current, long total){
         int first = (int) ((float) current/total * 10);
-        return EmoticonHelper.getChars(paused ? "pause_button" : "play_button")
+        return EmoticonHelper.getChars(paused ? "pause_button" : "play_button", true)
                 + FormatHelper.repeat('▬', first)
-                + EmoticonHelper.getChars("radio_button")
+                + EmoticonHelper.getChars("radio_button", true)
                 + FormatHelper.repeat('▬', 10 - first)
                 + "[" + Time.getAbbreviatedMusic(total, current) + "]";
     }

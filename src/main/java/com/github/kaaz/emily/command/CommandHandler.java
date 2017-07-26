@@ -114,7 +114,7 @@ public class CommandHandler {
      * @return the abstract command whose ailiase is the reaction chars
      */
     public static AbstractCommand getReactionCommand(String reactionName){
-        return REACTION_COMMAND_MAP.get(EmoticonHelper.getChars(reactionName));
+        return REACTION_COMMAND_MAP.get(EmoticonHelper.getChars(reactionName, false));
     }
 
     /**

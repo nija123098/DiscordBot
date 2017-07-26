@@ -1,7 +1,6 @@
 package com.github.kaaz.emily.audio;
 
 import com.github.kaaz.emily.audio.configs.playlist.PlaylistContentsConfig;
-import com.github.kaaz.emily.audio.configs.playlist.PlaylistNowPlayingConfig;
 import com.github.kaaz.emily.audio.configs.playlist.PlaylistPlayTypeConfig;
 import com.github.kaaz.emily.command.annotations.LaymanName;
 import com.github.kaaz.emily.config.ConfigHandler;
@@ -19,7 +18,7 @@ import com.github.kaaz.emily.util.Rand;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 /**
  * Made by nija123098 on 3/30/2017.
@@ -69,7 +68,7 @@ public class Playlist implements Configurable {
     }
     private String id;
     Playlist() {}
-    private Playlist(String id) {
+    protected Playlist(String id) {
         this.id = id;
     }
     @Override
@@ -112,12 +111,13 @@ public class Playlist implements Configurable {
         return this.id.startsWith("user-") ? User.getUser(this.id.split("-")[1]) : Guild.getGuild(this.id.split("-")[1]);
     }
 
-    public Track getNext(){
-        return ConfigHandler.getSetting(PlaylistPlayTypeConfig.class, this).decide.apply(this);
+    public Track getNext(Guild guild){
+        return ConfigHandler.getSetting(PlaylistPlayTypeConfig.class, this).decide.apply(this, guild);
     }
 
+    private static final Map<Playlist, Map<Guild, Integer>> SEQUENTIAL_MAP = new ConcurrentHashMap<>();
     public enum PlayType {
-        RANDOM(playlist -> {
+        RANDOM((playlist, guild) -> {
             List<Track> list = ConfigHandler.getSetting(PlaylistContentsConfig.class, playlist);
             switch (list.size()){
                 case 0:
@@ -125,10 +125,9 @@ public class Playlist implements Configurable {
                 case 1:
                     return list.get(0);
                 default:
-                    Integer current = ConfigHandler.getSetting(PlaylistNowPlayingConfig.class, playlist);
-                    return list.get(current == null ? Rand.getRand(list.size() - 1) : Rand.getRand(list.size() - 1, current));
+                    return list.get(Rand.getRand(list.size() - 1));
             }
-        }), SEQUENTIAL(playlist -> {
+        }), SEQUENTIAL((playlist, guild) -> {
             List<Track> list = ConfigHandler.getSetting(PlaylistContentsConfig.class, playlist);
             switch (list.size()){
                 case 0:
@@ -136,11 +135,11 @@ public class Playlist implements Configurable {
                 case 1:
                     return list.get(0);
                 default:
-                    return list.get(ConfigHandler.getSetting(PlaylistNowPlayingConfig.class, playlist));
+                    return list.get(SEQUENTIAL_MAP.computeIfAbsent(playlist, p -> new ConcurrentHashMap<>()).compute(guild, (g, integer) -> integer == null ? 0 : integer + 1));
             }
         }),;
-        private Function<Playlist, Track> decide;
-        PlayType(Function<Playlist, Track> decide) {
+        private BiFunction<Playlist, Guild, Track> decide;
+        PlayType(BiFunction<Playlist, Guild, Track> decide) {
             this.decide = decide;
         }
     }

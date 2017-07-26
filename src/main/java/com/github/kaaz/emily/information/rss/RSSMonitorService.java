@@ -53,7 +53,7 @@ public class RSSMonitorService extends AbstractService {
         } catch (FeedException | IOException ignored) {}
         return null;
     }
-    private static final String SAT = EmoticonHelper.getChars("satellite") + " ";
+    private static final String SAT = EmoticonHelper.getChars("satellite", false) + " ";
     private static class RSSNote {
         private MessageMaker maker = new MessageMaker((Channel) null);
         private RSSNote(SyndEntry entry) {

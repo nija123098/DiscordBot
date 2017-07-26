@@ -17,7 +17,7 @@ import java.util.concurrent.ExecutionException;
  * Made by nija123098 on 6/19/2017.
  */
 public class DogFactCommand extends AbstractCommand {
-    private static final String DOG = EmoticonHelper.getChars("dog") + " ";
+    private static final String DOG = EmoticonHelper.getChars("dog", false) + " ";
     public DogFactCommand() {
         super("dogfact", BotRole.BOT_ADMIN, ModuleLevel.FUN, null, null, "Posts a random dog fact");
     }

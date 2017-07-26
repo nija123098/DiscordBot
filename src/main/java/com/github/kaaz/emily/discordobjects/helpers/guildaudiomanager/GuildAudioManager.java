@@ -9,7 +9,6 @@ import com.github.kaaz.emily.config.AbstractConfig;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.configs.guild.GuildActivePlaylistConfig;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
-import com.github.kaaz.emily.discordobjects.wrappers.DiscordClient;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.github.kaaz.emily.discordobjects.wrappers.VoiceChannel;
@@ -22,10 +21,9 @@ import com.github.kaaz.emily.exeption.GhostException;
 import com.github.kaaz.emily.favor.FavorHandler;
 import com.github.kaaz.emily.launcher.BotConfig;
 import com.github.kaaz.emily.launcher.Launcher;
+import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.service.services.ScheduleService;
-import com.github.kaaz.emily.util.Care;
 import com.github.kaaz.emily.util.LangString;
-import com.github.kaaz.emily.util.SpeechHelper;
 import com.sedmelluq.discord.lavaplayer.player.AudioConfiguration;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
@@ -39,6 +37,7 @@ import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
 import org.eclipse.jetty.util.ConcurrentHashSet;
 import sx.blah.discord.handle.audio.AudioEncodingType;
 import sx.blah.discord.handle.audio.IAudioProvider;
+import sx.blah.discord.handle.obj.IVoiceState;
 
 import java.util.List;
 import java.util.Map;
@@ -59,20 +58,12 @@ public class GuildAudioManager extends AudioEventAdapter{
         PLAYER_MANAGER.registerSourceManager(new SoundCloudAudioSourceManager(false));
         PLAYER_MANAGER.registerSourceManager(new LocalAudioSourceManager());
         AtomicInteger integer = new AtomicInteger();
-        Launcher.registerStartup(() -> ConfigHandler.getNonDefaultSettings(PlayQueueConfig.class).forEach((channel, tracks) -> {
-            ScheduleService.schedule(integer.getAndIncrement() + 5_000, () -> {
-                boolean hasUser = false;
-                for (User user : channel.getConnectedUsers()){
-                    if (!user.isBot()) {
-                        hasUser = true;
-                        break;
-                    }
-                }
-                if (hasUser) return;
-                GuildAudioManager manager = getManager(channel);
-                manager.queue.addAll(tracks);
-            });
-        }));
+        Launcher.registerStartup(() -> ConfigHandler.getNonDefaultSettings(PlayQueueConfig.class).forEach((channel, tracks) -> ScheduleService.schedule(integer.getAndIncrement() + 5_000, () -> {
+            if (!hasValidListeners(channel)) return;
+            GuildAudioManager manager = getManager(channel);
+            manager.queueTrack(tracks.remove(0));
+            manager.queue.addAll(tracks);
+        })));
         PLAYER_MANAGER.getConfiguration().setOpusEncodingQuality(AudioConfiguration.OPUS_QUALITY_MAX);
         PLAYER_MANAGER.getConfiguration().setResamplingQuality(AudioConfiguration.ResamplingQuality.HIGH);
         AbstractConfig<List<Track>, VoiceChannel> config = ConfigHandler.getConfig(PlayQueueConfig.class);
@@ -89,7 +80,8 @@ public class GuildAudioManager extends AudioEventAdapter{
         if (BotConfig.GHOST_MODE) throw new GhostException();
         if (make) {
             GuildAudioManager current = getManager(channel.getGuild());
-            if (current != null && !current.channel.equals(channel)) throw new ArgumentException("You must be in the voice channel with " + DiscordClient.getOurUser().getDisplayName(channel.getGuild()) + " to use that command");
+            if (current != null && !current.channel.equals(channel)) throw new ArgumentException("You must be in the voice channel with me to use that command");
+            if (!hasValidListeners(channel)) throw new ArgumentException("Someone has to be able to hear me in that voice channel");
             AtomicReference<VoiceChannel> reference = new AtomicReference<>(channel);
             return MAP.computeIfAbsent(channel.getGuild().getID(), s -> new GuildAudioManager(reference.get()));
         } else {
@@ -109,9 +101,10 @@ public class GuildAudioManager extends AudioEventAdapter{
     private final List<LangString> speeches = new CopyOnWriteArrayList<>();
     private final List<Track> queue = new CopyOnWriteArrayList<>();
     private final List<LangString> interups = new CopyOnWriteArrayList<>();
-    private Track paused, current;
+    private Track paused;
+    private Track current;
     private long pausePosition;
-    private boolean leaveAfterThis, loop;
+    private boolean leaveAfterThis, loop, leaving;
     private GuildAudioManager(VoiceChannel channel) {
         this.channel = channel;
         this.lavaPlayer = PLAYER_MANAGER.createPlayer();
@@ -119,18 +112,21 @@ public class GuildAudioManager extends AudioEventAdapter{
         this.channel.channel().getGuild().getAudioManager().setAudioProvider(new AudioProvider(this.lavaPlayer));
         this.lavaPlayer.setVolume(ConfigHandler.getSetting(VolumeConfig.class, channel.getGuild()));
         this.channel.join();
-        this.queueSpeech(new LangString(true, "Hello"));
+        this.start(new SpeechTrack(new LangString(true, "Hello"), MessageMaker.getLang(null, this.channel)), 0);
     }
     public void leave(){
         this.clearQueue();
         if (this.current != null) this.skipTrack();
-        if (!this.channel.getConnectedUsers().isEmpty()){
-            this.queueSpeech(new LangString(true, "Goodbye"));// todo make leave right after end of speech and clear queue first
-            Care.less(() -> Thread.sleep(3_000));
+        if (this.leaving || !hasValidListeners(this.channel)){
+            MAP.remove(this.channel.getGuild().getID());
+            this.lavaPlayer.destroy();
+            this.channel.leave();
+        }else{
+            this.loop = false;
+            this.leaveAfterThis = true;
+            this.leaving = true;
+            this.queueSpeech(new LangString(true, "Goodbye"));
         }
-        MAP.remove(this.channel.getGuild().getID());
-        this.lavaPlayer.destroy();
-        this.channel.leave();
     }
     public void pause(boolean pause){
         this.lavaPlayer.setPaused(pause);
@@ -150,44 +146,42 @@ public class GuildAudioManager extends AudioEventAdapter{
         }
     }
     public void interrupt(LangString langString){// must fully exist
-        SpeechTrack track = new SpeechTrack(SpeechHelper.getFile(langString, MessageMaker.getLang(null, this.channel)));
         if (this.current == null && this.queue.isEmpty()) {
-            this.queueTrack(track);
+            this.queueTrack(new SpeechTrack(langString, MessageMaker.getLang(null, this.channel)));
             return;
         }
         if (this.paused != null){
             this.interups.add(langString);
             return;
         }
-        this.lavaPlayer.setPaused(true);
         this.pausePosition = this.lavaPlayer.getPlayingTrack().getPosition();
         this.paused = this.current;
-        this.current = null;
+        this.interups.add(langString);
         this.lavaPlayer.stopTrack();
-        this.start(track, 0);
-        this.paused = null;
     }
     public void setPlaylistOn(boolean on){
         ConfigHandler.setSetting(QueueTrackOnlyConfig.class, this.channel.getGuild(), on);
     }
     private void start(Track track, int position){
-        this.skipSet.clear();
         this.current = track;
+        this.skipSet.clear();
         this.lavaPlayer.setPaused(true);
         this.lavaPlayer.startTrack(this.current.getTrack(), true);
         if (position != 0) this.lavaPlayer.getPlayingTrack().setPosition(position);
         this.lavaPlayer.setPaused(false);
-        if (!(track instanceof SpeechTrack)) ConfigHandler.changeSetting(PlayCountConfig.class, track, integer -> integer + 1);
+        ConfigHandler.changeSetting(PlayCountConfig.class, track, integer -> integer + 1);
     }
     public void seek(long time) {
         this.lavaPlayer.getPlayingTrack().setPosition(time);
     }
     public int skipTrack() {
         int size = this.queue.size();
+        this.loop = false;
         this.lavaPlayer.stopTrack();
         return size;
     }
     public void onFinish(){
+        if (this.current == null) return;
         FavorHandler.addFavorLevel(this.current, this.voiceChannel().getConnectedUsers().size());
         if (!this.interups.isEmpty()) {
             this.start(new SpeechTrack(this.interups.remove(0), MessageMaker.getLang(null, this.channel)), 0);
@@ -206,7 +200,7 @@ public class GuildAudioManager extends AudioEventAdapter{
         }else if (!this.queue.isEmpty()){
             this.start(this.queue.remove(0), 0);
         }else if (!ConfigHandler.getSetting(QueueTrackOnlyConfig.class, this.channel.getGuild())){
-            this.queueTrack(ConfigHandler.getSetting(GuildActivePlaylistConfig.class, this.channel.getGuild()).getNext());
+            this.queueTrack(ConfigHandler.getSetting(GuildActivePlaylistConfig.class, this.channel.getGuild()).getNext(this.channel.getGuild()));
         }else this.current = null;
     }
     public void leaveAfterThis(){
@@ -234,7 +228,7 @@ public class GuildAudioManager extends AudioEventAdapter{
         return this.lavaPlayer.isPaused();
     }
     public void checkSkip(){
-        if (this.skipSet.size() / (float) this.channel.getConnectedUsers().size() >= ConfigHandler.getSetting(SkipPercentConfig.class, this.channel.getGuild()) / 100F){
+        if (this.skipSet.size() / (float) validListeners(this.channel) >= ConfigHandler.getSetting(SkipPercentConfig.class, this.channel.getGuild()) / 100F){
             this.skipTrack();
         }
     }
@@ -302,5 +296,14 @@ public class GuildAudioManager extends AudioEventAdapter{
         public AudioEncodingType getAudioEncodingType() {
             return AudioEncodingType.OPUS;
         }
+    }
+    public static int validListeners(VoiceChannel channel){
+        return (int) channel.getConnectedUsers().stream().filter(user -> BotRole.USER.hasRequiredRole(user, null)).filter(user -> {
+            IVoiceState voiceState = user.user().getVoiceStateForGuild(channel.getGuild().guild());
+            return !(voiceState.isDeafened() || voiceState.isSelfDeafened());
+        }).count();
+    }
+    public static boolean hasValidListeners(VoiceChannel channel){
+        return validListeners(channel) > 0;
     }
 }

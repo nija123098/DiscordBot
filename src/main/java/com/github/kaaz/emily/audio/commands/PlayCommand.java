@@ -7,9 +7,6 @@ import com.github.kaaz.emily.command.annotations.Argument;
 import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
-import com.github.kaaz.emily.exeption.DevelopmentException;
-
-import java.util.List;
 
 /**
  * Made by nija123098 on 6/8/2017.
@@ -20,9 +17,6 @@ public class PlayCommand extends AbstractCommand {
     }
     @Command
     public void command(GuildAudioManager manager, @Argument(info = "a song name or url") String s, MessageMaker maker) {
-        if (s.isEmpty()) manager.onFinish();
-        List<Track> tracks = Track.getTracks(s);
-        if (!tracks.isEmpty()) tracks.forEach(manager::queueTrack);
-        else throw new DevelopmentException("How did you get here?");
+        Track.getTracks(s).forEach(manager::queueTrack);
     }
 }

@@ -11,7 +11,7 @@ public class AbstractSlotPack {
     public AbstractSlotPack(String[] chars, int...vals) {
         this.chars = new String[chars.length];
         for (int i = 0; i < this.chars.length; i++) {
-            this.chars[i] = EmoticonHelper.getChars(chars[i]);
+            this.chars[i] = EmoticonHelper.getChars(chars[i], true);
         }
         this.vals = vals;
     }

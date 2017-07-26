@@ -35,7 +35,7 @@ public class GuildUser implements Configurable {
      * @return the guild user object for the guild and user
      */
     public static GuildUser getGuildUser(Guild guild, User user){
-        return getGuildUser(guild.getID() + "-id-" + user.getID());
+        return getGuildUser("gu-" + guild.getID() + "-id-" + user.getID());
     }
     private String id;
     protected GuildUser() {}
@@ -75,7 +75,8 @@ public class GuildUser implements Configurable {
         return Configurable.class.isInstance(o) && this.getID().equals(((Configurable) o).getID());
     }
     public Guild getGuild(){
-        return Guild.getGuild(this.id.split("-id-")[0]);
+        String s = this.id.split("-id-")[0];
+        return Guild.getGuild(s.substring(3, s.length()));
     }
     public User getUser(){
         return User.getUser(this.id.split("-id-")[1]);

@@ -92,7 +92,7 @@ public class AbstractCommand {
             this.emoticonAliases = new HashSet<>(0);
         }
         this.allNames.addAll(this.emoticonAliases);
-        this.emoticonAliases.stream().map(EmoticonHelper::getChars).forEach(this.allNames::add);
+        this.emoticonAliases.stream().map(s -> EmoticonHelper.getChars(s, false)).forEach(this.allNames::add);
         if (rAliases != null && superCommand != null){
             for (String rel : rAliases.split(", ")){
                 superCommand.getNames().forEach(s -> this.allNames.add(s + " " + rel));

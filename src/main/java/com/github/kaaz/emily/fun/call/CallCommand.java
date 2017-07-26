@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  * Made by nija123098 on 6/19/2017.
  */
 public class CallCommand extends AbstractCommand {
-    private static final String CALL_ICON = EmoticonHelper.getChars("telephone") + " ";
+    private static final String CALL_ICON = EmoticonHelper.getChars("telephone", false) + " ";
     private static final Map<Channel, Integer> CALL_IDS = new ConcurrentHashMap<>();
     private static final Map<Integer, Set<Channel>> CALLS = new ConcurrentHashMap<>();
     private static final AtomicInteger IDS = new AtomicInteger(-1);

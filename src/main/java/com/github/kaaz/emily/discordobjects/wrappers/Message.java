@@ -133,7 +133,7 @@ public class Message {// should not be kept stored, too many are made
     }
 
     public Reaction getReactionByName(String name){
-        return getReaction(EmoticonHelper.getChars(name));
+        return getReaction(EmoticonHelper.getChars(name, false));
     }
 
     public Reaction addReaction(String s) {
@@ -145,7 +145,7 @@ public class Message {// should not be kept stored, too many are made
     }
 
     public Reaction addReactionByName(String name) {
-        return addReaction(EmoticonHelper.getChars(name));
+        return addReaction(EmoticonHelper.getChars(name, false));
     }
 
     public void removeReaction(Reaction reaction) {
@@ -157,7 +157,7 @@ public class Message {// should not be kept stored, too many are made
     }
 
     public void removeReactionByName(String name) {
-        removeReaction(EmoticonHelper.getChars(name));
+        removeReaction(EmoticonHelper.getChars(name, false));
     }
 
     public boolean isDeleted() {

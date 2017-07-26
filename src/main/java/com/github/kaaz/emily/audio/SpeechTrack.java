@@ -1,6 +1,7 @@
 package com.github.kaaz.emily.audio;
 
 import com.github.kaaz.emily.util.AudioHelper;
+import com.github.kaaz.emily.util.FormatHelper;
 import com.github.kaaz.emily.util.LangString;
 import com.github.kaaz.emily.util.SpeechHelper;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
@@ -12,11 +13,9 @@ import java.io.File;
  */
 public class SpeechTrack extends Track {
     private final File file;
-    public SpeechTrack(File file) {
-        this.file = file;
-    }
     public SpeechTrack(LangString langString, String lang){
-        this(SpeechHelper.getFile(langString, lang));
+        super(FormatHelper.filtering(langString.asBuilt(), Character::isLetterOrDigit));
+        this.file = SpeechHelper.getFile(langString, lang);
     }
     @Override
     public String getSource() {

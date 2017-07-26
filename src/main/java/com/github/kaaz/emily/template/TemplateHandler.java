@@ -7,6 +7,7 @@ import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.util.Log;
 import com.github.kaaz.emily.util.Rand;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -23,13 +24,11 @@ public class TemplateHandler {
     }
 
     public static Template getTemplate(KeyPhrase keyPhrase, Guild guild, List<Template> exemptions){
-        List<Template> templates = ConfigHandler.getSetting(GuildTemplatesConfig.class, guild).get(keyPhrase);
-        if (templates == null || templates.size() == 0){
-            templates = ConfigHandler.getSetting(GlobalTemplateConfig.class, GlobalConfigurable.GLOBAL).get(keyPhrase);
-        }
-        if (templates == null || templates.size() == 0){
+        List<Template> templates = guild != null ? ConfigHandler.getSetting(GuildTemplatesConfig.class, guild).get(keyPhrase) : Collections.emptyList();
+        if (templates.isEmpty()) templates = ConfigHandler.getSetting(GlobalTemplateConfig.class, GlobalConfigurable.GLOBAL).get(keyPhrase);
+        if (templates == null || templates.isEmpty()){
             Log.log("No templates found for KeyPhrase: " + keyPhrase.name());
-            return null;// "No templates for KeyPhrase: " + keyPhrase.name()
+            return null;
         }// should not throw an exception since nothing failed
         if (exemptions.size() >= templates.size()){
             return templates.get(Rand.getRand(templates.size() - 1));

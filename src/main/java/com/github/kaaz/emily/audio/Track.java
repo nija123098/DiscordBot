@@ -10,10 +10,7 @@ import com.github.kaaz.emily.util.*;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import org.reflections.Reflections;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 /**
@@ -39,7 +36,7 @@ public abstract class Track implements Configurable{
     public static Track getTrack(String id){
         if (id == null) return null;
         String[] split = id.split("-");
-        if (split.length == 1) return null;
+        if (split.length != 2) return null;
         Class<?> clazz = CLASS_MAP.get(split[0].toUpperCase());
         if (clazz == null) return null;
         Function<String, Track> function = ID_MAP.get(clazz);
@@ -71,7 +68,7 @@ public abstract class Track implements Configurable{
         if (code != null){
             Collections.singletonList(Track.getTrack(TwitchTrack.class, code));
         }
-        return Collections.emptyList();
+        return new ArrayList<>(1);
     }
     private String id;
     protected Track() {}

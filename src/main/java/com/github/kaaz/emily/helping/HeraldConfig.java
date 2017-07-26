@@ -3,6 +3,7 @@ package com.github.kaaz.emily.helping;
 import com.github.kaaz.emily.config.AbstractConfig;
 import com.github.kaaz.emily.config.GuildUser;
 import com.github.kaaz.emily.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
+import com.github.kaaz.emily.discordobjects.wrappers.DiscordClient;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.github.kaaz.emily.discordobjects.wrappers.VoiceChannel;
@@ -32,6 +33,7 @@ public class HeraldConfig extends AbstractConfig<Boolean, Guild>{
     }
     private static final List<GuildUser> BUFFER = new MemoryManagementService.ManagedList<>(30_000);
     private void herald(VoiceChannel channel, User user, boolean join){
+        if (DiscordClient.getOurUser().equals(user)) return;
         GuildAudioManager manager = getManager(channel);
         GuildUser guildUser = GuildUser.getGuildUser(channel.getGuild(), user);
         if (manager == null) return;

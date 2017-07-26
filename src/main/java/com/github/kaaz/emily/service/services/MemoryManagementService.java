@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
 /**
@@ -16,8 +17,8 @@ import java.util.function.Consumer;
  */
 public class MemoryManagementService extends AbstractService {
     private static final long SERVICE_ITERATION_TIME = 1_000;// 1 min
-    private static final List<ManagedMap<?, ?>> MAPS = new ArrayList<>();
-    private static final List<ManagedList<?>> LISTS = new ArrayList<>();
+    private static final List<ManagedMap<?, ?>> MAPS = new CopyOnWriteArrayList<>();
+    private static final List<ManagedList<?>> LISTS = new CopyOnWriteArrayList<>();
     private static final long[] INDICES = new long[ConfigLevel.values().length];
     private static final float[] LEFT_OVER = new float[INDICES.length];
     private static final float[] CONFIG_PER = new float[INDICES.length];

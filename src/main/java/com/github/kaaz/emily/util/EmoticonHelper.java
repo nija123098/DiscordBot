@@ -27,10 +27,6 @@ public class EmoticonHelper {
             Log.log("Could not load emoticons", e);
         }
     }
-    public static String getChars(String name){
-        String chars = EMOTICON_MAP.get(name);
-        return chars == null ? null : chars + '\u200B';
-    }
     public static String getChars(String name, boolean noSpace){
         String chars = EMOTICON_MAP.get(name);
         if (chars == null) return null;

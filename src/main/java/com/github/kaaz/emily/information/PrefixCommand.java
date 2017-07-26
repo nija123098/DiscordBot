@@ -19,7 +19,9 @@ public class PrefixCommand extends AbstractCommand {
     }
     @Command
     public void command(MessageMaker maker, Guild guild, User user, String s){
-        if ((s != null && !s.isEmpty()) && BotRole.GUILD_TRUSTEE.hasRequiredRole(user, guild)) ConfigHandler.setSetting(GuildPrefixConfig.class, guild, s);
+        if ((s != null && !s.isEmpty()) && BotRole.GUILD_TRUSTEE.hasRequiredRole(user, guild)) {
+            ConfigHandler.setSetting(GuildPrefixConfig.class, guild, s);
+        }
         maker.appendAlternate(false, "My prefix in this guild is `", ConfigHandler.getSetting(GuildPrefixConfig.class, guild), "`\n To change it use the config command");
     }
 }

@@ -21,7 +21,7 @@ public class CurrentUpdateCommand extends AbstractCommand {
             Track track;
             if ((track = manager.currentTrack()) != null){
                 Long length = track.getLength();
-                maker.forceCompile().appendRaw(EmoticonHelper.getChars("notes") + track.getName() + (length != null ? "\n" + CurrentCommand.getPlayBar(manager.isPaused(), manager.currentTime(), length) : ""));
+                maker.forceCompile().appendRaw(EmoticonHelper.getChars("notes", true) + track.getName() + (length != null ? "\n" + CurrentCommand.getPlayBar(manager.isPaused(), manager.currentTime(), length) : ""));
             }
         });
     }

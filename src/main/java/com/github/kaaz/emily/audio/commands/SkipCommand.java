@@ -36,7 +36,7 @@ public class SkipCommand extends AbstractCommand {
         if (percent >= required) {
             int size = manager.skipTrack();
             if (size > 0) maker.append("There are " + size + " more songs");
-            else maker.append("There are no more songs to play");
+            else maker.append("There are no more songs to play from the queue");
         }
         else maker.append((percent - required) + "% is required to skip this track");
     }

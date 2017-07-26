@@ -41,7 +41,7 @@ public class UDCommand extends AbstractCommand {
             maker.getTitle().append(firstResult.get("word").toString());
             maker.append(StringEscapeUtils.unescapeHtml4(firstResult.get("definition").toString()));
             if (!firstResult.get("example").toString().isEmpty()) maker.append("\n\n*" + firstResult.get("example") + "*\n");
-            maker.append(EmoticonHelper.getChars("+1") + firstResult.get("thumbs_up") + "  " + EmoticonHelper.getChars("-1") + firstResult.get("thumbs_down"));
+            maker.append(EmoticonHelper.getChars("+1", false) + firstResult.get("thumbs_up") + "  " + EmoticonHelper.getChars("-1", false) + firstResult.get("thumbs_down"));
             maker.getNote().appendRaw("by " + firstResult.get("author").toString());
         } catch (IOException | ParseException e) {
             e.printStackTrace();

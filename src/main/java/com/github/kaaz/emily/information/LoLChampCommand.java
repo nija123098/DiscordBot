@@ -27,8 +27,11 @@ public class LoLChampCommand extends AbstractCommand {
     private final Map<String, Champion> dataChampionList = new HashMap<>();
     private String gameVersion = null;
     private String baseUrl = null;
-    private static final String[] skillIndex = {EmoticonHelper.getChars("regional_indicator_q"), EmoticonHelper.getChars("regional_indicator_w"), EmoticonHelper.getChars("regional_indicator_r"), EmoticonHelper.getChars("regional_indicator_s")};
-    private static String SWORDS = EmoticonHelper.getChars("crossed_swords"), EXPLOSION = EmoticonHelper.getChars("diamond_shape_with_a_dot_inside"), DEFENSE = EmoticonHelper.getChars("shield"), QUESTION_MARK = EmoticonHelper.getChars("question"), P = EmoticonHelper.getChars("regional_indicator_p");
+    private static final String[] skillIndex = {"q", "w", "r", "s"};
+    private static String SWORDS = EmoticonHelper.getChars("crossed_swords", true), EXPLOSION = EmoticonHelper.getChars("diamond_shape_with_a_dot_inside", true), DEFENSE = EmoticonHelper.getChars("shield", true), QUESTION_MARK = EmoticonHelper.getChars("question", true), P = EmoticonHelper.getChars("regional_indicator_p", true);
+    static {
+        for (int i = 0; i < skillIndex.length; i++) skillIndex[i] = EmoticonHelper.getChars("regional_indicator_" + skillIndex[i], true);
+    }
     public LoLChampCommand() {
         super("lolchamp", ModuleLevel.INFO, null, null, "check out a league of legends champion");
         this.api = BotConfig.RIOT_GAMES_TOKEN != null ? new RiotApi(new ApiConfig().setKey(BotConfig.RIOT_GAMES_TOKEN)) : null;

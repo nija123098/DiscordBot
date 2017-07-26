@@ -1,7 +1,6 @@
 package com.github.kaaz.emily.favor.configs;
 
 import com.github.kaaz.emily.config.AbstractConfig;
-import com.github.kaaz.emily.config.ConfigLevel;
 import com.github.kaaz.emily.config.GuildUser;
 import com.github.kaaz.emily.discordobjects.wrappers.Role;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventListener;
@@ -17,7 +16,7 @@ public class EarnRankConfig extends AbstractConfig<Float, Role> {
     }
     @EventListener
     public void handle(FavorChangeEvent event){// change to config change event
-        if (!event.getConfigurable().getConfigLevel().equals(ConfigLevel.GUILD_USER)) return;
+        if (!event.getConfigurable().getClass().equals(GuildUser.class)) return;
         GuildUser user = (GuildUser) event.getConfigurable();
         user.getGuild().getRoles().stream().filter(role -> this.getValue(role) != null).forEach(role -> {
             if (this.getValue(role) < event.getNewValue()) user.getUser().removeRole(role);

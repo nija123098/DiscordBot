@@ -18,7 +18,7 @@ import com.github.kaaz.emily.util.Rand;
  * Made by nija123098 on 5/17/2017.
  */
 public class SlotCommand extends AbstractCommand {
-    private static final String UNKNOWN = EmoticonHelper.getChars("white_small_square");
+    private static final String UNKNOWN = EmoticonHelper.getChars("white_small_square", false);
     public SlotCommand() {
         super("slot", ModuleLevel.FUN, null, null, "Gambling.");
     }

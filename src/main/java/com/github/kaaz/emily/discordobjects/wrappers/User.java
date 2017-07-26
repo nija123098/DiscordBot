@@ -44,7 +44,7 @@ public class User implements Configurable {
     }
     private transient final AtomicReference<IUser> reference;
     private String ID;
-    IUser user(){
+    public IUser user(){
         return reference.get();
     }
     protected User() {

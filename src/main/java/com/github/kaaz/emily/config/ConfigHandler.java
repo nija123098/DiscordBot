@@ -2,6 +2,7 @@ package com.github.kaaz.emily.config;
 
 import com.github.kaaz.emily.audio.Playlist;
 import com.github.kaaz.emily.audio.Track;
+import com.github.kaaz.emily.db.Database;
 import com.github.kaaz.emily.discordobjects.wrappers.Channel;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.Role;
@@ -10,7 +11,6 @@ import com.github.kaaz.emily.exeption.ArgumentException;
 import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.launcher.Reference;
 import com.github.kaaz.emily.util.Log;
-import com.github.kaaz.emily.db.MySQLMain;
 import org.reflections.Reflections;
 
 import java.util.*;
@@ -34,7 +34,7 @@ public class ConfigHandler {
     private static final Map<String, AbstractConfig<?, ? extends Configurable>> STRING_MAP;
     private static final Map<Class<? extends Configurable>, Function<String, ? extends Configurable>> FUNCTION_MAP = new ConcurrentHashMap<>(10);
     static {
-        MySQLMain.init();
+        Database.init();
         Set<Class<? extends AbstractConfig>> classes = new Reflections(Reference.BASE_PACKAGE).getSubTypesOf(AbstractConfig.class);
         CLASS_MAP = new HashMap<>(classes.size() + 2, 1);
         STRING_MAP = new HashMap<>(classes.size() + 2, 1);

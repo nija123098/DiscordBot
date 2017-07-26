@@ -33,6 +33,6 @@ public class UserCommand extends AbstractCommand {
         addAtrib(maker, "calendar_spiral", "Joined discord", Time.getAbbreviated(System.currentTimeMillis() - user.getJoinDate()) + " ago");
     }
     private static void addAtrib(MessageMaker maker, String icon, String info, String content){
-        maker.appendAlternate(true, EmoticonHelper.getChars(icon), "  " + info, ": " + content + "\n");
+        maker.appendAlternate(true, EmoticonHelper.getChars(icon, false), "  " + info, ": " + content + "\n");
     }
 }

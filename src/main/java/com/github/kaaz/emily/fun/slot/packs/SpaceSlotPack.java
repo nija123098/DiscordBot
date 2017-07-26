@@ -13,7 +13,7 @@ import java.util.stream.Stream;
  * Made by nija123098 on 5/19/2017.
  */
 public class SpaceSlotPack extends AbstractSlotPack {
-    private static final List<String> EARTHS = Stream.of("earth_americas", "earth_africa", "earth_asia").map(EmoticonHelper::getChars).collect(Collectors.toList());
+    private static final List<String> EARTHS = Stream.of("earth_americas", "earth_africa", "earth_asia").map(s -> EmoticonHelper.getChars(s, false)).collect(Collectors.toList());
     public SpaceSlotPack() {
         super(new String[]{"space_invader", "alien", "robot", "whale", "sunflower", "earth_africa"}, 20, 20, 15, 10, 10, 5);
         ScheduleService.scheduleRepeat(180000, 180000, () -> this.chars[5] = EARTHS.get(Rand.getRand(EARTHS.size()-1)));

@@ -38,7 +38,7 @@ public class SteamCommand extends AbstractCommand {
             maker.append(StringHelper.ensureSize(app.getAboutTheGame(), 200));
             maker.getNewFieldPart().withBoth("Price", app.isFreeToPlay() ? "FREE" : app.getPriceCurrency().getSymbol() + app.getPrice());
             maker.getNewFieldPart().withBoth("metacritic", app.getMetacriticScore() == null ? "none" : app.getMetacriticScore() + "");
-            maker.getNewFieldPart().withBoth("OS", (app.isAvailableForWindows() ? EmoticonHelper.getChars("desktop") : "") + (app.isAvailableForMac() ? EmoticonHelper.getChars("apple") : "") + (app.isAvailableForLinux() ? EmoticonHelper.getChars("penguin") : ""));
+            maker.getNewFieldPart().withBoth("OS", (app.isAvailableForWindows() ? EmoticonHelper.getChars("desktop", true) : "") + (app.isAvailableForMac() ? EmoticonHelper.getChars("apple", true) : "") + (app.isAvailableForLinux() ? EmoticonHelper.getChars("penguin", true) : ""));
             maker.withThumb(app.getHeaderImage());
             if (app.getRequiredAge() != 0) maker.getNewFieldPart().withBoth("age", app.getRequiredAge() + "");
             String code = ConfigHandler.getSetting(UserLanguageConfig.class, user);
@@ -54,7 +54,7 @@ public class SteamCommand extends AbstractCommand {
                 }
                 if (language.equals(s)) supported.set(true);
             });
-            maker.getNewFieldPart().withBoth("Language", supported.get() ? EmoticonHelper.getChars("white_check_mark") : (FormatHelper.cleanOfXML(app.getSupportedLanguages()) + ""));
+            maker.getNewFieldPart().withBoth("Language", supported.get() ? EmoticonHelper.getChars("white_check_mark", false) : (FormatHelper.cleanOfXML(app.getSupportedLanguages()) + ""));
         } catch (SteamApiException e) {
             throw new DevelopmentException(e);
         }

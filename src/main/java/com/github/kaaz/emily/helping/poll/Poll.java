@@ -95,7 +95,7 @@ public class Poll {
         LangString string = new LangString();
         string.appendTranslation("Poll by ").appendRaw(this.origin.getAuthor().getDisplayName(this.origin.getGuild()) + "\n**" + this.question + "**\n");
         for (int i = 0; i < this.options.length; i++) {
-            string.appendRaw(EmoticonHelper.getChars(LanguageHelper.getInteger(i + 1)) + " " + this.options[i] + "\n");
+            string.appendRaw(EmoticonHelper.getChars(LanguageHelper.getInteger(i + 1), false) + " " + this.options[i] + "\n");
         }
         string.appendTranslation("Poll ID: " + this.pollID);
         return string;
@@ -117,7 +117,7 @@ public class Poll {
         }
         maker.append("Your poll has been resolved").appendRaw(":\n**" + this.question + "**");
         for (int i = option.length - 1; i > -1; --i) {
-            maker.appendRaw(EmoticonHelper.getChars(LanguageHelper.getInteger(option[i])) + this.options[option[i]] + " ").append("with " + votes[option[i]] + " votes\n");
+            maker.appendRaw(EmoticonHelper.getChars(LanguageHelper.getInteger(option[i]), false) + this.options[option[i]] + " ").append("with " + votes[option[i]] + " votes\n");
         }
         maker.append(this.votes.size() + " unique users");
     }

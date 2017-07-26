@@ -15,8 +15,8 @@ import java.util.Scanner;
  * Made by nija123098 on 6/19/2017.
  */
 public class CatCommand extends AbstractCommand{
-    private static final String CAT = EmoticonHelper.getChars("cat") + " ";
-    private static final String DIDNT_WORK = "Unfortunately I can't seem to get any cats for you right now. " + EmoticonHelper.getChars("crying_cat_face");
+    private static final String CAT = EmoticonHelper.getChars("cat", false) + " ";
+    private static final String DIDNT_WORK = "Unfortunately I can't seem to get any cats for you right now. " + EmoticonHelper.getChars("crying_cat_face", false);
     private static final String URL;
     static {
         String builder = "http://thecatapi.com/api/images/get?type=gif&format=html";
