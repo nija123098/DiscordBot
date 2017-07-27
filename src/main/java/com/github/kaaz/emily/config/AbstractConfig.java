@@ -47,7 +47,7 @@ public class AbstractConfig<V, T extends Configurable> {
                 String tName = rs.getString("TABLE_NAME");
                 if (tName != null && tName.equals(name)) return;
             }
-            Database.query("CREATE TABLE `" + name + "` (id VARCHAR(50), value VARCHAR(" + (this.normalViewing ? 100 : 1000) + "), millis BIGINT)");
+            Database.query("CREATE TABLE `" + name + "` (id VARCHAR(150), value VARCHAR(" + (this.normalViewing ? 100 : 1000) + "), millis BIGINT)");
         } catch (SQLException e) {
             throw new DevelopmentException("Could not ensure table existence", e);
         }

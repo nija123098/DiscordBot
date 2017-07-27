@@ -36,7 +36,6 @@ public abstract class Track implements Configurable{
     public static Track getTrack(String id){
         if (id == null) return null;
         String[] split = id.split("-");
-        if (split.length != 2) return null;
         Class<?> clazz = CLASS_MAP.get(split[0].toUpperCase());
         if (clazz == null) return null;
         Function<String, Track> function = ID_MAP.get(clazz);

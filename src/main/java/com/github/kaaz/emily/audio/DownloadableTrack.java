@@ -83,7 +83,7 @@ public abstract class DownloadableTrack extends Track {
         return BotConfig.AUDIO_FORMAT;
     }
     public static List<Track> getDownloadedTracks(){// optimize
-        return Stream.of(new File(BotConfig.AUDIO_PATH).listFiles()).filter(File::isFile).filter(file -> TYPES.contains(file.getName().split(Pattern.quote("."))[0])).map(file -> Track.getTrack(file.getName())).filter(track -> MusicDownloadService.isDownloaded(((DownloadableTrack) track))).collect(Collectors.toList());
+        return Stream.of(new File(BotConfig.AUDIO_PATH).listFiles()).filter(File::isFile).filter(file -> TYPES.contains(file.getName().split(Pattern.quote("."))[1])).map(File::getName).map(s -> Track.getTrack(s.substring(0, s.indexOf('.')))).filter(track -> MusicDownloadService.isDownloaded(((DownloadableTrack) track))).collect(Collectors.toList());
     }
     @Override
     public Long getLength() {

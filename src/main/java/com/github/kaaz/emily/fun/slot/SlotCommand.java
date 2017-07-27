@@ -51,7 +51,7 @@ public class SlotCommand extends AbstractCommand {
             }
         }
         String[] strings = getMessage(ints, slotPack, amount);
-        if (bet != 0) MoneyTransfer.transact(user, DiscordClient.getOurUser(), 0, amount == null ? -bet : amount, "A slot bet");
+        if (bet != 0) MoneyTransfer.transact(DiscordClient.getOurUser(), user, 0, amount == null ? -bet : amount, "A slot bet");
         if (amount == null) {
             Float finalBet = bet;
             ConfigHandler.changeSetting(SlotJackpotConfig.class, GlobalConfigurable.GLOBAL, aFloat -> aFloat + finalBet / 2);
@@ -64,7 +64,7 @@ public class SlotCommand extends AbstractCommand {
         int last = strings.length - 1;
         ScheduleService.schedule(last * 750, () -> maker.getHeader().clear().getMaker().forceCompile().append(strings[last]).send());
     }
-    private String[] getMessage(int[][] ints, SlotPack pack, Float amountWon){
+    private static String[] getMessage(int[][] ints, SlotPack pack, Float amountWon){
         String[] strings = new String[4];
         for (int h = 0; h < strings.length; h++) {
             String builder = "";
@@ -79,37 +79,9 @@ public class SlotCommand extends AbstractCommand {
         }
         return strings;
     }
-    private Integer getSlotResult(int[][] ints){
-        int bestRow = Integer.MAX_VALUE;
-        int type;
-        for (int i = 0; i < ints.length; i++) {
-            type = ints[0][i];
-            for (int j = 1; j < ints[i].length; j++) {
-                if (type != ints[j][i]){
-                    type = Integer.MAX_VALUE;
-                    break;
-                }
-            }
-            if (type < bestRow) bestRow = type;
-        }
-        if (ints.length == ints[0].length){
-            type = ints[0][0];
-            for (int i = 1; i < ints.length; ++i) {
-                if (type != ints[i][i]){
-                    type = Integer.MAX_VALUE;
-                    break;
-                }
-            }
-            if (type < bestRow) bestRow = type;
-            type = ints[0][ints.length-1];
-            for (int i = 1; i < ints.length; ++i) {
-                if (type != ints[i][ints.length-1-i]){
-                    type = Integer.MAX_VALUE;
-                    break;
-                }
-            }
-            if (type < bestRow) bestRow = type;
-        }
-        return bestRow == Integer.MAX_VALUE ? null : bestRow;
+    private static Integer getSlotResult(int[][] ints){// null if none
+        if ((ints[0][0] == ints[1][1] && ints[1][1] == ints[2][2]) || (ints[2][0] == ints[1][1] && ints[1][1] == ints[0][2])) return ints[1][1];
+        if (ints[0][0] == ints[0][1] && ints[0][0] == ints[0][2]) return Math.max(ints[0][0], Math.max(ints[1][0], ints[2][0]));
+        return null;
     }
 }

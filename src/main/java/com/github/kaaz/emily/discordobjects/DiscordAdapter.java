@@ -108,7 +108,6 @@ public class DiscordAdapter {
     @EventSubscriber
     public static void handle(MessageReceivedEvent event){
         if (event.getAuthor().isBot() || !Launcher.isReady()) return;
-        long l = System.currentTimeMillis();
         ThreadProvider.submit(() -> {
             DiscordMessageReceived receivedEvent = new DiscordMessageReceived((sx.blah.discord.handle.impl.events.MessageReceivedEvent) event);
             if (MessageMonitor.monitor(receivedEvent)) return;

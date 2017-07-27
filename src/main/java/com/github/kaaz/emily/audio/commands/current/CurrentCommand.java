@@ -9,7 +9,6 @@ import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.configs.guild.GuildActivePlaylistConfig;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
-import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.util.EmoticonHelper;
 import com.github.kaaz.emily.util.FormatHelper;
@@ -24,7 +23,7 @@ public class CurrentCommand extends AbstractCommand {
         super("current", ModuleLevel.MUSIC, "playing, nowplaying, np", null, "Retrieves information about the song currently playing");
     }
     @Command
-    public static void command(GuildAudioManager manager, Guild guild, MessageMaker maker){
+    public static void command(GuildAudioManager manager, MessageMaker maker){
         Track track = manager.currentTrack();
         if (track == null) {
             maker.append("Nothing is currently playing");
@@ -36,7 +35,7 @@ public class CurrentCommand extends AbstractCommand {
         }
         long time = manager.currentTime();
         maker.getTitle().appendRaw(NOTES + " " + track.getName());
-        maker.appendRaw("[source](" + track.getSource() + ") - " + ConfigHandler.getSetting(GuildActivePlaylistConfig.class, guild).getName());
+        maker.appendRaw("[source](" + track.getSource() + ") - " + ConfigHandler.getSetting(GuildActivePlaylistConfig.class, manager.getGuild()).getName());
         maker.withUrl(track.getSource());
         maker.withThumb(track.getPreviewURL());
         maker.withReaction("track_next");
