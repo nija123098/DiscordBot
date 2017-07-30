@@ -313,13 +313,14 @@ public class AbstractCommand {
             command = command.getSuperCommand();
         }
         boolean hasNormalPerm = this.botRole.hasRequiredRole(user, channel.getGuild());
-        SpecialPermsContainer container = ConfigHandler.getSetting(GuildSpecialPermsConfig.class, channel.getGuild());
-        if (channel.getGuild() != null && container != null && BotRole.GUILD_TRUSTEE.hasRequiredRole(user, channel.getGuild())){
-            Boolean allow = container.getSpecialPermission(this, channel, user);
-            return allow == null ? hasNormalPerm : allow;
-        }else{
-            return hasNormalPerm;
+        if (channel.getGuild() != null){
+            SpecialPermsContainer container = ConfigHandler.getSetting(GuildSpecialPermsConfig.class, channel.getGuild());
+            if (container != null && BotRole.GUILD_TRUSTEE.hasRequiredRole(user, channel.getGuild())){
+                Boolean allow = container.getSpecialPermission(this, channel, user);
+                return allow == null ? hasNormalPerm : allow;
+            }
         }
+        return hasNormalPerm;
     }
 
     /**

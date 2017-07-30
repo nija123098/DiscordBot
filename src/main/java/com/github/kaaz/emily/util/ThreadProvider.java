@@ -7,6 +7,9 @@ import java.util.concurrent.*;
  */
 public class ThreadProvider {// upgrade?
     private static final ExecutorService EXECUTOR_SERVICE = new ThreadPoolExecutor(64, 256, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(10000), (ThreadFactory) Thread::new, (r, executor) -> r.run());
+    public static ExecutorService getExecutorService() {
+        return EXECUTOR_SERVICE;
+    }
     public static synchronized void submit(Runnable task){
         EXECUTOR_SERVICE.submit(task);
     }

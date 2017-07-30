@@ -21,12 +21,7 @@ import java.util.stream.Stream;
 public class EventDistributor {
     private static final Map<Class<?>, Set<Listener>> LISTENER_MAP = new ConcurrentHashMap<>();
     public static <E extends BotEvent> void register(Object o){
-        Class<?> clazz;
-        if (o instanceof Class){
-            clazz = (Class<?>) o;
-        } else {
-            clazz = o.getClass();
-        }
+        Class<?> clazz = o instanceof Class ? (Class<?>) o : o.getClass();
         Stream.of(clazz.getMethods()).filter(method -> method.isAnnotationPresent(EventListener.class)).filter(method -> method.getParameterCount() == 1).filter(method -> BotEvent.class.isAssignableFrom(method.getParameterTypes()[0])).forEach(method -> {
             Class<E> peram = (Class<E>) method.getParameterTypes()[0];
             Set<Listener> listeners = LISTENER_MAP.computeIfAbsent(peram, cl -> new ConcurrentHashSet<>());
@@ -43,7 +38,11 @@ public class EventDistributor {
     public static <E extends BotEvent> void distribute(Class<E> clazz, E event){
         ReflectionHelper.getAssignableTypes(clazz).forEach(c -> {
             Set<Listener> listeners = LISTENER_MAP.get(c);
-            if (listeners != null) listeners.forEach(listener -> listener.handle(event));
+            try{if (listeners != null) listeners.forEach(listener -> listener.handle(event));
+            } catch (Exception e){
+                if (GhostException.isGhostCaused(e)) return;
+                throw e;
+            }
         });
     }
     private static class Listener<E extends BotEvent> {
@@ -60,7 +59,7 @@ public class EventDistributor {
                 Log.log("This should never happen", e);
             } catch (InvocationTargetException e) {
                 if (GhostException.isGhostCaused(e.getCause())) return;
-                Log.log("Error while distributing event: " + this.m.getDeclaringClass().getName() + "#" + this.m.getName() + "\n    " + e.getCause().getMessage(), e);
+                Log.log("Error while distributing event: " + this.m.getDeclaringClass().getName() + "#" + this.m.getName() + " - " + e.getCause().getMessage(), e);
             }
         }
     }

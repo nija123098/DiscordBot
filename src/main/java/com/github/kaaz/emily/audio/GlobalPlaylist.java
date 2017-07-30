@@ -15,12 +15,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Made by nija123098 on 7/4/2017.
  */
 public class GlobalPlaylist extends Playlist {
     public static final GlobalPlaylist GLOBAL_PLAYLIST = new GlobalPlaylist();
+    private static AtomicInteger minimumTracks = new AtomicInteger();
     private GlobalPlaylist() {
         super(Playlist.GLOBAL_PLAYLIST_ID);
     }
@@ -58,6 +60,7 @@ public class GlobalPlaylist extends Playlist {
         AtomicDouble favor = new AtomicDouble();
         map.values().forEach(favor::addAndGet);
         favor.set(favor.get() / map.size() * 2);
+        TRACKS.clear();
         map.forEach((track, aFloat) -> {
             if (favor.get() > aFloat) TRACKS.add(track);
         });

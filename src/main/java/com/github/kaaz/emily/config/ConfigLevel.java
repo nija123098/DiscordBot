@@ -5,6 +5,9 @@ import com.github.kaaz.emily.audio.Track;
 import com.github.kaaz.emily.discordobjects.wrappers.*;
 import com.github.kaaz.emily.exeption.DevelopmentException;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * The enum to represent a type of configurable object.
  * Objects that can be configured must have a type.
@@ -32,14 +35,21 @@ public enum ConfigLevel {
     /** The type for a config that applies to all configurable types */
     ALL(Configurable.class),;
     private Class<? extends Configurable> clazz;
+    private Set<ConfigLevel> assignables = new HashSet<>();
     ConfigLevel(Class<? extends Configurable> clazz) {
         this.clazz = clazz;
     }
     public Class<? extends Configurable> getType(){
         return this.clazz;
     }
+    public Set<ConfigLevel> getAssignable(){
+        return assignables;
+    }
     public boolean isAssignableFrom(ConfigLevel level){
         return this == ALL || this == level;
+    }
+    public static void load(){
+        for (ConfigLevel configLevel : ConfigLevel.values()) for (ConfigLevel level : ConfigLevel.values()) if (configLevel.isAssignableFrom(level)) configLevel.assignables.add(level);
     }
     public static ConfigLevel getLevel(Class<? extends Configurable> clazz){
         for (ConfigLevel level : values()){

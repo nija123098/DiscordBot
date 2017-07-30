@@ -7,11 +7,12 @@ import com.github.kaaz.emily.config.GlobalConfigurable;
 import com.github.kaaz.emily.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 import com.github.kaaz.emily.launcher.BotConfig;
 import com.github.kaaz.emily.service.services.MusicDownloadService;
-import com.github.kaaz.emily.util.AudioHelper;
 import com.github.kaaz.emily.util.YTDLHelper;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
+import com.sedmelluq.discord.lavaplayer.source.local.LocalAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
+import com.sedmelluq.discord.lavaplayer.track.AudioReference;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
 import java.io.File;
@@ -28,6 +29,14 @@ import java.util.stream.Stream;
  */
 public abstract class DownloadableTrack extends Track {
     private static final List<String> TYPES = Stream.of(BotConfig.AUDIO_FILE_TYPES.split(",")).map(String::trim).collect(Collectors.toList());
+    private static final LocalAudioSourceManager LOCAL_SOURCE_MANAGER = new LocalAudioSourceManager();
+    public static AudioTrack makeAudioTrack(File file){
+        if (file == null) return null;
+        return (AudioTrack) LOCAL_SOURCE_MANAGER.loadItem(GuildAudioManager.PLAYER_MANAGER, new AudioReference(file.getAbsolutePath(), null));
+    }
+    public static List<Track> getDownloadedTracks(){// optimize
+        return Stream.of(new File(BotConfig.AUDIO_PATH).listFiles()).filter(File::isFile).filter(file -> TYPES.contains(file.getName().split(Pattern.quote("."))[1])).map(File::getName).map(s -> Track.getTrack(s.substring(0, s.indexOf('.')))).filter(track -> MusicDownloadService.isDownloaded(((DownloadableTrack) track))).collect(Collectors.toList());
+    }
     DownloadableTrack(String id) {
         super(id);
     }
@@ -36,7 +45,7 @@ public abstract class DownloadableTrack extends Track {
         return MusicDownloadService.isDownloaded(this);
     }
     public AudioTrack getTrack(){
-        if (this.isDownloaded()) return AudioHelper.makeAudioTrack(file());
+        if (this.isDownloaded()) return makeAudioTrack(file());
         int playTimes = ConfigHandler.getSetting(PlayCountConfig.class, this);
         if (playTimes > ConfigHandler.getSetting(RequiredPlaysToDownloadConfig.class, GlobalConfigurable.GLOBAL)) MusicDownloadService.queueDownload((int) Math.log(playTimes), this, null);
         BlockingQueue<AudioTrack> queue = new LinkedBlockingQueue<>(1);
@@ -81,9 +90,6 @@ public abstract class DownloadableTrack extends Track {
     }
     public String getPreferredType(){
         return BotConfig.AUDIO_FORMAT;
-    }
-    public static List<Track> getDownloadedTracks(){// optimize
-        return Stream.of(new File(BotConfig.AUDIO_PATH).listFiles()).filter(File::isFile).filter(file -> TYPES.contains(file.getName().split(Pattern.quote("."))[1])).map(File::getName).map(s -> Track.getTrack(s.substring(0, s.indexOf('.')))).filter(track -> MusicDownloadService.isDownloaded(((DownloadableTrack) track))).collect(Collectors.toList());
     }
     @Override
     public Long getLength() {

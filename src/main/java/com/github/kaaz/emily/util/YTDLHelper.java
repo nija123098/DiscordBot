@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class YTDLHelper {
     public static boolean download(String url, String id, String format){
-        if (!URLHelper.isValid(url)) return false;
+        if (!NetworkHelper.isValid(url)) return false;
         String location = BotConfig.AUDIO_PATH + id;
         List<String> commands = new ArrayList<>();
         ProcessBuilder builder = new ProcessBuilder();

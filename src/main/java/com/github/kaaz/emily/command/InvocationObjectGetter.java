@@ -62,7 +62,7 @@ public class InvocationObjectGetter {
             VoiceChannel voiceChannel = invoker.getConnectedVoiceChannel(guild);
             if (voiceChannel == null) throw new ContextException("You must be in a voice channel to use that command");
             return GuildAudioManager.getManager(voiceChannel, true);
-        });
+        }, ContextRequirement.GUILD);
         addContext(Track.class, ContextType.STATUS, (user, shard, channel, guild, message, reaction, args) -> {
             GuildAudioManager manager = GuildAudioManager.getManager(user.getConnectedVoiceChannel(guild), false);
             if (manager == null || manager.currentTrack() == null) throw new ContextException("No track is currently playing");

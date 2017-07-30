@@ -42,15 +42,17 @@ public class AbstractConfig<V, T extends Configurable> {
         if (!ObjectCloner.supports(this.valueType)) throw new DevelopmentException("Cloner does not support type: " + this.valueType.getName());
         this.normalViewing = TypeChanger.normalStorage(this.valueType);
         this.configLevel = ConfigLevel.getLevel((Class<T>) types[1]);
-        try (ResultSet rs = Database.getConnection().getMetaData().getTables(null, null, name, null)) {
-            while (rs.next()) {
-                String tName = rs.getString("TABLE_NAME");
-                if (tName != null && tName.equals(name)) return;
+        this.configLevel.getAssignable().forEach(level -> {
+            try (ResultSet rs = Database.getConnection().getMetaData().getTables(null, null, name, null)) {
+                while (rs.next()) {
+                    String tName = rs.getString("TABLE_NAME");
+                    if (tName != null && tName.equals(this.getNameForType(level))) return;
+                }
+                Database.query("CREATE TABLE `" + this.getNameForType(level) + "` (id VARCHAR(150), value VARCHAR(" + (this.normalViewing ? 100 : 1000) + "), millis BIGINT)");
+            } catch (SQLException e) {
+                throw new DevelopmentException("Could not ensure table existence", e);
             }
-            Database.query("CREATE TABLE `" + name + "` (id VARCHAR(150), value VARCHAR(" + (this.normalViewing ? 100 : 1000) + "), millis BIGINT)");
-        } catch (SQLException e) {
-            throw new DevelopmentException("Could not ensure table existence", e);
-        }
+        });
         EventDistributor.register(this);
     }
 
@@ -101,6 +103,10 @@ public class AbstractConfig<V, T extends Configurable> {
         return this.configLevel;
     }
 
+    private String getNameForType(ConfigLevel level){
+        return this.name + "_" + level.name().toLowerCase();
+    }
+
     /**
      * A standard getter.
      *
@@ -116,7 +122,7 @@ public class AbstractConfig<V, T extends Configurable> {
 
     public long getAge(Configurable configurable){
         if (configurable == null) throw new DevelopmentException("Attempted passing null as a configurable");
-        try{ResultSet set = Database.select("SELECT * FROM " + this.getName() + "WHERE id = " + Database.quote(configurable.getID()));
+        try{ResultSet set = Database.select("SELECT * FROM " + this.getNameForType(configurable.getConfigLevel()) + " WHERE id = " + Database.quote(configurable.getID()));
             if (!set.next()) return -1;
             set.getLong(3);
         } catch (SQLException e) {
@@ -137,8 +143,8 @@ public class AbstractConfig<V, T extends Configurable> {
         validateInput(configurable, value);
         if (this.getDefault(configurable).equals(value)) Database.query("DELETE FROM " + this.name + " WHERE id = " + Database.quote(configurable.getID()));
         else {
-            Database.query("DELETE FROM " + this.name + " WHERE id = " + Database.quote(configurable.getID()));
-            Database.insert("INSERT INTO " + this.getName() + " (`id`, `value`, `millis`) VALUES ('" + configurable.getID() + "','" + TypeChanger.toString(this.valueType, value) + "','" + System.currentTimeMillis() + "');");
+            Database.query("DELETE FROM " + this.getNameForType(configurable.getConfigLevel()) + " WHERE id = " + Database.quote(configurable.getID()));
+            Database.insert("INSERT INTO " + this.getNameForType(configurable.getConfigLevel()) + " (`id`, `value`, `millis`) VALUES ('" + configurable.getID() + "','" + TypeChanger.toString(this.valueType, value) + "','" + System.currentTimeMillis() + "');");
         }
         return value;
     }
@@ -152,7 +158,7 @@ public class AbstractConfig<V, T extends Configurable> {
      */
     public V getValue(T configurable){// slq here as well
         if (configurable == null) throw new DevelopmentException("Attempted passing null as a configurable");
-        ResultSet resultSet = Database.select("SELECT * FROM " + this.getName() + " WHERE id = " + Database.quote(configurable.getID()));
+        ResultSet resultSet = Database.select("SELECT * FROM " + this.getNameForType(configurable.getConfigLevel()) + " WHERE id = " + Database.quote(configurable.getID()));
         try{resultSet.next();
             return TypeChanger.toObject(this.valueType, resultSet.getString(2));
         } catch (SQLException e) {

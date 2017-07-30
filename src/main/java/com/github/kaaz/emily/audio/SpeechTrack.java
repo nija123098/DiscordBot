@@ -1,6 +1,5 @@
 package com.github.kaaz.emily.audio;
 
-import com.github.kaaz.emily.util.AudioHelper;
 import com.github.kaaz.emily.util.FormatHelper;
 import com.github.kaaz.emily.util.LangString;
 import com.github.kaaz.emily.util.SpeechHelper;
@@ -31,7 +30,7 @@ public class SpeechTrack extends Track {
     }
     @Override
     public AudioTrack getTrack() {
-        return AudioHelper.makeAudioTrack(this.file);
+        return DownloadableTrack.makeAudioTrack(this.file);
     }
     @Override
     public Long getLength() {

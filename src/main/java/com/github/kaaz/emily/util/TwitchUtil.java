@@ -8,6 +8,6 @@ public class TwitchUtil {
         s = NetworkHelper.stripProtocol(s);
         if (s.startsWith("www.twitch.tv/")) s = s.substring(14);
         else return null;
-        return URLHelper.isValid("https://www.twitch.tv/" + s) ? s : null;
+        return NetworkHelper.isValid("https://www.twitch.tv/" + s) ? s : null;
     }
 }

@@ -27,7 +27,7 @@ public class ConfigCommand extends AbstractCommand {
         if (s == null || s.isEmpty()){
             if (configurable == null) configurable = (C) (guild == null ? user : guild);
             C finalConfigurable = configurable;
-            ConfigHandler.getConfigs().stream().filter(config -> finalConfigurable.getConfigLevel().isAssignableFrom(config.getConfigLevel())).filter(config -> config.getBotRole().hasRequiredRole(user, guild)).filter(AbstractConfig::isNormalViewing).forEach(config -> {
+            ConfigHandler.getConfigs().stream().filter(config -> finalConfigurable.getClass().isAssignableFrom(config.getClass())).filter(config -> config.getBotRole().hasRequiredRole(user, guild)).filter(AbstractConfig::isNormalViewing).forEach(config -> {
                 helper.getNewFieldPart().withBoth(config.getName(), ConfigHandler.getExteriorSetting(config.getName(), finalConfigurable));// find a casting way to do this
             });
         }else CommandHandler.attemptInvocation("cfg set", user, message, null);

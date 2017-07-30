@@ -63,8 +63,8 @@ public class DiscordAdapter {
         }
         GuildAudioManager.init();
         SpeechParser.init();
-        DiscordClient.client().getDispatcher().registerListener(EventDistributor.class);
-        DiscordClient.client().getDispatcher().registerListener(DiscordAdapter.class);
+        DiscordClient.client().getDispatcher().registerListener(ThreadProvider.getExecutorService(), EventDistributor.class);
+        DiscordClient.client().getDispatcher().registerListener(ThreadProvider.getExecutorService(), DiscordAdapter.class);
         EventDistributor.register(ReactionBehavior.class);
         EventDistributor.register(MessageMonitor.class);
         EventDistributor.distribute(DiscordDataReload.class, null);
@@ -107,13 +107,11 @@ public class DiscordAdapter {
     }
     @EventSubscriber
     public static void handle(MessageReceivedEvent event){
-        if (event.getAuthor().isBot() || !Launcher.isReady()) return;
-        ThreadProvider.submit(() -> {
-            DiscordMessageReceived receivedEvent = new DiscordMessageReceived((sx.blah.discord.handle.impl.events.MessageReceivedEvent) event);
-            if (MessageMonitor.monitor(receivedEvent)) return;
-            receivedEvent.setCommand(CommandHandler.handle(receivedEvent));
-            EventDistributor.distribute(receivedEvent);
-        });
+        if (event.getAuthor().isBot() || !Launcher.isReady() || event.getMessage().getContent() == null || event.getMessage().getContent().isEmpty()) return;
+        DiscordMessageReceived receivedEvent = new DiscordMessageReceived((sx.blah.discord.handle.impl.events.MessageReceivedEvent) event);
+        if (MessageMonitor.monitor(receivedEvent)) return;
+        receivedEvent.setCommand(CommandHandler.handle(receivedEvent));
+        EventDistributor.distribute(receivedEvent);
     }
     @EventSubscriber
     public static void handle(Event event){

@@ -13,6 +13,7 @@ import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordMessage
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordReactionEvent;
 import com.github.kaaz.emily.exeption.BotException;
 import com.github.kaaz.emily.exeption.DevelopmentException;
+import com.github.kaaz.emily.exeption.GhostException;
 import com.github.kaaz.emily.launcher.Launcher;
 import com.github.kaaz.emily.launcher.Reference;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
@@ -180,7 +181,6 @@ public class CommandHandler {
      * @param reaction the reaction that invoked this command, if applicable
      */
     public static boolean attemptInvocation(String string, User user, Message message, Reaction reaction){
-        if (string == null) return false;// can happen
         AbstractCommand command;
         if (message.getGuild() == null){
             while (!Character.isLetterOrDigit(string.charAt(0))) string = string.substring(1);
@@ -286,9 +286,12 @@ public class CommandHandler {
      *
      * @param event the monitored event
      */
-    // @EventListener
     public static boolean handle(DiscordMessageReceived event){
-        return attemptInvocation(event.getMessage().getContent(), event.getAuthor(), event.getMessage(), null);// new MessageMaker(event.getMessage()).append(ChatBot.getChatBot(event.getChannel()).think(event.getMessage().getContent())).send();
+        try{return attemptInvocation(event.getMessage().getContent(), event.getAuthor(), event.getMessage(), null);// new MessageMaker(event.getMessage()).append(ChatBot.getChatBot(event.getChannel()).think(event.getMessage().getContent())).send();
+        } catch (Exception e){
+            if (GhostException.isGhostCaused(e)) return true;
+            throw e;
+        }
     }
 
     /**

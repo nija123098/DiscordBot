@@ -34,6 +34,7 @@ public class ConfigHandler {
     private static final Map<String, AbstractConfig<?, ? extends Configurable>> STRING_MAP;
     private static final Map<Class<? extends Configurable>, Function<String, ? extends Configurable>> FUNCTION_MAP = new ConcurrentHashMap<>(10);
     static {
+        ConfigLevel.load();
         Database.init();
         Set<Class<? extends AbstractConfig>> classes = new Reflections(Reference.BASE_PACKAGE).getSubTypesOf(AbstractConfig.class);
         CLASS_MAP = new HashMap<>(classes.size() + 2, 1);
@@ -96,8 +97,7 @@ public class ConfigHandler {
      * @return the set of Configs for that type
      */
     public static <T extends Configurable> Set<AbstractConfig<?, T>> getConfigs(Class<T> type){
-        ConfigLevel level = ConfigLevel.getLevel(type);
-        return getConfigs().stream().filter(config -> config.getConfigLevel() == level || config.getConfigLevel() == ConfigLevel.ALL).map(abstractConfig -> ((AbstractConfig<?, T>) abstractConfig)).collect(Collectors.toSet());
+        return getConfigs().stream().filter(config -> config.getClass().equals(type) || config.getConfigLevel() == ConfigLevel.ALL).map(abstractConfig -> ((AbstractConfig<?, T>) abstractConfig)).collect(Collectors.toSet());
     }
 
     /**

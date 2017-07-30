@@ -148,33 +148,54 @@
             <artifactId>sphinx4</artifactId>
             <version>c59a4b0be3</version>
         </dependency>
-        <!--<dependency>
-            <groupId>com.github.nija123098</groupId>
-            <artifactId>soundcloud_java_library</artifactId>
-            <version>ce05aac18a</version>
-        </dependency>-->
         <dependency>
             <groupId>com.github.nija123098</groupId>
             <artifactId>Java_Twitch_Api_Wrapper</artifactId>
             <version>ff3b8af</version>
         </dependency>
-        <!--<dependency>
-            <groupId>com.github.mkbrv</groupId>
-            <artifactId>orange.api</artifactId>
-            <version>6d2083b</version>
-        </dependency>-->
         <dependency><!-- https://mvnrepository.com/artifact/org.twitter4j/twitter4j -->
             <groupId>org.twitter4j</groupId>
             <artifactId>twitter4j-core</artifactId>
             <version>4.0.6</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
-        <dependency>
+        <dependency><!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <version>1.7.25</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.0.2</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>com.github.kaaz.emily.launcher.Launcher</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.4.3</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
