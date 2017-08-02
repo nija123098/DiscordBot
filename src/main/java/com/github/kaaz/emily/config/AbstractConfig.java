@@ -43,7 +43,7 @@ public class AbstractConfig<V, T extends Configurable> {
         this.normalViewing = TypeChanger.normalStorage(this.valueType);
         this.configLevel = ConfigLevel.getLevel((Class<T>) types[1]);
         this.configLevel.getAssignable().forEach(level -> {
-            try (ResultSet rs = Database.getConnection().getMetaData().getTables(null, null, name, null)) {
+            try (ResultSet rs = Database.getConnection().getMetaData().getTables(null, null, this.getNameForType(level), null)) {
                 while (rs.next()) {
                     String tName = rs.getString("TABLE_NAME");
                     if (tName != null && tName.equals(this.getNameForType(level))) return;
