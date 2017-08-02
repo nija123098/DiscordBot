@@ -169,7 +169,7 @@ public class SpeechParser implements IAudioReceiver {
     public static void handle(DiscordSpeakingEvent event){
         if (!PARSER_MAP.containsKey(event.getGuild())) return;
         SpeechParser parser = PARSER_MAP.computeIfAbsent(event.getGuild(), c -> new ConcurrentHashMap<>()).get(event.getUser());
-        if (parser != null && !event.isSpeaking()) ThreadProvider.submit(parser::onStop);
+        if (parser != null && !event.isSpeaking()) ThreadProvider.sub(parser::onStop);
     }
     @EventListener
     public static void handle(DiscordVoiceJoin event){

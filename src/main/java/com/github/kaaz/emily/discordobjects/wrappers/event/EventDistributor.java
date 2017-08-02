@@ -33,7 +33,7 @@ public class EventDistributor {
         });
     }
     public static <E extends BotEvent> void distribute(E event){
-        ThreadProvider.submit(() -> distribute((Class<E>) event.getClass(), event));
+        ThreadProvider.sub(() -> distribute((Class<E>) event.getClass(), event));
     }
     public static <E extends BotEvent> void distribute(Class<E> clazz, E event){
         ReflectionHelper.getAssignableTypes(clazz).forEach(c -> {

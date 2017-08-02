@@ -42,6 +42,7 @@ public class AbstractConfig<V, T extends Configurable> {
         if (!ObjectCloner.supports(this.valueType)) throw new DevelopmentException("Cloner does not support type: " + this.valueType.getName());
         this.normalViewing = TypeChanger.normalStorage(this.valueType);
         this.configLevel = ConfigLevel.getLevel((Class<T>) types[1]);
+        EventDistributor.register(this);
         this.configLevel.getAssignable().forEach(level -> {
             try (ResultSet rs = Database.getConnection().getMetaData().getTables(null, null, this.getNameForType(level), null)) {
                 while (rs.next()) {
@@ -53,7 +54,6 @@ public class AbstractConfig<V, T extends Configurable> {
                 throw new DevelopmentException("Could not ensure table existence", e);
             }
         });
-        EventDistributor.register(this);
     }
 
     protected void onLoad(){}

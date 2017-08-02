@@ -181,6 +181,7 @@ public class CommandHandler {
      * @param reaction the reaction that invoked this command, if applicable
      */
     public static boolean attemptInvocation(String string, User user, Message message, Reaction reaction){
+        if (string == null || string.isEmpty()) return false;
         AbstractCommand command;
         if (message.getGuild() == null){
             while (!Character.isLetterOrDigit(string.charAt(0))) string = string.substring(1);

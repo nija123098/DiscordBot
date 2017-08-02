@@ -3,6 +3,7 @@ package com.github.kaaz.emily.config;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.github.kaaz.emily.exeption.ConfigurableConvertException;
+import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.perms.BotRole;
 
 import java.util.HashMap;
@@ -41,6 +42,7 @@ public class GuildUser implements Configurable {
     protected GuildUser() {}
     private GuildUser(String id) {
         this.id = id;
+        if (this.getGuild() == null || this.getUser() == null) throw new DevelopmentException("Either the guild or user is null");
     }
     @Override
     public String getID() {

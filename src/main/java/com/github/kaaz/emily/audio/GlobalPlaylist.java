@@ -55,7 +55,6 @@ public class GlobalPlaylist extends Playlist {
     private static void loadTracks(){
         Map<Track, Float> map = new HashMap<>();
         List<Track> list = DownloadableTrack.getDownloadedTracks();
-        list.forEach(System.out::println);
         list.stream().filter(track -> !ConfigHandler.getSetting(BannedTrackConfig.class, track)).forEach(track -> map.put(track, FavorHandler.getFavorAmount(track)));
         AtomicDouble favor = new AtomicDouble();
         map.values().forEach(favor::addAndGet);

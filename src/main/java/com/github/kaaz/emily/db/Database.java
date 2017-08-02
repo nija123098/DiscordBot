@@ -42,22 +42,9 @@ public class Database {
         return CONNECTION;
     }
 
-    public static void ensureTableExistence(String name, int idSize, int valueSize) {
-        try (ResultSet rs = CONNECTION.getMetaData().getTables(null, null, name, null)) {
-            while (rs.next()) {
-                String tName = rs.getString("TABLE_NAME");
-                if (tName != null && tName.equals(name)) return;
-            }
-            Database.query("CREATE TABLE `" + name + "` (id VARCHAR(" + idSize + "), value VARCHAR(" + valueSize + "), millis BIGINT)");
-        } catch (SQLException e) {
-            throw new DevelopmentException("Could not ensure table existence", e);
-        }
-    }
-
     public static ResultSet select(String sql) {
         try{return CONNECTION.prepareStatement(sql).executeQuery();
         } catch (SQLException e) {
-            System.out.println(e.getErrorCode());
             throw new DevelopmentException("Could not select: " + sql, e);
         }
     }
