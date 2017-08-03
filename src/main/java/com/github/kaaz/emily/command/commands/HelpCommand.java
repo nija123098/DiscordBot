@@ -50,7 +50,7 @@ public class HelpCommand extends AbstractCommand {
                 return;
             }
             maker.appendRaw(EmoticonHelper.getChars("keyboard", false)).append("**Accessible Through:**");
-            maker.appendRaw(FormatHelper.makeTable(new ArrayList<>(command.getNames())) + "\n" + EmoticonHelper.getChars("notepad_spiral", false) + "**Description:**\n```\n");
+            maker.appendRaw(FormatHelper.makeTable(new ArrayList<>(command.getNames()).stream().filter(s -> !s.contains("_")).collect(Collectors.toList())) + "\n" + EmoticonHelper.getChars("notepad_spiral", false) + "**Description:**\n```\n");
             maker.append(command.getHelp()).appendRaw("\n```\n" + EmoticonHelper.getChars("gear", false) + "**Usages:**\n```\n");
             String[] strings = normalizeUsages(command.getUsages()).split("\n");
             for (int i = 0; i < strings.length; i++) {

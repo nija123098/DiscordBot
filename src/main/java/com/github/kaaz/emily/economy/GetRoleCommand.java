@@ -22,9 +22,9 @@ import java.util.stream.Collectors;
 /**
  * Made by nija123098 on 5/5/2017.
  */
-public class BuyRoleCommand extends AbstractCommand {
-    public BuyRoleCommand() {
-        super("buyrole", ModuleLevel.ECONOMY, "getrole, roleme", null, "Allows the buying of roles with guild based money.");
+public class GetRoleCommand extends AbstractCommand {
+    public GetRoleCommand() {
+        super("getrole", ModuleLevel.ECONOMY, "buyrole, roleme", null, "Allows the buying of roles with guild based money.");
     }
     @Command
     public void command(@Argument(optional = true, replacement = ContextType.NONE) Role role, GuildUser guildUser, MessageMaker maker){

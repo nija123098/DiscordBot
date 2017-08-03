@@ -289,7 +289,7 @@ public class InvocationObjectGetter {
         addConverter(Track.class, (invoker, shard, channel, guild, message, reaction, args) -> {
             List<Track> tracks = Track.getTracks(args);
             if (tracks.isEmpty()) throw new ArgumentException("No tracks found");
-            return new Pair<>(tracks.get(0), args.length());
+            return new Pair<>(tracks.get(0), args.length());// dangerous
         });
     }
 

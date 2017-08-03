@@ -40,7 +40,6 @@ public class SteamCommand extends AbstractCommand {
             maker.getNewFieldPart().withBoth("metacritic", app.getMetacriticScore() == null ? "none" : app.getMetacriticScore() + "");
             maker.getNewFieldPart().withBoth("OS", (app.isAvailableForWindows() ? EmoticonHelper.getChars("desktop", true) : "") + (app.isAvailableForMac() ? EmoticonHelper.getChars("apple", true) : "") + (app.isAvailableForLinux() ? EmoticonHelper.getChars("penguin", true) : ""));
             maker.withThumb(app.getHeaderImage());
-            if (app.getRequiredAge() != 0) maker.getNewFieldPart().withBoth("age", app.getRequiredAge() + "");
             String code = ConfigHandler.getSetting(UserLanguageConfig.class, user);
             if (code == null) code = "en";
             String language = LangString.getLangName(code);

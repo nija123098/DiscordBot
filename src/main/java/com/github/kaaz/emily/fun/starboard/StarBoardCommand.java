@@ -31,6 +31,7 @@ public class StarBoardCommand extends AbstractCommand {
             return;
         }
         StarLevel starLevel = StarLevel.level(reaction.getCount(), guild);
+        if (starLevel == null) return;
         MessageMaker maker = MAP.computeIfAbsent(message.getID(), s -> new MessageMaker(channel)
                 .withAuthorIcon(message.getAuthor().getAvatarURL())
                 .append(message.getContent()));

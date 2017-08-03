@@ -8,6 +8,7 @@ import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.github.kaaz.emily.service.services.ScheduleService;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -19,9 +20,13 @@ public class TodoListCommand extends AbstractCommand {
     }
     @Command
     public void command(User user, MessageMaker maker){
-        maker.append("Your todo list!");
-        AtomicInteger integer = new AtomicInteger();
-        ConfigHandler.getSetting(TodoListConfig.class, user).forEach(todoItem -> maker.getNewListPart().append(integer + ". " + todoItem.getTodo()));
+        List<TodoItem> items = ConfigHandler.getSetting(TodoListConfig.class, user);
+        if (items.isEmpty()) maker.append("Your todo list is empty!");
+        else {
+            maker.append("Your todo list!");
+            AtomicInteger integer = new AtomicInteger();
+            items.forEach(todoItem -> maker.getNewListPart().append(integer + ". " + todoItem.getTodo()));
+        }
     }
     static void remind(long delay, User user, TodoItem todoItem){
         ScheduleService.schedule(delay, () -> new MessageMaker(user).appendAlternate(true, "You put a item on your todo list for me to remind you of.\n", todoItem.getTodo()).send());

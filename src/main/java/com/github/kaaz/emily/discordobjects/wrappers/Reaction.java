@@ -27,7 +27,6 @@ public class Reaction {// should not be saved
         return reacts;
     }
     private IReaction reaction;
-    private String name;
     private Reaction(IReaction reaction) {
         this.reaction = reaction;
     }
@@ -40,16 +39,14 @@ public class Reaction {// should not be saved
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         Reaction reaction1 = (Reaction) o;
-
-        return (reaction != null ? reaction.equals(reaction1.reaction) : reaction1.reaction == null) && (name != null ? name.equals(reaction1.name) : reaction1.name == null);
+        return this.reaction.equals(reaction1.reaction);
     }
 
     @Override
     public int hashCode() {
         int result = reaction != null ? reaction.hashCode() : 0;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (this.getName() != null ? this.getName().hashCode() : 0);
         return result;
     }
 
@@ -78,13 +75,10 @@ public class Reaction {// should not be saved
     }
 
     public String getChars(){
-        return reaction().toString();
+        return reaction().getEmoji().getName();
     }
 
     public String getName() {
-        if (this.name == null){
-            this.name = EmoticonHelper.getName(reaction().toString());
-        }
-        return this.name;
+        return EmoticonHelper.getName(reaction().getEmoji().getName());
     }
 }

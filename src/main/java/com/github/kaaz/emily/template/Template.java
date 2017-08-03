@@ -176,7 +176,7 @@ public class Template {
             sectionBuilder += c;
         }
         void endSection(){
-            if (!sectionBuilder.equals("")) args.add(new StaticArg(sectionBuilder));
+            if (!sectionBuilder.isEmpty()) args.add(new StaticArg(sectionBuilder));
             sectionBuilder = "";
             wordBuilder = "";
         }

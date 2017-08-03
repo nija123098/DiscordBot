@@ -4,7 +4,7 @@ import com.github.kaaz.emily.discordobjects.wrappers.Message;
 import com.github.kaaz.emily.discordobjects.wrappers.Reaction;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.github.kaaz.emily.discordobjects.wrappers.event.BotEvent;
-import sx.blah.discord.handle.impl.events.ReactionAddEvent;
+import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.ReactionAddEvent;
 import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.ReactionEvent;
 
 /**
@@ -12,7 +12,7 @@ import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.Reactio
  */
 public class DiscordReactionEvent implements BotEvent {
     private ReactionEvent event;
-    public DiscordReactionEvent(ReactionAddEvent event) {
+    public DiscordReactionEvent(ReactionAddEvent event) {// todo fix this
         this.event = event;
     }
     public Reaction getReaction(){

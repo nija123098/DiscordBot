@@ -8,6 +8,7 @@ import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.command.annotations.Context;
 import com.github.kaaz.emily.config.*;
 import com.github.kaaz.emily.discordobjects.wrappers.*;
+import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.exeption.PermissionsException;
 
 /**
@@ -27,7 +28,7 @@ public class ConfigSetCommand extends AbstractCommand {
             }
             ConfigHandler.setExteriorSetting(config.getClass(), target, arg);
         } catch (Exception e){
-            e.printStackTrace();
+            throw new DevelopmentException(e);
         }
     }
 }

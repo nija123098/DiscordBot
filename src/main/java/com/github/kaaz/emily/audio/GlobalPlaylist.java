@@ -61,7 +61,7 @@ public class GlobalPlaylist extends Playlist {
         favor.set(favor.get() / map.size() * 2);
         TRACKS.clear();
         map.forEach((track, aFloat) -> {
-            if (favor.get() > aFloat) TRACKS.add(track);
+            if (aFloat >= favor.get()) TRACKS.add(track);
         });
     }
 }

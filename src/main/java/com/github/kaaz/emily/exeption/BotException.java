@@ -24,8 +24,6 @@ public class BotException extends RuntimeException {
     }
 
     public MessageMaker makeMessage(Channel channel){
-        MessageMaker maker = new MessageMaker(channel).asExceptionMessage(this);
-        ScheduleService.schedule(50, maker::send);
-        return maker;
+        return new MessageMaker(channel).asExceptionMessage(this);
     }
 }

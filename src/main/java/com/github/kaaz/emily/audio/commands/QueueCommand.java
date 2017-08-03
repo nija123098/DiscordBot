@@ -35,7 +35,7 @@ public class QueueCommand extends AbstractCommand {
                 break;
             } else time.addAndGet(trackTime);
         }
-        maker.append("There are " + tracks.size() + " items.");
+        maker.append("There are " + tracks.size() + " items.\n");
         if (!stream) maker.append("Total estimated play time of ").appendRaw(Time.getAbbreviated(time.get()));
         tracks.forEach(track -> maker.getNewListPart().append(track.getID() + " | " + (track.getLength() == null ? "until the stream ends" : Time.getAbbreviatedMusic(track.getLength())) + " | " + track.getName()));
     }

@@ -84,7 +84,7 @@ public class RotateCommand extends AbstractCommand {
     @Command
     public void command(MessageMaker maker, @Argument(info = "The text to rotate") String arg){
         StringBuilder builder = new StringBuilder();
-        if (arg == null) throw new ArgumentException("Please give text for me to rotate");
+        if (arg == null || arg.isEmpty()) throw new ArgumentException("Please give text for me to rotate");
         Stream.of(arg.split("")).forEach(s -> builder.append(CHAR_MAP.getOrDefault(s, s)));
         builder.reverse();
         maker.appendRaw(builder.toString());

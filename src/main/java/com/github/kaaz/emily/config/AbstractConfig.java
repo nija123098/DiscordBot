@@ -121,7 +121,6 @@ public class AbstractConfig<V, T extends Configurable> {
     }
 
     public long getAge(Configurable configurable){
-        if (configurable == null) throw new DevelopmentException("Attempted passing null as a configurable");
         try{ResultSet set = Database.select("SELECT * FROM " + this.getNameForType(configurable.getConfigLevel()) + " WHERE id = " + Database.quote(configurable.getID()));
             if (!set.next()) return -1;
             set.getLong(3);
@@ -139,9 +138,8 @@ public class AbstractConfig<V, T extends Configurable> {
     }
     protected void validateInput(T configurable, V v) {}
     public V setValue(T configurable, V value){
-        if (configurable == null) throw new DevelopmentException("Attempted passing null as a configurable");
         validateInput(configurable, value);
-        if (this.getDefault(configurable).equals(value)) Database.query("DELETE FROM " + this.name + " WHERE id = " + Database.quote(configurable.getID()));
+        if (Objects.equals(value, this.getDefault(configurable))) Database.query("DELETE FROM " + this.getNameForType(configurable.getConfigLevel()) + " WHERE id = " + Database.quote(configurable.getID()));
         else {
             Database.query("DELETE FROM " + this.getNameForType(configurable.getConfigLevel()) + " WHERE id = " + Database.quote(configurable.getID()));
             Database.insert("INSERT INTO " + this.getNameForType(configurable.getConfigLevel()) + " (`id`, `value`, `millis`) VALUES ('" + configurable.getID() + "','" + TypeChanger.toString(this.valueType, value) + "','" + System.currentTimeMillis() + "');");
@@ -157,7 +155,6 @@ public class AbstractConfig<V, T extends Configurable> {
      * @return the config's value
      */
     public V getValue(T configurable){// slq here as well
-        if (configurable == null) throw new DevelopmentException("Attempted passing null as a configurable");
         ResultSet resultSet = Database.select("SELECT * FROM " + this.getNameForType(configurable.getConfigLevel()) + " WHERE id = " + Database.quote(configurable.getID()));
         try{resultSet.next();
             return TypeChanger.toObject(this.valueType, resultSet.getString(2));

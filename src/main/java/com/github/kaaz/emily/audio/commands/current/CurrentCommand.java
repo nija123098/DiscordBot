@@ -35,13 +35,14 @@ public class CurrentCommand extends AbstractCommand {
         }
         long time = manager.currentTime();
         maker.getTitle().appendRaw(NOTES + " " + track.getName());
-        maker.appendRaw("[source](" + track.getSource() + ") - " + ConfigHandler.getSetting(GuildActivePlaylistConfig.class, manager.getGuild()).getName());
+        maker.appendRaw("[source](" + track.getSource() + ") | pl " + ConfigHandler.getSetting(GuildActivePlaylistConfig.class, manager.getGuild()).getName());
         maker.withUrl(track.getSource());
         maker.withThumb(track.getPreviewURL());
         maker.withReaction("track_next");
         if (manager.voiceChannel().getConnectedUsers().stream().filter(user -> BotRole.BOT_ADMIN.hasRequiredRole(user, null)).count() != 0) maker.withReaction("no_entry_sign");
         Long length = track.getLength();
         if (length != null) maker.getNewFieldPart().withBoth("Duration", Time.getAbbreviatedMusic(length, time));
+        if (manager.getNext() != null) maker.getNewFieldPart().withBoth("Next", manager.getNext().getName());
     }
     static String getPlayBar(boolean paused, long current, long total){
         int first = (int) ((float) current/total * 10);

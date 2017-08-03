@@ -322,7 +322,7 @@ public class MessageMaker {
             this.builder.withChannel(this.channel.channel());
             this.message = ErrorWrapper.wrap((ErrorWrapper.Request<IMessage>) () -> this.builder.send());
             this.ourMessage = Message.getMessage(this.message);
-            this.reactions.forEach(s -> this.message.addReaction(ReactionEmoji.of(s)));
+            this.reactions.forEach(s -> ErrorWrapper.wrap(() -> this.message.addReaction(ReactionEmoji.of(s))));
             if (this.deleteDelay != null) ScheduleService.schedule(this.deleteDelay, () -> ErrorWrapper.wrap(this.message::delete));
         } else {
             if (this.embed == null) ErrorWrapper.wrap(() -> this.message.edit(this.builder.getContent()));
@@ -337,9 +337,6 @@ public class MessageMaker {
         return lang == null ? "en" : lang;
     }
     private void compile(){
-        if (this.lang != null && !this.forceCompile) return;
-        // message
-        this.lang = getLang(this.user, this.channel);
         if (!this.channel.getModifiedPermissions(DiscordClient.getOurUser()).contains(DiscordPermission.SEND_MESSAGES)){
             if (this.channel.isPrivate()){
                 throw new RuntimeException("Could not send message to user due to lacking permissions: " + this.user.getName());
@@ -349,6 +346,9 @@ public class MessageMaker {
                 return;
             }
         }
+        if (this.lang != null && !this.forceCompile) return;
+        this.lang = getLang(this.user, this.channel);
+        // message
         if (this.couldNormalize()) this.asNormalMessage();
         else if (this.channel instanceof VoiceChannel) this.channel = ConfigHandler.getSetting(VoiceCommandPrintChannelConfig.class, this.channel.getGuild());
         if (this.embed == null) this.builder.withContent(this.header.langString.translate(this.lang));

@@ -183,7 +183,7 @@ public class CommandHandler {
     public static boolean attemptInvocation(String string, User user, Message message, Reaction reaction){
         if (string == null || string.isEmpty()) return false;
         AbstractCommand command;
-        if (message.getGuild() == null){
+        if (message.getChannel().isPrivate()){
             while (!Character.isLetterOrDigit(string.charAt(0))) string = string.substring(1);
             if (string.toLowerCase().startsWith("emily")) string = string.substring(5);
         }else{
@@ -201,11 +201,11 @@ public class CommandHandler {
                     string = string.substring(1 + DiscordClient.getOurUser().getNickname(message.getGuild()).length());
                 }else if (string.startsWith(MENTION.get())) string = string.substring(MENTION.get().length());
                 else if (string.startsWith(MENTION_NICK.get())) string = string.substring(MENTION_NICK.get().length());
-                else return false;
+                else if (reaction == null) return false;
             }
         }
         string = FormatHelper.trimFront(string);
-        Pair<AbstractCommand, String> pair = reaction == null ? getMessageCommand(string) : ((command = getReactionCommand(reaction.getChars())) == null ? null : new Pair<>(command, null));
+        Pair<AbstractCommand, String> pair = reaction == null ? getMessageCommand(string) : ((command = getReactionCommand(reaction.getName())) == null ? null : new Pair<>(command, null));
         if (pair == null && REACTION_COMMAND_MAP.containsKey(string)) pair = new Pair<>(REACTION_COMMAND_MAP.get(string), "");
         if (pair != null){
             command = pair.getKey();
@@ -236,7 +236,7 @@ public class CommandHandler {
                 }
                 return invoked;
             } catch (BotException e){
-                e.makeMessage(message.getChannel());
+                e.makeMessage(message.getChannel()).send();
                 message.addReactionByName(EXCEPTION_FOR_METHOD);
             } catch (Exception e) {
                 new MessageMaker(message).asExceptionMessage(new DevelopmentException(e)).send();
@@ -274,7 +274,7 @@ public class CommandHandler {
                     return true;
                 }
             } catch (BotException e){
-                e.makeMessage(channel);
+                e.makeMessage(channel).send();
             } catch (Exception e) {
                 new MessageMaker(channel).asExceptionMessage(new DevelopmentException(e)).send();
             }
@@ -302,7 +302,7 @@ public class CommandHandler {
      */
     @EventListener
     public static void handle(DiscordReactionEvent event){
-        if (!event.getUser().equals(DiscordClient.getOurUser())){
+        if (!event.getUser().isBot()){
             attemptInvocation(event.getMessage().getContent(), event.getUser(), event.getMessage(), event.getReaction());
         }
     }

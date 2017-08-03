@@ -101,8 +101,7 @@ public class GuildAudioManager extends AudioEventAdapter{
     private final List<LangString> speeches = new CopyOnWriteArrayList<>();
     private final List<Track> queue = new CopyOnWriteArrayList<>();
     private final List<LangString> interups = new CopyOnWriteArrayList<>();
-    private Track paused;
-    private Track current;
+    private Track current, paused, next;
     private long pausePosition;
     private boolean leaveAfterThis, loop, leaving;
     private GuildAudioManager(VoiceChannel channel) {
@@ -115,17 +114,18 @@ public class GuildAudioManager extends AudioEventAdapter{
         this.start(new SpeechTrack(new LangString(true, "Hello"), MessageMaker.getLang(null, this.channel)), 0);
     }
     public void leave(){
-        this.clearQueue();
-        if (this.current != null) this.skipTrack();
         if (this.leaving || !hasValidListeners(this.channel)){
             MAP.remove(this.channel.getGuild().getID());
             this.lavaPlayer.destroy();
             this.channel.leave();
         }else{
+            this.clearQueue();
+            this.speeches.clear();
+            this.queueSpeech(new LangString(true, "Goodbye"));
+            if (this.current != null) this.skipTrack();
             this.loop = false;
             this.leaveAfterThis = true;
             this.leaving = true;
-            this.queueSpeech(new LangString(true, "Goodbye"));
         }
     }
     public void pause(boolean pause){
@@ -197,11 +197,15 @@ public class GuildAudioManager extends AudioEventAdapter{
         }else if (this.paused != null){
             this.start(this.paused, (int) this.pausePosition);
             this.paused = null;
-        }else if (!this.queue.isEmpty()){
-            this.start(this.queue.remove(0), 0);
-        }else if (!ConfigHandler.getSetting(QueueTrackOnlyConfig.class, this.channel.getGuild())){
-            this.queueTrack(ConfigHandler.getSetting(GuildActivePlaylistConfig.class, this.channel.getGuild()).getNext(this.channel.getGuild()));
+        }else if (this.getNext() != null){
+            this.start(this.getNext(), 0);
         }else this.current = null;
+    }
+    public Track getNext(){
+        if (this.loop) return this.current;
+        if (!this.queue.isEmpty()) return this.queue.get(0);
+        if (this.next == null && !ConfigHandler.getSetting(QueueTrackOnlyConfig.class, this.channel.getGuild())) return (this.next = ConfigHandler.getSetting(GuildActivePlaylistConfig.class, this.channel.getGuild()).getNext(this.channel.getGuild()));
+        return this.next;
     }
     public void leaveAfterThis(){
         this.leaveAfterThis = true;
