@@ -35,7 +35,7 @@ public class JokeCommand extends AbstractCommand {
             String inputLine = in.readLine();
             JsonParser parser = new JsonParser();
             JsonObject array = parser.parse(inputLine).getAsJsonObject();
-            return array.get("value").getAsJsonObject().get("joke").getAsString();
+            return StringEscapeUtils.unescapeHtml4(array.get("value").getAsJsonObject().get("joke").getAsString());
         } catch (Exception e) {
             e.printStackTrace();
         }

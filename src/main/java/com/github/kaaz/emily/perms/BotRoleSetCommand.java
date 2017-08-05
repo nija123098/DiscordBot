@@ -3,6 +3,7 @@ package com.github.kaaz.emily.perms;
 import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.command.annotations.Argument;
+import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
 
@@ -14,7 +15,8 @@ public class BotRoleSetCommand extends AbstractCommand {
         super(BotRoleCommand.class, "set", null, null, null, "Adds or removes bot roles from a user");
     }
     @Command
-    public void command(User setter, @Argument User user, @Argument Boolean add, @Argument BotRole role, Guild guild){
+    public void command(User setter, @Argument User user, @Argument Boolean add, @Argument BotRole role, Guild guild, MessageMaker maker){
         BotRole.setRole(role, add, user, setter, guild);
+        BotRoleCommand.command(user, guild, maker);
     }
 }

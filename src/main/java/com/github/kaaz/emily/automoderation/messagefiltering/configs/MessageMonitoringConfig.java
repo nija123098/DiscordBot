@@ -16,7 +16,8 @@ public class MessageMonitoringConfig extends AbstractConfig<Set<MessageMonitorin
     private static final Set<MessageMonitoringType> DEFAULT = new HashSet<>(Arrays.asList(
             MessageMonitoringType.FAKE_DANGER, MessageMonitoringType.SLURS,
             MessageMonitoringType.WHITE_SPACE, MessageMonitoringType.INVOCATIONS,
-            MessageMonitoringType.EXCESSIVE_CAPITALS, MessageMonitoringType.EXCESSIVE_PINGING));
+            MessageMonitoringType.EXCESSIVE_CAPITALS, MessageMonitoringType.EXCESSIVE_PINGING,
+            MessageMonitoringType.SPAM));
     public MessageMonitoringConfig() {
         super("language_monitoring", BotRole.GUILD_TRUSTEE, DEFAULT, "Language monitoring for all channels unless if exceptions are given");
     }

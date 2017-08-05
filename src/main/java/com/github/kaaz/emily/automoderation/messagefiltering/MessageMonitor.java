@@ -61,7 +61,7 @@ public class MessageMonitor {
         try{CHANNEL_MAP.computeIfAbsent(received.getChannel(), MessageMonitor::calculate).forEach(filter -> filter.checkFilter(received));
         } catch (MessageMonitoringException exception){
             received.getMessage().delete();
-            new MessageMaker(received.getMessage()).withDM().append("Your message on " + received.getGuild().getName() + " in " + received.getChannel().getName() + " has been deleted.  Reason: " + exception.getMessage()).send();
+            new MessageMaker(received.getMessage()).withDM().append("Your message on ").appendRaw(received.getGuild().getName()).append(" in ").appendRaw(received.getChannel().mention()).append(" has been deleted.  Reason: " + exception.getMessage()).send();
             return true;
         }
         return false;

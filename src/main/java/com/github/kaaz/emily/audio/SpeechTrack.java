@@ -34,6 +34,6 @@ public class SpeechTrack extends Track {
     }
     @Override
     public Long getLength() {
-        return 0L;// todo?
+        return 0L;// it's close enough
     }
 }

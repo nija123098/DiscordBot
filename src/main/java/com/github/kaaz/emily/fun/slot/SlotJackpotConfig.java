@@ -8,8 +8,8 @@ import com.github.kaaz.emily.perms.BotRole;
 /**
  * Made by nija123098 on 5/18/2017.
  */
-public class SlotJackpotConfig extends AbstractConfig<Float, GlobalConfigurable> {
-    private static float SEED = 100;
+public class SlotJackpotConfig extends AbstractConfig<Integer, GlobalConfigurable> {
+    private static int SEED = 100;
     public SlotJackpotConfig() {
         super("slot_jackpot", BotRole.BOT_ADMIN, SEED, "The amount the Jackpot begins and is reset to");
     }

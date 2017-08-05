@@ -8,9 +8,9 @@ import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 /**
  * Made by nija123098 on 5/30/2017.
  */
-public class DiscordCommand extends AbstractCommand {
-    public DiscordCommand() {
-        super("guild", ModuleLevel.INFO, "discord", null, "Brings you to my support server");
+public class SupportCommand extends AbstractCommand {
+    public SupportCommand() {
+        super("support", ModuleLevel.INFO, "discord", null, "Brings you to my support server");
     }
     @Command
     public void command(MessageMaker maker){

@@ -55,7 +55,7 @@ public class SteamCommand extends AbstractCommand {
             });
             maker.getNewFieldPart().withBoth("Language", supported.get() ? EmoticonHelper.getChars("white_check_mark", false) : (FormatHelper.cleanOfXML(app.getSupportedLanguages()) + ""));
         } catch (SteamApiException e) {
-            throw new DevelopmentException(e);
+            throw new DevelopmentException("Steam just hates it's api.", e);
         }
     }
 }

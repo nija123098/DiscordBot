@@ -1,15 +1,18 @@
 package com.github.kaaz.emily.fun.slot;
 
 import com.github.kaaz.emily.command.AbstractCommand;
+import com.github.kaaz.emily.command.ContextType;
 import com.github.kaaz.emily.command.ModuleLevel;
 import com.github.kaaz.emily.command.annotations.Argument;
 import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.GlobalConfigurable;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
-import com.github.kaaz.emily.discordobjects.wrappers.DiscordClient;
+import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.github.kaaz.emily.economy.MoneyTransfer;
+import com.github.kaaz.emily.economy.configs.CurrentMoneyConfig;
+import com.github.kaaz.emily.exeption.ArgumentException;
 import com.github.kaaz.emily.service.services.ScheduleService;
 import com.github.kaaz.emily.util.EmoticonHelper;
 import com.github.kaaz.emily.util.Rand;
@@ -23,8 +26,10 @@ public class SlotCommand extends AbstractCommand {
         super("slot", ModuleLevel.FUN, null, null, "Gambling.");
     }
     @Command
-    public void command(User user, MessageMaker maker, @Argument(optional = true, info = "The amount bet") Float bet) {
-        if (bet == null) bet = 0F;
+    public void command(Guild guild, User user, MessageMaker maker, @Argument(optional = true, replacement = ContextType.NONE, info = "The amount bet") Integer bet) {
+        if (bet == null) bet = 0;
+        if (ConfigHandler.getSetting(CurrentMoneyConfig.class, user) < bet) throw new ArgumentException("You don't have that much currency");
+        if (bet < 0) throw new ArgumentException("You can't bet against yourself!  Believe in your self!");
         SlotPack slotPack = ConfigHandler.getSetting(SlotPackConfig.class, user);
         int[][] ints = new int[3][3];
         for (int i = 0; i < ints.length; ++i) {
@@ -34,26 +39,17 @@ public class SlotCommand extends AbstractCommand {
             }
         }
         Integer slot = getSlotResult(ints);
-        Float amount = slot == null ? 0 : slot.floatValue() * bet;
+        Integer amount = slot == null ? 0 : slot * bet;
         if (slot != null) amount *= slotPack.getAmount(slot);
         else {
             int count = 0;
-            for (int[] anInt : ints) {
-                for (int anAnInt : anInt) {
-                    if (anAnInt == 0) {
-                        ++count;
-                        break;
-                    }
-                }
-            }
-            if (count != 0) {
-                amount = (float) Math.pow(bet, count);
-            }
+            for (int i = 0; i < 3; i++) if (ints[i][1] == 0) ++count;
+            if (count != 0) amount = bet * count;
         }
         String[] strings = getMessage(ints, slotPack, amount);
-        if (bet != 0) MoneyTransfer.transact(DiscordClient.getOurUser(), user, 0, amount == null ? -bet : amount, "A slot bet");
-        if (amount == null) {
-            Float finalBet = bet;
+        if (bet != 0) MoneyTransfer.transact(guild, user, null, amount == 0 ? -bet : amount, "A slot bet");
+        if (amount == 0) {
+            Integer finalBet = bet;
             ConfigHandler.changeSetting(SlotJackpotConfig.class, GlobalConfigurable.GLOBAL, aFloat -> aFloat + finalBet / 2);
         }
         maker.withAutoSend(false);
@@ -64,7 +60,7 @@ public class SlotCommand extends AbstractCommand {
         int last = strings.length - 1;
         ScheduleService.schedule(last * 750, () -> maker.getHeader().clear().getMaker().forceCompile().append(strings[last]).send());
     }
-    private static String[] getMessage(int[][] ints, SlotPack pack, Float amountWon){
+    private static String[] getMessage(int[][] ints, SlotPack pack, Integer amountWon){
         String[] strings = new String[4];
         for (int h = 0; h < strings.length; h++) {
             String builder = "";
@@ -81,7 +77,7 @@ public class SlotCommand extends AbstractCommand {
     }
     private static Integer getSlotResult(int[][] ints){// null if none
         if ((ints[0][0] == ints[1][1] && ints[1][1] == ints[2][2]) || (ints[2][0] == ints[1][1] && ints[1][1] == ints[0][2])) return ints[1][1];
-        if (ints[0][0] == ints[0][1] && ints[0][0] == ints[0][2]) return Math.max(ints[0][0], Math.max(ints[1][0], ints[2][0]));
+        if (ints[0][0] == ints[1][0] && ints[1][0] == ints[2][0]) return ints[1][1];
         return null;
     }
 }

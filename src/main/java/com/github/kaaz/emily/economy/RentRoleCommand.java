@@ -30,7 +30,7 @@ public class RentRoleCommand extends AbstractCommand {
         if (role == null){
             String icon = ConfigHandler.getSetting(MoneySymbolConfig.class, guildUser.getGuild());
             List<String> list = guildUser.getGuild().getRoles().stream().map(role1 -> {
-                Float price = ConfigHandler.getSetting(RoleRentConfig.class, role1);
+                Integer price = ConfigHandler.getSetting(RoleRentConfig.class, role1);
                 return price == null ? null : role1.getName() + (price != 0 ? " for " + price + "" + icon : "");
             }).filter(Objects::nonNull).collect(Collectors.toList());
             if (list.isEmpty()) maker.append("There are no roles in this guild to get.");
@@ -40,7 +40,7 @@ public class RentRoleCommand extends AbstractCommand {
             }
         } else {
             int hours = (int) (time.timeUntil() / 3600);
-            Float currency = ConfigHandler.getSetting(RoleRentConfig.class, role);
+            Integer currency = ConfigHandler.getSetting(RoleRentConfig.class, role);
             if (currency == null) throw new ArgumentException("You can't rent this role");
             MoneyTransfer.transact(guildUser, guildUser.getGuild(), 0, currency * hours, "The purchase of the role " + role.getName() + " for " + hours + " hours");
             ConfigHandler.alterSetting(RoleSubscriptionsConfig.class, guildUser, map -> map.compute(role, (r, lon) -> lon == null ? time.schedualed() : time.timeUntil() + lon));

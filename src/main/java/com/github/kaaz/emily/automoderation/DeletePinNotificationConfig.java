@@ -24,7 +24,7 @@ public class DeletePinNotificationConfig extends AbstractConfig<Boolean, Guild> 
     }
     @EventListener
     public synchronized void handle(DiscordMessageReceived event){
-        if (!event.getMessage().getContent().equals("") || !this.getValue(event.getGuild()) || !DiscordPermission.MANAGE_MESSAGES.hasPermission(event.getAuthor(), event.getGuild()) || !DiscordPermission.MANAGE_MESSAGES.hasPermission(DiscordClient.getOurUser(), event.getGuild())) return;
+        if (!event.getMessage().getContent().isEmpty() || !this.getValue(event.getGuild()) || !DiscordPermission.MANAGE_MESSAGES.hasPermission(event.getAuthor(), event.getGuild()) || !DiscordPermission.MANAGE_MESSAGES.hasPermission(DiscordClient.getOurUser(), event.getGuild())) return;
         AtomicReference<DiscordMessagePin> reference = new AtomicReference<>();
         PIN_ENTRIES.forEach(messages -> {
             if (reference.get() == null && event.getAuthor().equals(messages.getAuthor())){

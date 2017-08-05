@@ -26,7 +26,7 @@ public class BankCommand extends AbstractCommand {
         if (configurable == null) configurable = user;
         getFormat(maker, "Your bank contains ", configurable);
         if (user.equals(configurable) && guildUser != null){
-            getFormat(maker, "\nIn this guild you have ", guildUser);
+            getFormat(maker, "\nIn this server you have ", guildUser);
         }
     }
     private static void getFormat(MessageMaker maker, String prefix, Configurable configurable){

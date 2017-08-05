@@ -40,7 +40,7 @@ public enum KeyPhrase {
         }
     }
     public void checkAvailableContext(Set<ContextRequirement> requirements){
-        if (!this.availableContext.containsAll(requirements)){// todo clarify
+        if (!this.availableContext.containsAll(requirements)){
             throw new ContextException("KeyPhrase only provides context: " + availableContext + " required " + requirements);
         }
     }

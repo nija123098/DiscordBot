@@ -38,7 +38,10 @@ public class LanguageHelper {
         throw new ArgumentException("Either that is not a number or you spelled it out and it's value is over 12");
     }
     public static String makePleural(String s){
-        return s.endsWith("s") ? s + "'s" : s + "s";
+        return s + (s.endsWith("s") ? "'s" : "s");
+    }
+    public static String makePossessive(String s){
+        return s + "'" + (s.endsWith("s") ? "" : "s");
     }
     public static String getInteger(int val){
         return INTEGERS.size() > val ? INTEGERS.get(val) : "number";

@@ -84,7 +84,7 @@ public class User implements Configurable {
         return user().getName();
     }
 
-    private final AtomicReference<Set<Guild>> guilds = new AtomicReference<>();
+    private transient final AtomicReference<Set<Guild>> guilds = new AtomicReference<>();
     public Set<Guild> getGuilds(){
         if (this.guilds.get() == null) {
             this.guilds.set(DiscordClient.getGuilds().stream().filter(guild -> guild.getUsers().contains(this)).collect(Collectors.toSet()));

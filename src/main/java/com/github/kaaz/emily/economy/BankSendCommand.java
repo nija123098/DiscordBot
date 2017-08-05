@@ -6,7 +6,7 @@ import com.github.kaaz.emily.command.annotations.Argument;
 import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.command.annotations.Context;
 import com.github.kaaz.emily.config.Configurable;
-import com.github.kaaz.emily.config.GuildUser;
+import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
 
 /**
@@ -17,15 +17,16 @@ public class BankSendCommand extends AbstractCommand {
         super(BankCommand.class, "send", null, null, null, "Sends currency to another user, guild, or guild user");
     }
     @Command
-    public void command(@Argument Configurable one, @Argument(optional = true, replacement = ContextType.NONE) Configurable two, @Argument Integer integer, @Context(softFail = true) GuildUser guildUser, User user){
+    public void command(@Argument Configurable one, @Argument(optional = true, replacement = ContextType.NONE) Configurable two, @Argument Integer integer, User user, @Context(softFail = true) Guild guild){
         Configurable reciver, sender;
         if (two != null){
             sender = one;
             reciver = two;
         }else{
             reciver = one;
-            sender = guildUser == null ? user : guildUser;
+            sender = user;
         }
-        MoneyTransfer.transact(sender, reciver, 12, 0, "Sending");
+        sender.checkPermissionToEdit(user, guild);
+        MoneyTransfer.transact(sender, reciver, 0, integer, "Sending");
     }
 }

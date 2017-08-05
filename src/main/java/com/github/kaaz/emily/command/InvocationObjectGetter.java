@@ -24,7 +24,9 @@ import java.awt.*;
 import java.lang.reflect.Parameter;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 /**
  * Made by nija123098 on 3/27/2017.
@@ -113,15 +115,34 @@ public class InvocationObjectGetter {
             User u = DiscordClient.getUserByID(FormatHelper.removeMention(args.split(" ")[0]));
             if (u != null) return new Pair<>(u, args.split(" ")[0].length());
             if (guild == null) throw new ArgumentException("Commands with user names can not be used in private channels");
-            List<User> users = new ArrayList<>(3);
+            String[] split = args.split("#");
+            List<User> users = new CopyOnWriteArrayList<>();
             UserNameMonitor.getNames(guild).forEach(s -> {
-                if (args.startsWith(s) && ((args.length() == s.length() || args.charAt(s.length()) == ' '))){
+                if (split[0].startsWith(s) && ((split[0].length() == s.length() || split[0].charAt(s.length()) == ' '))){
                     users.addAll(guild.getUsersByName(s));
-                    if (users.size() > 1){
-                        throw new ArgumentException("To many users by that name");
-                    }
                 }
             });
+            if (users.size() == 0) {
+                split[0] = split[0].toLowerCase();
+                UserNameMonitor.getNames(guild).forEach(s -> {
+                    String sl = s.toLowerCase();
+                    if (split[0].startsWith(sl) && ((split[0].length() == sl.length() || split[0].charAt(sl.length()) == ' '))){
+                        users.addAll(guild.getUsers().stream().filter(us -> (us.getNickname(guild) != null && us.getNickname(guild).toLowerCase().equals(s)) || us.getName().toLowerCase().equals(s)).collect(Collectors.toList()));
+                        if (users.size() > 1){
+                            if (split.length > 1) {
+                                StringBuilder foundDisBuilder = new StringBuilder();
+                                for (char c : split[1].toCharArray()){
+                                    if (!Character.isDigit(c)) break;
+                                    foundDisBuilder.append(c);
+                                }
+                                if (foundDisBuilder.length() != 4) throw new ArgumentException("To many users by that name and not that number code, use a mention or ID");
+                                users.removeIf(us -> !us.getDiscriminator().equals(foundDisBuilder.toString()));
+                            }
+                            throw new ArgumentException("To many users by that name, use a mention or ID");
+                        }
+                    }
+                });
+            }
             if (users.size() == 0) throw new ArgumentException("No users by that name, try an ID or mention");
             return new Pair<>(users.iterator().next(), users.get(0).getName().length());
         });

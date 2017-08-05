@@ -12,5 +12,6 @@ public enum MessageMonitoringType {
     POLITICAL,
     WHITE_SPACE,
     EXCESSIVE_CAPITALS,
-    EXCESSIVE_PINGING,;
+    EXCESSIVE_PINGING,
+    SPAM,;
 }

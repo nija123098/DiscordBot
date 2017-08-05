@@ -43,4 +43,8 @@ public class FMLCommand extends AbstractCommand {
             throw new DevelopmentException(e);
         }
     }
+
+    public static void main(String[] args) throws IOException {
+        System.out.println(Jsoup.connect("https://soundcloud.com/r3sizze/bass-hours-feat-max-landry-feel-it-right").timeout(30_000).userAgent(Reference.USER_AGENT).get().head().select("[property]"));
+    }
 }

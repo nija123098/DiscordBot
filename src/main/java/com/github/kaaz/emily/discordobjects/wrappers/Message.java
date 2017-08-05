@@ -129,7 +129,7 @@ public class Message {// should not be kept stored, too many are made
     }
 
     public Reaction getReaction(String s){
-        return Reaction.getReaction(message().getReactionByEmoji(ReactionEmoji.of(s)));
+        return Reaction.getReaction(message().getReactionByUnicode(s));
     }
 
     public Reaction getReactionByName(String name){

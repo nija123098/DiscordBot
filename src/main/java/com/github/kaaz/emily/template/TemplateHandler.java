@@ -32,13 +32,6 @@ public class TemplateHandler {
         }// should not throw an exception since nothing failed
         if (exemptions.size() >= templates.size()){
             return templates.get(Rand.getRand(templates.size() - 1));
-        } else {
-            while (true){// todo optimize
-                Template template = templates.get(Rand.getRand(templates.size() - 1));
-                if (!exemptions.contains(template)){
-                    return template;
-                }
-            }
-        }
+        } else return templates.get(Rand.getRand(templates.size(), exemptions.toArray(new Integer[exemptions.size()])));
     }
 }

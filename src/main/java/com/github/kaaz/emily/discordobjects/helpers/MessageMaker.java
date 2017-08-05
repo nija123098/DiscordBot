@@ -8,7 +8,6 @@ import com.github.kaaz.emily.config.configs.user.UserLanguageConfig;
 import com.github.kaaz.emily.discordobjects.exception.ErrorWrapper;
 import com.github.kaaz.emily.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 import com.github.kaaz.emily.discordobjects.wrappers.*;
-import com.github.kaaz.emily.exeption.BotException;
 import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.launcher.BotConfig;
 import com.github.kaaz.emily.service.services.ScheduleService;
@@ -47,7 +46,7 @@ public class MessageMaker {
     private User user;
     private Channel channel;
     private AtomicInteger currentPage = new AtomicInteger();
-    private Map<String, ReactionBehavior> reactionBehaviors = new HashMap<>();
+    private Map<String, ReactionBehavior> reactionBehaviors = new LinkedHashMap<>();
     private IMessage message, origin;
     private Message ourMessage;
     private boolean okHand;
@@ -212,9 +211,6 @@ public class MessageMaker {
     public MessageMaker append(boolean raw, String s){
         this.header.append(!raw, s);
         return this;
-    }
-    public MessageMaker asExceptionMessage(BotException cause) {
-        return this.maySend().withColor(Color.RED).getHeader().append(cause.getMessage()).getMaker().getTitle().appendRaw(cause.getClass().getSimpleName()).getMaker();
     }
     // embed methods
     public MessageMaker withColor(Color color){
@@ -417,25 +413,30 @@ public class MessageMaker {
                 fieldIndices = new Triple[textVals.length][];
                 Arrays.fill(fieldIndices, new Triple[0]);
             }
-            if (this.embed != null && this.fieldIndices.length > 1){
-                this.withReactionBehavior("arrow_left", (add, reaction, user) -> {
-                    if (currentPage.get() == 0) return;
-                    this.embed.withFooterText(generateNote(currentPage.decrementAndGet()));
-                    this.send(currentPage.get());
-                });
-                this.withReactionBehavior("arrow_right", (add, reaction, user) -> {
-                    if (currentPage.get() == fieldIndices.length - 1) return;
-                    this.embed.withFooterText(generateNote(currentPage.incrementAndGet()));
-                    this.send(currentPage.get());
-                });
+            if (this.embed != null){
+                if (this.fieldIndices.length > 1){
+                    this.withReactionBehavior("arrow_left", (add, reaction, user) -> {
+                        if (currentPage.get() == 0) return;
+                        this.embed.withFooterText(generateNote(currentPage.decrementAndGet()));
+                        this.send(currentPage.get());
+                    });
+                    this.withReactionBehavior("arrow_right", (add, reaction, user) -> {
+                        if (currentPage.get() == fieldIndices.length - 1) return;
+                        this.embed.withFooterText(generateNote(currentPage.incrementAndGet()));
+                        this.send(currentPage.get());
+                    });
+                }
                 this.embed.withFooterText(generateNote(0));
             }
         }
     }
     private String generateNote(int page){
         String note = this.note.langString.translate(lang);
-        if (note.length() != 0) note += " - ";
-        return "Page " + ++page + " of " + this.fieldIndices.length + note;
+        if (this.fieldIndices.length > 1) {
+            if (!note.isEmpty()) note = " - " + note;
+            note = "Page " + ++page + " of " + this.fieldIndices.length + note;
+        }
+        return note;
     }
     public class FieldPart {
         private MessageMaker maker;

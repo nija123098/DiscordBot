@@ -2,6 +2,8 @@ package com.github.kaaz.emily.config;
 
 import com.github.kaaz.emily.command.annotations.LaymanName;
 import com.github.kaaz.emily.db.Database;
+import com.github.kaaz.emily.discordobjects.wrappers.Channel;
+import com.github.kaaz.emily.discordobjects.wrappers.VoiceChannel;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
 import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.perms.BotRole;
@@ -48,8 +50,8 @@ public class AbstractConfig<V, T extends Configurable> {
                 while (rs.next()) {
                     String tName = rs.getString("TABLE_NAME");
                     if (tName != null && tName.equals(this.getNameForType(level))) return;
-                }
-                Database.query("CREATE TABLE `" + this.getNameForType(level) + "` (id VARCHAR(150), value VARCHAR(" + (this.normalViewing ? 100 : 1000) + "), millis BIGINT)");
+                }// VARCHAR(" + (this.normalViewing ? 100 : 10000) + ")
+                Database.query("CREATE TABLE `" + this.getNameForType(level) + "` (id VARCHAR(150), value TEXT, millis BIGINT)");
             } catch (SQLException e) {
                 throw new DevelopmentException("Could not ensure table existence", e);
             }
@@ -134,7 +136,7 @@ public class AbstractConfig<V, T extends Configurable> {
         return TypeChanger.toObject(this.valueType, e);
     }
     public String wrapTypeOut(V v, T configurable){// configurable may be used in over ride methods
-        return TypeChanger.toString(this.valueType, v);
+        return v instanceof Configurable ? v instanceof Channel && !(v instanceof VoiceChannel) ? ((Channel) v).mention() : ((Configurable) v).getName() : TypeChanger.toString(this.valueType, v);
     }
     protected void validateInput(T configurable, V v) {}
     public V setValue(T configurable, V value){

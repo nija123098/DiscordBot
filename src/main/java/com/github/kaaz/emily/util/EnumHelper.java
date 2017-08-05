@@ -23,7 +23,7 @@ public class EnumHelper {
     public static <E extends Enum<E>> Pair<E, Integer> getValue(Class<E> clazz, String value){
         value = value.toUpperCase().replace(" ", "_");
         for (E e : clazz.getEnumConstants()){
-            if (value.startsWith(e.name())) return new Pair<>(e, e.name().length());
+            if (value.equals(e.name())) return new Pair<>(e, e.name().length());
         }
         throw new ArgumentException("Unknown " + clazz.getSimpleName());
     }

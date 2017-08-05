@@ -165,7 +165,7 @@ public class FormatHelper {
      * @return formatted controllers
      */
     public static String makeTable(List<String> items, int columnLength, int columns) {
-        String ret = "```xl\n";
+        String ret = "```\n";
         int counter = 0;
         for (String item : items) {
             counter++;

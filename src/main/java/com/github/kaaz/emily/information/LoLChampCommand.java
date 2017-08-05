@@ -25,7 +25,6 @@ import java.util.Map;
 public class LoLChampCommand extends AbstractCommand {
     private final RiotApi api;
     private final Map<String, Champion> dataChampionList = new HashMap<>();
-    private String gameVersion = null;
     private String baseUrl = null;
     private static final String[] skillIndex = {"q", "w", "r", "s"};
     private static String SWORDS = EmoticonHelper.getChars("crossed_swords", true), EXPLOSION = EmoticonHelper.getChars("diamond_shape_with_a_dot_inside", true), DEFENSE = EmoticonHelper.getChars("shield", true), QUESTION_MARK = EmoticonHelper.getChars("question", true), P = EmoticonHelper.getChars("regional_indicator_p", true);
@@ -35,6 +34,10 @@ public class LoLChampCommand extends AbstractCommand {
     public LoLChampCommand() {
         super("lolchamp", ModuleLevel.INFO, null, null, "check out a league of legends champion");
         this.api = BotConfig.RIOT_GAMES_TOKEN != null ? new RiotApi(new ApiConfig().setKey(BotConfig.RIOT_GAMES_TOKEN)) : null;
+        try{baseUrl = String.format("http://ddragon.leagueoflegends.com/cdn/%s/img/", api.getDataVersions(Region.EUW).get(0));
+        } catch (RiotApiException e) {
+            throw new DevelopmentException(e);
+        }
     }
     private String getImage(Image img) {
         return baseUrl + img.getGroup() + "/" + img.getFull();
@@ -43,10 +46,6 @@ public class LoLChampCommand extends AbstractCommand {
     public void execute(@Argument(info = "champion name") String args, MessageMaker maker) {
         if (this.api == null) throw new DevelopmentException("This command is currently unavailable");
         try {
-            if (gameVersion == null) {
-                gameVersion = api.getDataVersions(Region.EUW).get(0);
-                baseUrl = String.format("http://ddragon.leagueoflegends.com/cdn/%s/img/", gameVersion);
-            }
             if (dataChampionList.isEmpty()) {
                 Map<String, Champion> tmp = api.getDataChampionList(Region.EUW, null, null, false, ChampData.ALL).getData();
                 for (Map.Entry<String, Champion> entry : tmp.entrySet()) {

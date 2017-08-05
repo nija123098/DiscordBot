@@ -14,19 +14,15 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
-import java.util.Arrays;
-import java.util.Currency;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Made by nija123098 on 6/19/2017.
  */
 public class ConversionCommand extends AbstractCommand {
-    private static final Map<String, Un> UN_MAP = new HashMap<>();
+    static final Map<String, Un> UN_MAP = new HashMap<>();
     static {
-        Sets.union(new HashSet<>(Arrays.asList(SI.GRAM)), Sets.union(SI.getInstance().getUnits(), NonSI.getInstance().getUnits())).forEach(o -> UN_MAP.put(o.toString(), new Un(o)));
+        Sets.union(new HashSet<>(Collections.singletonList(SI.GRAM)), Sets.union(SI.getInstance().getUnits(), NonSI.getInstance().getUnits())).forEach(o -> UN_MAP.put(o.toString(), new Un(o)));
         Map<Currency, Un> map = new HashMap<>();
         Currency.getAvailableCurrencies().forEach(currency -> map.put(currency, new Un(currency)));
         Currency.getAvailableCurrencies().forEach(currency -> {
@@ -42,7 +38,7 @@ public class ConversionCommand extends AbstractCommand {
     @Command
     public void command(String args, MessageMaker maker){
         String[] strings = args.split(" to ");
-        if (strings.length != 2) throw new ArgumentException("Please format arguments in <amount> <unit> to <unit>, it is case sensitive");
+        if (strings.length != 2) throw new ArgumentException("Please format arguments in <amount> <unit> **to** <unit>, it is case sensitive and uses abbreviations");
         String builder = "";
         char c;
         for (int i = 0; i < strings[0].length(); i++) {

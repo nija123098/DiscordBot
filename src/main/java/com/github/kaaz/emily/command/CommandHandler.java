@@ -47,6 +47,7 @@ public class CommandHandler {
         Set<Class<? extends AbstractCommand>> classes = new Reflections(Reference.BASE_PACKAGE).getSubTypesOf(AbstractCommand.class);
         CLASS_MAP = new HashMap<>(classes.size() + 10, 1);
         classes.forEach(clazz -> {
+            System.out.println(clazz.getSimpleName());
             try {
                 AbstractCommand command = clazz.newInstance();
                 CLASS_MAP.put(clazz, command);
@@ -239,7 +240,7 @@ public class CommandHandler {
                 e.makeMessage(message.getChannel()).send();
                 message.addReactionByName(EXCEPTION_FOR_METHOD);
             } catch (Exception e) {
-                new MessageMaker(message).asExceptionMessage(new DevelopmentException(e)).send();
+                new DevelopmentException(e).makeMessage(message.getChannel()).send();
             }
             return false;
         }else{
@@ -276,7 +277,7 @@ public class CommandHandler {
             } catch (BotException e){
                 e.makeMessage(channel).send();
             } catch (Exception e) {
-                new MessageMaker(channel).asExceptionMessage(new DevelopmentException(e)).send();
+                new DevelopmentException(e).makeMessage(channel).send();
             }
         }
         return false;

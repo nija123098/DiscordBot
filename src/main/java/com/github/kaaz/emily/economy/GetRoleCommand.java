@@ -31,7 +31,7 @@ public class GetRoleCommand extends AbstractCommand {
         if (role == null) {
             String icon = ConfigHandler.getSetting(MoneySymbolConfig.class, guildUser.getGuild());
             List<String> list = guildUser.getGuild().getRoles().stream().map(role1 -> {
-                Float price = ConfigHandler.getSetting(RoleBuyConfig.class, role1);
+                Integer price = ConfigHandler.getSetting(RoleBuyConfig.class, role1);
                 return price == null ? null : role1.getName() + (price != 0 ? " for " + price + "" + icon : "");
             }).filter(Objects::nonNull).collect(Collectors.toList());
             if (list.isEmpty()) maker.append("There are no roles in this guild to get.");
@@ -40,9 +40,9 @@ public class GetRoleCommand extends AbstractCommand {
                 maker.appendRaw(FormatHelper.makeTable(list));
             }
         } else {
-            Float f = ConfigHandler.getSetting(RoleBuyConfig.class, role);
+            Integer f = ConfigHandler.getSetting(RoleBuyConfig.class, role);
             if (f == null) throw new ArgumentException("You can not buy that role");
-            Float c = ConfigHandler.getSetting(CurrentMoneyConfig.class, guildUser);
+            Integer c = ConfigHandler.getSetting(CurrentMoneyConfig.class, guildUser);
             if (c < f) throw new ArgumentException("You must have " + f + " currency to buy that role.  Current: " + c);
             guildUser.getUser().addRole(role);
             ConfigHandler.setSetting(CurrentMoneyConfig.class, guildUser, c - f);

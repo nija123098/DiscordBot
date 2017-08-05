@@ -47,7 +47,7 @@ public class BotConfig {
     @ConfigurationOption
     public static String CAT_API_TOKEN = null;
     @ConfigurationOption
-    public static final String RIOT_GAMES_TOKEN = null;
+    public static final String RIOT_GAMES_TOKEN = "riot-token";
     @ConfigurationOption
     public static String DB_HOST = "localhost";
     @ConfigurationOption

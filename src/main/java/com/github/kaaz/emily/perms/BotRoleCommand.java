@@ -21,8 +21,9 @@ public class BotRoleCommand extends AbstractCommand {
         super("botrole", ModuleLevel.BOT_ADMINISTRATIVE, null, null, "Gets information on the user's roles in relation to the bot");
     }
     @Command
-    public void command(@Argument(optional = true) User user, Guild guild, MessageMaker maker){
-        maker.getTitle().appendAlternate(true, FormatHelper.makePleural(user.getDisplayName(guild)) + " BotRoles");
+    public static void command(@Argument(optional = true) User user, Guild guild, MessageMaker maker){
+        maker.getAuthorName().appendAlternate(true, FormatHelper.makePleural(user.getDisplayName(guild)) + " BotRoles");
+        maker.withAuthorIcon(user.getAvatarURL());
         Set<BotRole> botRoles = BotRole.getSet(user, guild);
         Stream.of(BotRole.values()).forEach(role -> maker.getNewFieldPart().getTitle().appendRaw(role.name()).getFieldPart().getValue().appendRaw(EmoticonHelper.getChars(botRoles.contains(role) ? "white_check_mark" : "x", false)));
     }

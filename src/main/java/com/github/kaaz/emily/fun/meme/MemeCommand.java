@@ -27,6 +27,7 @@ public class MemeCommand extends AbstractCommand {
     @Command
     public void command(MessageMaker maker, String[] args){
         if (args.length == 0) {
+            maker.append("Do @Emily <meme type> top text | bottom text\n");
             MemeTypesCommand.command(maker);
             return;
         }

@@ -104,11 +104,9 @@ public class LangString {
             String[] contents = content.split("\n");
             int before = 0, after = 0;
             for (int i = 0; i < contents.length; i++) {
-                if (contents[i].startsWith(" ")){
-                    before = contents[i].indexOf(" ");
-                    if (before == -1) {
-                        before = 0;
-                    }
+                for (int j = 0; j < contents[i].length(); j++) {
+                    if (contents[i].charAt(j) == ' ') ++before;
+                    else break;
                 }
                 for (int j = contents[i].length() - 1; j > -1; --j) {
                     if (contents[i].charAt(j) != ' '){
@@ -120,6 +118,7 @@ public class LangString {
                 if (i != contents.length - 1 || nextLineLast){
                     building += "\n";
                 }
+                before = 0;
                 after = 0;
             }
             return building;
