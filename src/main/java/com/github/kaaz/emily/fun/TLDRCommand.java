@@ -62,7 +62,7 @@ public class TLDRCommand extends AbstractCommand {
     }
     @Command
     public void command(MessageMaker maker, String s) {
-        if (s.isEmpty()) s = this.entries.get(Rand.getRand(this.entries.size() - 1));
+        if (s.isEmpty()) s = Rand.getRand(this.entries, false);
         else s = FormatHelper.removeChars(s, ' ').toLowerCase();
         Pair<String, String> pair = this.map.get(s);
         if (pair == null){

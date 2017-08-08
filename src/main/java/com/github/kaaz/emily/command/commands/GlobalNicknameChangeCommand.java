@@ -18,10 +18,12 @@ public class GlobalNicknameChangeCommand extends AbstractCommand {
     }
     @Command
     public void command(String arg, MessageMaker maker){
-        String global = ConfigHandler.getSetting(GlobalNicknameConfig.class, GlobalConfigurable.GLOBAL);
-        DiscordClient.getGuilds().stream().filter(guild -> {
-            String display = DiscordClient.getOurUser().getDisplayName(guild);
-            return display.equals(DiscordClient.getOurUser().getName()) || display.equals(global);
-        }).forEach(guild -> guild.setUserNickname(DiscordClient.getOurUser(), arg));
+        ConfigHandler.changeSetting(GlobalNicknameConfig.class, GlobalConfigurable.GLOBAL, global -> {
+            DiscordClient.getGuilds().stream().filter(guild -> {
+                String display = DiscordClient.getOurUser().getDisplayName(guild);
+                return display.equals(DiscordClient.getOurUser().getName()) || display.equals(global);
+            }).forEach(guild -> guild.setUserNickname(DiscordClient.getOurUser(), arg));
+            return arg;
+        });
     }
 }

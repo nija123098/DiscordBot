@@ -10,18 +10,18 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ProcessingHandler {
     private static final Map<Channel, Integer> PROCESSING_MAP = new ConcurrentHashMap<>();
-    public static void startProcess(Channel channel){
-        // if (PROCESSING_MAP.compute(channel, (c, integer) -> integer == null ? 1 : ++integer) == 1) channel.setTypingStatus(true);
+    public static synchronized void startProcess(Channel channel){
+        if (PROCESSING_MAP.compute(channel, (c, integer) -> integer == null ? 1 : ++integer) == 1) channel.setTypingStatus(true);
     }
-    public static void endProcess(Channel channel){
-        /*if (PROCESSING_MAP.get(channel) == 1){
+    public static synchronized void endProcess(Channel channel){
+        if (PROCESSING_MAP.get(channel) == 1){
             PROCESSING_MAP.remove(channel);
             channel.setTypingStatus(false);
-        } else PROCESSING_MAP.compute(channel, (c, integer) -> integer == null ? null : --integer);*/
+        } else PROCESSING_MAP.compute(channel, (c, integer) -> integer == null ? null : --integer);
     }
     public static void swapProcess(Channel origin, Channel destination){
-        /*if (origin.equals(destination)) return;
+        if (origin.equals(destination)) return;
         startProcess(destination);
-        endProcess(origin);*/
+        endProcess(origin);
     }
 }

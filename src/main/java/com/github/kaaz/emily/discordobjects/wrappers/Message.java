@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Made by nija123098 on 3/4/2017.
@@ -25,8 +24,7 @@ public class Message {// should not be kept stored, too many are made
         return MAP.computeIfAbsent(iMessage.getStringID(), s -> new Message(iMessage));
     }
     public static Message getMessage(String id){
-        try {
-            return getMessage(DiscordClient.client().getMessageByID(id));
+        try{return getMessage(DiscordClient.client().getMessageByID(id));
         } catch (NumberFormatException e) {
             return null;
         }
@@ -41,7 +39,10 @@ public class Message {// should not be kept stored, too many are made
         messages.forEach(message -> iMessages.add(message.message()));
         return iMessages;
     }
-    private final IMessage iMessage;
+    public static void update(IMessage iMessage){
+        getMessage(iMessage).iMessage = iMessage;
+    }
+    private IMessage iMessage;
     private Message(IMessage message){
         iMessage = message;
     }
@@ -128,8 +129,8 @@ public class Message {// should not be kept stored, too many are made
         return Reaction.getReactions(message().getReactions());
     }
 
-    public Reaction getReaction(String s){
-        return Reaction.getReaction(message().getReactionByUnicode(s));
+    public Reaction getReaction(String unicode){
+        return Reaction.getReaction(this.message().getReactionByUnicode(unicode));
     }
 
     public Reaction getReactionByName(String name){
@@ -138,9 +139,7 @@ public class Message {// should not be kept stored, too many are made
 
     public Reaction addReaction(String s) {
         if (BotConfig.GHOST_MODE) throw new GhostException();
-        AtomicReference<String> reference = new AtomicReference<>(s);
-        if (s.endsWith("\u200B")) reference.set(s.substring(0, s.length() - 1));
-        ErrorWrapper.wrap(() -> message().addReaction(ReactionEmoji.of(reference.get())));
+        ErrorWrapper.wrap(() -> this.message().addReaction(ReactionEmoji.of(s)));
         return getReaction(s);
     }
 
@@ -149,15 +148,16 @@ public class Message {// should not be kept stored, too many are made
     }
 
     public void removeReaction(Reaction reaction) {
-        ErrorWrapper.wrap(() -> message().removeReaction(DiscordClient.getOurUser().user(), reaction.reaction()));
+        if (reaction == null) return;
+        ErrorWrapper.wrap(() -> this.message().removeReaction(DiscordClient.getOurUser().user(), reaction.reaction()));
     }
 
     public void removeReaction(String s) {
-        ErrorWrapper.wrap(() -> message().removeReaction(DiscordClient.getOurUser().user(), getReaction(s).reaction()));
+        removeReaction(getReaction(s));
     }
 
     public void removeReactionByName(String name) {
-        removeReaction(EmoticonHelper.getChars(name, false));
+        removeReaction(getReactionByName(name));
     }
 
     public boolean isDeleted() {

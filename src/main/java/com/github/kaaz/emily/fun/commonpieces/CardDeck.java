@@ -24,7 +24,7 @@ public class CardDeck {
         return new Hand(this, cardCount);
     }
     private Card draw(){
-        return this.inPile.remove(Rand.getRand(this.inPile.size() - 1));
+        return Rand.getRand(this.inPile, true);
     }
     public static class Card{
         private Suit suit;

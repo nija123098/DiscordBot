@@ -12,4 +12,7 @@ public class Care {
     public interface Less {
         void care() throws Throwable;
     }
+    public static void lessSleep(long millis){
+        Care.less(() -> Thread.sleep(millis));
+    }
 }

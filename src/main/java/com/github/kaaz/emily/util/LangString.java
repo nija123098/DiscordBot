@@ -96,9 +96,8 @@ public class LangString {
      */
     public static String translate(String lang, String content) {
         return MAP.computeIfAbsent(lang, s -> new HashMap<>()).computeIfAbsent(content, s -> {
-            if (content.equals("\n")){
-                return "\n";
-            }
+            if (content == null) return null;
+            if (content.equals("\n")) return "\n";
             String building = "";
             boolean nextLineLast = content.endsWith("\n");
             String[] contents = content.split("\n");

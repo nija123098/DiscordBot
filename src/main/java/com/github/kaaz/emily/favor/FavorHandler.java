@@ -6,6 +6,7 @@ import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventListener;
 import com.github.kaaz.emily.discordobjects.wrappers.event.botevents.FavorLevelChangeEvent;
+import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordUserBanned;
 import com.github.kaaz.emily.favor.configs.FavorConfig;
 import com.github.kaaz.emily.perms.BotRole;
 
@@ -69,5 +70,9 @@ public class FavorHandler {
         if (event.getNewLevel() == FavorLevel.DISTRUSTED && event.getConfigurable() instanceof User){
             BotRole.setRole(BotRole.BANNED, true, (User) event.getConfigurable(), null);
         }
+    }
+    @EventListener
+    public static void handle(DiscordUserBanned event){
+        addFavorLevel(event.getUser(), -100);
     }
 }

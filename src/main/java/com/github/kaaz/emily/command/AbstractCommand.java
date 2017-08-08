@@ -4,6 +4,7 @@ import com.github.kaaz.emily.command.annotations.Argument;
 import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.command.annotations.Context;
 import com.github.kaaz.emily.command.annotations.LaymanName;
+import com.github.kaaz.emily.command.configs.CommandsUsedCountConfig;
 import com.github.kaaz.emily.command.configs.DisabledCommandsConfig;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.Configurable;
@@ -15,9 +16,9 @@ import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
 import com.github.kaaz.emily.exeption.BotException;
 import com.github.kaaz.emily.exeption.ContextException;
 import com.github.kaaz.emily.exeption.DevelopmentException;
-import com.github.kaaz.emily.exeption.PermissionsException;
 import com.github.kaaz.emily.perms.BotRole;
-import com.github.kaaz.emily.perms.configs.specialperms.*;
+import com.github.kaaz.emily.perms.configs.specialperms.GuildSpecialPermsConfig;
+import com.github.kaaz.emily.perms.configs.specialperms.SpecialPermsContainer;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
 import com.github.kaaz.emily.util.EmoticonHelper;
 import com.github.kaaz.emily.util.Log;
@@ -309,7 +310,7 @@ public class AbstractCommand {
         Set<String> blocked = ConfigHandler.getSetting(DisabledCommandsConfig.class, GlobalConfigurable.GLOBAL);
         AbstractCommand command = this;
         while (command != null){
-            if (blocked.contains(command.getName())) throw new PermissionsException("That command has been temporarily globally disabled");
+            if (blocked.contains(command.getName())) return false;
             command = command.getSuperCommand();
         }
         boolean hasNormalPerm = this.botRole.hasRequiredRole(user, channel.getGuild());
@@ -371,6 +372,7 @@ public class AbstractCommand {
         if (this.guildUserCoolDowns != null && !channel.isPrivate()){
             this.guildUserCoolDowns.add(GuildUser.getGuildUser(channel.getGuild(), user));
         }
+        CommandsUsedCountConfig.increment(user);
     }
 
     /**

@@ -30,8 +30,7 @@ public class TemplateHandler {
             Log.log("No templates found for KeyPhrase: " + keyPhrase.name());
             return null;
         }// should not throw an exception since nothing failed
-        if (exemptions.size() >= templates.size()){
-            return templates.get(Rand.getRand(templates.size() - 1));
-        } else return templates.get(Rand.getRand(templates.size(), exemptions.toArray(new Integer[exemptions.size()])));
+        if (exemptions.size() >= templates.size()) return Rand.getRand(templates, false);
+        else return templates.get(Rand.getRand(templates.size(), exemptions.toArray(new Integer[exemptions.size()])));
     }
 }

@@ -47,7 +47,6 @@ public class CommandHandler {
         Set<Class<? extends AbstractCommand>> classes = new Reflections(Reference.BASE_PACKAGE).getSubTypesOf(AbstractCommand.class);
         CLASS_MAP = new HashMap<>(classes.size() + 10, 1);
         classes.forEach(clazz -> {
-            System.out.println(clazz.getSimpleName());
             try {
                 AbstractCommand command = clazz.newInstance();
                 CLASS_MAP.put(clazz, command);
@@ -197,6 +196,7 @@ public class CommandHandler {
                         return true;
                     }
                     }catch(Exception ignored){}
+                    return false;
                 }else if (string.toLowerCase().startsWith("@emily")) string = string.substring(6);
                 else if (DiscordClient.getOurUser().getNickname(message.getGuild()) != null && string.toLowerCase().startsWith("@" + DiscordClient.getOurUser().getNickname(message.getGuild()))){
                     string = string.substring(1 + DiscordClient.getOurUser().getNickname(message.getGuild()).length());
@@ -242,12 +242,11 @@ public class CommandHandler {
             } catch (Exception e) {
                 new DevelopmentException(e).makeMessage(message.getChannel()).send();
             }
-            return false;
-        }else{
+        }else if (reaction == null){
             message.addReactionByName(UNKNOWN_COMMAND_EMOTICON);
             OPEN_EDIT_MESSAGES.add(message.getID());
-            return false;
         }
+        return false;
     }
 
     public static boolean attemptInvocation(String s, User user, GuildAudioManager manager){

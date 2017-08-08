@@ -18,13 +18,17 @@ import java.net.URLConnection;
  * Made by nija123098 on 5/22/2017.
  */
 public class JokeCommand extends AbstractCommand {
+    private static final String[] REDDIT_OPTIONS = new String[0];
     public JokeCommand() {
         super("joke", ModuleLevel.FUN, null, null, "");
     }
     @Command
     public void handle(MessageMaker maker, User user){// todo add Reddit jokes
         String joke = getJokeFromWeb(user.getName());
-        maker.append(joke != null && !joke.isEmpty() ? joke : "No jokes available, try latter");
+        try{RedditCommand.command(REDDIT_OPTIONS, maker);
+        } catch (Exception e){
+            maker.append(joke != null && !joke.isEmpty() ? joke : "No jokes available, try latter");
+        }
     }
     private String getJokeFromWeb(String username) {
         try {

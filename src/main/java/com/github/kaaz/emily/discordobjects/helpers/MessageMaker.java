@@ -10,11 +10,9 @@ import com.github.kaaz.emily.discordobjects.helpers.guildaudiomanager.GuildAudio
 import com.github.kaaz.emily.discordobjects.wrappers.*;
 import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.launcher.BotConfig;
+import com.github.kaaz.emily.launcher.Launcher;
 import com.github.kaaz.emily.service.services.ScheduleService;
-import com.github.kaaz.emily.util.EmoticonHelper;
-import com.github.kaaz.emily.util.ImageColorHelper;
-import com.github.kaaz.emily.util.LangString;
-import com.github.kaaz.emily.util.Rand;
+import com.github.kaaz.emily.util.*;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 import sx.blah.discord.handle.impl.obj.ReactionEmoji;
@@ -33,6 +31,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Made by nija123098 on 4/7/2017.
  */
 public class MessageMaker {
+    static {
+        Launcher.registerShutdown(ReactionBehavior::deregisterAll);
+    }
     private static final int CHAR_LIMIT = 2000;
     private static final int EMBED_LIMIT = 1000;
     private TextPart authorName, title, header, footer, note, external;
@@ -113,8 +114,7 @@ public class MessageMaker {
         return this;
     }
     public MessageMaker withReactionBehavior(String reactionName, ReactionBehavior behavior){
-        ReactionBehavior.deregisterListener(this.ourMessage, reactionName);
-        this.reactionBehaviors.put(reactionName, behavior);
+        if (!this.reactionBehaviors.containsKey(reactionName)) this.reactionBehaviors.put(reactionName, behavior);
         return this;
     }
     public MessageMaker withoutReactionBehavior(String reactionName){
@@ -218,19 +218,18 @@ public class MessageMaker {
         return this;
     }
     public MessageMaker withColor(String url){
-        this.embed.withColor(ImageColorHelper.getColor(url));
+        this.embed.withColor(GraphicsHelper.getColor(url));
         return this;
     }
     public MessageMaker withUserColor(){
-        this.embed.withColor(ImageColorHelper.getColor(this.user.getAvatarURL()));
-        return this;
+        return withUserColor(this.user);
     }
     public MessageMaker withRandomColor(){
         this.embed.withColor(Rand.getRand(0xFFFFFF));
         return this;
     }
     public MessageMaker withUserColor(User user){
-        this.embed.withColor(ImageColorHelper.getColor(user.getAvatarURL()));
+        if (user != null) this.withColor(user.getAvatarURL());
         return this;
     }
     public MessageMaker withFooterIcon(String url){
@@ -353,7 +352,7 @@ public class MessageMaker {
             this.embed.withTitle(title.langString.translate(lang));
             int starterChars = this.embed.getTotalVisibleCharacters() + header.langString.translate(lang).length() + footer.langString.translate(lang).length();
             if (CHAR_LIMIT < starterChars){
-                throw new RuntimeException("Header and footer are too big.");
+                throw new DevelopmentException("Header and footer are too big.");
             }
             if (textList.size() != 0){
                 int index = -1;

@@ -24,9 +24,7 @@ import java.awt.*;
 import java.lang.reflect.Parameter;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
 
 /**
  * Made by nija123098 on 3/27/2017.
@@ -103,7 +101,7 @@ public class InvocationObjectGetter {
             if (target != null){
                 return new Pair<>(target, length);
             }
-            ContextException.checkGuild(guild);
+            if (guild == null) throw new ContextException("You need to be in a guild to use that command");
             List<Channel> channels = guild.getChannelsByName(arg);
             if (channels.size() == 1){
                 return new Pair<>(channels.get(0), length);
@@ -112,39 +110,24 @@ public class InvocationObjectGetter {
         });
         addConverter(VoiceChannel.class, (invoker, shard, channel, guild, message, reaction, args) -> (Pair<VoiceChannel, Integer>) CONVERTER_MAP.get(Channel.class).getKey().getObject(invoker, shard, channel, guild, message, reaction, args));
         addConverter(User.class, (user, shard, channel, guild, message, reaction, args) -> {
-            User u = DiscordClient.getUserByID(FormatHelper.removeMention(args.split(" ")[0]));
+            User u = DiscordClient.getUserByID(args.split(" ")[0]);
             if (u != null) return new Pair<>(u, args.split(" ")[0].length());
             if (guild == null) throw new ArgumentException("Commands with user names can not be used in private channels");
-            String[] split = args.split("#");
-            List<User> users = new CopyOnWriteArrayList<>();
-            UserNameMonitor.getNames(guild).forEach(s -> {
-                if (split[0].startsWith(s) && ((split[0].length() == s.length() || split[0].charAt(s.length()) == ' '))){
-                    users.addAll(guild.getUsersByName(s));
+            String match = StringHelper.getGoodMatch(args, new ArrayList<>(UserNameMonitor.getNames(guild)));
+            List<User> users = new ArrayList<>(2);
+            if (match == null) throw new ArgumentException("No users by that name, try an ID, mention, or good old copy and paste");
+            else users.addAll(guild.getUsersByName(match));
+            if (users.size() > 1) throw new ArgumentException("There are too many users named that!");
+            int length = 0;
+            if (match.contains(" ")){
+                int matchSplitLength = match.split(" ").length;
+                String[] argsSplit = args.split(" ");
+                if (matchSplitLength >= argsSplit.length) length = args.length();
+                else for (int i = 0; i < matchSplitLength; i++) {
+                    length += argsSplit[i].length();
                 }
-            });
-            if (users.size() == 0) {
-                split[0] = split[0].toLowerCase();
-                UserNameMonitor.getNames(guild).forEach(s -> {
-                    String sl = s.toLowerCase();
-                    if (split[0].startsWith(sl) && ((split[0].length() == sl.length() || split[0].charAt(sl.length()) == ' '))){
-                        users.addAll(guild.getUsers().stream().filter(us -> (us.getNickname(guild) != null && us.getNickname(guild).toLowerCase().equals(s)) || us.getName().toLowerCase().equals(s)).collect(Collectors.toList()));
-                        if (users.size() > 1){
-                            if (split.length > 1) {
-                                StringBuilder foundDisBuilder = new StringBuilder();
-                                for (char c : split[1].toCharArray()){
-                                    if (!Character.isDigit(c)) break;
-                                    foundDisBuilder.append(c);
-                                }
-                                if (foundDisBuilder.length() != 4) throw new ArgumentException("To many users by that name and not that number code, use a mention or ID");
-                                users.removeIf(us -> !us.getDiscriminator().equals(foundDisBuilder.toString()));
-                            }
-                            throw new ArgumentException("To many users by that name, use a mention or ID");
-                        }
-                    }
-                });
-            }
-            if (users.size() == 0) throw new ArgumentException("No users by that name, try an ID or mention");
-            return new Pair<>(users.iterator().next(), users.get(0).getName().length());
+            }else length = args.split(" ")[0].length();
+            return new Pair<>(users.get(0), length);
         });
         addConverter(Playlist.class, (user, shard, channel, guild, message, reaction, args) -> {
             if (args.toLowerCase().startsWith("global")) return new Pair<>(GlobalPlaylist.GLOBAL_PLAYLIST, args.equalsIgnoreCase("global playlist") ? 15 : 6);
@@ -359,7 +342,15 @@ public class InvocationObjectGetter {
                     }
                     Pair<Object, Integer> pair = convert((Class<Object>) parameters[i].getType(), user, shard, channel, guild, message, reaction, args);
                     objects[i] = pair.getKey();
-                    args = FormatHelper.trimFront(args.substring(pair.getValue()));
+                    int subSize = pair.getValue();
+                    if (subSize > args.length()) {
+                        Log.log("Size of reduction is linger then args: " + subSize + " for " + args);
+                        subSize = args.length();
+                    }else if (subSize < 0){
+                        subSize = 0;
+                        Log.log("Size of reduction is less than 0, " + subSize);
+                    }
+                    args = FormatHelper.trimFront(args.substring(subSize));
                 }
             } catch (ArgumentException e){
                 if (parameters[i].isAnnotationPresent(Argument.class) && parameters[i].getAnnotation(Argument.class).optional()){

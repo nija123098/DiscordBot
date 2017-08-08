@@ -1,5 +1,6 @@
 package com.github.kaaz.emily.config;
 
+import com.github.kaaz.emily.launcher.Reference;
 import com.github.kaaz.emily.util.LanguageHelper;
 import com.github.kaaz.emily.util.Log;
 import com.github.kaaz.emily.util.ReflectionHelper;
@@ -22,6 +23,11 @@ import java.util.function.Function;
  */
 public class TypeChanger {
     private static final XStream X_STREAM = new XStream();
+    static {
+        X_STREAM.aliasPackage("emily-package", Reference.BASE_PACKAGE);
+        //XStream.setupDefaultSecurity(X_STREAM);
+        //ConfigHandler.getConfigs().forEach(config -> X_STREAM.allowTypeHierarchy(config.getValueType()));
+    }
     private static final Map<Class<?>, Function<?, String>> TO_STRING = new HashMap<>();
     private static final Map<String, Function<String, ?>> FROM_STRING = new HashMap<>();
     private static final Map<Class<?>, Function<?, ?>> XSTREAM_OBJECT_ALTERING = new HashMap<>();

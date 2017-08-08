@@ -22,7 +22,7 @@ public class Role implements Configurable{
     private static final Map<String, Role> MAP = new ConcurrentHashMap<>();
     public static Role getRole(String id){
         IRole role;
-        try{role = DiscordClient.client().getRoleByID(FormatHelper.removeMention(id));
+        try{role = DiscordClient.client().getRoleByID(FormatHelper.filtering(id, Character::isDigit));
         }catch(NumberFormatException e){return null;}
         if (role == null) return null;
         return getRole(role);

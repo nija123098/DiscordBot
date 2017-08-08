@@ -122,6 +122,10 @@ public class AbstractConfig<V, T extends Configurable> {
         return this.normalViewing;
     }
 
+    public Class<V> getValueType(){
+        return this.valueType;
+    }
+
     public long getAge(Configurable configurable){
         try{ResultSet set = Database.select("SELECT * FROM " + this.getNameForType(configurable.getConfigLevel()) + " WHERE id = " + Database.quote(configurable.getID()));
             if (!set.next()) return -1;

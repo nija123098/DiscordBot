@@ -3,20 +3,24 @@ package com.github.kaaz.emily.service.services;
 import com.github.kaaz.emily.audio.DownloadableTrack;
 import com.github.kaaz.emily.launcher.BotConfig;
 import com.github.kaaz.emily.service.AbstractService;
-import com.github.kaaz.emily.util.Care;
+import com.github.kaaz.emily.util.Log;
 import org.eclipse.jetty.util.ConcurrentHashSet;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.*;
 import java.util.function.Consumer;
 
 /**
  * Made by nija123098 on 3/28/2017.
  */
 public class MusicDownloadService extends AbstractService {
+    private static final ThreadPoolExecutor POOL_EXECUTOR = new ThreadPoolExecutor(1, BotConfig.MUSIC_DOWNLOAD_THREAD_COUNT, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<>(10), r -> {
+        Thread t = new Thread(r);
+        t.setDaemon(true);
+        return t;
+    }, (r, executor) -> Log.log("Music download queue exceeded"));
     private static final Consumer<DownloadableTrack> NOTHING = o -> {};
     private static final Set<DownloadableTrack> DOWNLOADING = new ConcurrentHashSet<>();
     private static final List<List<DownloadableTrack>> Q = new CopyOnWriteArrayList<>();
@@ -29,12 +33,6 @@ public class MusicDownloadService extends AbstractService {
     public MusicDownloadService() {
         super(-1);
         Runtime.getRuntime().addShutdownHook(new Thread(() -> DOWNLOADING.forEach(track -> track.file().delete())));
-        Thread t;
-        for (int i = 0; i < BotConfig.MUSIC_DOWNLOAD_THREAD_COUNT; i++) {
-            t = new Thread(this);
-            t.setDaemon(true);
-            t.start();
-        }
     }
     public static boolean isDownloaded(DownloadableTrack track){
         return track.file().exists() && !DOWNLOADING.contains(track);
@@ -58,20 +56,14 @@ public class MusicDownloadService extends AbstractService {
         PRIORITY_MAP.put(track, priority);
         ensureQCapacity(priority);
         Q.get(priority).add(track);
-    }
-    @Override
-    public void run() {
-        while (true){
-            DownloadableTrack track = getNext();
-            if (track == null) {
-                Care.less(() -> Thread.sleep(10_000));
-                continue;
-            }
-            DOWNLOADING.add(track);
-            track.download();
-            DOWNLOADING.remove(track);
-            CONSUMER_MAP.remove(track).forEach(consumer -> consumer.accept(track));
-        }
+        POOL_EXECUTOR.execute(() -> {
+            DownloadableTrack t = getNext();// getting the next track preserves priority
+            if (t == null) return;// should never happen
+            DOWNLOADING.add(t);
+            t.download();
+            DOWNLOADING.remove(t);
+            CONSUMER_MAP.remove(t).forEach(c -> c.accept(track));
+        });
     }
     @Override
     public boolean mayBlock(){
@@ -80,4 +72,6 @@ public class MusicDownloadService extends AbstractService {
     private static void ensureQCapacity(int size){
         while (size > Q.size() - 1) Q.add(new CopyOnWriteArrayList<>());
     }
+    @Override
+    public void run() {}
 }

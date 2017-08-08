@@ -1,6 +1,6 @@
 package com.github.kaaz.emily.util;
 
-import com.github.kaaz.emily.launcher.Reference;
+import com.github.kaaz.emily.launcher.BotConfig;
 import ga.dryco.redditjerk.implementation.RedditApi;
 import ga.dryco.redditjerk.wrappers.Link;
 import org.apache.commons.io.IOUtils;
@@ -20,7 +20,7 @@ import java.util.function.Function;
 public class RedditLink {
     private static final Map<String, LinkOrigin> LINK_ORIGINS;
     static {
-        RedditApi.getRedditInstance(Reference.USER_AGENT);
+        RedditApi.getRedditInstance(BotConfig.USER_AGENT);
         LINK_ORIGINS = new HashMap<>(LinkOrigin.values().length);
         for (LinkOrigin origin : LinkOrigin.values()) LINK_ORIGINS.put(origin.URL, origin);
     }//"imgur.com", "i.reddituploads.com", "youtube.com"

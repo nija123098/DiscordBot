@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
  */
 public class RollCommand extends AbstractCommand {
     public RollCommand() {
-        super("roll", ModuleLevel.FUN, "dice, rng", "game_die", "For if you ever need a random number");
+        super("roll", ModuleLevel.FUN, "dice, rng", null, "For if you ever need a random number");
     }// this should have a chance of rick rolling you
     @Command
     public void command(@Argument(optional = true, replacement = ContextType.NONE) Integer first, @Argument(optional = true, replacement = ContextType.NONE) Integer second, String arg, MessageMaker maker, @Context(softFail = true) Guild guild) {

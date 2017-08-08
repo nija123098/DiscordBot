@@ -12,13 +12,11 @@ import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.wrappers.Channel;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
+import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.util.EmoticonHelper;
 import com.github.kaaz.emily.util.FormatHelper;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -31,10 +29,15 @@ public class HelpCommand extends AbstractCommand {
         super("help", ModuleLevel.INFO, "helpme, he, ?, halp, commands", null, "Gives information about a command");
     }
     @Command
-    public static void command(@Argument(optional = true, replacement = ContextType.NONE) AbstractCommand command, MessageMaker maker, User user, Channel channel, @Context(softFail = true) Guild guild){
+    public static void command(@Argument(optional = true, replacement = ContextType.NONE) AbstractCommand command, MessageMaker maker, User user, Channel channel, @Context(softFail = true) Guild guild, @Context(softFail = true) ModuleLevel levelSelection, String full){
         if (command == null) {
             maker.append("I'll show you the following commands:\n");
-            for (ModuleLevel level : ModuleLevel.values()){
+            List<ModuleLevel> levels = new ArrayList<>();
+            if (full.toLowerCase().contains("full")) Collections.addAll(levels, ModuleLevel.values());
+            else if (levelSelection == null) Stream.of(ModuleLevel.values()).filter(level -> level.getDefaultRole().hasRequiredRole(user, guild)).findFirst().ifPresent(levels::add);
+            else levels.add(levelSelection);
+            if (levels.isEmpty()) throw new DevelopmentException("Shouldn't be possible");
+            for (ModuleLevel level : levels){
                 if (level == ModuleLevel.NONE || !level.getDefaultRole().hasRequiredRole(user, guild)) continue;
                 List<AbstractCommand> commands = level.getCommands().stream().filter(AbstractCommand::isHighCommand).filter(c -> c.hasPermission(user, channel)).collect(Collectors.toList());
                 if (!commands.isEmpty()) {
@@ -43,6 +46,14 @@ public class HelpCommand extends AbstractCommand {
                 }
             }
             maker.append("For more details about a command use ").appendRaw((guild == null ? "" : ConfigHandler.getSetting(GuildPrefixConfig.class, guild)) + "help <command>");
+            ModuleLevel.getGeneralApproved(user, guild).stream().filter(level -> level != ModuleLevel.NONE).forEach(level -> maker.withReactionBehavior(level.getIconName(), (add, reaction, u) -> {
+                if (!u.equals(user)) return;
+                maker.getHeader().clear();
+                maker.forceCompile();
+                maker.clearFieldParts();
+                command(null, maker, u, channel, guild, level, String.valueOf(0));
+                maker.send();
+            }));
         } else {
             command = command.getHighCommand();
             if (!command.hasPermission(user, channel)) {

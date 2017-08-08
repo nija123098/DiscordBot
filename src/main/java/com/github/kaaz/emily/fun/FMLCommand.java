@@ -5,7 +5,7 @@ import com.github.kaaz.emily.command.ModuleLevel;
 import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.exeption.DevelopmentException;
-import com.github.kaaz.emily.launcher.Reference;
+import com.github.kaaz.emily.launcher.BotConfig;
 import com.github.kaaz.emily.service.services.ScheduleService;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.jsoup.Jsoup;
@@ -37,14 +37,10 @@ public class FMLCommand extends AbstractCommand {
     }
     private void getItems(){
         try {
-            Document document = Jsoup.connect("http://fmylife.com/random").timeout(30_000).userAgent(Reference.USER_AGENT).get();
+            Document document = Jsoup.connect("http://fmylife.com/random").timeout(30_000).userAgent(BotConfig.USER_AGENT).get();
             if (document != null) items.addAll(document.select("p.block a[href^=/article/]").stream().map(Element::text).map(String::trim).map(s -> s.length() > 2000 ? s.substring(0, 1999) : s).filter(s -> s.endsWith("FML")).map(StringEscapeUtils::unescapeHtml4).collect(Collectors.toSet()));
         } catch (IOException e) {
             throw new DevelopmentException(e);
         }
-    }
-
-    public static void main(String[] args) throws IOException {
-        System.out.println(Jsoup.connect("https://soundcloud.com/r3sizze/bass-hours-feat-max-landry-feel-it-right").timeout(30_000).userAgent(Reference.USER_AGENT).get().head().select("[property]"));
     }
 }

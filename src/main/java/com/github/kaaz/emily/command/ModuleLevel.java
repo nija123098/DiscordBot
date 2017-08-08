@@ -1,11 +1,15 @@
 package com.github.kaaz.emily.command;
 
 import com.github.kaaz.emily.command.annotations.LaymanName;
+import com.github.kaaz.emily.discordobjects.wrappers.Guild;
+import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.util.EmoticonHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * An enum for every command module
@@ -24,7 +28,7 @@ public enum ModuleLevel {
     FUN("game_die"),
     MUSIC("headphones"),
     NONE("grey_question"),;
-    private String icon;
+    private String icon, iconName;
     private BotRole botRole;
     private List<AbstractCommand> commands = new ArrayList<>();
     void addCommand(AbstractCommand command){
@@ -35,15 +39,22 @@ public enum ModuleLevel {
     }
     ModuleLevel(BotRole role, String icon) {
         this.botRole = role;
+        this.iconName = icon;
         this.icon = EmoticonHelper.getChars(icon, true);
     }
     public String getIcon() {
         return this.icon;
+    }
+    public String getIconName(){
+        return this.iconName;
     }
     public BotRole getDefaultRole(){
         return this.botRole;
     }
     public List<AbstractCommand> getCommands() {
         return this.commands;
+    }
+    public static List<ModuleLevel> getGeneralApproved(User user, Guild guild){
+        return Stream.of(values()).filter(level -> level.getDefaultRole().hasRequiredRole(user, guild)).collect(Collectors.toList());
     }
 }

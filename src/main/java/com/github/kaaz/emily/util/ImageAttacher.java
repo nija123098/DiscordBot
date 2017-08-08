@@ -29,11 +29,9 @@ public class ImageAttacher {
                 }catch(FileNotFoundException e){e.printStackTrace();}
             });
         }
-        try{Thread.sleep(100);
-        }catch(InterruptedException ignored){}
+        Care.lessSleep(100);
         while ((ret = MAP.remove(file.getPath())) == null){
-            try{Thread.sleep(50);
-            }catch(InterruptedException ignored){}
+            Care.lessSleep(50);
         }
         return ret;
     }

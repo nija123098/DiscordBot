@@ -3,7 +3,7 @@ package com.github.kaaz.emily.fun.meme;
 import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
-import com.github.kaaz.emily.launcher.Reference;
+import com.github.kaaz.emily.launcher.BotConfig;
 import com.github.kaaz.emily.util.FormatHelper;
 import org.eclipse.jetty.util.ConcurrentHashSet;
 import org.jsoup.Jsoup;
@@ -31,7 +31,7 @@ public class MemeTypesCommand extends AbstractCommand {
     }
     static void loadMemeTypes() {
         try {
-            Document document = Jsoup.connect("https://memegen.link/").userAgent(Reference.USER_AGENT).timeout(5_000).get();
+            Document document = Jsoup.connect("https://memegen.link/").userAgent(BotConfig.USER_AGENT).timeout(5_000).get();
             if (document != null) {
                 Elements fmls = document.select(".js-meme-selector option");
                 if (!fmls.isEmpty()) {

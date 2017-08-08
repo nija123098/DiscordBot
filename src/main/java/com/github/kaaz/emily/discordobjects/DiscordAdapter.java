@@ -10,6 +10,7 @@ import com.github.kaaz.emily.discordobjects.wrappers.event.BotEvent;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
 import com.github.kaaz.emily.discordobjects.wrappers.event.botevents.DiscordDataReload;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordMessageReceived;
+import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordReactionEvent;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordVoiceJoin;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordVoiceLeave;
 import com.github.kaaz.emily.launcher.BotConfig;
@@ -30,6 +31,8 @@ import sx.blah.discord.handle.impl.events.ReadyEvent;
 import sx.blah.discord.handle.impl.events.guild.GuildUpdateEvent;
 import sx.blah.discord.handle.impl.events.guild.channel.ChannelUpdateEvent;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
+import sx.blah.discord.handle.impl.events.guild.channel.message.MessageUpdateEvent;
+import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.ReactionRemoveEvent;
 import sx.blah.discord.handle.impl.events.guild.role.RoleUpdateEvent;
 import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelMoveEvent;
 import sx.blah.discord.handle.impl.events.shard.ShardReadyEvent;
@@ -54,7 +57,7 @@ public class DiscordAdapter {
         Set<Class<? extends BotEvent>> classes = new Reflections(Reference.BASE_PACKAGE + ".discordobjects.wrappers.event.events").getSubTypesOf(BotEvent.class);
         classes.remove(DiscordMessageReceived.class);
         EVENT_MAP = new HashMap<>(classes.size() + 2, 1);
-        classes.stream().filter(clazz -> !clazz.equals(DiscordMessageReceived.class)).forEach(clazz -> EVENT_MAP.put((Class<? extends Event>) clazz.getConstructors()[0].getParameterTypes()[0], (Constructor<? extends BotEvent>) clazz.getConstructors()[0]));
+        classes.stream().filter(clazz -> !clazz.equals(DiscordMessageReceived.class)).map(clazz -> clazz.getConstructors()[0]).forEach(constructor -> EVENT_MAP.put((Class<? extends Event>) constructor.getParameterTypes()[0], (Constructor<? extends BotEvent>) constructor));
         ClientBuilder builder = new ClientBuilder();
         builder.withToken(BotConfig.BOT_TOKEN);
         builder.withRecommendedShardCount();
@@ -104,9 +107,17 @@ public class DiscordAdapter {
         Channel.update(event.getNewChannel());
     }
     @EventSubscriber
+    public static void handle(MessageUpdateEvent event){
+        Message.update(event.getNewMessage());
+    }
+    @EventSubscriber
     public static void handle(UserVoiceChannelMoveEvent event){
         EventDistributor.distribute(new DiscordVoiceLeave(event.getOldChannel(), event.getUser()));
         EventDistributor.distribute(new DiscordVoiceJoin(event.getNewChannel(), event.getUser()));
+    }
+    @EventSubscriber
+    public static void handle(ReactionRemoveEvent event){// it's cleaner than the alternative
+        EventDistributor.distribute(new DiscordReactionEvent(event));
     }
     @EventSubscriber
     public static void handle(MessageReceivedEvent event){

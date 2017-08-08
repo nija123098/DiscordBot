@@ -48,8 +48,7 @@ public class SpeechParser implements IAudioReceiver {
             configuration.setDictionaryPath("resource:/edu/cmu/sphinx/models/en-us/cmudict-en-us.dict");
             configuration.setLanguageModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us.lm.bin");
             SPEECH_RECOGNIZER_BUFFER = new InitBuffer<>(2, () -> {
-                try {
-                    return new StreamSpeechRecognizer(configuration);
+                try{return new StreamSpeechRecognizer(configuration);
                 } catch (IOException e){
                     Log.log("IOException while making speech recognizer instance", e);
                     return null;

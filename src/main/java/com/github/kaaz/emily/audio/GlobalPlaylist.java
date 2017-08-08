@@ -49,7 +49,7 @@ public class GlobalPlaylist extends Playlist {
     @Override
     public Track getNext(Guild guild) {
         if (TRACKS.size() < 50) loadTracks();
-        return TRACKS.isEmpty() ? null : TRACKS.remove(Rand.getRand(TRACKS.size() - 1));
+        return TRACKS.isEmpty() ? null : Rand.getRand(TRACKS, true);
     }
     private static final List<Track> TRACKS = new CopyOnWriteArrayList<>();
     private static void loadTracks(){

@@ -41,7 +41,7 @@ public class Launcher {
         DiscordAdapter.initialize();
         STARTUPS.forEach(Runnable::run);
         IS_READY.set(true);
-        ScheduleService.schedule(10_000, () -> DiscordClient.online("with users!"));
+        DiscordClient.online("with users!");
         Log.log("Bot finished initializing");
     }
     public static void registerStartup(Runnable runnable){
@@ -67,7 +67,7 @@ public class Launcher {
                 IS_READY.set(false);
                 SHUTDOWNS.forEach(Runnable::run);
                 DiscordClient.logout();
-                Care.less(() -> Thread.sleep(1_000));
+                Care.lessSleep(1_000);
                 System.exit(code);
             }));
         }

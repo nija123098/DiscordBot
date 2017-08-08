@@ -26,7 +26,7 @@ public class Channel implements Configurable {
     private static final Map<String, Channel> MAP = new MemoryManagementService.ManagedMap<>(180000);
     public static Channel getChannel(String id){
         try {
-            return getChannel(DiscordClient.client().getChannelByID(FormatHelper.removeMention(id)));
+            return getChannel(DiscordClient.client().getChannelByID(FormatHelper.filtering(id, Character::isDigit)));
         } catch (NumberFormatException e) {
             return null;
         }

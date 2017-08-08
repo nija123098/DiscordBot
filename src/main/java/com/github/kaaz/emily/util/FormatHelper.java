@@ -5,7 +5,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Strings;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
@@ -36,12 +35,7 @@ public class FormatHelper {
         return builder.toString();
     }
     public static String removeChars(String s, char toRemove){
-        StringBuilder builder = new StringBuilder(s.length());
-        Iterator<Character> iterator = new StringIterator(s);
-        iterator.forEachRemaining(character -> {
-            if (character != toRemove) builder.append(character);
-        });
-        return builder.toString();
+        return filtering(s, c -> c != toRemove);
     }
     public static String trimFront(String s){
         if (!s.startsWith(" ")){
@@ -59,13 +53,6 @@ public class FormatHelper {
     }
     public static String makePleural(String s){
         return s + "'" + (s.endsWith("s") ? s + "" : "s");
-    }
-    public static String removeMention(String s){
-        StringBuilder builder = new StringBuilder();
-        new StringIterator(s).forEachRemaining(character -> {
-            if (Character.isDigit(character)) builder.append(character);
-        });
-        return builder.toString();
     }
     public static int lengthOf(String[] args, int count){
         int l = 0;

@@ -11,6 +11,7 @@ import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IRole;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -138,6 +139,7 @@ public class Guild implements Configurable {
     }
 
     public List<User> getUsersByName(String s, boolean b) {
+        if (s == null || s.isEmpty()) return Collections.emptyList();
         AtomicReference<String> nick = new AtomicReference<>();
         return this.getUsers().stream().filter(user -> {
             if (user.getName().equals(s)) return true;

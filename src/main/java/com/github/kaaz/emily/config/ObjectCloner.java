@@ -1,18 +1,12 @@
 package com.github.kaaz.emily.config;
 
 import com.github.kaaz.emily.exeption.ArgumentException;
-import com.github.kaaz.emily.perms.configs.specialperms.GuildSpecialPermsConfig;
 import com.github.kaaz.emily.perms.configs.specialperms.SpecialPermsContainer;
 import com.github.kaaz.emily.util.ReflectionHelper;
 import javafx.util.Pair;
-import org.eclipse.jetty.util.ConcurrentHashSet;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
 
@@ -29,16 +23,8 @@ public class ObjectCloner {
         add(String.class);
         add(Configurable.class);
         add(List.class, CopyOnWriteArrayList::new);
-        add(Set.class, or -> {
-            Set<?> set = new ConcurrentHashSet();
-            set.addAll(or);
-            return set;
-        });
-        add(Map.class, or -> {
-            Map<?, ?> map = new ConcurrentHashMap(or.size());
-            map.putAll(or);
-            return map;
-        });
+        add(Set.class, Collections::synchronizedSet);
+        add(Map.class, Collections::synchronizedMap);
         add(Pair.class, or -> new Pair(or.getKey(), or.getValue()));
         add(SpecialPermsContainer.class, SpecialPermsContainer::copy);
     }

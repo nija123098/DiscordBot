@@ -3,18 +3,18 @@ package com.github.kaaz.emily.util;
 import org.eclipse.jetty.util.ConcurrentHashSet;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Made by nija123098 on 5/15/2017.
  */
 public class ReflectionHelper {
     private static final Set<Class<?>> OBJECT = Collections.singleton(Object.class);
-    private static final Map<Class<?>, Set<Class<?>>> SUPERCLASS_MAP = new ConcurrentHashMap<>();
+    private static final Map<Class<?>, Set<Class<?>>> SUPERCLASS_MAP = new HashMap<>();
     public static Set<Class<?>> getAssignableTypes(Class<?> lowest) {
-        if (lowest == null) return Collections.EMPTY_SET;
+        if (lowest == null) return Collections.emptySet();
         if (lowest == Object.class) return OBJECT;
         return SUPERCLASS_MAP.computeIfAbsent(lowest, l -> {
             Set<Class<?>> classes = new ConcurrentHashSet<>();
