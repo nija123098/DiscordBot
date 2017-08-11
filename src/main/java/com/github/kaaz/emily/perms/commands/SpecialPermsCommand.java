@@ -5,7 +5,6 @@ import com.github.kaaz.emily.command.ModuleLevel;
 import com.github.kaaz.emily.command.annotations.Argument;
 import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.config.ConfigHandler;
-import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.perms.configs.specialperms.GuildSpecialPermsConfig;
@@ -19,7 +18,7 @@ public class SpecialPermsCommand extends AbstractCommand {
         super("commandadmin", BotRole.GUILD_TRUSTEE, ModuleLevel.ADMINISTRATIVE, "ca", null, "Helps set command approval and restrictions on Emily commands based on channel and ranks");
     }
     @Command
-    public void command(Guild guild, MessageMaker maker, @Argument Boolean enable){
+    public void command(Guild guild, @Argument Boolean enable){
         ConfigHandler.setSetting(GuildSpecialPermsConfig.class, guild, enable ? new SpecialPermsContainer(guild) : null);
     }
 }

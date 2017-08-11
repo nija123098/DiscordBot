@@ -47,17 +47,17 @@ public class ArgumentException extends BotException {
         if (args == null){
             return super.getMessage();
         }
-        String s = "Argument " + this.parameter + " - " + super.getMessage() + "\nExpected: ";
+        StringBuilder s = new StringBuilder("Argument " + this.parameter + " - " + super.getMessage() + "\nExpected: ");
         for (int i = 0; i < this.args.length; i++) {
             if (!this.args[i].isAnnotationPresent(Argument.class)){
                 continue;
             }
-            s += this.args[i].getClass().isAnnotationPresent(LaymanName.class) ? this.args[i].getAnnotation(LaymanName.class).value() : this.args[i].getType().getSimpleName();
+            s.append(this.args[i].getClass().isAnnotationPresent(LaymanName.class) ? this.args[i].getAnnotation(LaymanName.class).value() : this.args[i].getType().getSimpleName());
             if (i != this.args.length - 1){
-                s += ", ";
+                s.append(", ");
             }
         }
-        s += "\n" + (this.args[this.parameter].isAnnotationPresent(LaymanName.class) ? this.args[this.parameter].getAnnotation(LaymanName.class).help() : this.args[this.parameter].getClass().getSimpleName() + " in the form of mention, ID, or reference");
-        return s;
+        s.append("\n").append(this.args[this.parameter].isAnnotationPresent(LaymanName.class) ? this.args[this.parameter].getAnnotation(LaymanName.class).help() : this.args[this.parameter].getClass().getSimpleName() + " in the form of mention, ID, or reference");
+        return s.toString();
     }
 }

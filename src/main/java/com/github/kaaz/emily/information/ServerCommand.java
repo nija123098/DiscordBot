@@ -24,7 +24,7 @@ public class ServerCommand extends AbstractCommand {
     public void command(Guild guild, MessageMaker maker){
         maker.withAuthorIcon(guild.getIconURL())
                 .getAuthorName().appendRaw(guild.getName()).getMaker()
-                .withThumb(guild.getIconURL());
+                .withThumb(guild.getIconURL()).withColor(guild.getIconURL());
         List<User> users = guild.getUsers();
         addAtrib(maker, "Members", users.stream().filter(user -> user.getPresence().getStatus() != Presence.Status.OFFLINE).count() + " online\n" + users.size() + " total");
         addAtrib(maker, "Channels", guild.getChannels().size() + " text channels\n" + guild.getVoiceChannels().size() + " voice channels");

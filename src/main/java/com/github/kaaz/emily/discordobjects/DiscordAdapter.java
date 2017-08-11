@@ -21,15 +21,18 @@ import com.github.kaaz.emily.service.services.ScheduleService;
 import com.github.kaaz.emily.template.KeyPhrase;
 import com.github.kaaz.emily.template.Template;
 import com.github.kaaz.emily.template.TemplateHandler;
+import com.github.kaaz.emily.util.EmoticonHelper;
 import com.github.kaaz.emily.util.Log;
 import com.github.kaaz.emily.util.ThreadProvider;
 import org.reflections.Reflections;
 import sx.blah.discord.api.ClientBuilder;
 import sx.blah.discord.api.events.Event;
 import sx.blah.discord.api.events.EventSubscriber;
+import sx.blah.discord.api.events.IListener;
 import sx.blah.discord.handle.impl.events.ReadyEvent;
 import sx.blah.discord.handle.impl.events.guild.GuildUpdateEvent;
 import sx.blah.discord.handle.impl.events.guild.channel.ChannelUpdateEvent;
+import sx.blah.discord.handle.impl.events.guild.channel.message.MentionEvent;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageUpdateEvent;
 import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.ReactionRemoveEvent;
@@ -37,6 +40,8 @@ import sx.blah.discord.handle.impl.events.guild.role.RoleUpdateEvent;
 import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelMoveEvent;
 import sx.blah.discord.handle.impl.events.shard.ShardReadyEvent;
 import sx.blah.discord.handle.impl.events.user.UserUpdateEvent;
+import sx.blah.discord.handle.impl.obj.ReactionEmoji;
+import sx.blah.discord.handle.obj.IMessage;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -45,6 +50,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Made by nija123098 on 3/12/2017.
@@ -53,6 +60,7 @@ public class DiscordAdapter {
     private static final Map<Class<? extends Event>, Constructor<? extends BotEvent>> EVENT_MAP;
     private static final long PLAY_TEXT_SPEED = 60_000;
     private static final List<Template> PREVIOUS_TEXTS = new MemoryManagementService.ManagedList<>(PLAY_TEXT_SPEED + 1000);// a second for execution time
+    private static final AtomicBoolean BOT_LAG_LOCKED = new AtomicBoolean();
     static {
         Set<Class<? extends BotEvent>> classes = new Reflections(Reference.BASE_PACKAGE + ".discordobjects.wrappers.event.events").getSubTypesOf(BotEvent.class);
         classes.remove(DiscordMessageReceived.class);
@@ -61,7 +69,9 @@ public class DiscordAdapter {
         ClientBuilder builder = new ClientBuilder();
         builder.withToken(BotConfig.BOT_TOKEN);
         builder.withRecommendedShardCount();
+        builder.setMaxMessageCacheCount(0);
         builder.withMaximumDispatchThreads(64);
+        builder.registerListener((IListener<ShardReadyEvent>) event -> event.getShard().idle("with the login screen!"));
         DiscordClient.set(builder.login());
         try{DiscordClient.client().getDispatcher().waitFor(ReadyEvent.class, 20 + 25 * DiscordClient.getShardCount(), TimeUnit.MINUTES);
         } catch (InterruptedException e) {
@@ -77,6 +87,16 @@ public class DiscordAdapter {
         if (!BotConfig.GHOST_MODE) ScheduleService.scheduleRepeat(PLAY_TEXT_SPEED + 10_000, PLAY_TEXT_SPEED, () -> {
             Template template = TemplateHandler.getTemplate(KeyPhrase.PLAY_TEXT, null, PREVIOUS_TEXTS);
             if (template != null) DiscordClient.getShards().forEach(shard -> shard.online(template.interpret((User) null, shard, null, null, null, null)));
+        });
+        ScheduleService.scheduleRepeat(10000, 10000, () -> {
+            if (!DiscordClient.isReady()) return;
+            AtomicLong responseTime = new AtomicLong();
+            DiscordClient.getShards().forEach(shard -> responseTime.addAndGet(shard.getResponseTime()));
+            boolean result = responseTime.get() / DiscordClient.getShardCount() > 1500;
+            if (result != BOT_LAG_LOCKED.get()){
+                BOT_LAG_LOCKED.set(result);
+                Log.log("Now " + (result ? "" : "un") + "locking bot due to lag");
+            }
         });
     }
 
@@ -119,17 +139,26 @@ public class DiscordAdapter {
     public static void handle(ReactionRemoveEvent event){// it's cleaner than the alternative
         EventDistributor.distribute(new DiscordReactionEvent(event));
     }
+    private static final List<IMessage> MENTIONED_MESSAGES = new MemoryManagementService.ManagedList<>(2_000);
+    @EventSubscriber
+    public static void handle(MentionEvent event){
+        ScheduleService.schedule(5 * event.getMessage().getShard().getResponseTime(), () -> {
+            if (MENTIONED_MESSAGES.contains(event.getMessage())) event.getMessage().addReaction(ReactionEmoji.of(EmoticonHelper.getChars("eyes", false)));
+        });
+    }
     @EventSubscriber
     public static void handle(MessageReceivedEvent event){
         if (event.getAuthor().isBot() || !Launcher.isReady() || event.getMessage().getContent() == null || event.getMessage().getContent().isEmpty()) return;
         DiscordMessageReceived receivedEvent = new DiscordMessageReceived((sx.blah.discord.handle.impl.events.MessageReceivedEvent) event);
         if (MessageMonitor.monitor(receivedEvent)) return;
         receivedEvent.setCommand(CommandHandler.handle(receivedEvent));
+        if (!receivedEvent.isCommand()) MENTIONED_MESSAGES.add(receivedEvent.getMessage().message());
         EventDistributor.distribute(receivedEvent);
     }
     @EventSubscriber
     public static void handle(Event event){
-        Constructor<? extends BotEvent> constructor = EVENT_MAP.get(event.getClass());// check this won't be duplicating messages received
+        if (BOT_LAG_LOCKED.get()) return;
+        Constructor<? extends BotEvent> constructor = EVENT_MAP.get(event.getClass());
         if (constructor != null) {
             try{EventDistributor.distribute(constructor.newInstance(event));
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {

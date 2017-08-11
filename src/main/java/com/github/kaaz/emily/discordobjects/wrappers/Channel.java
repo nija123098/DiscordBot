@@ -121,6 +121,7 @@ public class Channel implements Configurable {
     }
 
     public Guild getGuild() {
+        if (channel().isPrivate()) return null;
         return Guild.getGuild(channel().getGuild());
     }
 

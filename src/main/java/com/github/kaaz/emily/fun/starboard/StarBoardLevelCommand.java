@@ -4,7 +4,6 @@ import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.annotations.Argument;
 import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.config.ConfigHandler;
-import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 
 /**
@@ -15,7 +14,7 @@ public class StarBoardLevelCommand extends AbstractCommand {
         super(StarBoardCommand.class, "level", null, null, null, "Sets the minimum level requirement for a star level");
     }
     @Command
-    public void command(@Argument StarLevel level, @Argument Integer integer, Guild guild, MessageMaker maker){
+    public void command(@Argument StarLevel level, @Argument Integer integer, Guild guild){
         ConfigHandler.alterSetting(StarLevelRequirementConfig.class, guild, map -> map.put(level, integer));
     }
 }

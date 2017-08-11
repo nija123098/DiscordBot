@@ -5,17 +5,20 @@ import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.Message;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.github.kaaz.emily.discordobjects.wrappers.event.BotEvent;
-import sx.blah.discord.handle.impl.events.MessageDeleteEvent;
+import sx.blah.discord.handle.impl.events.guild.channel.message.MessageDeleteEvent;
 
 /**
- * Made by nija123098 on 7/18/2017.
+ * Made by nija123098 on 4/27/2017.
  */
 public class DiscordMessageDelete implements BotEvent {
     private MessageDeleteEvent event;
     public DiscordMessageDelete(MessageDeleteEvent event) {
         this.event = event;
     }
-    public User getAuther(){
+    public Message getMessage(){
+        return Message.getMessage(this.event.getMessage());
+    }
+    public User getAuthor(){
         return User.getUser(this.event.getAuthor());
     }
     public Channel getChannel(){
@@ -23,8 +26,5 @@ public class DiscordMessageDelete implements BotEvent {
     }
     public Guild getGuild(){
         return Guild.getGuild(this.event.getGuild());
-    }
-    public Message getMessage(){
-        return Message.getMessage(this.event.getMessage());
     }
 }

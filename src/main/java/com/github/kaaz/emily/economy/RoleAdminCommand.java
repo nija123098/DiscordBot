@@ -18,6 +18,6 @@ public class RoleAdminCommand extends AbstractCommand {
         maker.appendAlternate(true, "For example this sets the `Noob` role as self assignable.\n");
         maker.appendRaw("```@Emily config Noob role_buy 0```\n");
         maker.appendAlternate(true, "For example this sets the `Haxor` role as purchasable for 5.2 currency.\n");
-        maker.appendRaw("```@Emily config Haxor role_buy 5.2```");
+        maker.appendRaw("```@Emily config Haxor role_buy 5```");
     }
 }

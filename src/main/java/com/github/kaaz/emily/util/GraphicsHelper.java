@@ -33,7 +33,7 @@ public class GraphicsHelper {
         graphics.setColor(oldColor);
         graphics.setFont(oldFont);
     }
-    public static void drawStringShalowShadow(String text, int x, int y, Font font, Color color, Graphics2D graphics, boolean center){
+    public static void drawStringShallowShadow(String text, int x, int y, Font font, Color color, Graphics2D graphics, boolean center){
         drawString(text, x + 1, y, font, color, graphics, center);
         drawString(text, x - 1, y, font, color, graphics, center);
         drawString(text, x, y + 1, font, color, graphics, center);

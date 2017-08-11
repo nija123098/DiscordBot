@@ -37,7 +37,7 @@ public class CallCommand extends AbstractCommand {
         super("call", BotRole.GUILD_TRUSTEE, ModuleLevel.FUN, null, null, "Sends your messages to anouther server durring the call.");
     }
     @Command
-    public void command(@Argument(info = "The call ID", optional = true, replacement = ContextType.NONE) Integer callID, Channel channel, Guild guild, MessageMaker maker){
+    public void command(@Argument(info = "The call ID", optional = true, replacement = ContextType.NONE) Integer callID, Channel channel, MessageMaker maker, Guild guild){// guild for requirement
         if (callID == null){
             if (CALL_IDS.containsKey(channel)) {
                 maker.append("Currently in call with ID: " + CALL_IDS.get(channel));

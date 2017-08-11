@@ -31,7 +31,7 @@ public class SkipCommand extends AbstractCommand {
             users.add(user);
             return users;
         });
-        float percent = MAP.get(manager).size() / (float) manager.voiceChannel().getConnectedUsers().stream().filter(User::isBot).filter(u -> u.isDeaf(manager.voiceChannel().getGuild())).count() * 100;
+        float percent = MAP.get(manager).size() / (float) manager.voiceChannel().getConnectedUsers().stream().filter(User::isBot).filter(u -> u.isDeaf(manager.getGuild())).count() * 100;
         int required = ConfigHandler.getSetting(SkipPercentConfig.class, manager.voiceChannel().getGuild());
         if (percent >= required) {
             int size = manager.skipTrack();

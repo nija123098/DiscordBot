@@ -14,11 +14,10 @@ import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.github.kaaz.emily.discordobjects.wrappers.VoiceChannel;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventListener;
-import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordVoiceJoin;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordVoiceLeave;
 import com.github.kaaz.emily.exeption.ArgumentException;
 import com.github.kaaz.emily.exeption.GhostException;
-import com.github.kaaz.emily.favor.FavorHandler;
+import com.github.kaaz.emily.favor.configs.derivation.ListenedCountConfig;
 import com.github.kaaz.emily.launcher.BotConfig;
 import com.github.kaaz.emily.launcher.Launcher;
 import com.github.kaaz.emily.perms.BotRole;
@@ -58,7 +57,7 @@ public class GuildAudioManager extends AudioEventAdapter{
         PLAYER_MANAGER.registerSourceManager(new SoundCloudAudioSourceManager(false));
         PLAYER_MANAGER.registerSourceManager(new LocalAudioSourceManager());
         AtomicInteger integer = new AtomicInteger();
-        Launcher.registerStartup(() -> ConfigHandler.getNonDefaultSettings(PlayQueueConfig.class).forEach((channel, tracks) -> ScheduleService.schedule(integer.getAndIncrement() + 5_000, () -> {
+        Launcher.registerStartup(() -> ConfigHandler.getNonDefaultSettings(PlayQueueConfig.class).forEach((channel, tracks) -> ScheduleService.schedule(integer.getAndIncrement() * 1000 + 5_000, () -> {
             if (!hasValidListeners(channel)) return;
             GuildAudioManager manager = getManager(channel);
             manager.queueTrack(tracks.remove(0));
@@ -182,7 +181,7 @@ public class GuildAudioManager extends AudioEventAdapter{
     }
     public void onFinish(){
         if (this.current == null) return;
-        FavorHandler.addFavorLevel(this.current, this.voiceChannel().getConnectedUsers().size());
+        ConfigHandler.changeSetting(ListenedCountConfig.class, this.current, integer -> integer + validListeners(this.channel));
         if (!this.interups.isEmpty()) {
             this.start(new SpeechTrack(this.interups.remove(0), MessageMaker.getLang(null, this.channel)), 0);
             return;
@@ -249,11 +248,6 @@ public class GuildAudioManager extends AudioEventAdapter{
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
         this.onFinish();
-    }
-    @EventListener
-    public static void handle(DiscordVoiceJoin event){
-        GuildAudioManager manager = MAP.get(event.getGuild().getID());
-        if (manager == null || event.getUser().isBot()) return;
     }
     @EventListener
     public static void handle(DiscordVoiceLeave event){

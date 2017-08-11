@@ -20,7 +20,7 @@ public class TempBanModActionCommand extends AbstractCommand {
         super(ModActionCommand.class, "tempban", "tempban", null, "tb, t", "Temporarily bans a user, by default 1 day");
     }
     @Command
-    public void command(Guild guild, User user, @Argument(info = "the user to be muted") User target, @Argument(info = "Case #") Integer cas, @Argument(optional = true, info = "duration of punishment") Time time, @Argument(info = "the reason", optional = true) String reason){
+    public void command(Guild guild, User user, @Argument(info = "the user to be muted") User target, @Argument(optional = true, info = "duration of punishment") Time time, @Argument(info = "the reason", optional = true) String reason){
         long length = time != null ? time.timeUntil() : 3600000;
         ban(guild, target, length);
         new AbstractModAction(guild, AbstractModAction.ModActionLevel.TEMP_BAN, target, user, reason);

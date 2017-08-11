@@ -1,5 +1,9 @@
 package com.github.kaaz.emily.favor;
 
+import com.github.kaaz.emily.util.GraphicsHelper;
+
+import java.awt.*;
+
 /**
  * The enum to indicate the name
  * of the favor level that
@@ -18,11 +22,17 @@ public enum FavorLevel {
     LIKED(100, "Leaning toward the good side"),
     FAVORED(1000, "Has embraced a good nature"),
     PREFERRED(100000, "Indication of a wonderful human being"),;
-    float amount;
-    String description;
+    private float amount;
+    private String description;
     FavorLevel(float amount, String description) {
         this.amount = amount;
         this.description = description;
+    }
+    public String getDescription() {
+        return this.description;
+    }
+    public Color getColor() {
+        return GraphicsHelper.getGradient(this.ordinal() / (float) FavorLevel.values().length, Color.RED, Color.GREEN);
     }
 
     /**

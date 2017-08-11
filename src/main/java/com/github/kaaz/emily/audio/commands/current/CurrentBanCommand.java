@@ -4,7 +4,6 @@ import com.github.kaaz.emily.audio.Track;
 import com.github.kaaz.emily.audio.configs.track.BannedTrackConfig;
 import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.annotations.Command;
-import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.perms.BotRole;
 
 /**
@@ -19,7 +18,7 @@ public class CurrentBanCommand extends AbstractCommand {
         return BotRole.BOT_ADMIN;
     }
     @Command
-    public void command(Track track, MessageMaker maker){
+    public void command(Track track){
         BannedTrackConfig.ban(track);
     }
 }

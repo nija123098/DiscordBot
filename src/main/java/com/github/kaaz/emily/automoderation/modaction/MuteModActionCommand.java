@@ -25,14 +25,11 @@ public class MuteModActionCommand extends AbstractCommand {
         super(ModActionCommand.class, "mute", "mute", null, "m", "Mutes an annoying user for a specified amount of time or 1 hour");
     }
     @Command
-    public void command(Guild guild, User user, @Argument(info = "the user to be muted") User target, @Argument(info = "Case #") Integer cas, @Argument(optional = true, info = "duration of punishment") Time time, @Argument(info = "the reason", optional = true) String reason){
+    public void command(Guild guild, User user, @Argument(info = "the user to be muted") User target, @Argument(optional = true, info = "duration of punishment") Time time, @Argument(info = "the reason", optional = true) String reason){
+        if (ConfigHandler.getSetting(MuteRoleConfig.class, guild) == null) throw new ConfigurationException("No mute role is configured");
         long length = time != null ? time.timeUntil() : 3600000;
         mute(guild, target, length);
         new AbstractModAction(guild, AbstractModAction.ModActionLevel.MUTE, target, user, reason);
-    }
-    @Override
-    protected void checkSetupRequirements(User user, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, String args){
-        if (ConfigHandler.getSetting(MuteRoleConfig.class, guild) == null) throw new ConfigurationException("No mute role is configured");
     }
     private static void mute(Guild guild, User user, long length){
         Set<Role> roles = new HashSet<>(user.getRolesForGuild(guild));

@@ -11,7 +11,6 @@ import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordSpeakin
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordVoiceJoin;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordVoiceLeave;
 import com.github.kaaz.emily.launcher.BotConfig;
-import com.github.kaaz.emily.launcher.Launcher;
 import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.service.services.ScheduleService;
 import com.github.kaaz.emily.util.*;
@@ -55,7 +54,6 @@ public class SpeechParser implements IAudioReceiver {
                 }
             });
             EventDistributor.register(SpeechParser.class);
-            Launcher.registerStartup(() -> DiscordClient.getRoleByID(BotConfig.CONTRIBUTOR_SIGN_ROLE));
         }else{
             SPEECH_RECOGNIZER_BUFFER = null;
             PARSER_MAP = null;

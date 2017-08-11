@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiPredicate;
+import java.util.stream.Stream;
 
 /**
  * Made by nija123098 on 2/20/2017.
@@ -68,7 +69,6 @@ public enum BotRole {
     }
     private final Map<Object, Object> PERMISSIONS_CASHE = new HashMap<>();
     public boolean hasRequiredRole(User user, Guild guild){
-        if (user.getName().equals("Kaaz")) return true;
         if (!this.isTrueRank) return this.detect.test(user, guild);
         return (boolean) (this.guildImportant ? ((Map<Object, Object>) PERMISSIONS_CASHE.computeIfAbsent(guild, g -> new ConcurrentHashMap<>())) : PERMISSIONS_CASHE).computeIfAbsent(user, u -> {
             ScheduleService.schedule(120_000, () -> (this.guildImportant ? (Map<Object, Object>) PERMISSIONS_CASHE.get(guild) : PERMISSIONS_CASHE).remove(user));
@@ -101,6 +101,7 @@ public enum BotRole {
         if (grant) roles.add(role);
         else roles.remove(role);
         ConfigHandler.setSetting((Class<? extends AbstractConfig<Set<BotRole>,Configurable>>) config, configurable, roles);
+        Stream.of(values()).forEach(botRole -> botRole.PERMISSIONS_CASHE.clear());
         EventDistributor.distribute(new BotRoleChangeEvent(grant, role, target, guild));
     }
 }

@@ -1,6 +1,6 @@
 package com.github.kaaz.emily.config;
 
-import com.github.kaaz.emily.exeption.ArgumentException;
+import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.perms.configs.specialperms.SpecialPermsContainer;
 import com.github.kaaz.emily.util.ReflectionHelper;
 import javafx.util.Pair;
@@ -46,6 +46,6 @@ public class ObjectCloner {
             Function<Object, Object> function = MAP.get(clazz);
             if (function != null) return (I) function.apply(i);
         }
-        throw new ArgumentException("Attempted to clone a object of non-supported type");
+        throw new DevelopmentException("Attempted to clone a object of non-supported type");
     }
 }

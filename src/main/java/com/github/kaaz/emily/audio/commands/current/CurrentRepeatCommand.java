@@ -4,7 +4,6 @@ import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.ContextType;
 import com.github.kaaz.emily.command.annotations.Argument;
 import com.github.kaaz.emily.command.annotations.Command;
-import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 
 /**
@@ -15,7 +14,7 @@ public class CurrentRepeatCommand extends AbstractCommand {
         super(CurrentCommand.class, "repeat", null, "loop", "loop", "Repeats the currently playing song");
     }
     @Command
-    public void command(MessageMaker maker, GuildAudioManager manager, @Argument(optional = true, replacement = ContextType.NONE) Boolean loop){
+    public void command(GuildAudioManager manager, @Argument(optional = true, replacement = ContextType.NONE) Boolean loop){
         manager.loop(loop == null ? !manager.isLooping() : loop);
     }
 }

@@ -1,12 +1,12 @@
 package com.github.kaaz.emily.util;
 
 import com.github.kaaz.emily.exeption.DevelopmentException;
-import com.google.common.base.Function;
 import com.google.common.base.Strings;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -38,18 +38,8 @@ public class FormatHelper {
         return filtering(s, c -> c != toRemove);
     }
     public static String trimFront(String s){
-        if (!s.startsWith(" ")){
-            return s;
-        }
-        boolean stop = false;
-        for (int i = 0; i < s.length(); i++) {
-            if (s.charAt(i) == ' '){
-                stop = true;
-            }else if (stop){
-                return s.substring(i);
-            }
-        }
-        return s;
+        for (int i = 0; i < s.length(); i++) if (s.charAt(i) != ' ') return s.substring(i);
+        return "";
     }
     public static String makePleural(String s){
         return s + "'" + (s.endsWith("s") ? s + "" : "s");
@@ -61,6 +51,9 @@ public class FormatHelper {
         }
         return l;
     }
+    public static String embedLink(String text, String link){
+        return "[" + text + "](" + link + ")";
+    }
     /**
      * @param headers array containing the headers
      * @param table   array[n size] of array's[header size], containing the rows of the controllers
@@ -71,9 +64,7 @@ public class FormatHelper {
         StringBuilder sb = new StringBuilder();
         int padding = 1;
         int[] widths = new int[headers.size()];
-        for (int i = 0; i < widths.length; i++) {
-            widths[i] = 0;
-        }
+        Arrays.fill(widths, 0);
         for (int i = 0; i < headers.size(); i++) {
             if (headers.get(i).length() > widths[i]) {
                 widths[i] = headers.get(i).length();
@@ -218,6 +209,14 @@ public class FormatHelper {
         new StringIterator(s).forEachRemaining(character -> {
             if (filter.apply(character)) builder.append(character);
         });
+        return builder.toString();
+    }
+    public static String reformat(String s, Function<Character, Character> function){
+        StringBuilder builder = new StringBuilder(s.length());
+        for (int i = 0; i < s.length(); i++) {
+            Character character = function.apply(s.charAt(i));
+            if (character != null) builder.append(character);
+        }
         return builder.toString();
     }
 }

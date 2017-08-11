@@ -115,6 +115,10 @@ public class Playlist implements Configurable {
         return ConfigHandler.getSetting(PlaylistPlayTypeConfig.class, this).decide.apply(this, guild);
     }
 
+    public int getSize(){
+        return ConfigHandler.getSetting(PlaylistContentsConfig.class, this).size();
+    }
+
     private static final Map<Playlist, Map<Guild, Integer>> SEQUENTIAL_MAP = new ConcurrentHashMap<>();
     public enum PlayType {
         RANDOM((playlist, guild) -> {

@@ -2,7 +2,6 @@ package com.github.kaaz.emily.audio.commands;
 
 import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.annotations.Command;
-import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 
 /**
@@ -13,7 +12,7 @@ public class QueueClearCommand extends AbstractCommand {
         super(QueueCommand.class, "clear", null, null, null, "Clears the music queue");
     }
     @Command
-    public void command(GuildAudioManager manager, MessageMaker maker){
+    public void command(GuildAudioManager manager){
         manager.clearQueue();
     }
 }

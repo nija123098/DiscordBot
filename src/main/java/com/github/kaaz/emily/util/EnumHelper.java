@@ -21,7 +21,7 @@ public class EnumHelper {
         return EnumSet.of(es[0], Arrays.copyOfRange(es, 1, es.length));
     }
     public static <E extends Enum<E>> Pair<E, Integer> getValue(Class<E> clazz, String value){
-        value = value.toUpperCase().replace(" ", "_");
+        value = value.split(" ")[0].toUpperCase();
         for (E e : clazz.getEnumConstants()){
             if (value.equals(e.name())) return new Pair<>(e, e.name().length());
         }

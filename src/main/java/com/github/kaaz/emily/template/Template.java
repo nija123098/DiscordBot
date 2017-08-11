@@ -7,7 +7,6 @@ import com.github.kaaz.emily.command.ContextRequirement;
 import com.github.kaaz.emily.command.annotations.Argument;
 import com.github.kaaz.emily.discordobjects.wrappers.*;
 import com.github.kaaz.emily.exeption.ArgumentException;
-import com.github.kaaz.emily.exeption.ContextException;
 import com.github.kaaz.emily.util.StringIterator;
 
 import java.lang.reflect.Parameter;
@@ -17,13 +16,30 @@ import java.util.*;
  * Made by nija123098 on 4/17/2017.
  */
 public class Template {
-    private Set<ContextRequirement> contextRequirements;
-    private CombinedArg arg;
+    private String text;
     private KeyPhrase keyPhrase;
+    private transient CombinedArg arg;
     public Template(String template, KeyPhrase keyPhrase){
+        this.text = template;
         this.keyPhrase = keyPhrase;
-        this.arg = new CombinedArg(getCalculatedArgs(template, keyPhrase));
-        this.contextRequirements = new HashSet<>();
+        this.precompileCheck();
+        this.ensureArgsInited();
+    }
+    public Template() {
+        this.ensureArgsInited();//XSTREAM just doesn't like calling this
+    }
+    public void precompileCheck(){
+        int leftBraceCount = 0, rightBraceCount = 0;
+        for (int i = 0; i < this.text.length(); i++) {
+            char c = this.text.charAt(i);
+            if (c == TemplateHandler.LEFT_BRACE) ++leftBraceCount;
+            else if (c == TemplateHandler.RIGHT_BRACE) ++rightBraceCount;
+        }
+        if (leftBraceCount != rightBraceCount) throw new ArgumentException("Brace count miss-match, make sure every function is closed");
+    }
+    private void ensureArgsInited(){
+        if (this.arg != null) return;
+        this.arg = new CombinedArg(getCalculatedArgs(this.text, this.keyPhrase));
     }
     public String interpret(ContextPack pack, Object...args){
         return this.interpret(pack.getUser(), pack.getShard(), pack.getChannel(), pack.getGuild(), pack.getMessage(), pack.getReaction(), args);
@@ -31,10 +47,14 @@ public class Template {
     public String interpret(User user, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, Object...objects){
         this.keyPhrase.checkArgTypes(objects);// if is for testing since in testing it will be null
         Object[] contexts = new Object[]{user, shard, channel, guild, message, reaction};
-        for (int i = 0; i < contexts.length; i++) {
-            if (this.contextRequirements.contains(ContextRequirement.values()[i])) ContextException.checkRequirement(contexts[i], ContextRequirement.values()[i]);
-        }
-        return arg.calculate(user, shard, channel, guild, message, reaction, objects);
+        Set<ContextRequirement> requirements = new HashSet<>(contexts.length + 1, 1);
+        for (int i = 0; i < contexts.length; i++) if (contexts[i] != null) requirements.add(ContextRequirement.values()[i]);
+        this.keyPhrase.checkAvailableContext(requirements);
+        this.ensureArgsInited();
+        return this.arg.calculate(user, shard, channel, guild, message, reaction, objects);
+    }
+    public String getText() {
+        return this.text;
     }
     private abstract static class Arg{
         abstract Object calculate(User user, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, Object...objects);
@@ -67,6 +87,7 @@ public class Template {
         }
         @Override
         Class<?> getReturnType() {
+            if (this.i > this.keyPhrase.getArgTypes().length) throw new ArgumentException("Too high of argument number, make sure your arguments are zero indexed");
             return this.keyPhrase.getArgTypes()[this.i];
         }
     }
@@ -74,7 +95,9 @@ public class Template {
         private AbstractCommand command;
         private Arg[] args;
         CalculatedArg(AbstractCommand command, String s, KeyPhrase keyPhrase){
-            keyPhrase.checkAvailableContext(command.getContextRequirements());
+            Set<ContextRequirement> requirements = command.getContextRequirements();
+            requirements.remove(ContextRequirement.STRING);
+            keyPhrase.checkContextRequirements(requirements);
             this.command = command;
             if (!this.command.isTemplateCommand()){
                 throw new ArgumentException("Command is not a valid template command: " + this.command.getName());
@@ -87,7 +110,7 @@ public class Template {
                 }
             }
             if (this.args.length > argTotal){
-                throw new ArgumentException("Too many arguments.  Expected arg count: " + argTotal);
+                throw new ArgumentException("Too many arguments for " + command.getName() + " expected arg count: " + argTotal);
             }
             int arg = 0;
             for (int i = 0; i < this.args.length; i++) {
@@ -159,21 +182,27 @@ public class Template {
                             if (--left == 0){
                                 break;
                             }
-                        }
+                        } else if (TemplateHandler.LEFT_BRACE == c) ++left;
                         comArgs += c;
                     }
                     args.add(new CalculatedArg(CommandHandler.getCommand(command.replace("_", " ")), comArgs, keyPhrase));
                     return;
                 case TemplateHandler.ARGUMENT_CHARACTER:
                     endSection();
-                    args.add(new GrantedArg(Integer.parseInt(iterator.next() + ""), keyPhrase));
-                    break;
+                    if (!iterator.hasNext()) throw new ArgumentException("Improperly formed argument, please follow every " + TemplateHandler.ARGUMENT_CHARACTER + " with a argument number");
+                    try{args.add(new GrantedArg(Integer.parseInt(iterator.next() + ""), keyPhrase));
+                    } catch (NumberFormatException e){
+                        throw new ArgumentException("Improperly formed argument, please follow every " + TemplateHandler.ARGUMENT_CHARACTER + " with a argument number", e);
+                    }
+                    return;
                 case TemplateHandler.ARGUMENT_SPLITTER:
                     endSection();
                     args.add(null);
             }
-            if (c == ' ') wordBuilder = ""; else wordBuilder += c;
-            sectionBuilder += c;
+            if (c != TemplateHandler.ARGUMENT_SPLITTER){
+                if (c == ' ') wordBuilder = ""; else wordBuilder += c;
+                sectionBuilder += c;
+            }
         }
         void endSection(){
             if (!sectionBuilder.isEmpty()) args.add(new StaticArg(sectionBuilder));
@@ -192,15 +221,10 @@ public class Template {
             args.add(null);
             args.forEach(arg -> {
                 if (arg == null){
-                    if (temp.size() == 1){
-                        newArgs.add(temp.get(0));
-                    }else{
-                        newArgs.add(new CombinedArg(temp));
-                    }
+                    if (temp.size() == 1) newArgs.add(temp.get(0));
+                    else if (!temp.isEmpty()) newArgs.add(new CombinedArg(temp));
                     temp.clear();
-                }else{
-                    temp.add(arg);
-                }
+                }else temp.add(arg);
             });
 
             return newArgs.toArray(new Arg[newArgs.size()]);

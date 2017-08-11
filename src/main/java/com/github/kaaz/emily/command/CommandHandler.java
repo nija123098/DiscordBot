@@ -98,6 +98,10 @@ public class CommandHandler {
         Log.log("Command Handler initialized");
     }
 
+    public static Set<? extends AbstractCommand> getCommands(){
+        return new HashSet<>(CLASS_MAP.values());
+    }
+
     /**
      * Gets the command instance by the class type
      *
@@ -161,13 +165,7 @@ public class CommandHandler {
             return null;
         }
         for (int i = 0; i < index; ++i) {
-            in = in.substring(strings[i].length());
-            while (true){
-                if (!in.startsWith(" ")){
-                    break;
-                }
-                in = in.substring(1);
-            }
+            in = FormatHelper.trimFront(in.substring(strings[i].length()));
         }
         return new Pair<>(command, in);
     }
@@ -192,13 +190,13 @@ public class CommandHandler {
             else{
                 if ((command = REACTION_COMMAND_MAP.get(string)) != null){
                     try{if (command.hasPermission(user, message.getChannel()) && command.checkCoolDown(message.getChannel(), user) && command.interpretSuccess(command.invoke(user, message.getShard(), message.getChannel(), message.getGuild(), message, reaction, string))){
-                        command.invoked(message.getChannel(), user);
+                        command.invoked(message.getChannel(), user, message);
                         return true;
                     }
                     }catch(Exception ignored){}
                     return false;
                 }else if (string.toLowerCase().startsWith("@emily")) string = string.substring(6);
-                else if (DiscordClient.getOurUser().getNickname(message.getGuild()) != null && string.toLowerCase().startsWith("@" + DiscordClient.getOurUser().getNickname(message.getGuild()))){
+                else if (DiscordClient.getOurUser().getNickname(message.getGuild()) != null && string.toLowerCase().startsWith("@" + DiscordClient.getOurUser().getNickname(message.getGuild()).toLowerCase())){
                     string = string.substring(1 + DiscordClient.getOurUser().getNickname(message.getGuild()).length());
                 }else if (string.startsWith(MENTION.get())) string = string.substring(MENTION.get().length());
                 else if (string.startsWith(MENTION_NICK.get())) string = string.substring(MENTION_NICK.get().length());
@@ -230,7 +228,7 @@ public class CommandHandler {
                 boolean invoked = false;
                 if (command.interpretSuccess(command.invoke(user, message.getShard(), message.getChannel(), message.getGuild(), message, reaction, pair.getValue()))){
                     invoked = true;
-                    command.invoked(message.getChannel(), user);
+                    command.invoked(message.getChannel(), user, message);
                 }
                 if (message.getReactionByName(EXCEPTION_FOR_METHOD) != null){
                     message.removeReactionByName(EXCEPTION_FOR_METHOD);
@@ -270,7 +268,7 @@ public class CommandHandler {
             }
             try {
                 if (pair.getKey().interpretSuccess(pair.getKey().invoke(user, manager.getGuild().getShard(), manager.voiceChannel(), manager.getGuild(), null, null, pair.getValue()))){
-                    pair.getKey().invoked(channel, user);
+                    pair.getKey().invoked(channel, user, null);
                     return true;
                 }
             } catch (BotException e){

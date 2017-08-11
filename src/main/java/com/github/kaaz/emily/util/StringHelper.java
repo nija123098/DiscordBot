@@ -43,6 +43,7 @@ public class StringHelper {
         if (best.size() > 1) {
             best = getGoodMatch(in, best, StringUtils::getLevenshteinDistance, true, false);
         }
+        best.removeIf(s -> StringUtils.getJaroWinklerDistance(in, s) == 0);
         return best.size() != 1 ? null : best.get(0);
     }
     public static List<String> getGoodMatch(String matching, List<String> candidates, BiFunction<String, String, Number> function, boolean golf, boolean containment){

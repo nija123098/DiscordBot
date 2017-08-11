@@ -1,4 +1,4 @@
-package com.github.kaaz.emily.favor.configs;
+package com.github.kaaz.emily.favor.configs.balencing;
 
 import com.github.kaaz.emily.config.AbstractConfig;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;

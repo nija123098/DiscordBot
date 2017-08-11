@@ -48,10 +48,6 @@ public abstract class Track implements Configurable{
         Track track = getTrack(s);
         if (track != null) return Collections.singletonList(track);
         String code = YTUtil.extractVideoCode(s);
-        if (code == null) {
-            YTSearch.SimpleResult result = YTSearch.getResults(s);
-            if (result != null) code = result.getCode();
-        }
         if (code != null) {
             return Collections.singletonList(Track.getTrack(YoutubeTrack.class, code));
         }

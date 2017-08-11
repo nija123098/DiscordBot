@@ -18,7 +18,7 @@ public class SubscribeCommand extends AbstractCommand {
         super("subscribe", ModuleLevel.ADMINISTRATIVE, "sub", null, "Subscribe this channel to certain events, take a look at @Emily rss");
     }
     @Command
-    public void command(@Argument(optional = true, replacement = ContextType.NONE, info = "The thing to subscribe to") SubscriptionLevel level, String args, Channel channel, MessageMaker maker){
+    public void command(@Argument(optional = true, replacement = ContextType.NONE, info = "The thing to subscribe to") SubscriptionLevel level, Channel channel, MessageMaker maker){
         if (level == null) SubscribeCurrentCommand.command(channel, maker);
         else ConfigHandler.alterSetting(SubscriptionsConfig.class, channel, levels -> levels.add(level));
     }

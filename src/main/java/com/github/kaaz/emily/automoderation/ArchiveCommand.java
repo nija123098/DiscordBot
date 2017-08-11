@@ -40,7 +40,7 @@ public class ArchiveCommand extends AbstractCommand {
             strings.add(message.getCreationDate().format(DateTimeFormatter.ISO_DATE_TIME).replace("T", " | ") + " " + message.getAuthor().getNameAndDiscrim() + ": " + content);
         });
         try {
-            File file = FileHelper.getTempFile("archive", "txt");
+            File file = FileHelper.getTempFile("archive", "txt");// may want to put to hastebin
             Files.write(Paths.get(file.getPath()), Lists.reverse(strings));
             maker.withFile(file);
         } catch (IOException e) {

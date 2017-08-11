@@ -11,9 +11,11 @@ import sx.blah.discord.handle.obj.IRole;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 /**
  * Made by nija123098 on 3/7/2017.
@@ -30,8 +32,8 @@ public class Role implements Configurable{
     static Role getRole(IRole guild){
         return MAP.computeIfAbsent(guild.getID(), s -> new Role(guild));
     }
-    public static java.util.List<Role> getRoles(java.util.List<IRole> iRoles) {
-        java.util.List<Role> roles = new ArrayList<>(iRoles.size());
+    public static List<Role> getRoles(List<IRole> iRoles) {
+        List<Role> roles = new ArrayList<>(iRoles.size());
         iRoles.forEach(iUser -> roles.add(getRole(iUser)));
         return roles;
     }
@@ -86,6 +88,10 @@ public class Role implements Configurable{
         return this.getID().hashCode();
     }
 
+    public List<User> getUsers(){
+        Guild guild = this.getGuild();
+        return guild.getUsers().stream().filter(user -> user.getRolesForGuild(guild).contains(this)).collect(Collectors.toList());
+    }
     //WRAPPER METHODS
     public int getPosition() {
         return role().getPosition();

@@ -1,14 +1,29 @@
 package com.github.kaaz.emily.favor;
 
+import com.github.kaaz.emily.audio.Track;
+import com.github.kaaz.emily.audio.configs.track.PlayCountConfig;
 import com.github.kaaz.emily.config.ConfigHandler;
+import com.github.kaaz.emily.config.ConfigLevel;
 import com.github.kaaz.emily.config.Configurable;
+import com.github.kaaz.emily.config.GuildUser;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventListener;
 import com.github.kaaz.emily.discordobjects.wrappers.event.botevents.FavorLevelChangeEvent;
-import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordUserBanned;
-import com.github.kaaz.emily.favor.configs.FavorConfig;
+import com.github.kaaz.emily.exeption.DevelopmentException;
+import com.github.kaaz.emily.favor.configs.GuildUserReputationConfig;
+import com.github.kaaz.emily.favor.configs.balencing.MessageFavorFactorConfig;
+import com.github.kaaz.emily.favor.configs.balencing.ReactionFavorFactorConfig;
+import com.github.kaaz.emily.favor.configs.balencing.ReputationFavorFactorConfig;
+import com.github.kaaz.emily.favor.configs.derivation.BannedLocationConfig;
+import com.github.kaaz.emily.favor.configs.derivation.MessageCountConfig;
+import com.github.kaaz.emily.favor.configs.derivation.ReactionCountConfig;
 import com.github.kaaz.emily.perms.BotRole;
+import com.google.common.util.concurrent.AtomicDouble;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
 
 /**
  * The handler for favor levels for guilds and users.
@@ -18,6 +33,25 @@ import com.github.kaaz.emily.perms.BotRole;
  * @see FavorLevel
  */
 public class FavorHandler {
+    private static final Map<ConfigLevel, Function<? extends Configurable, Float>> TYPE_DERIVATIONS = new HashMap<>();
+    static {
+        add(GuildUser.class, guildUser -> {
+            if (ConfigHandler.getSetting(BannedLocationConfig.class, guildUser.getUser()).contains(guildUser.getGuild())) return -5000F;
+            float v = ConfigHandler.getSetting(MessageFavorFactorConfig.class, guildUser.getGuild()) * ConfigHandler.getSetting(MessageCountConfig.class, guildUser);
+            v += ConfigHandler.getSetting(ReputationFavorFactorConfig.class, guildUser.getGuild()) * ConfigHandler.getSetting(GuildUserReputationConfig.class, guildUser);
+            v += ConfigHandler.getSetting(ReactionFavorFactorConfig.class, guildUser.getGuild()) * ConfigHandler.getSetting(ReactionCountConfig.class, guildUser);
+            return v;
+        });
+        add(User.class, user -> {
+            AtomicDouble value = new AtomicDouble();
+            user.getGuilds().forEach(guild -> value.addAndGet(getFavorAmount(guild)));
+            return (float) value.get() / user.getGuilds().size();
+        });
+        add(Track.class, track -> ConfigHandler.getSetting(PlayCountConfig.class, track).floatValue());
+    }
+    private static <E extends Configurable> void add(Class<E> clazz, Function<E, Float> function){
+        TYPE_DERIVATIONS.put(ConfigLevel.getLevel(clazz), function);
+    }
     /**
      * A getter for the FavorLevel config.
      *
@@ -25,9 +59,10 @@ public class FavorHandler {
      * @return the favor amount
      */
     public static Float getFavorAmount(Configurable configurable){
-        return ConfigHandler.getSetting(FavorConfig.class, configurable);
+        Function<Configurable, Float> function = (Function<Configurable, Float>) TYPE_DERIVATIONS.get(configurable.getConfigLevel());
+        if (function == null) throw new DevelopmentException("Request for favor on type with no ");
+        return function.apply(configurable);
     }
-
     /**
      * Gets the enum by the favor amount indicated.
      *
@@ -35,44 +70,13 @@ public class FavorHandler {
      * @return the corresponding favor enum
      */
     public static FavorLevel getFavorLevel(Configurable configurable){
-        return FavorLevel.getFavorLevel(ConfigHandler.getSetting(FavorConfig.class, configurable));
+        return FavorLevel.getFavorLevel(getFavorAmount(configurable));
     }
-
-    /**
-     * A helper method to add favor to
-     *
-     * @param configurable the configurable to change the favor level for
-     * @param amount the amount to change it by
-     */
-    public static void addFavorLevel(Configurable configurable, float amount){
-        if (amount < 0){
-            amount *= 2;
-        }
-        setFavorLevel(configurable, amount + ConfigHandler.getSetting(FavorConfig.class, configurable));
-    }
-
-    /**
-     * A helper to set the favor level
-     *
-     * @param configurable the configurable to set the favor level for
-     * @param amount the amount to set it to
-     */
-    public static void setFavorLevel(Configurable configurable, float amount){
-        FavorLevel oldLevel = getFavorLevel(configurable), newLevel = FavorLevel.getFavorLevel(amount);
-        EventDistributor.distribute(new FavorChangeEvent(configurable, getFavorAmount(configurable), amount));
-        if (oldLevel != newLevel) EventDistributor.distribute(new FavorLevelChangeEvent(configurable, oldLevel, newLevel));
-        ConfigHandler.setSetting(FavorConfig.class, configurable, amount);
-    }
-
     static {EventDistributor.register(FavorHandler.class);}
     @EventListener
     public static void handle(FavorLevelChangeEvent event){
         if (event.getNewLevel() == FavorLevel.DISTRUSTED && event.getConfigurable() instanceof User){
             BotRole.setRole(BotRole.BANNED, true, (User) event.getConfigurable(), null);
         }
-    }
-    @EventListener
-    public static void handle(DiscordUserBanned event){
-        addFavorLevel(event.getUser(), -100);
     }
 }

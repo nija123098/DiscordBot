@@ -6,7 +6,6 @@ import com.github.kaaz.emily.command.annotations.Argument;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.audio.Playlist;
 import com.github.kaaz.emily.audio.configs.playlist.PlaylistContentsConfig;
-import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
 
@@ -20,7 +19,7 @@ public class PlaylistRemoveAllCommand extends AbstractCommand {
         super(PlaylistCommand.class, "all", null, null, null, "Removes all songs from the current playlist");
     }
     @Command
-    public void command(@Argument(optional = true) Playlist playlist, User user, Guild guild, MessageMaker maker){
+    public void command(@Argument(optional = true) Playlist playlist, User user, Guild guild){
         playlist.checkPermissionToEdit(user, guild);
         ConfigHandler.setSetting(PlaylistContentsConfig.class, playlist, new ArrayList<>(0));
     }

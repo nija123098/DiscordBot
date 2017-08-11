@@ -7,6 +7,7 @@ import com.github.kaaz.emily.discordobjects.wrappers.VoiceChannel;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
 import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.perms.BotRole;
+import com.github.kaaz.emily.util.Log;
 
 import java.lang.reflect.Type;
 import java.sql.ResultSet;
@@ -165,6 +166,7 @@ public class AbstractConfig<V, T extends Configurable> {
         try{resultSet.next();
             return TypeChanger.toObject(this.valueType, resultSet.getString(2));
         } catch (SQLException e) {
+            if (!e.getMessage().equals("Illegal operation on empty result set.")) Log.log("Error while getting value", e);
             return this.getDefault(configurable);
         }
     }
@@ -198,10 +200,13 @@ public class AbstractConfig<V, T extends Configurable> {
     }
 
     public String getExteriorValue(T configurable) {
-        return wrapTypeOut(getValue(configurable), configurable);
+        String result = wrapTypeOut(getValue(configurable), configurable);
+        if (result.equals("null")) result = "not set";
+        return result;
     }
 
     public void setExteriorValue(T configurable, String value) {
+        if (value.length() == 7 && value.toLowerCase().equals("not set")) value = "null";
         setValue(configurable, wrapTypeIn(value, configurable));
     }
 

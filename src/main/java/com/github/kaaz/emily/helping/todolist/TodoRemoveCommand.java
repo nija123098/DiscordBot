@@ -4,7 +4,6 @@ import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.annotations.Argument;
 import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.config.ConfigHandler;
-import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
 
 /**
@@ -15,7 +14,7 @@ public class TodoRemoveCommand extends AbstractCommand {
         super(TodoListCommand.class, "remove", null, null, null, "Removes an item from your todo list");
     }
     @Command
-    public void command(User user, MessageMaker maker, @Argument(info = "The todo number") Integer item){
+    public void command(User user, @Argument(info = "The todo number") Integer item){
         ConfigHandler.alterSetting(TodoListConfig.class, user, todoItems -> todoItems.remove((int) item));
     }
 }

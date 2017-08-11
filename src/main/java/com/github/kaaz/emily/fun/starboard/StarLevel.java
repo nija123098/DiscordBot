@@ -3,6 +3,7 @@ package com.github.kaaz.emily.fun.starboard;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.util.EmoticonHelper;
+import com.github.kaaz.emily.util.GraphicsHelper;
 
 import java.awt.*;
 import java.util.concurrent.atomic.AtomicReference;
@@ -11,18 +12,16 @@ import java.util.concurrent.atomic.AtomicReference;
  * Made by nija123098 on 5/31/2017.
  */
 public enum StarLevel {
-    SPARKLE(new Color(0xFFFFFF), "star"),
-    DWARF(new Color(0xFFF96F), "star2"),
-    YELLOW(new Color(0xFFFB3A), "dizzy"),
-    SOLAR(new Color(0xFFEC00), "sunny"),;
-    private Color color;
+    SPARKLE("star"),// 0xFFFFFF
+    DWARF("star2"),// 0xFFF96F
+    YELLOW("dizzy"),// 0xFFFB3A
+    SOLAR("sunny"),;// 0xFFEC00
     private String emoticon;
-    StarLevel(Color color, String emoticon) {
-        this.color = color;
+    StarLevel(String emoticon) {
         this.emoticon = EmoticonHelper.getChars(emoticon, false);
     }
     public Color getColor() {
-        return this.color;
+        return GraphicsHelper.getGradient(this.ordinal() / (float) StarLevel.values().length, Color.WHITE, Color.YELLOW);
     }
     public String getEmoticon() {
         return this.emoticon;

@@ -50,7 +50,7 @@ public class AbstractCommand {
     private List<GuildUser> guildUserCoolDowns;
     private Set<ContextRequirement> contextRequirements;
     private Set<AbstractCommand> subCommands;
-    private boolean prefixRequired = true;
+    private boolean prefixRequired = true, okOnSuccess;
     public AbstractCommand(Class<? extends AbstractCommand> superCommand, String name, String absoluteAliases, String emoticonAliases, String relativeAliases, String help){
         this.superCommand = superCommand;
         this.name = name;
@@ -109,7 +109,7 @@ public class AbstractCommand {
             throw new DevelopmentException("No method annotated " + Command.class.getSimpleName() + " in command: " + this.getClass().getName());
         }
         this.parameters = this.method.getParameters();
-        for (Parameter parameter : this.parameters){
+        if (!this.isTemplateCommand()) for (Parameter parameter : this.parameters){
             if (parameter.isAnnotationPresent(Argument.class)) InvocationObjectGetter.checkConvertType(parameter.getType());
             else if (parameter.isAnnotationPresent(Argument.class) || parameter.getAnnotations().length == 0) InvocationObjectGetter.checkContextType(parameter.getType());
         }
@@ -117,9 +117,10 @@ public class AbstractCommand {
         for (Parameter parameter : this.parameters) {
             if (parameter.getAnnotations().length == 0 || (parameter.isAnnotationPresent(Context.class) && !parameter.getAnnotation(Context.class).softFail())) {
                 this.contextRequirements.addAll(InvocationObjectGetter.getContextRequirements(parameter.getType(), parameter.isAnnotationPresent(Context.class) ? parameter.getAnnotation(Context.class).value() : ContextType.DEFAULT));
-            }else if (parameter.isAnnotationPresent(Argument.class) && !parameter.getAnnotation(Argument.class).optional()){
+            }else if (parameter.isAnnotationPresent(Argument.class) && !parameter.getAnnotation(Argument.class).optional() && !this.isTemplateCommand()){
                 this.contextRequirements.addAll(InvocationObjectGetter.getConvertRequirements(parameter.getType(), parameter.getAnnotation(Argument.class).replacement()));
             }
+            if (MessageMaker.class.equals(parameter.getType())) this.okOnSuccess = false;
         }// makes it into a more efficient set
         this.contextRequirements = this.contextRequirements.isEmpty() ? Collections.emptySet() : EnumSet.copyOf(this.contextRequirements);
         this.subCommands = new HashSet<>();
@@ -314,7 +315,7 @@ public class AbstractCommand {
             command = command.getSuperCommand();
         }
         boolean hasNormalPerm = this.botRole.hasRequiredRole(user, channel.getGuild());
-        if (channel.getGuild() != null){
+        if (!channel.isPrivate()){
             SpecialPermsContainer container = ConfigHandler.getSetting(GuildSpecialPermsConfig.class, channel.getGuild());
             if (container != null && BotRole.GUILD_TRUSTEE.hasRequiredRole(user, channel.getGuild())){
                 Boolean allow = container.getSpecialPermission(this, channel, user);
@@ -356,7 +357,7 @@ public class AbstractCommand {
      * @param channel the channel checked for rate limiting
      * @param user the user checked for rate limiting
      */
-    public void invoked(Channel channel, User user){
+    public void invoked(Channel channel, User user, Message message){
         if (this.globalUseTime != -1){
             this.globalUseTime = System.currentTimeMillis() + this.globalCoolDownTime;
         }
@@ -373,6 +374,7 @@ public class AbstractCommand {
             this.guildUserCoolDowns.add(GuildUser.getGuildUser(channel.getGuild(), user));
         }
         CommandsUsedCountConfig.increment(user);
+        if (this.okOnSuccess && message != null) message.addReactionByName("ok_hand");
     }
 
     /**
@@ -395,8 +397,6 @@ public class AbstractCommand {
         return this.contextRequirements;
     }
 
-    protected void checkSetupRequirements(User user, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, String args){}
-
     /**
      *
      *
@@ -410,8 +410,6 @@ public class AbstractCommand {
     public Object invoke(User user, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, String args, Object...argOverrides){
         ProcessingHandler.startProcess(channel);
         Object[] contexts = new Object[]{user, shard, channel, guild, message, reaction, args};
-        try{this.checkSetupRequirements((User) contexts[0], (Shard) contexts[1], (Channel) contexts[2], (Guild) contexts[3], (Message) contexts[4], (Reaction) contexts[5], (String) contexts[6]);
-        } catch (BotException e) {new MessageMaker((Message) contexts[4]);}
         boolean[] overridden = new boolean[argOverrides.length];
         for (int i = 0; i < overridden.length; i++) {
             overridden[i] = argOverrides[i] != null;
@@ -426,12 +424,15 @@ public class AbstractCommand {
         try {
             Object object = this.method.invoke(this, objects);
             Stream.of(objects).filter(MessageMaker.class::isInstance).forEach(o -> ((MessageMaker) o).send(true));
-            ProcessingHandler.endProcess(channel);
             return object;
         } catch (IllegalAccessException e) {
             Log.log("Malformed command: " + getName(), e);
         } catch (InvocationTargetException e) {
-            if (e.getCause() instanceof BotException) ((BotException) e.getCause()).makeMessage(message.getChannel()).withReaction(CommandHandler.EXCEPTION_FOR_METHOD).send();
+            if (e.getCause() instanceof BotException) {
+                e.printStackTrace();
+                ((BotException) e.getCause()).makeMessage(message.getChannel()).send();
+                if (reaction != null) message.addReactionByName(CommandHandler.EXCEPTION_FOR_METHOD);
+            }
             else if (e.getCause() instanceof DevelopmentException) Log.log("Exception during method execution: " + getName(), e);
             else new DevelopmentException(e.getCause()).makeMessage(message.getChannel()).send();
         }

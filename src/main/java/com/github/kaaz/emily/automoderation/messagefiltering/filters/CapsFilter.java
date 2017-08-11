@@ -6,8 +6,6 @@ import com.github.kaaz.emily.automoderation.messagefiltering.MessageMonitoringTy
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordMessageReceived;
 import com.github.kaaz.emily.util.FormatHelper;
 
-import java.util.stream.Stream;
-
 /**
  * Made by nija123098 on 7/19/2017.
  */
@@ -16,7 +14,17 @@ public class CapsFilter implements MessageFilter {
     @Override
     public void checkFilter(DiscordMessageReceived event) {
         String content = FormatHelper.filtering(event.getMessage().getContent(), character -> !Character.isWhitespace(character));
-        if (Stream.of(content.split("")).map(s -> s.indexOf(0)).filter(Character::isUpperCase).count() / (float) content.length() >= ALLOWED) throw new MessageMonitoringException("excessive use of capitals");
+        if (content.length() < 100) return;
+        int capsCount = 0;
+        boolean skip = true;
+        for (char c : content.toCharArray()){
+            if (skip) {
+                skip = false;
+                continue;
+            }
+            if (c == ' ') skip = true;
+            if (Character.isUpperCase(c) && ++capsCount / (float) content.length() >= ALLOWED) throw new MessageMonitoringException("excessive use of capitals");
+        }
     }
     @Override
     public MessageMonitoringType getType() {

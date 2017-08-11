@@ -102,16 +102,6 @@ public class ConfigHandler {
 
     /**
      * Gets the config object representing a certain config
-     * @param level the config level for the setting being gotten
-     * @param configName the config name for the config being gotten
-     * @return the object representing the config that is being searched for
-     */
-    public static AbstractConfig<?, ? extends Configurable> getConfig(ConfigLevel level, String configName){
-        return STRING_MAP.get(configName);
-    }
-
-    /**
-     * Gets the config object representing a certain config
      * @param configName the config name for the config being gotten
      * @return the object representing the config that is being searched for
      */
@@ -168,7 +158,7 @@ public class ConfigHandler {
      * @return if the value is set
      */
     public static boolean setSetting(String configName, Configurable configurable, Object value){
-        AbstractConfig config = getConfig(configurable.getConfigLevel(), configName);
+        AbstractConfig config = getConfig(configName);
         if (config != null){
             try {
                 config.setValue(configurable, value);
@@ -220,7 +210,7 @@ public class ConfigHandler {
      * @return if the value is set
      */
     public static boolean setExteriorSetting(String configName, Configurable configurable, String value){
-        AbstractConfig config = getConfig(configurable.getConfigLevel(), configName);
+        AbstractConfig config = getConfig(configName);
         if (config != null){
             try {
                 config.setExteriorValue(configurable, value);
@@ -266,7 +256,7 @@ public class ConfigHandler {
      * @return the value of the config for the configurable
      */
     public static Object getSetting(String configName, Configurable configurable){
-        AbstractConfig config = getConfig(configurable.getConfigLevel(), configName);
+        AbstractConfig config = getConfig(configName);
         if (config != null){
             return config.getValue(configurable);
         } else {
@@ -283,7 +273,7 @@ public class ConfigHandler {
      * @return the value of the config for the configurable
      */
     public static String getExteriorSetting(String configName, Configurable configurable){
-        AbstractConfig config = getConfig(configurable.getConfigLevel(), configName);
+        AbstractConfig config = getConfig(configName);
         if (config != null){
             return config.getExteriorValue(configurable);
         } else {

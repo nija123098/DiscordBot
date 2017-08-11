@@ -5,7 +5,6 @@ import com.github.kaaz.emily.command.ModuleLevel;
 import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.GlobalConfigurable;
-import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.wrappers.DiscordClient;
 import com.github.kaaz.emily.perms.BotRole;
 
@@ -17,7 +16,7 @@ public class GlobalNicknameChangeCommand extends AbstractCommand {
         super("globalnick", BotRole.BOT_ADMIN, ModuleLevel.BOT_ADMINISTRATIVE, null, null, "Changes the global nickname");
     }
     @Command
-    public void command(String arg, MessageMaker maker){
+    public void command(String arg){
         ConfigHandler.changeSetting(GlobalNicknameConfig.class, GlobalConfigurable.GLOBAL, global -> {
             DiscordClient.getGuilds().stream().filter(guild -> {
                 String display = DiscordClient.getOurUser().getDisplayName(guild);

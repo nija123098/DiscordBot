@@ -11,6 +11,7 @@ import com.github.kaaz.emily.util.FormatHelper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Made by nija123098 on 6/12/2017.
@@ -21,12 +22,15 @@ public class UserGuildsCommand extends AbstractCommand {
     }
     @Command
     public void command(@Argument User user, MessageMaker maker){
-        List<String> shards = new ArrayList<>(), IDs = new ArrayList<>(), names = new ArrayList<>();
-        for (Guild guild : user.getGuilds()){
-            shards.add(guild.getShard().getID() + "");
-            IDs.add(guild.getID());
-            names.add(guild.getName());
-        }
-        maker.append(FormatHelper.makeAsciiTable(Arrays.asList("shard", "guild", "name"), Arrays.asList(shards, IDs, names), null));
+        Set<Guild> guilds = user.getGuilds();
+        List<List<String>> stats = new ArrayList<>(guilds.size());
+        guilds.forEach(guild -> {
+            List<String> stat = new ArrayList<>();
+            stat.add(guild.getShard().getID() + "");
+            stat.add(guild.getID());
+            stat.add(guild.getName());
+            stats.add(stat);
+        });
+        maker.appendRaw(FormatHelper.makeAsciiTable(Arrays.asList("shard", "guild", "name"), stats, null));
     }
 }

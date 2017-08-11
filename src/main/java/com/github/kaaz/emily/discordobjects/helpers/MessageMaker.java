@@ -53,7 +53,7 @@ public class MessageMaker {
     private boolean okHand;
     private final Set<String> reactions = new HashSet<>(1);
     private Long deleteDelay;
-    private boolean maySend, mustEmbed, forceCompile, autoSend = true;
+    private boolean maySend, mustEmbed, forceCompile, colored, isMessageError, autoSend = true;
     private MessageMaker(User user, Channel channel, Message message){
         this.authorName = new TextPart(this);
         this.title = new TextPart(this);
@@ -109,6 +109,7 @@ public class MessageMaker {
         return !this.mustEmbed && this.fieldList.size() == 0 && this.textList.size() == 0 && !this.authorName.appended && !this.title.appended && !this.footer.appended && !this.note.appended;
     }
     public MessageMaker withChannel(Channel channel){
+        if (this.channel.equals(channel)) return this;
         ProcessingHandler.swapProcess(this.channel, channel);
         this.channel = channel;
         return this;
@@ -215,22 +216,26 @@ public class MessageMaker {
     // embed methods
     public MessageMaker withColor(Color color){
         this.embed.withColor(color);
+        this.colored = true;
         return this;
     }
     public MessageMaker withColor(String url){
-        this.embed.withColor(GraphicsHelper.getColor(url));
+        this.withColor(GraphicsHelper.getColor(url));
         return this;
     }
-    public MessageMaker withUserColor(){
-        return withUserColor(this.user);
+    public MessageMaker withColor(){
+        return withColor(this.user);
     }
     public MessageMaker withRandomColor(){
-        this.embed.withColor(Rand.getRand(0xFFFFFF));
+        this.withColor(new Color(Rand.getRand(0xFFFFFF)));
         return this;
     }
-    public MessageMaker withUserColor(User user){
+    public MessageMaker withColor(User user){
         if (user != null) this.withColor(user.getAvatarURL());
         return this;
+    }
+    public MessageMaker withColor(Role color){
+        return this.withColor(color.getColor());
     }
     public MessageMaker withFooterIcon(String url){
         this.embed.withFooterIcon(url);
@@ -286,10 +291,14 @@ public class MessageMaker {
         if (!(!this.autoSend && auto)) send();
     }
     public void send(){
-        try {
-            send(0);
+        try{send(0);
         } catch (Exception e){
-            e.printStackTrace();
+            Log.log("Error while sending " + (this.isMessageError ? "internal message error" : "") + " message", e);
+            if (!this.isMessageError){
+                MessageMaker maker = new DevelopmentException(e).makeMessage(this.channel);
+                maker.isMessageError = true;
+                maker.send();
+            }
         }
     }
     private void send(int page){
@@ -324,6 +333,7 @@ public class MessageMaker {
             else ErrorWrapper.wrap(() -> this.message.edit(this.embed.build()));
         }
         this.reactionBehaviors.forEach((s, behavior) -> ReactionBehavior.registerListener(this.ourMessage, s, behavior));
+        ProcessingHandler.endProcess(this.channel);
     }
     public static String getLang(User user, Channel channel){
         String lang = null;
@@ -342,6 +352,7 @@ public class MessageMaker {
             }
         }
         if (this.lang != null && !this.forceCompile) return;
+        if (!this.colored) this.withRandomColor();
         this.lang = getLang(this.user, this.channel);
         // message
         if (this.couldNormalize()) this.asNormalMessage();

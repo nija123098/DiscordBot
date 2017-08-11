@@ -10,9 +10,7 @@ import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.Message;
 import com.github.kaaz.emily.discordobjects.wrappers.Reaction;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
-import com.github.kaaz.emily.favor.FavorHandler;
 import com.github.kaaz.emily.favor.configs.GuildUserReputationConfig;
-import com.github.kaaz.emily.favor.configs.ReputationFavorFactorConfig;
 
 /**
  * Made by nija123098 on 7/19/2017.
@@ -27,6 +25,5 @@ public class ReputationCommand extends AbstractCommand {
         if (invoker.equals(user)) return;
         GuildUser guildUser = GuildUser.getGuildUser(guild, user);
         ConfigHandler.changeSetting(GuildUserReputationConfig.class, guildUser, integer -> ++integer);
-        FavorHandler.addFavorLevel(guildUser, ConfigHandler.getSetting(ReputationFavorFactorConfig.class, guild));
     }
 }

@@ -59,17 +59,4 @@ public enum ConfigLevel {
         }
         throw new DevelopmentException("Class does not have a type: " + clazz.getName());
     }
-    public static ConfigLevel getLevel(String args){
-        String arg = args.split(" ")[0].toUpperCase();
-        try{return ConfigLevel.valueOf(arg);
-        }catch(Exception ignored){}
-        arg = arg.toUpperCase();
-        if (arg.equals("GUILDUSER")){
-            return ConfigLevel.GUILD_USER;
-        }
-        if (arg.equals("GUILD USER")){
-            return ConfigLevel.GUILD_USER;
-        }
-        throw new RuntimeException("No such configurable type");
-    }
 }

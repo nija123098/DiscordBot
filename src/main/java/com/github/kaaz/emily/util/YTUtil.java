@@ -1,10 +1,9 @@
 package com.github.kaaz.emily.util;
 
 import com.github.kaaz.emily.audio.Track;
-import com.github.kaaz.emily.audio.YoutubeTrack;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Made by nija123098 on 6/6/2017.
@@ -41,6 +40,6 @@ public class YTUtil {
         return null;
     }
     public static List<Track> getTracksFromPlaylist(String code){
-        return YTSearch.getPlayListItems(code).stream().map(YTSearch.SimpleResult::getCode).map(YoutubeTrack::new).collect(Collectors.toList());
+        return new ArrayList<>(YTLookup.getPlaylist(code));
     }
 }

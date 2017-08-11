@@ -12,6 +12,7 @@ import com.github.kaaz.emily.config.GuildUser;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
+import com.github.kaaz.emily.economy.configs.CurrentMoneyConfig;
 import com.github.kaaz.emily.util.EmoticonHelper;
 import com.github.kaaz.emily.util.Time;
 
@@ -24,13 +25,13 @@ public class UserCommand extends AbstractCommand {
     }
     @Command
     public void command(@Argument(optional = true) User user, @Context(softFail = true) Guild guild, MessageMaker maker){
-        maker.appendAlternate(false, "Querying for **", (guild == null ? user.getName() : user.getDisplayName(guild)) + "**\n")
-                .withImage(user.getAvatarURL());
+        maker.appendAlternate(false, "Querying for **", user.getDisplayName(guild) + "**\n").withImage(user.getAvatarURL()).withColor(user.getAvatarURL());
         addAtrib(maker, "bust_in_silhouette", "User", user.getNameAndDiscrim());
         addAtrib(maker, "id", "Discord id", user.getID());
         addAtrib(maker, "keyboard", "Commands used", ConfigHandler.getSetting(CommandsUsedCountConfig.class, user) + "");
-        addAtrib(maker, "date", "Joined guild", Time.getAbbreviated(System.currentTimeMillis() - GuildUserJoinTimeConfig.get(GuildUser.getGuildUser(guild, user))) + " ago");
-        addAtrib(maker, "calendar_spiral", "Joined discord", Time.getAbbreviated(System.currentTimeMillis() - user.getJoinDate()) + " ago");
+        addAtrib(maker, "cookie", "Cookies", ConfigHandler.getSetting(CurrentMoneyConfig.class, user) + "");
+        addAtrib(maker, "date", "Joined server", Time.getAbbreviated(System.currentTimeMillis() - GuildUserJoinTimeConfig.get(GuildUser.getGuildUser(guild, user))) + " ago");
+        addAtrib(maker, "calendar_spiral", "Joined Discord", Time.getAbbreviated(System.currentTimeMillis() - user.getJoinDate()) + " ago");
     }
     private static void addAtrib(MessageMaker maker, String icon, String info, String content){
         maker.appendAlternate(true, EmoticonHelper.getChars(icon, false), "  " + info, ": " + content + "\n");

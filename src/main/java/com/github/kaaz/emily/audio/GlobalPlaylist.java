@@ -51,7 +51,12 @@ public class GlobalPlaylist extends Playlist {
         if (TRACKS.size() < 50) loadTracks();
         return TRACKS.isEmpty() ? null : Rand.getRand(TRACKS, true);
     }
+    @Override
+    public int getSize() {
+        return size;
+    }
     private static final List<Track> TRACKS = new CopyOnWriteArrayList<>();
+    private static int size = Integer.MAX_VALUE;
     private static void loadTracks(){
         Map<Track, Float> map = new HashMap<>();
         List<Track> list = DownloadableTrack.getDownloadedTracks();
@@ -59,9 +64,13 @@ public class GlobalPlaylist extends Playlist {
         AtomicDouble favor = new AtomicDouble();
         map.values().forEach(favor::addAndGet);
         favor.set(favor.get() / map.size() * 2);
+        size = 0;
         TRACKS.clear();
         map.forEach((track, aFloat) -> {
-            if (aFloat >= favor.get()) TRACKS.add(track);
+            if (aFloat >= favor.get()) {
+                TRACKS.add(track);
+                ++size;
+            }
         });
     }
 }

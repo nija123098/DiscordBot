@@ -3,7 +3,10 @@ package com.github.kaaz.emily.command;
 import com.github.kaaz.emily.discordobjects.wrappers.*;
 
 /**
- * Made by nija123098 on 4/23/2017.
+ * Context Command must be updated if this type's getters are changed
+ *
+ * @see com.github.kaaz.emily.template.commands.ContextCommand
+ * @author nija123098
  */
 public class ContextPack {
     private User user;

@@ -4,7 +4,6 @@ import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.annotations.Argument;
 import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.config.ConfigHandler;
-import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.wrappers.Channel;
 import com.github.kaaz.emily.information.configs.SubscriptionsConfig;
 
@@ -16,7 +15,7 @@ public class SubscribeStopCommand extends AbstractCommand {
         super(SubscribeCommand.class, "stop", null, null, "end", "Ends a subscription for the channel");
     }
     @Command
-    public static void command(@Argument(optional = true, info = "The thing to subscribe to") SubscriptionLevel level, Channel channel, MessageMaker maker){
+    public static void command(@Argument(optional = true, info = "The thing to subscribe to") SubscriptionLevel level, Channel channel){
         ConfigHandler.alterSetting(SubscriptionsConfig.class, channel, levels -> levels.remove(level));
     }
 }

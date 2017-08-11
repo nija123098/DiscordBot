@@ -176,7 +176,7 @@ public class LangString {
         return LANG_MAP.containsKey(code.toLowerCase());
     }
     public static String getLangName(String code){
-        if (code == null) return "None";
+        if (code == null) return "not set";
         String name = REVERSE_MAP.get(code.toLowerCase());
         if (name == null) throw new ArgumentException("Invalid language code, use ISO: " + code);
         return name;

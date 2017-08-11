@@ -4,7 +4,6 @@ import com.github.kaaz.emily.audio.Track;
 import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.annotations.Argument;
 import com.github.kaaz.emily.command.annotations.Command;
-import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 import com.github.kaaz.emily.exeption.ArgumentException;
 import com.github.kaaz.emily.exeption.ContextException;
@@ -18,7 +17,7 @@ public class CurrentSeekCommand extends AbstractCommand {
         super(CurrentCommand.class, "seek", null, null, "goto", "Go to specified timestamp of track (eg 3m10s");
     }
     @Command
-    public void command(@Argument Time time, GuildAudioManager manager, MessageMaker maker){
+    public void command(@Argument Time time, GuildAudioManager manager){
         Track track = manager.currentTrack();
         Long length = track.getLength();
         if (length == null) throw new ContextException("You can't seek on this track");

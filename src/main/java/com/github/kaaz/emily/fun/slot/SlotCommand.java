@@ -1,5 +1,6 @@
 package com.github.kaaz.emily.fun.slot;
 
+import com.fasterxml.jackson.databind.util.ArrayIterator;
 import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.ContextType;
 import com.github.kaaz.emily.command.ModuleLevel;
@@ -22,6 +23,8 @@ import com.github.kaaz.emily.exeption.BotException;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
 import com.github.kaaz.emily.service.services.ScheduleService;
 import com.github.kaaz.emily.util.EmoticonHelper;
+import com.github.kaaz.emily.util.FormatHelper;
+import com.google.api.client.util.Joiner;
 
 import java.util.Arrays;
 import java.util.List;
@@ -48,13 +51,13 @@ public class SlotCommand extends AbstractCommand {
         if (ConfigHandler.getSetting(CurrentMoneyConfig.class, user) < bet){
             BotException exception = new ArgumentException("You don't have that much currency");
             if (first == null) throw exception;
-            else exception.makeMessage(message.getChannel()).withDM().send();
+            else exception.makeMessage(null).withDM().send();
         }
         if (bet < 0) throw new ArgumentException("You can't bet against yourself!  Believe in your self!");
         SlotPack slotPack = ConfigHandler.getSetting(SlotPackConfig.class, user);
         int[][] ints = slotPack.getTable();
         Integer amount = slotPack.getReturn(ints) * bet;
-        String[] strings = getMessage(ints, slotPack, amount, user, guild);
+        String[] strings = getMessage(ints, slotPack, amount, user, first);
         if (bet != 0) MoneyTransfer.transact(guild, user, null, amount == 0 ? -bet : amount, "A slot bet");
         if (amount == 0) {
             Integer finalBet = bet;
@@ -63,13 +66,12 @@ public class SlotCommand extends AbstractCommand {
         maker.withAutoSend(false);
         for (int i = 0; i < strings.length - 1; i++) {
             int r = i;
-            ScheduleService.schedule(i * 1000, () -> maker.getHeader().clear().getMaker().append(strings[r]).forceCompile().send());
+            ScheduleService.schedule(i * 1000, () -> setupMaker(strings[r], maker).send());
         }
-        ScheduleService.schedule((strings.length - 1) * 1000, () -> maker.getHeader().clear().getMaker().forceCompile().append(strings[strings.length - 1]).send());
+        ScheduleService.schedule((strings.length - 1) * 1000, () -> setupMaker(strings[strings.length - 1], maker).send());
         if (first == null) {
             maker.withReactionBehavior("repeat_one", (add, reaction, u) -> {
-                if (!u.equals(user)) return;
-                this.command(guild, user, maker, 0, false, null);
+                if (u.equals(user)) this.command(guild, user, maker, 0, false, null);
             });
             ReactionBehavior arrowBehavior = (add, reaction, u) -> {
                 if (!u.equals(user)) return;
@@ -77,8 +79,11 @@ public class SlotCommand extends AbstractCommand {
                 float percent = .2f;
                 if (name.startsWith("down")) percent = -percent;
                 if (name.endsWith("small")) percent *= 2;
-                float finalPercent = percent + 1;
-                BET_MAP.compute(u, (us, integer) -> Math.max(integer + (name.endsWith("small") ? 2 : 1), Math.round(integer * finalPercent)));
+                float finalPercent = percent + (name.startsWith("down") ? -1 : 1);
+                int old = BET_MAP.get(u);
+                BET_MAP.compute(u, (us, integer) -> Math.max(0, (name.startsWith("down") ? -1 : 1) * Math.max(integer + (name.endsWith("small") ? 2 : 1), Math.round(integer * finalPercent))));
+                maker.forceCompile().getHeader().clear().appendRaw(FormatHelper.filtering(maker.sentMessage().getContent(), c -> c != 13).replace("  Bet: " + old, "  Bet: " + BET_MAP.get(u)));
+                maker.send();
             };
             maker.withReactionBehavior("arrow_up_small", arrowBehavior);
             maker.withReactionBehavior("arrow_up", arrowBehavior);
@@ -87,11 +92,11 @@ public class SlotCommand extends AbstractCommand {
         }
         if (message != null) message.delete();
     }
-    private static String[] getMessage(int[][] ints, SlotPack pack, Integer amountWon, User user, Guild guild){
+    private static String[] getMessage(int[][] ints, SlotPack pack, Integer amountWon, User user, Boolean first){
         String currencySymbol = ConfigHandler.getSetting(MoneySymbolConfig.class, GlobalConfigurable.GLOBAL);
         String[] strings = new String[4];
         for (int h = 1; h < strings.length; h++) {
-            String builder = "**" + (guild == null ? user.getName() : user.getDisplayName(guild)) + "**  Bet: " + BET_MAP.get(user) + currencySymbol;
+            String builder = (first == null && h == 1 ? user.getName() : user.mention()) + "  Bet: " + BET_MAP.get(user) + currencySymbol;
             for (int i = 0; i < ints.length; i++) {
                 builder += "\n";
                 for (int j = 0; j < ints[i].length; ++j) {
@@ -104,6 +109,12 @@ public class SlotCommand extends AbstractCommand {
             strings[h] = builder;
         }
         return Arrays.copyOfRange(strings, 1, strings.length);
+    }
+    private static MessageMaker setupMaker(String string, MessageMaker maker){
+        maker.forceCompile().getHeader().clear();
+        String[] split = string.split("\n");
+        maker.appendRaw("\n" + Joiner.on('\n').join(new ArrayIterator<>(Arrays.copyOfRange(split, 0, 4))) + "\n").maySend().append(split[4]);
+        return maker;
     }
     @Override
     public long getCoolDown(Class<? extends Configurable> clazz) {

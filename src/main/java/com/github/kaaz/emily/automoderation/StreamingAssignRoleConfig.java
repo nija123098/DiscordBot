@@ -11,6 +11,7 @@ import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordPresenc
 import com.github.kaaz.emily.exeption.ArgumentException;
 import com.github.kaaz.emily.launcher.Launcher;
 import com.github.kaaz.emily.perms.BotRole;
+import com.github.kaaz.emily.util.ThreadProvider;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -20,7 +21,7 @@ import java.util.Set;
  */
 public class StreamingAssignRoleConfig extends AbstractConfig<Role, Guild>{
     static {
-        Launcher.registerStartup(() -> DiscordClient.getUsers().forEach(user -> {
+        ThreadProvider.sub(() -> Launcher.registerStartup(() -> DiscordClient.getUsers().stream().filter(user -> !user.isBot()).forEach(user -> {
             if (user.getPresence().getStatus() == Presence.Status.STREAMING) {
                 rolesForGuilds(user.getGuilds()).forEach(role -> {
                     try{user.addRole(role);
@@ -34,7 +35,7 @@ public class StreamingAssignRoleConfig extends AbstractConfig<Role, Guild>{
                 });
                 ConfigHandler.setSetting(StreamingBeforeShutdownConfig.class, user, false);
             }
-        }));
+        })));
     }
     public StreamingAssignRoleConfig() {
         super("streaming_role", BotRole.GUILD_TRUSTEE, null, "The role to assign a streaming user");

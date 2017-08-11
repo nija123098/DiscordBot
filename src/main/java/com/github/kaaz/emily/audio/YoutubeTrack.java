@@ -1,5 +1,6 @@
 package com.github.kaaz.emily.audio;
 
+import com.github.kaaz.emily.util.Log;
 import com.github.kaaz.emily.util.StringHelper;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.json.simple.JSONObject;
@@ -15,15 +16,17 @@ public class YoutubeTrack extends DownloadableTrack {
     static {
         Track.registerTrackType(YoutubeTrack.class, YoutubeTrack::new, YoutubeTrack::new);
     }
+    private transient String name;
     public YoutubeTrack(String id) {
         super(id);
     }
     protected YoutubeTrack() {}
     @Override
     public String getName() {
-        try{return ((JSONObject) new JSONParser().parse(StringHelper.readAll("https://www.youtube.com/oembed?url=http%3A//youtube.com/watch%3Fv%3D" + this.getCode()))).get("title").toString();
+        if (name != null) return this.name;
+        try{return (this.name = ((JSONObject) new JSONParser().parse(StringHelper.readAll("https://www.youtube.com/oembed?url=http%3A//youtube.com/watch%3Fv%3D" + this.getCode()))).get("title").toString());
         }catch(ParseException | IOException | UnirestException e) {
-            e.printStackTrace();
+            Log.log("Exception getting name from Youtube track", e);
         }
         return null;
     }

@@ -39,6 +39,8 @@ public class BotConfig {
     @ConfigurationOption
     public static String LANGUAGE_FILTERING_PATH = CONTAINER_PATH + "LanguageFiltering.txt";
     @ConfigurationOption
+    public static String FAKE_DANGER_PATH = CONTAINER_PATH + "FakeDangerContents.txt";
+    @ConfigurationOption
     public static int MUSIC_DOWNLOAD_THREAD_COUNT = 1;
     @ConfigurationOption
     public static String AUDIO_FORMAT = "mp3";
@@ -53,7 +55,7 @@ public class BotConfig {
     @ConfigurationOption
     public static String DB_USER = "emily";
     @ConfigurationOption
-    public static String DB_PASS = "Soarnir'sCodeIsGarbage";
+    public static String DB_PASS = "SoarnirNeedsToStopBeingAWAL";
     @ConfigurationOption
     public static String DB_NAME = "emilybot";
     @ConfigurationOption
@@ -64,4 +66,6 @@ public class BotConfig {
     public static String TWITTER_SECRET = "twitter-secret";
     @ConfigurationOption
     public static Boolean GHOST_MODE = false;
+    @ConfigurationOption
+    public static Boolean TYPING_ENABLED = true;
 }

@@ -3,7 +3,6 @@ package com.github.kaaz.emily.helping.presence;
 import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.config.ConfigHandler;
-import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
 
 import java.util.Arrays;
@@ -18,7 +17,7 @@ public class AfkCommand extends AbstractCommand {
         super(PresenceCommand.class, "afk", "brb", null, null, "Marks you afk for a period of time");
     }
     @Command
-    public void command(User user, MessageMaker maker){
+    public void command(User user){
         ConfigHandler.setSetting(SelfMarkedAwayConfig.class, user, false);
     }
     private static final Set<String> NATURAL_TRIGGERS = new HashSet<>(Arrays.asList("afk", "brb", "ill be right back", "i will be right back"));
