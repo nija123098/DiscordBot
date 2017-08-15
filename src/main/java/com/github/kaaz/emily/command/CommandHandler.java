@@ -17,10 +17,8 @@ import com.github.kaaz.emily.exeption.GhostException;
 import com.github.kaaz.emily.launcher.Launcher;
 import com.github.kaaz.emily.launcher.Reference;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
-import com.github.kaaz.emily.util.EmoticonHelper;
-import com.github.kaaz.emily.util.FormatHelper;
-import com.github.kaaz.emily.util.LangString;
-import com.github.kaaz.emily.util.Log;
+import com.github.kaaz.emily.template.CustomCommandHandler;
+import com.github.kaaz.emily.util.*;
 import javafx.util.Pair;
 import org.reflections.Reflections;
 
@@ -41,7 +39,7 @@ public class CommandHandler {
     private static final Map<String, Object> COMMANDS_MAP;
     public static final String UNKNOWN_COMMAND_EMOTICON = "grey_question", EXCEPTION_FOR_METHOD = "exclamation";
     private static final List<String> OPEN_EDIT_MESSAGES = new MemoryManagementService.ManagedList<>(30000);
-    private static final AtomicReference<String> MENTION = new AtomicReference<>(), MENTION_NICK = new AtomicReference<>();
+    public static final AtomicReference<String> MENTION = new AtomicReference<>(), MENTION_NICK = new AtomicReference<>();
     static {
         Map<Class<? extends AbstractCommand>, Set<AbstractCommand>> typeMap = new HashMap<>();
         Set<Class<? extends AbstractCommand>> classes = new Reflections(Reference.BASE_PACKAGE).getSubTypesOf(AbstractCommand.class);
@@ -178,11 +176,21 @@ public class CommandHandler {
      * @param message the message reacted to or sent to invoke the command
      * @param reaction the reaction that invoked this command, if applicable
      */
-    public static boolean attemptInvocation(String string, User user, Message message, Reaction reaction){
+    public static Boolean attemptInvocation(String string, User user, Message message, Reaction reaction){
         if (string == null || string.isEmpty()) return false;
+        boolean mayChat = false;
         AbstractCommand command;
         if (message.getChannel().isPrivate()){
-            while (!Character.isLetterOrDigit(string.charAt(0))) string = string.substring(1);
+            if (string.startsWith(MENTION_NICK.get())){
+                mayChat = true;
+                string = string.substring(MENTION_NICK.get().length());
+            }else if (string.startsWith(MENTION.get())){
+                mayChat = true;
+                string = string.substring(MENTION.get().length());
+            } else while (!Character.isLetterOrDigit(string.charAt(0))) {
+                mayChat = false;
+                string = string.substring(1);
+            }
             if (string.toLowerCase().startsWith("emily")) string = string.substring(5);
         }else{
             String pref = ConfigHandler.getSetting(GuildPrefixConfig.class, message.getGuild());
@@ -198,9 +206,13 @@ public class CommandHandler {
                 }else if (string.toLowerCase().startsWith("@emily")) string = string.substring(6);
                 else if (DiscordClient.getOurUser().getNickname(message.getGuild()) != null && string.toLowerCase().startsWith("@" + DiscordClient.getOurUser().getNickname(message.getGuild()).toLowerCase())){
                     string = string.substring(1 + DiscordClient.getOurUser().getNickname(message.getGuild()).length());
-                }else if (string.startsWith(MENTION.get())) string = string.substring(MENTION.get().length());
-                else if (string.startsWith(MENTION_NICK.get())) string = string.substring(MENTION_NICK.get().length());
-                else if (reaction == null) return false;
+                }else if (string.startsWith(MENTION.get())) {
+                    string = string.substring(MENTION.get().length());
+                    mayChat = true;
+                }else if (string.startsWith(MENTION_NICK.get())) {
+                    string = string.substring(MENTION_NICK.get().length());
+                    mayChat = true;
+                }else if (reaction == null) return false;
             }
         }
         string = FormatHelper.trimFront(string);
@@ -240,7 +252,9 @@ public class CommandHandler {
             } catch (Exception e) {
                 new DevelopmentException(e).makeMessage(message.getChannel()).send();
             }
-        }else if (reaction == null){
+        }else if (reaction == null && !message.getChannel().isPrivate() && CustomCommandHandler.handle(message.getGuild(), message.getAuthor(), message.getChannel().getShard(), message.getChannel(), message, string)) return true;
+        else if (reaction == null){
+            if (mayChat) return null;
             message.addReactionByName(UNKNOWN_COMMAND_EMOTICON);
             OPEN_EDIT_MESSAGES.add(message.getID());
         }
@@ -285,7 +299,7 @@ public class CommandHandler {
      *
      * @param event the monitored event
      */
-    public static boolean handle(DiscordMessageReceived event){
+    public static Boolean handle(DiscordMessageReceived event){
         try{return attemptInvocation(event.getMessage().getContent(), event.getAuthor(), event.getMessage(), null);// new MessageMaker(event.getMessage()).append(ChatBot.getChatBot(event.getChannel()).think(event.getMessage().getContent())).send();
         } catch (Exception e){
             if (GhostException.isGhostCaused(e)) return true;
@@ -313,7 +327,7 @@ public class CommandHandler {
     @EventListener
     public static void handle(DiscordMessageEditEvent event){
         if (!event.getAuthor().equals(DiscordClient.getOurUser()) && OPEN_EDIT_MESSAGES.contains(event.getMessage().getID())){
-            if (attemptInvocation(event.getMessage().getContent(), event.getAuthor(), event.getMessage(), null)){
+            if (Care.lessBoolean(attemptInvocation(event.getMessage().getContent(), event.getAuthor(), event.getMessage(), null))){
                 OPEN_EDIT_MESSAGES.remove(event.getMessage().getID());
             }
         }

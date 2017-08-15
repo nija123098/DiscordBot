@@ -16,7 +16,6 @@ import java.net.URL;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Made by nija123098 on 6/18/2017.
@@ -24,8 +23,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RSSMonitorService extends AbstractService {
     private static final Date DATE = new Date();
     public RSSMonitorService() {
-        super(5000);
-    }
+        super(300_000);
+    }// 5 min
     @Override
     public boolean mayBlock(){
         return true;
@@ -33,15 +32,9 @@ public class RSSMonitorService extends AbstractService {
     @Override
     public void run() {
         DATE.setTime(RSSLastCheckConfig.getAndUpdate());
-        Map<String, RSSNote> notes = new ConcurrentHashMap<>();
-        Map<Channel, List<String>> stuff = ConfigHandler.getNonDefaultSettings(RSSSubscriptionsConfig.class);
-        stuff.forEach((channel, strings) -> strings.forEach(s -> notes.put(s, null)));
-        notes.forEach((s, rssNote) -> notes.put(s, getRSSNode(s)));
-        notes.forEach((s, rssNote) -> {
-            if (rssNote == null) notes.remove(s);
-        });
-        stuff.forEach((channel, strings) -> strings.forEach(s -> {
-            RSSNote note = notes.get(s);
+        Map<Channel, List<String>> map = ConfigHandler.getNonDefaultSettings(RSSSubscriptionsConfig.class);
+        map.forEach((channel, strings) -> strings.forEach(s -> {
+            RSSNote note = getRSSNode(s);
             if (note != null) note.send(channel);
         }));
     }
@@ -60,7 +53,7 @@ public class RSSMonitorService extends AbstractService {
             this.maker.appendRaw(SAT + entry.getTitle() + "\n" + entry.getLink());
         }
         public void send(Channel channel){
-            this.maker.withChannel(channel).clearMessage();
+            this.maker.withChannel(channel).clearMessage().send();
         }
     }
 }

@@ -18,7 +18,7 @@ import com.github.kaaz.emily.perms.configs.specialperms.SpecialPermsContainer;
  */
 public class SpecialPermsCommandCommand extends AbstractCommand {
     public SpecialPermsCommandCommand() {
-        super("command", ModuleLevel.ADMINISTRATIVE, null, null, "");
+        super("specialpermscommand", ModuleLevel.ADMINISTRATIVE, "spc", null, "");
     }
     @Command
     public void command(Guild guild, MessageMaker maker, @Argument(optional = true, replacement = ContextType.NONE) Role role, @Argument(optional = true, replacement = ContextType.NONE) Channel channel, @Argument Boolean allow, @Argument AbstractCommand command){

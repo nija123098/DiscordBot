@@ -30,7 +30,8 @@ public class CatCommand extends AbstractCommand{
     public void command(MessageMaker maker){
         try {
             String src = new Scanner(new URL(URL).openStream(), "UTF-8").nextLine();
-            maker.appendRaw(CAT + src.substring(src.indexOf("><img src=") + 11, src.length() - 6));
+            maker.getTitle().append("CAT!");
+            maker.withImage(src.substring(src.indexOf("><img src=") + 11, src.length() - 6));
         } catch (IOException e) {
             e.printStackTrace();
             maker.append(DIDNT_WORK);

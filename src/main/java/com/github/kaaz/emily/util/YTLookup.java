@@ -27,19 +27,14 @@ public class YTLookup {
     private static final YouTube.PlaylistItems.List PLAYLIST;
     static {
         YOUTUBE = new YouTube.Builder(new NetHttpTransport(), new JacksonFactory(), (HttpRequest request) -> {}).setApplicationName("Emily").build();
-        YouTube.Search.List list = null;
-        try{list = YOUTUBE.search().list("id,snippet");
-            list.setKey(BotConfig.GOOGLE_API_KEY);
-            list.setOrder("relevance");
-            list.setVideoCategoryId("10");
-            list.setType("video");
-            list.setFields("items(id/kind,id/videoId,snippet/title)");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        YouTube.Search.List list = errorWrap(() -> YOUTUBE.search().list("id,snippet"));
+        list.setKey(BotConfig.GOOGLE_API_KEY);
+        list.setOrder("relevance");
+        list.setVideoCategoryId("10");
+        list.setType("video");
+        list.setFields("items(id/kind,id/videoId,snippet/title)");
         SINGLE = list;
-        YouTube.PlaylistItems.List playlist = null;
-        playlist = errorWrap(() -> YOUTUBE.playlistItems().list("id,contentDetails,snippet"));
+        YouTube.PlaylistItems.List playlist = errorWrap(() -> YOUTUBE.playlistItems().list("id,contentDetails,snippet"));
         playlist.setKey(BotConfig.GOOGLE_API_KEY);
         playlist.setFields("items(contentDetails/videoId,snippet/title,snippet/publishedAt),nextPageToken,pageInfo");
         PLAYLIST = playlist;
@@ -58,7 +53,7 @@ public class YTLookup {
             searchResponse.getItems().forEach((sr) -> tracks.add(new YoutubeTrack(sr.getId().getVideoId())));
             CACHE.put(reduction, tracks);
         }
-        return CACHE.get(search);
+        return CACHE.get(reduction);
     }
     public static List<YoutubeTrack> getPlaylist(String code){
         YouTube.PlaylistItems.List list = (YouTube.PlaylistItems.List) PLAYLIST.clone();
@@ -78,10 +73,15 @@ public class YTLookup {
         try{return supplier.get();
         } catch (IOException e) {
             if (e.getMessage().contains("quotaExceeded") || e.getMessage().contains("keyInvalid")) throw new BotException("Please use URLs to play music", e);
-            throw new DevelopmentException(e);
+            throw new YoutubeSearchException(e);
         }
     }
     private interface GoogleResponseSupplier<E> {
         E get() throws IOException;
+    }
+    public static class YoutubeSearchException extends BotException {
+        private YoutubeSearchException(Throwable cause) {
+            super(cause);
+        }
     }
 }

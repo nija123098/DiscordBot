@@ -129,6 +129,10 @@ public class Channel implements Configurable {
         return channel().isPrivate();
     }
 
+    public boolean isNSFW(){
+        return channel().isNSFW();
+    }
+
     public String mention() {
         return channel().mention();
     }

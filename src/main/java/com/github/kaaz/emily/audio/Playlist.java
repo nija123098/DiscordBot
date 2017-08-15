@@ -64,11 +64,13 @@ public class Playlist implements Configurable {
     }
 
     public static Playlist getPlaylist(String id){
+        if (id == null || !id.startsWith("pl-ID-")) return null;
         return MAP.computeIfAbsent(id, s -> new Playlist(id));
     }
     private String id;
     Playlist() {}
     protected Playlist(String id) {
+        if (!id.endsWith("pl-ID-")) id = "pl-ID-" + id;
         this.id = id;
     }
     @Override

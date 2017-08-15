@@ -58,7 +58,7 @@ public class CallCommand extends AbstractCommand {
     }
     @EventListener
     public static void handle(DiscordMessageReceived send){
-        if (send.getAuthor().isBot()) return;
+        if (send.getAuthor().isBot() || send.isCommand()) return;
         Integer callID = CALL_IDS.get(send.getChannel());
         if (callID == null) return;
         CALLS.get(callID).stream().filter(channel -> !channel.equals(send.getChannel())).forEach(channel -> new MessageMaker(channel).appendRaw(CALL_ICON + send.getAuthor().getNameAndDiscrim() + "\n").append(send.getMessage().getContent()).send());

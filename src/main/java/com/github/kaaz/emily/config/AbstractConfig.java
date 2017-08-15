@@ -5,6 +5,7 @@ import com.github.kaaz.emily.db.Database;
 import com.github.kaaz.emily.discordobjects.wrappers.Channel;
 import com.github.kaaz.emily.discordobjects.wrappers.VoiceChannel;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
+import com.github.kaaz.emily.exeption.ArgumentException;
 import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.util.Log;
@@ -128,13 +129,10 @@ public class AbstractConfig<V, T extends Configurable> {
     }
 
     public long getAge(Configurable configurable){
-        try{ResultSet set = Database.select("SELECT * FROM " + this.getNameForType(configurable.getConfigLevel()) + " WHERE id = " + Database.quote(configurable.getID()));
-            if (!set.next()) return -1;
-            set.getLong(3);
-        } catch (SQLException e) {
-            e.printStackTrace();// check
-        }
-        return -1;
+        return Database.select("SELECT * FROM " + this.getNameForType(configurable.getConfigLevel()) + " WHERE id = " + Database.quote(configurable.getID()), set -> {
+            if (!set.next()) return -1L;
+            return set.getLong(3);
+        });
     }
 
     public V wrapTypeIn(String e, T configurable){
@@ -162,13 +160,14 @@ public class AbstractConfig<V, T extends Configurable> {
      * @return the config's value
      */
     public V getValue(T configurable){// slq here as well
-        ResultSet resultSet = Database.select("SELECT * FROM " + this.getNameForType(configurable.getConfigLevel()) + " WHERE id = " + Database.quote(configurable.getID()));
-        try{resultSet.next();
-            return TypeChanger.toObject(this.valueType, resultSet.getString(2));
-        } catch (SQLException e) {
-            if (!e.getMessage().equals("Illegal operation on empty result set.")) Log.log("Error while getting value", e);
-            return this.getDefault(configurable);
-        }
+        return Database.select("SELECT * FROM " + this.getNameForType(configurable.getConfigLevel()) + " WHERE id = " + Database.quote(configurable.getID()), set -> {
+            try{set.next();
+                return TypeChanger.toObject(this.valueType, set.getString(2));
+            } catch (SQLException e) {
+                if (!e.getMessage().equals("Current position is after the last row")) Log.log("Error while getting value", e);
+                return this.getDefault(configurable);
+            }
+        });
     }
 
     /**
@@ -206,11 +205,24 @@ public class AbstractConfig<V, T extends Configurable> {
     }
 
     public void setExteriorValue(T configurable, String value) {
+        if (!this.isNormalViewing()) throw new ArgumentException("Slow down there malicious user, we have that covered!");
         if (value.length() == 7 && value.toLowerCase().equals("not set")) value = "null";
         setValue(configurable, wrapTypeIn(value, configurable));
     }
 
     public Map<T, V> getNonDefaultSettings(){// SQL
-        return new HashMap<>();
+        return Database.select("SELECT * FROM " + this.getNameForType(this.configLevel), set -> {
+            Map<T, V> map = new HashMap<>();
+            try {
+                while (set.next()){
+                    T t = (T) ConfigHandler.getConfigurable(set.getString(1));
+                    if (t == null) continue;
+                    map.put(t, TypeChanger.toObject(this.valueType, set.getString(2)));
+                }
+            } catch (SQLException e) {
+                Log.log("Exception getting non-default setting values, got " + map.size(), e);
+            }
+            return map;// used for foreach, needn't be optimized
+        });
     }
 }

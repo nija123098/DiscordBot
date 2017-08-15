@@ -7,7 +7,6 @@ import com.github.kaaz.emily.discordobjects.wrappers.Channel;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.Role;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
-import com.github.kaaz.emily.exeption.ArgumentException;
 import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.launcher.Reference;
 import com.github.kaaz.emily.util.Log;
@@ -52,16 +51,17 @@ public class ConfigHandler {
         add(Playlist.class, Playlist::getPlaylist);
         add(User.class, User::getUser);
         add(Channel.class, Channel::getChannel);
-        add(GuildUser.class, s -> {
-            String[] idParts = s.split("-");
-            return GuildUser.getGuildUser(Guild.getGuild(idParts[0]), User.getUser(idParts[1]));
-        });
+        add(GuildUser.class, GuildUser::getGuildUser);
         add(Role.class, Role::getRole);
         add(Guild.class, Guild::getGuild);
         add(GuildUser.class, GuildUser::getGuildUser);
-        add(GlobalConfigurable.class, s -> GlobalConfigurable.GLOBAL);
+        add(GlobalConfigurable.class, s -> {
+            if (!s.equals(GlobalConfigurable.GLOBAL.getID())) return null;
+            return GlobalConfigurable.GLOBAL;
+        });
         add(Configurable.class, s -> {
             for (int i = 0; i < ConfigLevel.values().length; i++) {
+                if (ConfigLevel.values()[i] == ConfigLevel.ALL) continue;
                 Configurable configurable = ConfigHandler.getConfigurable(ConfigLevel.values()[i].getType(), s);
                 if (configurable != null) return configurable;
             }
@@ -330,7 +330,7 @@ public class ConfigHandler {
         for (Function<String, ? extends Configurable> f : FUNCTION_MAP.values()){
             if ((c = f.apply(id)) != null) return c;
         }
-        throw new ArgumentException("That ID matches no configurables");
+        return null;//throw new ArgumentException("That ID matches no configurables");
     }
 
     /**

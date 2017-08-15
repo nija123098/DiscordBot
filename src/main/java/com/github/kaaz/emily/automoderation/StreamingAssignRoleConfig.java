@@ -4,7 +4,6 @@ import com.github.kaaz.emily.config.AbstractConfig;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.discordobjects.wrappers.DiscordClient;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
-import com.github.kaaz.emily.discordobjects.wrappers.Presence;
 import com.github.kaaz.emily.discordobjects.wrappers.Role;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventListener;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordPresenceUpdate;
@@ -22,13 +21,13 @@ import java.util.Set;
 public class StreamingAssignRoleConfig extends AbstractConfig<Role, Guild>{
     static {
         ThreadProvider.sub(() -> Launcher.registerStartup(() -> DiscordClient.getUsers().stream().filter(user -> !user.isBot()).forEach(user -> {
-            if (user.getPresence().getStatus() == Presence.Status.STREAMING) {
+            if (user.getPresence().getOptionalStreamingUrl().isPresent()) {
                 rolesForGuilds(user.getGuilds()).forEach(role -> {
                     try{user.addRole(role);
                     } catch (Exception ignored){}// more role order moved
                 });
                 ConfigHandler.setSetting(StreamingBeforeShutdownConfig.class, user, false);
-            } else if (ConfigHandler.getSetting(StreamingBeforeShutdownConfig.class, user) && user.getPresence().getStatus() != Presence.Status.STREAMING) {
+            } else if (ConfigHandler.getSetting(StreamingBeforeShutdownConfig.class, user) && user.getPresence().getOptionalStreamingUrl().isPresent()) {
                 rolesForGuilds(user.getGuilds()).forEach(role -> {
                     try{user.removeRole(role);
                     } catch (Exception ignored){}// more role order moved
@@ -42,8 +41,8 @@ public class StreamingAssignRoleConfig extends AbstractConfig<Role, Guild>{
     }
     @EventListener
     public void handle(DiscordPresenceUpdate event){
-        if (event.getNewPresence().getStatus() == Presence.Status.STREAMING && event.getOldPresence().getStatus() == Presence.Status.STREAMING) return;
-        if (event.getNewPresence().getStatus() == Presence.Status.STREAMING) {
+        if (event.getNewPresence().getOptionalStreamingUrl().isPresent() && event.getOldPresence().getOptionalStreamingUrl().isPresent()) return;
+        if (event.getNewPresence().getOptionalStreamingUrl().isPresent()) {
             rolesForGuilds(event.getUser().getGuilds()).forEach(role -> {
                 try{event.getUser().addRole(role);
                 } catch (Exception ignored){}// todo role order moved

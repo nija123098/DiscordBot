@@ -16,6 +16,6 @@ public class NetworkHelper {
         return s;
     }
     public static boolean isValid(String url){
-        return VALIDATOR.isValid(url);
+        return VALIDATOR.isValid((url.startsWith("http") ? "" : "https://") + url);
     }
 }

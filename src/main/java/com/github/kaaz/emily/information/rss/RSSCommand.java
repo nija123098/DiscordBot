@@ -6,10 +6,7 @@ import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.wrappers.Channel;
-import com.github.kaaz.emily.util.FormatHelper;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -27,9 +24,7 @@ public class RSSCommand extends AbstractCommand {
             maker.append("You aren't currently subscribed to any rss feeds.");
             return;
         }
-        List<List<String>> body = new ArrayList<>(subs.size());
-        AtomicInteger i = new AtomicInteger(-1);
-        subs.forEach(s -> body.add(Arrays.asList(i.incrementAndGet() + "", s)));
-        maker.appendRaw(FormatHelper.makeAsciiTable(Arrays.asList("NUMBER", "URL"), body, null));
+        AtomicInteger i = new AtomicInteger(0);
+        subs.forEach(s -> maker.getNewListPart().appendRaw(i.incrementAndGet() + " " + s));
     }
 }

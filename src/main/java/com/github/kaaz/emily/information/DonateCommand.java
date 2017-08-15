@@ -4,6 +4,7 @@ import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.ModuleLevel;
 import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
+import com.github.kaaz.emily.util.FormatHelper;
 
 /**
  * Made by nija123098 on 5/11/2017.
@@ -14,9 +15,8 @@ public class DonateCommand extends AbstractCommand {
     }
     @Command
     public void command(MessageMaker maker){
-        maker.append("**You're interested in contributing, that's great!**\n" +
-                "\n" +
-                "**Found a bug!**\n" +
+        maker.getTitle().append("You're interested in contributing, that's great!");
+        maker.append("**Found a bug!**\n" +
                 "You can report them on either `!discord` or `!github`.\n" +
                 "\n" +
                 "**Want to contribute or share your thoughts?**\n" +
@@ -28,6 +28,6 @@ public class DonateCommand extends AbstractCommand {
                 "**If you've ascended beyond 0101 and know multiple numbers, consider following the project on `!github` to see what's happening.**\n" +
                 "\n" +
                 "**You'd like to donate?**\n" +
-                "You can do this though my patreon.  https://www.patreon.com/emilybot");
+                "You can do this though my " + FormatHelper.embedLink("Patreon", "https://www.patreon.com/emilybot") + ".");
     }
 }

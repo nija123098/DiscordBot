@@ -50,7 +50,7 @@ public class AbstractCommand {
     private List<GuildUser> guildUserCoolDowns;
     private Set<ContextRequirement> contextRequirements;
     private Set<AbstractCommand> subCommands;
-    private boolean prefixRequired = true, okOnSuccess;
+    private boolean prefixRequired = true, okOnSuccess = true;
     public AbstractCommand(Class<? extends AbstractCommand> superCommand, String name, String absoluteAliases, String emoticonAliases, String relativeAliases, String help){
         this.superCommand = superCommand;
         this.name = name;

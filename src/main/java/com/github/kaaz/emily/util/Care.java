@@ -15,4 +15,7 @@ public class Care {
     public static void lessSleep(long millis){
         Care.less(() -> Thread.sleep(millis));
     }
+    public static boolean lessBoolean(Boolean bool){
+        return bool == null ? false : bool;
+    }
 }

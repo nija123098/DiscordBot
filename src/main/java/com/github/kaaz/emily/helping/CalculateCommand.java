@@ -27,10 +27,10 @@ public class CalculateCommand extends AbstractCommand {
             return total;
         }
     };
-    private static final Operator BITWISE_EXCLUSIVE_OR = new Operator("^", 2, true, 8) {
+    private static final Operator POW = new Operator("^", 2, true, 8) {
         @Override
         public double apply(double... doubles) {
-            return (int) doubles[0] ^ (int) doubles[1];
+            return Math.pow(doubles[0], doubles[1]);
         }
     };
     private static final Operator BITWISE_AND = new Operator("&", 2, true, 7) {
@@ -65,7 +65,7 @@ public class CalculateCommand extends AbstractCommand {
     };
     private static final List<Operator> OPERATORS = new ArrayList<>();
     static {
-        Collections.addAll(OPERATORS, DIE_OPERATOR, BITWISE_AND, BITWISE_EXCLUSIVE_OR, BITWISE_INCLUSIVE_OR, AERITHMETIC_RIGHT_SHIFT, LOGICAL_RIGHT_SHIFT, LEFT_SHIFT);
+        Collections.addAll(OPERATORS, DIE_OPERATOR, BITWISE_AND, POW, BITWISE_INCLUSIVE_OR, AERITHMETIC_RIGHT_SHIFT, LOGICAL_RIGHT_SHIFT, LEFT_SHIFT);
     }
     public CalculateCommand() {
         super("calculate", ModuleLevel.HELPER, "eval", null, "Evaluate a math expression");

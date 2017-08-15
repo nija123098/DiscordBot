@@ -27,7 +27,7 @@ public class BotConfig {
     @ConfigurationOption
     public static long IMAGE_LOAD_CHANNEL = 321103742743085057L;
     @ConfigurationOption
-    public static String GOOGLE_API_KEY = null;
+    public static String GOOGLE_API_KEY = "api-key";
     @ConfigurationOption
     public static String TWITCH_ID = null;
     @ConfigurationOption

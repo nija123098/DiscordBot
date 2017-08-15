@@ -3,7 +3,12 @@ package com.github.kaaz.emily.information.rss;
 import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.annotations.Argument;
 import com.github.kaaz.emily.command.annotations.Command;
+import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
+import com.github.kaaz.emily.discordobjects.wrappers.Channel;
+import com.github.kaaz.emily.exeption.ArgumentException;
+import com.github.kaaz.emily.exeption.DevelopmentException;
+import com.github.kaaz.emily.util.NetworkHelper;
 import com.rometools.rome.io.FeedException;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
@@ -19,11 +24,14 @@ public class RSSSubscribeCommand extends AbstractCommand {
         super(RSSCommand.class, "subscribe", null, null, "sub", "Subscribes to an rss feed");
     }
     @Command
-    public void command(@Argument(info = "The rss to subscribe to") String arg, MessageMaker maker){
-        try{
-            new SyndFeedInput().build(new XmlReader(new URL(arg)));
-        } catch (FeedException | IOException e) {
-            maker.append("Invalid rss feed: " + arg);
+    public void command(@Argument(info = "The rss to subscribe to") String arg, Channel channel, MessageMaker maker){
+        if (!NetworkHelper.isValid(arg)) throw new ArgumentException("That isn't a valid link");
+        try{new SyndFeedInput().build(new XmlReader(new URL(arg)));
+            ConfigHandler.alterSetting(RSSSubscriptionsConfig.class, channel, strings -> strings.add(arg));
+        } catch (FeedException e) {
+            maker.append("That's not a valid RSS feed!" + arg);
+        } catch (IOException e) {
+            throw new DevelopmentException("Error getting rss feed", e);
         }
     }
 }

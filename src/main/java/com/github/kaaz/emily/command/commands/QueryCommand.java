@@ -6,13 +6,10 @@ import com.github.kaaz.emily.command.annotations.Argument;
 import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.db.Database;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
-import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.util.FormatHelper;
 import com.github.kaaz.emily.util.HastebinUtil;
 
-import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,9 +27,9 @@ public class QueryCommand extends AbstractCommand {
             return;
         }
         if (queary.startsWith("select")) queary += "query ";
-        List<String> header = new ArrayList<>();
-        List<List<String>> table = new ArrayList<>();
-        try (ResultSet r = Database.select(queary)) {
+        String output = Database.select(queary, r -> {
+            List<String> header = new ArrayList<>();
+            List<List<String>> table = new ArrayList<>();
             ResultSetMetaData metaData = r.getMetaData();
             int columnsCount = metaData.getColumnCount();
             for (int i = 0; i < columnsCount; i++) {
@@ -46,11 +43,8 @@ public class QueryCommand extends AbstractCommand {
                 }
                 table.add(row);
             }
-            r.getStatement().close();
-            String output = FormatHelper.makeAsciiTable(header, table, null);
-            maker.appendRaw(output.length() < 2000 ? output : HastebinUtil.handleHastebin(output));
-        } catch (SQLException e) {
-            throw new DevelopmentException("Exception while doing quearying: " + queary, e);
-        }
+            return FormatHelper.makeAsciiTable(header, table, null);
+        });
+        maker.appendRaw(output.length() < 2000 ? output : HastebinUtil.handleHastebin(output));
     }
 }

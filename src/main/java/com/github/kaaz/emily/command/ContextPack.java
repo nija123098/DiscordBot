@@ -1,11 +1,12 @@
 package com.github.kaaz.emily.command;
 
 import com.github.kaaz.emily.discordobjects.wrappers.*;
+import com.github.kaaz.emily.template.commands.functions.ContextCommand;
 
 /**
  * Context Command must be updated if this type's getters are changed
  *
- * @see com.github.kaaz.emily.template.commands.ContextCommand
+ * @see ContextCommand
  * @author nija123098
  */
 public class ContextPack {

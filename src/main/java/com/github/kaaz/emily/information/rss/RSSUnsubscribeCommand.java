@@ -25,7 +25,7 @@ public class RSSUnsubscribeCommand extends AbstractCommand {
             if (!subs.remove(s)) maker.append("You were not subscribed to that.");
         } else {
             if (integer > subs.size()) throw new ArgumentException("You don't have that many subscriptions");
-            subs.remove((int) integer);// Intellij is saying it still uses the Object arg method
+            subs.remove(integer + 1);// Intellij is saying it still uses the Object arg method
         }
         ConfigHandler.setSetting(RSSSubscriptionsConfig.class, channel, subs);
     }

@@ -33,12 +33,13 @@ public class ConversionCommand extends AbstractCommand {
         });
     }
     public ConversionCommand() {
-        super("convert", ModuleLevel.HELPER, null, null, "Converts units and currency amounts");
+        super("convert", ModuleLevel.HELPER, "conversion", null, "Converts units and currency amounts");
     }
     @Command
     public void command(String args, MessageMaker maker){
         String[] strings = args.split(" to ");
-        if (strings.length != 2) throw new ArgumentException("Please format arguments in <amount> <unit> **to** <unit>, it is case sensitive and uses abbreviations");
+        if (strings.length == 1) throw new ArgumentException("Please include \"to\" in your input.  The proper format is <amount> <unit> to <unit>");
+        if (strings.length != 2) throw new ArgumentException("Please format arguments in <amount> <unit> ***TO*** <unit>, it is case sensitive and uses abbreviations");
         String builder = "";
         char c;
         for (int i = 0; i < strings[0].length(); i++) {

@@ -2,7 +2,9 @@ package com.github.kaaz.emily.discordobjects;
 
 import com.github.kaaz.emily.audio.SpeechParser;
 import com.github.kaaz.emily.automoderation.messagefiltering.MessageMonitor;
+import com.github.kaaz.emily.chatbot.ChatBot;
 import com.github.kaaz.emily.command.CommandHandler;
+import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.helpers.ReactionBehavior;
 import com.github.kaaz.emily.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 import com.github.kaaz.emily.discordobjects.wrappers.*;
@@ -92,10 +94,10 @@ public class DiscordAdapter {
             if (!DiscordClient.isReady()) return;
             AtomicLong responseTime = new AtomicLong();
             DiscordClient.getShards().forEach(shard -> responseTime.addAndGet(shard.getResponseTime()));
-            boolean result = responseTime.get() / DiscordClient.getShardCount() > 1500;
+            boolean result = responseTime.get() / DiscordClient.getShardCount() > 2500;
             if (result != BOT_LAG_LOCKED.get()){
                 BOT_LAG_LOCKED.set(result);
-                Log.log("Now " + (result ? "" : "un") + "locking bot due to lag");
+                Log.log("Now " + (result ? "" : "un") + "locking bot due to lag - " + (responseTime.get() / DiscordClient.getShardCount()));
             }
         });
     }
@@ -151,8 +153,17 @@ public class DiscordAdapter {
         if (event.getAuthor().isBot() || !Launcher.isReady() || event.getMessage().getContent() == null || event.getMessage().getContent().isEmpty()) return;
         DiscordMessageReceived receivedEvent = new DiscordMessageReceived((sx.blah.discord.handle.impl.events.MessageReceivedEvent) event);
         if (MessageMonitor.monitor(receivedEvent)) return;
-        receivedEvent.setCommand(CommandHandler.handle(receivedEvent));
-        if (!receivedEvent.isCommand()) MENTIONED_MESSAGES.add(receivedEvent.getMessage().message());
+        Boolean parseForCommand = CommandHandler.handle(receivedEvent);
+        if (parseForCommand == null){
+            String thought = receivedEvent.getMessage().getContent();
+            if (ChatBot.mayChat(receivedEvent.getChannel(), receivedEvent.getMessage().getContent())) {
+                new MessageMaker(receivedEvent.getChannel()).appendRaw(ChatBot.getChatBot(receivedEvent.getChannel()).think(thought)).send();
+            }
+            receivedEvent.setCommand(true);
+        } else {
+            receivedEvent.setCommand(parseForCommand);
+            if (!parseForCommand) MENTIONED_MESSAGES.add(receivedEvent.getMessage().message());
+        }
         EventDistributor.distribute(receivedEvent);
     }
     @EventSubscriber

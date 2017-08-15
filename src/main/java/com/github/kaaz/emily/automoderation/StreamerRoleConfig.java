@@ -2,7 +2,6 @@ package com.github.kaaz.emily.automoderation;
 
 import com.github.kaaz.emily.config.AbstractConfig;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
-import com.github.kaaz.emily.discordobjects.wrappers.Presence;
 import com.github.kaaz.emily.discordobjects.wrappers.Role;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventListener;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordPresenceUpdate;
@@ -17,7 +16,7 @@ public class StreamerRoleConfig extends AbstractConfig<Role, Guild> {
     }
     @EventListener
     public void handle(DiscordPresenceUpdate update){
-        if (update.getNewPresence().getStatus() == Presence.Status.STREAMING){
+        if (update.getNewPresence().getOptionalStreamingUrl().isPresent()){
             update.getUser().getGuilds().forEach(guild -> {
                 Role role = this.getValue(guild);
                 if (role != null && !role.getGuild().getRolesForUser(update.getUser()).contains(role)) update.getUser().addRole(role);

@@ -35,15 +35,15 @@ public class ServiceHandler {
                 if (service.getDelayBetween() == -1) return;
                 if (service.mayBlock()){
                     Thread thread = new Thread(() -> {
-                        long start;
+                        long time;
                         while (true){
                             if (service.shouldRun()){
-                                start = System.currentTimeMillis();
+                                time = System.currentTimeMillis();
                                 service.run();
-                                start -= service.getDelayBetween();
-                                if (start > 0){
+                                time = time + service.getDelayBetween() - System.currentTimeMillis();
+                                if (time > 0){
                                     try {
-                                        Thread.sleep(start);
+                                        Thread.sleep(time + 1);
                                     } catch (InterruptedException e) {
                                         Log.log("Error while sleeping for a service", e);
                                     }

@@ -109,7 +109,7 @@ public class MessageMaker {
         return !this.mustEmbed && this.fieldList.size() == 0 && this.textList.size() == 0 && !this.authorName.appended && !this.title.appended && !this.footer.appended && !this.note.appended;
     }
     public MessageMaker withChannel(Channel channel){
-        if (this.channel.equals(channel)) return this;
+        if (channel.equals(this.channel)) return this;
         ProcessingHandler.swapProcess(this.channel, channel);
         this.channel = channel;
         return this;

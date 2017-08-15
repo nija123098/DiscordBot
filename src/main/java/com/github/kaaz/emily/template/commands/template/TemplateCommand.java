@@ -1,4 +1,4 @@
-package com.github.kaaz.emily.template;
+package com.github.kaaz.emily.template.commands.template;
 
 import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.CommandHandler;
@@ -12,6 +12,7 @@ import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.github.kaaz.emily.exeption.PermissionsException;
 import com.github.kaaz.emily.perms.BotRole;
+import com.github.kaaz.emily.template.KeyPhrase;
 
 /**
  * Made by nija123098 on 8/8/2017.
@@ -28,7 +29,7 @@ public class TemplateCommand extends AbstractCommand {
         if (guild == null){
             if (!BotRole.BOT_ADMIN.hasRequiredRole(user, null)) throw new PermissionsException("You must be a BOT_ADMIN to edit global templates, do this in a server to edit your templates");
         }else{
-            if (!keyPhrase.getAvailableContext().contains(ContextRequirement.GUILD)) throw new PermissionsException("You can't edit that template here, it is a global template");
+            if (!keyPhrase.getDefinition().getAvailableContext().contains(ContextRequirement.GUILD)) throw new PermissionsException("You can't edit that template here, it is a global template");
         }
     }
 }

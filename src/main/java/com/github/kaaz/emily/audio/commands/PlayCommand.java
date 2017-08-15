@@ -18,9 +18,13 @@ public class PlayCommand extends AbstractCommand {
         super("play", ModuleLevel.MUSIC, null, null, "Pays music from youtube or soundcloud or a stream from Twitch");
     }
     @Command
-    public void command(GuildAudioManager manager, @Argument(info = "a song name or url") String s) {
+    public void command(GuildAudioManager manager, @Argument(info = "a song name or url") String s, Track track) {
         List<Track> trackList = Track.getTracks(s);
-        if (trackList.isEmpty()) trackList.add(YTLookup.getTrack(s));
+        try{if (trackList.isEmpty() && !(s == null || s.isEmpty())) trackList.add(YTLookup.getTrack(s));
+        } catch (YTLookup.YoutubeSearchException e){
+            e.printStackTrace();
+            //if (track == null) trackList.;// TODO NEED TO SEE THIS WORKING
+        }
         trackList.forEach(manager::queueTrack);
     }
 }

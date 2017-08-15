@@ -17,16 +17,19 @@ import java.util.*;
  */
 public class Template {
     private String text;
-    private KeyPhrase keyPhrase;
+    private CustomCommandDefinition definition;
     private transient CombinedArg arg;
-    public Template(String template, KeyPhrase keyPhrase){
+    public Template(String template, CustomCommandDefinition definition){
         this.text = template;
-        this.keyPhrase = keyPhrase;
+        this.definition = definition;
         this.precompileCheck();
         this.ensureArgsInited();
     }
     public Template() {
         this.ensureArgsInited();//XSTREAM just doesn't like calling this
+    }
+    public CustomCommandDefinition getDefinition(){
+        return this.definition;
     }
     public void precompileCheck(){
         int leftBraceCount = 0, rightBraceCount = 0;
@@ -39,17 +42,18 @@ public class Template {
     }
     private void ensureArgsInited(){
         if (this.arg != null) return;
-        this.arg = new CombinedArg(getCalculatedArgs(this.text, this.keyPhrase));
+        this.arg = new CombinedArg(getCalculatedArgs(this.text, this.definition));
     }
     public String interpret(ContextPack pack, Object...args){
         return this.interpret(pack.getUser(), pack.getShard(), pack.getChannel(), pack.getGuild(), pack.getMessage(), pack.getReaction(), args);
     }
     public String interpret(User user, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, Object...objects){
-        this.keyPhrase.checkArgTypes(objects);// if is for testing since in testing it will be null
+        this.definition.checkArgTypes(objects);// if is for testing since in testing it will be null
         Object[] contexts = new Object[]{user, shard, channel, guild, message, reaction};
-        Set<ContextRequirement> requirements = new HashSet<>(contexts.length + 1, 1);
+        Set<ContextRequirement> requirements = new HashSet<>(contexts.length + 2, 1);
+        requirements.add(ContextRequirement.STRING);// this may cause problems
         for (int i = 0; i < contexts.length; i++) if (contexts[i] != null) requirements.add(ContextRequirement.values()[i]);
-        this.keyPhrase.checkAvailableContext(requirements);
+        this.definition.checkAvailableContext(requirements);
         this.ensureArgsInited();
         return this.arg.calculate(user, shard, channel, guild, message, reaction, objects);
     }
@@ -76,10 +80,10 @@ public class Template {
     }
     private static class GrantedArg extends Arg {
         private int i;
-        private KeyPhrase keyPhrase;
-        GrantedArg(int i, KeyPhrase keyPhrase){
+        private CustomCommandDefinition keyPhrase;
+        GrantedArg(int i, CustomCommandDefinition definition){
             this.i = i;
-            this.keyPhrase = keyPhrase;
+            this.keyPhrase = definition;
         }
         @Override
         Object calculate(User user, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, Object...objects) {
@@ -94,7 +98,7 @@ public class Template {
     private static class CalculatedArg extends Arg {
         private AbstractCommand command;
         private Arg[] args;
-        CalculatedArg(AbstractCommand command, String s, KeyPhrase keyPhrase){
+        CalculatedArg(AbstractCommand command, String s, CustomCommandDefinition keyPhrase){
             Set<ContextRequirement> requirements = command.getContextRequirements();
             requirements.remove(ContextRequirement.STRING);
             keyPhrase.checkContextRequirements(requirements);
@@ -157,12 +161,12 @@ public class Template {
         }
     }
     private static class ArgBuilder{// might want to make a builder for this
-        private KeyPhrase keyPhrase;
+        private CustomCommandDefinition commandDefinition;
         private String template, wordBuilder = "", sectionBuilder = "";
         private List<Arg> args = new ArrayList<>();
-        ArgBuilder(String template, KeyPhrase keyPhrase) {
+        ArgBuilder(String template, CustomCommandDefinition commandDefinition) {
             this.template = template;
-            this.keyPhrase = keyPhrase;
+            this.commandDefinition = commandDefinition;
         }
         void forEach(Iterator<Character> iterator){
             char c = iterator.next();
@@ -185,12 +189,12 @@ public class Template {
                         } else if (TemplateHandler.LEFT_BRACE == c) ++left;
                         comArgs += c;
                     }
-                    args.add(new CalculatedArg(CommandHandler.getCommand(command.replace("_", " ")), comArgs, keyPhrase));
+                    args.add(new CalculatedArg(CommandHandler.getCommand(command.replace("_", " ")), comArgs, commandDefinition));
                     return;
                 case TemplateHandler.ARGUMENT_CHARACTER:
                     endSection();
                     if (!iterator.hasNext()) throw new ArgumentException("Improperly formed argument, please follow every " + TemplateHandler.ARGUMENT_CHARACTER + " with a argument number");
-                    try{args.add(new GrantedArg(Integer.parseInt(iterator.next() + ""), keyPhrase));
+                    try{args.add(new GrantedArg(Integer.parseInt(iterator.next() + ""), commandDefinition));
                     } catch (NumberFormatException e){
                         throw new ArgumentException("Improperly formed argument, please follow every " + TemplateHandler.ARGUMENT_CHARACTER + " with a argument number", e);
                     }
@@ -230,7 +234,7 @@ public class Template {
             return newArgs.toArray(new Arg[newArgs.size()]);
         }
     }
-    private static Arg[] getCalculatedArgs(String s, KeyPhrase keyPhrase){
-        return new ArgBuilder(s, keyPhrase).build();
+    private static Arg[] getCalculatedArgs(String s, CustomCommandDefinition definition){
+        return new ArgBuilder(s, definition).build();
     }
 }

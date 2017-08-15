@@ -8,6 +8,7 @@ import com.github.kaaz.emily.command.annotations.Context;
 import com.github.kaaz.emily.config.Configurable;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
+import com.github.kaaz.emily.exeption.ArgumentException;
 
 /**
  * Made by nija123098 on 7/5/2017.
@@ -18,6 +19,8 @@ public class BankSendCommand extends AbstractCommand {
     }
     @Command
     public void command(@Argument Configurable one, @Argument(optional = true, replacement = ContextType.NONE) Configurable two, @Argument Integer integer, User user, @Context(softFail = true) Guild guild){
+        if (integer < 0) throw new ArgumentException("You can't take money from other users without their consent");
+        if (integer == 0) throw new ArgumentException("You can't send them nothing");
         Configurable reciver, sender;
         if (two != null){
             sender = one;

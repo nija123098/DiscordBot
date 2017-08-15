@@ -43,7 +43,7 @@ public class TemplateHandler {
         else return templates.get(Rand.getRand(templates.size() - 1, exemptions.toArray(new Integer[exemptions.size()])));
     }
     public static Template addTemplate(KeyPhrase keyPhrase, Guild guild, String s){
-        Template template = new Template(s, keyPhrase);
+        Template template = new Template(s, keyPhrase.getDefinition());
         Consumer<Map<KeyPhrase, List<Template>>> consumer = v -> v.computeIfAbsent(keyPhrase, k -> new ArrayList<>()).add(template);
         if (guild == null) ConfigHandler.alterSetting(GlobalTemplateConfig.class, GlobalConfigurable.GLOBAL, consumer);
         else ConfigHandler.alterSetting(GuildTemplatesConfig.class, guild, consumer);

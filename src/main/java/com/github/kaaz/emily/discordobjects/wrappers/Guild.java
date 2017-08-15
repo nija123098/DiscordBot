@@ -23,8 +23,10 @@ import java.util.stream.Collectors;
 public class Guild implements Configurable {
     private static final Map<String, Guild> MAP = new MemoryManagementService.ManagedMap<>(180000);
     public static Guild getGuild(String id){
+        IGuild guild = DiscordClient.client().getGuildByID(id);
+        if (guild == null) return null;
         try {
-            return MAP.computeIfAbsent(id, s -> new Guild(DiscordClient.client().getGuildByID(id)));
+            return MAP.computeIfAbsent(id, s -> new Guild(guild));
         } catch (NumberFormatException e) {
             return null;
         }
@@ -64,7 +66,7 @@ public class Guild implements Configurable {
     }
     @Override
     public String getID() {
-        return guild().getStringID();
+        return guild().getStringID().intern();
     }
 
     public void checkPermissionToEdit(User user, Guild guild){

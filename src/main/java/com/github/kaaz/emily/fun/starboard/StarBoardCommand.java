@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class StarBoardCommand extends AbstractCommand {
     private static final Map<String, MessageMaker> MAP = new ConcurrentHashMap<>();
     public StarBoardCommand() {
-        super("star", ModuleLevel.FUN, null, "star", "Vote to put a command on the star board");
+        super("star", ModuleLevel.FUN, null, "star, stars", "Vote to put a command on the star board");
     }
     @Command
     public void command(Message message, Reaction reaction, MessageMaker m, Guild guild){

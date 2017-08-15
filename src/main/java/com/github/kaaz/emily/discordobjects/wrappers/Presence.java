@@ -61,10 +61,11 @@ public class Presence {
 
     public enum Status {
         ONLINE,
+        DND,
         IDLE,
+        INVISIBLE,
         OFFLINE,
         STREAMING,
-        DND,
         UNKNOWN,;
     }
 }

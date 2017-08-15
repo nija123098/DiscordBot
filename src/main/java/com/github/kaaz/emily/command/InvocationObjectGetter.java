@@ -188,6 +188,8 @@ public class InvocationObjectGetter {
             String arg = args.split(" ")[0];
             Role role = message.getGuild().getRoleByID(arg);
             if (role != null) return new Pair<>(role, role.getID().length());
+            if (guild == null) throw new ArgumentException("You must be in a guild to use that command");
+            if (arg.toLowerCase().equals("everyone")) return new Pair<>(guild.getEveryoneRole(), 8);
             for (Role r : message.getGuild().getRoles()){
                 if (args.startsWith(r.getName()) && (args.length() == arg.length() || args.charAt(arg.length()) == ' ')){
                     if (role != null){
@@ -312,6 +314,10 @@ public class InvocationObjectGetter {
         return (Pair<T, Integer>) CONVERTER_MAP.get(clazz).getKey().getObject(user, shard, channel, guild, message, reaction, args);
     }
 
+    public static Set<Class<?>> getConversionTypes(){
+        return CONVERTER_MAP.keySet();
+    }
+
     @FunctionalInterface
     private interface ArgumentConverter<E>{
         Pair<E, Integer> getObject(User invoker, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, String args);
@@ -324,7 +330,7 @@ public class InvocationObjectGetter {
         Log.log("Invocation Object Getter initialized");
     }
 
-    static Object[] replace(Parameter[] parameters, Object[] objects, User user, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, String args, boolean[] argOverride){
+    public static Object[] replace(Parameter[] parameters, Object[] objects, User user, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, String args, boolean[] argOverride){
         int commandArgIndex = 0;
         for (int i = 0; i < parameters.length; i++) {
             try {

@@ -36,7 +36,11 @@ public class RedditCommand extends AbstractCommand {
         if (redditLink.getContent() == null) {
             if (redditLink.getFileType() == null) maker.append(redditLink.getTitle()).appendRaw("\n" + redditLink.getPointerUrl());
             else maker.withImage(redditLink.getFileURL()).getTitle().append(redditLink.getTitle());
-        } else maker.append(redditLink.getTitle()).append(redditLink.getContent());
+        } else {
+            String s = redditLink.getContent();
+            if (s.length() > 1500) s = s.substring(0, 1497) + "...";
+            maker.getTitle().append(redditLink.getTitle()).getMaker().append(s);
+        }
         maker.withUrl(redditLink.getPointerUrl());
     }
 }

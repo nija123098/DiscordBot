@@ -21,11 +21,10 @@ public class TagMineCommand extends AbstractCommand {
         Map<String, Tag> list = ConfigHandler.getSetting(TagConfig.class, guild);
         if (list.isEmpty()) maker.append("You don't have any tags.");
         else{
-            maker.append("Your tags:\n").appendRaw("```");
+            maker.getTitle().append("Your tags");
             list.forEach((s, tag) -> {
                 if (tag.getUser().equals(user)) maker.getNewListPart().appendRaw(tag.getName());
             });
         }
-        maker.append("```");
     }
 }

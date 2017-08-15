@@ -198,12 +198,14 @@ public class GuildAudioManager extends AudioEventAdapter{
             this.paused = null;
         }else if (this.getNext() != null){
             this.start(this.getNext(), 0);
+            this.next = null;
         }else this.current = null;
     }
     public Track getNext(){
         if (this.loop) return this.current;
-        if (!this.queue.isEmpty()) return this.queue.get(0);
-        if (this.next == null && !ConfigHandler.getSetting(QueueTrackOnlyConfig.class, this.channel.getGuild())) return (this.next = ConfigHandler.getSetting(GuildActivePlaylistConfig.class, this.channel.getGuild()).getNext(this.channel.getGuild()));
+        if (this.next != null) return this.next;
+        if (!this.queue.isEmpty()) return (this.next = this.queue.remove(0));
+        if (!ConfigHandler.getSetting(QueueTrackOnlyConfig.class, this.channel.getGuild())) return (this.next = ConfigHandler.getSetting(GuildActivePlaylistConfig.class, this.channel.getGuild()).getNext(this.channel.getGuild()));
         return this.next;
     }
     public void leaveAfterThis(){

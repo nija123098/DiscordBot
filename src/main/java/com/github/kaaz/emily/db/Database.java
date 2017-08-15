@@ -4,18 +4,19 @@ import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.launcher.BotConfig;
 import com.github.kaaz.emily.util.Log;
 import com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.ResultSetHandler;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 /**
  * Created by Soarnir on 16/7/17.
  */
 public class Database {
     private static final Connection CONNECTION;
+    private static final QueryRunner RUNNER;
     static {
         Connection c = null;
         try {
@@ -32,6 +33,12 @@ public class Database {
             Log.log("Could not init database connection", e);
         }
         CONNECTION = c;
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl("jdbc:mariadb://localhost:3306/" + BotConfig.DB_NAME);
+        config.setDriverClassName("org.mariadb.jdbc.Driver");
+        config.setUsername(BotConfig.DB_USER);
+        config.setPassword(BotConfig.DB_PASS);
+        RUNNER = new QueryRunner(new HikariDataSource(config));
         query("SET NAMES utf8mb4");
     }
 
@@ -42,31 +49,25 @@ public class Database {
         return CONNECTION;
     }
 
-    public static ResultSet select(String sql) {
-        try{return CONNECTION.prepareStatement(sql).executeQuery();
+    public static <E> E select(String sql, ResultSetHandler<E> handler) {
+        try{return RUNNER.query(sql, handler);
         } catch (SQLException e) {
             throw new DevelopmentException("Could not select: " + sql, e);
         }
     }
 
-    public static int query(String sql) {
-        try{return CONNECTION.createStatement().executeUpdate(sql);
+    public static void query(String sql) {
+        try{RUNNER.update(sql);
         } catch (SQLException e) {
             throw new DevelopmentException("Could not query: " + sql, e);
         }
     }
 
-    public static int insert(String sql) {
-        try (PreparedStatement query = CONNECTION.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            query.executeUpdate();
-            ResultSet rs = query.getGeneratedKeys();
-            if (rs.next()) {
-                return rs.getInt(1);
-            }
+    public static void insert(String sql) {
+        try{RUNNER.update(sql);
         } catch (SQLException e) {
             throw new DevelopmentException("Could not insert", e);
         }
-        return -1;
     }
     public static String quote(String id){
         return Character.isDigit(id.charAt(0)) ? id : "'" + id + "'";

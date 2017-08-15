@@ -53,7 +53,7 @@ public class MessageMonitor {
         });
     }
     public static boolean monitor(DiscordMessageReceived received){
-        if (received.getChannel().isPrivate() || received.getMessage().getContent() == null || received.getMessage().getContent().isEmpty()) return false;
+        if (received.getChannel().isPrivate() || received.getChannel().isNSFW() || received.getMessage().getContent() == null || received.getMessage().getContent().isEmpty()) return false;
         try{CHANNEL_MAP.computeIfAbsent(received.getChannel(), MessageMonitor::calculate).forEach(filter -> filter.checkFilter(received));
         } catch (MessageMonitoringException exception){
             received.getMessage().delete();

@@ -25,7 +25,14 @@ public class GuildUser implements Configurable {
      * @return the guild user object for the guild and user
      */
     public static GuildUser getGuildUser(String id){
-        return GUILD_USERS.computeIfAbsent(id, s -> new GuildUser(id));
+        if (id.startsWith("gu-")){
+            String[] split = id.substring(3).split("-id-");
+            Guild guild = Guild.getGuild(split[0]);
+            User user = User.getUser(split[1]);
+            if (guild == null || user == null) return null;
+            return GUILD_USERS.computeIfAbsent(id, s -> new GuildUser(id));
+        }
+        return null;
     }
 
     /**

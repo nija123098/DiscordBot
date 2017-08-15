@@ -1,7 +1,6 @@
 package com.github.kaaz.emily.automoderation.messagefiltering.filters;
 
 import com.github.kaaz.emily.automoderation.messagefiltering.MessageFilter;
-import com.github.kaaz.emily.automoderation.messagefiltering.MessageMonitoringException;
 import com.github.kaaz.emily.automoderation.messagefiltering.MessageMonitoringType;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordMessageReceived;
 import com.github.kaaz.emily.launcher.BotConfig;
@@ -24,7 +23,7 @@ import java.util.function.Consumer;
  * Made by nija123098 on 8/10/2017.
  */
 public class FakeDangerFilter implements MessageFilter {
-    private static final float REQUIREMENT = .4F;
+    private static final float REQUIREMENT = .05F;
     private static final Map<String, Double> DANGER_COMPONENTS;
     static {
         Map<String, Double> map = new HashMap<>();
@@ -47,7 +46,7 @@ public class FakeDangerFilter implements MessageFilter {
         String reduced = FormatHelper.reduceRepeats(FormatHelper.reformat(event.getMessage().getContent(), c -> c == '\n' || c == '\r' ? ' ' : c), ' ');
         if (reduced.length() < 60) return;
         StringChecker.checkoutString(reduced, DANGER_COMPONENTS.keySet(), policy);
-        if (score.get() >= REQUIREMENT) throw new MessageMonitoringException("Dake danger identified.  Do not spread these.");
+        if (score.get() / reduced.length() >= REQUIREMENT) System.out.println(score.get() + " " + event.getMessage().getContent());//throw new MessageMonitoringException("Dake danger identified.  Do not spread these.");
     }
     @Override
     public MessageMonitoringType getType() {
