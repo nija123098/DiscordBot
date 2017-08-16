@@ -15,4 +15,7 @@ public class MoneyHistoryConfig extends AbstractConfig<List<MoneyTransfer>, Conf
     public MoneyHistoryConfig() {
         super("money_history", BotRole.SYSTEM, new ArrayList<>(0), "The history of money");
     }
+    public boolean checkDefault(){
+        return false;
+    }
 }

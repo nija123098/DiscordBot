@@ -1,16 +1,15 @@
 package com.github.kaaz.emily.audio.commands.playlist;
 
 import com.github.kaaz.emily.audio.GlobalPlaylist;
-import com.github.kaaz.emily.command.AbstractCommand;
-import com.github.kaaz.emily.command.annotations.Command;
-import com.github.kaaz.emily.command.annotations.Argument;
-import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.audio.Playlist;
+import com.github.kaaz.emily.audio.Track;
 import com.github.kaaz.emily.audio.configs.playlist.PlaylistContentsConfig;
-import com.github.kaaz.emily.audio.configs.track.TrackNameConfig;
+import com.github.kaaz.emily.command.AbstractCommand;
+import com.github.kaaz.emily.command.annotations.Argument;
+import com.github.kaaz.emily.command.annotations.Command;
+import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
-import com.github.kaaz.emily.audio.Track;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
 
 import java.util.List;
@@ -30,6 +29,6 @@ public class PlaylistListCommand extends AbstractCommand {
         }
         List<Track> ids = ConfigHandler.getSetting(PlaylistContentsConfig.class, playlist);
         maker.getTitle().appendRaw(playlist.getName());
-        ids.forEach(s -> maker.getNewListPart().appendRaw("`" + s + "` | " + ConfigHandler.getSetting(TrackNameConfig.class, s)));
+        ids.forEach(s -> maker.getNewListPart().appendRaw("`" + s + "` | " + s.getName()));
     }
 }

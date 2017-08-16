@@ -35,8 +35,8 @@ public class HeraldConfig extends AbstractConfig<Boolean, Guild>{
     private void herald(VoiceChannel channel, User user, boolean join){
         if (DiscordClient.getOurUser().equals(user)) return;
         GuildAudioManager manager = getManager(channel);
-        GuildUser guildUser = GuildUser.getGuildUser(channel.getGuild(), user);
         if (manager == null) return;
+        GuildUser guildUser = GuildUser.getGuildUser(channel.getGuild(), user);
         if (!BUFFER.contains(guildUser)) manager.interrupt(new LangString(false, user.getDisplayName(channel.getGuild()) + " ").append(true, "has " + (join ? "joined" : "left") + " the channel"));
         BUFFER.add(guildUser);
     }

@@ -34,4 +34,7 @@ public class OldNicknameConfig extends AbstractConfig<Set<String>, GuildUser> {
             }
         });
     }
+    public boolean checkDefault(){
+        return false;
+    }
 }

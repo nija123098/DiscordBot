@@ -1,6 +1,7 @@
 package com.github.kaaz.emily.service.services;
 
 import com.github.kaaz.emily.service.AbstractService;
+import com.github.kaaz.emily.util.Care;
 import com.github.kaaz.emily.util.ThreadProvider;
 import org.eclipse.jetty.util.ConcurrentHashSet;
 
@@ -31,14 +32,17 @@ public class ScheduleService extends AbstractService {
     }
     @Override
     public void run() {
-        if (I.get() > System.currentTimeMillis()) return;
+        if (I.get() > System.currentTimeMillis()) {
+            Care.lessSleep(0);
+            return;
+        }
         Set<ScheduledTask> tasks = SERVICE_MAP.remove(I.getAndIncrement());
         if (tasks != null) tasks.forEach(scheduledTask -> ThreadProvider.sub(scheduledTask::run));
     }
     public static class ScheduledTask {
         private boolean cancel;
         private long time;
-        Runnable runnable;
+        private Runnable runnable;
         private ScheduledTask(long time, Runnable runnable) {
             this.time = time + System.currentTimeMillis();
             this.runnable = runnable;

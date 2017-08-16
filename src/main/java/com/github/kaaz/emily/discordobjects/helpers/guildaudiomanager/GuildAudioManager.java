@@ -16,12 +16,14 @@ import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventListener;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordVoiceLeave;
 import com.github.kaaz.emily.exeption.ArgumentException;
+import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.exeption.GhostException;
 import com.github.kaaz.emily.favor.configs.derivation.ListenedCountConfig;
 import com.github.kaaz.emily.launcher.BotConfig;
 import com.github.kaaz.emily.launcher.Launcher;
 import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.service.services.ScheduleService;
+import com.github.kaaz.emily.util.Care;
 import com.github.kaaz.emily.util.LangString;
 import com.sedmelluq.discord.lavaplayer.player.AudioConfiguration;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
@@ -67,10 +69,13 @@ public class GuildAudioManager extends AudioEventAdapter{
         PLAYER_MANAGER.getConfiguration().setResamplingQuality(AudioConfiguration.ResamplingQuality.HIGH);
         AbstractConfig<List<Track>, VoiceChannel> config = ConfigHandler.getConfig(PlayQueueConfig.class);
         LangString bye = new LangString(true, "I have to go restart, I will be back soon.");
-        Launcher.registerShutdown(() -> MAP.forEach((s, guildAudioManager) -> {
-            config.setValue(guildAudioManager.channel, guildAudioManager.queue);
-            guildAudioManager.interrupt(bye);
-        }));
+        Launcher.registerShutdown(() -> {
+            MAP.forEach((s, guildAudioManager) -> {
+                config.setValue(guildAudioManager.channel, guildAudioManager.queue);
+                guildAudioManager.interrupt(bye);
+            });
+            Care.lessSleep(5_000);
+        });
         EventDistributor.register(GuildAudioManager.class);
     }
     public static void init(){}
@@ -101,7 +106,7 @@ public class GuildAudioManager extends AudioEventAdapter{
     private final List<Track> queue = new CopyOnWriteArrayList<>();
     private final List<LangString> interups = new CopyOnWriteArrayList<>();
     private Track current, paused, next;
-    private long pausePosition;
+    private long pausePosition, lastSkip;
     private boolean leaveAfterThis, loop, leaving;
     private GuildAudioManager(VoiceChannel channel) {
         this.channel = channel;
@@ -153,7 +158,7 @@ public class GuildAudioManager extends AudioEventAdapter{
             this.interups.add(langString);
             return;
         }
-        this.pausePosition = this.lavaPlayer.getPlayingTrack().getPosition();
+        this.pausePosition = this.currentTime();
         this.paused = this.current;
         this.interups.add(langString);
         this.lavaPlayer.stopTrack();
@@ -174,7 +179,9 @@ public class GuildAudioManager extends AudioEventAdapter{
         this.lavaPlayer.getPlayingTrack().setPosition(time);
     }
     public int skipTrack() {
-        int size = this.queue.size();
+        if (lastSkip >= System.currentTimeMillis() - 10) throw new DevelopmentException("Sorry, skips are rate-limited at 1 per 10 seconds right now");
+        this.lastSkip = System.currentTimeMillis();
+        int size = this.queue.size() - 1;
         this.loop = false;
         this.lavaPlayer.stopTrack();
         return size;
@@ -196,15 +203,15 @@ public class GuildAudioManager extends AudioEventAdapter{
         }else if (this.paused != null){
             this.start(this.paused, (int) this.pausePosition);
             this.paused = null;
-        }else if (this.getNext() != null){
-            this.start(this.getNext(), 0);
+        }else if (this.getNext(false) != null){
+            this.start(this.getNext(true), 0);
             this.next = null;
         }else this.current = null;
     }
-    public Track getNext(){
+    public Track getNext(boolean take){
         if (this.loop) return this.current;
+        if (!this.queue.isEmpty()) return take ? this.queue.remove(0) : this.queue.get(0);
         if (this.next != null) return this.next;
-        if (!this.queue.isEmpty()) return (this.next = this.queue.remove(0));
         if (!ConfigHandler.getSetting(QueueTrackOnlyConfig.class, this.channel.getGuild())) return (this.next = ConfigHandler.getSetting(GuildActivePlaylistConfig.class, this.channel.getGuild()).getNext(this.channel.getGuild()));
         return this.next;
     }
@@ -221,7 +228,8 @@ public class GuildAudioManager extends AudioEventAdapter{
         return this.current;
     }
     public long currentTime(){
-        return this.lavaPlayer.getPlayingTrack().getPosition();
+        AudioTrack track = this.lavaPlayer.getPlayingTrack();
+        return track == null ? 0 : track.getPosition();
     }
     public List<Track> getQueue() {
         return this.queue;
@@ -255,13 +263,12 @@ public class GuildAudioManager extends AudioEventAdapter{
     public static void handle(DiscordVoiceLeave event){
         GuildAudioManager manager = MAP.get(event.getGuild().getID());
         if (manager == null) return;
-        for (User user : event.getChannel().getConnectedUsers()){
-            if (!user.isBot()) {
-                manager.skipSet.remove(user);
-                manager.checkSkip();
-                return;
-            }
+        if (!hasValidListeners(event.getChannel())) {
+            manager.leaving = true;
+            manager.leave();
         }
+        manager.skipSet.remove(event.getUser());
+        manager.checkSkip();
         manager.leave();
     }
     public class AudioProvider implements IAudioProvider {

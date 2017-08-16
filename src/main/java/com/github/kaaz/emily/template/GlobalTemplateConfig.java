@@ -15,4 +15,7 @@ public class GlobalTemplateConfig extends AbstractConfig<Map<KeyPhrase, List<Tem
     public GlobalTemplateConfig() {
         super("global_templates", BotRole.BOT_ADMIN, "All global templates", guild -> new HashMap<>());
     }
+    public boolean checkDefault(){
+        return false;
+    }
 }

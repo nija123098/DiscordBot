@@ -12,6 +12,7 @@ import com.github.kaaz.emily.discordobjects.wrappers.Channel;
 public class PurgeCommand extends AbstractCommand {
     public PurgeCommand() {
         super("purge", ModuleLevel.ADMINISTRATIVE, null, null, "Deletes old messages");
+        this.okOnSuccess = false;
     }
     @Command
     public void command(@Argument Integer count, Channel channel){

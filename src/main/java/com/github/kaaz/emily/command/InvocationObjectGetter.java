@@ -191,10 +191,8 @@ public class InvocationObjectGetter {
             if (guild == null) throw new ArgumentException("You must be in a guild to use that command");
             if (arg.toLowerCase().equals("everyone")) return new Pair<>(guild.getEveryoneRole(), 8);
             for (Role r : message.getGuild().getRoles()){
-                if (args.startsWith(r.getName()) && (args.length() == arg.length() || args.charAt(arg.length()) == ' ')){
-                    if (role != null){
-                        throw new ArgumentException("To many roles named that, mention the role or provide an ID");
-                    }
+                if (args.toLowerCase().startsWith(r.getName().toLowerCase()) && (args.length() == arg.length() || args.charAt(arg.length()) == ' ')){
+                    if (role != null) throw new ArgumentException("To many roles named that, mention the role or provide an ID");
                     role = r;
                 }
             }
@@ -330,7 +328,7 @@ public class InvocationObjectGetter {
         Log.log("Invocation Object Getter initialized");
     }
 
-    public static Object[] replace(Parameter[] parameters, Object[] objects, User user, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, String args, boolean[] argOverride){
+    public static Object[] replace(AbstractCommand command, Parameter[] parameters, Object[] objects, User user, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, String args, boolean[] argOverride){
         int commandArgIndex = 0;
         for (int i = 0; i < parameters.length; i++) {
             try {
@@ -364,8 +362,7 @@ public class InvocationObjectGetter {
                     objects[i] = parameters[i].getAnnotation(Argument.class).replacement() == ContextType.NONE ? null : CONTEXT_MAP.get(parameters[i].getType()).get(parameters[i].getAnnotation(Argument.class).replacement()).getKey().getObject(user, shard, channel, guild, message, reaction, args);
                     continue;
                 }
-                e.setParameter(commandArgIndex);
-                e.setArgs(parameters);
+                e.setImproperUsage(commandArgIndex, parameters, command);
                 throw e;
             }
         }

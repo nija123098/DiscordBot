@@ -53,6 +53,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -60,6 +61,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class DiscordAdapter {
     private static final Map<Class<? extends Event>, Constructor<? extends BotEvent>> EVENT_MAP;
+    private static final Map<Class<? extends Event>, Constructor<? extends BotEvent>> USED_EVENT_MAP;
     private static final long PLAY_TEXT_SPEED = 60_000;
     private static final List<Template> PREVIOUS_TEXTS = new MemoryManagementService.ManagedList<>(PLAY_TEXT_SPEED + 1000);// a second for execution time
     private static final AtomicBoolean BOT_LAG_LOCKED = new AtomicBoolean();
@@ -67,6 +69,7 @@ public class DiscordAdapter {
         Set<Class<? extends BotEvent>> classes = new Reflections(Reference.BASE_PACKAGE + ".discordobjects.wrappers.event.events").getSubTypesOf(BotEvent.class);
         classes.remove(DiscordMessageReceived.class);
         EVENT_MAP = new HashMap<>(classes.size() + 2, 1);
+        USED_EVENT_MAP = new HashMap<>();
         classes.stream().filter(clazz -> !clazz.equals(DiscordMessageReceived.class)).map(clazz -> clazz.getConstructors()[0]).forEach(constructor -> EVENT_MAP.put((Class<? extends Event>) constructor.getParameterTypes()[0], (Constructor<? extends BotEvent>) constructor));
         ClientBuilder builder = new ClientBuilder();
         builder.withToken(BotConfig.BOT_TOKEN);
@@ -81,25 +84,33 @@ public class DiscordAdapter {
         }
         GuildAudioManager.init();
         SpeechParser.init();
-        DiscordClient.client().getDispatcher().registerListener(ThreadProvider.getExecutorService(), EventDistributor.class);
-        DiscordClient.client().getDispatcher().registerListener(ThreadProvider.getExecutorService(), DiscordAdapter.class);
-        EventDistributor.register(ReactionBehavior.class);
-        EventDistributor.register(MessageMonitor.class);
-        EventDistributor.distribute(DiscordDataReload.class, null);
+        Launcher.registerStartup(() -> {
+            DiscordClient.client().getDispatcher().registerListener(ThreadProvider.getExecutorService(), EventDistributor.class);
+            DiscordClient.client().getDispatcher().registerListener(ThreadProvider.getExecutorService(), DiscordAdapter.class);
+            EventDistributor.register(ReactionBehavior.class);
+            EventDistributor.register(MessageMonitor.class);
+            EventDistributor.distribute(DiscordDataReload.class, null);
+        });
         if (!BotConfig.GHOST_MODE) ScheduleService.scheduleRepeat(PLAY_TEXT_SPEED + 10_000, PLAY_TEXT_SPEED, () -> {
             Template template = TemplateHandler.getTemplate(KeyPhrase.PLAY_TEXT, null, PREVIOUS_TEXTS);
             if (template != null) DiscordClient.getShards().forEach(shard -> shard.online(template.interpret((User) null, shard, null, null, null, null)));
         });
-        ScheduleService.scheduleRepeat(10000, 10000, () -> {
+        AtomicInteger count = new AtomicInteger();
+        ScheduleService.scheduleRepeat(5000, 5000, () -> {
             if (!DiscordClient.isReady()) return;
             AtomicLong responseTime = new AtomicLong();
             DiscordClient.getShards().forEach(shard -> responseTime.addAndGet(shard.getResponseTime()));
             boolean result = responseTime.get() / DiscordClient.getShardCount() > 2500;
             if (result != BOT_LAG_LOCKED.get()){
-                BOT_LAG_LOCKED.set(result);
-                Log.log("Now " + (result ? "" : "un") + "locking bot due to lag - " + (responseTime.get() / DiscordClient.getShardCount()));
-            }
+                if (count.incrementAndGet() >= 4){
+                    BOT_LAG_LOCKED.set(result);
+                    Log.log("Now " + (result ? "" : "un") + "locking bot due to lag - " + (responseTime.get() / DiscordClient.getShardCount()));
+                }
+            }else count.set(0);
         });
+    }
+    public static void registerTypeUsage(Class<? extends Event> clazz){
+        if (!USED_EVENT_MAP.containsKey(clazz)) USED_EVENT_MAP.put(clazz, EVENT_MAP.get(clazz));
     }
 
     /**
@@ -169,7 +180,7 @@ public class DiscordAdapter {
     @EventSubscriber
     public static void handle(Event event){
         if (BOT_LAG_LOCKED.get()) return;
-        Constructor<? extends BotEvent> constructor = EVENT_MAP.get(event.getClass());
+        Constructor<? extends BotEvent> constructor = USED_EVENT_MAP.get(event.getClass());
         if (constructor != null) {
             try{EventDistributor.distribute(constructor.newInstance(event));
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {

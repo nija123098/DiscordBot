@@ -11,4 +11,7 @@ public class GuildUserReputationConfig extends AbstractConfig<Integer, GuildUser
     public GuildUserReputationConfig() {
         super("guild_user_reputation", BotRole.GUILD_TRUSTEE, 0, "Guild based reputation for a guild member");
     }
+    public boolean checkDefault(){
+        return false;
+    }
 }

@@ -2,7 +2,6 @@ package com.github.kaaz.emily.config;
 
 import com.github.kaaz.emily.audio.Playlist;
 import com.github.kaaz.emily.audio.Track;
-import com.github.kaaz.emily.db.Database;
 import com.github.kaaz.emily.discordobjects.wrappers.Channel;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.Role;

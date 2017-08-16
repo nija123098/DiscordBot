@@ -18,4 +18,7 @@ public class SlotJackpotConfig extends AbstractConfig<Integer, GlobalConfigurabl
         ConfigHandler.setSetting(SlotJackpotConfig.class, GlobalConfigurable.GLOBAL, SEED);
         return val;
     }
+    public boolean checkDefault(){
+        return false;
+    }
 }

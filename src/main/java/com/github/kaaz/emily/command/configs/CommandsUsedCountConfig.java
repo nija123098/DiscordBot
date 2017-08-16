@@ -15,4 +15,7 @@ public class CommandsUsedCountConfig extends AbstractConfig<Integer, User> {
     public static void increment(User user){
         ConfigHandler.changeSetting(CommandsUsedCountConfig.class, user, integer -> ++integer);
     }
+    public boolean checkDefault(){
+        return false;
+    }
 }

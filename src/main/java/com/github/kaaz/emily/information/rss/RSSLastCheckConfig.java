@@ -22,4 +22,7 @@ public class RSSLastCheckConfig extends AbstractConfig<Long, GlobalConfigurable>
         });
         return val.get();
     }
+    public boolean checkDefault(){
+        return false;
+    }
 }

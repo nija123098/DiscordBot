@@ -11,4 +11,7 @@ public class ListenedCountConfig extends AbstractConfig<Integer, Track> {
     public ListenedCountConfig() {
         super("listened_count", BotRole.SYSTEM, 0, "The number of times a user has listened entirely to this track");
     }
+    public boolean checkDefault(){
+        return false;
+    }
 }

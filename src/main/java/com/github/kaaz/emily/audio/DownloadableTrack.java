@@ -1,6 +1,5 @@
 package com.github.kaaz.emily.audio;
 
-import com.github.kaaz.emily.audio.configs.RequiredPlaysToDownloadConfig;
 import com.github.kaaz.emily.audio.configs.track.*;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.GlobalConfigurable;
@@ -47,7 +46,7 @@ public abstract class DownloadableTrack extends Track {
     public AudioTrack getTrack(){
         if (this.isDownloaded()) return makeAudioTrack(file());
         int playTimes = ConfigHandler.getSetting(PlayCountConfig.class, this);
-        if (playTimes > ConfigHandler.getSetting(RequiredPlaysToDownloadConfig.class, GlobalConfigurable.GLOBAL)) MusicDownloadService.queueDownload((int) Math.log(playTimes), this, null);
+        if (playTimes >= BotConfig.REQUIRED_PLAYS_TO_COUNT) MusicDownloadService.queueDownload((int) Math.log(playTimes), this, null);
         BlockingQueue<AudioTrack> queue = new LinkedBlockingQueue<>(1);
         GuildAudioManager.PLAYER_MANAGER.loadItem(this.getSource(), new AudioLoadResultHandler() {
             @Override
@@ -68,7 +67,7 @@ public abstract class DownloadableTrack extends Track {
     public void manage(){
         super.manage();
         if (MusicDownloadService.isDownloaded(this) && ConfigHandler.getSetting(TrackTimeExpireConfig.class, this) > ConfigHandler.getSetting(TrackDeleteTimeConfig.class, GlobalConfigurable.GLOBAL) + System.currentTimeMillis()){
-            ConfigHandler.getSetting(TrackFileConfig.class, this).delete();
+            this.file().delete();
             ConfigHandler.setSetting(DurationTimeConfig.class, this, null);
             ConfigHandler.setSetting(TrackTypeConfig.class, this, null);
         }

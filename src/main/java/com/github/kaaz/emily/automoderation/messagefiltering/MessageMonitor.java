@@ -56,8 +56,8 @@ public class MessageMonitor {
         if (received.getChannel().isPrivate() || received.getChannel().isNSFW() || received.getMessage().getContent() == null || received.getMessage().getContent().isEmpty()) return false;
         try{CHANNEL_MAP.computeIfAbsent(received.getChannel(), MessageMonitor::calculate).forEach(filter -> filter.checkFilter(received));
         } catch (MessageMonitoringException exception){
-            received.getMessage().delete();
             new MessageMaker(received.getMessage()).withDM().append("Your message on ").appendRaw(received.getGuild().getName()).append(" in ").appendRaw(received.getChannel().mention()).append(" has been deleted.  Reason: " + exception.getMessage()).send();
+            received.getMessage().delete();
             return true;
         }
         return false;

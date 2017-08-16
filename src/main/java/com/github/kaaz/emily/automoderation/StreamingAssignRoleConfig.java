@@ -8,9 +8,7 @@ import com.github.kaaz.emily.discordobjects.wrappers.Role;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventListener;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordPresenceUpdate;
 import com.github.kaaz.emily.exeption.ArgumentException;
-import com.github.kaaz.emily.launcher.Launcher;
 import com.github.kaaz.emily.perms.BotRole;
-import com.github.kaaz.emily.util.ThreadProvider;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -19,36 +17,17 @@ import java.util.Set;
  * Made by nija123098 on 6/19/2017.
  */
 public class StreamingAssignRoleConfig extends AbstractConfig<Role, Guild>{
-    static {
-        ThreadProvider.sub(() -> Launcher.registerStartup(() -> DiscordClient.getUsers().stream().filter(user -> !user.isBot()).forEach(user -> {
-            if (user.getPresence().getOptionalStreamingUrl().isPresent()) {
-                rolesForGuilds(user.getGuilds()).forEach(role -> {
-                    try{user.addRole(role);
-                    } catch (Exception ignored){}// more role order moved
-                });
-                ConfigHandler.setSetting(StreamingBeforeShutdownConfig.class, user, false);
-            } else if (ConfigHandler.getSetting(StreamingBeforeShutdownConfig.class, user) && user.getPresence().getOptionalStreamingUrl().isPresent()) {
-                rolesForGuilds(user.getGuilds()).forEach(role -> {
-                    try{user.removeRole(role);
-                    } catch (Exception ignored){}// more role order moved
-                });
-                ConfigHandler.setSetting(StreamingBeforeShutdownConfig.class, user, false);
-            }
-        })));
-    }
     public StreamingAssignRoleConfig() {
         super("streaming_role", BotRole.GUILD_TRUSTEE, null, "The role to assign a streaming user");
     }
     @EventListener
     public void handle(DiscordPresenceUpdate event){
-        if (event.getNewPresence().getOptionalStreamingUrl().isPresent() && event.getOldPresence().getOptionalStreamingUrl().isPresent()) return;
         if (event.getNewPresence().getOptionalStreamingUrl().isPresent()) {
             rolesForGuilds(event.getUser().getGuilds()).forEach(role -> {
                 try{event.getUser().addRole(role);
                 } catch (Exception ignored){}// todo role order moved
-                ConfigHandler.setSetting(StreamingBeforeShutdownConfig.class, event.getUser(), false);
             });
-        } else if (ConfigHandler.getSetting(StreamingBeforeShutdownConfig.class, event.getUser())){
+        } else {
             rolesForGuilds(event.getUser().getGuilds()).forEach(role -> {
                 try{event.getUser().removeRole(role);
                 } catch (Exception ignored){}// more role order moved here

@@ -311,7 +311,7 @@ public class MessageMaker {
         this.compile();
         if (this.embed != null){
             if (page < 0 || page >= this.fieldIndices.length) throw new DevelopmentException("Attempted to get a page that doesn't exit");
-            this.embed.clearFields().withDesc(this.header.langString.translate(this.lang) + "\n\n" + (page >= textVals.length ? "" : textVals[page]) + "\n\n" + this.footer.langString.translate(lang));
+            this.embed.clearFields().withDesc((this.header.langString.translate(this.lang) + "\n\n" + (page >= textVals.length ? "" : textVals[page]) + "\n\n" + this.footer.langString.translate(lang)).replace("\n\n\n\n", "\n\n"));
             for (Triple<String, String, Boolean> ind : fieldIndices[page]){
                 this.embed.appendField(ind.getLeft(), ind.getMiddle(), ind.getRight());
             }

@@ -11,4 +11,7 @@ public class CurrentMoneyConfig extends AbstractConfig<Integer, Configurable> {
     public CurrentMoneyConfig() {
         super("current_money", BotRole.BOT_ADMIN, 0, "The amount of money a guild user has");
     }
+    public boolean checkDefault(){
+        return false;
+    }
 }

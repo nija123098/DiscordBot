@@ -67,7 +67,7 @@ public class Launcher {
                 IS_READY.set(false);
                 SHUTDOWNS.forEach(Runnable::run);
                 DiscordClient.logout();
-                Care.lessSleep(1_000);
+                Care.lessSleep(2_000);
                 System.exit(code);
             }));
         }

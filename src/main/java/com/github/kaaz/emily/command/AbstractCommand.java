@@ -50,7 +50,8 @@ public class AbstractCommand {
     private List<GuildUser> guildUserCoolDowns;
     private Set<ContextRequirement> contextRequirements;
     private Set<AbstractCommand> subCommands;
-    private boolean prefixRequired = true, okOnSuccess = true;
+    private boolean prefixRequired = true;
+    protected boolean okOnSuccess = true;
     public AbstractCommand(Class<? extends AbstractCommand> superCommand, String name, String absoluteAliases, String emoticonAliases, String relativeAliases, String help){
         this.superCommand = superCommand;
         this.name = name;
@@ -269,6 +270,7 @@ public class AbstractCommand {
 
     protected String getLocalUsages(){
         StringBuilder builder = new StringBuilder(this.name + " ");
+
         Stream.of(this.parameters).filter(parameter -> parameter.isAnnotationPresent(Argument.class)).forEach(parameter -> {
             boolean optional = parameter.getAnnotation(Argument.class).optional();
             String info = parameter.getAnnotation(Argument.class).info();
@@ -417,7 +419,7 @@ public class AbstractCommand {
         for (int i = 0; i < contexts.length; i++) {
             if (this.contextRequirements.contains(ContextRequirement.values()[i])) ContextException.checkRequirement(contexts[i], ContextRequirement.values()[i]);
         }
-        Object[] objects = InvocationObjectGetter.replace(this.parameters, new Object[this.parameters.length], user, shard, channel, guild, message, reaction, args, overridden);
+        Object[] objects = InvocationObjectGetter.replace(this, this.parameters, new Object[this.parameters.length], user, shard, channel, guild, message, reaction, args, overridden);
         for (int i = 0; i < overridden.length; i++) {
             if (argOverrides[i] != null) objects[i] = argOverrides[i];
         }

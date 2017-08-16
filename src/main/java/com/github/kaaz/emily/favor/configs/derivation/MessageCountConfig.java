@@ -24,4 +24,7 @@ public class MessageCountConfig extends AbstractConfig<Integer, GuildUser> {
         if (event.getMessage().getGuild() == null) return;
         this.changeSetting(GuildUser.getGuildUser(event.getMessage().getGuild(), event.getMessage().getAuthor()), integer -> --integer);
     }
+    public boolean checkDefault(){
+        return false;
+    }
 }

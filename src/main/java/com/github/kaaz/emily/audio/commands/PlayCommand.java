@@ -6,7 +6,7 @@ import com.github.kaaz.emily.command.ModuleLevel;
 import com.github.kaaz.emily.command.annotations.Argument;
 import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
-import com.github.kaaz.emily.util.YTLookup;
+import com.github.kaaz.emily.util.YTUtil;
 
 import java.util.List;
 
@@ -20,8 +20,11 @@ public class PlayCommand extends AbstractCommand {
     @Command
     public void command(GuildAudioManager manager, @Argument(info = "a song name or url") String s, Track track) {
         List<Track> trackList = Track.getTracks(s);
-        try{if (trackList.isEmpty() && !(s == null || s.isEmpty())) trackList.add(YTLookup.getTrack(s));
-        } catch (YTLookup.YoutubeSearchException e){
+        try{if (trackList.isEmpty() && !(s == null || s.isEmpty())) {
+            Track t = YTUtil.getTrack(s);
+            if (t != null) trackList.add(t);
+        }
+        } catch (YTUtil.YoutubeSearchException e){
             e.printStackTrace();
             //if (track == null) trackList.;// TODO NEED TO SEE THIS WORKING
         }

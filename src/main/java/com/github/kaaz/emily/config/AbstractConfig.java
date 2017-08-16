@@ -1,7 +1,6 @@
 package com.github.kaaz.emily.config;
 
 import com.github.kaaz.emily.command.annotations.LaymanName;
-import com.github.kaaz.emily.db.Database;
 import com.github.kaaz.emily.discordobjects.wrappers.Channel;
 import com.github.kaaz.emily.discordobjects.wrappers.VoiceChannel;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
@@ -16,6 +15,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -33,6 +33,7 @@ public class AbstractConfig<V, T extends Configurable> {
     private final ConfigLevel configLevel;
     private final Class<V> valueType;
     private final boolean normalViewing;
+    private final Map<Configurable, V> valueMap = new ConcurrentHashMap<>();
     public AbstractConfig(String name, BotRole botRole, V defaul, String description) {
         this(name, botRole, description, v -> defaul);
     }
@@ -52,7 +53,7 @@ public class AbstractConfig<V, T extends Configurable> {
                 while (rs.next()) {
                     String tName = rs.getString("TABLE_NAME");
                     if (tName != null && tName.equals(this.getNameForType(level))) return;
-                }// VARCHAR(" + (this.normalViewing ? 100 : 10000) + ")
+                }// make
                 Database.query("CREATE TABLE `" + this.getNameForType(level) + "` (id VARCHAR(150), value TEXT, millis BIGINT)");
             } catch (SQLException e) {
                 throw new DevelopmentException("Could not ensure table existence", e);
@@ -124,6 +125,10 @@ public class AbstractConfig<V, T extends Configurable> {
         return this.normalViewing;
     }
 
+    public boolean checkDefault(){
+        return true;
+    }
+
     public Class<V> getValueType(){
         return this.valueType;
     }
@@ -144,10 +149,13 @@ public class AbstractConfig<V, T extends Configurable> {
     protected void validateInput(T configurable, V v) {}
     public V setValue(T configurable, V value){
         validateInput(configurable, value);
-        if (Objects.equals(value, this.getDefault(configurable))) Database.query("DELETE FROM " + this.getNameForType(configurable.getConfigLevel()) + " WHERE id = " + Database.quote(configurable.getID()));
-        else {
+        if (this.checkDefault() && Objects.equals(value, this.getDefault(configurable))) {
+            Database.query("DELETE FROM " + this.getNameForType(configurable.getConfigLevel()) + " WHERE id = " + Database.quote(configurable.getID()));
+            this.valueMap.put(configurable, this.getDefault(configurable));
+        }else {
             Database.query("DELETE FROM " + this.getNameForType(configurable.getConfigLevel()) + " WHERE id = " + Database.quote(configurable.getID()));
             Database.insert("INSERT INTO " + this.getNameForType(configurable.getConfigLevel()) + " (`id`, `value`, `millis`) VALUES ('" + configurable.getID() + "','" + TypeChanger.toString(this.valueType, value) + "','" + System.currentTimeMillis() + "');");
+            this.valueMap.put(configurable, value);
         }
         return value;
     }
@@ -160,14 +168,14 @@ public class AbstractConfig<V, T extends Configurable> {
      * @return the config's value
      */
     public V getValue(T configurable){// slq here as well
-        return Database.select("SELECT * FROM " + this.getNameForType(configurable.getConfigLevel()) + " WHERE id = " + Database.quote(configurable.getID()), set -> {
+        return this.valueMap.computeIfAbsent(configurable, c -> Database.select("SELECT * FROM " + this.getNameForType(c.getConfigLevel()) + " WHERE id = " + Database.quote(c.getID()), set -> {
             try{set.next();
                 return TypeChanger.toObject(this.valueType, set.getString(2));
             } catch (SQLException e) {
                 if (!e.getMessage().equals("Current position is after the last row")) Log.log("Error while getting value", e);
                 return this.getDefault(configurable);
             }
-        });
+        }));
     }
 
     /**

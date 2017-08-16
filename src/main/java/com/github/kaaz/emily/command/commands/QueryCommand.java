@@ -4,7 +4,7 @@ import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.ModuleLevel;
 import com.github.kaaz.emily.command.annotations.Argument;
 import com.github.kaaz.emily.command.annotations.Command;
-import com.github.kaaz.emily.db.Database;
+import com.github.kaaz.emily.config.Database;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.util.FormatHelper;
 import com.github.kaaz.emily.util.HastebinUtil;

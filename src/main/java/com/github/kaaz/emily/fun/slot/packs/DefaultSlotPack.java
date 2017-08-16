@@ -7,7 +7,7 @@ import com.github.kaaz.emily.fun.slot.AbstractSlotPack;
  */
 public class DefaultSlotPack extends AbstractSlotPack {
     public DefaultSlotPack() {
-        super(new String[]{"seven", "crown", "gem", "bell", "chocolate_bar", "cherries", "melon"}, 7, 4, 4, 3, 2, 2, 2);
+        super(new String[]{"seven", "crown", "bell", "chocolate_bar", "cherries", "melon"}, 7, 4, 3, 2, 2, 2);
     }
     @Override
     public int getReturn(int[][] ints) {

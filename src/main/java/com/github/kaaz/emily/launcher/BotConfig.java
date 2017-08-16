@@ -68,4 +68,6 @@ public class BotConfig {
     public static Boolean GHOST_MODE = false;
     @ConfigurationOption
     public static Boolean TYPING_ENABLED = true;
+    @ConfigurationOption
+    public static Integer REQUIRED_PLAYS_TO_COUNT = 2;
 }

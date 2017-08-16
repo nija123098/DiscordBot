@@ -4,6 +4,7 @@ import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.ModuleLevel;
 import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
+import com.github.kaaz.emily.discordobjects.wrappers.DiscordClient;
 import com.github.kaaz.emily.util.FormatHelper;
 
 /**
@@ -25,9 +26,10 @@ public class DonateCommand extends AbstractCommand {
                 "**You know how to speak 0101?**\n" +
                 "Check out `!github` and feel free to pick up one of the open issues.\n" +
                 "\n" +
-                "**If you've ascended beyond 0101 and know multiple numbers, consider following the project on `!github` to see what's happening.**\n" +
+                "**If you've ascended beyond 0101 and know multiple numbers,** consider following the project on `!github` to see what's happening.\n" +
                 "\n" +
                 "**You'd like to donate?**\n" +
                 "You can do this though my " + FormatHelper.embedLink("Patreon", "https://www.patreon.com/emilybot") + ".");
+        maker.withThumb(DiscordClient.getOurUser().getAvatarURL());
     }
 }

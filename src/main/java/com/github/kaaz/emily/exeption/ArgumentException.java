@@ -1,5 +1,6 @@
 package com.github.kaaz.emily.exeption;
 
+import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.annotations.Argument;
 import com.github.kaaz.emily.command.annotations.LaymanName;
 
@@ -9,6 +10,7 @@ import java.lang.reflect.Parameter;
  * Made by nija123098 on 3/31/2017.
  */
 public class ArgumentException extends BotException {
+    private AbstractCommand command;
     private Parameter[] args;
     private int parameter;
     public ArgumentException() {
@@ -40,6 +42,12 @@ public class ArgumentException extends BotException {
 
     public void setArgs(Parameter[] args) {
         this.args = args;
+    }
+
+    public void setImproperUsage(int parameter, Parameter[] args, AbstractCommand command){
+        this.parameter = parameter;
+        this.args = args;
+        this.command = command;
     }
 
     @Override

@@ -6,6 +6,7 @@ import com.github.kaaz.emily.command.ModuleLevel;
 import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
+import com.github.kaaz.emily.util.FormatHelper;
 import com.github.kaaz.emily.util.Time;
 
 import java.util.List;
@@ -37,6 +38,11 @@ public class QueueCommand extends AbstractCommand {
         }
         maker.append("There are " + tracks.size() + " items.\n");
         if (!stream) maker.append("Total estimated play time of ").appendRaw(Time.getAbbreviated(time.get()));
-        tracks.forEach(track -> maker.getNewListPart().append(track.getID() + " | " + (track.getLength() == null ? "until the stream ends" : Time.getAbbreviatedMusic(track.getLength())) + " | " + track.getName()));
+        tracks.forEach(track -> maker.getNewListPart().append((track.getLength() == null ? "stream " : buffer(Time.getAbbreviatedMusic(track.getLength())) + " | " + track.getName())));
+    }
+    private static String buffer(String s){
+        int i = s.length() - 7;
+        if (i > 0) s = FormatHelper.repeat(' ', i) + s;
+        return s;
     }
 }

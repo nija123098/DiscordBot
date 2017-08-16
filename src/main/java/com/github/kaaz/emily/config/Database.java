@@ -1,4 +1,4 @@
-package com.github.kaaz.emily.db;
+package com.github.kaaz.emily.config;
 
 import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.launcher.BotConfig;

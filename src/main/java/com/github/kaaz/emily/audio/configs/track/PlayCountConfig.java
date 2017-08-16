@@ -11,4 +11,7 @@ public class PlayCountConfig extends AbstractConfig<Integer, Track> {
     public PlayCountConfig() {
         super("play_count", BotRole.BOT_ADMIN, 0, "The number of times a track has been played");
     }
+    public boolean checkDefault(){
+        return false;
+    }
 }
