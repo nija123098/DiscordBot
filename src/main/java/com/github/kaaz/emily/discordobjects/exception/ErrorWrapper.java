@@ -1,5 +1,6 @@
 package com.github.kaaz.emily.discordobjects.exception;
 
+import com.github.kaaz.emily.util.Care;
 import sx.blah.discord.util.DiscordException;
 import sx.blah.discord.util.MissingPermissionsException;
 import sx.blah.discord.util.RequestBuffer;
@@ -22,6 +23,14 @@ import sx.blah.discord.util.RequestBuffer;
  * @see DException
  */
 public class ErrorWrapper {
+    private static final String CLOUDFLAIR_MESSAGE =
+            "<html>\n" +
+                    "<head><title>400 Bad Request</title></head>\n" +
+                    "<body bgcolor=\"white\">\n" +
+                    "<center><h1>400 Bad Request</h1></center>\n" +
+                    "<hr><center>cloudflare-nginx</center>\n" +
+                    "</body>\n" +
+                    "</html>";
     public static <E> E wrap(Request<E> request) {
         return innerWrap(request);
     }
@@ -34,6 +43,10 @@ public class ErrorWrapper {
         } catch (MissingPermissionsException e){
             throw new MissingPermException(e);
         } catch (DiscordException e){
+            if (e.getMessage().startsWith(CLOUDFLAIR_MESSAGE)) {
+                Care.lessSleep(250);
+                return innerWrap(request);
+            }
             throw new DException(e);
         }
     }

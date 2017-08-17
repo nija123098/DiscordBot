@@ -6,6 +6,7 @@ import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.util.EmoticonHelper;
+import com.github.kaaz.emily.util.Log;
 import com.google.gson.JsonParser;
 import org.apache.commons.lang3.StringEscapeUtils;
 
@@ -39,7 +40,7 @@ public class CatFactCommand extends AbstractCommand {
             String inputLine = in.readLine();
             return new JsonParser().parse(inputLine).getAsJsonObject().get("facts").getAsString();
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.log("Exception getting cat facts", e);
         }
         return null;
     }

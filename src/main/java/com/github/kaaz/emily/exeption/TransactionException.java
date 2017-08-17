@@ -11,7 +11,6 @@ import com.github.kaaz.emily.economy.configs.MoneySymbolConfig;
 public class TransactionException extends BotException {
     public TransactionException(Configurable configurable, float inefficient){
         super(configurable.getName() + " does not have enough money to complete the transaction.  They lack " + inefficient + ConfigHandler.getSetting(MoneySymbolConfig.class, configurable.getGoverningObject()));
-        this.printStackTrace();
     }
     public TransactionException(Configurable configurable, ItemComponent itemComponent, int count){
         super(configurable.getName() + " needs " + count + " more " + itemComponent.name() + "s");

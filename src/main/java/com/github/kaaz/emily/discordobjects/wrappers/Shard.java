@@ -15,7 +15,10 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Shard {
     private static final Map<Integer, Shard> MAP = new ConcurrentHashMap<>();// never clear
     public static Shard getShard(int i){
-        return getShard(DiscordClient.client().getShards().get(i));
+        return getShard(DiscordClient.getAny(client -> {
+            IShard shard = client.getShards().get(0);
+            return shard.getInfo()[0] == i ? shard : null;
+        }));
     }
     public static long getCount() {
         return MAP.size();

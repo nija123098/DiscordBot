@@ -3,98 +3,105 @@ package com.github.kaaz.emily.discordobjects.wrappers;
 import com.github.kaaz.emily.discordobjects.exception.ErrorWrapper;
 import sx.blah.discord.api.IDiscordClient;
 
-import java.util.List;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 /**
  * Made by nija123098 on 3/7/2017.
  */
 public class DiscordClient {
-    private static IDiscordClient client;
-    public static void set(IDiscordClient discordClient){
-        client = discordClient;
+    private static List<IDiscordClient> clients;
+    private static Map<Shard, IDiscordClient> clientMap;
+    public static void set(List<IDiscordClient> discordClients){
+        clients = discordClients;
+        clientMap = new HashMap<>(clients.size() + 1, 1);
+        clients.forEach(client -> clientMap.put(Shard.getShard(client.getShards().get(0)), client));
     }
-    public static IDiscordClient client(){
-        return client;
+    public static List<IDiscordClient> clients(){
+        return clients;
+    }
+    public static IDiscordClient getClientForShard(Shard shard){
+        return clientMap.get(shard);
     }
     // WRAPPING METHODS
     public static List<Shard> getShards() {
-        return Shard.getShards(client.getShards());
+        List<Shard> shards = new ArrayList<>(clients.size());
+        clients.forEach(client -> shards.addAll(Shard.getShards(client.getShards())));
+        return shards;
     }
 
     public static int getShardCount() {
-        return client.getShardCount();
+        return clients.size();
     }
 
     public static void login() {
-        ErrorWrapper.wrap(() -> client.login());
+        clients.forEach(client -> ErrorWrapper.wrap(client::login));
     }
 
     public static void logout() {
-        ErrorWrapper.wrap(() -> client.logout());
+        clients.forEach(client -> ErrorWrapper.wrap(client::logout));
     }
 
     public static void changeUsername(String username) {
-        client.changeUsername(username);
+        clients.forEach(client -> ErrorWrapper.wrap(() -> client.changeUsername(username)));
     }
 
     public static void changePlayingText(String playingText) {
-        client.changePlayingText(playingText);
+        clients.forEach(client -> ErrorWrapper.wrap(() -> client.changePlayingText(playingText)));
     }
 
     public static void online(String playingText) {
-        ErrorWrapper.wrap(() -> client.online(playingText));
+        clients.forEach(client -> ErrorWrapper.wrap(() -> client.online(playingText)));
     }
 
     public static void online() {
-        ErrorWrapper.wrap(() -> client.online());
+        clients.forEach(client -> ErrorWrapper.wrap(client::online));
     }
 
     public static void idle(String playingText) {
-        ErrorWrapper.wrap(() -> client.idle(playingText));
+        clients.forEach(client -> ErrorWrapper.wrap(() -> client.idle(playingText)));
     }
 
     public static void idle() {
-        ErrorWrapper.wrap(() -> client.idle());
+        clients.forEach(client -> ErrorWrapper.wrap(client::idle));
     }
 
     public static void streaming(String playingText, String streamingUrl) {
-        ErrorWrapper.wrap(() -> client.streaming(playingText, streamingUrl));
+        clients.forEach(client -> ErrorWrapper.wrap(() -> client.streaming(playingText, streamingUrl)));
     }
 
     public static boolean isReady() {
-        return client.isReady();
+        for (IDiscordClient client : clients) if (!client.isReady()) return false;
+        return true;
     }
 
     public static boolean isLoggedIn() {
-        return client.isLoggedIn();
+        for (IDiscordClient client : clients) if (!client.isLoggedIn()) return false;
+        return true;
     }
 
     public static User getOurUser() {
-        return User.getUser(client.getOurUser());
+        return User.getUser(clients.get(0).getOurUser());
     }
 
     public static List<Channel> getChannels(boolean includePrivate) {
-        return Channel.getChannels(client.getChannels(includePrivate));
+        return getAll(client -> Channel.getChannels(client.getChannels()));
     }
 
     public static List<Channel> getChannels() {
         return getChannels(true);
     }
 
-    public static Channel getChannelByID(String channelID) {
-        return Channel.getChannel(channelID);
-    }
-
     public static List<VoiceChannel> getVoiceChannels() {
-        return VoiceChannel.getVoiceChannels(client.getVoiceChannels());
-    }
-
-    public static VoiceChannel getVoiceChannelByID(String id) {
-        return VoiceChannel.getVoiceChannel(id);
+        return getAll(client -> VoiceChannel.getVoiceChannels(client.getConnectedVoiceChannels()));
     }
 
     public static List<Guild> getGuilds() {
-        return Guild.getGuilds(client.getGuilds());
+        return getAll(client -> Guild.getGuilds(client.getGuilds()));
     }
 
     public static Guild getGuildByID(String guildID) {
@@ -102,15 +109,11 @@ public class DiscordClient {
     }
 
     public static List<User> getUsers() {
-        return User.getUsers(client.getUsers());
-    }
-
-    public static User getUserByID(String userID) {
-        return User.getUser(userID);
+        return getAll(client -> User.getUsers(client.getUsers()));
     }
 
     public static List<Role> getRoles() {
-        return Role.getRoles(client.getRoles());
+        return getAll(client -> Role.getRoles(client.getRoles()));
     }
 
     public static Role getRoleByID(String roleID) {
@@ -121,39 +124,43 @@ public class DiscordClient {
         return Message.getMessage(messageID);
     }
 
-    public static DirectChannel getOrCreatePMChannel(User user) {
-        return user.getOrCreatePMChannel();
-    }
-
     public static List<Region> getRegions() {
-        return ErrorWrapper.wrap((ErrorWrapper.Request<List<Region>>) () -> Region.getRegions(client.getRegions()));
-    }
-
-    public static Region getRegionByID(String regionID) {
-        return Region.getRegion(regionID);
+        return getAll(client -> ErrorWrapper.wrap((ErrorWrapper.Request<List<Region>>) () -> Region.getRegions(client.getRegions())));
     }
 
     public static List<VoiceChannel> getConnectedVoiceChannels() {
-        return VoiceChannel.getVoiceChannels(client.getConnectedVoiceChannels());
+        return getAll(client -> VoiceChannel.getVoiceChannels(client.getConnectedVoiceChannels()));
     }
 
     public static String getApplicationDescription() {
-        return ErrorWrapper.wrap((ErrorWrapper.Request<String>) () -> client.getApplicationDescription());
+        return ErrorWrapper.wrap((ErrorWrapper.Request<String>) () -> clients.get(0).getApplicationDescription());
     }
 
     public static String getApplicationIconURL() {
-        return ErrorWrapper.wrap((ErrorWrapper.Request<String>) () -> client.getApplicationIconURL());
+        return ErrorWrapper.wrap((ErrorWrapper.Request<String>) () -> clients.get(0).getApplicationIconURL());
     }
 
     public static String getApplicationClientID() {
-        return ErrorWrapper.wrap((ErrorWrapper.Request<String>) () -> client.getApplicationClientID());
+        return ErrorWrapper.wrap((ErrorWrapper.Request<String>) () -> clients.get(0).getApplicationClientID());
     }
 
     public static String getApplicationName() {
-        return ErrorWrapper.wrap((ErrorWrapper.Request<String>) () -> client.getApplicationName());
+        return ErrorWrapper.wrap((ErrorWrapper.Request<String>) () -> clients.get(0).getApplicationName());
     }
 
     public static User getApplicationOwner() {
-        return ErrorWrapper.wrap((ErrorWrapper.Request<User>) () -> User.getUser(client.getApplicationOwner()));
+        return ErrorWrapper.wrap((ErrorWrapper.Request<User>) () -> User.getUser(clients.get(0).getApplicationOwner()));
+    }
+
+    public static <E> E getAny(Function<IDiscordClient, E> function){
+        E e;
+        for (IDiscordClient f : clients) if ((e = function.apply(f)) != null) return e;
+        return null;
+    }
+
+    public static <E> List<E> getAll(Function<IDiscordClient, Collection<E>> function){
+        List<E> list = new ArrayList<>();
+        clients().forEach(f -> list.addAll(function.apply(f)));
+        return list;
     }
 }

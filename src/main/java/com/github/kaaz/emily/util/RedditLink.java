@@ -75,7 +75,7 @@ public class RedditLink {
                 IOUtils.copy(in, new FileOutputStream(outputfile));
                 this.file = outputfile;
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.log("Exception getting Reddit file");
             }
         }
         return this.file;

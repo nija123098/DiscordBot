@@ -29,7 +29,6 @@ public class ChangeContextCommand extends AbstractCommand {
                 contexts[requirement.ordinal()] = pair.getKey();
                 s = s.substring(pair.getValue());
             } catch (IllegalArgumentException e){
-                e.printStackTrace();
                 throw new ArgumentException("Unrecognized context: " + next, e);
             }
             s = FormatHelper.trimFront(s);

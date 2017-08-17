@@ -103,7 +103,7 @@ public class SpeechParser implements IAudioReceiver {
             stream.write(bytes);
             stream.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.log("Exception writing speech to file", e);
         }
         return file;
     }
@@ -132,7 +132,7 @@ public class SpeechParser implements IAudioReceiver {
             new StreamGobler(process.getErrorStream(), System.err).start();
             process.waitFor(10, TimeUnit.SECONDS);
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            Log.log("Exception converting file to compatible stats", e);
             return null;
         } finally {
             if (process != null) process.destroyForcibly();
@@ -149,11 +149,11 @@ public class SpeechParser implements IAudioReceiver {
                 if (result != null) reference.set(result.getHypothesis());
                 recognizer.stopRecognition();
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.log("Exception scanning file for voice data", e);
             }
             ScheduleService.schedule(file.length() * 5, () -> {
                 try{Files.delete(file.toPath());
-                }catch(IOException e) {e.printStackTrace();}
+                }catch(IOException e) {Log.log("Exception deleting voice data file", e);}
             });
         });
         return reference.get();

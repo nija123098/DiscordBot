@@ -23,15 +23,19 @@ import com.github.kaaz.emily.service.services.ScheduleService;
 import com.github.kaaz.emily.template.KeyPhrase;
 import com.github.kaaz.emily.template.Template;
 import com.github.kaaz.emily.template.TemplateHandler;
+import com.github.kaaz.emily.util.Care;
 import com.github.kaaz.emily.util.EmoticonHelper;
 import com.github.kaaz.emily.util.Log;
 import com.github.kaaz.emily.util.ThreadProvider;
+import org.apache.http.message.BasicNameValuePair;
 import org.reflections.Reflections;
 import sx.blah.discord.api.ClientBuilder;
 import sx.blah.discord.api.events.Event;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.api.events.IListener;
-import sx.blah.discord.handle.impl.events.ReadyEvent;
+import sx.blah.discord.api.internal.DiscordEndpoints;
+import sx.blah.discord.api.internal.Requests;
+import sx.blah.discord.api.internal.json.responses.GatewayBotResponse;
 import sx.blah.discord.handle.impl.events.guild.GuildUpdateEvent;
 import sx.blah.discord.handle.impl.events.guild.channel.ChannelUpdateEvent;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MentionEvent;
@@ -47,14 +51,11 @@ import sx.blah.discord.handle.obj.IMessage;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 /**
  * Made by nija123098 on 3/12/2017.
@@ -73,20 +74,27 @@ public class DiscordAdapter {
         classes.stream().filter(clazz -> !clazz.equals(DiscordMessageReceived.class)).map(clazz -> clazz.getConstructors()[0]).forEach(constructor -> EVENT_MAP.put((Class<? extends Event>) constructor.getParameterTypes()[0], (Constructor<? extends BotEvent>) constructor));
         ClientBuilder builder = new ClientBuilder();
         builder.withToken(BotConfig.BOT_TOKEN);
-        builder.withRecommendedShardCount();
         builder.setMaxMessageCacheCount(0);
-        builder.withMaximumDispatchThreads(64);
+        builder.withMaximumDispatchThreads(16);
         builder.registerListener((IListener<ShardReadyEvent>) event -> event.getShard().idle("with the login screen!"));
-        DiscordClient.set(builder.login());
-        try{DiscordClient.client().getDispatcher().waitFor(ReadyEvent.class, 20 + 25 * DiscordClient.getShardCount(), TimeUnit.MINUTES);
-        } catch (InterruptedException e) {
-            Log.log("Could not launch in time", e);
+        int total = Requests.GENERAL_REQUESTS.GET.makeRequest(DiscordEndpoints.GATEWAY + "/bot", GatewayBotResponse.class, new BasicNameValuePair("Authorization", "Bot " + BotConfig.BOT_TOKEN), new BasicNameValuePair("Content-Type", "application/json")).shards;
+        List<Integer> list = new ArrayList<>(total);
+        for (int i = 0; i < total; i++) if (i % BotConfig.TOTAL_EMILYS == BotConfig.EMILY_NUMBER) list.add(i);
+        DiscordClient.set(list.stream().map(integer -> builder.setShard(integer, total)).map(ClientBuilder::login).collect(Collectors.toList()));
+        int i = 20 + 25 * DiscordClient.getShardCount();
+        for (; i > -1; --i) {
+            if (DiscordClient.isReady()) break;
+            Care.lessSleep(1000);
+        }
+        if (i == 0) {
+            Log.log("Could not load in time");
+            System.exit(-1);
         }
         GuildAudioManager.init();
         SpeechParser.init();
         Launcher.registerStartup(() -> {
-            DiscordClient.client().getDispatcher().registerListener(ThreadProvider.getExecutorService(), EventDistributor.class);
-            DiscordClient.client().getDispatcher().registerListener(ThreadProvider.getExecutorService(), DiscordAdapter.class);
+            DiscordClient.clients().forEach(client -> client.getDispatcher().registerListener(ThreadProvider.getExecutorService(), EventDistributor.class));
+            DiscordClient.clients().forEach(client -> client.getDispatcher().registerListener(ThreadProvider.getExecutorService(), DiscordAdapter.class));
             EventDistributor.register(ReactionBehavior.class);
             EventDistributor.register(MessageMonitor.class);
             EventDistributor.distribute(DiscordDataReload.class, null);

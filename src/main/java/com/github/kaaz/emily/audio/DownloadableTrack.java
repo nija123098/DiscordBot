@@ -6,6 +6,7 @@ import com.github.kaaz.emily.config.GlobalConfigurable;
 import com.github.kaaz.emily.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 import com.github.kaaz.emily.launcher.BotConfig;
 import com.github.kaaz.emily.service.services.MusicDownloadService;
+import com.github.kaaz.emily.util.Log;
 import com.github.kaaz.emily.util.YTDLHelper;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.source.local.LocalAudioSourceManager;
@@ -59,7 +60,7 @@ public abstract class DownloadableTrack extends Track {
         });
         try{return queue.take();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Log.log("Exception loading AuidoTrack for " + this.getID(), e);
         }
         return null;
     }

@@ -5,6 +5,7 @@ import com.github.kaaz.emily.command.ModuleLevel;
 import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
+import com.github.kaaz.emily.util.Log;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -41,7 +42,7 @@ public class JokeCommand extends AbstractCommand {
             JsonObject array = parser.parse(inputLine).getAsJsonObject();
             return StringEscapeUtils.unescapeHtml4(array.get("value").getAsJsonObject().get("joke").getAsString());
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.log("Exception loading joke from web", e);
         }
         return null;
     }

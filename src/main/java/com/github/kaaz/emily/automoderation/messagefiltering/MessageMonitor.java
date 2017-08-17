@@ -48,7 +48,7 @@ public class MessageMonitor {
                 MessageFilter filter = clazz.newInstance();
                 ID_FILTER_MAP.put(filter.getType(), filter);
             } catch (InstantiationException | IllegalAccessException e) {
-                e.printStackTrace();
+                Log.log("Exception lading new MessageFilter", e);
             }
         });
     }

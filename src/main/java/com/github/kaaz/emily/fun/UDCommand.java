@@ -5,6 +5,7 @@ import com.github.kaaz.emily.command.ModuleLevel;
 import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.util.EmoticonHelper;
+import com.github.kaaz.emily.util.Log;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -44,7 +45,7 @@ public class UDCommand extends AbstractCommand {
             maker.append(EmoticonHelper.getChars("+1", false) + firstResult.get("thumbs_up") + "  " + EmoticonHelper.getChars("-1", false) + firstResult.get("thumbs_down"));
             maker.getNote().appendRaw("By " + firstResult.get("author").toString());
         } catch (IOException | ParseException e) {
-            e.printStackTrace();
+            Log.log("Exception loading UD content", e);
         }
     }
 }

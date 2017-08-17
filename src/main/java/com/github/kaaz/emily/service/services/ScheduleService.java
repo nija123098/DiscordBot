@@ -2,6 +2,7 @@ package com.github.kaaz.emily.service.services;
 
 import com.github.kaaz.emily.service.AbstractService;
 import com.github.kaaz.emily.util.Care;
+import com.github.kaaz.emily.util.Log;
 import com.github.kaaz.emily.util.ThreadProvider;
 import org.eclipse.jetty.util.ConcurrentHashSet;
 
@@ -61,10 +62,9 @@ public class ScheduleService extends AbstractService {
         }
         boolean run(){
             if (!this.cancel){
-                try {
-                    runnable.run();
+                try{runnable.run();
                 } catch (Throwable t){
-                    t.printStackTrace();
+                    Log.log("Exception running ScheduledService", t);
                 }
                 return true;
             }

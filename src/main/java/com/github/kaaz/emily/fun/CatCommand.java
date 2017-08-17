@@ -6,6 +6,7 @@ import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.launcher.BotConfig;
 import com.github.kaaz.emily.util.EmoticonHelper;
+import com.github.kaaz.emily.util.Log;
 
 import java.io.IOException;
 import java.net.URL;
@@ -33,7 +34,7 @@ public class CatCommand extends AbstractCommand{
             maker.getTitle().append("CAT!");
             maker.withImage(src.substring(src.indexOf("><img src=") + 11, src.length() - 6));
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.log("Exception getting cat image", e);
             maker.append(DIDNT_WORK);
         }
     }

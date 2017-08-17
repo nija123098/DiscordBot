@@ -60,7 +60,7 @@ public class SCUtil {
                 tracks.add(new SoundCloudTrack(line.substring(0, line.indexOf("\""))));
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.log("IOException loading tracks from Soundcloud", e);
             tracks = null;
         } finally {
             if (process != null) process.destroyForcibly();

@@ -22,6 +22,7 @@ import sx.blah.discord.util.MessageBuilder;
 
 import java.awt.*;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.List;
@@ -42,7 +43,7 @@ public class MessageMaker {
     private List<FieldPart> fieldList = new ArrayList<>();
     private Triple<String, String, Boolean>[][] fieldIndices;
     private EmbedBuilder embed = new EmbedBuilder();
-    private MessageBuilder builder = new MessageBuilder(DiscordClient.client());
+    private MessageBuilder builder;
     private String lang;
     private User user;
     private Channel channel;
@@ -53,6 +54,7 @@ public class MessageMaker {
     private boolean okHand;
     private final Set<String> reactions = new HashSet<>(1);
     private Long deleteDelay;
+    private File file;
     private boolean maySend, mustEmbed, forceCompile, colored, isMessageError, autoSend = true;
     private MessageMaker(User user, Channel channel, Message message){
         this.authorName = new TextPart(this);
@@ -263,10 +265,7 @@ public class MessageMaker {
         return this.maySend();
     }
     public MessageMaker withFile(File file){
-        try{this.builder.withFile(file);
-        }catch(Exception e) {
-            throw new DevelopmentException(e);
-        }
+        this.file = file;
         return this.appendRaw("");
     }
     public MessageMaker withTimestamp(LocalDateTime time){
@@ -306,6 +305,11 @@ public class MessageMaker {
         if (!this.maySend) {
             if (this.origin != null) ErrorWrapper.wrap(() -> this.origin.addReaction(EmoticonHelper.getChars("ok_hand", false)));
             return;
+        }
+        this.builder = new MessageBuilder(DiscordClient.getClientForShard(this.channel.getShard()));
+        try{this.builder.withFile(this.file);
+        } catch (FileNotFoundException e) {
+            throw new DevelopmentException("File not made by time of sending", e);
         }
         if (this.origin != null && this.okHand) ErrorWrapper.wrap(() -> this.origin.addReaction(EmoticonHelper.getChars("ok_hand", false)));
         this.compile();

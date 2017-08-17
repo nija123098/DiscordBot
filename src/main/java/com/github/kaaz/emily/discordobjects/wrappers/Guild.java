@@ -4,6 +4,8 @@ import com.github.kaaz.emily.config.ConfigLevel;
 import com.github.kaaz.emily.config.Configurable;
 import com.github.kaaz.emily.discordobjects.exception.ErrorWrapper;
 import com.github.kaaz.emily.exeption.ConfigurableConvertException;
+import com.github.kaaz.emily.exeption.GhostException;
+import com.github.kaaz.emily.launcher.BotConfig;
 import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
 import com.github.kaaz.emily.util.Time;
@@ -23,9 +25,9 @@ import java.util.stream.Collectors;
 public class Guild implements Configurable {
     private static final Map<String, Guild> MAP = new MemoryManagementService.ManagedMap<>(180000);
     public static Guild getGuild(String id){
-        IGuild guild = DiscordClient.client().getGuildByID(id);
-        if (guild == null) return null;
         try {
+            IGuild guild = DiscordClient.getAny(client -> client.getGuildByID(id));
+            if (guild == null) return null;
             return MAP.computeIfAbsent(id, s -> new Guild(guild));
         } catch (NumberFormatException e) {
             return null;
@@ -55,7 +57,7 @@ public class Guild implements Configurable {
         this.ID = guild.getID();
     }
     public Guild() {
-        this.reference = new AtomicReference<>(DiscordClient.client().getGuildByID(ID));
+        this.reference = new AtomicReference<>(DiscordClient.getAny(client -> client.getGuildByID(ID)));
     }
     public IGuild guild(){
         return this.reference.get();
@@ -204,30 +206,37 @@ public class Guild implements Configurable {
     }
 
     public void banUser(User user) {
+        if (BotConfig.GHOST_MODE) return;
         ErrorWrapper.wrap(() -> guild().banUser(user.user()));
     }
 
     public void banUser(User user, int i) {
+        if (BotConfig.GHOST_MODE) return;
         ErrorWrapper.wrap(() -> guild().banUser(user.user(), i));
     }
 
     public void banUser(String s) {
+        if (BotConfig.GHOST_MODE) return;
         ErrorWrapper.wrap(() -> guild().banUser(s));
     }
 
     public void banUser(String s, int i) {
+        if (BotConfig.GHOST_MODE) return;
         ErrorWrapper.wrap(() -> guild().banUser(s, i));
     }
 
     public void pardonUser(String s) {
+        if (BotConfig.GHOST_MODE) return;
         ErrorWrapper.wrap(() -> guild().pardonUser(s));
     }
 
     public void kickUser(User user) {
+        if (BotConfig.GHOST_MODE) return;
         ErrorWrapper.wrap(() -> guild().kickUser(user.user()));
     }
 
     public void editUserRoles(User user, Role...roles) {
+        if (BotConfig.GHOST_MODE) return;
         List<IRole> iRoles = new ArrayList<>(roles.length);
         for (Role role : roles) {
             iRoles.add(role.role());
@@ -236,42 +245,52 @@ public class Guild implements Configurable {
     }
 
     public void setDeafenUser(User user, boolean b) {
+        if (BotConfig.GHOST_MODE) return;
         ErrorWrapper.wrap(() -> guild().setDeafenUser(user.user(), b));
     }
 
     public void setMuteUser(User user, boolean b) {
+        if (BotConfig.GHOST_MODE) return;
         ErrorWrapper.wrap(() -> guild().setMuteUser(user.user(), b));
     }
 
     public void setUserNickname(User user, String s) {
+        if (BotConfig.GHOST_MODE) return;
         ErrorWrapper.wrap(() -> guild().setUserNickname(user.user(), s));
     }
 
     public void changeName(String s) {
+        if (BotConfig.GHOST_MODE) return;
         ErrorWrapper.wrap(() -> guild().changeName(s));
     }
 
     public void changeRegion(Region region) {
+        if (BotConfig.GHOST_MODE) return;
         ErrorWrapper.wrap(() -> Region.getRegion(guild().getRegion()));
     }
 
     public void changeAFKChannel(VoiceChannel voiceChannel) {
+        if (BotConfig.GHOST_MODE) return;
         ErrorWrapper.wrap(() -> guild().changeAFKChannel(voiceChannel.channel()));
     }
 
     public void changeAFKTimeout(int i) {
+        if (BotConfig.GHOST_MODE) return;
         ErrorWrapper.wrap(() -> guild().changeAFKTimeout(i));
     }
 
     public void leave() {
+        if (BotConfig.GHOST_MODE) return;
         ErrorWrapper.wrap(() -> guild().leave());
     }
 
     public Channel createChannel(String s) {
+        if (BotConfig.GHOST_MODE) throw new GhostException();
         return ErrorWrapper.wrap((ErrorWrapper.Request<Channel>) () -> Channel.getChannel(guild().createChannel(s)));
     }
 
     public VoiceChannel createVoiceChannel(String s) {
+        if (BotConfig.GHOST_MODE) throw new GhostException();
         return ErrorWrapper.wrap((ErrorWrapper.Request<VoiceChannel>) () -> VoiceChannel.getVoiceChannel(guild().createVoiceChannel(s)));
     }
 
@@ -288,6 +307,7 @@ public class Guild implements Configurable {
     }
 
     public void reorderRoles(Role...roles) {
+        if (BotConfig.GHOST_MODE) return;
         List<IRole> iRoles = new ArrayList<>(roles.length);
         for (Role role : roles) {
             iRoles.add(role.role());

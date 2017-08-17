@@ -5,6 +5,7 @@ import com.github.kaaz.emily.command.ModuleLevel;
 import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.launcher.BotConfig;
+import com.github.kaaz.emily.util.Log;
 import org.jsoup.Jsoup;
 
 import java.io.IOException;
@@ -24,7 +25,7 @@ public class InspiroCommand extends AbstractCommand {
         try {
             return Jsoup.connect("http://inspirobot.me/api?generate=true").timeout(5_000).userAgent(BotConfig.USER_AGENT).get().body().getElementsByTag("body").text();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.log("Exception getting inspiro image", e);
             return null;
         }
     }

@@ -110,7 +110,7 @@ public class InvocationObjectGetter {
         });
         addConverter(VoiceChannel.class, (invoker, shard, channel, guild, message, reaction, args) -> (Pair<VoiceChannel, Integer>) CONVERTER_MAP.get(Channel.class).getKey().getObject(invoker, shard, channel, guild, message, reaction, args));
         addConverter(User.class, (user, shard, channel, guild, message, reaction, args) -> {
-            User u = DiscordClient.getUserByID(args.split(" ")[0]);
+            User u = User.getUser(args.split(" ")[0]);
             if (u != null) return new Pair<>(u, args.split(" ")[0].length());
             if (guild == null) throw new ArgumentException("Commands with user names can not be used in private channels");
             String match = StringHelper.getGoodMatch(args, new ArrayList<>(UserNameMonitor.getNames(guild)));
@@ -159,7 +159,7 @@ public class InvocationObjectGetter {
             try {
                 int i = Integer.parseInt(arg);
                 Shard s = Shard.getShard(i);
-                if (s == null) throw new ArgumentException("That shard does not exist, try a " + (i < 0 ? "higher" : "lower") + " number");
+                if (s == null) throw new ArgumentException("That shard may not does not exist, try a " + (i < 0 ? "higher" : "lower") + " number");
                 return new Pair<>(s, arg.length());
             } catch (Exception e){
                 throw new ArgumentException("Not a valid shard ID");
@@ -255,9 +255,7 @@ public class InvocationObjectGetter {
         addConverter(Color.class, (invoker, shard, channel, guild, message, reaction, args) -> {
             String[] strings = args.split(" ");
             try{return new Pair<>((Color) Color.class.getField(strings[0].toUpperCase()).get(null), strings[0].length());
-            }catch(IllegalAccessException | NoSuchFieldException ignored) {
-                ignored.printStackTrace();
-            }
+            }catch(IllegalAccessException | NoSuchFieldException ignored) {}
             if (args.startsWith("#")) return new Pair<>(new Color(Integer.parseInt(strings[0].substring(1), 16), false), 7);
             Integer reserve = null;
             try {

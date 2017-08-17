@@ -70,4 +70,8 @@ public class BotConfig {
     public static Boolean TYPING_ENABLED = true;
     @ConfigurationOption
     public static Integer REQUIRED_PLAYS_TO_COUNT = 2;
+    @ConfigurationOption
+    public static Integer TOTAL_EMILYS = 1;
+    @ConfigurationOption
+    public static Integer EMILY_NUMBER = 0;
 }

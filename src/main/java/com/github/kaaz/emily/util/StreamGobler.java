@@ -21,7 +21,7 @@ public class StreamGobler extends Thread {
                 this.printStream.println(in);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.log("Exception gobbling stream", e);
         }
     }
 }

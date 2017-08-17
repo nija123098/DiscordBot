@@ -24,13 +24,13 @@ public class Role implements Configurable{
     private static final Map<String, Role> MAP = new ConcurrentHashMap<>();
     public static Role getRole(String id){
         IRole role;
-        try{role = DiscordClient.client().getRoleByID(FormatHelper.filtering(id, Character::isDigit));
+        try{role = DiscordClient.getAny(client -> client.getRoleByID(FormatHelper.filtering(id, Character::isDigit)));
         }catch(NumberFormatException e){return null;}
         if (role == null) return null;
         return getRole(role);
     }
-    static Role getRole(IRole guild){
-        return MAP.computeIfAbsent(guild.getID(), s -> new Role(guild));
+    static Role getRole(IRole role){
+        return MAP.computeIfAbsent(role.getID(), s -> new Role(role));
     }
     public static List<Role> getRoles(List<IRole> iRoles) {
         List<Role> roles = new ArrayList<>(iRoles.size());
@@ -43,7 +43,7 @@ public class Role implements Configurable{
     private transient final AtomicReference<IRole> reference;
     private String ID;
     public Role() {
-        this.reference = new AtomicReference<>(DiscordClient.client().getRoleByID(ID));
+        this.reference = new AtomicReference<>(DiscordClient.getAny(client -> client.getRoleByID(ID)));
     }
     private Role(IRole guild) {
         this.reference = new AtomicReference<>(guild);

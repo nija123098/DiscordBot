@@ -3,6 +3,7 @@ package com.github.kaaz.emily.information;
 import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
+import com.github.kaaz.emily.util.Care;
 
 /**
  * @author Soarnir
@@ -30,11 +31,7 @@ public class PingFancyCommand extends AbstractCommand {
             sum += lastResult;
             min = Math.min(min, lastResult);
             max = Math.max(max, lastResult);
-            try {
-                Thread.sleep(1_100L);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            Care.lessSleep(1_100L);
             start = System.currentTimeMillis();
         }
         maker.appendRaw("Average ping is: " + (int)Math.ceil(sum/5f) + "ms (min: " + min + "ms, max: " + max + "ms)");

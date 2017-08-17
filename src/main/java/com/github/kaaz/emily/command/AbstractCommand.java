@@ -431,7 +431,6 @@ public class AbstractCommand {
             Log.log("Malformed command: " + getName(), e);
         } catch (InvocationTargetException e) {
             if (e.getCause() instanceof BotException) {
-                e.printStackTrace();
                 ((BotException) e.getCause()).makeMessage(message.getChannel()).send();
                 if (reaction != null) message.addReactionByName(CommandHandler.EXCEPTION_FOR_METHOD);
             }

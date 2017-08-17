@@ -4,10 +4,7 @@ import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.ModuleLevel;
 import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
-import com.github.kaaz.emily.util.FormatHelper;
-import com.github.kaaz.emily.util.Rand;
-import com.github.kaaz.emily.util.StringIterator;
-import com.github.kaaz.emily.util.TwitterHelper;
+import com.github.kaaz.emily.util.*;
 import com.google.common.base.Joiner;
 import javafx.util.Pair;
 import twitter4j.Paging;
@@ -36,7 +33,7 @@ public class TLDRCommand extends AbstractCommand {
                 if (list.size() != 200) break;
                 statuses.addAll(list);
             } catch (TwitterException e) {
-                e.printStackTrace();
+                Log.log("Eexception from Twitter", e);
             }
         }
         statuses.removeIf(status -> status.getText().startsWith("RT "));

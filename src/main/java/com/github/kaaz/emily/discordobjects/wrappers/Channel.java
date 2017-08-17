@@ -8,6 +8,7 @@ import com.github.kaaz.emily.exeption.ConfigurableConvertException;
 import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
 import com.github.kaaz.emily.util.FormatHelper;
+import com.github.kaaz.emily.util.GetterUtil;
 import com.github.kaaz.emily.util.Time;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IPrivateChannel;
@@ -25,8 +26,9 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Channel implements Configurable {
     private static final Map<String, Channel> MAP = new MemoryManagementService.ManagedMap<>(180000);
     public static Channel getChannel(String id){
+        String r = FormatHelper.filtering(id, Character::isDigit);
         try {
-            return getChannel(DiscordClient.client().getChannelByID(FormatHelper.filtering(id, Character::isDigit)));
+            return getChannel((IChannel) GetterUtil.getAny(DiscordClient.clients(), f -> f.getChannelByID(r)));
         } catch (NumberFormatException e) {
             return null;
         }
@@ -49,7 +51,7 @@ public class Channel implements Configurable {
     final transient AtomicReference<IChannel> reference;
     private String ID;
     protected Channel() {
-        this.reference = new AtomicReference<>(DiscordClient.client().getChannelByID(ID));
+        this.reference = new AtomicReference<>(DiscordClient.getAny(client -> client.getChannelByID(ID)));
     }
     Channel(IChannel channel) {
         this.reference = new AtomicReference<>(channel);

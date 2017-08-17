@@ -53,7 +53,6 @@ public class MemeCommand extends AbstractCommand {
             ImageIO.write(image, "png", memeFile);
             maker.withFile(memeFile);
         } catch (IOException | ExecutionException | InterruptedException e) {
-            e.printStackTrace();
             throw new DevelopmentException("Our meme service is having trouble right now", e);
         }
     }

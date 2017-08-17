@@ -5,6 +5,7 @@ import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.launcher.BotConfig;
 import com.github.kaaz.emily.util.FormatHelper;
+import com.github.kaaz.emily.util.Log;
 import org.eclipse.jetty.util.ConcurrentHashSet;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -38,6 +39,7 @@ public class MemeTypesCommand extends AbstractCommand {
                     for (Element fml : fmls) MEME_TYPES.add(fml.val().toLowerCase());
                 }
             }
-        } catch (IOException e) {e.printStackTrace();}
+        } catch (IOException e) {
+            Log.log("Exception loading meme types", e);}
     }
 }

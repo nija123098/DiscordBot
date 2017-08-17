@@ -9,6 +9,7 @@ import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.launcher.BotConfig;
 import com.github.kaaz.emily.util.EmoticonHelper;
 import com.github.kaaz.emily.util.FormatHelper;
+import com.github.kaaz.emily.util.Log;
 import com.google.api.client.repackaged.com.google.common.base.Joiner;
 import net.rithms.riot.api.ApiConfig;
 import net.rithms.riot.api.RiotApi;
@@ -96,7 +97,7 @@ public class LoLChampCommand extends AbstractCommand {
             maker.append(description);
         } catch (RiotApiException e) {
             maker.getHeader().clear().append("I can't do that right now");
-            e.printStackTrace();
+            Log.log("Exception loading Riot information", e);
         }
     }
 }
