@@ -97,7 +97,7 @@ public class InvocationObjectGetter {
             boolean isMention = args.startsWith("<#");
             String arg = args.split(" ")[0].replace("<#", "").replace(">", "");
             int length = (isMention ? 3 : 0) + arg.length();
-            Channel target = DiscordClient.getChannelByID(arg);
+            Channel target = Channel.getChannel(arg);
             if (target != null){
                 return new Pair<>(target, length);
             }
