@@ -61,8 +61,6 @@ public class AbstractConfig<V, T extends Configurable> {
         });
     }
 
-    protected void onLoad(){}
-
     /**
      * A standard getter
      *

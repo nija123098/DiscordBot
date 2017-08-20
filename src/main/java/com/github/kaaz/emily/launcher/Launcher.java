@@ -10,6 +10,7 @@ import com.github.kaaz.emily.service.services.ScheduleService;
 import com.github.kaaz.emily.template.TemplateHandler;
 import com.github.kaaz.emily.util.Care;
 import com.github.kaaz.emily.util.Log;
+import com.github.kaaz.emily.util.ThreadProvider;
 import com.wezinkhof.configuration.ConfigurationBuilder;
 
 import java.io.File;
@@ -23,6 +24,7 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class Launcher {
     private static final Set<Runnable> STARTUPS = new HashSet<>();
+    private static final Set<Runnable> ASYNC_STARTUPS = new HashSet<>();
     private static final Set<Runnable> SHUTDOWNS = new HashSet<>();
     private static final AtomicBoolean IS_READY = new AtomicBoolean();
     private static final AtomicReference<ScheduleService.ScheduledTask> SHUTDOWN_TASK = new AtomicReference<>();
@@ -33,19 +35,12 @@ public class Launcher {
             Log.log("Failed to initialize configuration", e);
             System.exit(-1);
         }
-        TemplateHandler.initialize();
-        InvocationObjectGetter.initialize();
-        ConfigHandler.initialize();
-        ServiceHandler.initialize();
-        CommandHandler.initialize();
-        DiscordAdapter.initialize();
-        STARTUPS.forEach(Runnable::run);
-        IS_READY.set(true);
-        DiscordClient.online("with users!");
-        Log.log("Bot finished initializing");
     }
     public static void registerStartup(Runnable runnable){
         STARTUPS.add(runnable);
+    }
+    public static void registerAsyncStartup(Runnable runnable){
+        ASYNC_STARTUPS.add(runnable);
     }
     public static void registerShutdown(Runnable runnable){
         SHUTDOWNS.add(runnable);
@@ -73,6 +68,16 @@ public class Launcher {
         }
     }
     public static void main(String[] args) {
-
+        TemplateHandler.initialize();
+        InvocationObjectGetter.initialize();
+        ConfigHandler.initialize();
+        ServiceHandler.initialize();
+        CommandHandler.initialize();
+        DiscordAdapter.initialize();
+        STARTUPS.forEach(Runnable::run);
+        ASYNC_STARTUPS.forEach(ThreadProvider::sub);
+        IS_READY.set(true);
+        DiscordClient.online("with users!");
+        Log.log("Bot finished initializing");
     }
 }

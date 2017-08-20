@@ -4,6 +4,7 @@ import com.github.kaaz.emily.audio.SpeechParser;
 import com.github.kaaz.emily.automoderation.messagefiltering.MessageMonitor;
 import com.github.kaaz.emily.chatbot.ChatBot;
 import com.github.kaaz.emily.command.CommandHandler;
+import com.github.kaaz.emily.discordobjects.exception.ErrorWrapper;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.discordobjects.helpers.ReactionBehavior;
 import com.github.kaaz.emily.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
@@ -48,6 +49,7 @@ import sx.blah.discord.handle.impl.events.shard.ShardReadyEvent;
 import sx.blah.discord.handle.impl.events.user.UserUpdateEvent;
 import sx.blah.discord.handle.impl.obj.ReactionEmoji;
 import sx.blah.discord.handle.obj.IMessage;
+import sx.blah.discord.handle.obj.Permissions;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -75,7 +77,7 @@ public class DiscordAdapter {
         ClientBuilder builder = new ClientBuilder();
         builder.withToken(BotConfig.BOT_TOKEN);
         builder.setMaxMessageCacheCount(0);
-        builder.withMaximumDispatchThreads(16);
+        builder.withMaximumDispatchThreads(8);
         builder.registerListener((IListener<ShardReadyEvent>) event -> event.getShard().idle("with the login screen!"));
         int total = Requests.GENERAL_REQUESTS.GET.makeRequest(DiscordEndpoints.GATEWAY + "/bot", GatewayBotResponse.class, new BasicNameValuePair("Authorization", "Bot " + BotConfig.BOT_TOKEN), new BasicNameValuePair("Content-Type", "application/json")).shards;
         List<Integer> list = new ArrayList<>(total);
@@ -164,7 +166,8 @@ public class DiscordAdapter {
     @EventSubscriber
     public static void handle(MentionEvent event){
         ScheduleService.schedule(5 * event.getMessage().getShard().getResponseTime(), () -> {
-            if (MENTIONED_MESSAGES.contains(event.getMessage())) event.getMessage().addReaction(ReactionEmoji.of(EmoticonHelper.getChars("eyes", false)));
+            if (!event.getChannel().getModifiedPermissions(DiscordClient.getOurUser().user()).contains(Permissions.ADD_REACTIONS)) return;
+            if (MENTIONED_MESSAGES.contains(event.getMessage())) ErrorWrapper.wrap(() -> event.getMessage().addReaction(ReactionEmoji.of(EmoticonHelper.getChars("eyes", false))));
         });
     }
     @EventSubscriber
@@ -189,11 +192,11 @@ public class DiscordAdapter {
     public static void handle(Event event){
         if (BOT_LAG_LOCKED.get()) return;
         Constructor<? extends BotEvent> constructor = USED_EVENT_MAP.get(event.getClass());
-        if (constructor != null) {
+        if (constructor != null) {/*
             try{EventDistributor.distribute(constructor.newInstance(event));
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
                 throw new RuntimeException("Improperly built BotEvent constructor", e);
-            }
+            }*/
         }
     }
 }

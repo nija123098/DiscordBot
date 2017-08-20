@@ -2,7 +2,10 @@ package com.github.kaaz.emily.helping.todolist;
 
 import com.github.kaaz.emily.config.AbstractConfig;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
+import com.github.kaaz.emily.launcher.Launcher;
 import com.github.kaaz.emily.perms.BotRole;
+import com.github.kaaz.emily.service.services.ScheduleService;
+import com.github.kaaz.emily.util.ThreadProvider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,12 +15,10 @@ import java.util.List;
  */
 public class TodoListConfig extends AbstractConfig<List<TodoItem>, User> {
     public TodoListConfig() {
-        super("todo_list", BotRole.USER, new ArrayList<>(1), "The list of todo items for a user");
+        super("todo_list", BotRole.USER, new ArrayList<>(0), "The list of todo items for a user");
+        Launcher.registerAsyncStartup(() -> {
+            long current = System.currentTimeMillis();
+            this.getNonDefaultSettings().forEach((user, todoItems) -> todoItems.forEach(todoItem -> TodoListCommand.remind(todoItem.getScheduledTime() - current, user, todoItem)));
+        });
     }
-    @Override
-    protected void onLoad() {
-        long current = System.currentTimeMillis();
-        this.getNonDefaultSettings().forEach((user, todoItems) -> todoItems.forEach(todoItem -> TodoListCommand.remind(todoItem.getScheduledTime() - current, user, todoItem)));
-    }
-
 }

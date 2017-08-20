@@ -126,6 +126,10 @@ public class Guild implements Configurable {
         return User.getUsers(guild().getUsers());
     }
 
+    public int getUserSize(){
+        return guild().getUsers().size();
+    }
+
     public User getUserByID(String s) {
         return User.getUser(s);
     }

@@ -77,7 +77,7 @@ public class CommandHandler {
             EXACT_COMMAND_MAP.put(s, command);
         }));
         EventDistributor.register(CommandHandler.class);
-        Launcher.registerStartup(() -> {
+        Launcher.registerAsyncStartup(() -> {
             MENTION.set(DiscordClient.getOurUser().mention(false));
             MENTION_NICK.set(DiscordClient.getOurUser().mention(true));
         });

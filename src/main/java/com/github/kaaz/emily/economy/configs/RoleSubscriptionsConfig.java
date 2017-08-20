@@ -4,8 +4,10 @@ import com.github.kaaz.emily.config.AbstractConfig;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.GuildUser;
 import com.github.kaaz.emily.discordobjects.wrappers.Role;
+import com.github.kaaz.emily.launcher.Launcher;
 import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.service.services.ScheduleService;
+import com.github.kaaz.emily.util.ThreadProvider;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,11 +18,10 @@ import java.util.Map;
 public class RoleSubscriptionsConfig extends AbstractConfig<Map<Role, Long>, GuildUser> {
     public RoleSubscriptionsConfig() {
         super("role_subscriptions", BotRole.GUILD_TRUSTEE, new HashMap<>(), "The subscriptions for subscribed roles for a guild user.");
-    }
-    @Override
-    protected void onLoad(){
-        long current = System.currentTimeMillis();
-        this.getNonDefaultSettings().forEach((guildUser, map) -> map.forEach((role, expiration) -> scheduleRemoval(expiration - current, guildUser, role)));
+        Launcher.registerAsyncStartup(() -> {
+            long current = System.currentTimeMillis();
+            this.getNonDefaultSettings().forEach((guildUser, map) -> map.forEach((role, expiration) -> scheduleRemoval(expiration - current, guildUser, role)));
+        });
     }
     public static void scheduleRemoval(long delay, GuildUser guildUser, Role role){
         ScheduleService.schedule(delay, () -> {

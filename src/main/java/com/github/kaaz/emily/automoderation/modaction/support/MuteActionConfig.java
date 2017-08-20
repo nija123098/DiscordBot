@@ -5,8 +5,10 @@ import com.github.kaaz.emily.config.AbstractConfig;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.GuildUser;
 import com.github.kaaz.emily.discordobjects.wrappers.Role;
+import com.github.kaaz.emily.launcher.Launcher;
 import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.service.services.ScheduleService;
+import com.github.kaaz.emily.util.ThreadProvider;
 import javafx.util.Pair;
 
 import java.util.Set;
@@ -17,12 +19,9 @@ import java.util.Set;
 public class MuteActionConfig extends AbstractConfig<Pair<Long, Set<Role>>, GuildUser> {
     public MuteActionConfig() {
         super("temp_bans", BotRole.GUILD_TRUSTEE, null, "The temp bans and time they are unbanned");
-    }
-    @Override
-    protected void onLoad(){
-        ConfigHandler.getNonDefaultSettings(MuteActionConfig.class).forEach((guildUser, pair) -> ScheduleService.schedule(pair.getKey(), () -> {
+        Launcher.registerAsyncStartup(() -> ConfigHandler.getNonDefaultSettings(MuteActionConfig.class).forEach((guildUser, pair) -> ScheduleService.schedule(pair.getKey(), () -> {
             if (!(pair.getKey() - 10_000 < System.currentTimeMillis())) return;
             MuteModActionCommand.unmute(guildUser.getGuild(), guildUser.getUser());
-        }));
+        })));
     }
 }

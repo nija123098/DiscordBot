@@ -12,10 +12,7 @@ public class BannedTrackConfig extends AbstractConfig<Boolean, Track> {
     private static BannedTrackConfig CONFIG;
     public BannedTrackConfig() {
         super("banned_track", BotRole.BOT_ADMIN, false, "If the track is banned from being played on the global playlist");
-    }
-    @Override
-    protected void onLoad() {
-        CONFIG = ConfigHandler.getConfig(BannedTrackConfig.class);
+        CONFIG = this;
     }
     public static void ban(Track track){
         CONFIG.setValue(track, true);

@@ -74,4 +74,6 @@ public class BotConfig {
     public static Integer TOTAL_EMILYS = 1;
     @ConfigurationOption
     public static Integer EMILY_NUMBER = 0;
+    @ConfigurationOption
+    public static Integer MESSAGE_FILTERING_SERVER_SIZE = 150;
 }
