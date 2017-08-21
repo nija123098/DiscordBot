@@ -21,9 +21,15 @@ public class RollCallCommand extends AbstractCommand {
     }
     @Command
     public void command(VoiceChannel channel, MessageMaker maker, Guild guild){
-        Care.lessSleep(10_000);
-        List<String> list = channel.getConnectedUsers().stream().filter(user -> ConfigHandler.getSetting(SelfMarkedAwayConfig.class, user)).map(user -> user.getDisplayName(guild)).collect(Collectors.toList());
-        if (list.isEmpty()) maker.append("Everyone is present.");
-        else maker.appendRaw(FormatHelper.getList(list) + " are currently absent");
+        List<String> list = null;
+        for (int i = 0; i < 5; i++) {
+            list = channel.getConnectedUsers().stream().filter(user -> ConfigHandler.getSetting(SelfMarkedAwayConfig.class, user)).map(user -> user.getDisplayName(guild)).collect(Collectors.toList());
+            if (list.isEmpty()) {
+                maker.append("Everyone is present.");
+                return;
+            }
+            Care.lessSleep(2000);
+        }
+        maker.appendRaw(FormatHelper.getList(list) + " are currently absent");
     }
 }

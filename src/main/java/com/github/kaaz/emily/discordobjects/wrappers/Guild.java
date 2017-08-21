@@ -71,6 +71,11 @@ public class Guild implements Configurable {
         return guild().getStringID().intern();
     }
 
+    @Override
+    public boolean shouldCashe() {
+        return false;
+    }
+
     public void checkPermissionToEdit(User user, Guild guild){
         BotRole.GUILD_TRUSTEE.checkRequiredRole(user, guild);
     }

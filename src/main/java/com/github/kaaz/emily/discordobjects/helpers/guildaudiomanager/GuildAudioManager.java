@@ -18,7 +18,6 @@ import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordVoiceLe
 import com.github.kaaz.emily.exeption.ArgumentException;
 import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.exeption.GhostException;
-import com.github.kaaz.emily.favor.configs.derivation.ListenedCountConfig;
 import com.github.kaaz.emily.launcher.BotConfig;
 import com.github.kaaz.emily.launcher.Launcher;
 import com.github.kaaz.emily.perms.BotRole;
@@ -107,7 +106,7 @@ public class GuildAudioManager extends AudioEventAdapter{
     private final List<LangString> interups = new CopyOnWriteArrayList<>();
     private Track current, paused, next;
     private long pausePosition, lastSkip;
-    private boolean leaveAfterThis, loop, leaving;
+    private boolean leaveAfterThis, loop, leaving, skipped;
     private GuildAudioManager(VoiceChannel channel) {
         this.channel = channel;
         this.lavaPlayer = PLAYER_MANAGER.createPlayer();
@@ -167,6 +166,7 @@ public class GuildAudioManager extends AudioEventAdapter{
         ConfigHandler.setSetting(QueueTrackOnlyConfig.class, this.channel.getGuild(), on);
     }
     private void start(Track track, int position){
+        this.skipped = false;
         this.current = track;
         this.skipSet.clear();
         this.lavaPlayer.setPaused(true);
@@ -184,11 +184,12 @@ public class GuildAudioManager extends AudioEventAdapter{
         int size = this.queue.size() - 1;
         this.loop = false;
         this.lavaPlayer.stopTrack();
+        this.skipped = true;
         return size;
     }
     public void onFinish(){
         if (this.current == null) return;
-        ConfigHandler.changeSetting(ListenedCountConfig.class, this.current, integer -> integer + validListeners(this.channel));
+        if (!this.skipped) ConfigHandler.changeSetting(PlayCountConfig.class, this.current, integer -> integer + validListeners(this.channel));
         if (!this.interups.isEmpty()) {
             this.start(new SpeechTrack(this.interups.remove(0), MessageMaker.getLang(null, this.channel)), 0);
             return;

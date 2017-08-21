@@ -70,6 +70,11 @@ public class Channel implements Configurable {
     }
 
     @Override
+    public boolean shouldCashe() {
+        return false;
+    }
+
+    @Override
     public Configurable getGoverningObject(){
         return isPrivate() ? GlobalConfigurable.GLOBAL : this.getGuild();
     }

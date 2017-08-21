@@ -13,6 +13,7 @@ import com.google.common.util.concurrent.AtomicDouble;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -28,11 +29,14 @@ public class FakeDangerFilter implements MessageFilter {
     static {
         Map<String, Double> map = new HashMap<>();
         try {
-            Files.readAllLines(Paths.get(BotConfig.FAKE_DANGER_PATH)).forEach(s -> {
-                if (s.isEmpty()) return;
-                String[] split = s.split(" ");
-                map.put(Joiner.on(' ').join(Arrays.copyOfRange(split, 1, split.length)), Double.parseDouble(split[0]));
-            });
+            Path path = Paths.get(BotConfig.FAKE_DANGER_PATH);
+            if (path.toFile().exists()){
+                Files.readAllLines(path).forEach(s -> {
+                    if (s.isEmpty()) return;
+                    String[] split = s.split(" ");
+                    map.put(Joiner.on(' ').join(Arrays.copyOfRange(split, 1, split.length)), Double.parseDouble(split[0]));
+                });
+            }
         } catch (IOException e) {
             Log.log("Unable to load fake danger file", e);
         }

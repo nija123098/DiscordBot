@@ -2,10 +2,7 @@ package com.github.kaaz.emily.util;
 
 import org.eclipse.jetty.util.ConcurrentHashSet;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Made by nija123098 on 5/15/2017.
@@ -23,7 +20,7 @@ public class ReflectionHelper {
             Collections.addAll(classes, lowest.getInterfaces());
             classes.forEach(aClass -> classes.addAll(getAssignableTypes(aClass)));
             classes.add(lowest);
-            return classes;
+            return new HashSet<>(classes);
         });
     }
 }

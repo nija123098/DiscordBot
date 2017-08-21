@@ -52,6 +52,10 @@ public interface Configurable {
         return GlobalConfigurable.GLOBAL;
     }
 
+    default boolean shouldCashe(){
+        return false;
+    }
+
     default <T extends Configurable> Configurable convert(Class<T> t){
         if (t.equals(this.getClass())) return this;
         throw new ArgumentException("This configurable can not be morphed into that type of configurable: " + t.getName());

@@ -11,6 +11,7 @@ import com.github.kaaz.emily.launcher.Reference;
 import com.github.kaaz.emily.util.Log;
 import org.reflections.Reflections;
 
+import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
@@ -35,6 +36,7 @@ public class ConfigHandler {
         ConfigLevel.load();
         Database.init();
         Set<Class<? extends AbstractConfig>> classes = new Reflections(Reference.BASE_PACKAGE).getSubTypesOf(AbstractConfig.class);
+        classes.removeIf(clazz -> Modifier.isAbstract(clazz.getModifiers()));
         CLASS_MAP = new HashMap<>(classes.size() + 2, 1);
         STRING_MAP = new HashMap<>(classes.size() + 2, 1);
         classes.forEach(clazz -> {

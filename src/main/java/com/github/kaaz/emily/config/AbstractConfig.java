@@ -6,7 +6,10 @@ import com.github.kaaz.emily.discordobjects.wrappers.VoiceChannel;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
 import com.github.kaaz.emily.exeption.ArgumentException;
 import com.github.kaaz.emily.exeption.DevelopmentException;
+import com.github.kaaz.emily.launcher.Launcher;
 import com.github.kaaz.emily.perms.BotRole;
+import com.github.kaaz.emily.service.services.ScheduleService;
+import com.github.kaaz.emily.util.Care;
 import com.github.kaaz.emily.util.Log;
 
 import java.lang.reflect.Type;
@@ -33,7 +36,7 @@ public class AbstractConfig<V, T extends Configurable> {
     private final ConfigLevel configLevel;
     private final Class<V> valueType;
     private final boolean normalViewing;
-    private final Map<Configurable, V> valueMap = new ConcurrentHashMap<>();
+    private final Map<T, V> cashe;
     public AbstractConfig(String name, BotRole botRole, V defaul, String description) {
         this(name, botRole, description, v -> defaul);
     }
@@ -47,6 +50,11 @@ public class AbstractConfig<V, T extends Configurable> {
         if (!ObjectCloner.supports(this.valueType)) throw new DevelopmentException("Cloner does not support type: " + this.valueType.getName());
         this.normalViewing = TypeChanger.normalStorage(this.valueType);
         this.configLevel = ConfigLevel.getLevel((Class<T>) types[1]);
+        if (this.configLevel.mayCashe()){
+            this.cashe = new ConcurrentHashMap<>();
+            Launcher.registerShutdown(this::saveCashed);
+            ScheduleService.scheduleRepeat(600_000, 600_000, this::saveCashed);
+        }else this.cashe = null;
         EventDistributor.register(this);
         this.configLevel.getAssignable().forEach(level -> {
             try (ResultSet rs = Database.getConnection().getMetaData().getTables(null, null, this.getNameForType(level), null)) {
@@ -54,10 +62,17 @@ public class AbstractConfig<V, T extends Configurable> {
                     String tName = rs.getString("TABLE_NAME");
                     if (tName != null && tName.equals(this.getNameForType(level))) return;
                 }// make
-                Database.query("CREATE TABLE `" + this.getNameForType(level) + "` (id VARCHAR(150), value TEXT, millis BIGINT)");
+                Database.query("CREATE TABLE `" + this.getNameForType(level) + "` (id TINYTEXT, value TEXT, millis BIGINT)");
             } catch (SQLException e) {
                 throw new DevelopmentException("Could not ensure table existence", e);
             }
+        });
+    }
+
+    private void saveCashed(){// make slowly change, not all at once unless shutting down
+        this.cashe.forEach((t, integer) -> {
+            Care.lessSleep(50);
+            this.setValue(t, this.cashe.remove(t));
         });
     }
 
@@ -147,13 +162,16 @@ public class AbstractConfig<V, T extends Configurable> {
     protected void validateInput(T configurable, V v) {}
     public V setValue(T configurable, V value){
         validateInput(configurable, value);
+        if (this.cashe == null) saveValue(configurable, value);
+        else this.cashe.put(configurable, value);
+        return value;
+    }
+    private V saveValue(T configurable, V value){
         if (this.checkDefault() && Objects.equals(value, this.getDefault(configurable))) {
             Database.query("DELETE FROM " + this.getNameForType(configurable.getConfigLevel()) + " WHERE id = " + Database.quote(configurable.getID()));
-            this.valueMap.put(configurable, this.getDefault(configurable));
         }else {
             Database.query("DELETE FROM " + this.getNameForType(configurable.getConfigLevel()) + " WHERE id = " + Database.quote(configurable.getID()));
             Database.insert("INSERT INTO " + this.getNameForType(configurable.getConfigLevel()) + " (`id`, `value`, `millis`) VALUES ('" + configurable.getID() + "','" + TypeChanger.toString(this.valueType, value) + "','" + System.currentTimeMillis() + "');");
-            this.valueMap.put(configurable, value);
         }
         return value;
     }
@@ -166,14 +184,18 @@ public class AbstractConfig<V, T extends Configurable> {
      * @return the config's value
      */
     public V getValue(T configurable){// slq here as well
-        return this.valueMap.computeIfAbsent(configurable, c -> Database.select("SELECT * FROM " + this.getNameForType(c.getConfigLevel()) + " WHERE id = " + Database.quote(c.getID()), set -> {
+        if (this.cashe != null) return this.cashe.computeIfAbsent(configurable, this::grabValue);
+        return grabValue(configurable);
+    }
+    private V grabValue(T configurable){
+        return Database.select("SELECT * FROM " + this.getNameForType(configurable.getConfigLevel()) + " WHERE id = " + Database.quote(configurable.getID()), set -> {
             try{set.next();
                 return TypeChanger.toObject(this.valueType, set.getString(2));
             } catch (SQLException e) {
                 if (!e.getMessage().equals("Current position is after the last row")) Log.log("Error while getting value", e);
                 return this.getDefault(configurable);
             }
-        }));
+        });
     }
 
     /**
