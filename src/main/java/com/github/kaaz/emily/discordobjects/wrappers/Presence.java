@@ -13,6 +13,7 @@ import java.util.Optional;
 public class Presence {
     private static final Map<IPresence, Presence> MAP = new MemoryManagementService.ManagedMap<>(60000);
     public static Presence getPresence(IPresence presence){
+        if (presence == null) return null;
         return MAP.computeIfAbsent(presence, p -> new Presence(presence));
     }
     private IPresence iPresence;
@@ -32,7 +33,7 @@ public class Presence {
 
     @Override
     public int hashCode() {
-        return iPresence != null ? iPresence.hashCode() : 0;
+        return this.iPresence.getPlayingText().isPresent() ? this.iPresence.getPlayingText().get().hashCode() : 0;
     }
 
     public Optional<String> getOptionalPlayingText() {

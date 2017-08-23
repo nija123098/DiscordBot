@@ -77,7 +77,7 @@ public class DiscordAdapter {
         ClientBuilder builder = new ClientBuilder();
         builder.withToken(BotConfig.BOT_TOKEN);
         builder.setMaxMessageCacheCount(0);
-        builder.withMaximumDispatchThreads(8);
+        builder.withMaximumDispatchThreads(2);
         builder.registerListener((IListener<ShardReadyEvent>) event -> event.getShard().idle("with the login screen!"));
         int total = Requests.GENERAL_REQUESTS.GET.makeRequest(DiscordEndpoints.GATEWAY + "/bot", GatewayBotResponse.class, new BasicNameValuePair("Authorization", "Bot " + BotConfig.BOT_TOKEN), new BasicNameValuePair("Content-Type", "application/json")).shards;
         List<Integer> list = new ArrayList<>(total);
@@ -192,11 +192,11 @@ public class DiscordAdapter {
     public static void handle(Event event){
         if (BOT_LAG_LOCKED.get()) return;
         Constructor<? extends BotEvent> constructor = USED_EVENT_MAP.get(event.getClass());
-        if (constructor != null) {/*
+        if (constructor != null) {
             try{EventDistributor.distribute(constructor.newInstance(event));
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
                 throw new RuntimeException("Improperly built BotEvent constructor", e);
-            }*/
+            }
         }
     }
 }

@@ -16,9 +16,7 @@ import java.util.Map;
 public class Reaction {// should not be saved
     private static final Map<IReaction, Reaction> MAP = new MemoryManagementService.ManagedMap<>(150000);
     public static Reaction getReaction(IReaction iReaction){
-        if (iReaction == null){
-            return null;
-        }
+        if (iReaction == null) return null;
         return MAP.computeIfAbsent(iReaction, r -> new Reaction(iReaction));
     }
     static List<Reaction> getReactions(List<IReaction> reactions){
@@ -45,9 +43,7 @@ public class Reaction {// should not be saved
 
     @Override
     public int hashCode() {
-        int result = reaction != null ? reaction.hashCode() : 0;
-        result = 31 * result + (this.getName() != null ? this.getName().hashCode() : 0);
-        return result;
+        return this.reaction.getMessage().hashCode();
     }
 
     public Message getMessage(){

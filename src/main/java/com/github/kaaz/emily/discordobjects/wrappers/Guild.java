@@ -68,7 +68,7 @@ public class Guild implements Configurable {
     }
     @Override
     public String getID() {
-        return guild().getStringID().intern();
+        return guild().getStringID();
     }
 
     @Override
@@ -95,7 +95,7 @@ public class Guild implements Configurable {
 
     @Override
     public int hashCode() {
-        return this.getID().hashCode();
+        return this.guild().hashCode();
     }
 
     // THE FOLLOWING ARE WRAPPER METHODS

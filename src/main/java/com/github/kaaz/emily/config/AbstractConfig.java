@@ -36,7 +36,7 @@ public class AbstractConfig<V, T extends Configurable> {
     private final ConfigLevel configLevel;
     private final Class<V> valueType;
     private final boolean normalViewing;
-    private final Map<T, V> cashe;
+    private final Map<T, V> cache;
     public AbstractConfig(String name, BotRole botRole, V defaul, String description) {
         this(name, botRole, description, v -> defaul);
     }
@@ -51,10 +51,10 @@ public class AbstractConfig<V, T extends Configurable> {
         this.normalViewing = TypeChanger.normalStorage(this.valueType);
         this.configLevel = ConfigLevel.getLevel((Class<T>) types[1]);
         if (this.configLevel.mayCashe()){
-            this.cashe = new ConcurrentHashMap<>();
+            this.cache = new ConcurrentHashMap<>();
             Launcher.registerShutdown(this::saveCashed);
             ScheduleService.scheduleRepeat(600_000, 600_000, this::saveCashed);
-        }else this.cashe = null;
+        }else this.cache = null;
         EventDistributor.register(this);
         this.configLevel.getAssignable().forEach(level -> {
             try (ResultSet rs = Database.getConnection().getMetaData().getTables(null, null, this.getNameForType(level), null)) {
@@ -70,9 +70,9 @@ public class AbstractConfig<V, T extends Configurable> {
     }
 
     private void saveCashed(){// make slowly change, not all at once unless shutting down
-        this.cashe.forEach((t, integer) -> {
-            Care.lessSleep(50);
-            this.setValue(t, this.cashe.remove(t));
+        this.cache.forEach((t, integer) -> {
+            Care.lessSleep(10);
+            this.saveValue(t, this.cache.remove(t));
         });
     }
 
@@ -162,8 +162,8 @@ public class AbstractConfig<V, T extends Configurable> {
     protected void validateInput(T configurable, V v) {}
     public V setValue(T configurable, V value){
         validateInput(configurable, value);
-        if (this.cashe == null) saveValue(configurable, value);
-        else this.cashe.put(configurable, value);
+        if (this.cache == null) saveValue(configurable, value);
+        else this.cache.put(configurable, value);
         return value;
     }
     private V saveValue(T configurable, V value){
@@ -184,7 +184,7 @@ public class AbstractConfig<V, T extends Configurable> {
      * @return the config's value
      */
     public V getValue(T configurable){// slq here as well
-        if (this.cashe != null) return this.cashe.computeIfAbsent(configurable, this::grabValue);
+        if (this.cache != null) return this.cache.computeIfAbsent(configurable, this::grabValue);
         return grabValue(configurable);
     }
     private V grabValue(T configurable){

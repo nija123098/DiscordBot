@@ -11,15 +11,16 @@ import java.util.function.Supplier;
  * Made by nija123098 on 6/27/2017.
  */
 public class InitBuffer<E> {
+    private final Thread thread;
     private final BlockingQueue<E> buffer;
     public InitBuffer(int bufferSize, Supplier<E> supplier) {
         this.buffer = new ArrayBlockingQueue<>(bufferSize);
-        Thread thread = new Thread(() -> Care.less(() -> {
+        this.thread = new Thread(() -> {
             while (this.buffer.size() < bufferSize) this.buffer.offer(supplier.get());
-            Thread.sleep(1_000);
-        }), "InitBufferThread-" + this.hashCode());
-        thread.setDaemon(true);
-        thread.start();
+            Care.lessSleep(1000);
+        }, "InitBufferThread-" + this.hashCode());
+        this.thread.setDaemon(true);
+        this.thread.start();
     }
     public E get(){
         try{return this.buffer.take();

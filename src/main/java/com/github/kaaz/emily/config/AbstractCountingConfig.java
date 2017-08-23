@@ -8,7 +8,7 @@ import com.github.kaaz.emily.util.Care;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class AbstractCountingConfig<T extends Configurable> extends AbstractConfig<Integer, T> {
+public abstract class AbstractCountingConfig<T extends Configurable> extends AbstractConfig<Integer, T> {
     private Map<T, Integer> add = new ConcurrentHashMap<>();
     private Map<T, Integer> valueBase = new ConcurrentHashMap<>();
     public AbstractCountingConfig(String name, BotRole botRole, String description) {
@@ -18,7 +18,7 @@ public class AbstractCountingConfig<T extends Configurable> extends AbstractConf
     }
     private void save(){
         this.add.forEach((t, integer) -> {
-            Care.lessSleep(50);
+            Care.lessSleep(10);
             super.setValue(t, super.getValue(t) + integer);
             this.add.remove(t);
             this.valueBase.remove(t);

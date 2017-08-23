@@ -24,7 +24,7 @@ public class FileHelper {
         File file;
         try{file = Paths.get(BotConfig.TEMP_PATH, cat, snowflake + "." + end).toFile();
         }catch(Exception e){throw new DevelopmentException("Issue with making new file", e);}
-        file.deleteOnExit();
+        //file.deleteOnExit();
         if (!file.exists()) {
             file.getParentFile().mkdirs();
             try {file.createNewFile();}

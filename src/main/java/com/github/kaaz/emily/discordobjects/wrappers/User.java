@@ -72,7 +72,7 @@ public class User implements Configurable {
 
     @Override
     public int hashCode() {
-        return this.getID().hashCode();
+        return this.user().hashCode();
     }
 
     @Override

@@ -96,7 +96,7 @@ public class Channel implements Configurable {
 
     @Override
     public int hashCode() {
-        return this.getID().hashCode();
+        return this.channel().hashCode();
     }
 
     public Shard getShard() {

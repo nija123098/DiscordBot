@@ -42,7 +42,7 @@ public class Region {
 
     @Override
     public int hashCode() {
-        return this.getID().hashCode();
+        return this.region().hashCode();
     }
 
     public String getName() {

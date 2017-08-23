@@ -90,7 +90,7 @@ public class Role implements Configurable{
 
     @Override
     public int hashCode() {
-        return this.getID().hashCode();
+        return this.role().hashCode();
     }
 
     public List<User> getUsers(){

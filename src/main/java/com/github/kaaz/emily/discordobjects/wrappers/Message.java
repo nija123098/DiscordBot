@@ -57,7 +57,7 @@ public class Message {// should not be kept stored, too many are made
 
     @Override
     public int hashCode() {
-        return this.getID().hashCode();
+        return this.message().hashCode();
     }
 
     public String getContent() {

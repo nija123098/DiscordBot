@@ -11,7 +11,7 @@ import com.github.kaaz.emily.util.FileHelper;
  */
 public class DeleteTempFilesCommand extends AbstractCommand {
     public DeleteTempFilesCommand() {
-        super("dtf", BotRole.BOT_ADMIN, ModuleLevel.DEVELOPMENT, null, null, "Clears temp files");
+        super("deletetempfiles", BotRole.BOT_ADMIN, ModuleLevel.DEVELOPMENT, "dtf", null, "Clears temp files");
     }
     @Command
     public void command(){
