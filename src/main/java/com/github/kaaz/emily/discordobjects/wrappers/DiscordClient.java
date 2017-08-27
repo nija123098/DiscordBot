@@ -15,6 +15,8 @@ public class DiscordClient {
     public static void set(List<IDiscordClient> discordClients){
         clients = discordClients;
         clientMap = new HashMap<>(clients.size() + 1, 1);
+    }
+    public static void load(){
         clients.forEach(client -> clientMap.put(Shard.getShard(client.getShards().get(0)), client));
     }
     public static List<IDiscordClient> clients(){

@@ -50,9 +50,9 @@ public class User implements Configurable {
         this.reference = new AtomicReference<>(DiscordClient.getAny(client -> client.getUserByID(ID)));
     }
     User(IUser user) {
-        this.registerExistence();
         this.reference = new AtomicReference<>(user);
         this.ID = this.reference.get().getStringID();
+        this.registerExistence();
     }
     public IUser user(){
         return reference.get();

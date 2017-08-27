@@ -46,10 +46,10 @@ public class AbstractConfig<V, T extends Configurable> {
         this.defaul = defaul;
         this.description = description;
         Type[] types = TypeChanger.getRawClasses(this.getClass());
-        this.valueType = (Class<V>) types[0];
+        this.valueType = types.length == 1 ? (Class<V>) Integer.class : (Class<V>) types[0];
         if (!ObjectCloner.supports(this.valueType)) throw new DevelopmentException("Cloner does not support type: " + this.valueType.getName());
         this.normalViewing = TypeChanger.normalStorage(this.valueType);
-        this.configLevel = ConfigLevel.getLevel((Class<T>) types[1]);
+        this.configLevel = ConfigLevel.getLevel((Class<T>) types[types.length - 1]);
         if (this.configLevel.mayCashe()){
             this.cache = new ConcurrentHashMap<>();
             Launcher.registerShutdown(this::saveCashed);

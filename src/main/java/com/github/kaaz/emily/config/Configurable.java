@@ -63,6 +63,6 @@ public interface Configurable {
     }
 
     default void registerExistence(){
-        ConfigHandler.setSetting(ConfigurableExistsConfig.class, this, true);
+        Database.bufferCall(() -> ConfigHandler.setSetting(ConfigurableExistsConfig.class, this, true));
     }
 }

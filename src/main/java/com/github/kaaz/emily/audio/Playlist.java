@@ -70,9 +70,9 @@ public class Playlist implements Configurable {
     private String id;
     Playlist() {}
     protected Playlist(String id) {
-        this.registerExistence();
         if (!id.endsWith("pl-ID-")) id = "pl-ID-" + id;
         this.id = id;
+        this.registerExistence();
     }
     @Override
     public String getID() {

@@ -93,6 +93,7 @@ public class DiscordAdapter {
             Log.log("Could not load in time");
             System.exit(-1);
         }
+        DiscordClient.load();
         GuildAudioManager.init();
         SpeechParser.init();
         ContributorMonitor.init();

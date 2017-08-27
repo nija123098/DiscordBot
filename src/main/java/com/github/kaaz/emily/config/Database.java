@@ -2,6 +2,7 @@ package com.github.kaaz.emily.config;
 
 import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.launcher.BotConfig;
+import com.github.kaaz.emily.util.CallBuffer;
 import com.github.kaaz.emily.util.Log;
 import com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource;
 import com.zaxxer.hikari.HikariConfig;
@@ -15,6 +16,7 @@ import java.sql.*;
  * Created by Soarnir on 16/7/17.
  */
 public class Database {
+    private static final CallBuffer CALL_BUFFER = new CallBuffer(25);
     private static final Connection CONNECTION;
     private static final QueryRunner RUNNER;
     static {
@@ -43,6 +45,10 @@ public class Database {
     }
 
     public static void init() {
+    }
+
+    public static void bufferCall(Runnable runnable){
+        CALL_BUFFER.call(runnable);
     }
 
     public static Connection getConnection() {
