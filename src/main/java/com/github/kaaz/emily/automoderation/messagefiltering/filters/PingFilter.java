@@ -2,7 +2,7 @@ package com.github.kaaz.emily.automoderation.messagefiltering.filters;
 
 import com.github.kaaz.emily.automoderation.messagefiltering.MessageFilter;
 import com.github.kaaz.emily.automoderation.messagefiltering.MessageMonitoringException;
-import com.github.kaaz.emily.automoderation.messagefiltering.MessageMonitoringType;
+import com.github.kaaz.emily.automoderation.messagefiltering.MessageMonitoringLevel;
 import com.github.kaaz.emily.config.GuildUser;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordMessageReceived;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
@@ -25,7 +25,7 @@ public class PingFilter implements MessageFilter {
         PINGERS.add(guildUser);
     }
     @Override
-    public MessageMonitoringType getType() {
-        return MessageMonitoringType.EXCESSIVE_PINGING;
+    public MessageMonitoringLevel getType() {
+        return MessageMonitoringLevel.EXCESSIVE_PINGING;
     }
 }

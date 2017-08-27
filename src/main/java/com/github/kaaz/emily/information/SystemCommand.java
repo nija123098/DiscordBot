@@ -19,7 +19,7 @@ public class SystemCommand extends AbstractCommand {
         Runtime runtime = Runtime.getRuntime();
         long memoryLimit = runtime.maxMemory();
         long memoryInUse = runtime.totalMemory() - runtime.freeMemory();
-        maker.append(getProgressbar(memoryInUse, memoryLimit) + " " + " [ " + numberInMb(memoryInUse) + " / " + numberInMb(memoryLimit) + " ]");
+        maker.appendRaw(getProgressbar(memoryInUse, memoryLimit) + " " + " [ " + numberInMb(memoryInUse) + " / " + numberInMb(memoryLimit) + " ]");
     }
     private String getProgressbar(long current, long max) {
         String bar = "";

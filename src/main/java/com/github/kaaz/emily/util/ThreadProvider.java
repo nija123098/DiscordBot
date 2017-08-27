@@ -13,12 +13,12 @@ public class ThreadProvider extends ThreadPoolExecutor {// upgrade?
     private static final ThreadGroup THREAD_GROUP = new ThreadGroup("ThreadProviderGroup");
     private static final ExecutorService EXECUTOR_SERVICE = new ThreadProvider();
     private ThreadProvider() {
-        super(128, 512, 1, TimeUnit.MINUTES, new ArrayBlockingQueue<>(10000), r -> new Thread(THREAD_GROUP, r, THREAD_GROUP.getName() + "-Thread-" + ++count));
+        super(128, 512, 1, TimeUnit.MINUTES, new ArrayBlockingQueue<>(10000), r -> new Thread(THREAD_GROUP, r, THREAD_GROUP.getName() + "-Thread-" + ++count), (r, executor) -> r.run());
     }
     public static ExecutorService getExecutorService() {
         return EXECUTOR_SERVICE;
     }
     public static void sub(Runnable task){
-        EXECUTOR_SERVICE.submit(task);
+        EXECUTOR_SERVICE.execute(task);
     }
 }

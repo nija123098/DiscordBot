@@ -226,7 +226,7 @@ public class CommandHandler {
             }
             if (!command.hasPermission(user, message.getChannel())){
                 if (reaction == null){
-                    new MessageMaker(user, message).append("You do not have permission to use that command.").send();
+                    new MessageMaker(user, message).append("You do not have permission to use that command here.").withDeleteDelay(3_000L).send();
                 }
                 return false;
             }

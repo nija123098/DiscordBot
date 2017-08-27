@@ -54,6 +54,7 @@ public class Channel implements Configurable {
         this.reference = new AtomicReference<>(DiscordClient.getAny(client -> client.getChannelByID(ID)));
     }
     Channel(IChannel channel) {
+        this.registerExistence();
         this.reference = new AtomicReference<>(channel);
         this.ID = channel.getID();
     }

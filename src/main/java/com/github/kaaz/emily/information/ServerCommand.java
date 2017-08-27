@@ -27,6 +27,7 @@ public class ServerCommand extends AbstractCommand {
                 .withThumb(guild.getIconURL()).withColor(guild.getIconURL());
         List<User> users = guild.getUsers();
         addAtrib(maker, "Members", users.stream().filter(user -> user.getPresence().getStatus() != Presence.Status.OFFLINE).count() + " online\n" + users.size() + " total");
+        addAtrib(maker, "Bots", users.stream().filter(User::isBot).count() + "");
         addAtrib(maker, "Channels", guild.getChannels().size() + " text channels\n" + guild.getVoiceChannels().size() + " voice channels");
         addAtrib(maker, "Guild Owner", guild.getOwner().getNameAndDiscrim());
         addAtrib(maker, "Made", Time.getAbbreviated(System.currentTimeMillis() - guild.getCreationDate()) + " ago");
@@ -34,6 +35,8 @@ public class ServerCommand extends AbstractCommand {
         addAtrib(maker, "ID", guild.getID());
     }
     private static void addAtrib(MessageMaker maker, String name, String content){
-        maker.getNewFieldPart().withBoth(name, content);
+        MessageMaker.FieldPart part = maker.getNewFieldPart();
+        part.getTitle().append(name);
+        part.getValue().appendRaw(content);
     }
 }

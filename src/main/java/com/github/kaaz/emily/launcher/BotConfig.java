@@ -41,6 +41,8 @@ public class BotConfig {
     @ConfigurationOption
     public static String FAKE_DANGER_PATH = CONTAINER_PATH + "FakeDangerContents.txt";
     @ConfigurationOption
+    public static String BADGE_PATH = CONTAINER_PATH + "badges\\";
+    @ConfigurationOption
     public static int MUSIC_DOWNLOAD_THREAD_COUNT = 1;
     @ConfigurationOption
     public static String AUDIO_FORMAT = "mp3";

@@ -17,6 +17,7 @@ public class Region {
         return getRegion((IRegion) DiscordClient.getAny(client -> client.getRegionByID(id)));
     }
     static Region getRegion(IRegion region){
+        if (region == null) return null;
         return MAP.computeIfAbsent(region.getID(), s -> new Region(region));
     }
     static List<Region> getRegions(List<IRegion> iRegions){

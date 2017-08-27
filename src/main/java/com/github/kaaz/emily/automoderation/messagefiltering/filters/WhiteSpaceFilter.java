@@ -2,7 +2,7 @@ package com.github.kaaz.emily.automoderation.messagefiltering.filters;
 
 import com.github.kaaz.emily.automoderation.messagefiltering.MessageFilter;
 import com.github.kaaz.emily.automoderation.messagefiltering.MessageMonitoringException;
-import com.github.kaaz.emily.automoderation.messagefiltering.MessageMonitoringType;
+import com.github.kaaz.emily.automoderation.messagefiltering.MessageMonitoringLevel;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordMessageReceived;
 
 import java.util.stream.Stream;
@@ -18,7 +18,7 @@ public class WhiteSpaceFilter implements MessageFilter {
         if (Stream.of(content.split("")).map(s -> s.indexOf(0)).filter(Character::isWhitespace).count() / (float) content.length() >= ALLOWED) throw new MessageMonitoringException("too much white space");
     }
     @Override
-    public MessageMonitoringType getType() {
-        return MessageMonitoringType.WHITE_SPACE;
+    public MessageMonitoringLevel getType() {
+        return MessageMonitoringLevel.WHITE_SPACE;
     }
 }

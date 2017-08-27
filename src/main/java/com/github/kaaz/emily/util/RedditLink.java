@@ -7,7 +7,6 @@ import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
@@ -68,15 +67,10 @@ public class RedditLink {
         if (this.file == null && this.fileType != null){
             StringBuilder builder = new StringBuilder();
             new StringIterator(this.title).forEachRemaining(character -> builder.append(Character.isLetterOrDigit(character) ? character : '_'));
-            try (InputStream in = new URL(this.fileURL).openStream()) {
-                File outputfile = FileHelper.getTempFile("redditimages", this.fileType, builder.toString());
-                outputfile.createNewFile();
-                outputfile.deleteOnExit();
-                IOUtils.copy(in, new FileOutputStream(outputfile));
-                this.file = outputfile;
-            } catch (IOException e) {
-                Log.log("Exception getting Reddit file");
-            }
+            this.file = FileHelper.getTempFile("redditimages", this.fileType, builder.toString(), file -> {
+                InputStream in = new URL(this.fileURL).openStream();
+                IOUtils.copy(in, new FileOutputStream(file));
+            });
         }
         return this.file;
     }

@@ -1,7 +1,7 @@
 package com.github.kaaz.emily.perms;
 
-import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.Role;
+import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventListener;
 import com.github.kaaz.emily.discordobjects.wrappers.event.botevents.DiscordDataReload;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordUserRolesUpdateEvent;
@@ -14,24 +14,28 @@ public class ContributorMonitor {
     private static final Role CONTRIB_SIGN_ROLE = Role.getRole(BotConfig.CONTRIBUTOR_SIGN_ROLE);
     private static final Role SUPPORT_SIGN_ROLE = Role.getRole(BotConfig.SUPPORTER_SIGN_ROLE);
     public static void init(){
-
+        if (CONTRIB_SIGN_ROLE == null) return;// is not the instance serving Emily's Space
+        EventDistributor.register(ContributorMonitor.class);
     }
     @EventListener
     public static void handle(DiscordDataReload reload){
-        Role role = Role.getRole(BotConfig.CONTRIBUTOR_SIGN_ROLE);
-        if (role == null) return;
-        Guild guild = role.getGuild();
-        guild.getUsers().forEach(user -> {
-            if (user.getRolesForGuild(guild).contains(role)) {
-                if (BotRole.SUPPORTER.hasRole(user, null)) BotRole.setRole(BotRole.SUPPORTER, true, user, null);
-            } else if (BotRole.SUPPORTER.hasRole(user, null)) BotRole.setRole(BotRole.SUPPORTER, false, user, null);
+        reload(SUPPORT_SIGN_ROLE, BotRole.SUPPORTER);
+        reload(CONTRIB_SIGN_ROLE, BotRole.CONTRIBUTOR);
+    }
+    private static void reload(Role role, BotRole botRole){
+        role.getGuild().getUsers().forEach(user -> {
+            if (user.getRolesForGuild(role.getGuild()).contains(role)) {
+                if (botRole.hasRole(user, null)) BotRole.setRole(BotRole.SUPPORTER, true, user, null);
+            } else if (botRole.hasRole(user, null)) BotRole.setRole(BotRole.SUPPORTER, false, user, null);
         });
     }
     @EventListener
     public static void handle(DiscordUserRolesUpdateEvent event){
-        if (event.newRoles().contains(CONTRIB_SIGN_ROLE) && !event.oldRoles().contains(CONTRIB_SIGN_ROLE)) BotRole.setRole(BotRole.CONTRIBUTOR, true, event.getUser(), null);
-        else if (!event.newRoles().contains(CONTRIB_SIGN_ROLE) && event.oldRoles().contains(CONTRIB_SIGN_ROLE)) BotRole.setRole(BotRole.CONTRIBUTOR, false, event.getUser(), null);
-        if (event.newRoles().contains(SUPPORT_SIGN_ROLE) && !event.oldRoles().contains(SUPPORT_SIGN_ROLE)) BotRole.setRole(BotRole.SUPPORTER, true, event.getUser(), null);
-        else if (!event.newRoles().contains(SUPPORT_SIGN_ROLE) && event.oldRoles().contains(SUPPORT_SIGN_ROLE)) BotRole.setRole(BotRole.SUPPORTER, false, event.getUser(), null);
+        handle(event, SUPPORT_SIGN_ROLE, BotRole.SUPPORTER);
+        handle(event, CONTRIB_SIGN_ROLE, BotRole.CONTRIBUTOR);
+    }
+    public static void handle(DiscordUserRolesUpdateEvent event, Role role, BotRole botRole){
+        if (event.newRoles().contains(role) && !event.oldRoles().contains(role)) BotRole.setRole(botRole, true, event.getUser(), null);
+        else if (!event.newRoles().contains(role) && event.oldRoles().contains(role)) BotRole.setRole(botRole, false, event.getUser(), null);
     }
 }

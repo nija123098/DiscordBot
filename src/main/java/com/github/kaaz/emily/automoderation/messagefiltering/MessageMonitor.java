@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
  * Made by nija123098 on 7/19/2017.
  */
 public class MessageMonitor {
-    private static final Map<MessageMonitoringType, MessageFilter> ID_FILTER_MAP = new HashMap<>();
+    private static final Map<MessageMonitoringLevel, MessageFilter> ID_FILTER_MAP = new HashMap<>();
     private static final Map<Channel, Set<MessageFilter>> CHANNEL_MAP = new HashMap<>();
     static {
         new Reflections(Reference.BASE_PACKAGE).getSubTypesOf(MessageFilter.class).stream().filter(aClass -> !aClass.getSimpleName().isEmpty()).forEach(clazz -> {
@@ -40,7 +40,7 @@ public class MessageMonitor {
             Path path = Paths.get(BotConfig.LANGUAGE_FILTERING_PATH);
             if (Files.exists(path)) {
                 Files.readAllLines(path).forEach(s -> {
-                    MessageMonitoringType type = MessageMonitoringType.valueOf(s.split(" ")[0].toUpperCase());
+                    MessageMonitoringLevel type = MessageMonitoringLevel.valueOf(s.split(" ")[0].toUpperCase());
                     Consumer<String> policy = s1 -> {throw new MessageMonitoringException("banned phrase: " + s1);};
                     ID_FILTER_MAP.put(type, new MessageFilter() {
                         @Override
@@ -48,7 +48,7 @@ public class MessageMonitor {
                             StringChecker.checkoutString(FormatHelper.filtering(event.getMessage().getContent(), Character::isLetterOrDigit).toLowerCase(), Arrays.asList(s.substring(type.name().length(), s.length()).split(",")), policy);
                         }
                         @Override
-                        public MessageMonitoringType getType() {return type;}
+                        public MessageMonitoringLevel getType() {return type;}
                     });
                 });
             }
@@ -70,7 +70,7 @@ public class MessageMonitor {
         CHANNEL_MAP.put(channel, calculate(channel));
     }
     private static Set<MessageFilter> calculate(Channel channel){
-        Set<MessageMonitoringType> strings = ConfigHandler.getSetting(MessageMonitoringConfig.class, channel.getGuild());
+        Set<MessageMonitoringLevel> strings = ConfigHandler.getSetting(MessageMonitoringConfig.class, channel.getGuild());
         strings.addAll(ConfigHandler.getSetting(MessageMonitoringAdditionsConfig.class, channel));
         strings.removeAll(ConfigHandler.getSetting(MessageMonitoringExceptionsConfig.class, channel));
         return strings.stream().filter(strings::contains).map(ID_FILTER_MAP::get).filter(Objects::nonNull).collect(Collectors.toSet());

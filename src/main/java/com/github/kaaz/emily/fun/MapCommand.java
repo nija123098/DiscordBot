@@ -27,7 +27,7 @@ import java.util.List;
  * Made by nija123098 on 6/6/2017.
  */
 public class MapCommand extends AbstractCommand {
-    private static final int DOT_SIZE = 3;
+    private static final int DOT_SIZE = 2;
     private static final File FILE = FileHelper.getTempFile("map", "png", "map");
     public MapCommand() {
         super("map", ModuleLevel.FUN, null, null, "Displays a map of Emily's server distribution");
@@ -70,7 +70,7 @@ public class MapCommand extends AbstractCommand {
     private enum ColorAria {// AF -76498
         NA(-16724992, "US Central", "US East", "US West", "US South"),
         SA(-16744448, "Brazil"),
-        EU(-4128768, "Central Europe", "Western Europe"),
+        EU(-4128768, "Central Europe", "Western Europe", "Amsterdam", "London", "Frankfurt"),
         RU(-11231522, "Russia"),
         EMA(-836095, "Hong Kong"),
         SEA(-5220838, "Singapore"),

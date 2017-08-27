@@ -45,9 +45,10 @@ public class Role implements Configurable{
     public Role() {
         this.reference = new AtomicReference<>(DiscordClient.getAny(client -> client.getRoleByID(ID)));
     }
-    private Role(IRole guild) {
-        this.reference = new AtomicReference<>(guild);
-        this.ID = guild.getID();
+    private Role(IRole role) {
+        this.registerExistence();
+        this.reference = new AtomicReference<>(role);
+        this.ID = role.getID();
     }
     IRole role(){
         return this.reference.get();

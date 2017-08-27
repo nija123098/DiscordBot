@@ -1,8 +1,10 @@
 package com.github.kaaz.emily.discordobjects.wrappers;
 
+import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.ConfigLevel;
 import com.github.kaaz.emily.config.Configurable;
 import com.github.kaaz.emily.discordobjects.exception.ErrorWrapper;
+import com.github.kaaz.emily.economy.configs.LastCookieUseConfig;
 import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
 import com.github.kaaz.emily.service.services.ScheduleService;
@@ -44,15 +46,16 @@ public class User implements Configurable {
     }
     private transient final AtomicReference<IUser> reference;
     private String ID;
-    public IUser user(){
-        return reference.get();
-    }
     protected User() {
         this.reference = new AtomicReference<>(DiscordClient.getAny(client -> client.getUserByID(ID)));
     }
     User(IUser user) {
+        this.registerExistence();
         this.reference = new AtomicReference<>(user);
         this.ID = this.reference.get().getStringID();
+    }
+    public IUser user(){
+        return reference.get();
     }
     @Override
     public String getID() {
@@ -82,6 +85,13 @@ public class User implements Configurable {
 
     public String getName() {
         return user().getName();
+    }
+
+    @Override
+    public void manage() {// this should probably be more dependent on constants
+        if (ConfigHandler.getSetting(LastCookieUseConfig.class, this) > System.currentTimeMillis() - 86_400_000){
+            ConfigHandler.setSetting(LastCookieUseConfig.class, this, 0L);
+        }
     }
 
     private transient final AtomicReference<Set<Guild>> guilds = new AtomicReference<>();

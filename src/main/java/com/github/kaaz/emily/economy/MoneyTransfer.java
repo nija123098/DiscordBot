@@ -11,6 +11,7 @@ import com.github.kaaz.emily.economy.configs.CurrentMoneyConfig;
 import com.github.kaaz.emily.economy.configs.MoneyHistoryConfig;
 import com.github.kaaz.emily.exeption.ArgumentException;
 import com.github.kaaz.emily.exeption.TransactionException;
+import com.github.kaaz.emily.perms.BotRole;
 
 import java.util.Collections;
 import java.util.Map;
@@ -72,7 +73,7 @@ public class MoneyTransfer {
             transact(guild, DiscordClient.getOurUser(), firstPartyComponents, null, firstPartyMoney, 0, note + " tax");
             transact(GuildUser.getGuildUser(guild, user), DiscordClient.getOurUser(), firstPartyComponents, null, firstPartyMoney, 0, note + " in this server");
         }
-        transact(user, DiscordClient.getOurUser(), firstPartyComponents, null, firstPartyMoney, 0, note);
+        transact(user, DiscordClient.getOurUser(), firstPartyComponents, null, firstPartyMoney * ((grant.get() && BotRole.SUPPORTER.hasRequiredRole(user, null)) ? 2 : 1), 0, note);
     }
     private Configurable firstParty, secondParty;
     private Map<ItemComponent, Integer> firstPartyComponents, secondPartyComponents;

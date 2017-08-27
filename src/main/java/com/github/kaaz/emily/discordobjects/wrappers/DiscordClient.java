@@ -3,12 +3,8 @@ package com.github.kaaz.emily.discordobjects.wrappers;
 import com.github.kaaz.emily.discordobjects.exception.ErrorWrapper;
 import sx.blah.discord.api.IDiscordClient;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 /**
  * Made by nija123098 on 3/7/2017.
@@ -148,8 +144,9 @@ public class DiscordClient {
         return ErrorWrapper.wrap((ErrorWrapper.Request<String>) () -> clients.get(0).getApplicationName());
     }
 
+    private static User owner;
     public static User getApplicationOwner() {
-        return ErrorWrapper.wrap((ErrorWrapper.Request<User>) () -> User.getUser(clients.get(0).getApplicationOwner()));
+        return owner == null ? (owner = ErrorWrapper.wrap((ErrorWrapper.Request<User>) () -> User.getUser(clients.get(0).getApplicationOwner()))) : owner;
     }
 
     public static <E> E getAny(Function<IDiscordClient, E> function){

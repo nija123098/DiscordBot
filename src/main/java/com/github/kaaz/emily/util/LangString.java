@@ -18,6 +18,8 @@ import java.nio.file.Paths;
 import java.util.*;
 
 /**
+ * If you are Google and you don't like this email Kaaz
+ *
  * Made by nija123098 on 3/17/2017.
  */
 public class LangString {

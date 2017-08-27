@@ -2,6 +2,7 @@ package com.github.kaaz.emily.config;
 
 import com.github.kaaz.emily.audio.Playlist;
 import com.github.kaaz.emily.audio.Track;
+import com.github.kaaz.emily.config.configs.ConfigurableExistsConfig;
 import com.github.kaaz.emily.discordobjects.wrappers.Channel;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.Role;
@@ -14,6 +15,7 @@ import org.reflections.Reflections;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -293,7 +295,7 @@ public class ConfigHandler {
      * @return the count of the type instances
      */
     public static int getTypeCount(Class<? extends Configurable> type){
-        return 0;// todo
+        return getNonDefaultSettings(ConfigurableExistsConfig.class).size();
     }
 
     /**
@@ -379,7 +381,12 @@ public class ConfigHandler {
      * ending with the start index plus size
      */
     private static List<String> getTypeIDs(Class<? extends Configurable> type, long start, int size){
-        return new ArrayList<>(0);// todo
+        List<String> list = new ArrayList<>(size);
+        AtomicLong s = new AtomicLong(start);
+        getNonDefaultSettings(ConfigurableExistsConfig.class).forEach((configurable, aBoolean) -> {
+            if (s.decrementAndGet() <= 0 && list.size() < size) list.add(configurable.getID());
+        });
+        return list;
     }
 
     /**

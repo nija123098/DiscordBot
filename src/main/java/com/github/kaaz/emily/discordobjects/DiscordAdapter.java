@@ -19,6 +19,7 @@ import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordVoiceLe
 import com.github.kaaz.emily.launcher.BotConfig;
 import com.github.kaaz.emily.launcher.Launcher;
 import com.github.kaaz.emily.launcher.Reference;
+import com.github.kaaz.emily.perms.ContributorMonitor;
 import com.github.kaaz.emily.service.services.MemoryManagementService;
 import com.github.kaaz.emily.service.services.ScheduleService;
 import com.github.kaaz.emily.template.KeyPhrase;
@@ -76,7 +77,7 @@ public class DiscordAdapter {
         classes.stream().filter(clazz -> !clazz.equals(DiscordMessageReceived.class)).map(clazz -> clazz.getConstructors()[0]).forEach(constructor -> EVENT_MAP.put((Class<? extends Event>) constructor.getParameterTypes()[0], (Constructor<? extends BotEvent>) constructor));
         ClientBuilder builder = new ClientBuilder();
         builder.withToken(BotConfig.BOT_TOKEN);
-        builder.setMaxMessageCacheCount(0);
+        builder.setMaxMessageCacheCount(30);
         builder.withMaximumDispatchThreads(2);
         builder.registerListener((IListener<ShardReadyEvent>) event -> event.getShard().idle("with the login screen!"));
         int total = Requests.GENERAL_REQUESTS.GET.makeRequest(DiscordEndpoints.GATEWAY + "/bot", GatewayBotResponse.class, new BasicNameValuePair("Authorization", "Bot " + BotConfig.BOT_TOKEN), new BasicNameValuePair("Content-Type", "application/json")).shards;
@@ -94,6 +95,7 @@ public class DiscordAdapter {
         }
         GuildAudioManager.init();
         SpeechParser.init();
+        ContributorMonitor.init();
         Launcher.registerStartup(() -> {
             DiscordClient.clients().forEach(client -> client.getDispatcher().registerListener(ThreadProvider.getExecutorService(), EventDistributor.class));
             DiscordClient.clients().forEach(client -> client.getDispatcher().registerListener(ThreadProvider.getExecutorService(), DiscordAdapter.class));

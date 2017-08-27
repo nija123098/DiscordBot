@@ -17,6 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class SpecialPermsContainer {
     private Guild guild;
+    private Channel channel;
     private final Map<Channel, Map<Role, Set<String>>> allowCommandMap = new ConcurrentHashMap<>();
     private final Map<Channel, Map<Role, Set<String>>> denyCommandMap = new ConcurrentHashMap<>();
     private final Map<Channel, Map<Role, Set<String>>> exemptCommandMap = new ConcurrentHashMap<>();
@@ -27,6 +28,7 @@ public class SpecialPermsContainer {
     }
     protected SpecialPermsContainer() {}
     public Boolean getSpecialPermission(AbstractCommand command, Channel channel, User user){
+        if (this.channel != null && !this.channel.equals(channel)) return false;
         boolean deny = false;
         for (Role role : user.getRolesForGuild(this.guild)) {
             if (!this.exemptCommandMap.get(channel).get(role).contains(command.getName())) {
@@ -63,6 +65,16 @@ public class SpecialPermsContainer {
         Map<Channel, Map<Role, Set<ModuleLevel>>> first = allow ? this.allowModuleMap : this.denyModuleMap, second = allow ? this.allowModuleMap: this.denyModuleMap;
         first.computeIfAbsent(channel, chan -> new ConcurrentHashMap<>()).get(role).add(module);
         second.get(channel).get(role).remove(module);
+    }
+    public void restrict(Channel channel){
+        if (channel != null){
+            Arrays.asList(this.allowCommandMap, this.denyCommandMap, this.exemptCommandMap, this.denyModuleMap, this.allowModuleMap).forEach(channelMap -> {
+                channelMap.forEach((chan, o) -> {
+                    if (!channel.equals(chan)) channelMap.remove(chan);
+                });
+            });
+        }
+        this.channel = channel;
     }
     private void clean(){
         cleanCommands(this.allowCommandMap);

@@ -14,7 +14,9 @@ public class GlobalConfigurable implements Configurable {
      */
     public static final GlobalConfigurable GLOBAL = new GlobalConfigurable();
 
-    private GlobalConfigurable(){}
+    private GlobalConfigurable(){
+        this.registerExistence();
+    }
     @Override
     public String getID() {
         return "GLOBAL-id";

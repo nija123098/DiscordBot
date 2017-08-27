@@ -68,6 +68,7 @@ public abstract class Track implements Configurable{
     private String id;
     protected Track() {}
     protected Track(String id) {
+        this.registerExistence();
         String start = this.getClass().getSimpleName().toUpperCase();
         this.id = id.startsWith(start) ? id : start + "-" + id;
     }

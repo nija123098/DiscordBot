@@ -18,17 +18,24 @@ public class FileHelper {
     private static final Set<File> FILES = new ConcurrentHashSet<>();
     private static final AtomicInteger i = new AtomicInteger();
     public static File getTempFile(String cat, String end){
-        return getTempFile(cat, end, "gen" + i.incrementAndGet());
+        return getTempFile(cat, end, "gen" + i.incrementAndGet(), file -> {});
     }
     public static File getTempFile(String cat, String end, String snowflake){
+        return getTempFile(cat,  end, snowflake, file -> {});
+    }
+    public static File getTempFile(String cat, String end, String snowflake, IOConsumer once){
         File file;
         try{file = Paths.get(BotConfig.TEMP_PATH, cat, snowflake + "." + end).toFile();
         }catch(Exception e){throw new DevelopmentException("Issue with making new file", e);}
-        //file.deleteOnExit();
+        file.deleteOnExit();
         if (!file.exists()) {
             file.getParentFile().mkdirs();
             try {file.createNewFile();}
             catch(IOException e){throw new DevelopmentException(e);}
+            try{once.accept(file);
+            } catch (IOException e) {
+                throw new DevelopmentException("Exception writing to file", e);
+            }
         }
         return file;
     }
@@ -37,5 +44,8 @@ public class FileHelper {
         FILES.removeAll(files);
         files.forEach(File::delete);
         FILES.clear();
+    }
+    public interface IOConsumer {
+        void accept(File file) throws IOException;
     }
 }

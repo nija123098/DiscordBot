@@ -1,5 +1,6 @@
 package com.github.kaaz.emily.config;
 
+import com.github.kaaz.emily.config.configs.ConfigurableExistsConfig;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.github.kaaz.emily.exeption.ArgumentException;
@@ -59,5 +60,9 @@ public interface Configurable {
     default <T extends Configurable> Configurable convert(Class<T> t){
         if (t.equals(this.getClass())) return this;
         throw new ArgumentException("This configurable can not be morphed into that type of configurable: " + t.getName());
+    }
+
+    default void registerExistence(){
+        ConfigHandler.setSetting(ConfigurableExistsConfig.class, this, true);
     }
 }

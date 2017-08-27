@@ -74,7 +74,7 @@ public class CalculateCommand extends AbstractCommand {
     public void command(MessageMaker maker, @Argument(info = "The thing to evaluate") String arg){
         maker.append(eval(arg) + "");
     }
-    public static double eval(String arg){// TODO FIX
+    public static double eval(String arg){
         arg = arg.replace("d", "§").replace("D", "§");
         try{return new ExpressionBuilder(arg).operator(OPERATORS).build().evaluate();
         } catch (Exception e){

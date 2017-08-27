@@ -1,7 +1,7 @@
 package com.github.kaaz.emily.automoderation.messagefiltering.filters;
 
 import com.github.kaaz.emily.automoderation.messagefiltering.MessageFilter;
-import com.github.kaaz.emily.automoderation.messagefiltering.MessageMonitoringType;
+import com.github.kaaz.emily.automoderation.messagefiltering.MessageMonitoringLevel;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordMessageReceived;
 import com.github.kaaz.emily.launcher.BotConfig;
 import com.github.kaaz.emily.util.FormatHelper;
@@ -53,8 +53,8 @@ public class FakeDangerFilter implements MessageFilter {
         if (score.get() / reduced.length() >= REQUIREMENT) System.out.println(score.get() + " " + event.getMessage().getContent());//throw new MessageMonitoringException("Dake danger identified.  Do not spread these.");
     }
     @Override
-    public MessageMonitoringType getType() {
-        return MessageMonitoringType.FAKE_DANGER;
+    public MessageMonitoringLevel getType() {
+        return MessageMonitoringLevel.FAKE_DANGER;
     }
     private static String reduce(String in){
         StringBuilder builder = new StringBuilder(in.length());

@@ -7,5 +7,5 @@ import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordMessage
  */
 public interface MessageFilter {
     void checkFilter(DiscordMessageReceived event);
-    MessageMonitoringType getType();
+    MessageMonitoringLevel getType();
 }

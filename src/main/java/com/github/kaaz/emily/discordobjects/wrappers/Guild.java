@@ -53,6 +53,7 @@ public class Guild implements Configurable {
     private String ID;
     private transient final AtomicReference<IGuild> reference;
     private Guild(IGuild guild) {
+        this.registerExistence();
         this.reference = new AtomicReference<>(guild);
         this.ID = guild.getID();
     }

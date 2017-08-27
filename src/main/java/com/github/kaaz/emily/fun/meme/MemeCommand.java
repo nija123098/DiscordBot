@@ -11,7 +11,6 @@ import com.mashape.unirest.http.Unirest;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.Arrays;
@@ -49,9 +48,7 @@ public class MemeCommand extends AbstractCommand {
         }
         try {// let exceptions get thrown
             BufferedImage image = ImageIO.read(Unirest.get("https://memegen.link/" + type + "/" + URLEncoder.encode(topText, "UTF-8") + "/" + URLEncoder.encode(botText, "UTF-8") + ".jpg").asStringAsync().get().getRawBody());
-            File memeFile = FileHelper.getTempFile("memes", "jpg", type + "_" + URLEncoder.encode(topText, "UTF-8") + "_" + URLEncoder.encode(botText, "UTF-8"));
-            ImageIO.write(image, "png", memeFile);
-            maker.withFile(memeFile);
+            maker.withFile(FileHelper.getTempFile("memes", "jpg", type + "_" + URLEncoder.encode(topText, "UTF-8") + "_" + URLEncoder.encode(botText, "UTF-8"), file -> ImageIO.write(image, "png", file)));
         } catch (IOException | ExecutionException | InterruptedException e) {
             throw new DevelopmentException("Our meme service is having trouble right now", e);
         }

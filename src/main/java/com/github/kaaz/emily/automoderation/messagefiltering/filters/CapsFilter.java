@@ -2,7 +2,7 @@ package com.github.kaaz.emily.automoderation.messagefiltering.filters;
 
 import com.github.kaaz.emily.automoderation.messagefiltering.MessageFilter;
 import com.github.kaaz.emily.automoderation.messagefiltering.MessageMonitoringException;
-import com.github.kaaz.emily.automoderation.messagefiltering.MessageMonitoringType;
+import com.github.kaaz.emily.automoderation.messagefiltering.MessageMonitoringLevel;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordMessageReceived;
 import com.github.kaaz.emily.util.FormatHelper;
 
@@ -27,7 +27,7 @@ public class CapsFilter implements MessageFilter {
         }
     }
     @Override
-    public MessageMonitoringType getType() {
-        return MessageMonitoringType.EXCESSIVE_CAPITALS;
+    public MessageMonitoringLevel getType() {
+        return MessageMonitoringLevel.EXCESSIVE_CAPITALS;
     }
 }

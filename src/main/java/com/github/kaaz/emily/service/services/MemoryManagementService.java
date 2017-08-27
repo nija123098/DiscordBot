@@ -24,8 +24,8 @@ public class MemoryManagementService extends AbstractService {
     private static final float[] CONFIG_PER = new float[INDICES.length];
     public MemoryManagementService() {
         super(SERVICE_ITERATION_TIME);
-        for (int i = 0; i < INDICES.length; i++) {//43200000, 12 hours
-            CONFIG_PER[i] = ConfigHandler.getTypeCount(ConfigLevel.values()[i].getType()) / 43200000;// 12 hours
+        for (int i = 0; i < INDICES.length; i++) {
+            CONFIG_PER[i] = ConfigHandler.getTypeCount(ConfigLevel.values()[i].getType()) / 86_400_000;// 24 hours
         }
     }
     @Override

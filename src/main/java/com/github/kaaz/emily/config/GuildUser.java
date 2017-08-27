@@ -50,6 +50,7 @@ public class GuildUser implements Configurable {
     private GuildUser(String id) {
         this.id = id;
         if (this.getGuild() == null || this.getUser() == null) throw new DevelopmentException("Either the guild or user is null");
+        this.registerExistence();
     }
     @Override
     public String getID() {
