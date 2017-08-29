@@ -314,7 +314,7 @@ public class CommandHandler {
      */
     @EventListener
     public static void handle(DiscordReactionEvent event){
-        if (!event.getUser().isBot()){
+        if (!event.getUser().isBot() && Launcher.isReady()){
             attemptInvocation(event.getMessage().getContent(), event.getUser(), event.getMessage(), event.getReaction());
         }
     }

@@ -307,9 +307,11 @@ public class MessageMaker {
             return;
         }
         this.builder = new MessageBuilder(DiscordClient.getClientForShard(this.channel.getShard()));
-        try{this.builder.withFile(this.file);
-        } catch (FileNotFoundException e) {
-            throw new DevelopmentException("File not made by time of sending", e);
+        if (this.file != null){
+            try{this.builder.withFile(this.file);
+            } catch (FileNotFoundException e) {
+                throw new DevelopmentException("File not made by time of sending", e);
+            }
         }
         if (this.origin != null && this.okHand) ErrorWrapper.wrap(() -> this.origin.addReaction(EmoticonHelper.getChars("ok_hand", false)));
         this.compile();

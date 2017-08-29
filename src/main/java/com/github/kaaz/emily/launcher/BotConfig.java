@@ -19,9 +19,9 @@ public class BotConfig {
     @ConfigurationOption
     public static String TEMP_PATH = CONTAINER_PATH + "tempfiles\\";
     @ConfigurationOption
-    public static String CONTRIBUTOR_SIGN_ROLE = "274957607855325184";
+    public static String CONTRIBUTOR_SIGN_ROLE = "-1";
     @ConfigurationOption
-    public static String SUPPORTER_SIGN_ROLE = "329718304002539531";
+    public static String SUPPORTER_SIGN_ROLE = "-1";
     @ConfigurationOption
     public static String GIPHY_TOKEN = null;
     @ConfigurationOption

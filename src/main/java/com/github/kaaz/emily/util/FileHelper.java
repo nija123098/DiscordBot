@@ -31,7 +31,7 @@ public class FileHelper {
         if (!file.exists()) {
             file.getParentFile().mkdirs();
             try {file.createNewFile();}
-            catch(IOException e){throw new DevelopmentException(e);}
+            catch(IOException e){throw new DevelopmentException("Could not make file: " + file.getPath(), e);}
             try{once.accept(file);
             } catch (IOException e) {
                 throw new DevelopmentException("Exception writing to file", e);

@@ -57,7 +57,7 @@ public class MessageMonitor {
         }
     }
     public static boolean monitor(DiscordMessageReceived received){
-        if (received.getGuild().getUserSize() < BotConfig.MESSAGE_FILTERING_SERVER_SIZE || received.getChannel().isPrivate() || received.getChannel().isNSFW() || received.getMessage().getContent() == null || received.getMessage().getContent().isEmpty()) return false;
+        if (received.getChannel().isPrivate() || received.getGuild().getUserSize() < BotConfig.MESSAGE_FILTERING_SERVER_SIZE || received.getChannel().isNSFW() || received.getMessage().getContent() == null || received.getMessage().getContent().isEmpty()) return false;
         try{CHANNEL_MAP.computeIfAbsent(received.getChannel(), MessageMonitor::calculate).forEach(filter -> filter.checkFilter(received));
         } catch (MessageMonitoringException exception){
             new MessageMaker(received.getMessage()).withDM().append("Your message on ").appendRaw(received.getGuild().getName()).append(" in ").appendRaw(received.getChannel().mention()).append(" has been deleted.  Reason: " + exception.getMessage()).send();

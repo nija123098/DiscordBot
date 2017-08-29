@@ -15,6 +15,8 @@ public class ContributorMonitor {
     private static final Role SUPPORT_SIGN_ROLE = Role.getRole(BotConfig.SUPPORTER_SIGN_ROLE);
     public static void init(){
         if (CONTRIB_SIGN_ROLE == null) return;// is not the instance serving Emily's Space
+        System.out.println(CONTRIB_SIGN_ROLE.getName());
+        System.out.println(CONTRIB_SIGN_ROLE.getGuild().getName());
         EventDistributor.register(ContributorMonitor.class);
     }
     @EventListener
