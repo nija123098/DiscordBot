@@ -8,7 +8,8 @@ import java.util.*;
 public class Rand {
     private static final Random RANDOM = new Random();
     public static <E> E getRand(List<E> es, boolean remove){
-        return remove ? es.remove(Rand.getRand(es.size() - 1)) : es.get(Rand.getRand(es.size() - 1));
+        int index = Rand.getRand(es.size() - 1);
+        return remove ? es.remove(index) : es.get(index);
     }
     public static int getRand(int max){// 0 inclusive
         return max < 1 ? 0 : Math.abs(RANDOM.nextInt()) % (max + 1);

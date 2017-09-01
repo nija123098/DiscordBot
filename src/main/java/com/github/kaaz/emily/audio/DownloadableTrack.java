@@ -16,6 +16,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioReference;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
@@ -34,8 +35,10 @@ public abstract class DownloadableTrack extends Track {
         if (file == null) return null;
         return (AudioTrack) LOCAL_SOURCE_MANAGER.loadItem(GuildAudioManager.PLAYER_MANAGER, new AudioReference(file.getAbsolutePath(), null));
     }
-    public static List<Track> getDownloadedTracks(){// optimize
-        return Stream.of(new File(BotConfig.AUDIO_PATH).listFiles()).filter(File::isFile).filter(file -> TYPES.contains(file.getName().split(Pattern.quote("."))[1])).map(File::getName).map(s -> Track.getTrack(s.substring(0, s.indexOf('.')))).filter(track -> MusicDownloadService.isDownloaded(((DownloadableTrack) track))).collect(Collectors.toList());
+    public static List<Track> getDownloadedTracks(){
+        File[] downloadedMusic = new File(BotConfig.AUDIO_PATH).listFiles();
+        if (downloadedMusic == null) return Collections.emptyList();// happens when no music is downloaded
+        return Stream.of(downloadedMusic).filter(File::isFile).filter(file -> TYPES.contains(file.getName().split(Pattern.quote("."))[1])).map(File::getName).map(s -> Track.getTrack(s.substring(0, s.indexOf('.')))).filter(track -> MusicDownloadService.isDownloaded(((DownloadableTrack) track))).collect(Collectors.toList());
     }
     DownloadableTrack(String id) {
         super(id);

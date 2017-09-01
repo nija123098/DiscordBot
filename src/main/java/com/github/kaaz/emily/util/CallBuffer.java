@@ -17,7 +17,6 @@ public class CallBuffer {
      * @param runnable the thing to eventually run
      */
     public void call(Runnable runnable){
-        long assign = System.currentTimeMillis();
         ScheduleService.schedule(this.time.getAndAdd(this.callDifference) - System.currentTimeMillis(), runnable);
     }
 }

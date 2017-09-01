@@ -13,9 +13,7 @@ import com.rometools.rome.io.XmlReader;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Made by nija123098 on 6/18/2017.
@@ -33,10 +31,12 @@ public class RSSMonitorService extends AbstractService {
     public void run() {
         DATE.setTime(RSSLastCheckConfig.getAndUpdate());
         Map<Channel, List<String>> map = ConfigHandler.getNonDefaultSettings(RSSSubscriptionsConfig.class);
-        map.forEach((channel, strings) -> strings.forEach(s -> {
+        Map<String, Set<Channel>> reverse = new HashMap<>();
+        map.forEach((channel, strings) -> strings.forEach(s -> reverse.computeIfAbsent(s, st -> new HashSet<>()).add(channel)));
+        reverse.forEach((s, channels) -> {
             RSSNote note = getRSSNode(s);
-            if (note != null) note.send(channel);
-        }));
+            if (note != null) channels.forEach(note::send);
+        });
     }
     private static RSSNote getRSSNode(String url){
         try {
