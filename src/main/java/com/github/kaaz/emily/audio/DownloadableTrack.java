@@ -47,10 +47,12 @@ public abstract class DownloadableTrack extends Track {
     public boolean isDownloaded(){
         return MusicDownloadService.isDownloaded(this);
     }
-    public AudioTrack getTrack(){
+    public AudioTrack getAudioTrack(GuildAudioManager manager){
         if (this.isDownloaded()) return makeAudioTrack(file());
         int playTimes = ConfigHandler.getSetting(PlayCountConfig.class, this);
-        if (playTimes >= BotConfig.REQUIRED_PLAYS_TO_COUNT) MusicDownloadService.queueDownload((int) Math.log(playTimes), this, null);
+        if (playTimes >= BotConfig.REQUIRED_PLAYS_TO_DOWNLOAD) MusicDownloadService.queueDownload(playTimes == 0 ? 0 : (int) Math.log(playTimes), this, manager == null ? null : downloadableTrack -> {
+            if (manager.currentTrack().equals(this)) manager.swap(this.getAudioTrack(null));
+        });
         BlockingQueue<AudioTrack> queue = new LinkedBlockingQueue<>(1);
         GuildAudioManager.PLAYER_MANAGER.loadItem(this.getSource(), new AudioLoadResultHandler() {
             @Override
@@ -96,6 +98,6 @@ public abstract class DownloadableTrack extends Track {
     }
     @Override
     public Long getLength() {
-        return this.isDownloaded() ? ConfigHandler.getSetting(DurationTimeConfig.class, this) : this.getTrack().getDuration();
+        return this.isDownloaded() ? ConfigHandler.getSetting(DurationTimeConfig.class, this) : this.getAudioTrack(null).getDuration();
     }
 }

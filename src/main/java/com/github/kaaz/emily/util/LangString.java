@@ -148,10 +148,10 @@ public class LangString {
                     in.close();
                     return ((JSONArray) ((JSONArray) new JSONArray(response.toString()).get(0)).get(0)).get(0).toString();
                 } catch (IOException e) {
-                    throw new RuntimeException("Exception while attempting to get translation", e);
+                    throw new DevelopmentException("Exception while attempting to get translation", e);
                 }
             });
-        } catch (RuntimeException e) {
+        } catch (DevelopmentException e) {
             return content;
         }
     }
@@ -162,7 +162,7 @@ public class LangString {
             String[] strings = s.toLowerCase().split(" ");
             LANG_MAP.put(strings[0], strings[1]);
         });
-        }catch(IOException e){throw new DevelopmentException("Could not load supported languages");}
+        }catch(IOException e){throw new DevelopmentException("Could not load supported languages", e);}
         REVERSE_MAP = new HashMap<>(LANG_MAP.size());
         LANG_MAP.forEach((s, s2) -> REVERSE_MAP.putIfAbsent(s2, s));
     }

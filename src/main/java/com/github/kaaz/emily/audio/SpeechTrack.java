@@ -1,5 +1,6 @@
 package com.github.kaaz.emily.audio;
 
+import com.github.kaaz.emily.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 import com.github.kaaz.emily.util.FormatHelper;
 import com.github.kaaz.emily.util.LangString;
 import com.github.kaaz.emily.util.SpeechHelper;
@@ -29,7 +30,7 @@ public class SpeechTrack extends Track {
         return "Emily saying stuff";
     }
     @Override
-    public AudioTrack getTrack() {
+    public AudioTrack getAudioTrack(GuildAudioManager manager) {
         return DownloadableTrack.makeAudioTrack(this.file);
     }
     @Override

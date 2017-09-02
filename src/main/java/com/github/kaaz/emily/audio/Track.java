@@ -2,6 +2,7 @@ package com.github.kaaz.emily.audio;
 
 import com.github.kaaz.emily.config.ConfigLevel;
 import com.github.kaaz.emily.config.Configurable;
+import com.github.kaaz.emily.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.github.kaaz.emily.launcher.Reference;
@@ -61,7 +62,7 @@ public abstract class Track implements Configurable{
         }
         code = TwitchUtil.extractCode(s);
         if (code != null){
-            Collections.singletonList(Track.getTrack(TwitchTrack.class, code));
+            return Collections.singletonList(Track.getTrack(TwitchTrack.class, code));
         }
         return new ArrayList<>(1);
     }
@@ -107,6 +108,6 @@ public abstract class Track implements Configurable{
     public abstract String getSource();
     public abstract String getPreviewURL();
     public abstract String getInfo();
-    public abstract AudioTrack getTrack();
+    public abstract AudioTrack getAudioTrack(GuildAudioManager manager);
     public abstract Long getLength();
 }

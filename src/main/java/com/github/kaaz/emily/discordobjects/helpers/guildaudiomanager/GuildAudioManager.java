@@ -106,7 +106,7 @@ public class GuildAudioManager extends AudioEventAdapter{
     private final List<LangString> interups = new CopyOnWriteArrayList<>();
     private Track current, paused, next;
     private long pausePosition, lastSkip;
-    private boolean leaveAfterThis, loop, leaving, skipped;
+    private boolean leaveAfterThis, loop, leaving, skipped, swapping;
     private GuildAudioManager(VoiceChannel channel) {
         this.channel = channel;
         this.lavaPlayer = PLAYER_MANAGER.createPlayer();
@@ -148,6 +148,14 @@ public class GuildAudioManager extends AudioEventAdapter{
             else this.queue.add(track);
         }
     }
+    public void swap(AudioTrack track){
+        this.lavaPlayer.setPaused(true);
+        this.swapping = true;
+        track.setPosition(this.currentTime());
+        this.lavaPlayer.stopTrack();
+        this.lavaPlayer.startTrack(track, false);
+        this.lavaPlayer.setPaused(false);
+    }
     public void interrupt(LangString langString){// must fully exist
         if (this.current == null && this.queue.isEmpty()) {
             this.queueTrack(new SpeechTrack(langString, MessageMaker.getLang(null, this.channel)));
@@ -170,7 +178,7 @@ public class GuildAudioManager extends AudioEventAdapter{
         this.current = track;
         this.skipSet.clear();
         this.lavaPlayer.setPaused(true);
-        this.lavaPlayer.startTrack(this.current.getTrack(), true);
+        this.lavaPlayer.startTrack(this.current.getAudioTrack(this), true);
         if (position != 0) this.lavaPlayer.getPlayingTrack().setPosition(position);
         this.lavaPlayer.setPaused(false);
         ConfigHandler.changeSetting(PlayCountConfig.class, track, integer -> integer + 1);
@@ -189,6 +197,10 @@ public class GuildAudioManager extends AudioEventAdapter{
     }
     public void onFinish(){
         if (this.current == null) return;
+        if (this.swapping){
+            this.swapping = false;
+            return;
+        }
         if (!this.skipped) ConfigHandler.changeSetting(PlayCountConfig.class, this.current, integer -> integer + validListeners(this.channel));
         if (!this.interups.isEmpty()) {
             this.start(new SpeechTrack(this.interups.remove(0), MessageMaker.getLang(null, this.channel)), 0);
@@ -198,7 +210,7 @@ public class GuildAudioManager extends AudioEventAdapter{
             this.leave();
             return;
         }
-        if (this.loop) this.lavaPlayer.playTrack(this.current.getTrack());
+        if (this.loop) this.lavaPlayer.playTrack(this.current.getAudioTrack(null));
         else if (!this.speeches.isEmpty()){
             this.start(new SpeechTrack(this.speeches.remove(0), MessageMaker.getLang(null, this.channel)), 0);
         }else if (this.paused != null){

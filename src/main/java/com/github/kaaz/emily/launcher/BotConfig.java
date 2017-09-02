@@ -71,7 +71,7 @@ public class BotConfig {
     @ConfigurationOption
     public static Boolean TYPING_ENABLED = true;
     @ConfigurationOption
-    public static Integer REQUIRED_PLAYS_TO_COUNT = 2;
+    public static Integer REQUIRED_PLAYS_TO_DOWNLOAD = 2;
     @ConfigurationOption
     public static Integer TOTAL_EMILYS = 1;
     @ConfigurationOption

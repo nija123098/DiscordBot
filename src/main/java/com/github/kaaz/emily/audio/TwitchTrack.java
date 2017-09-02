@@ -6,7 +6,6 @@ import com.mb3364.twitch.api.Twitch;
 import com.mb3364.twitch.api.handlers.UserResponseHandler;
 import com.mb3364.twitch.api.models.User;
 import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.track.AudioItem;
 import com.sedmelluq.discord.lavaplayer.track.AudioReference;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
@@ -69,9 +68,8 @@ public class TwitchTrack extends Track {
         return null;
     }
     @Override
-    public AudioTrack getTrack() {
-        AudioItem audioItem = TWITCH_AUDIO_SOURCE_MANAGER.loadItem(GuildAudioManager.PLAYER_MANAGER, new AudioReference(this.getSource(), null));
-        return (AudioTrack) audioItem;
+    public AudioTrack getAudioTrack(GuildAudioManager manager) {
+        return (AudioTrack) TWITCH_AUDIO_SOURCE_MANAGER.loadItem(GuildAudioManager.PLAYER_MANAGER, new AudioReference(this.getSource(), null));
     }
     @Override
     public Long getLength() {
