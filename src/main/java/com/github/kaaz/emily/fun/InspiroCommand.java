@@ -15,7 +15,7 @@ import java.io.IOException;
  */
 public class InspiroCommand extends AbstractCommand {
     public InspiroCommand() {
-        super("inspiro", ModuleLevel.FUN, "inspirobot, inspire, inspireme", null, "Gets a image from inspirobot.me");
+        super("inspiro", ModuleLevel.FUN, "inspirobot, inspire, inspireme", null, "Gets an image from inspirobot.me");
     }
     @Command
     public void command(MessageMaker maker){

@@ -11,7 +11,7 @@ import com.github.kaaz.emily.fun.BlackJackCommand;
  */
 public class BlackJackHitCommand extends AbstractCommand {
     public BlackJackHitCommand() {
-        super(BlackJackCommand.class, "hit", "hit", null, null, "Hits");
+        super(BlackJackCommand.class, "hit", "hit", null, null, "Hits and starts the game");
     }
     @Command
     public void command(MessageMaker maker, User user){

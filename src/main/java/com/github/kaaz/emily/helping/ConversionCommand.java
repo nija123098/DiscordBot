@@ -84,4 +84,9 @@ public class ConversionCommand extends AbstractCommand {
         } catch (Exception ignored){}
         throw new ArgumentException("Can not convert between " + from + " and " + to);
     }
+
+    @Override
+    protected String getLocalUsages() {
+        return "convert <amount> <unit> to <unit> // convert between two units, case sensitive";
+    }
 }

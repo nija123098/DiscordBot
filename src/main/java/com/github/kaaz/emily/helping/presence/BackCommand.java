@@ -15,7 +15,7 @@ import java.util.Set;
  */
 public class BackCommand extends AbstractCommand {
     public BackCommand() {
-        super(PresenceCommand.class, "back", "present", null, null, "Marks you as no longer afk");
+        super(PresenceCommand.class, "back", "back, present", null, null, "Marks you as no longer afk");
     }
     @Command
     public void command(MessageMaker maker, User user){

@@ -20,4 +20,9 @@ public class BlackJackCommand extends AbstractCommand {
         if (game == null) maker.append("You are not playing a game, to start use !blackjack hit");
         else maker.append("You are still in a game. To finish type *blackjack stand*").appendRaw("\n" + game.toString());
     }
+
+    @Override
+    protected String getLocalUsages() {
+        return "";
+    }
 }

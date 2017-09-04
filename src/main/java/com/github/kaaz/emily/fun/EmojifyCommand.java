@@ -6,6 +6,7 @@ import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.exeption.ArgumentException;
 import com.github.kaaz.emily.util.EmoticonHelper;
+import com.github.kaaz.emily.util.Log;
 import com.github.kaaz.emily.util.StringIterator;
 import javafx.util.Pair;
 
@@ -39,7 +40,7 @@ public class EmojifyCommand extends AbstractCommand {
     }
     private String getChars(char c){
         if (Character.isLetter(c)) return EmoticonHelper.getChars("regional_indicator_" + Character.toLowerCase(c), true);
-        if (Character.isDigit(c)) return EmoticonHelper.getChars(Character.getName(c).substring(6), true);
+        if (Character.isDigit(c)) return EmoticonHelper.getChars(Character.getName(c).substring(6).toLowerCase(), true);
         if (c == '?') return EmoticonHelper.getChars("grey_question", true);
         if (c == '!') return EmoticonHelper.getChars("grey_exclamation", true);
         return String.valueOf(c);

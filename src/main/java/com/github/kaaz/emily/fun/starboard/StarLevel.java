@@ -15,7 +15,8 @@ public enum StarLevel {
     SPARKLE("star"),// 0xFFFFFF
     DWARF("star2"),// 0xFFF96F
     YELLOW("dizzy"),// 0xFFFB3A
-    SOLAR("sunny"),;// 0xFFEC00
+    SOLAR("sunny"),// 0xFFEC00
+    EXPLOSIVE("boom"),;//something
     private String emoticon;
     StarLevel(String emoticon) {
         this.emoticon = EmoticonHelper.getChars(emoticon, false);

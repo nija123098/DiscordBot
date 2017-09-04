@@ -37,7 +37,7 @@ public class PlaylistAddCommand extends AbstractCommand {
                     return;
                 }
                 ids.add(track);
-            } else throw new DevelopmentException("Chose a track, url, or playlist to import");
+            } else throw new DevelopmentException("Choose a track, url, or playlist to import");
         });
     }
 }

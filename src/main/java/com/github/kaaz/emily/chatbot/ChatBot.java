@@ -24,6 +24,6 @@ public class ChatBot {
     public String think(String thought){
         if (CommandHandler.MENTION.get().startsWith(thought)) thought = thought.substring(CommandHandler.MENTION.get().length());
         else if (CommandHandler.MENTION_NICK.get().startsWith(thought)) thought = thought.substring(CommandHandler.MENTION_NICK.get().length());
-        return "ChatBot became a payed service at a price which we can not come close to afford, we have an alternative and it is planned to be in the next version, sorry for the incontinence.  If you are wondering who's fault this is his name starts with  \"Soar\" and ends with \"nir\" and his discord ID is 187580838194577409";
+        return "ChatBot became a payed service at a price which we can not come close to afford, we have an alternative and it is planned to be in the next version, sorry for the inconvenience.  If you are wondering who's fault this is his name starts with  \"Soar\" and ends with \"nir\" and his discord ID is 187580838194577409";
     }
 }

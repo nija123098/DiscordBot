@@ -19,12 +19,16 @@ import com.github.kaaz.emily.economy.configs.PrefixMoneySymbolConfig;
  */
 public class BankCommand extends AbstractCommand {
     public BankCommand() {
-        super("bank", ModuleLevel.ECONOMY, "currency, money, jar", null, "Gets the current balance");
+        super("bank", ModuleLevel.ECONOMY, "currency, money, jar", null, "Gets the current balance of the user");
     }
     @Command
-    public void command(@Argument(optional = true) Configurable configurable, User user, @Context(softFail = true) GuildUser guildUser, MessageMaker maker){
-        if (configurable == null) configurable = user;
-        getFormat(maker, "Your bank contains ", configurable);
+    public void command(@Argument(info = "user",optional = true) Configurable configurable, User user, @Context(softFail = true) GuildUser guildUser, MessageMaker maker){
+        if (configurable == null) {
+            configurable = user;
+            getFormat(maker, "Your bank contains ", configurable);
+        } else {
+            getFormat(maker, "" + configurable.getName() + "'s bank contains ", configurable);
+        }
         if (user.equals(configurable) && guildUser != null){
             getFormat(maker, "\nIn this server you have ", guildUser);
         }

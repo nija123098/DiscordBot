@@ -13,6 +13,7 @@ import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.util.EmoticonHelper;
 import com.github.kaaz.emily.util.Rand;
 
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,9 +25,14 @@ public class RollCommand extends AbstractCommand {
         super("roll", ModuleLevel.FUN, "dice, rng", null, "For if you ever need a random number");
     }// this should have a chance of rick rolling you
     @Command
-    public void command(@Argument(optional = true, replacement = ContextType.NONE) Integer first, @Argument(optional = true, replacement = ContextType.NONE) Integer second, String arg, MessageMaker maker, @Context(softFail = true) Guild guild) {
+    public void command(@Argument(optional = true, replacement = ContextType.NONE) Integer first, @Argument(optional = true, replacement = ContextType.NONE) Integer second,@Argument(info = "test") String arg, MessageMaker maker, @Context(softFail = true) Guild guild) {
         int value;
-        Pattern dice = Pattern.compile("(\\d+)d(\\d+)\\+?(\\d+)?");
+        String[] notOperands = arg.split("(\\s*[^0-z]+\\s*)");
+        String[] operands = arg.split("([\\w]+)");
+        String[] res = new String[operands.length + notOperands.length - 1];
+
+
+        final Pattern dice = Pattern.compile("(\\d+)d(\\d+)");
         if (first != null) {
             if (second == null) {
                 value = Rand.getRand(first - 1) + 1;
@@ -41,26 +47,44 @@ public class RollCommand extends AbstractCommand {
             }
         } else if (arg.isEmpty()) {
             value = Rand.getRand(5) + 1;
-            maker.append("Rolling 1 [6] sided " + EmoticonHelper.getChars("game_die", false) + " | Rolled: " + value);
+            maker.append("Rolling 1 [6] sided " + EmoticonHelper.getChars("game_die", false) + " | Rolled: " + value).mustEmbed();
         } else {
-            int max_dice = 40, min_sides = 2;
+            int max_dice = 144, min_sides = 2;
+            System.out.println("operands: " + Arrays.toString(operands));
+            System.out.println("notOperands: " + Arrays.toString(notOperands));
+            for(int i = 0; i < res.length; i++) {
+                res[i] = i%2==0 ? notOperands[i / 2] : operands[i / 2 + 1];
+            }
+            System.out.println("res: " + Arrays.toString(res));
+
+            int dicecount = 0;
+            int bonuscount = 0;
+            for (int o = 0; o < res.length; o++) {
+                if (res[o].matches("(\\d+)d(\\d+)")) {
+                    dicecount++;
+                } else if (res[o].matches("(\\d+)")) {
+                    bonuscount++;
+                }
+            }
+            System.out.println("dicecount: " + dicecount);
+            System.out.println("other numbers: " + bonuscount);
+
             Matcher match = dice.matcher(arg);
-            if (match.find()) {
+            if (match.find() && dicecount == 1) {
                 int die = Integer.parseInt(match.group(1));
                 int sides = Integer.parseInt(match.group(2));
                 int bonus = 0;
                 if (die > max_dice) {
-                    maker.append("I only have 40 " + EmoticonHelper.getChars("game_die", false) + "! " + EmoticonHelper.getChars("wink", false));
+                    maker.append("I only have 144 " + EmoticonHelper.getChars("game_die", false) + "! " + EmoticonHelper.getChars("wink", false));
                 } else if (die < 1) {
                     maker.append("Hmm, I'm gonna need at least one " + EmoticonHelper.getChars("game_die", false));
                 } else if (sides < min_sides) {
                     maker.append(EmoticonHelper.getChars("confused", false) + " hard to do anything with less than 2 sides");
-                } else if (match.group(3) != null && !"null".equals(match.group(3))) {
-                    bonus = Integer.parseInt(match.group(3));
-                    maker.append(multiDice(die, sides, bonus));
                 } else {
                     maker.append(multiDice(die, sides, bonus));
                 }
+            } else {
+
             }
         }
         GuildAudioManager manager = GuildAudioManager.getManager(guild);
@@ -68,19 +92,76 @@ public class RollCommand extends AbstractCommand {
     }
 
     private static String multiDice(int dices, int sides, int bonus) {
-        String text = String.format("Rolling %s [%s] sided " + EmoticonHelper.getChars("game_die", false) + ": ", dices, sides);
+        String text = String.format("Rolling %s [%s] sided " + EmoticonHelper.getChars("game_die", false), dices, sides);
         int total = 0;
-        for (int i = 0; i < dices; i++) {
-            int roll = Rand.getRand(sides) + 1;
-            text += " " + roll;
-            total += roll;
+        int magnitude = String.valueOf(sides).length();
+        String zero = "";
+        String[] zeroes = new String[magnitude];
+        String dashes = "-";
+        zeroes[magnitude-1] = "";
+        for (int l = magnitude-1; l > 0; l--) {
+            zero = zero + "0";
+            dashes = dashes + "-";
+            zeroes[l-1] = zero;
         }
         if (bonus != 0) {
-            text += " + " + bonus;
-            total += bonus;
+            text = text + " + (" + bonus + "): \n";
+            total = total + bonus;
+        } else {
+            text = text + ": \n";
+        }
+        int gridArray[][] = fancyGrid(dices, sides);
+        for (int t = 0; t < gridArray.length; t++) {
+            for (int j = 0; j < gridArray[t].length; j++) {
+                total = total + gridArray[t][j];
+                magnitude = String.valueOf(gridArray[t][j]).length() - 1;
+                if (gridArray[t][j] == 0) {
+                    text = text + ("| **`" + dashes + "`** ");
+                } else {
+                    text = text + ("| **`" + zeroes[magnitude] + gridArray[t][j] + "`** ");
+                }
+            }
+            text = text + ("|\n");
         }
         return text + " Total: **" + total + "**";
     }
 
+    public static int[][] fancyGrid(int dice, int sides) {
+        int [] randArray = new int[dice];
+        for (int k = 0; k < dice; k++) {
+            randArray[k] = (Rand.getRand(sides) + 1);
+        }
+        int [] tableArray = Counter(dice);
+        int [][] gridArray = new int[tableArray[0]][tableArray[1]];
+        int row = 0, col = 0;
+        //fill the grid
+        for (int c = 0; c < dice; c++) {
+            gridArray[col][row] = randArray[c];
+            if (row < gridArray[0].length-1) {
+                row = row + 1; //row
+            } else {
+                col = col + 1; //col
+                row = 0;
+            }
+        }
+        return gridArray;
+    }
 
+    public static int[] Counter(int i) {
+        int total = 0;
+        int rowtest = 0;
+        int coltest = 0;
+        int[] rowColArray = new int[2];
+        while (total < i) {
+            if (rowtest <= coltest) {
+                rowtest++;
+            } else {
+                coltest++;
+            }
+            total = rowtest * coltest;
+        }
+        rowColArray[0] = rowtest;
+        rowColArray[1] = coltest;
+        return rowColArray;
+    }
 }

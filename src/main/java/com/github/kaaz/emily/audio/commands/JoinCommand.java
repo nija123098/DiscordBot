@@ -16,7 +16,7 @@ public class JoinCommand extends AbstractCommand {
         super("join", ModuleLevel.MUSIC, null, null, "Makes the bot join the voice channel you are in");
     }
     @Command
-    public static void command(GuildAudioManager manager, @Argument(optional = true) VoiceChannel channel, MessageMaker maker){
+    public static void command(GuildAudioManager manager, VoiceChannel channel, MessageMaker maker){
         if (!manager.voiceChannel().equals(channel)) maker.append("Sorry, I am already in another channel");
     }
 }

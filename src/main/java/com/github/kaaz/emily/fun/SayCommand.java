@@ -17,7 +17,7 @@ public class SayCommand extends AbstractCommand {
         super("say", ModuleLevel.FUN, null, null, "Makes the bot say something");
     }
     @Command
-    public void command(@Argument(info = "The stuff you want me to say") String s, Channel channel, MessageMaker maker){
+    public void command(@Argument(info = "Text you want me to repeat, if you're in a voice channel you'll hear it there") String s, Channel channel, MessageMaker maker){
         GuildAudioManager manager = GuildAudioManager.getManager(channel.getGuild());
         if (manager != null) manager.queueSpeech(new LangString(false, s));// && BotRole.CONTRIBUTOR.hasRequiredRole(user, channel.getGuild())
         else maker.appendRaw(s);

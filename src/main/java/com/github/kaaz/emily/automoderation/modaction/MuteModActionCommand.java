@@ -22,7 +22,7 @@ import java.util.Set;
  */
 public class MuteModActionCommand extends AbstractCommand {
     public MuteModActionCommand() {
-        super(ModActionCommand.class, "mute", "mute", null, "m", "Mutes an annoying user for a specified amount of time or 1 hour");
+        super(ModActionCommand.class, "mute", "mute", null, "m", "Mutes an annoying user for a specified amount of time or 1 hour by default");
     }
     @Command
     public void command(Guild guild, User user, @Argument(info = "the user to be muted") User target, @Argument(optional = true, info = "duration of punishment") Time time, @Argument(info = "the reason", optional = true) String reason){

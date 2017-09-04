@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class PlayCommand extends AbstractCommand {
     public PlayCommand() {
-        super("play", ModuleLevel.MUSIC, "p", null, "Plays music from youtube or soundcloud or a stream from Twitch");
+        super("play", ModuleLevel.MUSIC, "p", null, "Plays music from youtube, soundcloud or a stream from Twitch");
     }
     @Command
     public void command(GuildAudioManager manager, @Argument(info = "a song name or url") String s, MessageMaker maker) {

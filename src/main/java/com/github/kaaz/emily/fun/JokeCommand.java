@@ -21,14 +21,14 @@ import java.net.URLConnection;
 public class JokeCommand extends AbstractCommand {
     private static final String[] REDDIT_OPTIONS = new String[0];
     public JokeCommand() {
-        super("joke", ModuleLevel.FUN, null, null, "");
+        super("joke", ModuleLevel.FUN, null, null, "Let me tell you a joke!");
     }
     @Command
-    public void handle(MessageMaker maker, User user){// todo add Reddit jokes
+    public void command(MessageMaker maker, User user){// todo add Reddit jokes
         String joke = getJokeFromWeb(user.getName());
         try{RedditCommand.command(REDDIT_OPTIONS, maker);
         } catch (Exception e){
-            maker.append(joke != null && !joke.isEmpty() ? joke : "No jokes available, try latter");
+            maker.append(joke != null && !joke.isEmpty() ? joke : "No jokes available, try later");
         }
     }
     private String getJokeFromWeb(String username) {

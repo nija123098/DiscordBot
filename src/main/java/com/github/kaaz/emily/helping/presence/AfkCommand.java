@@ -14,7 +14,7 @@ import java.util.Set;
  */
 public class AfkCommand extends AbstractCommand {
     public AfkCommand() {
-        super(PresenceCommand.class, "afk", "brb", null, null, "Marks you afk for a period of time");
+        super(PresenceCommand.class, "afk", "brb, afk", null, "afk", "Marks you afk for a period of time");
     }
     @Command
     public void command(User user){

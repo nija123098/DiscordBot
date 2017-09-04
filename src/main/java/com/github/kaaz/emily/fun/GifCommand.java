@@ -29,4 +29,9 @@ public class GifCommand extends AbstractCommand {
         } catch (Exception ignored) {}
         maker.append("Sorry, there are no gifs right now, check back later.");
     }
+
+    @Override
+    protected String getLocalUsages() {
+        return "gif <tag> // Get a gif from giphy based on <tag>";
+    }
 }

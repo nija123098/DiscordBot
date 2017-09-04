@@ -14,7 +14,7 @@ import com.github.kaaz.emily.perms.BotRole;
  */
 public class MoneyTreeCommand extends AbstractCommand {
     public MoneyTreeCommand() {
-        super("moneytree", BotRole.BOT_ADMIN, ModuleLevel.ECONOMY, "mt", null, "Gives free money");
+        super("moneytree", BotRole.BOT_ADMIN, ModuleLevel.ECONOMY, "mt", null, "Cookies do grow on trees");
     }
     @Command
     public void handle(@Argument Integer amount, @Argument Configurable configurable){

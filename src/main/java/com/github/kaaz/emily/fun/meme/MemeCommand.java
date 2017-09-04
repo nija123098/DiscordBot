@@ -2,6 +2,7 @@ package com.github.kaaz.emily.fun.meme;
 
 import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.ModuleLevel;
+import com.github.kaaz.emily.command.annotations.Argument;
 import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.exeption.DevelopmentException;
@@ -26,7 +27,7 @@ public class MemeCommand extends AbstractCommand {
     @Command
     public void command(MessageMaker maker, String[] args){
         if (args.length == 0) {
-            maker.append("Do @Emily <meme type> top text | bottom text\n");
+            maker.append("Do @Emily <meme type> [top text] | [bottom text]\n");
             MemeTypesCommand.command(maker);
             return;
         }
@@ -52,5 +53,10 @@ public class MemeCommand extends AbstractCommand {
         } catch (IOException | ExecutionException | InterruptedException e) {
             throw new DevelopmentException("Our meme service is having trouble right now", e);
         }
+    }
+
+    @Override
+    protected String getLocalUsages() {
+        return "meme <meme type> [top text] | [bottom text] // replace the top and bottom text for immense hilarity";
     }
 }

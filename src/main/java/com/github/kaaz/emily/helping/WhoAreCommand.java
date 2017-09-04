@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class WhoAreCommand extends AbstractCommand {
     public WhoAreCommand() {
-        super("whoare", ModuleLevel.HELPER, "who are, inquire role", null, "Shows the users that are the given role");
+        super("whoare", ModuleLevel.HELPER, "who are, inquire role", null, "Shows the users that have the given role");
     }
     @Command
     public void command(@Argument Role role, Guild guild, MessageMaker maker){

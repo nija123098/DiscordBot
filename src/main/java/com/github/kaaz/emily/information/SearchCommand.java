@@ -2,6 +2,7 @@ package com.github.kaaz.emily.information;
 
 import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.ModuleLevel;
+import com.github.kaaz.emily.command.annotations.Argument;
 import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.exeption.DevelopmentException;
@@ -19,7 +20,7 @@ public class SearchCommand extends AbstractCommand {
         super("search", ModuleLevel.INFO, "s, duck, duckduckgo", null, "Searches something using duckduckgo");
     }
     @Command
-    public void command(String search, MessageMaker maker){
+    public void command(@Argument String search, MessageMaker maker){
         try {
             JSONObject result = (JSONObject) new JSONParser().parse(Unirest.get("https://api.duckduckgo.com/?q=" + StringEscapeUtils.escapeHtml4(search.toLowerCase().replace(" ", "+")) + "&format=json&pretty=1").asString().getBody());
             JSONArray array = ((JSONArray) (result).get("RelatedTopics"));

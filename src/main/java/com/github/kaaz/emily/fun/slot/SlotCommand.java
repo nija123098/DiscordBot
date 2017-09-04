@@ -39,7 +39,7 @@ public class SlotCommand extends AbstractCommand {
     private static final List<User> ACTIVE_EDITING = new MemoryManagementService.ManagedList<>(6000);// todo make proper command rate-limiter
     private static final String UNKNOWN = EmoticonHelper.getChars("white_small_square", false);
     public SlotCommand() {
-        super("slot", ModuleLevel.FUN, null, "slot_machine", "Gambling.");
+        super("slot", ModuleLevel.FUN, null, "slot_machine", "Gamble your cookies away");
     }
     @Command
     public void command(@Context(softFail = true) Guild guild, User user, MessageMaker maker, @Argument(optional = true, replacement = ContextType.NONE, info = "The amount bet") Integer bet, @Context(softFail = true) Boolean first, Message message) {

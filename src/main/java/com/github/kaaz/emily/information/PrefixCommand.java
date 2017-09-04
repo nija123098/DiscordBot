@@ -15,7 +15,7 @@ import com.github.kaaz.emily.perms.BotRole;
  */
 public class PrefixCommand extends AbstractCommand {
     public PrefixCommand() {
-        super("prefix", ModuleLevel.ADMINISTRATIVE, null, null, "Shows or can change the prefix for this guild.");
+        super("prefix", ModuleLevel.ADMINISTRATIVE, null, null, "Shows or changes the prefix for this guild.");
     }
     @Command
     public void command(MessageMaker maker, Guild guild, User user, String s){

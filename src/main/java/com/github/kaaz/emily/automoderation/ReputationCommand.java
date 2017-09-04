@@ -2,6 +2,7 @@ package com.github.kaaz.emily.automoderation;
 
 import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.ModuleLevel;
+import com.github.kaaz.emily.command.annotations.Argument;
 import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.GuildUser;
@@ -23,5 +24,10 @@ public class ReputationCommand extends AbstractCommand {
         if (invoker.equals(user)) return;
         GuildUser guildUser = GuildUser.getGuildUser(guild, user);
         ConfigHandler.changeSetting(GuildUserReputationConfig.class, guildUser, integer -> ++integer);
+    }
+
+    @Override
+    protected String getLocalUsages() {
+        return "This is a reaction based command, react to a user's message to activate it";
     }
 }

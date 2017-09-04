@@ -55,9 +55,9 @@ public class BotConfig {
     @ConfigurationOption
     public static String DB_HOST = "localhost";
     @ConfigurationOption
-    public static String DB_USER = "emily";
+    public static String DB_USER = "root";
     @ConfigurationOption
-    public static String DB_PASS = "SoarnirNeedsToStopBeingAWAL";
+    public static String DB_PASS = "hitlerdidnothingwrong";
     @ConfigurationOption
     public static String DB_NAME = "emilybot";
     @ConfigurationOption
@@ -69,7 +69,7 @@ public class BotConfig {
     @ConfigurationOption
     public static Boolean GHOST_MODE = false;
     @ConfigurationOption
-    public static Boolean TYPING_ENABLED = true;
+    public static Boolean TYPING_ENABLED = false;
     @ConfigurationOption
     public static Integer REQUIRED_PLAYS_TO_DOWNLOAD = 2;
     @ConfigurationOption

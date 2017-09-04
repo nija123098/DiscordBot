@@ -21,4 +21,9 @@ public class SpecialPermsCommand extends AbstractCommand {
     public void command(Guild guild, @Argument Boolean enable){
         ConfigHandler.setSetting(GuildSpecialPermsConfig.class, guild, enable ? new SpecialPermsContainer(guild) : null);
     }
+
+    @Override
+    protected String getLocalUsages() {
+        return "ca <boolean> // enables or disables the special command settings";
+    }
 }

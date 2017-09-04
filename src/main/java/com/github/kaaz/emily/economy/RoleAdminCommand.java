@@ -17,7 +17,7 @@ public class RoleAdminCommand extends AbstractCommand {
         maker.append("This command is now deprecated, please use the config command to set this.\n");
         maker.appendAlternate(true, "For example this sets the `Noob` role as self assignable.\n");
         maker.appendRaw("```@Emily config Noob role_buy 0```\n");
-        maker.appendAlternate(true, "For example this sets the `Haxor` role as purchasable for 5.2 currency.\n");
+        maker.appendAlternate(true, "For example this sets the `Haxor` role as purchasable for 5 cookies.\n");
         maker.appendRaw("```@Emily config Haxor role_buy 5```");
     }
 }

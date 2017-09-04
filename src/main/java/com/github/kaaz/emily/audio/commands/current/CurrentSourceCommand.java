@@ -10,7 +10,7 @@ import com.github.kaaz.emily.audio.Track;
  */
 public class CurrentSourceCommand extends AbstractCommand {
     public CurrentSourceCommand() {
-        super(CurrentCommand.class, "current", null, null, null, "Shows the source of the video");
+        super(CurrentCommand.class, "source", null, null, null, "Shows the source of the video");
     }
     @Command
     public void command(Track track, MessageMaker maker){

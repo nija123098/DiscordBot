@@ -17,6 +17,7 @@ public class StarLevelRequirementConfig extends AbstractConfig<Map<StarLevel, In
         DEFAULT.put(StarLevel.DWARF, 4);
         DEFAULT.put(StarLevel.YELLOW, 8);
         DEFAULT.put(StarLevel.SOLAR, 14);
+        DEFAULT.put(StarLevel.EXPLOSIVE, 25);
     }
     public StarLevelRequirementConfig() {
         super("star_level_requirement", BotRole.GUILD_TRUSTEE, DEFAULT, "The minimum requirements for a certain level");

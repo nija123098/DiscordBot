@@ -2,6 +2,7 @@ package com.github.kaaz.emily.fun;
 
 import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.ModuleLevel;
+import com.github.kaaz.emily.command.annotations.Argument;
 import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.exeption.ArgumentException;
@@ -42,5 +43,10 @@ public class RedditCommand extends AbstractCommand {
             maker.getTitle().append(redditLink.getTitle()).getMaker().append(s);
         }
         maker.withUrl(redditLink.getPointerUrl());
+    }
+
+    @Override
+    protected String getLocalUsages() {
+        return "reddit <search> // Get a random post from reddit based on <search>";
     }
 }

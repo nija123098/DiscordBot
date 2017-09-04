@@ -12,7 +12,7 @@ public class Rand {
         return remove ? es.remove(index) : es.get(index);
     }
     public static int getRand(int max){// 0 inclusive
-        return max < 1 ? 0 : Math.abs(RANDOM.nextInt()) % (max + 1);
+        return max < 1 ? 0 : Math.abs(RANDOM.nextInt()) % (max);
     }
     public static Integer getRand(int max, Integer...exclude){
         if (exclude.length == 0 || exclude.length > max) return getRand(max);

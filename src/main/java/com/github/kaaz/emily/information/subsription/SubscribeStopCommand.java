@@ -15,7 +15,7 @@ public class SubscribeStopCommand extends AbstractCommand {
         super(SubscribeCommand.class, "stop", null, null, "end", "Ends a subscription for the channel");
     }
     @Command
-    public static void command(@Argument(optional = true, info = "The thing to subscribe to") SubscriptionLevel level, Channel channel){
+    public static void command(@Argument(optional = true, info = "The thing subscribed to") SubscriptionLevel level, Channel channel){
         ConfigHandler.alterSetting(SubscriptionsConfig.class, channel, levels -> levels.remove(level));
     }
 }

@@ -2,6 +2,7 @@ package com.github.kaaz.emily.fun;
 
 import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.ModuleLevel;
+import com.github.kaaz.emily.command.annotations.Argument;
 import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.util.EmoticonHelper;
@@ -26,7 +27,7 @@ public class UDCommand extends AbstractCommand {
         super("ud", ModuleLevel.FUN, "urbandictionary", null, "Searches Urban Dictionary");
     }
     @Command
-    public void command(MessageMaker maker, String arg){
+    public void command(MessageMaker maker, @Argument(info = "search urban dictionary") String arg){
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(new URL("http://api.urbandictionary.com/v0/define?term=" + URLEncoder.encode(arg, "UTF-8")).openConnection().getInputStream()));
             JSONParser jsonParser = new JSONParser();
@@ -47,5 +48,10 @@ public class UDCommand extends AbstractCommand {
         } catch (IOException | ParseException e) {
             Log.log("Exception loading UD content", e);
         }
+    }
+
+    @Override
+    protected String getLocalUsages() {
+        return "ud <term> // search urban dictionary for <term>";
     }
 }

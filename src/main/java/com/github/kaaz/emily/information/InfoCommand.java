@@ -17,7 +17,7 @@ public class InfoCommand extends AbstractCommand {
     @Command
     public void command(MessageMaker maker){
         if (totalCommands == -1) totalCommands = (int) CommandHandler.getCommands().stream().filter(AbstractCommand::isHighCommand).filter(o -> !o.isTemplateCommand()).count();
-        maker.append("What am I? ***I'm batman***\n" +
+        maker.appendRaw("What am I? ***I'm batman***\n" +
                 "My purpose? ***What is your purpose in life?***\n" +
                 "Who made me? ***Kaaz***\n" +
                 "\n" +
@@ -26,6 +26,6 @@ public class InfoCommand extends AbstractCommand {
                 "***For help*** about a specific command type !help <command>\n" +
                 "An example: `@Emily help skip` to see what you can do with the skip command.\n" +
                 "\n" +
-                "If you need assistance, want to share your thoughts or want to contribute feel free to join my ***!discord***");
+                "If you need assistance, want to share your thoughts or want to contribute feel free to join my `!discord`");
     }
 }

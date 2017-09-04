@@ -34,7 +34,7 @@ public class CallCommand extends AbstractCommand {
     private static final Map<Integer, Set<Channel>> CALLS = new ConcurrentHashMap<>();
     private static final AtomicInteger IDS = new AtomicInteger(-1);
     public CallCommand() {
-        super("call", BotRole.GUILD_TRUSTEE, ModuleLevel.FUN, null, null, "Sends your messages to anouther server durring the call.");
+        super("call", BotRole.GUILD_TRUSTEE, ModuleLevel.FUN, null, null, "Sends your messages to another server during the call.");
     }
     @Command
     public void command(@Argument(info = "The call ID", optional = true, replacement = ContextType.NONE) Integer callID, Channel channel, MessageMaker maker, Guild guild){// guild for requirement
@@ -70,7 +70,7 @@ public class CallCommand extends AbstractCommand {
         set.remove(channel);
         if (set.size() == 1) {
             CALLS.remove(integer);
-            set.forEach(chan -> new MessageMaker(chan).append("Hanging up call.").send());
+            set.forEach(chan -> new MessageMaker(chan).append("Ending the call.").send());
         }
         else set.forEach(chan -> new MessageMaker(chan).appendRaw(channel.getGuild().getName() + " ").append("has hung up.").send());
     }
@@ -78,5 +78,10 @@ public class CallCommand extends AbstractCommand {
     public long getCoolDown(Class<? extends Configurable> clazz) {
         if (clazz.equals(Guild.class)) return 5_000;
         return super.getCoolDown(clazz);
+    }
+
+    @Override
+    protected String getLocalUsages() {
+        return "call [call id] // use call without the ID to initialize the call and get the ID, then share the ID with the server you want to call";
     }
 }

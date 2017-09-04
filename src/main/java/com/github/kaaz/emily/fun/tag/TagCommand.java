@@ -31,4 +31,9 @@ public class TagCommand extends AbstractCommand {
             ConfigHandler.getSetting(TagConfig.class, guild).forEach((s1, tag) -> maker.getNewListPart().appendRaw(s1));
         }
     }
+
+    @Override
+    protected String getLocalUsages() {
+        return "tag <name> <text> // Create your own tag!";
+    }
 }

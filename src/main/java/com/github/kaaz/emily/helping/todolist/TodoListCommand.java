@@ -25,10 +25,15 @@ public class TodoListCommand extends AbstractCommand {
         else {
             maker.append("Your todo list!");
             AtomicInteger integer = new AtomicInteger();
-            items.forEach(todoItem -> maker.getNewListPart().append(integer + ". " + todoItem.getTodo()));
+            items.forEach(todoItem -> maker.getNewListPart().append(integer + ". " + todoItem.getTodo() + "time until: " + todoItem.getScheduledTime()));
         }
     }
     static void remind(long delay, User user, TodoItem todoItem){
-        ScheduleService.schedule(delay, () -> new MessageMaker(user).appendAlternate(true, "You put a item on your todo list for me to remind you of.\n", todoItem.getTodo()).send());
+        ScheduleService.schedule(delay, () -> new MessageMaker(user).appendAlternate(true, "You put an item on your todo list for me to remind you of.\n", todoItem.getTodo()).send());
+    }
+
+    @Override
+    protected String getLocalUsages() {
+        return "todo // get your todo list";
     }
 }

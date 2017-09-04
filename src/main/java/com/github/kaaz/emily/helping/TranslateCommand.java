@@ -16,7 +16,7 @@ import com.github.kaaz.emily.util.EmoticonHelper;
  */
 public class TranslateCommand extends AbstractCommand {
     public TranslateCommand() {
-        super("translate", ModuleLevel.HELPER, null, "speech_balloon, speech_left", "Translates a message to your language of choice of the user_language config");
+        super("translate", ModuleLevel.HELPER, null, "speech_balloon, speech_left", "Translates a message to the language of your choice based on the user_language config. This is a reaction based command");
     }
     @Command
     public void command(@Context(softFail = true) Reaction reaction, MessageMaker maker, User user){
@@ -29,5 +29,10 @@ public class TranslateCommand extends AbstractCommand {
             return;
         }
         maker.append(reaction.getMessage().getContent());
+    }
+
+    @Override
+    protected String getLocalUsages() {
+        return "react to a message to translate it";
     }
 }

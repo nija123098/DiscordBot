@@ -33,10 +33,15 @@ public class EightBallCommand extends AbstractCommand {
             "You are doomed",
             "You can't handle the truth"};
     public EightBallCommand() {
-        super("8ball", ModuleLevel.FUN, "eightball", "crystal_ball", "See what the rng 8ball has to say");
+        super("8ball", ModuleLevel.FUN, "eightball", "crystal_ball", "See what the mystical 8ball has to say");
     }
     @Command
     public void command(MessageMaker maker){
         maker.append(OPTIONS[Rand.getRand(OPTIONS.length - 1)]);
+    }
+
+    @Override
+    protected String getLocalUsages() {
+        return "8ball <question> // predict the outcome of your yes/no question with the mystical 8ball";
     }
 }

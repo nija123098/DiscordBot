@@ -19,7 +19,7 @@ public class WarnModActionCommand extends AbstractCommand {
         super(ModActionCommand.class, "warn", "warn", null, "w", "Warns a user of their behavior and gives them a strike");
     }
     @Command
-    public void command(@Argument User user, User invoker, Guild guild, String warning){
+    public void command(@Argument User user, User invoker, Guild guild, @Argument(info = "the reason",optional = true) String warning){
         new AbstractModAction(guild, AbstractModAction.ModActionLevel.WARN, user, invoker, warning);
         new MessageMaker(user).append("You have been warned in " + guild.getName() + " and gained 1 strike, totaling " + ConfigHandler.getSetting(StrikeActionConfig.class, GuildUser.getGuildUser(guild, user)) + "\n" + warning).send();
     }
