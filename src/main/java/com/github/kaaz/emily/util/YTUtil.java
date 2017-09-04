@@ -2,6 +2,7 @@ package com.github.kaaz.emily.util;
 
 import com.github.kaaz.emily.audio.Track;
 import com.github.kaaz.emily.audio.YoutubeTrack;
+import com.github.kaaz.emily.exeption.ArgumentException;
 import com.github.kaaz.emily.exeption.BotException;
 import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.launcher.BotConfig;
@@ -44,7 +45,10 @@ public class YTUtil {
     }
     public static String extractVideoCode(String s){
         int ind = s.indexOf('&');
-        if (ind != -1) s = s.substring(0, ind);
+        if (ind != -1) {
+            if (s.startsWith("&list=", 43)) throw new ArgumentException("When you give me a link to a song and playlist I don't know what to play!");
+            s = s.substring(0, ind);
+        }
         s = NetworkHelper.stripProtocol(s);
         if (s.startsWith("www.youtube.com/watch?v=")) s = s.substring(24);
         else if (s.startsWith("youtu.be/")) s = s.substring(9);

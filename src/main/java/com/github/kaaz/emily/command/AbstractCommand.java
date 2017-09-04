@@ -269,8 +269,7 @@ public class AbstractCommand {
     }
 
     protected String getLocalUsages(){
-        StringBuilder builder = new StringBuilder(this.name + " ");
-
+        StringBuilder builder = new StringBuilder(this.name).append(" ");
         Stream.of(this.parameters).filter(parameter -> parameter.isAnnotationPresent(Argument.class)).forEach(parameter -> {
             boolean optional = parameter.getAnnotation(Argument.class).optional();
             String info = parameter.getAnnotation(Argument.class).info();

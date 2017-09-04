@@ -65,7 +65,7 @@ public abstract class DownloadableTrack extends Track {
         });
         try{return queue.take();
         } catch (InterruptedException e) {
-            Log.log("Exception loading AuidoTrack for " + this.getID(), e);
+            Log.log("Exception loading AudioTrack for " + this.getID(), e);
         }
         return null;
     }

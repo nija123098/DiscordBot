@@ -33,14 +33,14 @@ public class JokeCommand extends AbstractCommand {
     }
     private String getJokeFromWeb(String username) {
         try {
-            URL loginurl = new URL("http://api.icndb.com/jokes/random?firstName=&lastName=" + StringEscapeUtils.escapeHtml4(username));
+            URL loginurl = new URL("http://api.icndb.com/jokes/random?firstName=&lastName=UNIQUE_SEQUENCE");
             URLConnection yc = loginurl.openConnection();
             yc.setConnectTimeout(10_000);
             BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
             String inputLine = in.readLine();
             JsonParser parser = new JsonParser();
             JsonObject array = parser.parse(inputLine).getAsJsonObject();
-            return StringEscapeUtils.unescapeHtml4(array.get("value").getAsJsonObject().get("joke").getAsString());
+            return StringEscapeUtils.unescapeHtml4(array.get("value").getAsJsonObject().get("joke").getAsString()).replace("UNIQUE_SEQUENCE", username);
         } catch (Exception e) {
             Log.log("Exception loading joke from web", e);
         }

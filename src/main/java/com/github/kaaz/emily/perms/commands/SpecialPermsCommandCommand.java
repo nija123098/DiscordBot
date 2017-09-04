@@ -2,7 +2,6 @@ package com.github.kaaz.emily.perms.commands;
 
 import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.ContextType;
-import com.github.kaaz.emily.command.ModuleLevel;
 import com.github.kaaz.emily.command.annotations.Argument;
 import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.config.ConfigHandler;
@@ -18,7 +17,7 @@ import com.github.kaaz.emily.perms.configs.specialperms.SpecialPermsContainer;
  */
 public class SpecialPermsCommandCommand extends AbstractCommand {
     public SpecialPermsCommandCommand() {
-        super("specialpermscommand", ModuleLevel.ADMINISTRATIVE, "spc", null, "");
+        super(SpecialPermsCommand.class, "command", null, null, null, "");
     }
     @Command
     public void command(Guild guild, MessageMaker maker, @Argument(optional = true, replacement = ContextType.NONE) Role role, @Argument(optional = true, replacement = ContextType.NONE) Channel channel, @Argument Boolean allow, @Argument AbstractCommand command){

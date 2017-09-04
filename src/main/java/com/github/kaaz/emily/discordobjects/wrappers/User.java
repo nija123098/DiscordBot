@@ -33,7 +33,7 @@ public class User implements Configurable {
     public static User getUser(IUser user){
         return MAP.computeIfAbsent(user.getStringID(), s -> new User(user));
     }
-    static List<User> getUsers(List<IUser> iUsers){
+    static List<User> getUsers(Collection<IUser> iUsers){
         List<User> users = new ArrayList<>(iUsers.size());
         iUsers.forEach(iUser -> users.add(getUser(iUser)));
         return users;

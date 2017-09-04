@@ -43,7 +43,7 @@ import sx.blah.discord.handle.impl.events.guild.channel.ChannelUpdateEvent;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MentionEvent;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageUpdateEvent;
-import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.ReactionRemoveEvent;
+import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.ReactionEvent;
 import sx.blah.discord.handle.impl.events.guild.role.RoleUpdateEvent;
 import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelMoveEvent;
 import sx.blah.discord.handle.impl.events.shard.ShardReadyEvent;
@@ -65,7 +65,6 @@ import java.util.stream.Collectors;
  */
 public class DiscordAdapter {
     private static final Map<Class<? extends Event>, Constructor<? extends BotEvent>> EVENT_MAP;
-    private static final Map<Class<? extends Event>, Constructor<? extends BotEvent>> USED_EVENT_MAP;
     private static final long PLAY_TEXT_SPEED = 60_000;
     private static final List<Template> PREVIOUS_TEXTS = new MemoryManagementService.ManagedList<>(PLAY_TEXT_SPEED + 1000);// a second for execution time
     private static final AtomicBoolean BOT_LAG_LOCKED = new AtomicBoolean();
@@ -73,8 +72,7 @@ public class DiscordAdapter {
         Set<Class<? extends BotEvent>> classes = new Reflections(Reference.BASE_PACKAGE + ".discordobjects.wrappers.event.events").getSubTypesOf(BotEvent.class);
         classes.remove(DiscordMessageReceived.class);
         EVENT_MAP = new HashMap<>(classes.size() + 2, 1);
-        USED_EVENT_MAP = new HashMap<>();
-        classes.stream().filter(clazz -> !clazz.equals(DiscordMessageReceived.class)).map(clazz -> clazz.getConstructors()[0]).forEach(constructor -> EVENT_MAP.put((Class<? extends Event>) constructor.getParameterTypes()[0], (Constructor<? extends BotEvent>) constructor));
+        classes.stream().filter(clazz -> !clazz.equals(DiscordMessageReceived.class)).filter(clazz -> !clazz.isAssignableFrom(ReactionEvent.class)).map(clazz -> clazz.getConstructors()[0]).forEach(constructor -> EVENT_MAP.put((Class<? extends Event>) constructor.getParameterTypes()[0], (Constructor<? extends BotEvent>) constructor));
         ClientBuilder builder = new ClientBuilder();
         builder.withToken(BotConfig.BOT_TOKEN);
         builder.setMaxMessageCacheCount(30);
@@ -122,10 +120,6 @@ public class DiscordAdapter {
             }else count.set(0);
         });
     }
-    public static void registerTypeUsage(Class<? extends Event> clazz){
-        if (!USED_EVENT_MAP.containsKey(clazz)) USED_EVENT_MAP.put(clazz, EVENT_MAP.get(clazz));
-    }
-
     /**
      * Forces the initialization of this class
      */
@@ -162,7 +156,7 @@ public class DiscordAdapter {
         EventDistributor.distribute(new DiscordVoiceJoin(event.getNewChannel(), event.getUser()));
     }
     @EventSubscriber
-    public static void handle(ReactionRemoveEvent event){// it's cleaner than the alternative
+    public static void handle(ReactionEvent event){// it's cleaner than the alternative
         EventDistributor.distribute(new DiscordReactionEvent(event));
     }
     private static final List<IMessage> MENTIONED_MESSAGES = new MemoryManagementService.ManagedList<>(2_000);
@@ -194,7 +188,7 @@ public class DiscordAdapter {
     @EventSubscriber
     public static void handle(Event event){
         if (BOT_LAG_LOCKED.get()) return;
-        Constructor<? extends BotEvent> constructor = USED_EVENT_MAP.get(event.getClass());
+        Constructor<? extends BotEvent> constructor = EVENT_MAP.get(event.getClass());
         if (constructor != null) {
             try{EventDistributor.distribute(constructor.newInstance(event));
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {

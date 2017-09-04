@@ -5,6 +5,7 @@ import com.github.kaaz.emily.command.ModuleLevel;
 import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
 import com.github.kaaz.emily.launcher.Reference;
+import com.github.kaaz.emily.util.Care;
 
 /**
  * Made by nija123098 on 5/11/2017.
@@ -18,6 +19,12 @@ public class SystemCommand extends AbstractCommand {
         maker.append("Emily Version: " + Reference.EMILY_VERSION + "\n");
         Runtime runtime = Runtime.getRuntime();
         long memoryLimit = runtime.maxMemory();
+        long leastMemory = runtime.freeMemory(), freeMemory;
+        for (int i = 0; i < 120_000; i++) {
+            Care.lessSleep(1);
+            freeMemory = runtime.freeMemory();
+            if (leastMemory < freeMemory) break;
+        }
         long memoryInUse = runtime.totalMemory() - runtime.freeMemory();
         maker.appendRaw(getProgressbar(memoryInUse, memoryLimit) + " " + " [ " + numberInMb(memoryInUse) + " / " + numberInMb(memoryLimit) + " ]");
     }

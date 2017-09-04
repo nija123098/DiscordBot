@@ -60,7 +60,8 @@ public class MusicDownloadService extends AbstractService {
             DownloadableTrack t = getNext();// getting the next track preserves priority
             if (t == null) return;// should never happen
             DOWNLOADING.add(t);
-            t.download();
+            try{t.download();
+            } catch (Exception e){Log.log("Exception downloading song", e);}
             DOWNLOADING.remove(t);
             CONSUMER_MAP.remove(t).forEach(c -> c.accept(track));
         });

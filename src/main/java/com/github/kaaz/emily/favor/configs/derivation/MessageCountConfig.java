@@ -16,12 +16,12 @@ public class MessageCountConfig extends AbstractConfig<Integer, GuildUser> {
     }
     @EventListener
     public void handle(DiscordMessageReceived event){
-        if (event.getMessage().getGuild() == null) return;
+        if (event.getMessage().getChannel().isPrivate()) return;
         this.changeSetting(GuildUser.getGuildUser(event.getMessage().getGuild(), event.getMessage().getAuthor()), integer -> ++integer);
     }
     @EventListener
     public void handle(DiscordMessageDelete event){
-        if (event.getMessage().getGuild() == null) return;
+        if (event.getMessage() == null || event.getMessage().getChannel().isPrivate()) return;
         this.changeSetting(GuildUser.getGuildUser(event.getMessage().getGuild(), event.getMessage().getAuthor()), integer -> --integer);
     }
     public boolean checkDefault(){

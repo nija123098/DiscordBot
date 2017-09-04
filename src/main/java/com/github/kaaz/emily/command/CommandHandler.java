@@ -177,7 +177,7 @@ public class CommandHandler {
      * @param reaction the reaction that invoked this command, if applicable
      */
     public static Boolean attemptInvocation(String string, User user, Message message, Reaction reaction){
-        if (string == null || string.isEmpty()) return false;
+        if ((string == null || string.isEmpty()) && reaction == null) return false;
         boolean mayChat = false;
         AbstractCommand command;
         if (message.getChannel().isPrivate()){
@@ -314,7 +314,7 @@ public class CommandHandler {
      */
     @EventListener
     public static void handle(DiscordReactionEvent event){
-        if (!event.getUser().isBot() && Launcher.isReady()){
+        if (!event.getUser().isBot() && Launcher.isReady() && (!event.getMessage().getAuthor().isBot() || event.getMessage().getAuthor().equals(DiscordClient.getOurUser()))){
             attemptInvocation(event.getMessage().getContent(), event.getUser(), event.getMessage(), event.getReaction());
         }
     }
@@ -326,7 +326,7 @@ public class CommandHandler {
      */
     @EventListener
     public static void handle(DiscordMessageEditEvent event){
-        if (!event.getAuthor().equals(DiscordClient.getOurUser()) && OPEN_EDIT_MESSAGES.contains(event.getMessage().getID())){
+        if (!event.getAuthor().isBot() && OPEN_EDIT_MESSAGES.contains(event.getMessage().getID())){
             if (Care.lessBoolean(attemptInvocation(event.getMessage().getContent(), event.getAuthor(), event.getMessage(), null))){
                 OPEN_EDIT_MESSAGES.remove(event.getMessage().getID());
             }

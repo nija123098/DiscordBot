@@ -4,6 +4,7 @@ import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.ModuleLevel;
 import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
+import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.util.*;
 import com.google.common.base.Joiner;
 import javafx.util.Pair;
@@ -33,7 +34,7 @@ public class TLDRCommand extends AbstractCommand {
                 if (list.size() != 200) break;
                 statuses.addAll(list);
             } catch (TwitterException e) {
-                Log.log("Eexception from Twitter", e);
+                throw new DevelopmentException("Exception getting tl;dr data from twitter", e);
             }
         }
         statuses.removeIf(status -> status.getText().startsWith("RT "));

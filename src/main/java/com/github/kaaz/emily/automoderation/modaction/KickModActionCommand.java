@@ -4,6 +4,8 @@ import com.github.kaaz.emily.automoderation.modaction.support.AbstractModAction;
 import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.annotations.Argument;
 import com.github.kaaz.emily.command.annotations.Command;
+import com.github.kaaz.emily.discordobjects.wrappers.Channel;
+import com.github.kaaz.emily.discordobjects.wrappers.DiscordPermission;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
 
@@ -16,7 +18,11 @@ public class KickModActionCommand extends AbstractCommand {
     }
     @Command
     public void command(Guild guild, User user, @Argument(info = "The user to be kicked") User target, @Argument(optional = true, info = "The reason") String reason){
-        guild.kickUser(user);
+        guild.kickUser(target);
         new AbstractModAction(guild, AbstractModAction.ModActionLevel.KICK, target, user, reason);
+    }
+    @Override
+    public boolean hasPermission(User user, Channel channel) {
+        return !channel.isPrivate() && user.getPermissionsForGuild(channel.getGuild()).contains(DiscordPermission.KICK);
     }
 }

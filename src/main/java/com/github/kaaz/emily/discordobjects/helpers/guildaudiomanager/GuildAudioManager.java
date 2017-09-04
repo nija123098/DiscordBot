@@ -81,16 +81,18 @@ public class GuildAudioManager extends AudioEventAdapter{
     public static GuildAudioManager getManager(VoiceChannel channel, boolean make){
         if (channel == null) return null;// this might not happen anymore
         if (BotConfig.GHOST_MODE) throw new GhostException();
+        GuildAudioManager current = getManager(channel.getGuild());
+        if (current != null) {
+            if (!current.voiceChannel().isConnected()) MAP.replace(channel.getID(), new GuildAudioManager(channel));
+            if (!current.channel.equals(channel)) throw new ArgumentException("You must be in the voice channel with me to use that command");
+            return current;
+        }
         if (make) {
-            GuildAudioManager current = getManager(channel.getGuild());
-            if (current != null && !current.channel.equals(channel)) throw new ArgumentException("You must be in the voice channel with me to use that command");
             if (!hasValidListeners(channel)) throw new ArgumentException("Someone has to be able to hear me in that voice channel");
             AtomicReference<VoiceChannel> reference = new AtomicReference<>(channel);
             return MAP.computeIfAbsent(channel.getGuild().getID(), s -> new GuildAudioManager(reference.get()));
-        } else {
-            GuildAudioManager manager = MAP.get(channel.getGuild().getID());
-            return manager != null && manager.channel.equals(channel) ? manager : null;
         }
+        return null;
     }
     public static GuildAudioManager getManager(VoiceChannel channel){
         return getManager(channel, true);

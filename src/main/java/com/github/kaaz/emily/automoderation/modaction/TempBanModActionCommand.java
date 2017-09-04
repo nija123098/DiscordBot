@@ -7,6 +7,8 @@ import com.github.kaaz.emily.command.annotations.Argument;
 import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.GuildUser;
+import com.github.kaaz.emily.discordobjects.wrappers.Channel;
+import com.github.kaaz.emily.discordobjects.wrappers.DiscordPermission;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.github.kaaz.emily.service.services.ScheduleService;
@@ -24,6 +26,10 @@ public class TempBanModActionCommand extends AbstractCommand {
         long length = time != null ? time.timeUntil() : 3600000;
         ban(guild, target, length);
         new AbstractModAction(guild, AbstractModAction.ModActionLevel.TEMP_BAN, target, user, reason);
+    }
+    @Override
+    public boolean hasPermission(User user, Channel channel) {
+        return !channel.isPrivate() && user.getPermissionsForGuild(channel.getGuild()).contains(DiscordPermission.BAN);
     }
     private static void ban(Guild guild, User user, long length){
         guild.banUser(user);

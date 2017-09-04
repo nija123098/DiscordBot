@@ -2,6 +2,7 @@ package com.github.kaaz.emily.discordobjects.wrappers;
 
 import com.github.kaaz.emily.discordobjects.exception.ErrorWrapper;
 import sx.blah.discord.api.IDiscordClient;
+import sx.blah.discord.handle.obj.IUser;
 
 import java.util.*;
 import java.util.function.Function;
@@ -107,7 +108,9 @@ public class DiscordClient {
     }
 
     public static List<User> getUsers() {
-        return getAll(client -> User.getUsers(client.getUsers()));
+        Set<IUser> users = new HashSet<>(1000000, 1);
+        clients().forEach(client -> users.addAll(client.getUsers()));
+        return User.getUsers(users);
     }
 
     public static List<Role> getRoles() {

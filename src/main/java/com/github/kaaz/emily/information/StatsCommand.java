@@ -27,7 +27,7 @@ public class StatsCommand extends AbstractCommand {
     }
     private String getTotalTable(boolean minified) {
         List<List<String>> body = new ArrayList<>();
-        int totGuilds = 0, totUsers = 0, totChannels = 0, totVoice = 0, totActiveVoice = 0;
+        int totGuilds = 0, totUsers = DiscordClient.getUsers().size(), totChannels = 0, totVoice = 0, totActiveVoice = 0;
         for (Shard shard : DiscordClient.getShards()) {
             List<Guild> guilds = shard.getGuilds();
             int numGuilds = guilds.size();
@@ -41,7 +41,6 @@ public class StatsCommand extends AbstractCommand {
                 }
             }
             totGuilds += numGuilds;
-            totUsers += users;
             totChannels += channels;
             totVoice += voiceChannels;
             totActiveVoice += activeVoice;

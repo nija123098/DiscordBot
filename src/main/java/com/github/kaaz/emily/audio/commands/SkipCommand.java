@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SkipCommand extends AbstractCommand {
     private static final Map<GuildAudioManager, Set<User>> MAP = new ConcurrentHashMap<>();
     public SkipCommand() {
-        super("skip", ModuleLevel.MUSIC, null, "track_next", "Skips the currently playing track");
+        super("skip", ModuleLevel.MUSIC, "next", "track_next", "Skips the currently playing track");
     }
     @Command
     public static void command(GuildAudioManager manager, User user, MessageMaker maker){

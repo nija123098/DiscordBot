@@ -4,6 +4,7 @@ import com.github.kaaz.emily.automoderation.ModLogConfig;
 import com.github.kaaz.emily.config.ConfigHandler;
 import com.github.kaaz.emily.config.GuildUser;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
+import com.github.kaaz.emily.discordobjects.wrappers.Channel;
 import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.github.kaaz.emily.exeption.ArgumentException;
@@ -26,7 +27,7 @@ public class AbstractModAction {
     public static void updateCase(Guild guild, int cas, String reason){
         AbstractModAction action = ConfigHandler.getSetting(ModActionConfig.class, guild).get(cas);
         if (action == null || OLDEST_CASE_MAP.getOrDefault(guild, Integer.MAX_VALUE) < cas) throw new ArgumentException("The entered case is too old to modify or doesn't exist (yet)");
-        action.update(reason);
+        if (action.logMaker != null) action.update(reason);
     }
     private MessageMaker logMaker, warningMaker;
     private ModActionLevel level;
@@ -35,15 +36,18 @@ public class AbstractModAction {
         this.level = level;
         this.offender = offender;
         this.invoker = invoker;
-        this.logMaker = new MessageMaker(ConfigHandler.getSetting(ModLogConfig.class, guild))
-                .withColor(level.color)
-                .getAuthorName().append(level.name()).getMaker()
-                .withAuthorIcon(offender.getAvatarURL());
+        Channel logChannel = ConfigHandler.getSetting(ModLogConfig.class, guild);
         int cas = CaseNumberConfig.incrament(guild);
-        this.logMaker.getNote().append("case " + cas);
-        this.logMaker.send();
-        this.warningMaker = new MessageMaker(offender).mustEmbed().withColor(Color.RED);
-        this.update(reason);
+        if (logChannel != null){
+            this.logMaker = new MessageMaker(logChannel)
+                    .withColor(level.color)
+                    .getAuthorName().append(level.name()).getMaker()
+                    .withAuthorIcon(offender.getAvatarURL());
+            this.logMaker.getNote().append("case " + cas);
+            this.logMaker.send();
+            this.warningMaker = new MessageMaker(offender).mustEmbed().withColor(Color.RED);
+            this.update(reason);
+        }
         ConfigHandler.alterSetting(ModActionConfig.class, guild, map -> map.put(cas, this));
         OLDEST_CASE_MAP.putIfAbsent(guild, cas - 1);
         LAST_CASE.put(GuildUser.getGuildUser(guild, invoker), cas);
