@@ -1,7 +1,6 @@
 package com.github.kaaz.emily.config.commands;
 
 import com.github.kaaz.emily.command.AbstractCommand;
-import com.github.kaaz.emily.command.CommandHandler;
 import com.github.kaaz.emily.command.ModuleLevel;
 import com.github.kaaz.emily.command.annotations.Argument;
 import com.github.kaaz.emily.command.annotations.Command;
@@ -24,16 +23,16 @@ public class ConfigCommand extends AbstractCommand {
         super("config", BotRole.USER, ModuleLevel.ADMINISTRATIVE, "cfg", null, "Gets information on config values");
     }
     @Command
-    public <C extends Configurable> void command(@Argument(optional = true) C configurable, @Argument String s, User user, @Context(softFail = true) Guild guild, MessageMaker helper, @Context(softFail = true) Message message){
-        if (s == null || s.isEmpty()){
+    public <C extends Configurable> void command(@Argument(optional = true) C configurable, @Argument String s, User user, @Context(softFail = true) Guild guild, MessageMaker maker, @Context(softFail = true) Message message){
+        if (configurable != null || s == null || s.isEmpty()){
             if (configurable == null) configurable = (C) (guild == null ? user : guild);
             C finalConfigurable = configurable;
-            helper.getAuthorName().appendRaw(LanguageHelper.makePossessive(configurable.getName()) + " ").append(" Settings");
-            if (configurable instanceof User || configurable instanceof Guild) helper.withAuthorIcon(configurable instanceof User ? ((User) configurable).getAvatarURL() : ((Guild) configurable).getIconURL());
-            helper.getNote().append("To view " + (configurable instanceof User ? "server" : "user") + " settings use this command in a " + (configurable instanceof User ? "server" : "DM with me"));
+            maker.getAuthorName().appendRaw(LanguageHelper.makePossessive(configurable.getName()) + " ").append(" Settings");
+            if (configurable instanceof User || configurable instanceof Guild) maker.withAuthorIcon(configurable instanceof User ? ((User) configurable).getAvatarURL() : ((Guild) configurable).getIconURL());
+            maker.getNote().append("To view " + (configurable instanceof User ? "server" : "user") + " settings use this command in a " + (configurable instanceof User ? "server" : "DM with me"));
             ConfigHandler.getConfigs().stream().filter(config -> finalConfigurable.getConfigLevel().isAssignableFrom(config.getConfigLevel())).filter(config -> config.getBotRole().hasRequiredRole(user, guild)).filter(AbstractConfig::isNormalViewing).forEach(config -> {
-                helper.getNewFieldPart().withBoth(config.getName(), ConfigHandler.getExteriorSetting(config.getName(), finalConfigurable));// find a casting way to do this
+                maker.getNewFieldPart().withBoth(config.getName(), ConfigHandler.getExteriorSetting(config.getName(), finalConfigurable));// find a casting way to do this
             });
-        }else CommandHandler.attemptInvocation("cfg set", user, message, null);
+        }else maker.append("Please use ").appendRaw("config get ").append("or").appendRaw(" config set").append(" but you can do !cfg [user/guild] to show all configs now.");
     }
 }

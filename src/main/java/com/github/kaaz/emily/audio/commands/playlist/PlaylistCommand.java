@@ -18,7 +18,7 @@ import com.github.kaaz.emily.discordobjects.wrappers.User;
  */
 public class PlaylistCommand extends AbstractCommand {
     public PlaylistCommand() {
-        super("playlist", ModuleLevel.MUSIC, "pl", null, "Gets information on the current playlist");
+        super("playlist", ModuleLevel.MUSIC, "pl", null, "Gets information on the current playlist and sets the active playlist");
     }
     @Command
     public void play(@Argument(optional = true) Playlist playlist, Guild guild, MessageMaker maker){

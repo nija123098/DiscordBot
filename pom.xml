@@ -131,7 +131,7 @@
         <dependency>
             <groupId>com.github.rithms</groupId>
             <artifactId>riot-api-java</artifactId>
-            <version>master-v3.9.0-g8c63cae-136</version>
+            <version>4.0.1</version>
         </dependency>
         <dependency><!-- https://mvnrepository.com/artifact/org.jscience/jscience -->
             <groupId>org.jscience</groupId>
@@ -164,20 +164,17 @@
             <version>1.7.25</version>
             <scope>test</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/commons-dbutils/commons-dbutils -->
-        <dependency>
+        <dependency><!-- https://mvnrepository.com/artifact/commons-dbutils/commons-dbutils -->
             <groupId>commons-dbutils</groupId>
             <artifactId>commons-dbutils</artifactId>
             <version>1.6</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/com.zaxxer/HikariCP -->
-        <dependency>
+        <dependency><!-- https://mvnrepository.com/artifact/com.zaxxer/HikariCP -->
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
             <version>2.6.3</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client -->
-        <dependency>
+        <dependency><!-- https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client -->
             <groupId>org.mariadb.jdbc</groupId>
             <artifactId>mariadb-java-client</artifactId>
             <version>2.1.0</version>

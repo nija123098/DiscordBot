@@ -23,7 +23,7 @@ public class User implements Configurable {
     private static final Map<String, User> MAP = new MemoryManagementService.ManagedMap<>(180000);
     public static User getUser(String id){
         try {
-            IUser user = DiscordClient.getAny(client -> client.getUserByID(FormatHelper.filtering(id, Character::isDigit)));
+            IUser user = DiscordClient.getAny(client -> client.getUserByID(FormatHelper.filtering(id, Character::isLetterOrDigit)));
             if (user == null) return null;
             return MAP.computeIfAbsent(id, s -> new User(user));
         } catch (NumberFormatException e) {

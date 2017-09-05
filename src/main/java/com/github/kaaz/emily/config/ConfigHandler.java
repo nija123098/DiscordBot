@@ -333,7 +333,7 @@ public class ConfigHandler {
         for (Function<String, ? extends Configurable> f : FUNCTION_MAP.values()){
             if ((c = f.apply(id)) != null) return c;
         }
-        return null;//throw new ArgumentException("That ID matches no configurables");
+        return null;// throw new ArgumentException("That ID matches no configurables");
     }
 
     /**

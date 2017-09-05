@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Channel implements Configurable {
     private static final Map<String, Channel> MAP = new MemoryManagementService.ManagedMap<>(180000);
     public static Channel getChannel(String id){
-        String r = FormatHelper.filtering(id, Character::isDigit);
+        String r = FormatHelper.filtering(id, Character::isLetterOrDigit);
         try {
             return getChannel((IChannel) GetterUtil.getAny(DiscordClient.clients(), f -> f.getChannelByID(r)));
         } catch (NumberFormatException e) {

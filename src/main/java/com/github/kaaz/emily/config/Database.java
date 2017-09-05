@@ -16,7 +16,7 @@ import java.sql.*;
  * Created by Soarnir on 16/7/17.
  */
 public class Database {
-    private static final CallBuffer CALL_BUFFER = new CallBuffer(1000);
+    private static final CallBuffer CALL_BUFFER = new CallBuffer(250);
     private static final Connection CONNECTION;
     private static final QueryRunner RUNNER;
     static {

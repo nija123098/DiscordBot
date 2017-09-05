@@ -70,6 +70,9 @@ public class HelpCommand extends AbstractCommand {
                 maker.appendRaw("\n");
             }
             maker.appendRaw("```\n");
+            if (command.getExample() != null){
+                maker.appendRaw(EmoticonHelper.getChars("question", false) + "**").append("Examples:").appendRaw("**\n```\n").append(command.getExample()).appendRaw("\n```\n");
+            }
             maker.append("<> indicates an argument, [] indicates an optional argument.  Do not use `<>` or `[]` in a command.");
         }
     }

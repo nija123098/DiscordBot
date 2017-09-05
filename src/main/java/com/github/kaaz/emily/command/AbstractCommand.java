@@ -268,6 +268,10 @@ public class AbstractCommand {
         return this.help;
     }
 
+    public String getExample(){
+        return null;
+    }
+
     protected String getLocalUsages(){
         StringBuilder builder = new StringBuilder(this.name).append(" ");
         Stream.of(this.parameters).filter(parameter -> parameter.isAnnotationPresent(Argument.class)).forEach(parameter -> {

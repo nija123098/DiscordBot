@@ -161,6 +161,7 @@ public class AbstractConfig<V, T extends Configurable> {
     }
     protected void validateInput(T configurable, V v) {}
     public V setValue(T configurable, V value){
+        if (!(value == null || this.valueType.isInstance(value))) throw new ArgumentException("Attempted passing incorrect type of argument");
         validateInput(configurable, value);
         if (this.cache == null) saveValue(configurable, value);
         else this.cache.put(configurable, value);

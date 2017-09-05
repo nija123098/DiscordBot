@@ -44,7 +44,7 @@ public class StringHelper {
             best = getGoodMatch(in, best, StringUtils::getLevenshteinDistance, true, false);
         }
         best.removeIf(s -> StringUtils.getJaroWinklerDistance(in, s) == 0);
-        return best.size() != 1 ? null : best.get(0);
+        return best.size() != 1 || (StringUtils.getLevenshteinDistance(best.get(0), in) > .4F * in.length() || StringUtils.getLevenshteinDistance(best.get(0), FormatHelper.filtering(in, Character::isLetter)) > .4F * in.length()) ? null : best.get(0);
     }
     public static List<String> getGoodMatch(String matching, List<String> candidates, BiFunction<String, String, Number> function, boolean golf, boolean containment){
         double bestScore = Double.MAX_VALUE;

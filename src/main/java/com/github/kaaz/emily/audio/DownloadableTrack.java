@@ -51,7 +51,7 @@ public abstract class DownloadableTrack extends Track {
         if (this.isDownloaded()) return makeAudioTrack(file());
         int playTimes = ConfigHandler.getSetting(PlayCountConfig.class, this);
         if (playTimes >= BotConfig.REQUIRED_PLAYS_TO_DOWNLOAD) MusicDownloadService.queueDownload(playTimes == 0 ? 0 : (int) Math.log(playTimes), this, manager == null ? null : downloadableTrack -> {
-            if (manager.currentTrack().equals(this)) manager.swap(this.getAudioTrack(null));
+            if (this.equals(manager.currentTrack())) manager.swap(this.getAudioTrack(null));
         });
         BlockingQueue<AudioTrack> queue = new LinkedBlockingQueue<>(1);
         GuildAudioManager.PLAYER_MANAGER.loadItem(this.getSource(), new AudioLoadResultHandler() {

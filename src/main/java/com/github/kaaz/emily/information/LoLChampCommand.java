@@ -14,11 +14,11 @@ import com.google.api.client.repackaged.com.google.common.base.Joiner;
 import net.rithms.riot.api.ApiConfig;
 import net.rithms.riot.api.RiotApi;
 import net.rithms.riot.api.RiotApiException;
-import net.rithms.riot.api.endpoints.static_data.constant.ChampData;
+import net.rithms.riot.api.endpoints.static_data.constant.ChampionListTags;
 import net.rithms.riot.api.endpoints.static_data.dto.Champion;
 import net.rithms.riot.api.endpoints.static_data.dto.ChampionSpell;
 import net.rithms.riot.api.endpoints.static_data.dto.Image;
-import net.rithms.riot.constant.Region;
+import net.rithms.riot.constant.Platform;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,10 +35,10 @@ public class LoLChampCommand extends AbstractCommand {
     public LoLChampCommand() {
         super("lolchamp", ModuleLevel.INFO, null, null, "check out a league of legends champion");
         this.api = BotConfig.RIOT_GAMES_TOKEN != null ? new RiotApi(new ApiConfig().setKey(BotConfig.RIOT_GAMES_TOKEN)) : null;
-        try{baseUrl = String.format("http://ddragon.leagueoflegends.com/cdn/%s/img/", api.getDataVersions(Region.EUW).get(0));
+        /*try{baseUrl = String.format("http://ddragon.leagueoflegends.com/cdn/%s/img/", api.getDataVersions(Platform.EUW).get(0));
         } catch (RiotApiException e) {
             throw new DevelopmentException(e);
-        }
+        }*/
     }
     private String getImage(Image img) {
         return baseUrl + img.getGroup() + "/" + img.getFull();
@@ -48,7 +48,7 @@ public class LoLChampCommand extends AbstractCommand {
         if (this.api == null) throw new DevelopmentException("This command is currently unavailable");
         try {
             if (dataChampionList.isEmpty()) {
-                Map<String, Champion> tmp = api.getDataChampionList(Region.EUW, null, null, false, ChampData.ALL).getData();
+                Map<String, Champion> tmp = api.getDataChampionList(Platform.EUW, null, null, false, ChampionListTags.ALL).getData();
                 for (Map.Entry<String, Champion> entry : tmp.entrySet()) {
                     dataChampionList.put(entry.getKey().toLowerCase(), entry.getValue());
                 }
@@ -96,8 +96,8 @@ public class LoLChampCommand extends AbstractCommand {
             }
             maker.append(description);
         } catch (RiotApiException e) {
-            maker.getHeader().clear().append("I can't do that right now");
-            Log.log("Exception loading Riot information", e);
+            maker.getHeader().clear().append("Sorry, we are in the process of updating out API key!");
+            if (!e.getMessage().contains("403")) Log.log("Exception loading Riot information", e);
         }
     }
 }

@@ -183,7 +183,6 @@ public class GuildAudioManager extends AudioEventAdapter{
         this.lavaPlayer.startTrack(this.current.getAudioTrack(this), true);
         if (position != 0) this.lavaPlayer.getPlayingTrack().setPosition(position);
         this.lavaPlayer.setPaused(false);
-        ConfigHandler.changeSetting(PlayCountConfig.class, track, integer -> integer + 1);
     }
     public void seek(long time) {
         this.lavaPlayer.getPlayingTrack().setPosition(time);

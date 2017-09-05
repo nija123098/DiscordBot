@@ -26,7 +26,7 @@ public class PlaylistAddCommand extends AbstractCommand {
     public void command(@Argument(optional = true) Playlist playlist, @Argument(optional = true) Track track, @Argument(optional = true, replacement = ContextType.NONE) Playlist importingPlaylist, User user, Guild guild, MessageMaker maker, @Argument(optional = true, info = "A playlist url") String args){
         playlist.checkPermissionToEdit(user, guild);
         ConfigHandler.alterSetting(PlaylistContentsConfig.class, playlist, ids -> {
-            if (args != null){
+            if (args != null && !args.isEmpty()){
                 List<Track> tracks = Track.getTracks(args);
                 if (track != null) ids.addAll(tracks);
                 else maker.append("This url doesn't point to a supported playlist");

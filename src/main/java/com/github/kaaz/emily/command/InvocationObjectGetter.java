@@ -3,6 +3,7 @@ package com.github.kaaz.emily.command;
 import com.github.kaaz.emily.audio.GlobalPlaylist;
 import com.github.kaaz.emily.audio.Playlist;
 import com.github.kaaz.emily.audio.Track;
+import com.github.kaaz.emily.audio.configs.UserPlaylistsConfig;
 import com.github.kaaz.emily.command.annotations.Argument;
 import com.github.kaaz.emily.command.annotations.Context;
 import com.github.kaaz.emily.config.AbstractConfig;
@@ -110,6 +111,7 @@ public class InvocationObjectGetter {
         });
         addConverter(VoiceChannel.class, (invoker, shard, channel, guild, message, reaction, args) -> (Pair<VoiceChannel, Integer>) CONVERTER_MAP.get(Channel.class).getKey().getObject(invoker, shard, channel, guild, message, reaction, args));
         addConverter(User.class, (user, shard, channel, guild, message, reaction, args) -> {
+            if (args.equalsIgnoreCase("me")) return new Pair<>(user, 2);
             User u = User.getUser(args.split(" ")[0]);
             if (u != null) return new Pair<>(u, args.split(" ")[0].length());
             if (guild == null) throw new ArgumentException("Commands with user names can not be used in private channels");
@@ -131,10 +133,27 @@ public class InvocationObjectGetter {
         });
         addConverter(Playlist.class, (user, shard, channel, guild, message, reaction, args) -> {
             if (args.toLowerCase().startsWith("global")) return new Pair<>(GlobalPlaylist.GLOBAL_PLAYLIST, args.equalsIgnoreCase("global playlist") ? 15 : 6);
-            Playlist playlist = Playlist.getPlaylist(user, message.getGuild(), args);
-            if (playlist == null) throw new ArgumentException("No playlist identified with that name");
-            String[] strings = args.split(" ");
-            return new Pair<>(playlist, strings[0].length() + strings[1].length() + 1);
+            Pair<User, Integer> p = null;
+            try{p = InvocationObjectGetter.convert(User.class, user, null, null, guild, null, null, args);
+            } catch (ArgumentException ignored){}
+            Pair<User, Integer> pair = p;
+            if (pair != null) {
+                user = pair.getKey();
+                args = args.substring(0, pair.getValue());
+            }
+            args = args.toLowerCase().split(" ")[0];
+            if (ConfigHandler.getSetting(UserPlaylistsConfig.class, user).contains(args)){
+                return new Pair<>(Playlist.getPlaylist(user, args), (pair == null ? 0 : pair.getValue()) + args.length());
+            }
+            String ar = args;
+            AtomicReference<Pair<Playlist, Integer>> reference = new AtomicReference<>();
+            if (guild != null) guild.getUsers().forEach(u -> {
+                if (ConfigHandler.getSetting(UserPlaylistsConfig.class, u).contains(ar)){
+                    if (reference.get() != null) throw new ArgumentException("Please specify a user, too many playlists are named that and owned by people in this server");
+                    reference.set(new Pair<>(Playlist.getPlaylist(u, ar), (pair == null ? 0 : pair.getValue()) + ar.length()));
+                }
+            });
+            throw new ArgumentException("Please specify a playlist by user and name or global");
         });
         addConverter(Guild.class, (user, shard, channel, guild, message, reaction, args) -> {
             Guild target = Guild.getGuild(args.split(" ")[0]);

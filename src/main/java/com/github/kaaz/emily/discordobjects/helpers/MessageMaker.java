@@ -10,7 +10,6 @@ import com.github.kaaz.emily.discordobjects.helpers.guildaudiomanager.GuildAudio
 import com.github.kaaz.emily.discordobjects.wrappers.*;
 import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.launcher.BotConfig;
-import com.github.kaaz.emily.launcher.Launcher;
 import com.github.kaaz.emily.service.services.ScheduleService;
 import com.github.kaaz.emily.util.*;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
@@ -32,9 +31,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Made by nija123098 on 4/7/2017.
  */
 public class MessageMaker {
-    static {
-        Launcher.registerShutdown(ReactionBehavior::deregisterAll);
-    }
     private static final int CHAR_LIMIT = 2000;
     private static final int EMBED_LIMIT = 1000;
     private TextPart authorName, title, header, footer, note, external;

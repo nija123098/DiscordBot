@@ -5,18 +5,20 @@ import com.github.kaaz.emily.util.LanguageHelper;
 import com.github.kaaz.emily.util.Log;
 import com.github.kaaz.emily.util.ReflectionHelper;
 import com.thoughtworks.xstream.XStream;
+import org.reflections.Reflections;
+import org.reflections.scanners.SubTypesScanner;
 
 import java.io.File;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Made by nija123098 on 5/15/2017.
@@ -24,9 +26,16 @@ import java.util.function.Function;
 public class TypeChanger {
     private static final XStream X_STREAM = new XStream();
     static {
+        XStream.setupDefaultSecurity(X_STREAM);
         X_STREAM.aliasPackage("emily-package", Reference.BASE_PACKAGE);
-        //XStream.setupDefaultSecurity(X_STREAM);
-        //ConfigHandler.getConfigs().forEach(config -> X_STREAM.allowTypeHierarchy(config.getValueType()));
+        Set<Class<?>> types = new HashSet<>();
+        new Reflections(Reference.BASE_PACKAGE, new SubTypesScanner(false)).getSubTypesOf(Object.class).stream().filter(clazz -> !clazz.isAnnotation()).filter(clazz -> !clazz.isEnum()).filter(clazz -> !clazz.isInterface()).filter(clazz -> !clazz.getName().contains("util")).filter(clazz -> !clazz.getName().contains("$")).filter(clazz -> Stream.of(clazz.getDeclaredFields()).filter(field -> !Modifier.isStatic(field.getModifiers())).count() > 0).map(clazz -> {
+            Class<?> previous = clazz;
+            Class<?> current;
+            while (!(current = previous.getSuperclass()).equals(Object.class)) previous = current;
+            if (previous.getInterfaces().length == 1) return previous.getInterfaces()[0];
+            else return previous;
+        }).collect(Collectors.toSet()).forEach(X_STREAM::allowTypeHierarchy);// set reduces repeat
     }
     private static final Map<Class<?>, Function<?, String>> TO_STRING = new HashMap<>();
     private static final Map<String, Function<String, ?>> FROM_STRING = new HashMap<>();
