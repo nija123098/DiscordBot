@@ -10,6 +10,6 @@ import com.github.kaaz.emily.perms.BotRole;
  */
 public class VoiceCommandPrintChannelConfig extends AbstractConfig<Channel, Guild> {
     public VoiceCommandPrintChannelConfig() {
-        super("voice_command_print_channel", BotRole.GUILD_TRUSTEE, "The channel in which commands from voice channels are printed if they are to large to say", Guild::getGeneralChannel);
+        super("voice_text_channel", BotRole.GUILD_TRUSTEE, "The channel in which commands from voice channels are printed if they are to large to say", Guild::getGeneralChannel);
     }
 }

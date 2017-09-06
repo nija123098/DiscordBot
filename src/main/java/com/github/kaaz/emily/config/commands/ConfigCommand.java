@@ -30,9 +30,7 @@ public class ConfigCommand extends AbstractCommand {
             maker.getAuthorName().appendRaw(LanguageHelper.makePossessive(configurable.getName()) + " ").append(" Settings");
             if (configurable instanceof User || configurable instanceof Guild) maker.withAuthorIcon(configurable instanceof User ? ((User) configurable).getAvatarURL() : ((Guild) configurable).getIconURL());
             maker.getNote().append("To view " + (configurable instanceof User ? "server" : "user") + " settings use this command in a " + (configurable instanceof User ? "server" : "DM with me"));
-            ConfigHandler.getConfigs().stream().filter(config -> finalConfigurable.getConfigLevel().isAssignableFrom(config.getConfigLevel())).filter(config -> config.getBotRole().hasRequiredRole(user, guild)).filter(AbstractConfig::isNormalViewing).forEach(config -> {
-                maker.getNewFieldPart().withBoth(config.getName(), ConfigHandler.getExteriorSetting(config.getName(), finalConfigurable));// find a casting way to do this
-            });
+            ConfigHandler.getConfigs(configurable.getClass()).stream().filter(config -> config.getBotRole().hasRequiredRole(user, guild)).filter(AbstractConfig::isNormalViewing).forEach(config -> maker.getNewFieldPart().withBoth(config.getName(), ConfigHandler.getExteriorSetting(config.getName(), finalConfigurable)));
         }else maker.append("Please use ").appendRaw("config get ").append("or").appendRaw(" config set").append(" but you can do !cfg [user/guild] to show all configs now.");
     }
 }

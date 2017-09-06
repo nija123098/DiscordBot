@@ -100,7 +100,7 @@ public class ConfigHandler {
      * @return the set of Configs for that type
      */
     public static <T extends Configurable> Set<AbstractConfig<?, T>> getConfigs(Class<T> type){
-        return getConfigs().stream().filter(config -> config.getClass().equals(type) || config.getConfigLevel() == ConfigLevel.ALL).map(abstractConfig -> ((AbstractConfig<?, T>) abstractConfig)).collect(Collectors.toSet());
+        return getConfigs().stream().filter(config -> config.getConfigLevel().isAssignableFrom(ConfigLevel.getLevel(type))).map(abstractConfig -> ((AbstractConfig<?, T>) abstractConfig)).collect(Collectors.toSet());
     }
 
     /**

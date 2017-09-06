@@ -35,10 +35,10 @@ public class LoLChampCommand extends AbstractCommand {
     public LoLChampCommand() {
         super("lolchamp", ModuleLevel.INFO, null, null, "check out a league of legends champion");
         this.api = BotConfig.RIOT_GAMES_TOKEN != null ? new RiotApi(new ApiConfig().setKey(BotConfig.RIOT_GAMES_TOKEN)) : null;
-        /*try{baseUrl = String.format("http://ddragon.leagueoflegends.com/cdn/%s/img/", api.getDataVersions(Platform.EUW).get(0));
+        try{baseUrl = String.format("http://ddragon.leagueoflegends.com/cdn/%s/img/", api.getDataVersions(Platform.EUW).get(0));
         } catch (RiotApiException e) {
             throw new DevelopmentException(e);
-        }*/
+        }
     }
     private String getImage(Image img) {
         return baseUrl + img.getGroup() + "/" + img.getFull();

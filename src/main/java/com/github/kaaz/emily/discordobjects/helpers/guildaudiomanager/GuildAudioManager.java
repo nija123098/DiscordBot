@@ -16,7 +16,6 @@ import com.github.kaaz.emily.discordobjects.wrappers.event.EventDistributor;
 import com.github.kaaz.emily.discordobjects.wrappers.event.EventListener;
 import com.github.kaaz.emily.discordobjects.wrappers.event.events.DiscordVoiceLeave;
 import com.github.kaaz.emily.exeption.ArgumentException;
-import com.github.kaaz.emily.exeption.DevelopmentException;
 import com.github.kaaz.emily.exeption.GhostException;
 import com.github.kaaz.emily.launcher.BotConfig;
 import com.github.kaaz.emily.launcher.Launcher;
@@ -107,8 +106,8 @@ public class GuildAudioManager extends AudioEventAdapter{
     private final List<Track> queue = new CopyOnWriteArrayList<>();
     private final List<LangString> interups = new CopyOnWriteArrayList<>();
     private Track current, paused, next;
-    private long pausePosition, lastSkip;
-    private boolean leaveAfterThis, loop, leaving, skipped, swapping;
+    private long pausePosition;
+    private boolean leaveAfterThis, loop, leaving, skipped, swapping, pause;
     private GuildAudioManager(VoiceChannel channel) {
         this.channel = channel;
         this.lavaPlayer = PLAYER_MANAGER.createPlayer();
@@ -135,6 +134,7 @@ public class GuildAudioManager extends AudioEventAdapter{
     }
     public void pause(boolean pause){
         this.lavaPlayer.setPaused(pause);
+        this.pause = pause;
     }
     public void clearQueue(){
         this.queue.clear();
@@ -188,10 +188,9 @@ public class GuildAudioManager extends AudioEventAdapter{
         this.lavaPlayer.getPlayingTrack().setPosition(time);
     }
     public int skipTrack() {
-        if (lastSkip >= System.currentTimeMillis() - 10) throw new DevelopmentException("Sorry, skips are rate-limited at 1 per 10 seconds right now");
-        this.lastSkip = System.currentTimeMillis();
         int size = this.queue.size() - 1;
         this.loop = false;
+        this.pause = false;
         this.lavaPlayer.stopTrack();
         this.skipped = true;
         return size;
@@ -221,6 +220,9 @@ public class GuildAudioManager extends AudioEventAdapter{
             this.start(this.getNext(true), 0);
             this.next = null;
         }else this.current = null;
+        if (this.current != null && !(this.current instanceof SpeechTrack) && this.pause){
+            this.lavaPlayer.setPaused(true);
+        }
     }
     public Track getNext(boolean take){
         if (this.loop) return this.current;

@@ -16,7 +16,7 @@ import java.util.ArrayList;
  */
 public class PlaylistRemoveAllCommand extends AbstractCommand {
     public PlaylistRemoveAllCommand() {
-        super(PlaylistCommand.class, "all", null, null, null, "Removes all songs from the current playlist");
+        super(PlaylistRemoveCommand.class, "all", null, null, null, "Removes all songs from the current playlist");
     }
     @Command
     public void command(@Argument(optional = true) Playlist playlist, User user, Guild guild){

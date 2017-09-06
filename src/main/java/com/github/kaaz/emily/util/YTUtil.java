@@ -16,9 +16,11 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
@@ -32,6 +34,8 @@ public class YTUtil {
     private static final String BASE_PLAYLIST_URL = "https://www.youtube.com/playlist?list=";
     private static final ConcurrentHashMap<String, List<YoutubeTrack>> CACHE = new ConcurrentHashMap<>();
     private static final Map<String, Boolean> VALID_CODES = new ConcurrentHashMap<>();
+    private static final List<String> KEYS = new ArrayList<>();
+    private static final AtomicInteger KEY_INDEX = new AtomicInteger(-1);
     private static boolean isYoutubeVideoCode(String s){
         return VALID_CODES.computeIfAbsent(s, s1 -> {
             if (s.length() != 11) return false;
@@ -75,16 +79,18 @@ public class YTUtil {
     static {
         YOUTUBE = new YouTube.Builder(new NetHttpTransport(), new JacksonFactory(), (HttpRequest request) -> {}).setApplicationName("Emily").build();
         YouTube.Search.List list = YTUtil.errorWrap(() -> YTUtil.YOUTUBE.search().list("id,snippet"));
-        list.setKey(BotConfig.GOOGLE_API_KEY);
         list.setOrder("relevance");
         list.setVideoCategoryId("10");
         list.setType("video");
         list.setFields("items(id/kind,id/videoId,snippet/title)");
         SINGLE = list;
         YouTube.PlaylistItems.List playlist = YTUtil.errorWrap(() -> YTUtil.YOUTUBE.playlistItems().list("id,contentDetails,snippet"));
-        playlist.setKey(BotConfig.GOOGLE_API_KEY);
         playlist.setFields("items(contentDetails/videoId,snippet/title,snippet/publishedAt),nextPageToken,pageInfo");
         PLAYLIST = playlist;
+        Collections.addAll(KEYS, BotConfig.GOOGLE_API_KEY.split(" "));
+    }
+    public static String getKey(){
+        return KEYS.get(KEY_INDEX.incrementAndGet() % KEYS.size());
     }
     public static List<Track> getTracksFromPlaylist(String code){
         return new ArrayList<>(getPlaylist(code));
@@ -100,6 +106,7 @@ public class YTUtil {
         if (!(CACHE.containsKey(reduction) && count <= CACHE.get(reduction).size())) {
             List<YoutubeTrack> tracks = new ArrayList<>(count);
             YouTube.Search.List list = (YouTube.Search.List) SINGLE.clone();
+            list.setKey(getKey());
             list.setQ(search);
             list.setMaxResults((long) count);
             SearchListResponse searchResponse = errorWrap(list::execute);
@@ -111,6 +118,7 @@ public class YTUtil {
 
     public static List<YoutubeTrack> getPlaylist(String code){
         YouTube.PlaylistItems.List list = (YouTube.PlaylistItems.List) PLAYLIST.clone();
+        list.setKey(getKey());
         List<YoutubeTrack> tracks = new ArrayList<>();
         String nextToken = "";
         do {
