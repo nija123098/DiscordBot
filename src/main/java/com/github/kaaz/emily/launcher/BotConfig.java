@@ -78,4 +78,6 @@ public class BotConfig {
     public static Integer EMILY_NUMBER = 0;
     @ConfigurationOption
     public static Integer MESSAGE_FILTERING_SERVER_SIZE = 150;
+    @ConfigurationOption
+    public static Long TRACK_EXPIRATION_TIME = 432000000L;
 }

@@ -7,7 +7,9 @@ import com.github.kaaz.emily.discordobjects.wrappers.Guild;
 import com.github.kaaz.emily.discordobjects.wrappers.User;
 import com.github.kaaz.emily.launcher.Reference;
 import com.github.kaaz.emily.perms.BotRole;
-import com.github.kaaz.emily.util.*;
+import com.github.kaaz.emily.util.Log;
+import com.github.kaaz.emily.util.SCUtil;
+import com.github.kaaz.emily.util.YTUtil;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import org.reflections.Reflections;
 
@@ -60,7 +62,7 @@ public abstract class Track implements Configurable{
         if (tracks != null){
             return tracks;
         }
-        code = TwitchUtil.extractCode(s);
+        // code = TwitchUtil.extractCode(s);
         if (code != null){
             return Collections.singletonList(Track.getTrack(TwitchTrack.class, code));
         }
@@ -71,6 +73,7 @@ public abstract class Track implements Configurable{
     protected Track(String id) {
         String start = this.getClass().getSimpleName().toUpperCase();
         this.id = id.startsWith(start) ? id : start + "-" + id;
+        //if (this.getLength() != null && this.getLength() > 10_800_000) throw new ArgumentException("I can't play songs that are over 3 hours in length, please use my repeat functionality.");
         this.registerExistence();
     }
     @Override

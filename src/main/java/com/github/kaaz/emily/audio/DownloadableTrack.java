@@ -1,11 +1,14 @@
 package com.github.kaaz.emily.audio;
 
-import com.github.kaaz.emily.audio.configs.track.*;
+import com.github.kaaz.emily.audio.configs.track.DurationTimeConfig;
+import com.github.kaaz.emily.audio.configs.track.PlayCountConfig;
+import com.github.kaaz.emily.audio.configs.track.TrackTimeExpireConfig;
+import com.github.kaaz.emily.audio.configs.track.TrackTypeConfig;
 import com.github.kaaz.emily.config.ConfigHandler;
-import com.github.kaaz.emily.config.GlobalConfigurable;
 import com.github.kaaz.emily.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 import com.github.kaaz.emily.launcher.BotConfig;
 import com.github.kaaz.emily.service.services.MusicDownloadService;
+import com.github.kaaz.emily.util.Care;
 import com.github.kaaz.emily.util.Log;
 import com.github.kaaz.emily.util.YTDLHelper;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
@@ -48,7 +51,11 @@ public abstract class DownloadableTrack extends Track {
         return MusicDownloadService.isDownloaded(this);
     }
     public AudioTrack getAudioTrack(GuildAudioManager manager){
-        if (this.isDownloaded()) return makeAudioTrack(file());
+        if (this.download()) return makeAudioTrack(file());
+        else {
+            Care.lessSleep(1000);
+            getAudioTrack(manager);
+        }
         int playTimes = ConfigHandler.getSetting(PlayCountConfig.class, this);
         if (playTimes >= BotConfig.REQUIRED_PLAYS_TO_DOWNLOAD) MusicDownloadService.queueDownload(playTimes == 0 ? 0 : (int) Math.log(playTimes), this, manager == null ? null : downloadableTrack -> {
             if (this.equals(manager.currentTrack())) manager.swap(this.getAudioTrack(null));
@@ -72,7 +79,7 @@ public abstract class DownloadableTrack extends Track {
     @Override
     public void manage(){
         super.manage();
-        if (MusicDownloadService.isDownloaded(this) && ConfigHandler.getSetting(TrackTimeExpireConfig.class, this) > ConfigHandler.getSetting(TrackDeleteTimeConfig.class, GlobalConfigurable.GLOBAL) + System.currentTimeMillis()){
+        if (MusicDownloadService.isDownloaded(this) && ConfigHandler.getSetting(TrackTimeExpireConfig.class, this) + BotConfig.TRACK_EXPIRATION_TIME < System.currentTimeMillis()){
             this.file().delete();
             ConfigHandler.setSetting(DurationTimeConfig.class, this, null);
             ConfigHandler.setSetting(TrackTypeConfig.class, this, null);
@@ -91,6 +98,7 @@ public abstract class DownloadableTrack extends Track {
         return false;
     }
     public File file(){// used when playing, and deleting, but at deletion it does not matter
+        ConfigHandler.setSetting(TrackTimeExpireConfig.class, this, System.currentTimeMillis());
         return new File(BotConfig.AUDIO_PATH + this.getID() + "." + ConfigHandler.getSetting(TrackTypeConfig.class, this));
     }
     public String getPreferredType(){

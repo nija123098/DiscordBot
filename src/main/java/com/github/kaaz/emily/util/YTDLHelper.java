@@ -25,7 +25,7 @@ public class YTDLHelper {
         commands.add("0");
         commands.add("--prefer-ffmpeg");
         commands.add("--max-filesize");
-        commands.add("128m");
+        commands.add("1G");
         commands.add("--exec");
         commands.add("mv {} " + BotConfig.AUDIO_PATH);//-hide_banner -i input.m4a -c:a copy
         commands.add("--output");

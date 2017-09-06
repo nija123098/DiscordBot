@@ -19,7 +19,6 @@ import com.github.kaaz.emily.exeption.ArgumentException;
 import com.github.kaaz.emily.exeption.GhostException;
 import com.github.kaaz.emily.launcher.BotConfig;
 import com.github.kaaz.emily.launcher.Launcher;
-import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.service.services.ScheduleService;
 import com.github.kaaz.emily.util.Care;
 import com.github.kaaz.emily.util.LangString;
@@ -201,7 +200,7 @@ public class GuildAudioManager extends AudioEventAdapter{
             this.swapping = false;
             return;
         }
-        if (!this.skipped) ConfigHandler.changeSetting(PlayCountConfig.class, this.current, integer -> integer + validListeners(this.channel));
+        if (!this.skipped && !(this.current instanceof SpeechTrack)) ConfigHandler.changeSetting(PlayCountConfig.class, this.current, integer -> integer + validListeners(this.channel));
         if (!this.interups.isEmpty()) {
             this.start(new SpeechTrack(this.interups.remove(0), MessageMaker.getLang(null, this.channel)), 0);
             return;
@@ -305,10 +304,8 @@ public class GuildAudioManager extends AudioEventAdapter{
             if (lastFrame == null) {
                 lastFrame = audioPlayer.provide();
             }
-
             byte[] data = lastFrame != null ? lastFrame.data : null;
             lastFrame = null;
-
             return data;
         }
         @Override
@@ -321,7 +318,7 @@ public class GuildAudioManager extends AudioEventAdapter{
         }
     }
     public static int validListeners(VoiceChannel channel){
-        return (int) channel.getConnectedUsers().stream().filter(user -> BotRole.USER.hasRequiredRole(user, null)).filter(user -> {
+        return (int) channel.getConnectedUsers().stream().filter(user -> !user.isBot()).filter(user -> {
             IVoiceState voiceState = user.user().getVoiceStateForGuild(channel.getGuild().guild());
             return !(voiceState.isDeafened() || voiceState.isSelfDeafened());
         }).count();
