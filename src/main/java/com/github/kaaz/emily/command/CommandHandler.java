@@ -196,11 +196,18 @@ public class CommandHandler {
             String pref = ConfigHandler.getSetting(GuildPrefixConfig.class, message.getGuild());
             if (string.startsWith(pref)) string = string.substring(pref.length());
             else{
-                if ((command = REACTION_COMMAND_MAP.get(string)) != null){
-                    try{if (command.hasPermission(user, message.getChannel()) && command.checkCoolDown(message.getChannel(), user) && command.interpretSuccess(command.invoke(user, message.getShard(), message.getChannel(), message.getGuild(), message, reaction, string))){
-                        command.invoked(message.getChannel(), user, message);
-                        return true;
+                String split = string.split(" ")[0];
+                if ((command = REACTION_COMMAND_MAP.get(split)) != null){
+                    Pair<AbstractCommand, String> pair = getMessageCommand(command.getName() + " " + FormatHelper.trimFront(string.substring(split.length())));
+                    if (pair != null){
+                        command = pair.getKey();
+                        string = pair.getValue();
                     }
+                    try {
+                        if (command.hasPermission(user, message.getChannel()) && command.checkCoolDown(message.getChannel(), user) && command.interpretSuccess(command.invoke(user, message.getShard(), message.getChannel(), message.getGuild(), message, reaction, string))){
+                            command.invoked(message.getChannel(), user, message);
+                            return true;
+                        }
                     }catch(Exception ignored){}
                     return false;
                 }else if (string.toLowerCase().startsWith("@emily")) string = string.substring(6);

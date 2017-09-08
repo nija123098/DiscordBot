@@ -55,7 +55,7 @@ public class Poll {
         MessageMaker maker = new MessageMaker(origin);
         maker.getHeader().append(this.getMessageContent());
         for (int i = 0; i < this.options.length; i++) {
-            maker.withReactionBehavior(LanguageHelper.getInteger(i + 1), (add, reaction, user) -> {
+            maker.withPublicReactionBehavior(LanguageHelper.getInteger(i + 1), (add, reaction, user) -> {
                 try {
                     int val = LanguageHelper.getInteger(reaction.getName());
                     if (add) this.vote(user, val);

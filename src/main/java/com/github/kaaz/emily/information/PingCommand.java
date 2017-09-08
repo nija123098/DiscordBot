@@ -4,6 +4,7 @@ import com.github.kaaz.emily.command.AbstractCommand;
 import com.github.kaaz.emily.command.ModuleLevel;
 import com.github.kaaz.emily.command.annotations.Command;
 import com.github.kaaz.emily.discordobjects.helpers.MessageMaker;
+import com.github.kaaz.emily.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 import com.github.kaaz.emily.util.EmoticonHelper;
 import com.github.kaaz.emily.util.Log;
 
@@ -22,5 +23,6 @@ public class PingCommand extends AbstractCommand {
         Log.log("Ping is " + time);
         helper.forceCompile().getHeader().clear();
         helper.appendRaw(EmoticonHelper.getChars("inbox_tray", false) + " ").append("ping is " + time + "ms");
+        GuildAudioManager.PLAYER_MANAGER.enableGcMonitoring();
     }
 }

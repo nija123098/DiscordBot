@@ -10,7 +10,7 @@ import com.github.kaaz.emily.discordobjects.helpers.guildaudiomanager.GuildAudio
  */
 public class PauseCommand extends AbstractCommand {
     public PauseCommand() {
-        super("pause", ModuleLevel.MUSIC, "unpause", null, "Pauses the currently playing track");
+        super("pause", ModuleLevel.MUSIC, "unpause", "pause_button", "Pauses the currently playing track");
     }
     @Command
     public void command(GuildAudioManager manager){

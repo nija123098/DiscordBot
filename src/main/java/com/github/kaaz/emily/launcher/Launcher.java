@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * Made by nija123098 on 2/20/2017.
  */
 public class Launcher {
+    private static final AtomicBoolean LOCKDOWN = new AtomicBoolean();
     private static final Set<Runnable> STARTUPS = new HashSet<>();
     private static final Set<Runnable> ASYNC_STARTUPS = new HashSet<>();
     private static final Set<Runnable> SHUTDOWNS = new HashSet<>();

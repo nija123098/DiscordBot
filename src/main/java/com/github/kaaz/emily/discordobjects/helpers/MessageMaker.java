@@ -113,6 +113,12 @@ public class MessageMaker {
         return this;
     }
     public MessageMaker withReactionBehavior(String reactionName, ReactionBehavior behavior){
+        if (!this.reactionBehaviors.containsKey(reactionName)) this.reactionBehaviors.put(reactionName, (add, reaction, user) -> {
+            if (user.equals(this.user)) behavior.behave(add, reaction, user);
+        });
+        return this;
+    }
+    public MessageMaker withPublicReactionBehavior(String reactionName, ReactionBehavior behavior){
         if (!this.reactionBehaviors.containsKey(reactionName)) this.reactionBehaviors.put(reactionName, behavior);
         return this;
     }
@@ -371,12 +377,14 @@ public class MessageMaker {
                 int index = -1;
                 String s = "";
                 List<String> strings = new ArrayList<>();
+                int newLines = 0;
                 while (true) {
                     if (++index >= textList.size()){
                         strings.add(s);
                         break;
                     }
-                    if (starterChars + s.length() + textList.get(index).langString.translate(lang).length() > CHAR_LIMIT){
+                    if (starterChars + s.length() + textList.get(index).langString.translate(lang).length() > CHAR_LIMIT || (newLines += StringHelper.instances(textList.get(index).langString.translate(lang), '\n')) > 21){
+                        newLines = 0;
                         --index;
                         strings.add(s);
                         s = "";

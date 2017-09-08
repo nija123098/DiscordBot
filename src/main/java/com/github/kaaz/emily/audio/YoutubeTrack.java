@@ -23,12 +23,13 @@ public class YoutubeTrack extends DownloadableTrack {
     protected YoutubeTrack() {}
     @Override
     public String getName() {
-        if (this.name != null) return this.name;
-        try{return (this.name = ((JSONObject) new JSONParser().parse(StringHelper.readAll("https://www.youtube.com/oembed?url=http%3A//youtube.com/watch%3Fv%3D" + this.getCode()))).get("title").toString());
-        }catch(ParseException | IOException | UnirestException e) {
-            Log.log("Exception getting name from Youtube track", e);
+        if (this.name == null) {
+            try{this.name = ((JSONObject) new JSONParser().parse(StringHelper.readAll("https://www.youtube.com/oembed?url=http%3A//youtube.com/watch%3Fv%3D" + this.getCode()))).get("title").toString();
+            }catch(ParseException | IOException | UnirestException e) {
+                Log.log("Exception getting name from Youtube track", e);
+            }
         }
-        return null;
+        return this.name;
     }
     public String getSource() {
         return "https://www.youtube.com/watch?v=" + this.getCode();

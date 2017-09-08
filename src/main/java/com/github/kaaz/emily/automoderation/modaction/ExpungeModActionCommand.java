@@ -31,7 +31,7 @@ public class ExpungeModActionCommand extends AbstractCommand {
     @Command
     public void command(Guild guild, User user, @Argument(info = "The user to be kicked") User target, @Argument(optional = true, info = "The reason") String reason){
         guild.banUser(user, 7);// 7 is the max
-        new AbstractModAction(guild, AbstractModAction.ModActionLevel.BAN, target, user, reason);
+        new AbstractModAction(guild, AbstractModAction.ModActionLevel.EXPUNGE, target, user, reason);
         MessageMaker maker = new MessageMaker(user).getTitle().append("Name Removal").getMaker()
                 .append("The following names were used by the user while present in the guild.  " +
                         "Select the corresponding letter to remove the name from all message history.  " +

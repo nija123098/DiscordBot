@@ -22,6 +22,7 @@ import com.github.kaaz.emily.launcher.Launcher;
 import com.github.kaaz.emily.service.services.ScheduleService;
 import com.github.kaaz.emily.util.Care;
 import com.github.kaaz.emily.util.LangString;
+import com.github.kaaz.emily.util.Log;
 import com.sedmelluq.discord.lavaplayer.player.AudioConfiguration;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
@@ -40,8 +41,11 @@ import sx.blah.discord.handle.obj.IVoiceState;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -49,6 +53,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * Made by nija123098 on 3/28/2017.
  */
 public class GuildAudioManager extends AudioEventAdapter{
+    private static final int BUFFER_SIZE = 40;
     private static final Map<String, GuildAudioManager> MAP = new ConcurrentHashMap<>();
     public static final DefaultAudioPlayerManager PLAYER_MANAGER = new DefaultAudioPlayerManager();
     static {
@@ -98,6 +103,7 @@ public class GuildAudioManager extends AudioEventAdapter{
     public static GuildAudioManager getManager(Guild guild){
         return MAP.get(guild.getID());
     }
+    private AudioProvider audioProvider;
     private VoiceChannel channel;
     private AudioPlayer lavaPlayer;
     private final Set<User> skipSet = new ConcurrentHashSet<>();
@@ -111,7 +117,8 @@ public class GuildAudioManager extends AudioEventAdapter{
         this.channel = channel;
         this.lavaPlayer = PLAYER_MANAGER.createPlayer();
         this.lavaPlayer.addListener(this);
-        this.channel.channel().getGuild().getAudioManager().setAudioProvider(new AudioProvider(this.lavaPlayer));
+        this.audioProvider = new AudioProvider(this);
+        this.channel.channel().getGuild().getAudioManager().setAudioProvider(this.audioProvider);
         this.lavaPlayer.setVolume(ConfigHandler.getSetting(VolumeConfig.class, channel.getGuild()));
         this.channel.join();
         this.start(new SpeechTrack(new LangString(true, "Hello"), MessageMaker.getLang(null, this.channel)), 0);
@@ -119,10 +126,13 @@ public class GuildAudioManager extends AudioEventAdapter{
     public void leave(){
         if (this.leaving || !hasValidListeners(this.channel)){
             MAP.remove(this.channel.getGuild().getID());
-            this.lavaPlayer.destroy();
             this.channel.leave();
+            this.audioProvider.run.set(false);
+            this.lavaPlayer.destroy();
         }else{
+            this.audioProvider.clearBuffer();
             this.clearQueue();
+            this.interups.clear();
             this.speeches.clear();
             this.queueSpeech(new LangString(true, "Goodbye"));
             if (this.current != null) this.skipTrack();
@@ -187,6 +197,7 @@ public class GuildAudioManager extends AudioEventAdapter{
         this.lavaPlayer.getPlayingTrack().setPosition(time);
     }
     public int skipTrack() {
+        this.audioProvider.clearBuffer();
         int size = this.queue.size() - 1;
         this.loop = false;
         this.pause = false;
@@ -284,29 +295,42 @@ public class GuildAudioManager extends AudioEventAdapter{
         }
         manager.skipSet.remove(event.getUser());
         manager.checkSkip();
-        manager.leave();
     }
+    private static final AudioFrame NULL = new AudioFrame(0, null, 0, null);
     public class AudioProvider implements IAudioProvider {
-        private final AudioPlayer audioPlayer;
-        private AudioFrame lastFrame;
-        private AudioProvider(AudioPlayer audioPlayer) {
-            this.audioPlayer = audioPlayer;
+        private final BlockingQueue<AudioFrame> frames = new LinkedBlockingQueue<>(BUFFER_SIZE);
+        private final Thread queueThread;
+        private final AtomicBoolean run = new AtomicBoolean(true);
+        private AudioProvider(GuildAudioManager manager) {
+            this.queueThread = new Thread(() -> {
+                int check = 1;
+                while (run.get()){
+                    Care.lessSleep(1);
+                    if (this.frames.size() != BUFFER_SIZE){
+                        AudioFrame frame = manager.lavaPlayer.provide();
+                        this.frames.add(frame == null ? NULL : frame);
+                    }else Care.lessSleep(5);
+                }
+            });
+            this.queueThread.setDaemon(true);
+            this.queueThread.start();
         }
         @Override
         public boolean isReady() {
-            if (lastFrame == null) {
-                lastFrame = audioPlayer.provide();
-            }
-            return lastFrame != null;
+            return !this.frames.isEmpty() && this.queueThread.isAlive();
         }
         @Override
         public byte[] provide() {
-            if (lastFrame == null) {
-                lastFrame = audioPlayer.provide();
+            try {
+                if (!isReady()) return null;// This is redundant, but Lavaplayer doesn't always work well either.
+                return frames.take().data;
+            } catch (InterruptedException e) {
+                Log.log("Interrupted taking frame, ending song", e);
+                return null;
             }
-            byte[] data = lastFrame != null ? lastFrame.data : null;
-            lastFrame = null;
-            return data;
+        }
+        public void clearBuffer(){
+            this.frames.clear();
         }
         @Override
         public int getChannels() {

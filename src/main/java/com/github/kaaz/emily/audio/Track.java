@@ -9,6 +9,7 @@ import com.github.kaaz.emily.launcher.Reference;
 import com.github.kaaz.emily.perms.BotRole;
 import com.github.kaaz.emily.util.Log;
 import com.github.kaaz.emily.util.SCUtil;
+import com.github.kaaz.emily.util.TwitchUtil;
 import com.github.kaaz.emily.util.YTUtil;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import org.reflections.Reflections;
@@ -62,7 +63,7 @@ public abstract class Track implements Configurable{
         if (tracks != null){
             return tracks;
         }
-        // code = TwitchUtil.extractCode(s);
+        code = TwitchUtil.extractCode(s);
         if (code != null){
             return Collections.singletonList(Track.getTrack(TwitchTrack.class, code));
         }
