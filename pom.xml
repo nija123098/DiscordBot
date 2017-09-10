@@ -4,14 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.github.Kaaz</groupId>
+    <groupId>com.github.nija123098</groupId>
     <artifactId>DiscordBot</artifactId>
     <version>2.0.0</version>
 
     <packaging>jar</packaging>
 
     <description>A discord bot for music and other fun features</description>
-    <url>https://github.com/Kaaz/DiscordBot</url>
+    <url>https://github.com/nija123098/DiscordBot</url>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -34,7 +34,7 @@
         <dependency>
             <groupId>com.github.austinv11</groupId>
             <artifactId>Discord4j</artifactId>
-            <version>3d0e660</version>
+            <version>9a5d23f</version>
             <classifier>shaded</classifier>
         </dependency>
         <dependency>
@@ -186,7 +186,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>com.github.kaaz.emily.launcher.Launcher</mainClass>
+                            <mainClass>com.github.nija123098.evelyn.launcher.Launcher</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

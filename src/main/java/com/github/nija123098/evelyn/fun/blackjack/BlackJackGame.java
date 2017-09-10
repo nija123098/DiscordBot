@@ -1,0 +1,62 @@
+package com.github.nija123098.evelyn.fun.blackjack;
+
+import com.github.nija123098.evelyn.config.Configurable;
+import com.github.nija123098.evelyn.fun.commonpieces.CardDeck;
+import com.github.nija123098.evelyn.util.LanguageHelper;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Made by nija123098 on 5/25/2017.
+ */
+public class BlackJackGame {
+    private static final Map<Configurable, BlackJackGame> GAME_MAP = new HashMap<>();
+    public static synchronized BlackJackGame getGame(Configurable configurable){
+        return GAME_MAP.get(configurable);
+    }
+    public static synchronized void setGame(Configurable configurable, BlackJackGame game){
+        GAME_MAP.put(configurable, game);
+    }
+    private Configurable player;
+    private CardDeck.Hand dealerHand, playerHand;
+    public BlackJackGame(Configurable player) {
+        this.player = player;
+        CardDeck deck = new CardDeck();
+        this.dealerHand = deck.makeHand(1);
+        this.playerHand = deck.makeHand(2);
+    }
+    public int playerHit(){
+        this.playerHand.draw();
+        return value(this.playerHand);
+    }
+    public int dealerHit(){
+        this.dealerHand.draw();
+        return value(this.dealerHand);
+    }
+    public int playerValue(){
+        return value(this.playerHand);
+    }
+    @Override
+    public String toString(){
+        return "Dealer's hand (" + value(this.dealerHand) + ")\n" + this.dealerHand.toString() + "\n\n" + LanguageHelper.makePossessive(this.player.getName()) + " hand (" + value(this.playerHand) + ")\n" + this.playerHand.toString();
+    }
+    public boolean playerBlackJack(){
+        return blackJack(this.playerHand);
+    }
+    public boolean dealerBlackJack(){
+        return blackJack(this.dealerHand);
+    }
+    public static int value(CardDeck.Hand hand){
+        return CardDeck.ValueRule.BLACK_JACK.value(hand);
+    }
+    public static boolean blackJack(CardDeck.Hand hand){
+        return hand.getHand().size() == 2 && (isJack(hand.getHand().get(0)) && isAce(hand.getHand().get(1)) || isJack(hand.getHand().get(1)) && isAce(hand.getHand().get(0)));
+    }
+    private static boolean isJack(CardDeck.Card card){
+        return card.getNumber() == 11 && (card.getSuit().equals(CardDeck.Suit.CLUBS) || card.getSuit().equals(CardDeck.Suit.SPADES));
+    }
+    private static boolean isAce(CardDeck.Card card){
+        return card.getNumber() == 14;
+    }
+}
