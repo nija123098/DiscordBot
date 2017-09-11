@@ -25,6 +25,7 @@ import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -33,6 +34,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class MessageMaker {
     private static final int CHAR_LIMIT = 2000;
     private static final int EMBED_LIMIT = 1000;
+    private static final Map<Guild, Map<User, Set<Channel>>> NO_RESPONSE_LOCATION = new ConcurrentHashMap<>();
     private TextPart authorName, title, header, footer, note, external;
     private List<TextPart> textList = new ArrayList<>();
     private String[] textVals;
@@ -354,8 +356,9 @@ public class MessageMaker {
             if (this.channel.isPrivate()){
                 throw new RuntimeException("Could not send message to user due to lacking permissions: " + this.user.getName());
             } else {
-                this.channel = this.user.getOrCreatePMChannel();
-                this.compile();
+                if (this.user != null && NO_RESPONSE_LOCATION.computeIfAbsent(this.channel.getGuild(), guild -> new ConcurrentHashMap<>()).computeIfAbsent(this.user, u -> new HashSet<>()).add(this.channel)){
+                    this.user.getOrCreatePMChannel().channel().sendMessage("Hey, I don't respond there and I won't tell you again!  Your command has been completed though.");
+                }
                 return;
             }
         }

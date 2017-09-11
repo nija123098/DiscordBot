@@ -1,5 +1,6 @@
 package com.github.nija123098.evelyn.command;
 
+import com.github.nija123098.evelyn.command.configs.UnknownReactionConfig;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.configs.guild.GuildPrefixConfig;
 import com.github.nija123098.evelyn.config.configs.user.VoicePrefixConfig;
@@ -262,7 +263,7 @@ public class CommandHandler {
         }else if (reaction == null && !message.getChannel().isPrivate() && CustomCommandHandler.handle(message.getGuild(), message.getAuthor(), message.getChannel().getShard(), message.getChannel(), message, string)) return true;
         else if (reaction == null){
             if (mayChat) return null;
-            if (FormatHelper.filtering(string, Character::isLetter).isEmpty()) return false;
+            if (FormatHelper.filtering(string, Character::isLetter).isEmpty() || (message.getChannel().isPrivate() && ConfigHandler.getSetting(UnknownReactionConfig.class, message.getGuild()))) return false;
             message.addReactionByName(UNKNOWN_COMMAND_EMOTICON);
             OPEN_EDIT_MESSAGES.add(message.getID());
         }

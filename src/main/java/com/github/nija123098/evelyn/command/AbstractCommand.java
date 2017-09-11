@@ -10,6 +10,7 @@ import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.Configurable;
 import com.github.nija123098.evelyn.config.GlobalConfigurable;
 import com.github.nija123098.evelyn.config.GuildUser;
+import com.github.nija123098.evelyn.config.configs.user.LastCommandTimeConfig;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.*;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventDistributor;
@@ -379,6 +380,7 @@ public class AbstractCommand {
             this.guildUserCoolDowns.add(GuildUser.getGuildUser(channel.getGuild(), user));
         }
         CommandsUsedCountConfig.increment(user);
+        LastCommandTimeConfig.update(user);
         if (this.okOnSuccess && message != null) message.addReactionByName("ok_hand");
     }
 
