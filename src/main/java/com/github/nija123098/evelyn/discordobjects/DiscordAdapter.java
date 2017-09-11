@@ -1,8 +1,8 @@
 package com.github.nija123098.evelyn.discordobjects;
 
 import com.github.nija123098.evelyn.audio.SpeechParser;
-import com.github.nija123098.evelyn.automoderation.DeletePinNotificationConfig;
-import com.github.nija123098.evelyn.automoderation.messagefiltering.MessageMonitor;
+import com.github.nija123098.evelyn.moderation.DeletePinNotificationConfig;
+import com.github.nija123098.evelyn.moderation.messagefiltering.MessageMonitor;
 import com.github.nija123098.evelyn.chatbot.ChatBot;
 import com.github.nija123098.evelyn.command.CommandHandler;
 import com.github.nija123098.evelyn.discordobjects.exception.ErrorWrapper;
@@ -136,8 +136,10 @@ public class DiscordAdapter {
             }
         }
         ScheduleService.scheduleRepeat(System.currentTimeMillis() % 86_400_000, 86_400_000, () -> {// 24 hours
+            long time = System.currentTimeMillis();
+            time -= time % 86_400_000;
             while (!DiscordClient.isReady()) Care.lessSleep(1000);
-            try{Files.write(path, Collections.singleton(System.currentTimeMillis() + " " + DiscordClient.getGuilds().size()), StandardOpenOption.APPEND);
+            try{Files.write(path, Collections.singleton(time + " " + DiscordClient.getGuilds().size()), StandardOpenOption.APPEND);
             } catch (IOException e) {
                 Log.log("Could not save guild count", e);
             }

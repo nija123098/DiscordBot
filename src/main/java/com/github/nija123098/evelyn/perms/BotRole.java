@@ -96,11 +96,10 @@ public enum BotRole {
     public static void setRole(BotRole role, boolean grant, User target, Guild guild){
         Class<? extends AbstractConfig<Set<BotRole>, ? extends Configurable>> config = role.isGlobalFlag ? GlobalBotRoleConfig.class : GuildBotRoleConfig.class;
         Configurable configurable = role.isGlobalFlag ? target : GuildUser.getGuildUser(guild, target);
-        Set<BotRole> roles = ConfigHandler.getSetting((Class<? extends AbstractConfig<Set<BotRole>,Configurable>>) config, configurable);
-        if (roles.contains(role)) return;
-        if (grant) roles.add(role);
-        else roles.remove(role);
-        ConfigHandler.setSetting((Class<? extends AbstractConfig<Set<BotRole>,Configurable>>) config, configurable, roles);
+        ConfigHandler.alterSetting((Class<? extends AbstractConfig<Set<BotRole>,Configurable>>) config, configurable, roles -> {
+            if (grant) roles.add(role);
+            else roles.remove(role);
+        });
         Stream.of(values()).forEach(botRole -> botRole.PERMISSIONS_CASHE.clear());
         EventDistributor.distribute(new BotRoleChangeEvent(grant, role, target, guild));
     }

@@ -3,9 +3,7 @@ package com.github.nija123098.evelyn.helping.presence;
 import com.github.nija123098.evelyn.config.AbstractConfig;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
-import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordPermission;
-import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
-import com.github.nija123098.evelyn.discordobjects.wrappers.Presence;
+import com.github.nija123098.evelyn.discordobjects.wrappers.*;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordMessageReceived;
 import com.github.nija123098.evelyn.perms.BotRole;
@@ -24,7 +22,10 @@ public class MentionResponseConfig extends AbstractConfig<Boolean, Guild> {
     @EventListener
     public void handle(DiscordMessageReceived event){
         if (event.getChannel().isPrivate() || event.getGuild().getUserSize() < 16 || event.getAuthor().isBot()) return;
-        Set<String> set = event.getMessage().getMentions().stream().filter(user -> event.getChannel().getModifiedPermissions(user).contains(DiscordPermission.READ_MESSAGES)).filter(user -> user.getPresence().getStatus() != Presence.Status.ONLINE || ConfigHandler.getSetting(SelfMarkedAwayConfig.class, user)).map(user -> user.getDisplayName(event.getGuild()) + " is " + (user.getPresence().getStatus() == Presence.Status.ONLINE ? "AFK" : user.getPresence().getStatus())).collect(Collectors.toSet());
+        Set<User> users = event.getMessage().getMentions().stream().filter(user -> !DiscordClient.getOurUser().equals(user)).filter(user -> event.getChannel().getModifiedPermissions(user).contains(DiscordPermission.READ_MESSAGES)).filter(user -> user.getPresence().getStatus() != Presence.Status.ONLINE || ConfigHandler.getSetting(SelfMarkedAwayConfig.class, user)).collect(Collectors.toSet());
+        if (users.isEmpty()) return;
+        if (users.size() != 1) users.removeIf(User::isBot);
+        Set<String> set = users.stream().map(user -> user.getDisplayName(event.getGuild()) + " is " + (user.getPresence().getStatus() == Presence.Status.ONLINE ? "AFK" : user.getPresence().getStatus())).collect(Collectors.toSet());
         if (set.isEmpty()) return;
         new MessageMaker(event.getMessage()).appendRaw(Joiner.on(", ").join(set)).withDeleteDelay(Math.max(5_000, set.size() * 1_500L)).send();
     }

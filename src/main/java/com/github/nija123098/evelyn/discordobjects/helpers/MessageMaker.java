@@ -1,6 +1,6 @@
 package com.github.nija123098.evelyn.discordobjects.helpers;
 
-import com.github.nija123098.evelyn.automoderation.VoiceCommandPrintChannelConfig;
+import com.github.nija123098.evelyn.moderation.VoiceCommandPrintChannelConfig;
 import com.github.nija123098.evelyn.command.ProcessingHandler;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.configs.guild.GuildLanguageConfig;
@@ -305,7 +305,7 @@ public class MessageMaker {
     private void send(int page){
         if (BotConfig.GHOST_MODE) return;
         if (!this.maySend) {
-            if (this.origin != null) ErrorWrapper.wrap(() -> this.origin.addReaction(EmoticonHelper.getChars("ok_hand", false)));
+            if (this.origin != null) ErrorWrapper.wrap(() -> this.origin.addReaction(ReactionEmoji.of(EmoticonHelper.getChars("ok_hand", false))));
             return;
         }
         this.builder = new MessageBuilder(DiscordClient.getClientForShard(this.channel.getShard()));
@@ -315,7 +315,7 @@ public class MessageMaker {
                 throw new DevelopmentException("File not made by time of sending", e);
             }
         }
-        if (this.origin != null && this.okHand) ErrorWrapper.wrap(() -> this.origin.addReaction(EmoticonHelper.getChars("ok_hand", false)));
+        if (this.origin != null && this.okHand) ErrorWrapper.wrap(() -> this.origin.addReaction(ReactionEmoji.of(EmoticonHelper.getChars("ok_hand", false))));
         this.compile();
         if (this.embed != null){
             if (page < 0 || page >= this.fieldIndices.length) throw new DevelopmentException("Attempted to get a page that doesn't exit");

@@ -12,6 +12,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.exeption.DevelopmentException;
 import com.github.nija123098.evelyn.exeption.PermissionsException;
 import com.github.nija123098.evelyn.service.services.ScheduleService;
+import com.github.nija123098.evelyn.util.FormatHelper;
 import com.github.nija123098.evelyn.util.Rand;
 
 import java.util.List;
@@ -34,7 +35,8 @@ public class Playlist implements Configurable {
     }
     public static Playlist getPlaylist(String id){
         if (id == null) return null;
-        return MAP.computeIfAbsent(id, s -> new Playlist(id));
+        String[] split = id.split("-");
+        return getPlaylist(User.getUser(split[1]), split[2]);
     }
     private String id;
     Playlist() {}

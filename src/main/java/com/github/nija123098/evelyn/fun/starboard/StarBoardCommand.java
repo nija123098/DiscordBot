@@ -7,7 +7,6 @@ import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.*;
 import com.github.nija123098.evelyn.util.NetworkHelper;
-import sun.plugin2.message.helper.URLHelper;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
