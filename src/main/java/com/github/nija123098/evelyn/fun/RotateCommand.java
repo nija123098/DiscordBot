@@ -6,6 +6,8 @@ import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.exeption.ArgumentException;
+import org.apache.commons.collections4.BidiMap;
+import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,9 +17,9 @@ import java.util.stream.Stream;
  * Made by nija123098 on 5/22/2017.
  */
 public class RotateCommand extends AbstractCommand {
-    private static final Map<String, String> CHAR_MAP;
+    private static final BidiMap<String, String> CHAR_MAP;
     static {
-        CHAR_MAP = new HashMap<>();
+        CHAR_MAP = new DualHashBidiMap<>();
         CHAR_MAP.put("a", "\u0250");
         CHAR_MAP.put("b", "q");
         CHAR_MAP.put("c", "\u0254");
@@ -83,9 +85,14 @@ public class RotateCommand extends AbstractCommand {
     }
     @Command
     public void command(MessageMaker maker, @Argument(info = "The text to rotate") String arg){
-        StringBuilder builder = new StringBuilder();
         if (arg == null || arg.isEmpty()) throw new ArgumentException("Please give text for me to rotate");
-        Stream.of(arg.split("")).forEach(s -> builder.append(CHAR_MAP.getOrDefault(s, s)));
+        StringBuilder builder = new StringBuilder(arg.length());
+        Stream.of(arg.split("")).forEach(s -> {
+            String st = CHAR_MAP.get(s);
+            if (st == null) st = CHAR_MAP.getKey(s);
+            if (st == null) st = s;
+            builder.append(st);
+        });
         builder.reverse();
         maker.appendRaw(builder.toString());
     }

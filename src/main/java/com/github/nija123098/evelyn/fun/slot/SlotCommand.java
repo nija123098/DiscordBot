@@ -51,7 +51,7 @@ public class SlotCommand extends AbstractCommand {
         if (ConfigHandler.getSetting(CurrentMoneyConfig.class, user) < bet){
             BotException exception = new ArgumentException("You don't have that much currency");
             if (first == null) throw exception;
-            else exception.makeMessage(null).withDM().send();
+            else exception.makeMessage(user.getOrCreatePMChannel()).send();
         }
         if (bet < 0) throw new ArgumentException("You can't bet against yourself!  Believe in your self!");
         SlotPack slotPack = ConfigHandler.getSetting(SlotPackConfig.class, user);

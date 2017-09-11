@@ -28,7 +28,6 @@ public class TypeChanger {
     static {
         XStream.setupDefaultSecurity(X_STREAM);
         X_STREAM.aliasPackage("emily-package", Reference.BASE_PACKAGE);
-        Set<Class<?>> types = new HashSet<>();
         new Reflections(Reference.BASE_PACKAGE, new SubTypesScanner(false)).getSubTypesOf(Object.class).stream().filter(clazz -> !clazz.isAnnotation()).filter(clazz -> !clazz.isEnum()).filter(clazz -> !clazz.isInterface()).filter(clazz -> !clazz.getName().contains("util")).filter(clazz -> !clazz.getName().contains("$")).filter(clazz -> Stream.of(clazz.getDeclaredFields()).filter(field -> !Modifier.isStatic(field.getModifiers())).count() > 0).map(clazz -> {
             Class<?> previous = clazz;
             Class<?> current;
@@ -95,12 +94,12 @@ public class TypeChanger {
         if (s.equals("null")) return null;
         if (to.isEnum()) return (T) getEnum(to, s);
         if (to.equals(String.class)) return (T) s;
-        AtomicReference<T> reference = new AtomicReference<>();
-        ReflectionHelper.getAssignableTypes(to).forEach(clazz -> {
+        for (Class<?> clazz : ReflectionHelper.getAssignableTypes(to)) {
             Function<String, Object> f = (Function<String, Object>) FROM_STRING.get(clazz.getName());
-            if (reference.get() == null && f != null) reference.set((T) f.apply(s));
-        });
-        return reference.get() == null ? (T) X_STREAM.fromXML(s) : reference.get();
+            if (f != null)
+            return (T) f.apply(s);
+        }
+        return (T) X_STREAM.fromXML(s);
     }
     private static <T extends Enum<T>> Object getEnum(Class<?> clazz, String s){
         return Enum.valueOf((Class<T>) clazz, s);

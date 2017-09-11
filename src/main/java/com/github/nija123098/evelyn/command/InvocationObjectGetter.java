@@ -104,10 +104,10 @@ public class InvocationObjectGetter {
             }
             if (guild == null) throw new ContextException("You need to be in a guild to use that command");
             List<Channel> channels = guild.getChannelsByName(arg);
-            if (channels.size() == 1){
-                return new Pair<>(channels.get(0), length);
-            }
-            throw new ArgumentException("No channel identified by that name, try using an ID or mention");
+            if (channels.size() == 1) return new Pair<>(channels.get(0), length);
+            List<VoiceChannel> voiceChannels = guild.getVoiceChannelsByName(arg);
+            if (voiceChannels.size() == 1) return new Pair<>(voiceChannels.get(0), length);
+            throw new ArgumentException((voiceChannels.isEmpty() && channels.isEmpty() ? "No channel is " : "Too many channels are") + " identified by that name, try using an ID or mention");
         });
         addConverter(VoiceChannel.class, (invoker, shard, channel, guild, message, reaction, args) -> (Pair<VoiceChannel, Integer>) CONVERTER_MAP.get(Channel.class).getKey().getObject(invoker, shard, channel, guild, message, reaction, args));
         addConverter(User.class, (user, shard, channel, guild, message, reaction, args) -> {

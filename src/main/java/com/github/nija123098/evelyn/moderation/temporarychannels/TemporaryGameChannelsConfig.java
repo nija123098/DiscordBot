@@ -9,7 +9,7 @@ import com.github.nija123098.evelyn.util.FormatHelper;
 
 public class TemporaryGameChannelsConfig extends AbstractConfig<Integer, Guild> {
     public TemporaryGameChannelsConfig() {
-        super("temp_game_channels", BotRole.GUILD_TRUSTEE, 0, "Makes a channel for when people are playing the same game 0 disables it");
+        super("temp_game_users", BotRole.GUILD_TRUSTEE, 0, "Makes a channel for when people are playing the same game 0 disables it");
     }
     @EventListener
     public void handle(DiscordPresenceUpdate update){
@@ -20,7 +20,7 @@ public class TemporaryGameChannelsConfig extends AbstractConfig<Integer, Guild> 
             if (!DiscordClient.getOurUser().getPermissionsForGuild(guild).contains(DiscordPermission.MANAGE_CHANNELS) || this.getValue(guild) < 1) continue;
             for (User user : guild.getUsers()){
                 if (!user.getPresence().getOptionalPlayingText().isPresent()) continue;
-                if (playText.equals(user.getPresence().getPlayingText()) && ++count > this.getValue(guild)) TemporaryChannelCommand.command(false, FormatHelper.filtering(playText.toLowerCase(), Character::isLetterOrDigit).replace(" ", "-"), guild);
+                if (playText.equals(user.getPresence().getPlayingText()) && ++count > this.getValue(guild)) TemporaryChannelCommand.command(false, FormatHelper.filtering(playText.toLowerCase().replace(" ", "-"), Character::isLetterOrDigit), guild);
             }
         }
     }

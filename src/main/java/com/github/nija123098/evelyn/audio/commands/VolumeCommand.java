@@ -22,7 +22,7 @@ public class VolumeCommand extends AbstractCommand {
         if (value == null) maker.append(manager.getVolume() + "").appendRaw("%");
         else {
             value = value < 0 ? manager.getVolume() + value : value;
-            if (value < 1 || value > 150) throw new ArgumentException("You can't set the volume to " + value);
+            if (value < 1 || value > 101) throw new ArgumentException("You can't set the volume to " + value);
             manager.setVolume(value);
         }
     }

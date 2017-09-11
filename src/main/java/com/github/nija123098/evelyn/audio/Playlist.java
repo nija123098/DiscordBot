@@ -36,6 +36,7 @@ public class Playlist implements Configurable {
     public static Playlist getPlaylist(String id){
         if (id == null) return null;
         String[] split = id.split("-");
+        if (split.length != 3) return null;
         return getPlaylist(User.getUser(split[1]), split[2]);
     }
     private String id;

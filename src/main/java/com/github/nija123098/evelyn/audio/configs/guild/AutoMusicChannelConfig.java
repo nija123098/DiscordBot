@@ -16,7 +16,7 @@ import com.github.nija123098.evelyn.perms.BotRole;
  */
 public class AutoMusicChannelConfig extends AbstractConfig<VoiceChannel, Guild> {
     public AutoMusicChannelConfig() {
-        super("auto_channel", BotRole.GUILD_TRUSTEE, null, "Sets a channel where music starts playing on join");
+        super("auto_channel", BotRole.GUILD_TRUSTEE, "Sets a channel where music starts playing on join", guild -> guild.getVoiceChannelsByName("Music").stream().findAny().orElse(null));
     }
     @EventListener
     public void listen(DiscordVoiceJoin event){

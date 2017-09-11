@@ -82,7 +82,7 @@ public class Channel implements Configurable {
 
     @Override
     public <T extends Configurable> Configurable convert(Class<T> t) {
-        if (t.equals(Channel.class)) return this;
+        if (Channel.class.isAssignableFrom(t)) return this;
         if (!this.isPrivate() && this.getGuild().getGeneralChannel().equals(this)){
             if (t.equals(Guild.class)) return this.getGuild();
             if (t.equals(Role.class)) return this.getGuild().getEveryoneRole();

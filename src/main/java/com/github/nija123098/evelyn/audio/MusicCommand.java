@@ -2,7 +2,6 @@ package com.github.nija123098.evelyn.audio;
 
 import com.github.nija123098.evelyn.audio.configs.guild.SkipPercentConfig;
 import com.github.nija123098.evelyn.audio.configs.guild.AutoMusicChannelConfig;
-import com.github.nija123098.evelyn.audio.configs.guild.MusicOutputTextChannelConfig;
 import com.github.nija123098.evelyn.audio.configs.guild.QueueTrackOnlyConfig;
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
@@ -13,6 +12,7 @@ import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager.VolumeConfig;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
+import com.github.nija123098.evelyn.moderation.MusicChannelConfig;
 
 /**
  * Made by nija123098 on 6/6/2017.
@@ -31,7 +31,7 @@ public class MusicCommand extends AbstractCommand {
         maker.getNewFieldPart().getTitle().append("skip percent required").getFieldPart().getValue().appendRaw(ConfigHandler.getSetting(SkipPercentConfig.class, guild) + "%");
         Channel chan = ConfigHandler.getSetting(AutoMusicChannelConfig.class, guild);
         maker.getNewFieldPart().getTitle().append("auto channel").getFieldPart().getValue().appendRaw(chan == null ? "not set" : chan.mention());
-        chan = ConfigHandler.getSetting(MusicOutputTextChannelConfig.class, guild);
+        chan = ConfigHandler.getSetting(MusicChannelConfig.class, guild);
         maker.getNewFieldPart().getTitle().append("track info channel").getFieldPart().getValue().appendRaw(chan == null ? "not set" : chan.mention());
     }
 }

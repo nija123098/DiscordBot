@@ -124,7 +124,7 @@ public class User implements Configurable {
     }
 
     public String getDisplayName(Guild guild) {
-        return user().getDisplayName(guild.guild());
+        return guild == null ? user().getName() : user().getDisplayName(guild.guild());
     }
 
     public String getNickname(Guild guild) {

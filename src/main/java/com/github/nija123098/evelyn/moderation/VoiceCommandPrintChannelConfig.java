@@ -10,6 +10,6 @@ import com.github.nija123098.evelyn.perms.BotRole;
  */
 public class VoiceCommandPrintChannelConfig extends AbstractConfig<Channel, Guild> {
     public VoiceCommandPrintChannelConfig() {
-        super("voice_text_channel", BotRole.GUILD_TRUSTEE, "The channel in which commands from voice channels are printed if they are to large to say", Guild::getGeneralChannel);
+        super("voice_text_channel", BotRole.GUILD_TRUSTEE, "The channel in which commands from voice channels are printed if they are to large to say", BotChannelConfig::get);
     }
 }
