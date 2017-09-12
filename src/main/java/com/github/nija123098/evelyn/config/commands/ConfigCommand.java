@@ -23,7 +23,7 @@ public class ConfigCommand extends AbstractCommand {
         super("config", BotRole.USER, ModuleLevel.ADMINISTRATIVE, "cfg", null, "Gets information on config values");
     }
     @Command
-    public <C extends Configurable> void command(@Argument(optional = true) C configurable, @Argument String s, User user, @Context(softFail = true) Guild guild, MessageMaker maker, @Context(softFail = true) Message message){
+    public <C extends Configurable> void command(@Argument(optional = true, info = "config/user/channel/role") C configurable, @Argument String s, User user, @Context(softFail = true) Guild guild, MessageMaker maker, @Context(softFail = true) Message message){
         if (configurable != null || s == null || s.isEmpty()){
             if (configurable == null) configurable = (C) (guild == null ? user : guild);
             C finalConfigurable = configurable;
