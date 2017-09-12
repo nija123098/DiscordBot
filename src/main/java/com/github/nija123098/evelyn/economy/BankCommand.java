@@ -22,7 +22,7 @@ public class BankCommand extends AbstractCommand {
         super("bank", ModuleLevel.ECONOMY, "currency, money, jar", null, "Gets the current balance of the user");
     }
     @Command
-    public void command(@Argument(info = "user",optional = true) Configurable configurable, User user, @Context(softFail = true) GuildUser guildUser, MessageMaker maker){
+    public void command(@Argument(info = "user", optional = true) Configurable configurable, User user, @Context(softFail = true) GuildUser guildUser, MessageMaker maker){
         if (configurable == null) {
             configurable = user;
             getFormat(maker, "Your bank contains ", configurable);

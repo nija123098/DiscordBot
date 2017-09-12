@@ -1,6 +1,8 @@
 package com.github.nija123098.evelyn.discordobjects;
 
 import com.github.nija123098.evelyn.audio.SpeechParser;
+import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
+import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.*;
 import com.github.nija123098.evelyn.moderation.DeletePinNotificationConfig;
 import com.github.nija123098.evelyn.moderation.messagefiltering.MessageMonitor;
 import com.github.nija123098.evelyn.chatbot.ChatBot;
@@ -13,10 +15,6 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.*;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.BotEvent;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventDistributor;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.botevents.DiscordDataReload;
-import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordMessageReceived;
-import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordReactionEvent;
-import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordVoiceJoin;
-import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordVoiceLeave;
 import com.github.nija123098.evelyn.launcher.BotConfig;
 import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.launcher.Reference;
@@ -45,6 +43,8 @@ import sx.blah.discord.handle.impl.events.guild.channel.message.MentionEvent;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageUpdateEvent;
 import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.ReactionEvent;
+import sx.blah.discord.handle.impl.events.guild.member.UserBanEvent;
+import sx.blah.discord.handle.impl.events.guild.member.UserLeaveEvent;
 import sx.blah.discord.handle.impl.events.guild.role.RoleUpdateEvent;
 import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelMoveEvent;
 import sx.blah.discord.handle.impl.events.shard.ShardReadyEvent;
@@ -80,7 +80,7 @@ public class DiscordAdapter {
         Set<Class<? extends BotEvent>> classes = new Reflections(Reference.BASE_PACKAGE + ".discordobjects.wrappers.event.events").getSubTypesOf(BotEvent.class);
         classes.remove(DiscordMessageReceived.class);
         EVENT_MAP = new HashMap<>(classes.size() + 2, 1);
-        classes.stream().filter(clazz -> !clazz.equals(DiscordMessageReceived.class)).filter(clazz -> !clazz.isAssignableFrom(ReactionEvent.class)).map(clazz -> clazz.getConstructors()[0]).forEach(constructor -> EVENT_MAP.put((Class<? extends Event>) constructor.getParameterTypes()[0], (Constructor<? extends BotEvent>) constructor));
+        classes.stream().filter(clazz -> !clazz.equals(DiscordMessageReceived.class)).filter(clazz -> !clazz.equals(DiscordUserLeave.class)).filter(clazz -> !clazz.isAssignableFrom(ReactionEvent.class)).map(clazz -> clazz.getConstructors()[0]).forEach(constructor -> EVENT_MAP.put((Class<? extends Event>) constructor.getParameterTypes()[0], (Constructor<? extends BotEvent>) constructor));
         ClientBuilder builder = new ClientBuilder();
         builder.withToken(BotConfig.BOT_TOKEN);
         builder.setMaxMessageCacheCount(30);

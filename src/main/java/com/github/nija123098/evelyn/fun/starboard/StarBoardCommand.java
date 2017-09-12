@@ -34,7 +34,7 @@ public class StarBoardCommand extends AbstractCommand {
         StarLevel starLevel = StarLevel.level(reaction.getCount(), guild);
         if (starLevel == null) return;
         MessageMaker maker = MAP.computeIfAbsent(message.getID(), s -> new MessageMaker(channel).withAuthorIcon(message.getAuthor().getAvatarURL()));
-        if (NetworkHelper.isValid(message.getContent())) maker.withUrl(message.getContent());
+        if ((message.getContent().endsWith(".png") || message.getContent().endsWith(".gif")) && NetworkHelper.isValid(message.getContent())) maker.withUrl(message.getContent());
         else maker.append(message.getContent());
         maker.getAuthorName().clear().appendRaw(message.getAuthor().getDisplayName(guild) + " is a " + starLevel.getEmoticon() + " in " + message.getChannel().getName());
         maker.withColor(starLevel.getColor()).forceCompile().send();

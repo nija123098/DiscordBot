@@ -203,6 +203,10 @@ public class MessageMaker {
         this.textList.add(part);
         return part;
     }
+    public MessageMaker guaranteeNewPage(){
+        this.textList.add(null);
+        return this;
+    }
     public MessageMaker appendRaw(String s){
         this.header.appendRaw(s);
         return this;
@@ -385,8 +389,9 @@ public class MessageMaker {
                     if (++index >= textList.size()){
                         strings.add(s);
                         break;
-                    }
-                    if (starterChars + s.length() + textList.get(index).langString.translate(lang).length() > CHAR_LIMIT || (newLines += StringHelper.instances(textList.get(index).langString.translate(lang), '\n')) > 21){
+                    }// make new page compatible with recompile
+                    if (textList.get(index) == null || starterChars + s.length() + textList.get(index).langString.translate(lang).length() > CHAR_LIMIT || (newLines += StringHelper.instances(textList.get(index).langString.translate(lang), '\n')) > 21){
+                        if (textList.get(index) == null) textList.remove(index);
                         newLines = 0;
                         --index;
                         strings.add(s);

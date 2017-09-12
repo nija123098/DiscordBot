@@ -11,10 +11,10 @@ public enum KeyPhrase {
             (new ContextRequirement[0]),
     PLAY_TEXT//                       location
             (new ContextRequirement[]{ContextRequirement.SHARD}),
-    USER_JOIN//                       location,                 location,                 joiner,                   first time,    Emily favor
+    USER_JOIN//                       location,                 location,                 joiner,                   first time,    favor
             (new ContextRequirement[]{ContextRequirement.GUILD, ContextRequirement.SHARD, ContextRequirement.USER}, Boolean.class, Float.class),
-    USER_LEAVE//              location,                 location,                 kicker,                   target  invoker     banned
-            (new ContextRequirement[]{ContextRequirement.GUILD, ContextRequirement.SHARD, ContextRequirement.USER}, User.class, Boolean.class),
+    USER_LEAVE//              location,                 location,                 kicker,                   target  invoker     kicked         banned
+            (new ContextRequirement[]{ContextRequirement.GUILD, ContextRequirement.SHARD, ContextRequirement.USER}, User.class, Boolean.class, Boolean.class),
     ADVANCED_TESTING(new ContextRequirement[]{ContextRequirement.CHANNEL, ContextRequirement.MESSAGE}, User.class),;
     private CustomCommandDefinition definition;
     KeyPhrase(ContextRequirement[] availableContext, Class<?>...argTypes) {
