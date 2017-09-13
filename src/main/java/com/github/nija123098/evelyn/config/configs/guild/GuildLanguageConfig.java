@@ -14,8 +14,9 @@ public class GuildLanguageConfig extends AbstractConfig<String, Guild> {
         super("guild_language", BotRole.GUILD_TRUSTEE, null, "The language the bot uses to communicate in the guild");
     }
     @Override
-    protected void validateInput(Guild configurable, String v) {
+    protected String validateInput(Guild configurable, String v) {
         if (!LangString.isLangCode(v) && !LangString.isLangName(v)) throw new ArgumentException("Please input a valid language code or name");
+        return v;
     }
     @Override
     public String wrapTypeIn(String e, Guild configurable) {

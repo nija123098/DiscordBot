@@ -6,6 +6,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordUserBanned;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordUserPardoned;
+import com.github.nija123098.evelyn.favor.FavorChangeEvent;
 import com.github.nija123098.evelyn.perms.BotRole;
 
 import java.util.HashSet;
@@ -20,10 +21,10 @@ public class BannedLocationConfig extends AbstractConfig<Set<Guild>, User> {
     }
     @EventListener
     public void handle(DiscordUserBanned event){
-        this.alterSetting(event.getUser(), guilds -> guilds.remove(event.getGuild()));
+        FavorChangeEvent.process(event.getUser(), () -> this.alterSetting(event.getUser(), guilds -> guilds.remove(event.getGuild())));
     }
     @EventListener
     public void handle(DiscordUserPardoned event){
-        this.alterSetting(event.getUser(), guilds -> guilds.remove(event.getGuild()));
+        FavorChangeEvent.process(event.getUser(), () -> this.alterSetting(event.getUser(), guilds -> guilds.remove(event.getGuild())));
     }
 }

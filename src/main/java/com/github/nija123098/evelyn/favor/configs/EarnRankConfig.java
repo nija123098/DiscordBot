@@ -19,7 +19,7 @@ public class EarnRankConfig extends AbstractConfig<Float, Role> {
         if (!event.getConfigurable().getClass().equals(GuildUser.class)) return;
         GuildUser user = (GuildUser) event.getConfigurable();
         user.getGuild().getRoles().stream().filter(role -> this.getValue(role) != null).forEach(role -> {
-            if (this.getValue(role) < event.getNewValue()) user.getUser().removeRole(role);
+            if (this.getValue(role) > event.getNewValue()) user.getUser().removeRole(role);
             else user.getUser().addRole(role);
         });
     }

@@ -5,6 +5,7 @@ import com.google.common.base.Strings;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -218,5 +219,11 @@ public class FormatHelper {
             if (character != null) builder.append(character);
         }
         return builder.toString();
+    }
+    public static String reduce(String s){
+        return filtering(s, Character::isLetter);
+    }
+    public static Set<String> reduce(Set<String> strings){
+        return strings.stream().map(FormatHelper::reduce).collect(Collectors.toSet());
     }
 }

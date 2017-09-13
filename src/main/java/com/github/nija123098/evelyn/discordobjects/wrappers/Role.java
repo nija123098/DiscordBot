@@ -29,7 +29,7 @@ public class Role implements Configurable {
         if (role == null) return null;
         return getRole(role);
     }
-    static Role getRole(IRole role){
+    public static Role getRole(IRole role){
         return MAP.computeIfAbsent(role.getID(), s -> new Role(role));
     }
     public static List<Role> getRoles(List<IRole> iRoles) {

@@ -14,8 +14,9 @@ public class UserLanguageConfig extends AbstractConfig<String, User> {
         super("user_language", BotRole.USER, null, "The language the bot uses to communicate with the user");
     }
     @Override
-    protected void validateInput(User configurable, String v) {
+    protected String validateInput(User configurable, String v) {
         if (!LangString.isLangCode(v) && !LangString.isLangName(v)) throw new ArgumentException("Please input a valid language code or name");
+        return v;
     }
     @Override
     public String wrapTypeIn(String e, User configurable) {

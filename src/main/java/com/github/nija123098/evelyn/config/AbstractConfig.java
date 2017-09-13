@@ -57,6 +57,7 @@ public class AbstractConfig<V, T extends Configurable> {
         }else this.cache = null;
         EventDistributor.register(this);
         this.configLevel.getAssignable().forEach(level -> {
+            if (level == ConfigLevel.ALL) return;
             try (ResultSet rs = Database.getConnection().getMetaData().getTables(null, null, this.getNameForType(level), null)) {
                 while (rs.next()) {
                     String tName = rs.getString("TABLE_NAME");
@@ -159,10 +160,10 @@ public class AbstractConfig<V, T extends Configurable> {
     public String wrapTypeOut(V v, T configurable){// configurable may be used in over ride methods
         return v instanceof Configurable ? v instanceof Channel && !(v instanceof VoiceChannel) ? ((Channel) v).mention() : ((Configurable) v).getName() : TypeChanger.toString(this.valueType, v);
     }
-    protected void validateInput(T configurable, V v) {}
+    protected V validateInput(T configurable, V v) {return v;}
     public V setValue(T configurable, V value){
         if (!(value == null || this.valueType.isInstance(value))) throw new ArgumentException("Attempted passing incorrect type of argument");
-        validateInput(configurable, value);
+        value = validateInput(configurable, value);
         if (this.cache == null) saveValue(configurable, value);
         else this.cache.put(configurable, value);
         return value;

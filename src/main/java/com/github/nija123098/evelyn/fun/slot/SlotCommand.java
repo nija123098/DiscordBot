@@ -12,6 +12,7 @@ import com.github.nija123098.evelyn.config.Configurable;
 import com.github.nija123098.evelyn.config.GlobalConfigurable;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.helpers.ReactionBehavior;
+import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Message;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
@@ -71,17 +72,17 @@ public class SlotCommand extends AbstractCommand {
         ScheduleService.schedule((strings.length - 1) * 1000, () -> setupMaker(strings[strings.length - 1], maker).send());
         if (first == null) {
             maker.withReactionBehavior("repeat_one", (add, reaction, u) -> {
-                if (u.equals(user)) this.command(guild, user, maker, 0, false, null);
+                try{if (u.equals(user)) this.command(guild, user, maker, 0, false, null);
+                }catch (BotException e) {e.makeMessage(message.getChannel()).send();}
             });
             ReactionBehavior arrowBehavior = (add, reaction, u) -> {
-                if (!u.equals(user)) return;
                 String name = reaction.getName().substring(6);
                 float percent = .2f;
                 if (name.startsWith("down")) percent = -percent;
                 if (name.endsWith("small")) percent *= 2;
                 float finalPercent = percent + (name.startsWith("down") ? -1 : 1);
                 int old = BET_MAP.get(u);
-                BET_MAP.compute(u, (us, integer) -> Math.max(0, (name.startsWith("down") ? -1 : 1) * Math.max(integer + (name.endsWith("small") ? 2 : 1), Math.round(integer * finalPercent))));
+                BET_MAP.compute(u, (us, integer) -> integer + (name.startsWith("down") ? -1 : 1) * Math.max((name.endsWith("small") ? 2 : 1), Math.round(integer * finalPercent)));
                 maker.forceCompile().getHeader().clear().appendRaw(FormatHelper.filtering(maker.sentMessage().getContent(), c -> c != 13).replace("  Bet: " + old, "  Bet: " + BET_MAP.get(u)));
                 maker.send();
             };

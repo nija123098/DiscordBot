@@ -1,5 +1,6 @@
 package com.github.nija123098.evelyn.discordobjects.helpers;
 
+import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.moderation.VoiceCommandPrintChannelConfig;
 import com.github.nija123098.evelyn.command.ProcessingHandler;
 import com.github.nija123098.evelyn.config.ConfigHandler;
@@ -32,6 +33,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Made by nija123098 on 4/7/2017.
  */
 public class MessageMaker {
+    static {
+        Launcher.registerShutdown(ReactionBehavior::deregisterAll);
+    }
     private static final int CHAR_LIMIT = 2000;
     private static final int EMBED_LIMIT = 1000;
     private static final Map<Guild, Map<User, Set<Channel>>> NO_RESPONSE_LOCATION = new ConcurrentHashMap<>();

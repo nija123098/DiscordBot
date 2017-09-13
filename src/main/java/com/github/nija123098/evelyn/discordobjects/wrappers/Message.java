@@ -5,6 +5,7 @@ import com.github.nija123098.evelyn.exeption.GhostException;
 import com.github.nija123098.evelyn.launcher.BotConfig;
 import com.github.nija123098.evelyn.service.services.MemoryManagementService;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
+import com.github.nija123098.evelyn.util.Time;
 import sx.blah.discord.handle.impl.obj.ReactionEmoji;
 import sx.blah.discord.handle.obj.IMessage;
 
@@ -74,6 +75,10 @@ public class Message {// should not be kept stored, too many are made
 
     public LocalDateTime getTimestamp() {
         return message().getTimestamp();
+    }
+
+    public long getTime(){
+        return Time.toMillis(this.getTimestamp());
     }
 
     public List<User> getMentions() {

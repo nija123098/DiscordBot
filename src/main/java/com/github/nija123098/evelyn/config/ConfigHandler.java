@@ -148,8 +148,8 @@ public class ConfigHandler {
      * @param configurable the configurable the config is to be set for
      * @param value the value the config is being set at
      */
-    public static <V, T extends Configurable> void setSetting(Class<? extends AbstractConfig<V, T>> clazz, T configurable, V value){
-        getConfig(clazz).setValue(configurable, value);
+    public static <V, T extends Configurable> V setSetting(Class<? extends AbstractConfig<V, T>> clazz, T configurable, V value){
+        return getConfig(clazz).setValue(configurable, value);
     }
 
     /**

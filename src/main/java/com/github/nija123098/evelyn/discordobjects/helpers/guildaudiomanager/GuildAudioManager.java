@@ -91,7 +91,10 @@ public class GuildAudioManager extends AudioEventAdapter{
         GuildAudioManager current = getManager(channel.getGuild());
         if (current != null) {
             if (!current.voiceChannel().isConnected()) MAP.replace(channel.getID(), new GuildAudioManager(channel));
-            if (!current.channel.equals(channel)) throw new ArgumentException("You must be in the voice channel with me to use that command");
+            if (!current.channel.equals(channel)) {
+                if (make) throw new ArgumentException("You must be in the voice channel with me to use that command");
+                else return null;
+            }
             return current;
         }
         if (make) {

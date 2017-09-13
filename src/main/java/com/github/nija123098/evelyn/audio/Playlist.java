@@ -9,6 +9,7 @@ import com.github.nija123098.evelyn.config.ConfigLevel;
 import com.github.nija123098.evelyn.config.Configurable;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
+import com.github.nija123098.evelyn.exeption.ArgumentException;
 import com.github.nija123098.evelyn.exeption.DevelopmentException;
 import com.github.nija123098.evelyn.exeption.PermissionsException;
 import com.github.nija123098.evelyn.service.services.ScheduleService;
@@ -31,6 +32,7 @@ public class Playlist implements Configurable {
         ScheduleService.schedule(1000, () -> MAP.put(GLOBAL_PLAYLIST_ID, GlobalPlaylist.GLOBAL_PLAYLIST));
     }
     public static Playlist getPlaylist(User user, String name){
+        if (name.isEmpty()) throw new ArgumentException("Your playlist must have a name");
         return ConfigHandler.getSetting(UserPlaylistsConfig.class, user).contains(name.toLowerCase()) ? MAP.computeIfAbsent("pl-" + user.getID() + "-" + name.toLowerCase(), Playlist::new) : null;
     }
     public static Playlist getPlaylist(String id){

@@ -13,7 +13,8 @@ public class SkipPercentConfig extends AbstractConfig<Integer, Guild> {
         super("music_vote_percent", BotRole.GUILD_TRUSTEE, 40, "The percent of concerting users required to skip a track");
     }
     @Override
-    protected void validateInput(Guild configurable, Integer val) {
+    protected Integer validateInput(Guild configurable, Integer val) {
         if (val < 1 && val > 100) throw new ArgumentException("Volume value must be between 1 and 100");
+        return val;
     }
 }

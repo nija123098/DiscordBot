@@ -12,12 +12,9 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.botevents.FavorLevelChangeEvent;
 import com.github.nija123098.evelyn.exeption.DevelopmentException;
 import com.github.nija123098.evelyn.favor.configs.GuildUserReputationConfig;
-import com.github.nija123098.evelyn.favor.configs.balencing.MessageFavorFactorConfig;
-import com.github.nija123098.evelyn.favor.configs.balencing.ReactionFavorFactorConfig;
-import com.github.nija123098.evelyn.favor.configs.balencing.ReputationFavorFactorConfig;
-import com.github.nija123098.evelyn.favor.configs.derivation.BannedLocationConfig;
-import com.github.nija123098.evelyn.favor.configs.derivation.MessageCountConfig;
-import com.github.nija123098.evelyn.favor.configs.derivation.ReactionCountConfig;
+import com.github.nija123098.evelyn.favor.configs.balencing.*;
+import com.github.nija123098.evelyn.favor.configs.derivation.*;
+import com.github.nija123098.evelyn.moderation.linkedgames.GuildLinkedGamesConfig;
 import com.github.nija123098.evelyn.perms.BotRole;
 import com.google.common.util.concurrent.AtomicDouble;
 
@@ -40,11 +37,13 @@ public class FavorHandler {
             float v = ConfigHandler.getSetting(MessageFavorFactorConfig.class, guildUser.getGuild()) * ConfigHandler.getSetting(MessageCountConfig.class, guildUser);
             v += ConfigHandler.getSetting(ReputationFavorFactorConfig.class, guildUser.getGuild()) * ConfigHandler.getSetting(GuildUserReputationConfig.class, guildUser);
             v += ConfigHandler.getSetting(ReactionFavorFactorConfig.class, guildUser.getGuild()) * ConfigHandler.getSetting(ReactionCountConfig.class, guildUser);
+            v += ConfigHandler.getSetting(VoiceTimeFavorFactorConfig.class, guildUser.getGuild()) * ConfigHandler.getSetting(VoiceTimeConfig.class, guildUser);
+            v += ConfigHandler.getSetting(GameTimeFavorFactorConfig.class, guildUser.getGuild()) * ConfigHandler.getSetting(PlayTimeFavorConfig.class, guildUser);
             return v;
         });
         add(User.class, user -> {
             AtomicDouble value = new AtomicDouble();
-            user.getGuilds().forEach(guild -> value.addAndGet(getFavorAmount(guild)));
+            user.getGuilds().forEach(guild -> value.addAndGet(getFavorAmount(GuildUser.getGuildUser(guild, user))));
             return (float) value.get() / user.getGuilds().size();
         });
         add(Track.class, track -> ConfigHandler.getSetting(PlayCountConfig.class, track).floatValue());
@@ -60,7 +59,7 @@ public class FavorHandler {
      */
     public static Float getFavorAmount(Configurable configurable){
         Function<Configurable, Float> function = (Function<Configurable, Float>) TYPE_DERIVATIONS.get(configurable.getConfigLevel());
-        if (function == null) throw new DevelopmentException("Request for favor on type with no ");
+        if (function == null) throw new DevelopmentException("Request for favor on type with no favor calculation available: " + configurable.getConfigLevel());
         return function.apply(configurable);
     }
     /**

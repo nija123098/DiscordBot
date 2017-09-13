@@ -9,6 +9,6 @@ import com.github.nija123098.evelyn.perms.BotRole;
  */
 public class LanguageLevelViolationFactorConfig extends AbstractConfig<Float, Guild> {
     public LanguageLevelViolationFactorConfig() {
-        super("language_favor_factor", BotRole.GUILD_TRUSTEE, 5F, "The factor by which favor is taken from a guild user for a language violation");
+        super("language_favor_factor", BotRole.GUILD_TRUSTEE, 50F, "The factor by which favor is taken from a guild user for a language violation");
     }
 }

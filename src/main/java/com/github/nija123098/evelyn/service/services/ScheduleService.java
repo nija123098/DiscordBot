@@ -55,7 +55,8 @@ public class ScheduleService extends AbstractService {
         }
         public void cancel(){
             this.cancel = true;
-            SERVICE_MAP.get(this.time).remove(this);
+            Set<ScheduleService.ScheduledTask> services = SERVICE_MAP.get(this.time);
+            if (services != null) services.remove(this);// if null it is too late to cancel
         }
         public boolean isCanceled(){
             return this.cancel;

@@ -63,7 +63,7 @@ public class CalculateCommand extends AbstractCommand {
             return ((int) doubles[0]) << ((int) doubles[1]);
         }
     };
-    private static final List<Operator> OPERATORS = new ArrayList<>();
+    public static final List<Operator> OPERATORS = new ArrayList<>();
     static {
         Collections.addAll(OPERATORS, DIE_OPERATOR, BITWISE_AND, POW, BITWISE_INCLUSIVE_OR, AERITHMETIC_RIGHT_SHIFT, LOGICAL_RIGHT_SHIFT, LEFT_SHIFT);
     }

@@ -23,7 +23,8 @@ public class AutoAssignRoleConfig extends AbstractConfig<Role, Guild> {
         if (role != null) event.getUser().addRole(role);
     }
     @Override
-    protected void validateInput(Guild configurable, Role role) {
+    protected Role validateInput(Guild configurable, Role role) {
         if (role.getPosition() < DiscordClient.getOurUser().getRolesForGuild(configurable).get(0).getPosition()) throw new ArgumentException("For me to assign roles I must have a higher role");
+        return role;
     }
 }
