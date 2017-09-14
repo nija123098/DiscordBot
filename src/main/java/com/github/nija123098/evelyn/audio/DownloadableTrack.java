@@ -83,7 +83,7 @@ public abstract class DownloadableTrack extends Track {
         return this.isDownloaded() || this.actualDownload();
     }
     private static final File AUDIO_CONTAINER = new File(BotConfig.AUDIO_PATH);
-    private boolean actualDownload(){
+    boolean actualDownload(){
         if (YTDLHelper.download(this.getSource(), this.getID(), this.getPreferredType())){
             ConfigHandler.setSetting(TrackTypeConfig.class, this, Stream.of(AUDIO_CONTAINER.listFiles()).filter(Objects::nonNull).filter(File::isFile).filter(file -> file.getName().startsWith(this.getID())).filter(file -> TYPES.contains(file.getName().split(Pattern.quote("."))[1])).findAny().get().getName().split(Pattern.quote("."))[1]);
             return true;

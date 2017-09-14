@@ -36,7 +36,7 @@ public class Playlist implements Configurable {
         return ConfigHandler.getSetting(UserPlaylistsConfig.class, user).contains(name.toLowerCase()) ? MAP.computeIfAbsent("pl-" + user.getID() + "-" + name.toLowerCase(), Playlist::new) : null;
     }
     public static Playlist getPlaylist(String id){
-        if (id == null) return null;
+        if (id == null || !id.startsWith("pl-")) return null;
         String[] split = id.split("-");
         if (split.length != 3) return null;
         return getPlaylist(User.getUser(split[1]), split[2]);

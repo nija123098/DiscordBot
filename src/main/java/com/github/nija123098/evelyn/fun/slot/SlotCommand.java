@@ -77,12 +77,12 @@ public class SlotCommand extends AbstractCommand {
             });
             ReactionBehavior arrowBehavior = (add, reaction, u) -> {
                 String name = reaction.getName().substring(6);
-                float percent = .2f;
-                if (name.startsWith("down")) percent = -percent;
-                if (name.endsWith("small")) percent *= 2;
-                float finalPercent = percent + (name.startsWith("down") ? -1 : 1);
                 int old = BET_MAP.get(u);
-                BET_MAP.compute(u, (us, integer) -> integer + (name.startsWith("down") ? -1 : 1) * Math.max((name.endsWith("small") ? 2 : 1), Math.round(integer * finalPercent)));
+                BET_MAP.compute(u, (us, integer) -> {
+                    integer += (name.startsWith("down") ? -1 : 1) * (name.endsWith("small") ? 10 : 1);
+                    int max = ConfigHandler.getSetting(CurrentMoneyConfig.class, user);
+                    return max < integer ? max : integer;
+                });
                 maker.forceCompile().getHeader().clear().appendRaw(FormatHelper.filtering(maker.sentMessage().getContent(), c -> c != 13).replace("  Bet: " + old, "  Bet: " + BET_MAP.get(u)));
                 maker.send();
             };

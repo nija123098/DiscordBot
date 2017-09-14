@@ -58,21 +58,21 @@ public class Database {
     public static <E> E select(String sql, ResultSetHandler<E> handler) {
         try{return RUNNER.query(sql, handler);
         } catch (SQLException e) {
-            throw new DevelopmentException("Could not select: " + sql, e);
+            throw new DevelopmentException("Could not select: ERROR: " + e.getErrorCode() + " " + sql, e);
         }
     }
 
     public static void query(String sql) {
         try{RUNNER.update(sql);
         } catch (SQLException e) {
-            throw new DevelopmentException("Could not query: " + sql, e);
+            throw new DevelopmentException("Could not query: ERROR: " + e.getErrorCode() + " " + sql, e);
         }
     }
 
     public static void insert(String sql) {
         try{RUNNER.update(sql);
         } catch (SQLException e) {
-            throw new DevelopmentException("Could not insert", e);
+            throw new DevelopmentException("Could not insert: ERROR: " + e.getErrorCode() + " " + sql, e);
         }
     }
     public static String quote(String id){

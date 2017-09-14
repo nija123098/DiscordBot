@@ -21,7 +21,7 @@ public class MentionResponseConfig extends AbstractConfig<Boolean, Guild> {
     }
     @EventListener
     public void handle(DiscordMessageReceived event){
-        if (event.getChannel().isPrivate() || event.getGuild().getUserSize() < 16 || event.getAuthor().isBot()) return;
+        if (event.getChannel().isPrivate() || event.getGuild().getUserSize() < 16 || event.getAuthor().isBot() || !this.getValue(event.getGuild())) return;
         Set<User> users = event.getMessage().getMentions().stream().filter(user -> !DiscordClient.getOurUser().equals(user)).filter(user -> event.getChannel().getModifiedPermissions(user).contains(DiscordPermission.READ_MESSAGES)).filter(user -> user.getPresence().getStatus() != Presence.Status.ONLINE || ConfigHandler.getSetting(SelfMarkedAwayConfig.class, user)).collect(Collectors.toSet());
         if (users.isEmpty()) return;
         if (users.size() != 1) users.removeIf(User::isBot);

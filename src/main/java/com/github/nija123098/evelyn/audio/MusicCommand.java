@@ -24,7 +24,7 @@ public class MusicCommand extends AbstractCommand {
     @Command
     public void command(MessageMaker maker, Guild guild){
         maker.getTitle().append("Music Configuration");
-        maker.append("These are music related configs, this is just an overview.\nTo play music do `@Emily play`");
+        maker.append("These are music related configs, this is just an overview.\nTo play music do `@Evelyn play`");
         maker.getNewFieldPart().getTitle().append("volume").getFieldPart().getValue().appendRaw(ConfigHandler.getSetting(VolumeConfig.class, guild) + "%");
         maker.getNewFieldPart().getTitle().append("current playlist").getFieldPart().getValue().appendRaw(ConfigHandler.getSetting(GuildActivePlaylistConfig.class, guild).getName());
         maker.getNewFieldPart().getTitle().append("queue type").getFieldPart().getValue().appendRaw(ConfigHandler.getSetting(QueueTrackOnlyConfig.class, guild) ? "Music is only played when queued" : "Playlist music is played when the queue runs out");

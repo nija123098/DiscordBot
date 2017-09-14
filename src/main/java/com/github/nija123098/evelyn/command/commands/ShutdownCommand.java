@@ -18,7 +18,7 @@ public class ShutdownCommand extends AbstractCommand {
     public void command(@Argument(optional = true, replacement = ContextType.NONE) Integer val, String remaining){
         remaining = remaining.toLowerCase();
         if (remaining.contains("now")) System.exit(val == null ? -1 : val);
-        Launcher.shutdown(remaining.contains("cancel") ? null : val == null ? 0 : val, remaining.contains("q") ? 5_000 : 30_000);
+        Launcher.shutdown(remaining.contains("c") ? null : val == null ? 0 : val, remaining.contains("q") ? 5_000 : 30_000);
         if (!remaining.contains("soft")) {
             Thread firm = new Thread(() -> {
                 try{Thread.sleep(150_000);

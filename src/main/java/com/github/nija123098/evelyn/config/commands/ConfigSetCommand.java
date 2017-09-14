@@ -12,6 +12,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Role;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
+import com.github.nija123098.evelyn.exeption.ArgumentException;
 import com.github.nija123098.evelyn.exeption.DevelopmentException;
 import com.github.nija123098.evelyn.exeption.PermissionsException;
 
@@ -28,6 +29,7 @@ public class ConfigSetCommand extends AbstractCommand {
             throw new PermissionsException("You must be at least a " + config.requiredBotRole().name() + " to edit that config");
         }
         if (arg.isEmpty()){
+            if (target == null) throw new ArgumentException("Recived to target value, if resetting the value wsa intended use the cfg reset command, if unsetting the config was intended use the cfg setnull command");
             ConfigHandler.setSetting((Class<? extends AbstractConfig<V, T>>) config.getClass(), (T) (guild == null ? user : guild),  (V) target.convert((Class<? extends Configurable>) config.getValueType()));
         }else{
             if (target == null) target = (T) new Configurable[]{track, playlist, user, channel, guildUser, target instanceof Role ? target : null, guild, GlobalConfigurable.GLOBAL, target}[config.getConfigLevel().ordinal()].convert(config.getConfigLevel().getType());

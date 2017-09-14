@@ -8,8 +8,12 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * The enum to represent a type of configurable object.
@@ -66,5 +70,9 @@ public enum ConfigLevel {
             }
         }
         throw new DevelopmentException("Class does not have a type: " + clazz.getName());
+    }
+    private static List<ConfigLevel> levels = Stream.of(values()).filter(configLevel -> configLevel != ALL).collect(Collectors.toList());
+    public static List<ConfigLevel> nonAllValues(){
+        return levels;
     }
 }

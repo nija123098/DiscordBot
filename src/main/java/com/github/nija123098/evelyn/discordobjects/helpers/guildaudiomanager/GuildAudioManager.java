@@ -135,6 +135,7 @@ public class GuildAudioManager extends AudioEventAdapter{
             MAP.remove(this.channel.getGuild().getID());
             this.channel.leave();
             this.audioProvider.run.set(false);
+            this.lavaPlayer.setPaused(true);
             this.lavaPlayer.destroy();
         }else{
             this.audioProvider.clearBuffer();

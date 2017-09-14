@@ -164,18 +164,19 @@ public class AbstractConfig<V, T extends Configurable> {
     public V setValue(T configurable, V value){
         if (!(value == null || this.valueType.isInstance(value))) throw new ArgumentException("Attempted passing incorrect type of argument");
         value = validateInput(configurable, value);
-        if (this.cache == null) saveValue(configurable, value);
+        if (this.cache == null || value == null) saveValue(configurable, value);
         else this.cache.put(configurable, value);
         return value;
     }
     private V saveValue(T configurable, V value){
-        if (this.checkDefault() && Objects.equals(value, this.getDefault(configurable))) {
-            Database.query("DELETE FROM " + this.getNameForType(configurable.getConfigLevel()) + " WHERE id = " + Database.quote(configurable.getID()));
-        }else {
-            Database.query("DELETE FROM " + this.getNameForType(configurable.getConfigLevel()) + " WHERE id = " + Database.quote(configurable.getID()));
+        reset(configurable);
+        if (!(this.checkDefault() && Objects.equals(value, this.getDefault(configurable)))) {
             Database.insert("INSERT INTO " + this.getNameForType(configurable.getConfigLevel()) + " (`id`, `value`, `millis`) VALUES ('" + configurable.getID() + "','" + TypeChanger.toString(this.valueType, value) + "','" + System.currentTimeMillis() + "');");
         }
         return value;
+    }
+    public void reset(Configurable configurable){
+        Database.query("DELETE FROM " + this.getNameForType(configurable.getConfigLevel()) + " WHERE id = " + Database.quote(configurable.getID()));
     }
 
     /**
@@ -186,8 +187,10 @@ public class AbstractConfig<V, T extends Configurable> {
      * @return the config's value
      */
     public V getValue(T configurable){// slq here as well
-        if (this.cache != null) return this.cache.computeIfAbsent(configurable, this::grabValue);
-        return grabValue(configurable);
+        V value;
+        if (this.cache == null || (value = this.cache.get(configurable)) == null) value = grabValue(configurable);
+        if (this.cache != null && value != null) return this.cache.computeIfAbsent(configurable, this::grabValue);
+        return value;
     }
     private V grabValue(T configurable){
         return Database.select("SELECT * FROM " + this.getNameForType(configurable.getConfigLevel()) + " WHERE id = " + Database.quote(configurable.getID()), set -> {
@@ -240,8 +243,12 @@ public class AbstractConfig<V, T extends Configurable> {
         setValue(configurable, wrapTypeIn(value, configurable));
     }
 
-    public Map<T, V> getNonDefaultSettings(){// SQL
-        return Database.select("SELECT * FROM " + this.getNameForType(this.configLevel), set -> {
+    public Map<T, V> getNonDefaultSettings() {
+        return getNonDefaultSettings(this.getConfigLevel().getType());
+    }
+
+    public Map<T, V> getNonDefaultSettings(Class<? extends Configurable> clazz){
+        return Database.select("SELECT * FROM " + this.getNameForType(ConfigLevel.getLevel(clazz)), set -> {
             Map<T, V> map = new HashMap<>();
             try {
                 while (set.next()){

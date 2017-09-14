@@ -1,6 +1,8 @@
 package com.github.nija123098.evelyn.discordobjects.wrappers;
 
 import com.github.nija123098.evelyn.discordobjects.exception.ErrorWrapper;
+import com.github.nija123098.evelyn.util.GetterUtil;
+import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IVoiceChannel;
 
 import java.util.ArrayList;
@@ -11,7 +13,7 @@ import java.util.List;
  */
 public class VoiceChannel extends Channel {
     static VoiceChannel getVoiceChannel(String id){
-        return (VoiceChannel) Channel.getChannel(id);
+        return getVoiceChannel((IVoiceChannel) GetterUtil.getAny(DiscordClient.clients(), f -> f.getVoiceChannelByID(id)));
     }
     public static VoiceChannel getVoiceChannel(IVoiceChannel channel){
         return (VoiceChannel) Channel.getChannel(channel);

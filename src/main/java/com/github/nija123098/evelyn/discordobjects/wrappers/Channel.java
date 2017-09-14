@@ -28,7 +28,8 @@ public class Channel implements Configurable {
     public static Channel getChannel(String id){
         String r = FormatHelper.filtering(id, Character::isLetterOrDigit);
         try {
-            return getChannel((IChannel) GetterUtil.getAny(DiscordClient.clients(), f -> f.getChannelByID(r)));
+            Channel channel = getChannel((IChannel) GetterUtil.getAny(DiscordClient.clients(), f -> f.getChannelByID(r)));
+            return channel == null ? VoiceChannel.getVoiceChannel(r) : channel;
         } catch (NumberFormatException e) {
             return null;
         }

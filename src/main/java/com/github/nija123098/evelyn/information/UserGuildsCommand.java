@@ -6,6 +6,7 @@ import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
+import com.github.nija123098.evelyn.perms.BotRole;
 import com.github.nija123098.evelyn.util.FormatHelper;
 
 import java.util.ArrayList;
@@ -32,5 +33,9 @@ public class UserGuildsCommand extends AbstractCommand {
             stats.add(stat);
         });
         maker.appendRaw(FormatHelper.makeAsciiTable(Arrays.asList("shard", "guild", "name"), stats, null));
+    }
+    @Override
+    public BotRole getBotRole() {
+        return BotRole.BOT_ADMIN;
     }
 }

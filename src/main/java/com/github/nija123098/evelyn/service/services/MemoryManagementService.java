@@ -3,6 +3,7 @@ package com.github.nija123098.evelyn.service.services;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.ConfigLevel;
 import com.github.nija123098.evelyn.config.Configurable;
+import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.service.AbstractService;
 
 import java.util.ArrayList;
@@ -24,15 +25,19 @@ public class MemoryManagementService extends AbstractService {
     private static final float[] CONFIG_PER = new float[INDICES.length];
     public MemoryManagementService() {
         super(SERVICE_ITERATION_TIME);
-        for (int i = 0; i < INDICES.length; i++) {
-            CONFIG_PER[i] = ConfigHandler.getTypeCount(ConfigLevel.values()[i].getType()) / 86_400_000;// 24 hours
-        }
+        Launcher.registerStartup(() -> {
+            for (int i = 0; i < INDICES.length; i++) {
+                if (ConfigLevel.values()[i] == ConfigLevel.ALL) continue;
+                CONFIG_PER[i] = ConfigHandler.getTypeCount(ConfigLevel.values()[i].getType()) / 86_400_000;// 24 hours
+            }
+        });
     }
     @Override
     public void run() {
         MAPS.forEach(ManagedMap::manage);
         LISTS.forEach(ManagedList::manage);
         for (int i = 0; i < INDICES.length; i++) {
+            if (ConfigLevel.values()[i] == ConfigLevel.ALL) continue;
             LEFT_OVER[i] += CONFIG_PER[i];
             int count = (int) (LEFT_OVER[i] / 1);
             ConfigHandler.getTypeInstances(ConfigLevel.values()[i].getType(), INDICES[i], count).stream().filter(Objects::nonNull).forEach(Configurable::manage);

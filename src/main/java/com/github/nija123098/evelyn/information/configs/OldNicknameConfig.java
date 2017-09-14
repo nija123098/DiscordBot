@@ -23,17 +23,6 @@ public class OldNicknameConfig extends AbstractConfig<Set<String>, GuildUser> {
         if (event.getNewUsername() == null) return;
         this.alterSetting(GuildUser.getGuildUser(event.getGuild(), event.getUser()), strings -> strings.add(event.getNewUsername()));
     }
-    @EventListener
-    public void handle(DiscordDataReload reload){
-        ConfigHandler.getTypeInstances(GuildUser.class).forEach(guildUser -> {
-            Set<String> names = this.getValue(guildUser);
-            String name = guildUser.getUser().getDisplayName(guildUser.getGuild());
-            if (!names.contains(name)){
-                names.add(name);
-                this.setValue(guildUser, names);
-            }
-        });
-    }
     public boolean checkDefault(){
         return false;
     }

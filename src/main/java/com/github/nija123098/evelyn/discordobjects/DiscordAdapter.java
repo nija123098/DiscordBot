@@ -187,8 +187,8 @@ public class DiscordAdapter {
     private static final List<IMessage> MENTIONED_MESSAGES = new MemoryManagementService.ManagedList<>(2_000);
     @EventSubscriber
     public static void handle(MentionEvent event){
-        ScheduleService.schedule(5 * event.getMessage().getShard().getResponseTime(), () -> {
-            if (!event.getChannel().getModifiedPermissions(DiscordClient.getOurUser().user()).contains(Permissions.ADD_REACTIONS)) return;
+        if (event.getMessage().mentionsEveryone() || event.getMessage().mentionsHere() || !event.getChannel().getModifiedPermissions(DiscordClient.getOurUser().user()).contains(Permissions.ADD_REACTIONS)) return;
+        ScheduleService.schedule(500, () -> {
             if (MENTIONED_MESSAGES.contains(event.getMessage())) ErrorWrapper.wrap(() -> event.getMessage().addReaction(ReactionEmoji.of(EmoticonHelper.getChars("eyes", false))));
         });
     }

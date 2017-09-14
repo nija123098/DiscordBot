@@ -284,8 +284,11 @@ public class ConfigHandler {
         }
     }
 
-    public static <T extends Configurable, V> Map<T, V> getNonDefaultSettings(Class<? extends AbstractConfig<V, T>> config){// SQL
-        return getConfig(config).getNonDefaultSettings();
+    public static <T extends Configurable, V> Map<T, V> getNonDefaultSettings(Class<? extends AbstractConfig<V, T>> config){
+        return getNonDefaultSettings(config, getConfig(config).getConfigLevel().getType());
+    }
+    public static <T extends Configurable, V> Map<T, V> getNonDefaultSettings(Class<? extends AbstractConfig<V, T>> config, Class<? extends Configurable> type){
+        return getConfig(config).getNonDefaultSettings(type);
     }
 
     /**
@@ -295,7 +298,7 @@ public class ConfigHandler {
      * @return the count of the type instances
      */
     public static int getTypeCount(Class<? extends Configurable> type){
-        return getNonDefaultSettings(ConfigurableExistsConfig.class).size();
+        return getNonDefaultSettings(ConfigurableExistsConfig.class, type).size();
     }
 
     /**
@@ -383,7 +386,7 @@ public class ConfigHandler {
     private static List<String> getTypeIDs(Class<? extends Configurable> type, long start, int size){
         List<String> list = new ArrayList<>(size);
         AtomicLong s = new AtomicLong(start);
-        getNonDefaultSettings(ConfigurableExistsConfig.class).forEach((configurable, aBoolean) -> {
+        getNonDefaultSettings(ConfigurableExistsConfig.class, type).forEach((configurable, aBoolean) -> {
             if (s.decrementAndGet() <= 0 && list.size() < size) list.add(configurable.getID());
         });
         return list;

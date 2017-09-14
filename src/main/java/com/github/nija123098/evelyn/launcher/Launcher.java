@@ -73,10 +73,10 @@ public class Launcher {
     public static void main(String[] args) {
         TemplateHandler.initialize();
         InvocationObjectGetter.initialize();
-        ConfigHandler.initialize();
-        ServiceHandler.initialize();
-        CommandHandler.initialize();
-        DiscordAdapter.initialize();
+        ConfigHandler.initialize();//  changing
+        ServiceHandler.initialize();// this order
+        CommandHandler.initialize();// could break
+        DiscordAdapter.initialize();// EVERYTHING
         STARTUPS.forEach(Runnable::run);
         ASYNC_STARTUPS.forEach(ThreadProvider::sub);
         IS_READY.set(true);

@@ -75,7 +75,7 @@ public abstract class Track implements Configurable {
         String start = this.getClass().getSimpleName().toUpperCase();
         this.id = id.startsWith(start) ? id : start + "-" + id;
         //if (this.getLength() != null && this.getLength() > 10_800_000) throw new ArgumentException("I can't play songs that are over 3 hours in length, please use my repeat functionality.");
-        this.registerExistence();
+        if (!(this instanceof SpeechTrack)) this.registerExistence();
     }
     @Override
     public String getID() {
