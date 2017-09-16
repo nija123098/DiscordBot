@@ -38,7 +38,7 @@ public class TypeChanger {
     }
     private static final Map<Class<?>, Function<?, String>> TO_STRING = new HashMap<>();
     private static final Map<String, Function<String, ?>> FROM_STRING = new HashMap<>();
-    private static final Map<Class<?>, Function<?, ?>> XSTREAM_OBJECT_ALTERING = new HashMap<>();
+    private static final Map<Class<?>, Function<?, ?>> X_STREAM_OBJECT_ALTERING = new HashMap<>();
     private static <T> void add(Class<T> clazz, Function<T, String> toString, Function<String, T> toType){
         TO_STRING.put(clazz, toString);
         FROM_STRING.put(clazz.getName(), toType);
@@ -62,14 +62,14 @@ public class TypeChanger {
         });
     }
     private static <T> void alter(Class<T> clazz, Function<T, Object> function){
-        XSTREAM_OBJECT_ALTERING.put(clazz, function);
+        X_STREAM_OBJECT_ALTERING.put(clazz, function);
     }
     static {
         alter(CopyOnWriteArrayList.class, ArrayList::new);
         alter(ConcurrentHashMap.class, HashMap::new);
     }
     private static <T> Object alter(T o){
-        Function<T, Object> function = (Function<T, Object>) XSTREAM_OBJECT_ALTERING.get(o.getClass());
+        Function<T, Object> function = (Function<T, Object>) X_STREAM_OBJECT_ALTERING.get(o.getClass());
         if (function == null) return o;
         return function.apply(o);
     }

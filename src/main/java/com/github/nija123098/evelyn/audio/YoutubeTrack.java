@@ -64,4 +64,7 @@ public class YoutubeTrack extends DownloadableTrack {
     public boolean download(){
         return this.isDownloaded() && !this.isLiveStream.get() && this.actualDownload();
     }
+    public void setName(String name){
+        this.name.set(name);
+    }
 }

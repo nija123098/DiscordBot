@@ -50,7 +50,7 @@ public class AbstractConfig<V, T extends Configurable> {
         if (!ObjectCloner.supports(this.valueType)) throw new DevelopmentException("Cloner does not support type: " + this.valueType.getName());
         this.normalViewing = TypeChanger.normalStorage(this.valueType);
         this.configLevel = ConfigLevel.getLevel((Class<T>) types[types.length - 1]);
-        if (this.configLevel.mayCashe()){
+        if (this.configLevel.mayCache()){
             this.cache = new ConcurrentHashMap<>();
             Launcher.registerShutdown(this::saveCashed);
             ScheduleService.scheduleRepeat(600_000, 600_000, this::saveCashed);

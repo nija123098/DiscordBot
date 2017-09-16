@@ -110,7 +110,11 @@ public class YTUtil {
             list.setQ(search);
             list.setMaxResults((long) count);
             SearchListResponse searchResponse = errorWrap(list::execute);
-            searchResponse.getItems().forEach((sr) -> tracks.add(new YoutubeTrack(sr.getId().getVideoId())));
+            searchResponse.getItems().forEach((sr) -> {
+                YoutubeTrack track = (YoutubeTrack) Track.getTrack(YoutubeTrack.class, sr.getId().getVideoId());
+                track.setName(sr.getSnippet().getTitle());
+                tracks.add(track);
+            });
             CACHE.put(reduction, tracks);
         }
         return CACHE.get(reduction);

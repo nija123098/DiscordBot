@@ -67,11 +67,11 @@ public enum BotRole {
     public boolean hasRole(User user, Guild guild){
         return this.detect.test(user, guild);
     }
-    private final Map<Object, Object> PERMISSIONS_CASHE = new HashMap<>();
+    private final Map<Object, Object> PERMISSIONS_CACHE = new HashMap<>();
     public boolean hasRequiredRole(User user, Guild guild){
         if (!this.isTrueRank) return this.detect.test(user, guild);
-        return (boolean) (this.guildImportant ? ((Map<Object, Object>) PERMISSIONS_CASHE.computeIfAbsent(guild, g -> new ConcurrentHashMap<>())) : PERMISSIONS_CASHE).computeIfAbsent(user, u -> {
-            ScheduleService.schedule(120_000, () -> (this.guildImportant ? (Map<Object, Object>) PERMISSIONS_CASHE.get(guild) : PERMISSIONS_CASHE).remove(user));
+        return (boolean) (this.guildImportant ? ((Map<Object, Object>) PERMISSIONS_CACHE.computeIfAbsent(guild, g -> new ConcurrentHashMap<>())) : PERMISSIONS_CACHE).computeIfAbsent(user, u -> {
+            ScheduleService.schedule(120_000, () -> (this.guildImportant ? (Map<Object, Object>) PERMISSIONS_CACHE.get(guild) : PERMISSIONS_CACHE).remove(user));
             for (int i = this.ordinal(); i < values().length; i++) if (values()[i].detect.test(user, guild)) return true;
             return false;
         });
@@ -100,7 +100,7 @@ public enum BotRole {
             if (grant) roles.add(role);
             else roles.remove(role);
         });
-        Stream.of(values()).forEach(botRole -> botRole.PERMISSIONS_CASHE.clear());
+        Stream.of(values()).forEach(botRole -> botRole.PERMISSIONS_CACHE.clear());
         EventDistributor.distribute(new BotRoleChangeEvent(grant, role, target, guild));
     }
 }

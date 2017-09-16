@@ -26,10 +26,12 @@ import sx.blah.discord.util.RoleBuilder;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class SetupRanksCommand extends AbstractCommand {
-    static Map<Guild, ScheduleService.ScheduledTask> scheduledTaskMap = new HashMap<>();
+    static final Map<Guild, ScheduleService.ScheduledTask> SCHEDULED_TASK_MAP = new HashMap<>();
     public SetupRanksCommand() {
         super("setupranks", ModuleLevel.ADMINISTRATIVE, "setup ranks", null, "Sets up the ranks for autoranking");
     }
@@ -51,16 +53,21 @@ public class SetupRanksCommand extends AbstractCommand {
             requirement.add(val);
         }
         maker.append("The bot will make " + requirement.size() + " roles to fulfil this request." +
-                "\nYou have 30 seconds to do `@Evelyn setupranks cancel`" +
+                "\nYou have 1 minute to do `@Evelyn setupranks cancel`" +
                 "\nYou must name these, it's not too hard.  (I'll change this soon)" +
                 "\nRanks will update for a user when their favor level changes, which happens fairly often.");
-        scheduledTaskMap.put(guild, ScheduleService.schedule(30_000, () -> {
-            float value;
-            for (int i = 0; i < requirement.size(); i++) {
-                value = requirement.get(i);
-                ConfigHandler.setSetting(EarnRankConfig.class, Role.getRole(new RoleBuilder(guild.guild()).withColor(GraphicsHelper.getGradient((float) i / requirement.size(), low == null ? Color.BLUE : low, high == null ? Color.GREEN : high)).setHoist(raise == null ? false : raise).build()), value);
+        SCHEDULED_TASK_MAP.put(guild, ScheduleService.schedule(0, () -> {
+            List<Runnable> roleMaking = new ArrayList<>(requirement.size());
+            AtomicInteger i = new AtomicInteger();
+            for (; i.get() < requirement.size(); i.incrementAndGet()) {
+                int index = i.get();
+                roleMaking.add(() -> {
+                    float value = requirement.get(index);
+                    ConfigHandler.setSetting(EarnRankConfig.class, Role.getRole(new RoleBuilder(guild.guild()).withColor(GraphicsHelper.getGradient((float) index / (requirement.size() - 1), high == null ? Color.GREEN : high, low == null ? Color.BLUE : low)).setHoist(raise == null ? false : raise).build()), value);
+                });
             }
-            scheduledTaskMap.remove(guild);
+            SCHEDULED_TASK_MAP.remove(guild);
+            for (int j = roleMaking.size() - 1; j > -1; --j) roleMaking.get(j).run();
         }));
     }
 }

@@ -72,7 +72,7 @@ public class Channel implements Configurable {
     }
 
     @Override
-    public boolean shouldCashe() {
+    public boolean shouldCache() {
         return false;
     }
 

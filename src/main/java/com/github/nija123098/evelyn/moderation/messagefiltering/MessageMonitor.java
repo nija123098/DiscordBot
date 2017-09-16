@@ -25,13 +25,13 @@ import java.util.stream.Collectors;
  * Made by nija123098 on 7/19/2017.
  */
 public class MessageMonitor {
-    private static final Map<MessageMonitoringLevel, MessageFilter> ID_FILTER_MAP = new HashMap<>();
+    private static final Map<MessageMonitoringLevel, MessageFilter> FILTER_MAP = new HashMap<>();
     private static final Map<Channel, Set<MessageFilter>> CHANNEL_MAP = new HashMap<>();
     static {
         new Reflections(Reference.BASE_PACKAGE).getSubTypesOf(MessageFilter.class).stream().filter(aClass -> !aClass.getSimpleName().isEmpty()).forEach(clazz -> {
             try {
                 MessageFilter filter = clazz.newInstance();
-                ID_FILTER_MAP.put(filter.getType(), filter);
+                FILTER_MAP.put(filter.getType(), filter);
             } catch (InstantiationException | IllegalAccessException e) {
                 Log.log("Exception lading new MessageFilter", e);
             }
@@ -42,7 +42,7 @@ public class MessageMonitor {
                 Files.readAllLines(path).forEach(s -> {
                     MessageMonitoringLevel type = MessageMonitoringLevel.valueOf(s.split(" ")[0].toUpperCase());
                     Consumer<String> policy = s1 -> {throw new MessageMonitoringException("banned phrase: " + s1);};
-                    ID_FILTER_MAP.put(type, new MessageFilter() {
+                    FILTER_MAP.put(type, new MessageFilter() {
                         @Override
                         public void checkFilter(DiscordMessageReceived event) {
                             StringChecker.checkoutString(FormatHelper.filtering(event.getMessage().getContent(), Character::isLetterOrDigit).toLowerCase(), Arrays.asList(s.substring(type.name().length(), s.length()).split(",")), policy);
@@ -66,14 +66,16 @@ public class MessageMonitor {
         }
         return false;
     }
-    public static void recalculate(Channel channel){
-        CHANNEL_MAP.put(channel, calculate(channel));
-    }
     private static Set<MessageFilter> calculate(Channel channel){
         Set<MessageMonitoringLevel> strings = ConfigHandler.getSetting(MessageMonitoringConfig.class, channel.getGuild());
         strings.addAll(ConfigHandler.getSetting(MessageMonitoringAdditionsConfig.class, channel));
         strings.removeAll(ConfigHandler.getSetting(MessageMonitoringExceptionsConfig.class, channel));
-        return strings.stream().filter(strings::contains).map(ID_FILTER_MAP::get).filter(Objects::nonNull).collect(Collectors.toSet());
+        return strings.stream().filter(strings::contains).map(FILTER_MAP::get).filter(Objects::nonNull).collect(Collectors.toSet());
     }
-
+    public static void recalculate(Channel channel){
+        CHANNEL_MAP.put(channel, calculate(channel));
+    }
+    public static Set<MessageMonitoringLevel> getLevels(Channel channel){
+        return CHANNEL_MAP.computeIfAbsent(channel, MessageMonitor::calculate).stream().map(MessageFilter::getType).collect(Collectors.toSet());
+    }
 }

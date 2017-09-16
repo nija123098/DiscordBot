@@ -51,7 +51,7 @@ public class Guild implements Configurable {
         }
     }
     private String ID;
-    private transient final AtomicReference<IGuild> reference;
+    private transient AtomicReference<IGuild> reference;
     private Guild(IGuild guild) {
         this.reference = new AtomicReference<>(guild);
         this.ID = guild.getID();
@@ -61,7 +61,7 @@ public class Guild implements Configurable {
         this.reference = new AtomicReference<>(DiscordClient.getAny(client -> client.getGuildByID(ID)));
     }
     public IGuild guild(){
-        return this.reference.get();
+        return this.reference == null ? (reference = new AtomicReference<>(DiscordClient.getAny(client -> client.getGuildByID(this.ID)))).get() : this.reference.get();
     }
     @Override
     public ConfigLevel getConfigLevel() {
@@ -73,7 +73,7 @@ public class Guild implements Configurable {
     }
 
     @Override
-    public boolean shouldCashe() {
+    public boolean shouldCache() {
         return false;
     }
 

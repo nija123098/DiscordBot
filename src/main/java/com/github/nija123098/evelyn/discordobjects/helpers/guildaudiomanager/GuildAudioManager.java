@@ -126,7 +126,7 @@ public class GuildAudioManager extends AudioEventAdapter{
         this.lavaPlayer.addListener(this);
         this.audioProvider = new AudioProvider(this);
         this.channel.channel().getGuild().getAudioManager().setAudioProvider(this.audioProvider);
-        this.lavaPlayer.setVolume((int) (ConfigHandler.getSetting(VolumeConfig.class, channel.getGuild()) * 1.5F));
+        this.setVolume(ConfigHandler.getSetting(VolumeConfig.class, channel.getGuild()));
         this.channel.join();
         if (ConfigHandler.getSetting(GreetingsVoiceConfig.class, channel.getGuild())) this.start(new SpeechTrack(new LangString(true, "Hello"), MessageMaker.getLang(null, this.channel)), 0);
     }
@@ -285,7 +285,7 @@ public class GuildAudioManager extends AudioEventAdapter{
     }
     public void setVolume(int val){
         this.lavaPlayer.setVolume((int) (val * 1.5F));
-        ConfigHandler.setSetting(VolumeConfig.class, this.getGuild(), this.lavaPlayer.getVolume());
+        ConfigHandler.setSetting(VolumeConfig.class, this.getGuild(), val);
     }
     public int getVolume(){
         return this.lavaPlayer.getVolume();

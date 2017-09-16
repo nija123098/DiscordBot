@@ -71,7 +71,7 @@ public class GuildUser implements Configurable {
         BotRole.GUILD_TRUSTEE.checkRequiredRole(user, guild);
     }
     @Override
-    public boolean shouldCashe() {
+    public boolean shouldCache() {
         return false;
     }
     @Override

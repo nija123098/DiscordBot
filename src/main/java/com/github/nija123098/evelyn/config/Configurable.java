@@ -53,7 +53,7 @@ public interface Configurable {
         return GlobalConfigurable.GLOBAL;
     }
 
-    default boolean shouldCashe(){
+    default boolean shouldCache(){
         return false;
     }
 

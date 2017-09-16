@@ -1,6 +1,8 @@
 package com.github.nija123098.evelyn.moderation;
 
+import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordPermission;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Message;
+import com.github.nija123098.evelyn.exeption.PermissionsException;
 import com.github.nija123098.evelyn.service.AbstractService;
 
 import java.util.List;
@@ -13,6 +15,8 @@ import java.util.stream.Collectors;
 public class MessageDeleteService extends AbstractService {
     private static final List<Message> TO_DELETE = new CopyOnWriteArrayList<>();
     public static void delete(List<Message> messages){
+        if (messages.isEmpty()) return;
+        PermissionsException.checkPermissions(messages.get(0).getChannel(), DiscordPermission.MANAGE_MESSAGES, DiscordPermission.READ_MESSAGES, DiscordPermission.READ_MESSAGE_HISTORY);
         messages = messages.stream().filter(message -> !message.isPinned()).collect(Collectors.toList());
         if (messages.isEmpty()) return;
         if (!messages.get(0).getChannel().isPrivate()){

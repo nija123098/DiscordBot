@@ -12,8 +12,8 @@ public class SetupRanksCancelCommand extends AbstractCommand {
     }
     @Command
     public void command(Guild guild, MessageMaker maker){
-        ScheduleService.ScheduledTask task = SetupRanksCommand.scheduledTaskMap.remove(guild);
+        ScheduleService.ScheduledTask task = SetupRanksCommand.SCHEDULED_TASK_MAP.remove(guild);
         if (task != null) task.cancel();
-        else maker.append("Oh no, it seems you were too late, that's too bad");
+        else maker.append("Oh no, it seems you were too late, that's too bad.");
     }
 }

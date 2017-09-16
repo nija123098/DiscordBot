@@ -54,7 +54,7 @@ public enum ConfigLevel {
     public Set<ConfigLevel> getAssignable(){
         return assignables;
     }
-    public boolean mayCashe(){
+    public boolean mayCache(){
         return this.mayCashe;
     }
     public boolean isAssignableFrom(ConfigLevel level){

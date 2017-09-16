@@ -21,11 +21,11 @@ public class TranslateCommand extends AbstractCommand {
     @Command
     public void command(@Context(softFail = true) Reaction reaction, MessageMaker maker, User user){
         if (reaction == null){
-            maker.append("Please use " + EmoticonHelper.getChars("speech_balloon", false) + " on a message to translate it to your language!");
+            maker.append("Please react using a " + EmoticonHelper.getChars("speech_balloon", false) + " on a message to translate it to your language!");
             return;
         }
         if (ConfigHandler.getSetting(UserLanguageConfig.class, user) == null) {
-            maker.withDM().append("Please set your language using `@Emily cfg set user_language myLanguage`");
+            maker.withDM().append("Please set your language using `@Evelyn cfg set user_language myLanguage`");
             return;
         }
         maker.append(reaction.getMessage().getContent());
