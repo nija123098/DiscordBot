@@ -18,36 +18,33 @@ import java.util.concurrent.atomic.AtomicReference;
  * Made by nija123098 on 6/10/2017.
  */
 public class YoutubeTrack extends DownloadableTrack {
-    private static final CallBuffer CALL_BUFFER = new CallBuffer(500);
+    private static final CallBuffer CALL_BUFFER = new CallBuffer(250);
     static {
         registerTrackType(YoutubeTrack.class, YoutubeTrack::new, YoutubeTrack::new);
     }
-    private final transient AtomicReference<String> name = new AtomicReference<>();
-    private final transient AtomicBoolean isLiveStream = new AtomicBoolean(true);
+    private transient String name;
     public YoutubeTrack(String id) {
         super(id);
-        AtomicReference<Runnable> liveSet = new AtomicReference<>(), getting = new AtomicReference<>();
-        liveSet.set(() -> {
-            try{this.isLiveStream.set(Jsoup.connect(this.getSource()).get().head().getElementsByTag("script").toString().contains("LIVESTREAMING_DEFAULT_BROADCAST"));
-            } catch (IOException e) {
-                Log.log("Exception getting if a track is a stream, rescheduling: " + this.getCode(), e);
-                CALL_BUFFER.call(liveSet.get());
-            }
+        AtomicReference<Runnable> nameGetter = new AtomicReference<>();
+        nameGetter.set(() -> {
+            this.loadName();
+            if (this.name == null) CALL_BUFFER.call(nameGetter.get());
         });
-        getting.set(() -> {
-            try{this.name.set(((JSONObject) new JSONParser().parse(StringHelper.readAll("https://www.youtube.com/oembed?url=http%3A//youtube.com/watch%3Fv%3D" + this.getCode()))).get("title").toString());
-            }catch(ParseException | IOException | UnirestException e) {
-                Log.log("Exception getting name from Youtube track, rescheduling", e);
-                CALL_BUFFER.call(getting.get());
-            }
-        });
-        CALL_BUFFER.call(liveSet.get());
-        CALL_BUFFER.call(getting.get());// there is probably a better way to do this
+        CALL_BUFFER.call(nameGetter.get());// there is probably a better way to do this
     }
     protected YoutubeTrack() {}
+    private void loadName() {
+        if (this.name != null){
+            try{this.name = ((JSONObject) new JSONParser().parse(StringHelper.readAll("https://www.youtube.com/oembed?url=http%3A//youtube.com/watch%3Fv%3D" + this.getCode()))).get("title").toString();
+            } catch (ParseException | IOException | UnirestException e) {
+                Log.log("Exception getting name from Youtube track", e);
+            }
+        }
+    }
     @Override
     public String getName() {
-        return this.name.get() != null ? this.name.get() : "I'm loading the song name as fast as I can";
+        loadName();
+        return this.name != null ? this.name : "I'm loading the song name as fast as I can";
     }
     public String getSource() {
         return "https://www.youtube.com/watch?v=" + this.getCode();
@@ -62,9 +59,9 @@ public class YoutubeTrack extends DownloadableTrack {
     }
     @Override
     public boolean download(){
-        return this.isDownloaded() && !this.isLiveStream.get() && this.actualDownload();
+        return this.isDownloaded() && (this.getLength() != Long.MAX_VALUE || this.getLength() == 0) && this.actualDownload();
     }
     public void setName(String name){
-        this.name.set(name);
+        this.name = name;
     }
 }

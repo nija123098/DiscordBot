@@ -22,7 +22,7 @@ public class PlayTimeFavorConfig extends AbstractConfig<Integer, GuildUser> {
     @EventListener
     public void handle(DiscordPresenceUpdate update){
         long current = System.currentTimeMillis();
-        if (map.containsKey(update.getUser())){
+        if (map.containsKey(update.getUser()) && isValidPresence(update.getOldPresence())){
             String reduced = FormatHelper.reduce(update.getOldPresence().getOptionalPlayingText().get());
             update.getUser().getGuilds().forEach(guild -> {
                 if (FormatHelper.reduce(ConfigHandler.getSetting(GuildLinkedGamesConfig.class, guild)).contains(reduced)){

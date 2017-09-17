@@ -13,7 +13,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class TemporaryGameChannelsConfig extends AbstractConfig<Integer, Guild> {
-    static final Function<String, String> playTextToChannel = s -> FormatHelper.filtering(s, c -> Character.isLetterOrDigit(c) || c == ' ');
+    static final Function<String, String> playTextToChannel = s -> FormatHelper.filtering(s.replace("-", " "), c -> Character.isLetterOrDigit(c) || c == ' ');
     public TemporaryGameChannelsConfig() {
         super("temp_game_users", BotRole.GUILD_TRUSTEE, 0, "Makes a channel for when people are playing the same game 0 disables it");
     }
@@ -25,14 +25,14 @@ public class TemporaryGameChannelsConfig extends AbstractConfig<Integer, Guild> 
     public void handle(DiscordPresenceUpdate update){
         if (!update.getNewPresence().getOptionalPlayingText().isPresent() || update.getNewPresence().getStatus() != Presence.Status.ONLINE) return;
         String playText = update.getNewPresence().getPlayingText(), reducedPlayText = playTextToChannel.apply(playText);
-        int count = 1;
+        int count = 0;
         for (Guild guild : update.getUser().getGuilds()){
-            if (!DiscordClient.getOurUser().getPermissionsForGuild(guild).contains(DiscordPermission.MANAGE_CHANNELS) || this.getValue(guild) < 1 || guild.getVoiceChannels().stream().map(Channel::getName).filter(s -> s.equals(reducedPlayText)).count() > 1) continue;
+            if (!DiscordClient.getOurUser().getPermissionsForGuild(guild).contains(DiscordPermission.MANAGE_CHANNELS) || this.getValue(guild) < 1 || guild.getVoiceChannels().stream().map(Channel::getName).filter(s -> s.equals(reducedPlayText)).count() > 0) continue;
             for (User user : guild.getUsers()){
                 if (!user.getPresence().getOptionalPlayingText().isPresent()) continue;
                 if (playText.equals(user.getPresence().getPlayingText()) && ++count > this.getValue(guild)) {
                     TemporaryChannelCommand.command(false, reducedPlayText, guild);
-                    return;
+                    break;
                 }
             }
         }

@@ -112,11 +112,13 @@ public class InvocationObjectGetter {
         addConverter(VoiceChannel.class, (invoker, shard, channel, guild, message, reaction, args) -> (Pair<VoiceChannel, Integer>) CONVERTER_MAP.get(Channel.class).getKey().getObject(invoker, shard, channel, guild, message, reaction, args));
         addConverter(User.class, (user, shard, channel, guild, message, reaction, args) -> {
             if (args.equalsIgnoreCase("me")) return new Pair<>(user, 2);
-            User u = User.getUser(args.split(" ")[0]);
-            if (u != null) return new Pair<>(u, args.split(" ")[0].length());
+            String first = args.split(" ")[0];
+            User u = User.getUser(first);
+            if (u != null) return new Pair<>(u, first.length());
             if (guild == null) throw new ArgumentException("Commands with user names can not be used in private channels");
+            List<User> users = guild.getUsersByName(first);
+            if (users.size() == 1) return new Pair<>(users.get(0), first.length());
             String match = StringHelper.getGoodMatch(args, new ArrayList<>(UserNameMonitor.getNames(guild)));
-            List<User> users = new ArrayList<>(2);
             if (match == null) throw new ArgumentException("No users by that name, try an ID, mention, or good old copy and paste");
             else users.addAll(guild.getUsersByName(match));
             if (users.size() > 1) throw new ArgumentException("There are too many users named that!");
@@ -325,6 +327,7 @@ public class InvocationObjectGetter {
     }
 
     public static <T> Pair<T, Integer> convert(Class<T> clazz, User user, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, String args){
+        if (args.equalsIgnoreCase("null")) return new Pair<>(null, 4);
         if (clazz.isEnum()) return (Pair<T, Integer>) EnumHelper.getValue(clazz, args);
         return (Pair<T, Integer>) CONVERTER_MAP.get(clazz).getKey().getObject(user, shard, channel, guild, message, reaction, args);
     }

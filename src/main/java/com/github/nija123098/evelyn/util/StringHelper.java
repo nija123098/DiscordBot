@@ -36,7 +36,7 @@ public class StringHelper {
     public static String getGoodMatch(String in, List<String> strings){
         List<String> removing = new ArrayList<>(strings);
         removing.removeIf(s -> !s.toLowerCase().contains(in.toLowerCase()));
-        if (removing.size() == 1 && !acceptableDistance(removing.get(0), in)) return removing.get(0);
+        if (removing.size() == 1 && acceptableDistance(removing.get(0), in)) return removing.get(0);
         else if (!removing.isEmpty()) strings = removing;
         List<String> best = getGoodMatch(in, strings, StringUtils::getLevenshteinDistance, true, true);
         best = getGoodMatch(in, best, StringUtils::getJaroWinklerDistance, true, true);
@@ -47,7 +47,7 @@ public class StringHelper {
         return best.size() != 1 || !acceptableDistance(best.get(0), in) ? null : best.get(0);
     }
     public static boolean acceptableDistance(String best, String in){
-        return StringUtils.getLevenshteinDistance(best, in) > .4F * in.length() || StringUtils.getLevenshteinDistance(best, FormatHelper.filtering(in, Character::isLetter)) > .4F * in.length();
+        return StringUtils.getLevenshteinDistance(best, in) < .2F * Math.max(Math.max(in.length(), best.length()), 6) || StringUtils.getLevenshteinDistance(best, FormatHelper.filtering(in, c -> !Character.isLetter(c))) < .2F * Math.max(in.length(), best.length());
     }
     public static List<String> getGoodMatch(String matching, List<String> candidates, BiFunction<String, String, Number> function, boolean golf, boolean containment){
         double bestScore = Double.MAX_VALUE;

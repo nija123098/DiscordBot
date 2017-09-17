@@ -63,7 +63,7 @@ public class HelpCommand extends AbstractCommand {
             maker.append(command.getHelp()).appendRaw("\n```\n" + EmoticonHelper.getChars("gear", false) + "**Usages:**\n```\n");
             String[] strings = normalizeUsages(command.getUsages()).split("\n");
             for (int i = 0; i < strings.length; i++) {
-                if (i % 2 == 0) maker.append(strings[i]);
+                if (i % 2 == 1) maker.append(strings[i]);
                 else maker.appendRaw(strings[i]);
                 maker.appendRaw("\n");
             }

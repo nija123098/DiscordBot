@@ -6,6 +6,8 @@ import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
+import com.github.nija123098.evelyn.exeption.ArgumentException;
+import com.github.nija123098.evelyn.util.FormatHelper;
 
 public class PlaylistMakeCommand extends AbstractCommand {
     public PlaylistMakeCommand() {
@@ -13,7 +15,8 @@ public class PlaylistMakeCommand extends AbstractCommand {
     }
     @Command
     public void command(@Argument(info = "name") String s, User user){
-        String st = s.toLowerCase().split(" ")[0];
-        ConfigHandler.alterSetting(UserPlaylistsConfig.class, user, strings -> strings.add(st));
+        if (s.isEmpty()) throw new ArgumentException("Your playlist must have a name");
+        if (!s.equals(FormatHelper.filtering(s, Character::isLetter))) throw new ArgumentException("A playlist name can't contain spaces");
+        ConfigHandler.alterSetting(UserPlaylistsConfig.class, user, strings -> strings.add(s));
     }
 }

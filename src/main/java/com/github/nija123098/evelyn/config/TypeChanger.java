@@ -27,7 +27,7 @@ public class TypeChanger {
     private static final XStream X_STREAM = new XStream();
     static {
         XStream.setupDefaultSecurity(X_STREAM);
-        X_STREAM.aliasPackage("emily-package", Reference.BASE_PACKAGE);
+        X_STREAM.aliasPackage("evelyn-package", Reference.BASE_PACKAGE);
         new Reflections(Reference.BASE_PACKAGE, new SubTypesScanner(false)).getSubTypesOf(Object.class).stream().filter(clazz -> !clazz.isAnnotation()).filter(clazz -> !clazz.isEnum()).filter(clazz -> !clazz.isInterface()).filter(clazz -> !clazz.getName().contains("util")).filter(clazz -> !clazz.getName().contains("$")).filter(clazz -> Stream.of(clazz.getDeclaredFields()).filter(field -> !Modifier.isStatic(field.getModifiers())).count() > 0).map(clazz -> {
             Class<?> previous = clazz;
             Class<?> current;

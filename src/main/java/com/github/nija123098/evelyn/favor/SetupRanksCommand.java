@@ -6,6 +6,7 @@ import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.config.ConfigHandler;
+import com.github.nija123098.evelyn.config.GuildUser;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
 import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordPermission;
@@ -40,7 +41,7 @@ public class SetupRanksCommand extends AbstractCommand {
         if (!DiscordClient.getOurUser().getPermissionsForGuild(guild).contains(DiscordPermission.MANAGE_ROLES)) throw new PermissionsException("I need to be able to manage roles for this");
         equation = ConfigHandler.setSetting(FavorRankEquationConfig.class, guild, equation);
         AtomicDouble greatest = new AtomicDouble(0);
-        guild.getUsers().forEach(user -> {
+        guild.getUsers().stream().map(user -> GuildUser.getGuildUser(guild, user)).forEach(user -> {
             float f = FavorHandler.getFavorAmount(user);
             if (greatest.get() < f) greatest.set(f);
         });

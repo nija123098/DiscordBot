@@ -119,7 +119,7 @@ public class GuildAudioManager extends AudioEventAdapter{
     private final List<LangString> interups = new CopyOnWriteArrayList<>();
     private Track current, paused, next;
     private long pausePosition;
-    private boolean leaveAfterThis, loop, leaving, skipped, swapping, pause;
+    private boolean leaveAfterThis, loop, leaving, skipped, swapping, pause, destroyed;
     private GuildAudioManager(VoiceChannel channel) {
         this.channel = channel;
         this.lavaPlayer = PLAYER_MANAGER.createPlayer();
@@ -137,6 +137,7 @@ public class GuildAudioManager extends AudioEventAdapter{
             this.audioProvider.run.set(false);
             this.lavaPlayer.setPaused(true);
             this.lavaPlayer.destroy();
+            this.destroyed = true;
         }else{
             this.audioProvider.clearBuffer();
             this.clearQueue();
@@ -200,6 +201,7 @@ public class GuildAudioManager extends AudioEventAdapter{
         this.lavaPlayer.startTrack(this.current.getAudioTrack(this), true);
         if (position != 0) this.lavaPlayer.getPlayingTrack().setPosition(position);
         this.lavaPlayer.setPaused(false);
+        if (this.destroyed) throw new RuntimeException("Hey lava player, I destroyed you, NOW GO AWAY");
         ThreadProvider.sub(() -> CurrentCommand.command(this.getGuild(), new MessageMaker(ConfigHandler.getSetting(MusicChannelConfig.class, this.getGuild()))));
     }
     public void seek(long time) {
@@ -214,7 +216,7 @@ public class GuildAudioManager extends AudioEventAdapter{
         this.skipped = true;
         return size;
     }
-    public void onFinish(){
+    private void onFinish(){
         if (this.current == null) return;
         if (this.swapping){
             this.swapping = false;
@@ -313,8 +315,8 @@ public class GuildAudioManager extends AudioEventAdapter{
         private AudioProvider(GuildAudioManager manager) {
             this.queueThread = new Thread(() -> {
                 while (run.get()){
-                    Care.lessSleep(1);
-                    if (this.frames.size() != BUFFER_SIZE){
+                    System.out.println(this.frames.size());
+                    if (this.frames.size() < BUFFER_SIZE){
                         AudioFrame frame = manager.lavaPlayer.provide();
                         this.frames.add(frame == null ? NULL : frame);
                     }else Care.lessSleep(5);

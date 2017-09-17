@@ -1,8 +1,8 @@
 package com.github.nija123098.evelyn.config;
 
+import com.github.nija123098.evelyn.command.InvocationObjectGetter;
 import com.github.nija123098.evelyn.command.annotations.LaymanName;
-import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
-import com.github.nija123098.evelyn.discordobjects.wrappers.VoiceChannel;
+import com.github.nija123098.evelyn.discordobjects.wrappers.*;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventDistributor;
 import com.github.nija123098.evelyn.exeption.ArgumentException;
 import com.github.nija123098.evelyn.exeption.DevelopmentException;
@@ -122,7 +122,7 @@ public class AbstractConfig<V, T extends Configurable> {
         return this.configLevel;
     }
 
-    private String getNameForType(ConfigLevel level){
+    public String getNameForType(ConfigLevel level){
         return this.name + "_" + level.name().toLowerCase();
     }
 
@@ -175,7 +175,8 @@ public class AbstractConfig<V, T extends Configurable> {
         }
         return value;
     }
-    public void reset(Configurable configurable){
+    public void reset(T configurable){
+        if (this.cache != null) this.cache.remove(configurable);
         Database.query("DELETE FROM " + this.getNameForType(configurable.getConfigLevel()) + " WHERE id = " + Database.quote(configurable.getID()));
     }
 
@@ -237,10 +238,10 @@ public class AbstractConfig<V, T extends Configurable> {
         return result;
     }
 
-    public void setExteriorValue(T configurable, String value) {
+    public void setExteriorValue(T configurable, User user, Channel channel, Guild guild, Message message, String value) {
         if (!this.isNormalViewing()) throw new ArgumentException("Slow down there malicious user, we have that covered!");
         if (value.length() == 7 && value.toLowerCase().equals("not set")) value = "null";
-        setValue(configurable, wrapTypeIn(value, configurable));
+        setValue(configurable, InvocationObjectGetter.convert(this.getValueType(), user, null, channel, guild, message, null, value).getKey());
     }
 
     public Map<T, V> getNonDefaultSettings() {

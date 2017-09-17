@@ -3,16 +3,16 @@ package com.github.nija123098.evelyn.config;
 import com.github.nija123098.evelyn.audio.Playlist;
 import com.github.nija123098.evelyn.audio.Track;
 import com.github.nija123098.evelyn.config.configs.ConfigurableExistsConfig;
-import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
-import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
-import com.github.nija123098.evelyn.discordobjects.wrappers.Role;
-import com.github.nija123098.evelyn.discordobjects.wrappers.User;
+import com.github.nija123098.evelyn.discordobjects.wrappers.*;
 import com.github.nija123098.evelyn.exeption.DevelopmentException;
 import com.github.nija123098.evelyn.launcher.Reference;
+import com.github.nija123098.evelyn.util.Care;
 import com.github.nija123098.evelyn.util.Log;
+import com.github.nija123098.evelyn.util.ThreadProvider;
 import org.reflections.Reflections;
 
 import java.lang.reflect.Modifier;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -137,8 +137,8 @@ public class ConfigHandler {
      * @param configurable the configurable the config is to be set for
      * @param value the value the config is being set at
      */
-    public static <C extends AbstractConfig<I, T>, I, T extends Configurable> void setExteriorSetting(Class<C> clazz, T configurable, String value){
-        getConfig(clazz).setExteriorValue(configurable, value);
+    public static <C extends AbstractConfig<I, T>, I, T extends Configurable> void setExteriorSetting(Class<C> clazz, T configurable, User user, Channel channel, Guild guild, Message message, String value){
+        getConfig(clazz).setExteriorValue(configurable, user, channel, guild, message, value);
     }
 
     /**
@@ -212,11 +212,11 @@ public class ConfigHandler {
      * @param value the value to be set
      * @return if the value is set
      */
-    public static boolean setExteriorSetting(String configName, Configurable configurable, String value){
+    public static boolean setExteriorSetting(String configName, Configurable configurable, User user, Channel channel, Guild guild, Message message, String value){
         AbstractConfig config = getConfig(configName);
         if (config != null){
             try {
-                config.setExteriorValue(configurable, value);
+                config.setExteriorValue(configurable, user, channel, guild, message, value);
                 return true;
             } catch (ClassCastException e){
                 throw new RuntimeException("Attempted generic value config assignment with the wrong type on config \"" + config.getName() + "\" with value type: " + value.getClass().getName(), e);

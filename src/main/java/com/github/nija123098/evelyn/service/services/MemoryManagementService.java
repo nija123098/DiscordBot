@@ -5,6 +5,7 @@ import com.github.nija123098.evelyn.config.ConfigLevel;
 import com.github.nija123098.evelyn.config.Configurable;
 import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.service.AbstractService;
+import com.github.nija123098.evelyn.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +18,7 @@ import java.util.function.Consumer;
  * Made by nija123098 on 3/26/2017.
  */
 public class MemoryManagementService extends AbstractService {
-    private static final long SERVICE_ITERATION_TIME = 1_000;// 1 min
+    private static final long SERVICE_ITERATION_TIME = 1_000;
     private static final List<ManagedMap<?, ?>> MAPS = new CopyOnWriteArrayList<>();
     private static final List<ManagedList<?>> LISTS = new CopyOnWriteArrayList<>();
     private static final long[] INDICES = new long[ConfigLevel.values().length];
@@ -25,25 +26,29 @@ public class MemoryManagementService extends AbstractService {
     private static final float[] CONFIG_PER = new float[INDICES.length];
     public MemoryManagementService() {
         super(SERVICE_ITERATION_TIME);
+        /*
         Launcher.registerStartup(() -> {
             for (int i = 0; i < INDICES.length; i++) {
                 if (ConfigLevel.values()[i] == ConfigLevel.ALL) continue;
-                CONFIG_PER[i] = ConfigHandler.getTypeCount(ConfigLevel.values()[i].getType()) / 86_400_000;// 24 hours
+                CONFIG_PER[i] = ConfigHandler.getTypeCount(ConfigLevel.values()[i].getType()) / (float) 86_400_000;// 24 hours
             }
-        });
+        });*/
     }
     @Override
     public void run() {
         MAPS.forEach(ManagedMap::manage);
         LISTS.forEach(ManagedList::manage);
+        /* todo fix
         for (int i = 0; i < INDICES.length; i++) {
             if (ConfigLevel.values()[i] == ConfigLevel.ALL) continue;
+            try{if (ConfigLevel.values()[i].getType().getMethod("manage").getDeclaringClass().equals(Configurable.class)) continue;
+            } catch (NoSuchMethodException e) {Log.log("This should never happen", e);}
             LEFT_OVER[i] += CONFIG_PER[i];
             int count = (int) (LEFT_OVER[i] / 1);
             ConfigHandler.getTypeInstances(ConfigLevel.values()[i].getType(), INDICES[i], count).stream().filter(Objects::nonNull).forEach(Configurable::manage);
             INDICES[i] += count;
             LEFT_OVER[i] %= 1;
-        }
+        }*/
     }
     public static class ManagedMap<K, V> extends ConcurrentHashMap<K, V> {// may want to use a cache or optimize
         private int iterationTotal, iteration;
