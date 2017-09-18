@@ -16,7 +16,7 @@ public class PlaylistMakeCommand extends AbstractCommand {
     @Command
     public void command(@Argument(info = "name") String s, User user){
         if (s.isEmpty()) throw new ArgumentException("Your playlist must have a name");
-        if (!s.equals(FormatHelper.filtering(s, Character::isSpaceChar))) throw new ArgumentException("A playlist name can't contain spaces");
+        if (s.contains(" ")) throw new ArgumentException("A playlist name cannot contain spaces");
         ConfigHandler.alterSetting(UserPlaylistsConfig.class, user, strings -> strings.add(s));
     }
 }
