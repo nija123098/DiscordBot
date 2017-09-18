@@ -65,7 +65,9 @@ public class GuildAudioManager extends AudioEventAdapter{
         PLAYER_MANAGER.registerSourceManager(new SoundCloudAudioSourceManager(false));
         PLAYER_MANAGER.registerSourceManager(new LocalAudioSourceManager());
         AtomicInteger integer = new AtomicInteger();
-        Launcher.registerStartup(() -> ConfigHandler.getNonDefaultSettings(PlayQueueConfig.class).forEach((channel, tracks) -> ScheduleService.schedule(integer.getAndIncrement() * 1000 + 5_000, () -> {
+        AbstractConfig<List<Track>, VoiceChannel> playQueueConfig = ConfigHandler.getConfig(PlayQueueConfig.class);
+        Launcher.registerStartup(() -> playQueueConfig.getNonDefaultSettings().forEach((channel, tracks) -> ScheduleService.schedule(integer.getAndIncrement() * 1000 + 5_000, () -> {
+            playQueueConfig.reset(channel);
             if (!hasValidListeners(channel)) return;
             GuildAudioManager manager = getManager(channel);
             manager.queueTrack(tracks.remove(0));
@@ -73,11 +75,10 @@ public class GuildAudioManager extends AudioEventAdapter{
         })));
         PLAYER_MANAGER.getConfiguration().setOpusEncodingQuality(AudioConfiguration.OPUS_QUALITY_MAX);
         PLAYER_MANAGER.getConfiguration().setResamplingQuality(AudioConfiguration.ResamplingQuality.HIGH);
-        AbstractConfig<List<Track>, VoiceChannel> config = ConfigHandler.getConfig(PlayQueueConfig.class);
         LangString bye = new LangString(true, "I have to go restart, I will be back soon.");
         Launcher.registerShutdown(() -> {
             MAP.forEach((s, guildAudioManager) -> {
-                config.setValue(guildAudioManager.channel, guildAudioManager.queue);
+                playQueueConfig.setValue(guildAudioManager.channel, guildAudioManager.queue);
                 guildAudioManager.interrupt(bye);
             });
             Care.lessSleep(5_000);
@@ -315,7 +316,6 @@ public class GuildAudioManager extends AudioEventAdapter{
         private AudioProvider(GuildAudioManager manager) {
             this.queueThread = new Thread(() -> {
                 while (run.get()){
-                    System.out.println(this.frames.size());
                     if (this.frames.size() < BUFFER_SIZE){
                         AudioFrame frame = manager.lavaPlayer.provide();
                         this.frames.add(frame == null ? NULL : frame);

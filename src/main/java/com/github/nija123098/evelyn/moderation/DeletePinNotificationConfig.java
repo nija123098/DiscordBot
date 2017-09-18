@@ -1,6 +1,7 @@
 package com.github.nija123098.evelyn.moderation;
 
 import com.github.nija123098.evelyn.config.AbstractConfig;
+import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
 import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordPermission;
@@ -21,7 +22,7 @@ public class DeletePinNotificationConfig extends AbstractConfig<Boolean, Guild> 
     private static final List<DiscordMessagePin> PIN_ENTRIES = new MemoryManagementService.ManagedList<>(5_000);
     private static final List<DiscordMessageReceived> MESSAGE_ENTRIES = new MemoryManagementService.ManagedList<>(5_000);
     public DeletePinNotificationConfig() {
-        super("delete_pin_notification", BotRole.GUILD_TRUSTEE, true, "Deletes the <user> has pined a message notification");
+        super("delete_pin_notification", ConfigCategory.GUILD_PERSONALIZATION, true, "Deletes the <user> has pined a message notification");
         config = this;
     }
     // @EventListener

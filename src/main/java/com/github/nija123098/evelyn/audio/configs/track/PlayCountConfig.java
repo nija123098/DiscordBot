@@ -2,6 +2,7 @@ package com.github.nija123098.evelyn.audio.configs.track;
 
 import com.github.nija123098.evelyn.audio.Track;
 import com.github.nija123098.evelyn.config.AbstractCountingConfig;
+import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.perms.BotRole;
 
 /**
@@ -9,6 +10,6 @@ import com.github.nija123098.evelyn.perms.BotRole;
  */
 public class PlayCountConfig extends AbstractCountingConfig<Track> {
     public PlayCountConfig() {
-        super("play_count", BotRole.BOT_ADMIN, "The number of times a track has been played");
+        super("play_count", ConfigCategory.STAT_TRACKING, "The number of times a track has been played");
     }
 }

@@ -1,10 +1,7 @@
 package com.github.nija123098.evelyn.economy.configs;
 
+import com.github.nija123098.evelyn.config.*;
 import com.github.nija123098.evelyn.moderation.GuildUserJoinTimeConfig;
-import com.github.nija123098.evelyn.config.AbstractConfig;
-import com.github.nija123098.evelyn.config.ConfigHandler;
-import com.github.nija123098.evelyn.config.Configurable;
-import com.github.nija123098.evelyn.config.GuildUser;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordUserJoin;
 import com.github.nija123098.evelyn.perms.BotRole;
@@ -14,7 +11,7 @@ import com.github.nija123098.evelyn.perms.BotRole;
  */
 public class StartingMoneyConfig extends AbstractConfig<Integer, Configurable> {
     public StartingMoneyConfig() {
-        super("starting_money", BotRole.BOT_ADMIN, 0, "The amount of money a config starts with");
+        super("starting_money", ConfigCategory.ECONOMY, 0, "The amount of money a config starts with");
     }
     @EventListener
     public void handle(DiscordUserJoin event){

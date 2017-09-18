@@ -1,6 +1,7 @@
 package com.github.nija123098.evelyn.favor.configs;
 
 import com.github.nija123098.evelyn.config.AbstractConfig;
+import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.config.GuildUser;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Role;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
@@ -12,7 +13,7 @@ import com.github.nija123098.evelyn.perms.BotRole;
  */
 public class EarnRankConfig extends AbstractConfig<Float, Role> {
     public EarnRankConfig() {
-        super("favor_requirement", BotRole.GUILD_TRUSTEE, null, "A map of roles earned by users due to their favor in a guild");
+        super("favor_requirement", ConfigCategory.FAVOR, (Float) null, "A map of roles earned by users due to their favor in a guild");
     }
     @EventListener
     public void handle(FavorChangeEvent event){// change to config change event

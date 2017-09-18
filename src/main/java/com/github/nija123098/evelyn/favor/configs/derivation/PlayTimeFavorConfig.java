@@ -1,6 +1,7 @@
 package com.github.nija123098.evelyn.favor.configs.derivation;
 
 import com.github.nija123098.evelyn.config.AbstractConfig;
+import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.GuildUser;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Presence;
@@ -17,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PlayTimeFavorConfig extends AbstractConfig<Integer, GuildUser> {
     private Map<User, Long> map = new ConcurrentHashMap<>();
     public PlayTimeFavorConfig() {
-        super("play_time", BotRole.SYSTEM, 0, "The time a user has spent in a game which is approved for favor game in 5 min increments");
+        super("play_time", ConfigCategory.STAT_TRACKING, 0, "The time a user has spent in a game which is approved for favor game in 5 min increments");
     }
     @EventListener
     public void handle(DiscordPresenceUpdate update){

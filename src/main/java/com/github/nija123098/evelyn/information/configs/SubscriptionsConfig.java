@@ -1,6 +1,7 @@
 package com.github.nija123098.evelyn.information.configs;
 
 import com.github.nija123098.evelyn.config.AbstractConfig;
+import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.information.subsription.SubscriptionLevel;
 import com.github.nija123098.evelyn.perms.BotRole;
@@ -13,6 +14,6 @@ import java.util.Set;
  */
 public class SubscriptionsConfig extends AbstractConfig<Set<SubscriptionLevel>, Channel> {
     public SubscriptionsConfig() {
-        super("channel_subscriptions", BotRole.GUILD_TRUSTEE, new HashSet<>(), "The subscriptions a channel has");
+        super("channel_subscriptions", ConfigCategory.STAT_TRACKING, new HashSet<>(), "The subscriptions a channel has");
     }
 }

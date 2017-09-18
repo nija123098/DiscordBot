@@ -82,7 +82,7 @@ public class ScheduleService extends AbstractService {
         }
         @Override
         boolean run(){
-            if (super.run() && !this.skipping){
+            if (!this.skipping && super.run()){
                 SERVICE_MAP.computeIfAbsent(this.delayBetween + System.currentTimeMillis(), l -> new ConcurrentHashSet<>()).add(this);
                 return true;
             }

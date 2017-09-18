@@ -33,7 +33,7 @@ public class Playlist implements Configurable {
     }
     public static Playlist getPlaylist(User user, String name){
         if (name.isEmpty()) throw new ArgumentException("Your playlist must have a name");
-        if (!name.equals(FormatHelper.filtering(name, Character::isLetter))) throw new ArgumentException("A playlist name can't contain spaces");
+        if (!name.equals(FormatHelper.filtering(name, Character::isLetter))) throw new ArgumentException("A playlist name must only contain letters");
         return ConfigHandler.getSetting(UserPlaylistsConfig.class, user).contains(name.toLowerCase()) ? MAP.computeIfAbsent("pl-" + user.getID() + "-" + name.toLowerCase(), Playlist::new) : null;
     }
     public static Playlist getPlaylist(String id){

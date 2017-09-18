@@ -1,6 +1,7 @@
 package com.github.nija123098.evelyn.moderation;
 
 import com.github.nija123098.evelyn.config.AbstractConfig;
+import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.config.GuildUser;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordUserJoin;
@@ -11,7 +12,7 @@ import com.github.nija123098.evelyn.perms.BotRole;
  */
 public class GuildUserJoinTimeConfig extends AbstractConfig<Long, GuildUser> {
     public GuildUserJoinTimeConfig() {
-        super("user_join_time", BotRole.BOT_ADMIN, "The first time a user joins a guild", guildUser -> guildUser.getGuild().getJoinTimeForUser(guildUser.getUser()));
+        super("user_join_time", ConfigCategory.STAT_TRACKING, guildUser -> guildUser.getGuild().getJoinTimeForUser(guildUser.getUser()), "The first time a user joins a guild");
         config = this;
     }
     private static GuildUserJoinTimeConfig config;

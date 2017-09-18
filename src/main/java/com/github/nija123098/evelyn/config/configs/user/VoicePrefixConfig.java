@@ -1,6 +1,7 @@
 package com.github.nija123098.evelyn.config.configs.user;
 
 import com.github.nija123098.evelyn.config.AbstractConfig;
+import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.perms.BotRole;
 
@@ -9,6 +10,6 @@ import com.github.nija123098.evelyn.perms.BotRole;
  */
 public class VoicePrefixConfig extends AbstractConfig<String, User> {
     public VoicePrefixConfig() {
-        super("voice_prefix", BotRole.USER, "command", "The prefix Emily responds to in voice channels");
+        super("voice_prefix", ConfigCategory.PERSONAL_PERSONALIZATION, "command", "The prefix Emily responds to in voice channels");
     }
 }

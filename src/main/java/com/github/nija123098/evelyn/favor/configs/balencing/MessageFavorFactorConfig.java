@@ -1,6 +1,7 @@
 package com.github.nija123098.evelyn.favor.configs.balencing;
 
 import com.github.nija123098.evelyn.config.AbstractConfig;
+import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.perms.BotRole;
 
@@ -9,6 +10,6 @@ import com.github.nija123098.evelyn.perms.BotRole;
  */
 public class MessageFavorFactorConfig extends AbstractConfig<Float, Guild> {
     public MessageFavorFactorConfig() {
-        super("message_favor_factor", BotRole.GUILD_TRUSTEE, 1F, "The factor by which favor is bestowed on a guild user for a message");
+        super("message_favor_factor", ConfigCategory.FAVOR, 1F, "The factor by which favor is bestowed on a guild user for a message");
     }
 }

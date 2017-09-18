@@ -1,6 +1,7 @@
 package com.github.nija123098.evelyn.template;
 
 import com.github.nija123098.evelyn.config.AbstractConfig;
+import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.config.GlobalConfigurable;
 import com.github.nija123098.evelyn.perms.BotRole;
 
@@ -13,7 +14,7 @@ import java.util.Map;
  */
 public class GlobalTemplateConfig extends AbstractConfig<Map<KeyPhrase, List<Template>>, GlobalConfigurable> {
     public GlobalTemplateConfig() {
-        super("global_templates", BotRole.BOT_ADMIN, "All global templates", guild -> new HashMap<>());
+        super("global_templates", ConfigCategory.STAT_TRACKING, guild -> new HashMap<>(), "All global templates");
     }
     public boolean checkDefault(){
         return false;

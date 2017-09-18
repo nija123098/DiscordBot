@@ -1,6 +1,7 @@
 package com.github.nija123098.evelyn.fun.tag;
 
 import com.github.nija123098.evelyn.config.AbstractConfig;
+import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
@@ -17,7 +18,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class TagConfig extends AbstractConfig<Map<String, Tag>, Guild> {
     public TagConfig() {
-        super("guild_tags", BotRole.GUILD_TRUSTEE, new ConcurrentHashMap<>(), "The tags on a guild");
+        super("guild_tags", ConfigCategory.STAT_TRACKING, new ConcurrentHashMap<>(), "The tags on a guild");
     }
     @EventListener
     public void leave(DiscordUserLeave leave){

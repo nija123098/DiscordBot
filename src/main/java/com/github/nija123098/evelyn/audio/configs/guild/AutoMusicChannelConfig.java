@@ -2,6 +2,7 @@ package com.github.nija123098.evelyn.audio.configs.guild;
 
 import com.github.nija123098.evelyn.audio.commands.JoinCommand;
 import com.github.nija123098.evelyn.config.AbstractConfig;
+import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
@@ -16,7 +17,7 @@ import com.github.nija123098.evelyn.perms.BotRole;
  */
 public class AutoMusicChannelConfig extends AbstractConfig<VoiceChannel, Guild> {
     public AutoMusicChannelConfig() {
-        super("auto_channel", BotRole.GUILD_TRUSTEE, null, "Sets a channel where music starts playing on join");
+        super("auto_channel", ConfigCategory.MUSIC, (VoiceChannel) null, "Sets a channel where music starts playing on join");
     }
     @EventListener
     public void listen(DiscordVoiceJoin event){

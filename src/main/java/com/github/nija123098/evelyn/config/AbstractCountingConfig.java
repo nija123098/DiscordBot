@@ -11,8 +11,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class AbstractCountingConfig<T extends Configurable> extends AbstractConfig<Integer, T> {
     private Map<T, Integer> add = new ConcurrentHashMap<>();
     private Map<T, Integer> valueBase = new ConcurrentHashMap<>();
-    public AbstractCountingConfig(String name, BotRole botRole, String description) {
-        super(name, botRole, 0, description);
+    public AbstractCountingConfig(String name, ConfigCategory category, String description) {
+        super(name, category, 0, description);
         ScheduleService.scheduleRepeat(600_000, 600_000, this::save);
         Launcher.registerShutdown(this::save);
     }

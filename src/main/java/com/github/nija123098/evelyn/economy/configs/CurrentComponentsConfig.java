@@ -1,6 +1,7 @@
 package com.github.nija123098.evelyn.economy.configs;
 
 import com.github.nija123098.evelyn.config.AbstractConfig;
+import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.config.Configurable;
 import com.github.nija123098.evelyn.economy.ItemComponent;
 import com.github.nija123098.evelyn.perms.BotRole;
@@ -13,6 +14,6 @@ import java.util.Map;
  */
 public class CurrentComponentsConfig extends AbstractConfig<Map<ItemComponent, Integer>, Configurable> {
     public CurrentComponentsConfig() {
-        super("current_components", BotRole.BOT_ADMIN, new HashMap<>(), "The current components a thing has");
+        super("current_components", ConfigCategory.STAT_TRACKING, new HashMap<>(), "The current components a thing has");
     }
 }

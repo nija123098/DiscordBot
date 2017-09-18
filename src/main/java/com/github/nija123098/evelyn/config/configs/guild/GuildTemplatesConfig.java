@@ -1,6 +1,7 @@
 package com.github.nija123098.evelyn.config.configs.guild;
 
 import com.github.nija123098.evelyn.config.AbstractConfig;
+import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.perms.BotRole;
 import com.github.nija123098.evelyn.template.KeyPhrase;
@@ -15,6 +16,6 @@ import java.util.Map;
  */
 public class GuildTemplatesConfig extends AbstractConfig<Map<KeyPhrase, List<Template>>, Guild> {
     public GuildTemplatesConfig() {
-        super("guild_templates", BotRole.GUILD_TRUSTEE, "All global templates", guild -> new HashMap<>());
+        super("guild_templates", ConfigCategory.GUILD_PERSONALIZATION, guild -> new HashMap<>(), "All global templates");
     }
 }

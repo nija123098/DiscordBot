@@ -1,6 +1,7 @@
 package com.github.nija123098.evelyn.favor.configs.derivation;
 
 import com.github.nija123098.evelyn.config.AbstractConfig;
+import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.config.GuildUser;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordMessageDelete;
@@ -13,7 +14,7 @@ import com.github.nija123098.evelyn.perms.BotRole;
  */
 public class MessageCountConfig extends AbstractConfig<Integer, GuildUser> {
     public MessageCountConfig() {
-        super("message_count", BotRole.SYSTEM, 0, "The number of messages a user has made");
+        super("message_count", ConfigCategory.STAT_TRACKING, 0, "The number of messages a user has made");
     }
     @EventListener
     public void handle(DiscordMessageReceived event){

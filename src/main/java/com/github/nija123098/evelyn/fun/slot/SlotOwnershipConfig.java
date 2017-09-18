@@ -1,6 +1,7 @@
 package com.github.nija123098.evelyn.fun.slot;
 
 import com.github.nija123098.evelyn.config.AbstractConfig;
+import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.perms.BotRole;
 
@@ -12,7 +13,7 @@ import java.util.Map;
  */
 public class SlotOwnershipConfig extends AbstractConfig<Map<SlotPack, Boolean>, User> {
     public SlotOwnershipConfig() {
-        super("slot_pack_ownership", BotRole.BOT_ADMIN, defaul(), "The slot packs a user owns");
+        super("slot_pack_ownership", ConfigCategory.STAT_TRACKING, defaul(), "The slot packs a user owns");
     }
     private static Map<SlotPack, Boolean> defaul(){
         Map<SlotPack, Boolean> map = new HashMap<>();

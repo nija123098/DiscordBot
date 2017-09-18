@@ -1,6 +1,7 @@
 package com.github.nija123098.evelyn.economy.configs;
 
 import com.github.nija123098.evelyn.config.AbstractConfig;
+import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.GuildUser;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Role;
@@ -16,7 +17,7 @@ import java.util.Map;
  */
 public class RoleSubscriptionsConfig extends AbstractConfig<Map<Role, Long>, GuildUser> {
     public RoleSubscriptionsConfig() {
-        super("role_subscriptions", BotRole.GUILD_TRUSTEE, new HashMap<>(), "The subscriptions for subscribed roles for a guild user.");
+        super("role_subscriptions", ConfigCategory.STAT_TRACKING, new HashMap<>(), "The subscriptions for subscribed roles for a guild user.");
         Launcher.registerAsyncStartup(() -> {
             long current = System.currentTimeMillis();
             this.getNonDefaultSettings().forEach((guildUser, map) -> map.forEach((role, expiration) -> scheduleRemoval(expiration - current, guildUser, role)));

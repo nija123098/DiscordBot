@@ -1,6 +1,7 @@
 package com.github.nija123098.evelyn.moderation;
 
 import com.github.nija123098.evelyn.config.AbstractConfig;
+import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
@@ -15,7 +16,7 @@ import java.util.Collections;
 
 public class LeaveGoodbyeConfig extends AbstractConfig<Channel, Guild> {
     public LeaveGoodbyeConfig() {
-        super("leave_goodbye", BotRole.GUILD_TRUSTEE, null, "If the bot should wish farewell to a user when they leave");
+        super("leave_goodbye", ConfigCategory.LOGGING, (Channel) null, "If the bot should wish farewell to a user when they leave");
     }
     @EventListener
     public void handle(DiscordUserLeave leave){

@@ -2,6 +2,7 @@ package com.github.nija123098.evelyn.moderation;
 
 import com.github.nija123098.evelyn.command.CommandHandler;
 import com.github.nija123098.evelyn.config.AbstractConfig;
+import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.GuildUser;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
@@ -19,7 +20,7 @@ import java.util.Collections;
 
 public class JoinWelcomeConfig extends AbstractConfig<Channel, Guild>{
     public JoinWelcomeConfig() {
-        super("join_welcome", BotRole.GUILD_TRUSTEE, null, "If the bot should welcome a user when they join");
+        super("join_welcome", ConfigCategory.LOGGING, (Channel) null, "If the bot should welcome a user when they join");
     }
     @EventListener
     public void handle(DiscordUserJoin leave){

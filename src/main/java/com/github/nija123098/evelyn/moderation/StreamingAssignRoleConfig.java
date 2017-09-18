@@ -1,6 +1,7 @@
 package com.github.nija123098.evelyn.moderation;
 
 import com.github.nija123098.evelyn.config.AbstractConfig;
+import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
@@ -18,7 +19,7 @@ import java.util.Set;
  */
 public class StreamingAssignRoleConfig extends AbstractConfig<Role, Guild> {
     public StreamingAssignRoleConfig() {
-        super("streaming_role", BotRole.GUILD_TRUSTEE, null, "The role to assign a streaming user");
+        super("streaming_role", ConfigCategory.MODERATION, (Role) null, "The role to assign a streaming user");
     }
     @EventListener
     public void handle(DiscordPresenceUpdate event){

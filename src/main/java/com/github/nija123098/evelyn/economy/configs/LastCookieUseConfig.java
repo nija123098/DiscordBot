@@ -1,6 +1,7 @@
 package com.github.nija123098.evelyn.economy.configs;
 
 import com.github.nija123098.evelyn.config.AbstractConfig;
+import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.perms.BotRole;
 
@@ -9,6 +10,6 @@ import com.github.nija123098.evelyn.perms.BotRole;
  */
 public class LastCookieUseConfig extends AbstractConfig<Long, User> {
     public LastCookieUseConfig() {
-        super("last_cookie_use", BotRole.BOT_ADMIN, 0L, "The last time the cookie command was used");
+        super("last_cookie_use", ConfigCategory.STAT_TRACKING, 0L, "The last time the cookie command was used");
     }
 }

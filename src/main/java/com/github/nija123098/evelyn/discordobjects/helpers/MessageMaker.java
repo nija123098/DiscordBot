@@ -211,6 +211,10 @@ public class MessageMaker {
         this.textList.add(null);
         return this;
     }
+    public MessageMaker guaranteeNewFieldPage(){
+        this.fieldList.add(null);
+        return this;
+    }
     public MessageMaker appendRaw(String s){
         this.header.appendRaw(s);
         return this;
@@ -416,18 +420,23 @@ public class MessageMaker {
                 int index = -1, size = 0, page = 0;
                 List<List<Triple<String, String, Boolean>>> vals = new ArrayList<>(this.fieldList.size());
                 vals.add(new ArrayList<>());
+                boolean newPage = false;
                 while (true) {
                     if (++index >= fieldList.size()){
                         break;
                     }
-                    if (starterChars + size > CHAR_LIMIT || vals.get(page).size() > 21){
+                    if (starterChars + size > CHAR_LIMIT || vals.get(page).size() > 21 || newPage){
+                        newPage = false;
                         --index;
                         size = 0;
                         ++page;
                         vals.add(new ArrayList<>());
                     } else {
-                        size = fieldList.get(index).title.langString.translate(lang).length() + fieldList.get(index).value.langString.translate(lang).length();
-                        vals.get(page).add(new ImmutableTriple<>(fieldList.get(index).title.langString.translate(lang), fieldList.get(index).value.langString.translate(lang), fieldList.get(index).inline));
+                        if (fieldList.get(index) == null) newPage = true;
+                        else {
+                            size = fieldList.get(index).title.langString.translate(lang).length() + fieldList.get(index).value.langString.translate(lang).length();
+                            vals.get(page).add(new ImmutableTriple<>(fieldList.get(index).title.langString.translate(lang), fieldList.get(index).value.langString.translate(lang), fieldList.get(index).inline));
+                        }
                     }
                 }
                 fieldIndices = new Triple[textVals.length + vals.size() - (embedsOfFront ? 1 : 0)][];

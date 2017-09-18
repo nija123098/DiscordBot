@@ -34,17 +34,26 @@ public class AbstractConfig<V, T extends Configurable> {
     private final String name, description;
     private final BotRole botRole;
     private final ConfigLevel configLevel;
+    private final ConfigCategory catagory;
     private final Class<V> valueType;
     private final boolean normalViewing;
     private final Map<T, V> cache;
-    public AbstractConfig(String name, BotRole botRole, V defaul, String description) {
-        this(name, botRole, description, v -> defaul);
+    public AbstractConfig(String name, ConfigCategory category, V defaul, String description) {
+        this(name, category, v -> defaul, description);
     }
-    public AbstractConfig(String name, BotRole botRole, String description, Function<T, V> defaul) {
+    public AbstractConfig(String name, BotRole botRole, ConfigCategory category, V defaul, String description) {
+        this(name, botRole, category, v -> defaul, description);
+    }
+    public AbstractConfig(String name, ConfigCategory category, Function<T, V> defaul, String description) {
+        this(name, category.getBotRole(), category, defaul, description);
+    }
+    public AbstractConfig(String name, BotRole botRole, ConfigCategory category, Function<T, V> defaul, String description) {
         this.name = name;
         this.botRole = botRole;
         this.defaul = defaul;
         this.description = description;
+        this.catagory = category;
+        this.catagory.addConfig(this);
         Type[] types = TypeChanger.getRawClasses(this.getClass());
         this.valueType = types.length == 1 ? (Class<V>) Integer.class : (Class<V>) types[0];
         if (!ObjectCloner.supports(this.valueType)) throw new DevelopmentException("Cloner does not support type: " + this.valueType.getName());

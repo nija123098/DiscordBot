@@ -1,6 +1,7 @@
 package com.github.nija123098.evelyn.fun.slot;
 
 import com.github.nija123098.evelyn.config.AbstractConfig;
+import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.perms.BotRole;
 
@@ -9,6 +10,6 @@ import com.github.nija123098.evelyn.perms.BotRole;
  */
 public class SlotPackConfig extends AbstractConfig<SlotPack, User> {
     public SlotPackConfig() {
-        super("slot_pack", BotRole.USER, SlotPack.DEFAULT, "The slot pack active");
+        super("slot_pack", ConfigCategory.PERSONAL_PERSONALIZATION, SlotPack.DEFAULT, "The slot pack active");
     }
 }

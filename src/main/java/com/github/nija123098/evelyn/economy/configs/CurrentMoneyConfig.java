@@ -1,6 +1,7 @@
 package com.github.nija123098.evelyn.economy.configs;
 
 import com.github.nija123098.evelyn.config.AbstractConfig;
+import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.config.Configurable;
 import com.github.nija123098.evelyn.perms.BotRole;
 
@@ -9,7 +10,7 @@ import com.github.nija123098.evelyn.perms.BotRole;
  */
 public class CurrentMoneyConfig extends AbstractConfig<Integer, Configurable> {
     public CurrentMoneyConfig() {
-        super("current_money", BotRole.BOT_ADMIN, 0, "The amount of money a guild user has");
+        super("current_money", ConfigCategory.STAT_TRACKING, 0, "The amount of money a guild user has");
     }
     public boolean checkDefault(){
         return false;

@@ -8,7 +8,6 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -43,10 +42,10 @@ public enum ConfigLevel {
     ALL(Configurable.class, false),;
     private final Class<? extends Configurable> clazz;
     private final Set<ConfigLevel> assignables = new HashSet<>();
-    private final boolean mayCashe;
-    ConfigLevel(Class<? extends Configurable> clazz, boolean mayCashe) {
+    private final boolean mayCache;
+    ConfigLevel(Class<? extends Configurable> clazz, boolean mayCache) {
         this.clazz = clazz;
-        this.mayCashe = mayCashe;
+        this.mayCache = mayCache;
     }
     public Class<? extends Configurable> getType(){
         return this.clazz;
@@ -55,7 +54,7 @@ public enum ConfigLevel {
         return assignables;
     }
     public boolean mayCache(){
-        return this.mayCashe;
+        return this.mayCache;
     }
     public boolean isAssignableFrom(ConfigLevel level){
         return this == ALL || this == level;

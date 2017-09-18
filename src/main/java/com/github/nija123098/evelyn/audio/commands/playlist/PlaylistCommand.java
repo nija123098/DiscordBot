@@ -26,7 +26,7 @@ public class PlaylistCommand extends AbstractCommand {
         else playlist = ConfigHandler.getSetting(GuildActivePlaylistConfig.class, guild);
         Configurable owner = playlist.getOwner();
         maker.getTitle().appendRaw(playlist.getName()).getMaker().getHeader()
-                .appendAlternate(false, "Is owned by ", (owner == null ? "Emily" : ("the " + (owner instanceof User ? "user " + ((User) owner).getDisplayName(guild) : "guild " + owner.getName()))))
+                .appendAlternate(false, "Is owned by ", (owner == null ? "Evelyn" : ("the " + (owner instanceof User ? "user " + ((User) owner).getDisplayName(guild) : "guild " + owner.getName()))))
                 .appendAlternate(true, "\n", "This playlist contains " + ConfigHandler.getSetting(PlaylistContentsConfig.class, playlist).size() + " tracks");
     }
     @Override

@@ -1,6 +1,7 @@
 package com.github.nija123098.evelyn.helping.presence;
 
 import com.github.nija123098.evelyn.config.AbstractConfig;
+import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.*;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
  */
 public class MentionResponseConfig extends AbstractConfig<Boolean, Guild> {
     public MentionResponseConfig() {
-        super("afk_mention_response", BotRole.GUILD_TRUSTEE, false, "The bot responds mentioning the stasis of a user if they are marked NDN, AWAY, OFFLINE, or self marked AFK or AWAY");
+        super("afk_mention_response", ConfigCategory.GUILD_PERSONALIZATION, false, "The bot responds mentioning the stasis of a user if they are marked NDN, AWAY, OFFLINE, or self marked AFK or AWAY");
     }
     @EventListener
     public void handle(DiscordMessageReceived event){

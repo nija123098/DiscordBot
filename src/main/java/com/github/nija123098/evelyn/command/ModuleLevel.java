@@ -19,6 +19,7 @@ import java.util.stream.Stream;
  */
 @LaymanName(value = "Module", help = "A group of commands.  MUSIC, FUN, BOT_ADMINISTRATIVE, ADMINISTRATIVE, ECONOMY, DEVELOPMENT, INFO, HELPER, NONE")
 public enum ModuleLevel {
+    SYSTEM_LEVEL(BotRole.SYSTEM, "floppy_disk"),
     DEVELOPMENT(BotRole.CONTRIBUTOR, "computer"),
     BOT_ADMINISTRATIVE(BotRole.BOT_ADMIN, "monkey"),
     ADMINISTRATIVE(BotRole.GUILD_TRUSTEE, "oncoming_police_car"),

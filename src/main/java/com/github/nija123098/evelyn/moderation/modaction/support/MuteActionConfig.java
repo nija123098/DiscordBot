@@ -1,5 +1,6 @@
 package com.github.nija123098.evelyn.moderation.modaction.support;
 
+import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.moderation.modaction.MuteModActionCommand;
 import com.github.nija123098.evelyn.config.AbstractConfig;
 import com.github.nija123098.evelyn.config.ConfigHandler;
@@ -17,7 +18,7 @@ import java.util.Set;
  */
 public class MuteActionConfig extends AbstractConfig<Pair<Long, Set<Role>>, GuildUser> {
     public MuteActionConfig() {
-        super("temp_bans", BotRole.GUILD_TRUSTEE, null, "The temp bans and time they are unbanned");
+        super("temp_bans", ConfigCategory.STAT_TRACKING, (Pair<Long, Set<Role>>) null, "The temp bans and time they are unbanned");
         Launcher.registerAsyncStartup(() -> ConfigHandler.getNonDefaultSettings(MuteActionConfig.class).forEach((guildUser, pair) -> ScheduleService.schedule(pair.getKey(), () -> {
             if (!(pair.getKey() - 10_000 < System.currentTimeMillis())) return;
             MuteModActionCommand.unmute(guildUser.getGuild(), guildUser.getUser());

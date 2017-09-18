@@ -1,6 +1,7 @@
 package com.github.nija123098.evelyn.economy.configs;
 
 import com.github.nija123098.evelyn.config.AbstractConfig;
+import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.config.Configurable;
 import com.github.nija123098.evelyn.perms.BotRole;
 
@@ -9,6 +10,6 @@ import com.github.nija123098.evelyn.perms.BotRole;
  */
 public class MoneyNameConfig extends AbstractConfig<String, Configurable> {
     public MoneyNameConfig() {
-        super("money_name", BotRole.BOT_ADMIN, "cookies", "The name of money");
+        super("money_name", ConfigCategory.ECONOMY, "cookies", "The name of money");
     }
 }

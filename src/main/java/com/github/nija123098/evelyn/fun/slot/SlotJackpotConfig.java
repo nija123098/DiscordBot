@@ -1,6 +1,7 @@
 package com.github.nija123098.evelyn.fun.slot;
 
 import com.github.nija123098.evelyn.config.AbstractConfig;
+import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.GlobalConfigurable;
 import com.github.nija123098.evelyn.perms.BotRole;
@@ -11,7 +12,7 @@ import com.github.nija123098.evelyn.perms.BotRole;
 public class SlotJackpotConfig extends AbstractConfig<Integer, GlobalConfigurable> {
     private static int SEED = 100;
     public SlotJackpotConfig() {
-        super("slot_jackpot", BotRole.BOT_ADMIN, SEED, "The amount the Jackpot begins and is reset to");
+        super("slot_jackpot", ConfigCategory.STAT_TRACKING, SEED, "The amount the Jackpot begins and is reset to");
     }
     public static float getAndResetPot(){
         float val = ConfigHandler.getSetting(SlotJackpotConfig.class, GlobalConfigurable.GLOBAL);

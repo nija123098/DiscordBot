@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class SetupRanksCommand extends AbstractCommand {
-    static final Map<Guild, ScheduleService.ScheduledTask> SCHEDULED_TASK_MAP = new HashMap<>();
+    static final Map<Guild, Runnable> TASK_MAP = new HashMap<>();
     public SetupRanksCommand() {
         super("setupranks", ModuleLevel.ADMINISTRATIVE, "setup ranks", null, "Sets up the ranks for autoranking");
     }
@@ -41,8 +41,8 @@ public class SetupRanksCommand extends AbstractCommand {
         if (!DiscordClient.getOurUser().getPermissionsForGuild(guild).contains(DiscordPermission.MANAGE_ROLES)) throw new PermissionsException("I need to be able to manage roles for this");
         equation = ConfigHandler.setSetting(FavorRankEquationConfig.class, guild, equation);
         AtomicDouble greatest = new AtomicDouble(0);
-        guild.getUsers().stream().map(user -> GuildUser.getGuildUser(guild, user)).forEach(user -> {
-            float f = FavorHandler.getFavorAmount(user);
+        guild.getUsers().stream().map(user -> GuildUser.getGuildUser(guild, user)).forEach(guildUser -> {
+            float f = FavorHandler.getFavorAmount(guildUser);
             if (greatest.get() < f) greatest.set(f);
         });
         Expression expression = new ExpressionBuilder(equation).operator(CalculateCommand.OPERATORS).variable("x").build();
@@ -54,10 +54,12 @@ public class SetupRanksCommand extends AbstractCommand {
             requirement.add(val);
         }
         maker.append("The bot will make " + requirement.size() + " roles to fulfil this request." +
-                "\nYou have 1 minute to do `@Evelyn setupranks cancel`" +
+                "\nYou have 5 minutes to do `@Evelyn setupranks approve`" +
                 "\nYou must name these, it's not too hard.  (I'll change this soon)" +
                 "\nRanks will update for a user when their favor level changes, which happens fairly often.");
-        SCHEDULED_TASK_MAP.put(guild, ScheduleService.schedule(0, () -> {
+        ScheduleService.ScheduledTask task = ScheduleService.schedule(300_000, () -> TASK_MAP.remove(guild));
+        TASK_MAP.put(guild, () -> {
+            task.cancel();
             List<Runnable> roleMaking = new ArrayList<>(requirement.size());
             AtomicInteger i = new AtomicInteger();
             for (; i.get() < requirement.size(); i.incrementAndGet()) {
@@ -67,8 +69,8 @@ public class SetupRanksCommand extends AbstractCommand {
                     ConfigHandler.setSetting(EarnRankConfig.class, Role.getRole(new RoleBuilder(guild.guild()).withColor(GraphicsHelper.getGradient((float) index / (requirement.size() - 1), high == null ? Color.GREEN : high, low == null ? Color.BLUE : low)).setHoist(raise == null ? false : raise).build()), value);
                 });
             }
-            SCHEDULED_TASK_MAP.remove(guild);
+            TASK_MAP.remove(guild);
             for (int j = roleMaking.size() - 1; j > -1; --j) roleMaking.get(j).run();
-        }));
+        });
     }
 }

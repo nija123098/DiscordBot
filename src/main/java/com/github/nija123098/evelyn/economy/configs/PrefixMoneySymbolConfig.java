@@ -1,6 +1,7 @@
 package com.github.nija123098.evelyn.economy.configs;
 
 import com.github.nija123098.evelyn.config.AbstractConfig;
+import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.config.Configurable;
 import com.github.nija123098.evelyn.perms.BotRole;
 
@@ -9,6 +10,6 @@ import com.github.nija123098.evelyn.perms.BotRole;
  */
 public class PrefixMoneySymbolConfig extends AbstractConfig<Boolean, Configurable> {
     public PrefixMoneySymbolConfig() {
-        super("prefix_money_symbol", BotRole.BOT_ADMIN, false, "If the money symbol appears before or after the amount");
+        super("prefix_money_symbol", ConfigCategory.ECONOMY, false, "If the money symbol appears before or after the amount");
     }
 }

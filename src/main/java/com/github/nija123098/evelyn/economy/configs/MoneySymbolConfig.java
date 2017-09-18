@@ -1,6 +1,7 @@
 package com.github.nija123098.evelyn.economy.configs;
 
 import com.github.nija123098.evelyn.config.AbstractConfig;
+import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.config.Configurable;
 import com.github.nija123098.evelyn.perms.BotRole;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
@@ -10,6 +11,6 @@ import com.github.nija123098.evelyn.util.EmoticonHelper;
  */
 public class MoneySymbolConfig extends AbstractConfig<String, Configurable> {
     public MoneySymbolConfig() {
-        super("money_symbol", BotRole.BOT_ADMIN, EmoticonHelper.getChars("cookie", true), "The symbol money is represented by");
+        super("money_symbol", ConfigCategory.ECONOMY, EmoticonHelper.getChars("cookie", true), "The symbol money is represented by");
     }
 }

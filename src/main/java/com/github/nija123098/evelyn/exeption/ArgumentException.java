@@ -3,6 +3,8 @@ package com.github.nija123098.evelyn.exeption;
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.LaymanName;
+import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
+import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 
 import java.lang.reflect.Parameter;
 
@@ -55,17 +57,16 @@ public class ArgumentException extends BotException {
         if (args == null){
             return super.getMessage();
         }
-        StringBuilder s = new StringBuilder("Argument " + this.parameter + " - " + super.getMessage() + "\nExpected: ");
-        for (int i = 0; i < this.args.length; i++) {
-            if (!this.args[i].isAnnotationPresent(Argument.class)){
-                continue;
-            }
-            s.append(this.args[i].getClass().isAnnotationPresent(LaymanName.class) ? this.args[i].getAnnotation(LaymanName.class).value() : this.args[i].getType().getSimpleName());
-            if (i != this.args.length - 1){
-                s.append(", ");
-            }
+        StringBuilder s = new StringBuilder("Argument " + (this.parameter + 1) + " - " + super.getMessage() + "\nExpected arguments:  ");
+        for (Parameter arg : this.args) {
+            if (!arg.isAnnotationPresent(Argument.class)) continue;
+            s.append(arg.getClass().isAnnotationPresent(LaymanName.class) ? arg.getAnnotation(LaymanName.class).value() : arg.getType().getSimpleName() + ", ");
         }
-        s.append("\n").append(this.args[this.parameter].isAnnotationPresent(LaymanName.class) ? this.args[this.parameter].getAnnotation(LaymanName.class).help() : this.args[this.parameter].getClass().getSimpleName() + " in the form of mention, ID, or reference");
-        return s.toString();
+        return s.substring(0, s.length() - 2);
+    }
+
+    @Override
+    public MessageMaker makeMessage(Channel channel) {
+        return super.makeMessage(channel).getNote().append("Please check the help command for more information on how to use this command.").getMaker();
     }
 }
