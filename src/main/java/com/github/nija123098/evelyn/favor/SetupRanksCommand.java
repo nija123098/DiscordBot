@@ -15,6 +15,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Role;
 import com.github.nija123098.evelyn.exeption.ArgumentException;
 import com.github.nija123098.evelyn.exeption.PermissionsException;
 import com.github.nija123098.evelyn.favor.configs.EarnRankConfig;
+import com.github.nija123098.evelyn.favor.configs.StackFavorRankConfig;
 import com.github.nija123098.evelyn.favor.configs.balencing.FavorRankEquationConfig;
 import com.github.nija123098.evelyn.helping.CalculateCommand;
 import com.github.nija123098.evelyn.service.services.ScheduleService;
@@ -37,7 +38,7 @@ public class SetupRanksCommand extends AbstractCommand {
         super("setupranks", ModuleLevel.ADMINISTRATIVE, "setup ranks", null, "Sets up the ranks for autoranking");
     }
     @Command
-    public void command(MessageMaker maker, Guild guild, @Argument(optional = true, info = "raise above default roles", replacement = ContextType.NONE) Boolean raise, @Argument(optional = true, info = "the lowest color", replacement = ContextType.NONE) Color low, @Argument(optional = true, info = "the highest color", replacement = ContextType.NONE) Color high, @Argument(info = "rank equation x == rank, y == favor required") String equation){
+    public static void command(MessageMaker maker, Guild guild, @Argument(optional = true, info = "raise above default roles", replacement = ContextType.NONE) Boolean raise, @Argument(optional = true, info = "the lowest color", replacement = ContextType.NONE) Color low, @Argument(optional = true, info = "the highest color", replacement = ContextType.NONE) Color high, @Argument(info = "rank equation x == rank, y == favor required") String equation){
         if (!DiscordClient.getOurUser().getPermissionsForGuild(guild).contains(DiscordPermission.MANAGE_ROLES)) throw new PermissionsException("I need to be able to manage roles for this");
         equation = ConfigHandler.setSetting(FavorRankEquationConfig.class, guild, equation);
         AtomicDouble greatest = new AtomicDouble(0);
@@ -66,7 +67,9 @@ public class SetupRanksCommand extends AbstractCommand {
                 int index = i.get();
                 roleMaking.add(() -> {
                     float value = requirement.get(index);
-                    ConfigHandler.setSetting(EarnRankConfig.class, Role.getRole(new RoleBuilder(guild.guild()).withColor(GraphicsHelper.getGradient((float) index / (requirement.size() - 1), high == null ? Color.GREEN : high, low == null ? Color.BLUE : low)).setHoist(raise == null ? false : raise).build()), value);
+                    Role role = Role.getRole(new RoleBuilder(guild.guild()).withColor(GraphicsHelper.getGradient((float) index / (requirement.size() - 1), high == null ? Color.GREEN : high, low == null ? Color.BLUE : low)).setHoist(raise == null ? false : raise).build());
+                    ConfigHandler.setSetting(StackFavorRankConfig.class, role, false);
+                    ConfigHandler.setSetting(EarnRankConfig.class, role, value);
                 });
             }
             TASK_MAP.remove(guild);

@@ -17,7 +17,7 @@ public class UserLanguageConfig extends AbstractConfig<String, User> {
     @Override
     protected String validateInput(User configurable, String v) {
         if (!LangString.isLangCode(v) && !LangString.isLangName(v)) throw new ArgumentException("Please input a valid language code or name");
-        return v;
+        return LangString.isLangCode(v) ? v : LangString.getLangCode(v);
     }
     @Override
     public String wrapTypeIn(String e, User configurable) {

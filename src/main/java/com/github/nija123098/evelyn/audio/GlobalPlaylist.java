@@ -38,10 +38,6 @@ public class GlobalPlaylist extends Playlist {
         return "Global Playlist";
     }
     @Override
-    public boolean hasGivenName() {
-        return false;
-    }
-    @Override
     public Configurable getOwner() {
         return DiscordClient.getOurUser();
     }

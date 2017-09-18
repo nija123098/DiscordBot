@@ -12,7 +12,7 @@ import com.github.nija123098.evelyn.perms.BotRole;
  */
 public class BotChannelConfig extends AbstractConfig<Channel, Guild> {
     public BotChannelConfig() {
-        super("bot_channel", ConfigCategory.LOGGING, Guild::getGeneralChannel, "Channel where the bot's output goes to");
+        super("bot_channel", ConfigCategory.LOGGING, guild -> guild.getChannels().stream().filter(channel -> channel.getName().toLowerCase().contains("bot")).findFirst().orElse(null), "Channel where the bot's output goes to");
     }
     public static Channel get(Guild guild){
         return ConfigHandler.getSetting(BotChannelConfig.class, guild);

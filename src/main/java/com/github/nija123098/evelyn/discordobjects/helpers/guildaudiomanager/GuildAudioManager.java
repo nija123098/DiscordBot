@@ -65,9 +65,9 @@ public class GuildAudioManager extends AudioEventAdapter{
         PLAYER_MANAGER.registerSourceManager(new SoundCloudAudioSourceManager(false));
         PLAYER_MANAGER.registerSourceManager(new LocalAudioSourceManager());
         AtomicInteger integer = new AtomicInteger();
-        AbstractConfig<List<Track>, VoiceChannel> playQueueConfig = ConfigHandler.getConfig(PlayQueueConfig.class);
-        Launcher.registerStartup(() -> playQueueConfig.getNonDefaultSettings().forEach((channel, tracks) -> ScheduleService.schedule(integer.getAndIncrement() * 1000 + 5_000, () -> {
-            playQueueConfig.reset(channel);
+        AbstractConfig<List<Track>, VoiceChannel> config = ConfigHandler.getConfig(PlayQueueConfig.class);
+        Launcher.registerStartup(() -> config.getNonDefaultSettings().forEach((channel, tracks) -> ScheduleService.schedule(integer.getAndIncrement() * 1000 + 5_000, () -> {
+            config.reset(channel);
             if (!hasValidListeners(channel)) return;
             GuildAudioManager manager = getManager(channel);
             manager.queueTrack(tracks.remove(0));
@@ -78,7 +78,7 @@ public class GuildAudioManager extends AudioEventAdapter{
         LangString bye = new LangString(true, "I have to go restart, I will be back soon.");
         Launcher.registerShutdown(() -> {
             MAP.forEach((s, guildAudioManager) -> {
-                playQueueConfig.setValue(guildAudioManager.channel, guildAudioManager.queue);
+                config.setValue(guildAudioManager.channel, guildAudioManager.queue);
                 guildAudioManager.interrupt(bye);
             });
             Care.lessSleep(5_000);

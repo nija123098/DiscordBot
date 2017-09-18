@@ -11,6 +11,6 @@ import com.github.nija123098.evelyn.perms.BotRole;
  */
 public class MuteRoleConfig extends AbstractConfig<Role, Guild> {
     public MuteRoleConfig() {
-        super("mute_role", ConfigCategory.MODERATION, (Role) null, "The role members who are muted will be assigned");
+        super("mute_role", ConfigCategory.MODERATION, guild -> guild.getRoles().stream().filter(role -> role.getName().toLowerCase().contains("mute")).findFirst().orElse(null), "The role members who are muted will be assigned");
     }
 }

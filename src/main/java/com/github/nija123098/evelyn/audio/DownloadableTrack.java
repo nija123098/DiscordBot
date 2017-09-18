@@ -52,7 +52,7 @@ public abstract class DownloadableTrack extends Track {
     public AudioTrack getAudioTrack(GuildAudioManager manager){
         if (this.isDownloaded()) return makeAudioTrack(file());
         int playTimes = ConfigHandler.getSetting(PlayCountConfig.class, this);
-        if (playTimes >= BotConfig.REQUIRED_PLAYS_TO_DOWNLOAD) MusicDownloadService.queueDownload(playTimes == 0 ? 0 : (int) Math.log(playTimes), this, manager == null ? null : downloadableTrack -> {
+        if (playTimes >= BotConfig.REQUIRED_PLAYS_TO_DOWNLOAD && BotConfig.REQUIRED_PLAYS_TO_DOWNLOAD != -1) MusicDownloadService.queueDownload(playTimes == 0 ? 0 : (int) Math.log(playTimes), this, manager == null ? null : downloadableTrack -> {
             if (this.equals(manager.currentTrack())) manager.swap(this.getAudioTrack(null));
         });
         BlockingQueue<AudioTrack> queue = new LinkedBlockingQueue<>(1);

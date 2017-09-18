@@ -60,7 +60,7 @@ public enum ConfigLevel {
         return this == ALL || this == level;
     }
     public static void load(){
-        for (ConfigLevel configLevel : ConfigLevel.values()) for (ConfigLevel level : ConfigLevel.values()) if (configLevel.isAssignableFrom(level) && configLevel != ALL) configLevel.assignables.add(level);
+        for (ConfigLevel configLevel : ConfigLevel.values()) for (ConfigLevel level : ConfigLevel.values()) if (configLevel.isAssignableFrom(level) && level != ALL) configLevel.assignables.add(level);
     }
     public static ConfigLevel getLevel(Class<? extends Configurable> clazz){
         for (ConfigLevel level : values()){

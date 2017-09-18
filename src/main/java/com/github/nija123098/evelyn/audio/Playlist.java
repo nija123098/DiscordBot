@@ -1,6 +1,7 @@
 package com.github.nija123098.evelyn.audio;
 
-import com.github.nija123098.evelyn.audio.configs.UserPlaylistsConfig;
+import com.github.nija123098.evelyn.audio.configs.guild.GuildPlaylistsConfig;
+import com.github.nija123098.evelyn.audio.configs.playlist.UserPlaylistsConfig;
 import com.github.nija123098.evelyn.audio.configs.playlist.PlaylistContentsConfig;
 import com.github.nija123098.evelyn.audio.configs.playlist.PlaylistPlayTypeConfig;
 import com.github.nija123098.evelyn.command.annotations.LaymanName;
@@ -12,6 +13,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.exeption.ArgumentException;
 import com.github.nija123098.evelyn.exeption.DevelopmentException;
 import com.github.nija123098.evelyn.exeption.PermissionsException;
+import com.github.nija123098.evelyn.perms.BotRole;
 import com.github.nija123098.evelyn.service.services.ScheduleService;
 import com.github.nija123098.evelyn.util.FormatHelper;
 import com.github.nija123098.evelyn.util.Rand;
@@ -34,13 +36,19 @@ public class Playlist implements Configurable {
     public static Playlist getPlaylist(User user, String name){
         if (name.isEmpty()) throw new ArgumentException("Your playlist must have a name");
         if (!name.equals(FormatHelper.filtering(name, Character::isLetter))) throw new ArgumentException("A playlist name must only contain letters");
-        return ConfigHandler.getSetting(UserPlaylistsConfig.class, user).contains(name.toLowerCase()) ? MAP.computeIfAbsent("pl-" + user.getID() + "-" + name.toLowerCase(), Playlist::new) : null;
+        return ConfigHandler.getSetting(UserPlaylistsConfig.class, user).contains(name.toLowerCase()) ? MAP.computeIfAbsent("pl-u-" + user.getID() + "-" + name.toLowerCase(), Playlist::new) : null;
+    }
+    public static Playlist getPlaylist(Guild guild, String name){
+        if (name.isEmpty()) throw new ArgumentException("Your playlist must have a name");
+        if (!name.equals(FormatHelper.filtering(name, Character::isLetter))) throw new ArgumentException("A playlist name must only contain letters");
+        return ConfigHandler.getSetting(GuildPlaylistsConfig.class, guild).contains(name.toLowerCase()) ? MAP.computeIfAbsent("pl-g-" + guild.getID() + "-" + name.toLowerCase(), Playlist::new) : null;
     }
     public static Playlist getPlaylist(String id){
         if (id == null || !id.startsWith("pl-")) return null;
         String[] split = id.split("-");
-        if (split.length != 3) return null;
-        return getPlaylist(User.getUser(split[1]), split[2]);
+        if (split.length != 4) return null;
+        if (split[2].equals("u")) return getPlaylist(User.getUser(split[2]), split[3]);
+        else return getPlaylist(Guild.getGuild(split[2]), split[3]);
     }
     private String id;
     Playlist() {}
@@ -64,8 +72,12 @@ public class Playlist implements Configurable {
 
     @Override
     public void checkPermissionToEdit(User user, Guild guild){
-        if (!this.getOwner().equals(user)){
-            throw new PermissionsException("You don't own this playlist, " + ((User) this.getOwner()).getDisplayName(guild) + " does");
+        if (this.id.startsWith("pl-u-")){
+            if (!this.getOwner().equals(user)){
+                throw new PermissionsException("You don't own this playlist, " + ((User) this.getOwner()).getDisplayName(guild) + " does");
+            }
+        }else{
+            if (!BotRole.GUILD_TRUSTEE.hasRequiredRole(user, guild)) throw new PermissionsException("You must at least be a trustee edit a server playlist");
         }
     }
 
@@ -75,15 +87,11 @@ public class Playlist implements Configurable {
     }
 
     public String getName(){
-        return this.id.split("-")[2];
-    }
-
-    public boolean hasGivenName(){
-        return !this.id.substring(this.id.indexOf(':') + 1).isEmpty();
+        return this.id.split("-")[3];
     }
 
     public Configurable getOwner() {
-        return User.getUser(this.id.split("-")[1]);
+        return this.id.startsWith("pl-u-") ? User.getUser(this.id.split("-")[2]) : Guild.getGuild(this.id.split("-")[2]);
     }
 
     public Track getNext(Guild guild){

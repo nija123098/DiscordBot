@@ -3,7 +3,8 @@ package com.github.nija123098.evelyn.command;
 import com.github.nija123098.evelyn.audio.GlobalPlaylist;
 import com.github.nija123098.evelyn.audio.Playlist;
 import com.github.nija123098.evelyn.audio.Track;
-import com.github.nija123098.evelyn.audio.configs.UserPlaylistsConfig;
+import com.github.nija123098.evelyn.audio.configs.guild.GuildPlaylistsConfig;
+import com.github.nija123098.evelyn.audio.configs.playlist.UserPlaylistsConfig;
 import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Context;
 import com.github.nija123098.evelyn.config.AbstractConfig;
@@ -139,13 +140,23 @@ public class InvocationObjectGetter {
             try{p = InvocationObjectGetter.convert(User.class, user, null, null, guild, null, null, args);
             } catch (ArgumentException ignored){}
             Pair<User, Integer> pair = p;
-            if (pair != null) {
+            if (pair != null){
                 user = pair.getKey();
                 args = args.substring(0, pair.getValue());
+            }
+            String[] split = args.split(" ");
+            if (guild != null && (split[0].equalsIgnoreCase("server") || split[0].equalsIgnoreCase("guild") || split[0].equalsIgnoreCase("s"))){
+                if (ConfigHandler.getSetting(GuildPlaylistsConfig.class, guild).contains(split[1])){
+                    return new Pair<>(Playlist.getPlaylist(guild, split[1]), split[0].length() + 1 + split[1].length());
+                }
+                throw new ArgumentException("There is no server playlist by that name");
             }
             args = args.toLowerCase().split(" ")[0];
             if (ConfigHandler.getSetting(UserPlaylistsConfig.class, user).contains(args)){
                 return new Pair<>(Playlist.getPlaylist(user, args), (pair == null ? 0 : pair.getValue()) + args.length());
+            }
+            if (ConfigHandler.getSetting(GuildPlaylistsConfig.class, guild).contains(args)){
+                return new Pair<>(Playlist.getPlaylist(guild, args), args.length());
             }
             String ar = args;
             AtomicReference<Pair<Playlist, Integer>> reference = new AtomicReference<>();
