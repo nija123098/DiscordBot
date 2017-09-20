@@ -19,6 +19,8 @@ import com.github.nija123098.evelyn.exeption.ArgumentException;
 import com.github.nija123098.evelyn.exeption.ContextException;
 import com.github.nija123098.evelyn.exeption.DevelopmentException;
 import com.github.nija123098.evelyn.discordobjects.wrappers.*;
+import com.github.nija123098.evelyn.fun.gamestructure.Game;
+import com.github.nija123098.evelyn.fun.gamestructure.GameHandler;
 import com.github.nija123098.evelyn.util.*;
 import javafx.util.Pair;
 
@@ -70,6 +72,7 @@ public class InvocationObjectGetter {
             if (manager == null || manager.currentTrack() == null) throw new ContextException("No track is currently playing");
             return manager.currentTrack();
         }, ContextRequirement.GUILD, ContextRequirement.USER);
+        addContext(Game.class, ContextType.DEFAULT, (invoker, shard, channel, guild, message, reaction, args) -> GameHandler.getGame(guild, message.getAuthor()), ContextRequirement.GUILD, ContextRequirement.USER);
         addContext(ContextPack.class, ContextType.DEFAULT, ContextPack::new);
         addContext(Float.class, ContextType.NONE, (invoker, shard, channel, guild, message, reaction, args) -> null);
         addContext(Configurable.class, ContextType.DEFAULT, (user, shard, channel, guild, message, reaction, args) -> null);
@@ -136,15 +139,17 @@ public class InvocationObjectGetter {
         });
         addConverter(Playlist.class, (user, shard, channel, guild, message, reaction, args) -> {
             if (args.toLowerCase().startsWith("global")) return new Pair<>(GlobalPlaylist.GLOBAL_PLAYLIST, args.equalsIgnoreCase("global playlist") ? 15 : 6);
+            String[] split = args.split(" ");
             Pair<User, Integer> p = null;
-            try{p = InvocationObjectGetter.convert(User.class, user, null, null, guild, null, null, args);
-            } catch (ArgumentException ignored){}
+            if (split.length > 1){
+                try{p = InvocationObjectGetter.convert(User.class, user, null, null, guild, null, null, args);
+                } catch (ArgumentException ignored){}
+            }
             Pair<User, Integer> pair = p;
             if (pair != null){
                 user = pair.getKey();
                 args = args.substring(0, pair.getValue());
             }
-            String[] split = args.split(" ");
             if (guild != null && (split[0].equalsIgnoreCase("server") || split[0].equalsIgnoreCase("guild") || split[0].equalsIgnoreCase("s"))){
                 if (ConfigHandler.getSetting(GuildPlaylistsConfig.class, guild).contains(split[1])){
                     return new Pair<>(Playlist.getPlaylist(guild, split[1]), split[0].length() + 1 + split[1].length());

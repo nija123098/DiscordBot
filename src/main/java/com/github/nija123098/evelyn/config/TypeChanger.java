@@ -96,8 +96,7 @@ public class TypeChanger {
         if (to.equals(String.class)) return (T) s;
         for (Class<?> clazz : ReflectionHelper.getAssignableTypes(to)) {
             Function<String, Object> f = (Function<String, Object>) FROM_STRING.get(clazz.getName());
-            if (f != null)
-            return (T) f.apply(s);
+            if (f != null) return (T) f.apply(s);
         }
         return (T) X_STREAM.fromXML(s);
     }

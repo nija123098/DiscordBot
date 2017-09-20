@@ -66,7 +66,7 @@ public class SetupRanksCommand extends AbstractCommand {
             for (; i.get() < requirement.size(); i.incrementAndGet()) {
                 int index = i.get();
                 roleMaking.add(() -> {
-                    float value = requirement.get(index);
+                    float value = requirement.get(index - requirement.size());
                     Role role = Role.getRole(new RoleBuilder(guild.guild()).withColor(GraphicsHelper.getGradient((float) index / (requirement.size() - 1), high == null ? Color.GREEN : high, low == null ? Color.BLUE : low)).setHoist(raise == null ? false : raise).build());
                     ConfigHandler.setSetting(StackFavorRankConfig.class, role, false);
                     ConfigHandler.setSetting(EarnRankConfig.class, role, value);

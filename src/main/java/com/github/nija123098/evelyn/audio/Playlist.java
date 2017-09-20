@@ -35,7 +35,8 @@ public class Playlist implements Configurable {
     }
     public static Playlist getPlaylist(User user, String name){
         if (name.isEmpty()) throw new ArgumentException("Your playlist must have a name");
-        if (!name.equals(FormatHelper.filtering(name, Character::isLetter))) throw new ArgumentException("A playlist name must only contain letters");
+        String reduced = FormatHelper.filtering(name, Character::isLetter);
+        if (!name.equals(reduced)) throw new ArgumentException("A playlist name must only contain letters");
         return ConfigHandler.getSetting(UserPlaylistsConfig.class, user).contains(name.toLowerCase()) ? MAP.computeIfAbsent("pl-u-" + user.getID() + "-" + name.toLowerCase(), Playlist::new) : null;
     }
     public static Playlist getPlaylist(Guild guild, String name){
@@ -47,7 +48,7 @@ public class Playlist implements Configurable {
         if (id == null || !id.startsWith("pl-")) return null;
         String[] split = id.split("-");
         if (split.length != 4) return null;
-        if (split[2].equals("u")) return getPlaylist(User.getUser(split[2]), split[3]);
+        if (split[1].equals("u")) return getPlaylist(User.getUser(split[2]), split[3]);
         else return getPlaylist(Guild.getGuild(split[2]), split[3]);
     }
     private String id;
@@ -90,7 +91,7 @@ public class Playlist implements Configurable {
         return this.id.split("-")[3];
     }
 
-    public Configurable getOwner() {
+    public Configurable getOwner() {// might want to use governing object instead
         return this.id.startsWith("pl-u-") ? User.getUser(this.id.split("-")[2]) : Guild.getGuild(this.id.split("-")[2]);
     }
 

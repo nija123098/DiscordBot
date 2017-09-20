@@ -198,7 +198,14 @@ public class AbstractConfig<V, T extends Configurable> {
      */
     public V getValue(T configurable){// slq here as well
         V value;
-        if (this.cache == null || (value = this.cache.get(configurable)) == null) value = grabValue(configurable);
+        if (this.cache == null){
+            value = grabValue(configurable);
+        }else{
+            value = this.cache.get(configurable);
+            if (value == null){
+                value = grabValue(configurable);
+            }
+        }
         if (this.cache != null && value != null) return this.cache.computeIfAbsent(configurable, this::grabValue);
         return value;
     }

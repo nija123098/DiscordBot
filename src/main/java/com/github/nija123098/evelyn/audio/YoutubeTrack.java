@@ -25,19 +25,14 @@ public class YoutubeTrack extends DownloadableTrack {
     private transient String name;
     public YoutubeTrack(String id) {
         super(id);
-        AtomicReference<Runnable> nameGetter = new AtomicReference<>();
-        nameGetter.set(() -> {
-            this.loadName();
-            if (this.name == null) CALL_BUFFER.call(nameGetter.get());
-        });
-        CALL_BUFFER.call(nameGetter.get());// there is probably a better way to do this
+        CALL_BUFFER.call(this::loadName);
     }
     protected YoutubeTrack() {}
     private void loadName() {
         if (this.name != null){
             try{this.name = ((JSONObject) new JSONParser().parse(StringHelper.readAll("https://www.youtube.com/oembed?url=http%3A//youtube.com/watch%3Fv%3D" + this.getCode()))).get("title").toString();
             } catch (ParseException | IOException | UnirestException e) {
-                Log.log("Exception getting name from Youtube track", e);
+                Log.log("Exception getting name from Youtube track: " + this.getCode(), e);
             }
         }
     }

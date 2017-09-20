@@ -19,7 +19,7 @@ import java.util.function.Consumer;
  * Made by nija123098 on 2/27/2017.
  */
 public class TemplateHandler {
-    static final char LEFT_BRACE = '<', RIGHT_BRACE = '>', ARGUMENT_SPLITTER = '|', ARGUMENT_CHARACTER = '%';
+    static final char LEFT_BRACE = '{', RIGHT_BRACE = '}', ARGUMENT_SPLITTER = '|', ARGUMENT_CHARACTER = '%';
 
     /**
      * Forces the initialization of this class
