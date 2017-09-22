@@ -17,7 +17,7 @@ import com.github.nija123098.evelyn.perms.configs.specialperms.SpecialPermsConta
  */
 public class SpecialPermsCommandCommand extends AbstractCommand {
     public SpecialPermsCommandCommand() {
-        super(SpecialPermsCommand.class, "command", null, null, null, "");
+        super(SpecialPermsCommand.class, "command", null, null, null, "configures the special command permissions");
     }
     @Command
     public void command(Guild guild, MessageMaker maker, @Argument(optional = true, replacement = ContextType.NONE) Role role, @Argument(optional = true, replacement = ContextType.NONE) Channel channel, @Argument Boolean allow, @Argument AbstractCommand command){

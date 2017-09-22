@@ -19,8 +19,6 @@ import com.github.nija123098.evelyn.exeption.ArgumentException;
 import com.github.nija123098.evelyn.exeption.ContextException;
 import com.github.nija123098.evelyn.exeption.DevelopmentException;
 import com.github.nija123098.evelyn.discordobjects.wrappers.*;
-import com.github.nija123098.evelyn.fun.gamestructure.Game;
-import com.github.nija123098.evelyn.fun.gamestructure.GameHandler;
 import com.github.nija123098.evelyn.util.*;
 import javafx.util.Pair;
 
@@ -72,7 +70,6 @@ public class InvocationObjectGetter {
             if (manager == null || manager.currentTrack() == null) throw new ContextException("No track is currently playing");
             return manager.currentTrack();
         }, ContextRequirement.GUILD, ContextRequirement.USER);
-        addContext(Game.class, ContextType.DEFAULT, (invoker, shard, channel, guild, message, reaction, args) -> GameHandler.getGame(guild, message.getAuthor()), ContextRequirement.GUILD, ContextRequirement.USER);
         addContext(ContextPack.class, ContextType.DEFAULT, ContextPack::new);
         addContext(Float.class, ContextType.NONE, (invoker, shard, channel, guild, message, reaction, args) -> null);
         addContext(Configurable.class, ContextType.DEFAULT, (user, shard, channel, guild, message, reaction, args) -> null);

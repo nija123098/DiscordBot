@@ -5,15 +5,13 @@ import com.github.nija123098.evelyn.exeption.GhostException;
 import com.github.nija123098.evelyn.launcher.BotConfig;
 import com.github.nija123098.evelyn.service.services.MemoryManagementService;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
+import com.github.nija123098.evelyn.util.Log;
 import com.github.nija123098.evelyn.util.Time;
 import sx.blah.discord.handle.impl.obj.ReactionEmoji;
 import sx.blah.discord.handle.obj.IMessage;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Made by nija123098 on 3/4/2017.
@@ -142,6 +140,12 @@ public class Message {// should not be kept stored, too many are made
         return getReaction(EmoticonHelper.getChars(name, false));
     }
 
+    public Reaction addReaction(String s, long id) {
+        if (BotConfig.GHOST_MODE) throw new GhostException();
+        ErrorWrapper.wrap(() -> this.message().addReaction(ReactionEmoji.of(s, id)));
+        return getReaction(s);
+    }
+
     public Reaction addReaction(String s) {
         if (BotConfig.GHOST_MODE) throw new GhostException();
         ErrorWrapper.wrap(() -> this.message().addReaction(ReactionEmoji.of(s)));
@@ -149,6 +153,17 @@ public class Message {// should not be kept stored, too many are made
     }
 
     public Reaction addReactionByName(String name) {
+        try {
+            String emoji = getGuild().guild().getEmojiByName(name).toString();
+            String emojiName = Arrays.toString(emoji.split(":(.+):"));
+            String[] temp = emoji.split("(\\D+)");
+            Long emojiId = Long.parseLong(temp[1]);
+            if (!emoji.isEmpty()) {
+                return addReaction(emojiName, emojiId);
+            }
+        } catch (NullPointerException e) {
+
+        }
         return addReaction(EmoticonHelper.getChars(name, false));
     }
 

@@ -11,14 +11,14 @@ import com.github.nija123098.evelyn.template.CustomCommandConfig;
 /**
  * Made by nija123098 on 8/13/2017.
  */
-public class CustomCommandRagexCommand extends AbstractCommand {
-    public CustomCommandRagexCommand() {
-        super(CustomCommandCommand.class, "ragex", null, null, null, "Adds a ragex search to activate a command on text without a prefix");
+public class CustomCommandRegexCommand extends AbstractCommand {
+    public CustomCommandRegexCommand() {
+        super(CustomCommandCommand.class, "ragex", null, null, null, "Adds a regex search to activate a command on text without a prefix");
     }
     @Command
     public void command(Guild guild, String s){
         int space = s.indexOf(" ");
-        if (space == -1) throw new ArgumentException("Please use the following syntax: <name> <ragex>");
+        if (space == -1) throw new ArgumentException("Please use the following syntax: <name> <regex>");
         String name = s.substring(0, space).toLowerCase();
         String ragex = s.substring(space).trim();
         ConfigHandler.alterSetting(CustomCommandConfig.class, guild, commands -> {

@@ -10,7 +10,7 @@ import com.github.nija123098.evelyn.util.FormatHelper;
 
 public class LinkedGamesAddCommand extends AbstractCommand {
     public LinkedGamesAddCommand() {
-        super(LinkedGamesCommand.class, "remove", null, null, null, "Removes a game from the linked games list");
+        super(LinkedGamesCommand.class, "add", null, null, null, "Adds a game to the linked games list");
     }
     @Command
     public void command(@Argument(info = "the game") String s, Guild guild){

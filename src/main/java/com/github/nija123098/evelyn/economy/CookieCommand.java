@@ -7,9 +7,11 @@ import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
+import com.github.nija123098.evelyn.economy.configs.CurrentMoneyConfig;
 import com.github.nija123098.evelyn.economy.configs.LastCookieUseConfig;
 import com.github.nija123098.evelyn.economy.configs.MoneyNameConfig;
 import com.github.nija123098.evelyn.economy.configs.MoneySymbolConfig;
+import com.github.nija123098.evelyn.util.EmoticonHelper;
 
 /**
  * Made by nija123098 on 6/6/2017.
@@ -25,7 +27,7 @@ public class CookieCommand extends AbstractCommand {
         if (count != 12) time += 7_200_000 * count;
         else time = System.currentTimeMillis();
         if (count == 0) maker.append("No " + ConfigHandler.getSetting(MoneySymbolConfig.class, user.getGoverningObject()) + " for you yet");
-        else maker.append("You get " + count + " " + ConfigHandler.getSetting(MoneyNameConfig.class, user.getGoverningObject()));
+        else maker.append("You get " + count + " " + ConfigHandler.getSetting(MoneyNameConfig.class, user.getGoverningObject()) + "\nYou now have " + ConfigHandler.getSetting(CurrentMoneyConfig.class, user) + EmoticonHelper.getChars("cookie",false));
         maker.append("\nYou can retrieve a " + ConfigHandler.getSetting(MoneyNameConfig.class, user.getGoverningObject()) + " every 120 minutes, I'll save up to 12 for you");
         if (count != 0) MoneyTransfer.transact(guild, user, null, count, "Cookies from the cookie oven!");
         ConfigHandler.setSetting(LastCookieUseConfig.class, user, time);
