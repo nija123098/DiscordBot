@@ -14,7 +14,7 @@ Caching is done based on shards. Shards are Discord's way splitting connections 
 ## Design
 The project was made with several things in mind.
 
-1. The server running the program is sufficient and is not short on by memory.
+1. The server running the program is sufficient and is not short on memory.
 
 2. That the core should do most of the work allowing for all other code to be as simple as possible.
 
