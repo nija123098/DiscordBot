@@ -36,7 +36,7 @@ public class Database {
         }
         CONNECTION = c;
         HikariConfig config = new HikariConfig();
-        config.setJdbcUrl("jdbc:mariadb://localhost:3306/" + BotConfig.DB_NAME);
+        config.setJdbcUrl("jdbc:mariadb://" + BotConfig.DB_HOST + ":" + BotConfig.DB_PORT + "/" + BotConfig.DB_NAME);
         config.setDriverClassName("org.mariadb.jdbc.Driver");
         config.setUsername(BotConfig.DB_USER);
         config.setPassword(BotConfig.DB_PASS);

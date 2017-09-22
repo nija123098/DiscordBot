@@ -63,6 +63,8 @@ public class BotConfig {
     @ConfigurationOption
     public static String DB_NAME = "emilybot";
     @ConfigurationOption
+    public static String DB_PORT = "3306";
+    @ConfigurationOption
     public static String BITLY_TOKEN = "";
     @ConfigurationOption
     public static Boolean VOICE_COMMANDS_ENABLED = false;
