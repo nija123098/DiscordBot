@@ -59,13 +59,13 @@ public class BotConfig {
     @ConfigurationOption
     public static String DB_HOST = "localhost";
     @ConfigurationOption
-    public static String DB_USER = "root";
-    @ConfigurationOption
-    public static String DB_PASS = "idlikenottobeblacklistedsostopputtingthingsabouthittlerhereoriwillforceyoutomakepullrequests";
+    public static String DB_PORT = "3306";
     @ConfigurationOption
     public static String DB_NAME = "emilybot";
     @ConfigurationOption
-    public static String DB_PORT = "3306";
+    public static String DB_USER = "root";
+    @ConfigurationOption
+    public static String DB_PASS = "idlikenottobeblacklistedsostopputtingthingsabouthittlerhereoriwillforceyoutomakepullrequests";
     @ConfigurationOption
     public static String BITLY_TOKEN = "";
     @ConfigurationOption
