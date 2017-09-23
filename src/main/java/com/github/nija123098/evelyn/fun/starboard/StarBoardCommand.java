@@ -33,8 +33,8 @@ public class StarBoardCommand extends AbstractCommand {
         StarLevel starLevel = StarLevel.level(reaction.getCount(), guild);
         if (starLevel == null) return;
         MessageMaker maker = MAP.computeIfAbsent(message.getID(), s -> new MessageMaker(channel).withAuthorIcon(message.getAuthor().getAvatarURL()));
-        if ((message.getContent().endsWith(".png") || message.getContent().endsWith(".gif")) && NetworkHelper.isValid(message.getContent())) maker.withUrl(message.getContent());
-        else maker.append(message.getContent());
+        if ((message.getContent().endsWith(".png") || message.getContent().endsWith(".gif")) && NetworkHelper.isValid(message.getContent())) maker.withImage(message.getContent());
+        else maker.append(message.getMentionCleanedContent());
         maker.getAuthorName().clear().appendRaw(message.getAuthor().getDisplayName(guild) + " is a " + starLevel.getEmoticon() + " in " + message.getChannel().getName());
         maker.withColor(starLevel.getColor()).forceCompile().send();
         if (!message.getAttachments().isEmpty()) maker.withImage(message.getAttachments().get(0).getUrl());

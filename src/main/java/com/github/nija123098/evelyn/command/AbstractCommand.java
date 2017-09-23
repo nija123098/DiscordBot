@@ -387,7 +387,7 @@ public class AbstractCommand {
             if (!message.getChannel().isPrivate()) {
                 Channel chan = ConfigHandler.getSetting(BotLogConfig.class, message.getGuild());
                 if (chan == null) return;
-                new MessageMaker(chan).appendRaw("**" + this.getName() + "** ").append(message.getChannel().mention() + " by " + message.getAuthor().getDisplayName(message.getGuild()) + (message.getAuthor().getNickname(message.getGuild()) == null ? "" : " AKA " + message.getAuthor().getNameAndDiscrim())).appendRaw("\n" + message.getContent()).send();
+                new MessageMaker(chan).appendRaw("**" + this.getName() + "** ").append(message.getChannel().mention() + " by " + message.getAuthor().getDisplayName(message.getGuild()) + (message.getAuthor().getNickname(message.getGuild()) == null ? "" : " AKA " + message.getAuthor().getNameAndDiscrim())).appendRaw("\n" + message.getMentionCleanedContent()).send();
             }
         }
     }

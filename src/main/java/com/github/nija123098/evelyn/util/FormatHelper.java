@@ -1,5 +1,6 @@
 package com.github.nija123098.evelyn.util;
 
+import com.github.nija123098.evelyn.discordobjects.wrappers.Message;
 import com.github.nija123098.evelyn.exeption.DevelopmentException;
 import com.google.common.base.Strings;
 
@@ -7,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 

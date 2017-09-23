@@ -15,7 +15,7 @@ import com.github.nija123098.evelyn.exeption.ArgumentException;
  */
 public class BankSendCommand extends AbstractCommand {
     public BankSendCommand() {
-        super(BankCommand.class, "send", null, null, null, "Sends currency to another user, guild, or guild user");
+        super(BankCommand.class, "send", "send", null, null, "Sends currency to another user, guild, or guild user");
     }
     @Command
     public void command(@Argument Configurable one, @Argument(optional = true, replacement = ContextType.NONE) Configurable two, @Argument Integer integer, User user, @Context(softFail = true) Guild guild){

@@ -12,6 +12,7 @@ import sx.blah.discord.handle.obj.IMessage;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Made by nija123098 on 3/4/2017.
@@ -43,10 +44,10 @@ public class Message {// should not be kept stored, too many are made
     }
     private IMessage iMessage;
     private Message(IMessage message){
-        iMessage = message;
+        this.iMessage = message;
     }
     public IMessage message() {
-        return iMessage;
+        return this.iMessage;
     }
 
     @Override
@@ -61,6 +62,15 @@ public class Message {// should not be kept stored, too many are made
 
     public String getContent() {
         return message().getContent();
+    }
+
+    public String getMentionCleanedContent(){
+        AtomicReference<String> reference = new AtomicReference<>(this.getContent());
+        if (this.mentionsEveryone()) reference.getAndUpdate(s -> s.replace("@everyone", "***everyone***"));
+        if (this.mentionsHere()) return reference.getAndUpdate(s -> s.replace("@here", "***here***"));
+        this.getMentions().forEach(user -> reference.getAndUpdate(s -> s.replace(user.mention().replace("!", "!?"), "***" + user.getNameAndDiscrim() + "***")));
+        this.getRoleMentions().forEach(role -> reference.getAndUpdate(s -> s.replace(role.mention(), "***" + role.getName() + "***")));
+        return reference.get();
     }
 
     public Channel getChannel() {
@@ -140,12 +150,6 @@ public class Message {// should not be kept stored, too many are made
         return getReaction(EmoticonHelper.getChars(name, false));
     }
 
-    public Reaction addReaction(String s, long id) {
-        if (BotConfig.GHOST_MODE) throw new GhostException();
-        ErrorWrapper.wrap(() -> this.message().addReaction(ReactionEmoji.of(s, id)));
-        return getReaction(s);
-    }
-
     public Reaction addReaction(String s) {
         if (BotConfig.GHOST_MODE) throw new GhostException();
         ErrorWrapper.wrap(() -> this.message().addReaction(ReactionEmoji.of(s)));
@@ -153,18 +157,12 @@ public class Message {// should not be kept stored, too many are made
     }
 
     public Reaction addReactionByName(String name) {
-        try {
-            String emoji = getGuild().guild().getEmojiByName(name).toString();
-            String emojiName = Arrays.toString(emoji.split(":(.+):"));
-            String[] temp = emoji.split("(\\D+)");
-            Long emojiId = Long.parseLong(temp[1]);
-            if (!emoji.isEmpty()) {
-                return addReaction(emojiName, emojiId);
-            }
-        } catch (NullPointerException e) {
+        return addReaction(EmoticonHelper.getReactionEmoji(name));
+    }
 
-        }
-        return addReaction(EmoticonHelper.getChars(name, false));
+    private Reaction addReaction(ReactionEmoji reactionEmoji){
+        ErrorWrapper.wrap(() -> this.message().addReaction(reactionEmoji));
+        return Reaction.getReaction(this.message().getReactionByEmoji(reactionEmoji));
     }
 
     public void removeReaction(Reaction reaction) {

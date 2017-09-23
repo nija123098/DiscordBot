@@ -25,10 +25,10 @@ public class JoinWelcomeConfig extends AbstractConfig<Channel, Guild>{
     @EventListener
     public void handle(DiscordUserJoin leave){
         Channel channel = this.getValue(leave.getGuild());
-        if (channel == null) return;// TODO WORKING ON check USER_JOIN and USER_LEAVE arguments
+        if (channel == null) return;
         Template template = TemplateHandler.getTemplate(KeyPhrase.USER_JOIN, leave.getGuild(), Collections.emptyList());
         if (template == null) return;
         GuildUser guildUser = GuildUser.getGuildUser(leave.getGuild(), leave.getUser());
-        new MessageMaker(channel).appendRaw(template.interpret(leave.getUser(), null, null, leave.getGuild(), null, null, ConfigHandler.getSetting(GuildUserJoinTimeConfig.class, guildUser) == leave.getGuild().getJoinTimeForUser(leave.getUser()), FavorHandler.getFavorAmount(leave.getUser())));
+        new MessageMaker(channel).appendRaw(template.interpret(leave.getUser(), channel.getShard(), null, leave.getGuild(), null, null, ConfigHandler.getSetting(GuildUserJoinTimeConfig.class, guildUser) == leave.getGuild().getJoinTimeForUser(leave.getUser()), FavorHandler.getFavorAmount(leave.getUser())));
     }
 }

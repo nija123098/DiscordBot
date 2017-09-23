@@ -12,14 +12,12 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventDistribut
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.botevents.BotRoleChangeEvent;
 import com.github.nija123098.evelyn.exeption.ArgumentException;
 import com.github.nija123098.evelyn.exeption.PermissionsException;
+import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.perms.configs.standard.GlobalBotRoleConfig;
 import com.github.nija123098.evelyn.perms.configs.standard.GuildBotRoleConfig;
 import com.github.nija123098.evelyn.service.services.ScheduleService;
 
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiPredicate;
@@ -40,11 +38,11 @@ public enum BotRole {
     CONTRIBUTOR(false, true, false, WorkAroundReferences.B_A),
     BOT_ADMIN(true, true, false, WorkAroundReferences.B_O),
     BOT_OWNER(true, (user, guild) -> user.equals(DiscordClient.getApplicationOwner())),
-    SYSTEM(true, (user, guild) -> false),;
+    SYSTEM(true, (user, guild) -> Launcher.hasSystemAccess(user)),;
     static {
         WorkAroundReferences.set();
     }
-    private boolean isTrueRank, isGlobalFlag, isGuildFlag, guildImportant = this.name().startsWith("GUILD");
+    private boolean isTrueRank, isGlobalFlag, isGuildFlag;// , guildImportant = this.name().startsWith("GUILD");
     private BiPredicate<User, Guild> detect, change;
     BotRole(boolean isTrueRank, BiPredicate<User, Guild> detect, BiPredicate<User, Guild> change) {
         this.isTrueRank = isTrueRank;
@@ -67,14 +65,14 @@ public enum BotRole {
     public boolean hasRole(User user, Guild guild){
         return this.detect.test(user, guild);
     }
-    private final Map<Object, Object> PERMISSIONS_CACHE = new HashMap<>();
+    // private final Map<Object, Object> PERMISSIONS_CACHE = new HashMap<>();
     public boolean hasRequiredRole(User user, Guild guild){
         if (!this.isTrueRank) return this.detect.test(user, guild);
-        return (boolean) (this.guildImportant ? ((Map<Object, Object>) PERMISSIONS_CACHE.computeIfAbsent(guild, g -> new ConcurrentHashMap<>())) : PERMISSIONS_CACHE).computeIfAbsent(user, u -> {
+        /* return (boolean) (this.guildImportant ? ((Map<Object, Object>) PERMISSIONS_CACHE.computeIfAbsent(guild, g -> new ConcurrentHashMap<>())) : PERMISSIONS_CACHE).computeIfAbsent(user, u -> {
             ScheduleService.schedule(120_000, () -> (this.guildImportant ? (Map<Object, Object>) PERMISSIONS_CACHE.get(guild) : PERMISSIONS_CACHE).remove(user));
-            for (int i = this.ordinal(); i < values().length; i++) if (values()[i].detect.test(user, guild)) return true;
-            return false;
-        });
+        }); todo reimplement caching*/
+        for (int i = this.ordinal(); i < values().length; i++) if (values()[i].detect.test(user, guild)) return true;
+        return false;
     }
     public void checkRequiredRole(User user, Guild guild){
         if (!this.hasRequiredRole(user, guild)) throw new PermissionsException(this);
@@ -96,11 +94,11 @@ public enum BotRole {
     public static void setRole(BotRole role, boolean grant, User target, Guild guild){
         Class<? extends AbstractConfig<Set<BotRole>, ? extends Configurable>> config = role.isGlobalFlag ? GlobalBotRoleConfig.class : GuildBotRoleConfig.class;
         Configurable configurable = role.isGlobalFlag ? target : GuildUser.getGuildUser(guild, target);
-        ConfigHandler.alterSetting((Class<? extends AbstractConfig<Set<BotRole>,Configurable>>) config, configurable, roles -> {
+        ConfigHandler.alterSetting((Class<? extends AbstractConfig<Set<BotRole>, Configurable>>) config, configurable, roles -> {
             if (grant) roles.add(role);
             else roles.remove(role);
         });
-        Stream.of(values()).forEach(botRole -> botRole.PERMISSIONS_CACHE.clear());
+        // Stream.of(values()).forEach(botRole -> botRole.PERMISSIONS_CACHE.clear());
         EventDistributor.distribute(new BotRoleChangeEvent(grant, role, target, guild));
     }
 }

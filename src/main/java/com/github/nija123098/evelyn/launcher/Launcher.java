@@ -5,6 +5,7 @@ import com.github.nija123098.evelyn.command.InvocationObjectGetter;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.discordobjects.DiscordAdapter;
 import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
+import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.service.ServiceHandler;
 import com.github.nija123098.evelyn.service.services.ScheduleService;
 import com.github.nija123098.evelyn.template.TemplateHandler;
@@ -23,6 +24,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * Made by nija123098 on 2/20/2017.
  */
 public class Launcher {
+    public static final Set<User> USERS = new HashSet<>();
     private static final Set<Runnable> STARTUPS = new HashSet<>();
     private static final Set<Runnable> ASYNC_STARTUPS = new HashSet<>();
     private static final Set<Runnable> SHUTDOWNS = new HashSet<>();
@@ -47,6 +49,13 @@ public class Launcher {
     }
     public static boolean isReady(){
         return IS_READY.get();
+    }
+    public static void grantSystemAccess(User user){
+        USERS.add(user);
+        ScheduleService.schedule(300_000, () -> USERS.remove(user));
+    }
+    public static boolean hasSystemAccess(User user){
+        return USERS.contains(user);
     }
     public synchronized static void shutdown(Integer code, long delay){
         ScheduleService.ScheduledTask task = SHUTDOWN_TASK.get();

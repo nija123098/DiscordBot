@@ -21,9 +21,9 @@ public class MemoryManagementService extends AbstractService {
     private static final long SERVICE_ITERATION_TIME = 1_000;
     private static final List<ManagedMap<?, ?>> MAPS = new CopyOnWriteArrayList<>();
     private static final List<ManagedList<?>> LISTS = new CopyOnWriteArrayList<>();
-    private static final long[] INDICES = new long[ConfigLevel.values().length];
-    private static final float[] LEFT_OVER = new float[INDICES.length];
-    private static final float[] CONFIG_PER = new float[INDICES.length];
+    // private static final long[] INDICES = new long[ConfigLevel.values().length];
+    // private static final float[] LEFT_OVER = new float[INDICES.length];
+    // private static final float[] CONFIG_PER = new float[INDICES.length];
     public MemoryManagementService() {
         super(SERVICE_ITERATION_TIME);
         /*

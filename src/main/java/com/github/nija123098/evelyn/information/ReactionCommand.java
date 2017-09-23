@@ -18,11 +18,12 @@ public class ReactionCommand extends AbstractCommand {
     }
     @Command
     public void command(@Argument(info = "text") String s, MessageMaker maker){
-        String display = EmoticonHelper.getChars(s, false);
-        if (display == null) {
+        ReactionEmoji emoji = EmoticonHelper.getReactionEmoji(s);
+        String display;
+        if (emoji == null) {
             display = EmoticonHelper.getName(s);
             if (display == null) throw new ArgumentException("Please specify a reaction by name or symbol");
-        }
+        }else display = emoji.toString().replace("<", "<:");// this is a patch for D4J
         maker.appendRaw(display);
     }
 

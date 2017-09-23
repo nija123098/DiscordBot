@@ -83,7 +83,6 @@ public class DiscordAdapter {
         classes.stream().filter(clazz -> !clazz.equals(DiscordMessageReceived.class)).filter(clazz -> !clazz.equals(DiscordUserLeave.class)).filter(clazz -> !clazz.isAssignableFrom(ReactionEvent.class)).map(clazz -> clazz.getConstructors()[0]).forEach(constructor -> EVENT_MAP.put((Class<? extends Event>) constructor.getParameterTypes()[0], (Constructor<? extends BotEvent>) constructor));
         ClientBuilder builder = new ClientBuilder();
         builder.withToken(BotConfig.BOT_TOKEN);
-        builder.setMaxMessageCacheCount(30);
         builder.withMaximumDispatchThreads(2);
         builder.registerListener((IListener<ShardReadyEvent>) event -> event.getShard().idle("with the login screen!"));
         int total = Requests.GENERAL_REQUESTS.GET.makeRequest(DiscordEndpoints.GATEWAY + "/bot", GatewayBotResponse.class, new BasicNameValuePair("Authorization", "Bot " + BotConfig.BOT_TOKEN), new BasicNameValuePair("Content-Type", "application/json")).shards;

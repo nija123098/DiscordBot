@@ -25,7 +25,9 @@ public class BotConfig {
     @ConfigurationOption
     public static String GIPHY_TOKEN = null;
     @ConfigurationOption
-    public static long IMAGE_LOAD_CHANNEL = 321103742743085057L;
+    public static long IMAGE_LOAD_CHANNEL = 0L;
+    @ConfigurationOption
+    public static String SUPPORT_SERVER = "support-server";
     @ConfigurationOption
     public static String GOOGLE_API_KEY = "api-key";
     @ConfigurationOption
@@ -59,7 +61,7 @@ public class BotConfig {
     @ConfigurationOption
     public static String DB_USER = "root";
     @ConfigurationOption
-    public static String DB_PASS = "hitlerdidnothingwrong";
+    public static String DB_PASS = "idlikenottobeblacklistedsostopputtingthingsabouthittlerhereoriwillforceyoutomakepullrequests";
     @ConfigurationOption
     public static String DB_NAME = "emilybot";
     @ConfigurationOption

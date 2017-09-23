@@ -1,7 +1,13 @@
 package com.github.nija123098.evelyn.util;
 
 
+import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
+import com.github.nija123098.evelyn.discordobjects.wrappers.Reaction;
 import com.github.nija123098.evelyn.launcher.BotConfig;
+import sx.blah.discord.handle.impl.obj.Guild;
+import sx.blah.discord.handle.impl.obj.ReactionEmoji;
+import sx.blah.discord.handle.impl.obj.Role;
+import sx.blah.discord.handle.obj.IEmoji;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -18,11 +24,11 @@ public class EmoticonHelper {
     static {
         try{
             Files.readAllLines(Paths.get(BotConfig.CONTAINER_PATH, "Emoticons.txt")).forEach(s -> {
-            String[] strings = s.split(" ");
-            MAP.put(strings[0], new HashSet<>(Arrays.asList(Arrays.copyOfRange(strings, 1, strings.length))));
-            for (int i = 1; i < strings.length; i++) EMOTICON_MAP.put(strings[i], strings[0]);
-            NAME_MAP.put(strings[0], strings[1]);
-        });
+                String[] strings = s.split(" ");
+                MAP.put(strings[0], new HashSet<>(Arrays.asList(Arrays.copyOfRange(strings, 1, strings.length))));
+                for (int i = 1; i < strings.length; i++) EMOTICON_MAP.put(strings[i], strings[0]);
+                NAME_MAP.put(strings[0], strings[1]);
+            });
         } catch (IOException e) {
             Log.log("Could not load emoticons", e);
         }
@@ -32,6 +38,13 @@ public class EmoticonHelper {
         if (chars == null) return null;
         if (noSpace) chars += '\u200B';
         return chars;
+    }
+    public static ReactionEmoji getReactionEmoji(String s){// re-wrap once D4J v3 releases
+        String chars = getChars(s, false);
+        if (chars != null) return ReactionEmoji.of(chars);
+        IEmoji iEmoji = DiscordClient.getSupportServer().guild().getEmojiByName(s);
+        if (iEmoji != null) return ReactionEmoji.of(iEmoji);
+        return null;
     }
     public static String getName(String chars){
         return NAME_MAP.get(chars);

@@ -11,7 +11,7 @@ import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
  */
 public class ModActionCommand extends AbstractCommand {
     public ModActionCommand() {
-        super("modaction", ModuleLevel.ADMINISTRATIVE, "ma", null, "Provides information on various disciplinary actions");
+        super("modaction", ModuleLevel.ADMINISTRATIVE, "ma, mod action", null, "Provides information on various disciplinary actions");
     }
     @Command
     public void command(MessageMaker maker){

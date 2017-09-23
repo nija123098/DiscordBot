@@ -47,7 +47,9 @@ public class StringHelper {
         return best.size() != 1 || !acceptableDistance(best.get(0), in) ? null : best.get(0);
     }
     public static boolean acceptableDistance(String best, String in){
-        return StringUtils.getLevenshteinDistance(best, in) < .2F * Math.max(Math.max(in.length(), best.length()), 6) || StringUtils.getLevenshteinDistance(best, FormatHelper.filtering(in, c -> !Character.isLetter(c))) < .2F * Math.max(in.length(), best.length());
+        best = best.toLowerCase();
+        in = in.toLowerCase();
+        return StringUtils.getLevenshteinDistance(best, in) < .25F * Math.max(Math.max(in.length(), best.length()), 6) || StringUtils.getLevenshteinDistance(best, FormatHelper.filtering(in, Character::isLetter)) < .25F * Math.max(in.length(), best.length());
     }
     public static List<String> getGoodMatch(String matching, List<String> candidates, BiFunction<String, String, Number> function, boolean golf, boolean containment){
         double bestScore = Double.MAX_VALUE;
