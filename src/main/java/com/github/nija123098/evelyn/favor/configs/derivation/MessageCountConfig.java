@@ -28,7 +28,4 @@ public class MessageCountConfig extends AbstractConfig<Integer, GuildUser> {
         GuildUser guildUser = GuildUser.getGuildUser(event.getGuild(), event.getAuthor());
         FavorChangeEvent.process(guildUser, () -> this.changeSetting(guildUser, integer -> --integer));
     }
-    public boolean checkDefault(){
-        return false;
-    }
 }

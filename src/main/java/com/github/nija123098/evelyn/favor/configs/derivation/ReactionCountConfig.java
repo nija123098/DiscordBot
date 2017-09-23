@@ -20,7 +20,4 @@ public class ReactionCountConfig extends AbstractConfig<Integer, GuildUser> {
         if (event.getMessage().getGuild() == null) return;
         FavorChangeEvent.process(event.getUser(), () -> this.changeSetting(GuildUser.getGuildUser(event.getMessage().getGuild(), event.getMessage().getAuthor()), integer -> integer + (event.addingReaction() ? 1 : -1)));
     }
-    public boolean checkDefault(){
-        return false;
-    }
 }

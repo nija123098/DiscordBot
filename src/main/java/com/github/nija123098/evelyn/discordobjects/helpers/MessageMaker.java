@@ -1,7 +1,7 @@
 package com.github.nija123098.evelyn.discordobjects.helpers;
 
 import com.github.nija123098.evelyn.launcher.Launcher;
-import com.github.nija123098.evelyn.moderation.VoiceCommandPrintChannelConfig;
+import com.github.nija123098.evelyn.moderation.logging.VoiceCommandPrintChannelConfig;
 import com.github.nija123098.evelyn.command.ProcessingHandler;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.configs.guild.GuildLanguageConfig;
@@ -38,7 +38,6 @@ public class MessageMaker {
     }
     private static final int CHAR_LIMIT = 2000;
     private static final int EMBED_LIMIT = 1000;
-    private static final Map<Guild, Map<User, Set<Channel>>> NO_RESPONSE_LOCATION = new ConcurrentHashMap<>();
     private TextPart authorName, title, header, footer, note, external;
     private List<TextPart> textList = new ArrayList<>();
     private String[] textVals;
@@ -53,11 +52,10 @@ public class MessageMaker {
     private Map<String, ReactionBehavior> reactionBehaviors = new LinkedHashMap<>();
     private IMessage message, origin;
     private Message ourMessage;
-    private boolean okHand;
     private final Set<String> reactions = new HashSet<>(1);
     private Long deleteDelay;
     private File file;
-    private boolean maySend, mustEmbed, forceCompile, colored, isMessageError, autoSend = true;
+    private boolean okHand, maySend, mustEmbed, forceCompile, colored, isMessageError, autoSend = true;
     private MessageMaker(User user, Channel channel, Message message){
         this.authorName = new TextPart(this);
         this.title = new TextPart(this);
@@ -177,6 +175,10 @@ public class MessageMaker {
         return this.maySend(true);
     }
     // text methods
+    public MessageMaker withAuthor(User author){
+        this.getAuthorName().appendRaw(author.getNameAndDiscrim() + " " + author.getID());
+        return this.withAuthorIcon(author.getAvatarURL());
+    }
     public TextPart getAuthorName(){
         return this.authorName;
     }
@@ -322,6 +324,7 @@ public class MessageMaker {
             if (this.origin != null) ErrorWrapper.wrap(() -> this.origin.addReaction(ReactionEmoji.of(EmoticonHelper.getChars("ok_hand", false))));
             return;
         }
+        if (!this.channel.getModifiedPermissions(DiscordClient.getOurUser()).contains(DiscordPermission.SEND_MESSAGES)) return;// only will effect emoticon commands, normal commands are already checked
         this.builder = new MessageBuilder(DiscordClient.getClientForShard(this.channel.getShard()));
         if (this.file != null){
             try{this.builder.withFile(this.file);
@@ -364,16 +367,6 @@ public class MessageMaker {
         return lang == null ? "en" : lang;
     }
     private void compile(){
-        if (!this.channel.getModifiedPermissions(DiscordClient.getOurUser()).contains(DiscordPermission.SEND_MESSAGES)){
-            if (this.channel.isPrivate()){
-                throw new RuntimeException("Could not send message to user due to lacking permissions: " + this.user.getName());
-            } else {
-                if (this.user != null && NO_RESPONSE_LOCATION.computeIfAbsent(this.channel.getGuild(), guild -> new ConcurrentHashMap<>()).computeIfAbsent(this.user, u -> new HashSet<>()).add(this.channel)){
-                    this.user.getOrCreatePMChannel().channel().sendMessage("Hey, I don't respond there and I won't tell you again!  Your command has been completed though.");
-                }
-                return;
-            }
-        }
         if (this.lang != null && !this.forceCompile) return;
         if (!this.colored) this.withRandomColor();
         this.lang = getLang(this.user, this.channel);

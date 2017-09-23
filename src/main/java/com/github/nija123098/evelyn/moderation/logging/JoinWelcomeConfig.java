@@ -1,6 +1,5 @@
-package com.github.nija123098.evelyn.moderation;
+package com.github.nija123098.evelyn.moderation.logging;
 
-import com.github.nija123098.evelyn.command.CommandHandler;
 import com.github.nija123098.evelyn.config.AbstractConfig;
 import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.config.ConfigHandler;
@@ -11,7 +10,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordUserJoin;
 import com.github.nija123098.evelyn.favor.FavorHandler;
-import com.github.nija123098.evelyn.perms.BotRole;
+import com.github.nija123098.evelyn.moderation.GuildUserJoinTimeConfig;
 import com.github.nija123098.evelyn.template.KeyPhrase;
 import com.github.nija123098.evelyn.template.Template;
 import com.github.nija123098.evelyn.template.TemplateHandler;

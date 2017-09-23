@@ -16,7 +16,4 @@ public class GlobalTemplateConfig extends AbstractConfig<Map<KeyPhrase, List<Tem
     public GlobalTemplateConfig() {
         super("global_templates", ConfigCategory.STAT_TRACKING, guild -> new HashMap<>(), "All global templates");
     }
-    public boolean checkDefault(){
-        return false;
-    }
 }

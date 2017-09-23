@@ -17,7 +17,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventDistribut
 import com.github.nija123098.evelyn.exeption.BotException;
 import com.github.nija123098.evelyn.exeption.ContextException;
 import com.github.nija123098.evelyn.exeption.DevelopmentException;
-import com.github.nija123098.evelyn.moderation.BotLogConfig;
+import com.github.nija123098.evelyn.moderation.logging.BotLogConfig;
 import com.github.nija123098.evelyn.perms.BotRole;
 import com.github.nija123098.evelyn.perms.configs.specialperms.GuildSpecialPermsConfig;
 import com.github.nija123098.evelyn.perms.configs.specialperms.SpecialPermsContainer;
@@ -387,7 +387,7 @@ public class AbstractCommand {
             if (!message.getChannel().isPrivate()) {
                 Channel chan = ConfigHandler.getSetting(BotLogConfig.class, message.getGuild());
                 if (chan == null) return;
-                new MessageMaker(chan).appendRaw("**" + this.getName() + "** ").append(message.getChannel().mention() + " by " + message.getAuthor().getDisplayName(message.getGuild()) + (message.getAuthor().getNickname(message.getGuild()) == null ? "" : " AKA " + message.getAuthor().getNameAndDiscrim())).appendRaw("\n" + message.getMentionCleanedContent()).send();
+                new MessageMaker(chan).withAuthorIcon(user.getAvatarURL()).getAuthorName().appendRaw(message.getAuthor().getDisplayName(message.getGuild()) + (message.getAuthor().getNickname(message.getGuild()) == null ? "" : " AKA " + message.getAuthor().getNameAndDiscrim())).getMaker().append(message.getChannel().mention() + " - used command ***" + this.name + "***").appendRaw("\n" + message.getMentionCleanedContent()).send();
             }
         }
     }

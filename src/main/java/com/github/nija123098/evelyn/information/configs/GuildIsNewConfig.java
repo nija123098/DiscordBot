@@ -10,7 +10,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordGuildJoin;
 import com.github.nija123098.evelyn.launcher.Launcher;
-import com.github.nija123098.evelyn.moderation.BotChannelConfig;
+import com.github.nija123098.evelyn.moderation.logging.BotChannelConfig;
 
 public class GuildIsNewConfig extends AbstractConfig<Boolean, Guild> {
     public GuildIsNewConfig() {

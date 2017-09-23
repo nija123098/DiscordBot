@@ -12,7 +12,4 @@ public class GuildUserReputationConfig extends AbstractConfig<Integer, GuildUser
     public GuildUserReputationConfig() {
         super("guild_user_reputation", ConfigCategory.STAT_TRACKING, 0, "Guild based reputation for a guild member");
     }
-    public boolean checkDefault(){
-        return false;
-    }
 }

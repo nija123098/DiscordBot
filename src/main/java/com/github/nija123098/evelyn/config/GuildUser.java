@@ -16,7 +16,7 @@ public class GuildUser implements Configurable {
     /**
      * The map containing guild user configurables
      */
-    public static final Map<String, GuildUser> GUILD_USERS = new HashMap<>();
+    private static final Map<String, GuildUser> GUILD_USERS = new HashMap<>();
 
     /**
      * The getter for a object that represents a guild user
@@ -80,6 +80,7 @@ public class GuildUser implements Configurable {
     }
     @Override
     public <T extends Configurable> Configurable convert(Class<T> t) {
+        if (t.equals(GuildUser.class)) return this;
         if (t.equals(Guild.class)) return this.getGuild();
         if (t.equals(User.class)) return this.getUser();
         throw new ConfigurableConvertException(this.getClass(), t);

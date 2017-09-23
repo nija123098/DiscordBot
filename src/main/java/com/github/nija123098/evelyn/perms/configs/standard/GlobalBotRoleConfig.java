@@ -15,7 +15,4 @@ public class GlobalBotRoleConfig extends AbstractConfig<Set<BotRole>, User> {
     public GlobalBotRoleConfig() {
         super("global_flag_ranks", ConfigCategory.STAT_TRACKING, new HashSet<>(0), "The config for if an user is a contributor to the bot");
     }
-    public boolean checkDefault(){
-        return false;
-    }
 }

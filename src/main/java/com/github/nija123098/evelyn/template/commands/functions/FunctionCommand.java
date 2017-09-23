@@ -18,7 +18,7 @@ import java.util.Set;
  * Made by nija123098 on 8/9/2017.
  */
 public class FunctionCommand extends AbstractCommand {
-    private static final Set<Class<?>> APPROVED_RETURNS = new HashSet<>(Arrays.asList(Number.class, String.class, Integer.TYPE, Long.TYPE));
+    private static final Set<Class<?>> APPROVED_RETURNS = new HashSet<>(Arrays.asList(Number.class, String.class));
     public FunctionCommand() {
         super("function", ModuleLevel.NONE, null, null, "Calls a function in the source code for a configurable");
     }
@@ -28,14 +28,15 @@ public class FunctionCommand extends AbstractCommand {
         try{method = o.getClass().getMethod(s);
         }catch(NoSuchMethodException e){throw new ArgumentException(e);}
         boolean approved = false;
-        for (Class<?> clazz : ReflectionHelper.getAssignableTypes(method.getReturnType())) if (APPROVED_RETURNS.contains(clazz)){
+        if (Character.isLowerCase(method.getReturnType().getSimpleName().charAt(0))) approved = true;
+        else for (Class<?> clazz : ReflectionHelper.getAssignableTypes(method.getReturnType())) if (APPROVED_RETURNS.contains(clazz)){
             approved = true;
             break;
         }
         if (!approved) throw new ArgumentException("That method is not approved for use");
         try{return method.invoke(o);
         } catch (IllegalAccessException e) {
-            throw new ArgumentException("That method is not approved for use");
+            throw new ArgumentException("method " + method.getName() + " is not approved for use");
         } catch (InvocationTargetException e) {
             throw new DevelopmentException(e);
         }

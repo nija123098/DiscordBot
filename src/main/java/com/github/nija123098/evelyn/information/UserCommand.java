@@ -25,12 +25,12 @@ public class UserCommand extends AbstractCommand {
     }
     @Command
     public void command(@Argument(optional = true) User user, @Context(softFail = true) Guild guild, MessageMaker maker){
-        maker.appendAlternate(false, "Querying for **", user.getDisplayName(guild) + "**\n").withImage(user.getAvatarURL()).withColor(user.getAvatarURL());
+        maker.appendAlternate(false, "Querying for **", (guild == null ? user.getName() : user.getDisplayName(guild)) + "**\n").withImage(user.getAvatarURL()).withColor(user.getAvatarURL());
         addAtrib(maker, "bust_in_silhouette", "User", user.getNameAndDiscrim());
         addAtrib(maker, "id", "Discord id", user.getID());
         addAtrib(maker, "keyboard", "Commands used", ConfigHandler.getSetting(CommandsUsedCountConfig.class, user) + "");
         addAtrib(maker, "cookie", "Cookies", ConfigHandler.getSetting(CurrentMoneyConfig.class, user) + "");
-        addAtrib(maker, "date", "Joined server", Time.getAbbreviated(System.currentTimeMillis() - GuildUserJoinTimeConfig.get(GuildUser.getGuildUser(guild, user))) + " ago");
+        if (guild != null) addAtrib(maker, "date", "Joined server", Time.getAbbreviated(System.currentTimeMillis() - GuildUserJoinTimeConfig.get(GuildUser.getGuildUser(guild, user))) + " ago");
         addAtrib(maker, "calendar_spiral", "Joined Discord", Time.getAbbreviated(System.currentTimeMillis() - user.getJoinDate()) + " ago");
     }
     private static void addAtrib(MessageMaker maker, String icon, String info, String content){

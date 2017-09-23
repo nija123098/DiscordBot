@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * Made by nija123098 on 6/12/2017.
@@ -32,7 +33,12 @@ public class UserGuildsCommand extends AbstractCommand {
             stat.add(guild.getName());
             stats.add(stat);
         });
-        maker.appendRaw(FormatHelper.makeAsciiTable(Arrays.asList("shard", "guild", "name"), stats, null));
+        String[] split = FormatHelper.makeAsciiTable(Arrays.asList("shard", "guild", "name"), stats, null).split("\n");
+        maker.appendRaw("```");
+        Stream.of(Arrays.copyOfRange(split, 1, split.length - 1)).forEach(s -> {
+            maker.getNewListPart().appendRaw(s);
+        });
+        maker.getFooter().appendRaw("```");
     }
     @Override
     public BotRole getBotRole() {

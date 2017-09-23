@@ -27,9 +27,4 @@ public class UserLanguageConfig extends AbstractConfig<String, User> {
     public String wrapTypeOut(String s, User configurable) {
         return LangString.getLangName(s);
     }
-
-    @Override
-    public boolean checkDefault() {
-        return false;
-    }
 }

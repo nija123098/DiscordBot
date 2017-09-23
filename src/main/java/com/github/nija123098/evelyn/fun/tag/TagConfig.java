@@ -34,7 +34,4 @@ public class TagConfig extends AbstractConfig<Map<String, Tag>, Guild> {
         }));
         return deleted.get();
     }
-    public boolean checkDefault(){
-        return false;
-    }
 }

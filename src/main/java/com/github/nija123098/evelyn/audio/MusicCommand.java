@@ -12,7 +12,7 @@ import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager.VolumeConfig;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
-import com.github.nija123098.evelyn.moderation.MusicChannelConfig;
+import com.github.nija123098.evelyn.moderation.logging.MusicChannelConfig;
 
 /**
  * Made by nija123098 on 6/6/2017.

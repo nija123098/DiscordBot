@@ -24,6 +24,7 @@ import javafx.util.Pair;
 import org.reflections.Reflections;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -34,6 +35,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * @see AbstractCommand
  */
 public class CommandHandler {
+    private static final Map<Guild, Map<User, Set<Channel>>> NO_RESPONSE_LOCATION = new ConcurrentHashMap<>();
     private static final Map<Class<? extends AbstractCommand>, AbstractCommand> CLASS_MAP;
     private static final Map<String, AbstractCommand> REACTION_COMMAND_MAP;
     private static final Map<String, AbstractCommand> EXACT_COMMAND_MAP;
@@ -211,7 +213,7 @@ public class CommandHandler {
                         }
                     }catch(Exception ignored){}
                     return false;
-                }else if (string.toLowerCase().startsWith("@emily")) string = string.substring(6);
+                }else if (string.toLowerCase().startsWith("@evelyn")) string = string.substring(6);
                 else if (DiscordClient.getOurUser().getNickname(message.getGuild()) != null && string.toLowerCase().startsWith("@" + DiscordClient.getOurUser().getNickname(message.getGuild()).toLowerCase())){
                     string = string.substring(1 + DiscordClient.getOurUser().getNickname(message.getGuild()).length());
                 }else if (string.startsWith(MENTION.get())) {
@@ -227,6 +229,9 @@ public class CommandHandler {
         Pair<AbstractCommand, String> pair = reaction == null ? getMessageCommand(string) : ((command = getReactionCommand(reaction.getName())) == null ? null : new Pair<>(command, null));
         if (pair == null && REACTION_COMMAND_MAP.containsKey(string)) pair = new Pair<>(REACTION_COMMAND_MAP.get(string), "");
         if (pair != null){
+            if (!message.getChannel().getModifiedPermissions(DiscordClient.getOurUser()).contains(DiscordPermission.SEND_MESSAGES) && NO_RESPONSE_LOCATION.computeIfAbsent(message.getChannel().getGuild(), guild -> new ConcurrentHashMap<>()).computeIfAbsent(message.getAuthor(), u -> new HashSet<>()).add(message.getChannel())){
+                new MessageMaker(message.getAuthor()).append("I can't send a command there and I won't tell you again!").send();
+            }
             command = pair.getKey();
             Reaction r = message.getReactionByName(UNKNOWN_COMMAND_EMOTICON);
             if (r != null){

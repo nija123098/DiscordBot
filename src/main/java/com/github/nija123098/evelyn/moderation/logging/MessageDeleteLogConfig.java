@@ -1,0 +1,23 @@
+package com.github.nija123098.evelyn.moderation.logging;
+
+import com.github.nija123098.evelyn.config.AbstractConfig;
+import com.github.nija123098.evelyn.config.ConfigCategory;
+import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
+import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
+import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
+import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
+import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordMessageDelete;
+
+import java.awt.*;
+
+public class MessageDeleteLogConfig extends AbstractConfig<Channel, Guild> {
+    public MessageDeleteLogConfig() {
+        super("message_delete_log", ConfigCategory.LOGGING, (Channel) null, "The location logs should be made for messages that are deleted");
+    }
+    @EventListener
+    public void handle(DiscordMessageDelete delete){
+        Channel channel;
+        if (delete.getMessage() == null || delete.getChannel().isPrivate() || (channel = this.getValue(delete.getGuild())) == null) return;
+        new MessageMaker(channel).withColor(Color.GRAY).withAuthor(delete.getMessage().getAuthor()).appendRaw("ID: " + delete.getMessage().getID()).append("Message deleted from ").appendRaw(delete.getAuthor().getDisplayName(delete.getGuild())).append(" in ").appendRaw(delete.getChannel().mention()).send();
+    }
+}

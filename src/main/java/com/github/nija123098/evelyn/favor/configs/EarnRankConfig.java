@@ -27,6 +27,7 @@ public class EarnRankConfig extends AbstractConfig<Float, Role> {
     public void handle(FavorChangeEvent event){// change to config change event
         if (!event.getConfigurable().getClass().equals(GuildUser.class)) return;
         GuildUser user = (GuildUser) event.getConfigurable();
+        if (user.getUser().isBot()) return;
         Set<Role> roles = user.getGuild().getRoles().stream().filter(role -> this.getValue(role) != null).collect(Collectors.toSet());
         Set<Role> independents = roles.stream().filter(role -> ConfigHandler.getSetting(StackFavorRankConfig.class, role)).collect(Collectors.toSet());
         independents.forEach(role -> {

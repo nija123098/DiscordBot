@@ -42,7 +42,7 @@ public class Template {
     }
     private void ensureArgsInited(){
         if (this.arg != null) return;
-        this.arg = new CombinedArg(getCalculatedArgs(this.text, this.definition));
+        this.arg = new CombinedArg(getCalculatedArgs(TemplatePrepossessing.substitute(this.text), this.definition));
     }
     public String interpret(ContextPack pack, Object...args){
         return this.interpret(pack.getUser(), pack.getShard(), pack.getChannel(), pack.getGuild(), pack.getMessage(), pack.getReaction(), args);

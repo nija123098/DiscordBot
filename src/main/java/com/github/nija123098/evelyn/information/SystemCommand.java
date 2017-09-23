@@ -5,12 +5,16 @@ import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.launcher.Reference;
+import com.github.nija123098.evelyn.service.services.ScheduleService;
 import com.github.nija123098.evelyn.util.Care;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Made by nija123098 on 5/11/2017.
  */
 public class SystemCommand extends AbstractCommand {
+    private static AtomicInteger integer = new AtomicInteger();
     public SystemCommand() {
         super("system", ModuleLevel.INFO, "sys", null, "Shows memory usage and Emily's version");
     }
@@ -20,12 +24,15 @@ public class SystemCommand extends AbstractCommand {
         Runtime runtime = Runtime.getRuntime();
         long memoryLimit = runtime.maxMemory();
         long leastMemory = runtime.freeMemory(), freeMemory;
-        for (int i = 0; i < 120_000; i++) {
-            Care.lessSleep(1);
+        for (int i = 0; i < 6_000; i++) {
+            Care.lessSleep(100);
             freeMemory = runtime.freeMemory();
-            if (leastMemory < freeMemory) break;
+            if (leastMemory < freeMemory) {
+                leastMemory = freeMemory;
+                break;
+            }
         }
-        long memoryInUse = runtime.totalMemory() - runtime.freeMemory();
+        long memoryInUse = runtime.totalMemory() - leastMemory;
         maker.appendRaw(getProgressbar(memoryInUse, memoryLimit) + " " + " [ " + numberInMb(memoryInUse) + " / " + numberInMb(memoryLimit) + " ]");
     }
     private String getProgressbar(long current, long max) {

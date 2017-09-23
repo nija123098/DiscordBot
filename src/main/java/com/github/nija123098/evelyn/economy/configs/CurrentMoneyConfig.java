@@ -12,7 +12,4 @@ public class CurrentMoneyConfig extends AbstractConfig<Integer, Configurable> {
     public CurrentMoneyConfig() {
         super("current_money", ConfigCategory.STAT_TRACKING, 0, "The amount of money a guild user has");
     }
-    public boolean checkDefault(){
-        return false;
-    }
 }

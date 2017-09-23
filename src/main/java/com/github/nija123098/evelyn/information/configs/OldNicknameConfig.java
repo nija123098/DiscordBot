@@ -24,7 +24,4 @@ public class OldNicknameConfig extends AbstractConfig<Set<String>, GuildUser> {
         if (event.getNewUsername() == null) return;
         this.alterSetting(GuildUser.getGuildUser(event.getGuild(), event.getUser()), strings -> strings.add(event.getNewUsername()));
     }
-    public boolean checkDefault(){
-        return false;
-    }
 }

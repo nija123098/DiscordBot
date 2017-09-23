@@ -27,7 +27,7 @@ public class CookieCommand extends AbstractCommand {
         if (count != 12) time += 7_200_000 * count;
         else time = System.currentTimeMillis();
         if (count == 0) maker.append("No " + ConfigHandler.getSetting(MoneySymbolConfig.class, user.getGoverningObject()) + " for you yet");
-        else maker.append("You get " + count + " " + ConfigHandler.getSetting(MoneyNameConfig.class, user.getGoverningObject()) + "\nYou now have " + ConfigHandler.getSetting(CurrentMoneyConfig.class, user) + EmoticonHelper.getChars("cookie",false));
+        else maker.append("You get " + count + " " + ConfigHandler.getSetting(MoneyNameConfig.class, user.getGoverningObject()) + "\nYou now have " + (ConfigHandler.getSetting(CurrentMoneyConfig.class, user) + count)).appendRaw(" " + ConfigHandler.getSetting(MoneySymbolConfig.class, guild));
         maker.append("\nYou can retrieve a " + ConfigHandler.getSetting(MoneyNameConfig.class, user.getGoverningObject()) + " every 120 minutes, I'll save up to 12 for you");
         if (count != 0) MoneyTransfer.transact(guild, user, null, count, "Cookies from the cookie oven!");
         ConfigHandler.setSetting(LastCookieUseConfig.class, user, time);

@@ -179,7 +179,7 @@ public class AbstractConfig<V, T extends Configurable> {
     }
     private V saveValue(T configurable, V value){
         reset(configurable);
-        if (!(this.checkDefault() && Objects.equals(value, this.getDefault(configurable)))) {
+        if (!Objects.equals(value, this.getDefault(configurable))) {
             Database.insert("INSERT INTO " + this.getNameForType(configurable.getConfigLevel()) + " (`id`, `value`, `millis`) VALUES ('" + configurable.getID() + "','" + TypeChanger.toString(this.valueType, value) + "','" + System.currentTimeMillis() + "');");
         }
         return value;

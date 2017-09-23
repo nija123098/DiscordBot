@@ -30,7 +30,4 @@ public class GuildUserJoinTimeConfig extends AbstractConfig<Long, GuildUser> {
         if (this.getValue(guildUser) != null) return;
         this.setValue(guildUser, event.getJoinTime());
     }
-    public boolean checkDefault(){
-        return false;
-    }
 }
