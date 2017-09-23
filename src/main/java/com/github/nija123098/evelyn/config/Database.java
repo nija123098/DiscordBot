@@ -36,6 +36,7 @@ public class Database {
         }
         CONNECTION = c;
         HikariConfig config = new HikariConfig();
+        config.setMaximumPoolSize(20);
         config.setJdbcUrl("jdbc:mariadb://" + BotConfig.DB_HOST + ":" + BotConfig.DB_PORT + "/" + BotConfig.DB_NAME);
         config.setDriverClassName("org.mariadb.jdbc.Driver");
         config.setUsername(BotConfig.DB_USER);
