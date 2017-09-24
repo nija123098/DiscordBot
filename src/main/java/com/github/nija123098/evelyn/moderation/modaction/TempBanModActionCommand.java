@@ -32,7 +32,7 @@ public class TempBanModActionCommand extends AbstractCommand {
         return !channel.isPrivate() && user.getPermissionsForGuild(channel.getGuild()).contains(DiscordPermission.BAN);
     }
     private static void ban(Guild guild, User user, long length){
-        guild.banUser(user);
+        guild.banUser(user, 7, "I was told to");
         ConfigHandler.changeSetting(TempBanActionConfig.class, GuildUser.getGuildUser(guild, user), map -> length + System.currentTimeMillis());
         ScheduleService.schedule(length, () -> unban(guild, user));
     }

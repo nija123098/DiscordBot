@@ -194,8 +194,8 @@ public class DiscordAdapter {
     @EventSubscriber
     public static void handle(MessageReceivedEvent event){
         if (event.getAuthor().isBot() || !Launcher.isReady() || event.getMessage().getContent() == null) return;
-        if (event.getMessage().getContent().isEmpty()) DeletePinNotificationConfig.handle(new DiscordMessageReceived((sx.blah.discord.handle.impl.events.MessageReceivedEvent) event));
-        DiscordMessageReceived receivedEvent = new DiscordMessageReceived((sx.blah.discord.handle.impl.events.MessageReceivedEvent) event);
+        if (event.getMessage().getContent().isEmpty()) DeletePinNotificationConfig.handle(new DiscordMessageReceived(event));
+        DiscordMessageReceived receivedEvent = new DiscordMessageReceived(event);
         if (MessageMonitor.monitor(receivedEvent)) return;
         Boolean parseForCommand = CommandHandler.handle(receivedEvent);
         if (parseForCommand == null){

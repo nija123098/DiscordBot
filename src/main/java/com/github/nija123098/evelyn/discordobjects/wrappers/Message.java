@@ -24,7 +24,7 @@ public class Message {// should not be kept stored, too many are made
         return MAP.computeIfAbsent(iMessage.getStringID(), s -> new Message(iMessage));
     }
     public static Message getMessage(String id){
-        try{return getMessage((IMessage) DiscordClient.getAny(client -> client.getMessageByID(id)));
+        try{return getMessage((IMessage) DiscordClient.getAny(client -> client.getMessageByID(Long.parseLong(id))));
         } catch (NumberFormatException e) {
             return null;
         }

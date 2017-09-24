@@ -12,8 +12,8 @@ import java.util.List;
  * Made by nija123098 on 3/7/2017.
  */
 public class VoiceChannel extends Channel {
-    static VoiceChannel getVoiceChannel(String id){
-        return getVoiceChannel((IVoiceChannel) GetterUtil.getAny(DiscordClient.clients(), f -> f.getVoiceChannelByID(id)));
+    static VoiceChannel getVoiceChannel(String id){// I have no clue how this hasn't thrown any NumberFormatExceptions so far
+        return getVoiceChannel((IVoiceChannel) GetterUtil.getAny(DiscordClient.clients(), f -> f.getVoiceChannelByID(Long.parseLong(id))));
     }
     public static VoiceChannel getVoiceChannel(IVoiceChannel channel){
         return (VoiceChannel) Channel.getChannel(channel);

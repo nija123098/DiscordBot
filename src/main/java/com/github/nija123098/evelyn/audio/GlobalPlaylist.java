@@ -8,7 +8,9 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.exeption.PermissionsException;
 import com.github.nija123098.evelyn.favor.FavorHandler;
+import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.util.Rand;
+import com.github.nija123098.evelyn.util.ThreadProvider;
 import com.google.common.util.concurrent.AtomicDouble;
 
 import java.util.HashMap;
@@ -24,6 +26,7 @@ public class GlobalPlaylist extends Playlist {
     public static final GlobalPlaylist GLOBAL_PLAYLIST = new GlobalPlaylist();
     private GlobalPlaylist() {
         super(Playlist.GLOBAL_PLAYLIST_ID, true);
+        Launcher.registerStartup(GlobalPlaylist::loadTracks);
     }
     @Override
     public String getID() {
@@ -54,7 +57,7 @@ public class GlobalPlaylist extends Playlist {
     private static int size = Integer.MAX_VALUE;
     private static void loadTracks(){
         Map<Track, Float> map = new HashMap<>();
-        List<Track> list = DownloadableTrack.getDownloadedTracks();
+        List<Track> list = ConfigHandler.getTypeInstances(Track.class);
         list.stream().filter(track -> !ConfigHandler.getSetting(BannedTrackConfig.class, track)).forEach(track -> map.put(track, FavorHandler.getFavorAmount(track)));
         AtomicDouble favor = new AtomicDouble();
         map.values().forEach(favor::addAndGet);
@@ -67,5 +70,6 @@ public class GlobalPlaylist extends Playlist {
                 ++size;
             }
         });
+        System.out.println("BOO");
     }
 }

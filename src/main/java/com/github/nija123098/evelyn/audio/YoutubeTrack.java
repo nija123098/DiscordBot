@@ -1,9 +1,6 @@
 package com.github.nija123098.evelyn.audio;
 
-import com.github.nija123098.evelyn.util.CallBuffer;
-import com.github.nija123098.evelyn.util.Log;
-import com.github.nija123098.evelyn.util.StringHelper;
-import com.github.nija123098.evelyn.util.ThreadProvider;
+import com.github.nija123098.evelyn.util.*;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -29,8 +26,10 @@ public class YoutubeTrack extends DownloadableTrack {
     }
     protected YoutubeTrack() {}
     private void loadName() {
-        if (this.name != null){
-            try{this.name = ((JSONObject) new JSONParser().parse(StringHelper.readAll("https://www.youtube.com/oembed?url=http%3A//youtube.com/watch%3Fv%3D" + this.getCode()))).get("title").toString();
+        if (this.name == null){
+            try{
+                String content = StringHelper.readAll("https://www.youtube.com/oembed?url=http%3A//youtube.com/watch%3Fv%3D" + this.getCode());
+                this.name = content.equals("Unauthorized") ? YTUtil.getVideoName(this.getCode()) : ((JSONObject) new JSONParser().parse(content)).get("title").toString();
             } catch (ParseException | IOException | UnirestException e) {
                 Log.log("Exception getting name from Youtube track: " + this.getCode(), e);
             }

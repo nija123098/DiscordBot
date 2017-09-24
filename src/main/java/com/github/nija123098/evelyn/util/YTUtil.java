@@ -12,7 +12,11 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.PlaylistItemListResponse;
 import com.google.api.services.youtube.model.SearchListResponse;
+import com.google.api.services.youtube.model.VideoListResponse;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -47,6 +51,14 @@ public class YTUtil {
             }
         });
     }
+    private static String getTrackName(String code){
+        try {
+            String content = StringHelper.readAll("https://www.youtube.com/oembed?url=http%3A//youtube.com/watch%3Fv%3D" + code);
+            return content.equals("Unauthorized") ? YTUtil.getVideoName(code) : ((JSONObject) new JSONParser().parse(content)).get("title").toString();
+        } catch (IOException | ParseException | UnirestException e) {
+            return null;
+        }
+    }
     public static String extractVideoCode(String s){
         int ind = s.indexOf('&');
         if (ind != -1) {
@@ -77,7 +89,7 @@ public class YTUtil {
     }
 
     static {
-        YOUTUBE = new YouTube.Builder(new NetHttpTransport(), new JacksonFactory(), (HttpRequest request) -> {}).setApplicationName("Emily").build();
+        YOUTUBE = new YouTube.Builder(new NetHttpTransport(), new JacksonFactory(), (HttpRequest request) -> {}).setApplicationName("Evelyn").build();
         YouTube.Search.List list = YTUtil.errorWrap(() -> YTUtil.YOUTUBE.search().list("id,snippet"));
         list.setOrder("relevance");
         list.setVideoCategoryId("10");
@@ -134,6 +146,15 @@ public class YTUtil {
             } catch (IOException e) {throw new DevelopmentException("IO issue getting playlist contents", e);}
         } while (nextToken != null);
         return tracks;
+    }
+
+    public static String getVideoName(String code){
+        try {
+            return YOUTUBE.videos().list("snippet").setKey(getKey()).set("hl", "en").setId(code).execute().getItems().get(0).getSnippet().getTitle();
+        } catch (Exception e) {
+            Log.log("Exception while getting video name from Youtube: " + code, e);
+        }
+        return null;
     }
 
     static <E> E errorWrap(GoogleResponseSupplier<E> supplier) {

@@ -18,7 +18,7 @@ public class KickModActionCommand extends AbstractCommand {
     }
     @Command
     public void command(Guild guild, User user, @Argument(info = "The user to be kicked") User target, @Argument(optional = true, info = "The reason") String reason){
-        guild.kickUser(target);
+        guild.kickUser(target, reason);
         new AbstractModAction(guild, AbstractModAction.ModActionLevel.KICK, target, user, reason);
     }
     @Override

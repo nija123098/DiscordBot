@@ -3,14 +3,14 @@ package com.github.nija123098.evelyn.discordobjects.wrappers.event.events;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.BotEvent;
-import sx.blah.discord.handle.impl.events.NickNameChangeEvent;
+import sx.blah.discord.handle.impl.events.guild.member.NicknameChangedEvent;
 
 /**
  * Made by nija123098 on 3/31/2017.
  */
 public class DiscordNicknameChange implements BotEvent {
-    private NickNameChangeEvent event;
-    public DiscordNicknameChange(NickNameChangeEvent event) {
+    private NicknameChangedEvent event;
+    public DiscordNicknameChange(NicknameChangedEvent event) {
         this.event = event;
     }
     public Guild getGuild(){

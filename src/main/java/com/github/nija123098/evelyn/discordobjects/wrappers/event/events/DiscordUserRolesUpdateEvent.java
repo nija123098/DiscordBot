@@ -3,7 +3,7 @@ package com.github.nija123098.evelyn.discordobjects.wrappers.event.events;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Role;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.BotEvent;
-import sx.blah.discord.handle.impl.events.UserRoleUpdateEvent;
+import sx.blah.discord.handle.impl.events.guild.member.UserRoleUpdateEvent;
 
 import java.util.List;
 

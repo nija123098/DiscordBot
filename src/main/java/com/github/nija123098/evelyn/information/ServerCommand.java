@@ -2,6 +2,7 @@ package com.github.nija123098.evelyn.information;
 
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
+import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.configs.guild.GuildPrefixConfig;
@@ -21,7 +22,7 @@ public class ServerCommand extends AbstractCommand {
         super("server", ModuleLevel.INFO, "guild", null, "Displays information about the server");
     }
     @Command
-    public void command(Guild guild, MessageMaker maker){
+    public void command(@Argument(optional = true) Guild guild, MessageMaker maker){
         maker.withAuthorIcon(guild.getIconURL())
                 .getAuthorName().appendRaw(guild.getName()).getMaker()
                 .withThumb(guild.getIconURL()).withColor(guild.getIconURL());

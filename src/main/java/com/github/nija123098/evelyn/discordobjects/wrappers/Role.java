@@ -24,13 +24,13 @@ public class Role implements Configurable {
     private static final Map<String, Role> MAP = new ConcurrentHashMap<>();
     public static Role getRole(String id){
         IRole role;
-        try{role = DiscordClient.getAny(client -> client.getRoleByID(FormatHelper.filtering(id, Character::isLetterOrDigit)));
+        try{role = DiscordClient.getAny(client -> client.getRoleByID(Long.parseLong(FormatHelper.filtering(id, Character::isLetterOrDigit))));
         }catch(NumberFormatException e){return null;}
         if (role == null) return null;
         return getRole(role);
     }
     public static Role getRole(IRole role){
-        return MAP.computeIfAbsent(role.getID(), s -> new Role(role));
+        return MAP.computeIfAbsent(role.getStringID(), s -> new Role(role));
     }
     public static List<Role> getRoles(List<IRole> iRoles) {
         List<Role> roles = new ArrayList<>(iRoles.size());
@@ -38,16 +38,16 @@ public class Role implements Configurable {
         return roles;
     }
     public static void update(IRole role){// hash is based on id, so no old channel is necessary
-        MAP.computeIfAbsent(role.getID(), s -> new Role(role)).reference.set(role);
+        MAP.computeIfAbsent(role.getStringID(), s -> new Role(role)).reference.set(role);
     }
     private transient final AtomicReference<IRole> reference;
     private String ID;
     public Role() {
-        this.reference = new AtomicReference<>(DiscordClient.getAny(client -> client.getRoleByID(ID)));
+        this.reference = new AtomicReference<>(DiscordClient.getAny(client -> client.getRoleByID(Long.parseLong(ID))));
     }
     private Role(IRole role) {
         this.reference = new AtomicReference<>(role);
-        this.ID = role.getID();
+        this.ID = role.getStringID();
         this.registerExistence();
     }
     IRole role(){
@@ -79,7 +79,7 @@ public class Role implements Configurable {
         if (t.equals(Role.class)) return this;
         if (!this.getGuild().getEveryoneRole().equals(this)){
             if (t.equals(Guild.class)) return this.getGuild();
-            if (t.equals(Channel.class)) return this.getGuild().getGeneralChannel();
+            if (t.equals(Channel.class) && this.getGuild().getGeneralChannel() != null) return this.getGuild().getGeneralChannel();
         }
         throw new ConfigurableConvertException(this.getClass(), t);
     }
@@ -172,7 +172,7 @@ public class Role implements Configurable {
     }
 
     public String getID() {
-        return role().getID();
+        return role().getStringID();
     }
 
     public Shard getShard() {

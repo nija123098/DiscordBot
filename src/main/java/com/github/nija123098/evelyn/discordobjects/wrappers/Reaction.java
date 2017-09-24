@@ -67,7 +67,7 @@ public class Reaction {// should not be saved
     }
 
     public boolean getClientReacted() {
-        return reaction().getClientReacted();
+        return reaction().getUserReacted(DiscordClient.getOurUser().user());
     }
 
     public String getChars(){

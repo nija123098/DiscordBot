@@ -35,7 +35,7 @@
         <dependency>
             <groupId>com.github.austinv11</groupId>
             <artifactId>Discord4j</artifactId>
-            <version>9a5d23f</version>
+            <version>d12a9ac</version>
             <classifier>shaded</classifier>
         </dependency>
         <dependency>
@@ -117,7 +117,7 @@
         <dependency>
             <groupId>com.google.apis</groupId>
             <artifactId>google-api-services-youtube</artifactId>
-            <version>v3-rev178-1.22.0</version>
+            <version>v3-rev184-1.22.0</version>
         </dependency>
         <dependency>
             <groupId>com.sedmelluq</groupId>

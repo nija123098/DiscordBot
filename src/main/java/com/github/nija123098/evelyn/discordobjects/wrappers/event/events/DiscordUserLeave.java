@@ -5,7 +5,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.BotEvent;
 import com.github.nija123098.evelyn.util.Care;
 import sx.blah.discord.handle.audit.ActionType;
-import sx.blah.discord.handle.impl.events.UserLeaveEvent;
+import sx.blah.discord.handle.impl.events.guild.member.UserLeaveEvent;
 
 /**
  * Made by nija123098 on 3/31/2017.

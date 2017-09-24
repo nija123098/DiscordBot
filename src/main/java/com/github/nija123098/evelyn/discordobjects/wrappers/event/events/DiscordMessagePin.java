@@ -5,7 +5,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Message;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.BotEvent;
-import sx.blah.discord.handle.impl.events.MessagePinEvent;
+import sx.blah.discord.handle.impl.events.guild.channel.message.MessagePinEvent;
 
 /**
  * Made by nija123098 on 5/24/2017.

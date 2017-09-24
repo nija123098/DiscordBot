@@ -18,7 +18,7 @@ public class BanModActionCommand extends AbstractCommand {
     }
     @Command
     public void command(Guild guild, User user, @Argument(info = "The user to be kicked") User target, @Argument(optional = true, info = "The reason") String reason){
-        guild.banUser(target);
+        guild.banUser(target, 7, reason);
         new AbstractModAction(guild, AbstractModAction.ModActionLevel.BAN, target, user, reason);
     }
     @Override

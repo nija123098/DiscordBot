@@ -14,10 +14,7 @@ import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IPrivateChannel;
 import sx.blah.discord.handle.obj.IVoiceChannel;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -28,7 +25,7 @@ public class Channel implements Configurable {
     public static Channel getChannel(String id){
         String r = FormatHelper.filtering(id, Character::isLetterOrDigit);
         try {
-            Channel channel = getChannel((IChannel) GetterUtil.getAny(DiscordClient.clients(), f -> f.getChannelByID(r)));
+            Channel channel = getChannel((IChannel) GetterUtil.getAny(DiscordClient.clients(), f -> f.getChannelByID(Long.parseLong(r))));
             return channel == null ? VoiceChannel.getVoiceChannel(r) : channel;
         } catch (NumberFormatException e) {
             return null;
@@ -52,11 +49,11 @@ public class Channel implements Configurable {
     final transient AtomicReference<IChannel> reference;
     private String ID;
     protected Channel() {
-        this.reference = new AtomicReference<>(DiscordClient.getAny(client -> client.getChannelByID(ID)));
+        this.reference = new AtomicReference<>(DiscordClient.getAny(client -> client.getChannelByID(Long.parseLong(ID))));
     }
     Channel(IChannel channel) {
         this.reference = new AtomicReference<>(channel);
-        this.ID = channel.getID();
+        this.ID = channel.getStringID();
         this.registerExistence();
     }
     public IChannel channel(){
@@ -84,7 +81,7 @@ public class Channel implements Configurable {
     @Override
     public <T extends Configurable> Configurable convert(Class<T> t) {
         if (Channel.class.isAssignableFrom(t)) return this;
-        if (!this.isPrivate() && this.getGuild().getGeneralChannel().equals(this)){
+        if (!this.isPrivate() && this.equals(this.getGuild().getGeneralChannel())){
             if (t.equals(Guild.class)) return this.getGuild();
             if (t.equals(Role.class)) return this.getGuild().getEveryoneRole();
         }
@@ -187,11 +184,11 @@ public class Channel implements Configurable {
     }
 
     public Map<User, PermOverride> getUserOverrides() {
-        return PermOverride.getUserMap(channel().getUserOverrides());
+        return PermOverride.getUserMap(channel().getUserOverridesLong());
     }
 
     public Map<Role, PermOverride> getRoleOverrides() {
-        return PermOverride.getRoleMap(channel().getRoleOverrides());
+        return PermOverride.getRoleMap(channel().getRoleOverridesLong());
     }
 
     public EnumSet<DiscordPermission> getModifiedPermissions(User user) {
@@ -227,7 +224,7 @@ public class Channel implements Configurable {
     }
 
     public List<Message> getMessages(){
-        return Message.getMessages(this.channel().getMessages());
+        return Message.getMessages(Arrays.asList(this.channel().getMessageHistory().asArray()));
     }
 
     public List<Message> getMessages(int count){

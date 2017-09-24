@@ -26,7 +26,7 @@ public class Guild implements Configurable {
     private static final Map<String, Guild> MAP = new MemoryManagementService.ManagedMap<>(180000);
     public static Guild getGuild(String id){
         try {
-            IGuild guild = DiscordClient.getAny(client -> client.getGuildByID(id));
+            IGuild guild = DiscordClient.getAny(client -> client.getGuildByID(Long.parseLong(id)));
             if (guild == null) return null;
             return MAP.computeIfAbsent(id, s -> new Guild(guild));
         } catch (NumberFormatException e) {
@@ -54,14 +54,14 @@ public class Guild implements Configurable {
     private transient AtomicReference<IGuild> reference;
     private Guild(IGuild guild) {
         this.reference = new AtomicReference<>(guild);
-        this.ID = guild.getID();
+        this.ID = guild.getStringID();
         this.registerExistence();
     }
     public Guild() {
-        this.reference = new AtomicReference<>(DiscordClient.getAny(client -> client.getGuildByID(ID)));
+        this.reference = new AtomicReference<>(DiscordClient.getAny(client -> client.getGuildByID(Long.parseLong(this.ID))));
     }
     public IGuild guild(){
-        return this.reference == null ? (reference = new AtomicReference<>(DiscordClient.getAny(client -> client.getGuildByID(this.ID)))).get() : this.reference.get();
+        return this.reference == null ? (reference = new AtomicReference<>(DiscordClient.getAny(client -> client.getGuildByID(Long.parseLong(this.ID))))).get() : this.reference.get();
     }
     @Override
     public ConfigLevel getConfigLevel() {
@@ -84,7 +84,7 @@ public class Guild implements Configurable {
     @Override
     public <T extends Configurable> Configurable convert(Class<T> t) {
         if (t.equals(Guild.class)) return this;
-        if (t.equals(Channel.class)) return this.getGeneralChannel();
+        if (t.equals(Channel.class) && this.getGeneralChannel() != null) return this.getGeneralChannel();
         if (t.equals(Role.class)) return this.getEveryoneRole();
         throw new ConfigurableConvertException(this.getClass(), t);
     }
@@ -105,7 +105,7 @@ public class Guild implements Configurable {
     }
 
     public String getOwnerID() {
-        return guild().getOwnerID();
+        return String.valueOf(guild().getOwnerLongID());
     }
 
     public User getOwner() {
@@ -215,34 +215,19 @@ public class Guild implements Configurable {
         return ErrorWrapper.wrap((ErrorWrapper.Request<List<User>>) () -> User.getUsers(guild().getBannedUsers()));
     }
 
-    public void banUser(User user) {
+    public void banUser(User user, int delete, String reason) {
         if (BotConfig.GHOST_MODE) return;
-        ErrorWrapper.wrap(() -> guild().banUser(user.user()));
-    }
-
-    public void banUser(User user, int i) {
-        if (BotConfig.GHOST_MODE) return;
-        ErrorWrapper.wrap(() -> guild().banUser(user.user(), i));
-    }
-
-    public void banUser(String s) {
-        if (BotConfig.GHOST_MODE) return;
-        ErrorWrapper.wrap(() -> guild().banUser(s));
-    }
-
-    public void banUser(String s, int i) {
-        if (BotConfig.GHOST_MODE) return;
-        ErrorWrapper.wrap(() -> guild().banUser(s, i));
+        ErrorWrapper.wrap(() -> guild().banUser(user.user(), reason, delete));
     }
 
     public void pardonUser(String s) {
         if (BotConfig.GHOST_MODE) return;
-        ErrorWrapper.wrap(() -> guild().pardonUser(s));
+        ErrorWrapper.wrap(() -> guild().pardonUser(Long.parseLong(s)));
     }
 
-    public void kickUser(User user) {
+    public void kickUser(User user, String reason) {
         if (BotConfig.GHOST_MODE) return;
-        ErrorWrapper.wrap(() -> guild().kickUser(user.user()));
+        ErrorWrapper.wrap(() -> guild().kickUser(user.user(), reason));
     }
 
     public void editUserRoles(User user, Role...roles) {
@@ -276,7 +261,7 @@ public class Guild implements Configurable {
 
     public void changeRegion(Region region) {
         if (BotConfig.GHOST_MODE) return;
-        ErrorWrapper.wrap(() -> Region.getRegion(guild().getRegion()));
+        ErrorWrapper.wrap(() -> guild().changeRegion(region.region()));
     }
 
     public void changeAFKChannel(VoiceChannel voiceChannel) {
@@ -313,7 +298,7 @@ public class Guild implements Configurable {
     }
 
     public Channel getGeneralChannel() {
-        return Channel.getChannel(guild().getGeneralChannel());
+        return Channel.getChannel(this.getID());
     }
 
     public void reorderRoles(Role...roles) {
