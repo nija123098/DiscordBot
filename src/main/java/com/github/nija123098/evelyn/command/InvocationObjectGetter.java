@@ -19,6 +19,9 @@ import com.github.nija123098.evelyn.exeption.ArgumentException;
 import com.github.nija123098.evelyn.exeption.ContextException;
 import com.github.nija123098.evelyn.exeption.DevelopmentException;
 import com.github.nija123098.evelyn.discordobjects.wrappers.*;
+import com.github.nija123098.evelyn.fun.gamestructure.AbstractGame;
+import com.github.nija123098.evelyn.fun.gamestructure.GameHandler;
+import com.github.nija123098.evelyn.fun.gamestructure.Team;
 import com.github.nija123098.evelyn.util.*;
 import javafx.util.Pair;
 
@@ -70,6 +73,7 @@ public class InvocationObjectGetter {
             if (manager == null || manager.currentTrack() == null) throw new ContextException("No track is currently playing");
             return manager.currentTrack();
         }, ContextRequirement.GUILD, ContextRequirement.USER);
+        addContext(AbstractGame.class, ContextType.DEFAULT, (invoker, shard, channel, guild, message, reaction, args) -> GameHandler.getGame(guild, message.getAuthor()), ContextRequirement.GUILD, ContextRequirement.USER);
         addContext(ContextPack.class, ContextType.DEFAULT, ContextPack::new);
         addContext(Float.class, ContextType.NONE, (invoker, shard, channel, guild, message, reaction, args) -> null);
         addContext(Configurable.class, ContextType.DEFAULT, (user, shard, channel, guild, message, reaction, args) -> null);
@@ -327,6 +331,18 @@ public class InvocationObjectGetter {
             if (tracks.isEmpty()) throw new ArgumentException("No tracks found");
             return new Pair<>(tracks.get(0), args.length());// dangerous
         });
+        addConverter(Team.class, (invoker, shard, channel, guild, message, reaction, args) -> {
+            Pair<User, Integer> userPair = null;
+            try{userPair = convert(User.class, invoker, shard, channel, guild, message, reaction, args);
+            } catch (ArgumentException ignored){}
+            if (userPair != null) return new Pair<>(new Team(userPair.getKey()), userPair.getValue());
+            Pair<Role, Integer> rolePair = null;
+            try{rolePair = convert(Role.class, invoker, shard, channel, guild, message, reaction, args);
+            } catch (ArgumentException ignored){}
+            if (rolePair != null) return new Pair<>(new Team(.5F, rolePair.getKey()), userPair.getValue());
+            throw new ArgumentException("Please specify a team by role or user");
+        });
+
     }
 
     private static <T> void addConverter(Class<T> clazz, ArgumentConverter<T> argumentConverter, ContextRequirement...requirements){

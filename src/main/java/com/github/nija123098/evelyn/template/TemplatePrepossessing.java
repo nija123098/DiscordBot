@@ -14,6 +14,7 @@ public class TemplatePrepossessing {
         add("guild", "context{guild}");
         add("total-users", "function{context{guild}|getTotalMemberCount}");
         add("shard", "function{context{shard}|getID}");
+        add("user-number", "function{context{guilduser}|getJoinPosition}");
     }// todo programmatically determine some of these
     private static void add(String name, String function){
         REPLACEMENT_MAP.put("%" + name + "%", function);

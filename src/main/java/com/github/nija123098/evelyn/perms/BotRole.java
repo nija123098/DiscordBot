@@ -42,7 +42,8 @@ public enum BotRole {
     static {
         WorkAroundReferences.set();
     }
-    private boolean isTrueRank, isGlobalFlag, isGuildFlag;// , guildImportant = this.name().startsWith("GUILD");
+    private final Map<Object, Object> PERMISSIONS_CACHE = new HashMap<>();
+    private boolean isTrueRank, isGlobalFlag, isGuildFlag, guildImportant = this.name().startsWith("GUILD");
     private BiPredicate<User, Guild> detect, change;
     BotRole(boolean isTrueRank, BiPredicate<User, Guild> detect, BiPredicate<User, Guild> change) {
         this.isTrueRank = isTrueRank;
@@ -65,14 +66,13 @@ public enum BotRole {
     public boolean hasRole(User user, Guild guild){
         return this.detect.test(user, guild);
     }
-    // private final Map<Object, Object> PERMISSIONS_CACHE = new HashMap<>();
     public boolean hasRequiredRole(User user, Guild guild){
         if (!this.isTrueRank) return this.detect.test(user, guild);
-        /* return (boolean) (this.guildImportant ? ((Map<Object, Object>) PERMISSIONS_CACHE.computeIfAbsent(guild, g -> new ConcurrentHashMap<>())) : PERMISSIONS_CACHE).computeIfAbsent(user, u -> {
+        return (boolean) (this.guildImportant ? ((Map<Object, Object>) PERMISSIONS_CACHE.computeIfAbsent(guild, g -> new ConcurrentHashMap<>())) : PERMISSIONS_CACHE).computeIfAbsent(user, u -> {
             ScheduleService.schedule(120_000, () -> (this.guildImportant ? (Map<Object, Object>) PERMISSIONS_CACHE.get(guild) : PERMISSIONS_CACHE).remove(user));
-        }); todo reimplement caching*/
-        for (int i = this.ordinal(); i < values().length; i++) if (values()[i].detect.test(user, guild)) return true;
-        return false;
+            for (int i = this.ordinal(); i < values().length; i++) if (values()[i].detect.test(user, guild)) return true;
+            return false;
+        });
     }
     public void checkRequiredRole(User user, Guild guild){
         if (!this.hasRequiredRole(user, guild)) throw new PermissionsException(this);
@@ -90,7 +90,7 @@ public enum BotRole {
         if (!role.isFlagRank()) throw new ArgumentException("You can not set non-flag roles though a bot");
         if (!role.change.test(setter, guild)) throw new PermissionsException("You can not change that role");
         setRole(role, grant, target, guild);
-    }// this might just get moved to a command
+    }
     public static void setRole(BotRole role, boolean grant, User target, Guild guild){
         Class<? extends AbstractConfig<Set<BotRole>, ? extends Configurable>> config = role.isGlobalFlag ? GlobalBotRoleConfig.class : GuildBotRoleConfig.class;
         Configurable configurable = role.isGlobalFlag ? target : GuildUser.getGuildUser(guild, target);
@@ -98,7 +98,7 @@ public enum BotRole {
             if (grant) roles.add(role);
             else roles.remove(role);
         });
-        // Stream.of(values()).forEach(botRole -> botRole.PERMISSIONS_CACHE.clear());
+        Stream.of(values()).forEach(botRole -> botRole.PERMISSIONS_CACHE.clear());
         EventDistributor.distribute(new BotRoleChangeEvent(grant, role, target, guild));
     }
 }

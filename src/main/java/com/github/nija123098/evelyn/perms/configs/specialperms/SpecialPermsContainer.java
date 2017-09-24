@@ -18,11 +18,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SpecialPermsContainer {
     private Guild guild;
     private Channel channel;
-    private final Map<Channel, Map<Role, Set<String>>> allowCommandMap = new ConcurrentHashMap<>();
-    private final Map<Channel, Map<Role, Set<String>>> denyCommandMap = new ConcurrentHashMap<>();
-    private final Map<Channel, Map<Role, Set<String>>> exemptCommandMap = new ConcurrentHashMap<>();
-    private final Map<Channel, Map<Role, Set<ModuleLevel>>> denyModuleMap = new ConcurrentHashMap<>();
-    private final Map<Channel, Map<Role, Set<ModuleLevel>>> allowModuleMap = new ConcurrentHashMap<>();
+    private final Map<Channel, Map<Role, Set<String>>> allowCommandMap = new HashMap<>();
+    private final Map<Channel, Map<Role, Set<String>>> denyCommandMap = new HashMap<>();
+    private final Map<Channel, Map<Role, Set<String>>> exemptCommandMap = new HashMap<>();
+    private final Map<Channel, Map<Role, Set<ModuleLevel>>> denyModuleMap = new HashMap<>();
+    private final Map<Channel, Map<Role, Set<ModuleLevel>>> allowModuleMap = new HashMap<>();
     public SpecialPermsContainer(Guild guild){
         this.guild = guild;
     }

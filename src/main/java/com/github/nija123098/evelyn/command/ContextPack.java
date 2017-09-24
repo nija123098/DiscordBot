@@ -1,6 +1,9 @@
 package com.github.nija123098.evelyn.command;
 
+import com.github.nija123098.evelyn.config.GuildUser;
 import com.github.nija123098.evelyn.discordobjects.wrappers.*;
+import com.github.nija123098.evelyn.exeption.ArgumentException;
+import com.github.nija123098.evelyn.exeption.ContextException;
 import com.github.nija123098.evelyn.template.commands.functions.ContextCommand;
 
 /**
@@ -46,5 +49,9 @@ public class ContextPack {
     }
     public String getArgs(){
         return this.args;
+    }
+    public GuildUser getGuildUser(){
+        if (this.guild == null) throw new ContextException("A guild is not present in this context");
+        return GuildUser.getGuildUser(this.guild, this.user);
     }
 }

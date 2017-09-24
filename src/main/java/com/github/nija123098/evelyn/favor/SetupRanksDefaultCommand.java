@@ -16,7 +16,7 @@ public class SetupRanksDefaultCommand extends AbstractCommand {
     }
     @Command
     public void command(MessageMaker maker, Guild guild){
-        ConfigHandler.getConfigs().stream().filter(abstractConfig -> abstractConfig.getName().equals("favor_factor")).forEach(abstractConfig -> ((AbstractConfig<Float, Guild>) abstractConfig).setValue(guild, 0F));
+        ConfigHandler.getConfigs().stream().filter(abstractConfig -> abstractConfig.getName().endsWith("favor_factor")).forEach(abstractConfig -> ((AbstractConfig<Float, Guild>) abstractConfig).setValue(guild, 0F));
         ConfigHandler.setSetting(TimeFavorFactorConfig.class, guild, .01F);
         SetupRanksCommand.command(maker, guild, true, new Color(0x8500ff), Color.GREEN, "x^2.5");
     }

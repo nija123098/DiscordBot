@@ -70,6 +70,5 @@ public class GlobalPlaylist extends Playlist {
                 ++size;
             }
         });
-        System.out.println("BOO");
     }
 }
