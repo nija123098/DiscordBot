@@ -43,7 +43,7 @@ public class Reaction {// should not be saved
 
     @Override
     public int hashCode() {
-        return this.reaction.getMessage().hashCode();
+        return reaction().getMessage().hashCode();
     }
 
     public Message getMessage(){
@@ -51,7 +51,7 @@ public class Reaction {// should not be saved
     }
 
     public int getCount() {
-        return reaction.getCount();
+        return reaction().getCount();
     }
 
     public List<User> getUsers() {
@@ -75,6 +75,7 @@ public class Reaction {// should not be saved
     }
 
     public String getName() {
-        return EmoticonHelper.getName(reaction().getEmoji().getName());
+        String name = EmoticonHelper.getName(reaction().getEmoji().getName());
+        return name == null ? reaction().getEmoji().getName() : name;
     }
 }

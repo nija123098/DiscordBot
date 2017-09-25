@@ -212,7 +212,7 @@ public class MessageMaker {
         this.textList.add(part);
         return part;
     }
-    public MessageMaker guaranteeNewPage(){
+    public MessageMaker guaranteeNewListPage(){
         this.textList.add(null);
         return this;
     }

@@ -5,6 +5,7 @@ import com.github.nija123098.evelyn.audio.Track;
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Command;
+import com.github.nija123098.evelyn.command.annotations.Context;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.configs.guild.GuildActivePlaylistConfig;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
@@ -25,10 +26,9 @@ public class CurrentCommand extends AbstractCommand {
         super("current", ModuleLevel.MUSIC, "playing, nowplaying, np", null, "Retrieves information about the song currently playing");
     }
     @Command
-    public static void command(Guild guild, MessageMaker maker){
+    public static void command(Guild guild, MessageMaker maker, @Context(softFail = true) Track track){
         GuildAudioManager manager = GuildAudioManager.getManager(guild);
         if (manager == null) throw new ContextException("I am not playing any music here");
-        Track track = manager.currentTrack();
         if (track == null) {
             maker.append("Nothing is currently playing");
             return;

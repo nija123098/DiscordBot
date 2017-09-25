@@ -203,7 +203,13 @@ public class GuildAudioManager extends AudioEventAdapter{
         if (position != 0) this.lavaPlayer.getPlayingTrack().setPosition(position);
         this.lavaPlayer.setPaused(false);
         if (this.destroyed) throw new RuntimeException("Hey lava player, I destroyed you, NOW GO AWAY");
-        ThreadProvider.sub(() -> CurrentCommand.command(this.getGuild(), new MessageMaker(ConfigHandler.getSetting(MusicChannelConfig.class, this.getGuild()))));
+        ThreadProvider.sub(() -> {
+            Track current = this.currentTrack();
+            if (current instanceof SpeechTrack) return;
+            MessageMaker maker = new MessageMaker(ConfigHandler.getSetting(MusicChannelConfig.class, this.getGuild()));
+            if (!this.leaving) CurrentCommand.command(this.getGuild(), maker, current);
+            maker.send();
+        });
     }
     public void seek(long time) {
         this.lavaPlayer.getPlayingTrack().setPosition(time);

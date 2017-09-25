@@ -6,6 +6,7 @@ import com.github.nija123098.evelyn.command.ContextPack;
 import com.github.nija123098.evelyn.command.ContextRequirement;
 import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.exeption.ArgumentException;
+import com.github.nija123098.evelyn.util.FormatHelper;
 import com.github.nija123098.evelyn.util.StringIterator;
 import com.github.nija123098.evelyn.discordobjects.wrappers.*;
 
@@ -189,6 +190,7 @@ public class Template {
                         } else if (TemplateHandler.LEFT_BRACE == c) ++left;
                         comArgs += c;
                     }
+                    command = FormatHelper.filtering(command, character -> Character.isLetterOrDigit(character) || character == '_');
                     args.add(new CalculatedArg(CommandHandler.getCommand(command.replace("_", " ")), comArgs, commandDefinition));
                     return;
                 case TemplateHandler.ARGUMENT_CHARACTER:

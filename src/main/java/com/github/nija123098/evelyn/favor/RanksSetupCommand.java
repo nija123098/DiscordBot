@@ -32,10 +32,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class SetupRanksCommand extends AbstractCommand {
+public class RanksSetupCommand extends AbstractCommand {
     static final Map<Guild, Runnable> TASK_MAP = new HashMap<>();
-    public SetupRanksCommand() {
-        super("setupranks", ModuleLevel.ADMINISTRATIVE, "setup ranks", null, "Sets up the ranks for autoranking");
+    public RanksSetupCommand() {
+        super(RanksCommand.class, "setup", "setupranks, setup ranks", null, null, "Sets up the ranks for autoranking");
     }
     @Command
     public static void command(MessageMaker maker, Guild guild, @Argument(optional = true, info = "raise above default roles", replacement = ContextType.NONE) Boolean raise, @Argument(optional = true, info = "the lowest color", replacement = ContextType.NONE) Color low, @Argument(optional = true, info = "the highest color", replacement = ContextType.NONE) Color high, @Argument(info = "rank equation x == rank, y == favor required") String equation){

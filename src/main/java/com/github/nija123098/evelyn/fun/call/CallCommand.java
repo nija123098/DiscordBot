@@ -68,7 +68,7 @@ public class CallCommand extends AbstractCommand {
         if (integer == null) throw new ArgumentException("You are not currently in a call");
         Set<Channel> set = CALLS.get(integer);
         set.remove(channel);
-        if (set.size() == 1) {
+        if (set.size() == 2) {
             CALLS.remove(integer);
             set.forEach(chan -> new MessageMaker(chan).append("Ending the call.").send());
         }

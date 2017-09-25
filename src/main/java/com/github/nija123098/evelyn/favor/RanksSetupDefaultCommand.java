@@ -10,14 +10,14 @@ import com.github.nija123098.evelyn.favor.configs.balencing.TimeFavorFactorConfi
 
 import java.awt.Color;
 
-public class SetupRanksDefaultCommand extends AbstractCommand {
-    public SetupRanksDefaultCommand() {
-        super(SetupRanksCommand.class, "default", null, null, null, "Sets up ranks only by time");
+public class RanksSetupDefaultCommand extends AbstractCommand {
+    public RanksSetupDefaultCommand() {
+        super(RanksSetupCommand.class, "default", null, null, null, "Sets up ranks only by time");
     }
     @Command
     public void command(MessageMaker maker, Guild guild){
         ConfigHandler.getConfigs().stream().filter(abstractConfig -> abstractConfig.getName().endsWith("favor_factor")).forEach(abstractConfig -> ((AbstractConfig<Float, Guild>) abstractConfig).setValue(guild, 0F));
         ConfigHandler.setSetting(TimeFavorFactorConfig.class, guild, .01F);
-        SetupRanksCommand.command(maker, guild, true, new Color(0x8500ff), Color.GREEN, "x^2.5");
+        RanksSetupCommand.command(maker, guild, true, new Color(0x8500ff), Color.GREEN, "x^2.5");
     }
 }

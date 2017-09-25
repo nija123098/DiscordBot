@@ -59,7 +59,7 @@ public class GlobalPlaylist extends Playlist {
         list.stream().filter(track -> !ConfigHandler.getSetting(BannedTrackConfig.class, track)).forEach(track -> map.put(track, Math.log(Math.min(1, FavorHandler.getFavorAmount(track)))));
         AtomicDouble favor = new AtomicDouble();
         map.values().forEach(favor::addAndGet);
-        favor.set(favor.get() / map.size() * 2);
+        favor.set(favor.get() / map.size() * 4);
         size = 0;
         TRACKS.clear();
         map.forEach((track, favorAmount) -> {
