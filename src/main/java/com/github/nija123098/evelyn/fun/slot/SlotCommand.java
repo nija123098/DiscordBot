@@ -44,6 +44,7 @@ public class SlotCommand extends AbstractCommand {
     }
     @Command
     public void command(@Context(softFail = true) Guild guild, User user, MessageMaker maker, @Argument(optional = true, replacement = ContextType.NONE, info = "The amount bet") Integer bet, @Context(softFail = true) Boolean first, Message message) {
+        if (first == null) new MessageMaker(maker).append("Use reactions to use slots.  Use " + EmoticonHelper.getChars("repeat_one", true) + " to re-bet and the arrows to change the balance.\n\n").withDeleteDelay(30_000L).send();
         if (ACTIVE_EDITING.contains(user)) return;
         ACTIVE_EDITING.add(user);
         if (bet == null) bet = 0;

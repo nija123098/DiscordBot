@@ -21,7 +21,8 @@ public class PlaylistCommand extends AbstractCommand {
         super("playlist", ModuleLevel.MUSIC, "pl", null, "Gets information on the current playlist and sets the active playlist");
     }
     @Command
-    public void play(@Argument(optional = true) Playlist playlist, Guild guild, MessageMaker maker){
+    public void play(@Argument(optional = true) Playlist playlist, String s, Guild guild, MessageMaker maker){
+        if (s.isEmpty()) maker.getExternal().append("Use `@Evelyn pl make` to make a playlist.");
         if (playlist != null) ConfigHandler.setSetting(GuildActivePlaylistConfig.class, guild, playlist);
         else playlist = ConfigHandler.getSetting(GuildActivePlaylistConfig.class, guild);
         Configurable owner = playlist.getOwner();

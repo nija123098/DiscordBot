@@ -21,7 +21,12 @@ import java.util.concurrent.ConcurrentHashMap;
  * The configurable for users within a guild
  */
 public class GuildUser implements Configurable {
+    /**
+     * The map containing guild user configurables
+     */
+    private static final Map<String, GuildUser> GUILD_USERS = new HashMap<>();
     private static final Map<Guild, Integer> NEXT_USER_INTEGER = new ConcurrentHashMap<>();
+
     static {
         EventDistributor.register(GuildUser.class);
         Launcher.registerStartup(() -> DiscordClient.getGuilds().forEach(GuildUser::orderGuildUsers));
@@ -37,11 +42,6 @@ public class GuildUser implements Configurable {
     public static void handle(DiscordGuildJoin join){
         orderGuildUsers(join.getGuild());
     }
-
-    /**
-     * The map containing guild user configurables
-     */
-    private static final Map<String, GuildUser> GUILD_USERS = new HashMap<>();
 
     /**
      * The getter for a object that represents a guild user

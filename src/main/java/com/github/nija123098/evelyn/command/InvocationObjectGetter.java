@@ -339,10 +339,9 @@ public class InvocationObjectGetter {
             Pair<Role, Integer> rolePair = null;
             try{rolePair = convert(Role.class, invoker, shard, channel, guild, message, reaction, args);
             } catch (ArgumentException ignored){}
-            if (rolePair != null) return new Pair<>(new Team(.5F, rolePair.getKey()), userPair.getValue());
+            if (rolePair != null) return new Pair<>(new Team(.5F, rolePair.getKey()), rolePair.getValue());
             throw new ArgumentException("Please specify a team by role or user");
         });
-
     }
 
     private static <T> void addConverter(Class<T> clazz, ArgumentConverter<T> argumentConverter, ContextRequirement...requirements){

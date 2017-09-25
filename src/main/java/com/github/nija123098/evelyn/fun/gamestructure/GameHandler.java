@@ -2,6 +2,7 @@ package com.github.nija123098.evelyn.fun.gamestructure;
 
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
+import com.github.nija123098.evelyn.exeption.ContextException;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -14,7 +15,9 @@ public class GameHandler {
         game.getTeams().forEach(team -> team.getUsers().forEach(user -> GAME_MAP.computeIfAbsent(guild, c -> new ConcurrentHashMap<>()).put(user, game)));
     }
     public static AbstractGame getGame(Guild guild, User user){
-        return GAME_MAP.getOrDefault(guild, Collections.emptyMap()).getOrDefault(user, null);
+        AbstractGame game = GAME_MAP.getOrDefault(guild, Collections.emptyMap()).get(user);
+        if (game == null) throw new ContextException("You are not currently playing a game, to start do @Evelyn game start <gamename>");
+        return game;
     }
     static void deregister(AbstractGame game) {
         GAME_MAP.forEach((guild, map) -> map.forEach((user, abstractGame) -> {

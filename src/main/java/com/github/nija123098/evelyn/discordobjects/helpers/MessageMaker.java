@@ -82,6 +82,9 @@ public class MessageMaker {
     public MessageMaker(User user) {
         this(user, user.getOrCreatePMChannel(), null);
     }
+    public MessageMaker(MessageMaker maker) {
+        this(maker.user, maker.channel, Message.getMessage(maker.origin));
+    }
     // setup methods
     public MessageMaker clearMessage(){
         this.message = null;
@@ -449,12 +452,12 @@ public class MessageMaker {
             }
             if (this.embed != null){
                 if (this.fieldIndices.length > 1){
-                    this.withReactionBehavior("arrow_left", (add, reaction, user) -> {
+                    this.withReactionBehavior("point_left", (add, reaction, user) -> {
                         if (currentPage.get() == 0) return;
                         this.embed.withFooterText(generateNote(currentPage.decrementAndGet()));
                         this.send(currentPage.get());
                     });
-                    this.withReactionBehavior("arrow_right", (add, reaction, user) -> {
+                    this.withReactionBehavior("point_right", (add, reaction, user) -> {
                         if (currentPage.get() == fieldIndices.length - 1) return;
                         this.embed.withFooterText(generateNote(currentPage.incrementAndGet()));
                         this.send(currentPage.get());

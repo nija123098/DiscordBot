@@ -111,8 +111,8 @@ public class TicTacToe extends AbstractGame {
         if (!fail) return side ? this.getTeams().get(0) : this.getTeams().get(1);
         side = this.grid[0][this.size - 1];
         fail = false;
-        for (int i = 1; i < this.size; i++) {
-            if (this.grid[i][this.size - i] == null || this.grid[i][this.size - i] != side){
+        for (int i = 1; i < this.size; ++i) {
+            if (this.grid[i][this.size - i - 1] == null || this.grid[i][this.size - i - 1] != side){
                 fail = true;
                 break;
             }

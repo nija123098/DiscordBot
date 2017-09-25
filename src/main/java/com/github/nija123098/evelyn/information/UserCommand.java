@@ -27,13 +27,17 @@ public class UserCommand extends AbstractCommand {
     public void command(@Argument(optional = true) User user, @Context(softFail = true) Guild guild, MessageMaker maker){
         maker.appendAlternate(false, "Querying for **", (guild == null ? user.getName() : user.getDisplayName(guild)) + "**\n").withImage(user.getAvatarURL()).withColor(user.getAvatarURL());
         addAtrib(maker, "bust_in_silhouette", "User", user.getNameAndDiscrim());
-        addAtrib(maker, "id", "Discord id", user.getID());
-        addAtrib(maker, "keyboard", "Commands used", ConfigHandler.getSetting(CommandsUsedCountConfig.class, user) + "");
-        addAtrib(maker, "cookie", "Cookies", ConfigHandler.getSetting(CurrentMoneyConfig.class, user) + "");
-        if (guild != null) addAtrib(maker, "date", "Joined server", Time.getAbbreviated(System.currentTimeMillis() - GuildUserJoinTimeConfig.get(GuildUser.getGuildUser(guild, user))) + " ago");
+        addAtrib(maker, "keyboard", "Commands used", ConfigHandler.getSetting(CommandsUsedCountConfig.class, user));
+        addAtrib(maker, "cookie", "Cookies", ConfigHandler.getSetting(CurrentMoneyConfig.class, user));
+        if (guild != null) {
+            GuildUser guildUser = GuildUser.getGuildUser(guild, user);
+            addAtrib(maker, "hash", "User Number", guildUser.getJoinPosition() + 1);
+            addAtrib(maker, "date", "Joined server", Time.getAbbreviated(System.currentTimeMillis() - GuildUserJoinTimeConfig.get(guildUser)) + " ago");
+        }
         addAtrib(maker, "calendar_spiral", "Joined Discord", Time.getAbbreviated(System.currentTimeMillis() - user.getJoinDate()) + " ago");
+        maker.getNote().append("ID: " + user.getID());
     }
-    private static void addAtrib(MessageMaker maker, String icon, String info, String content){
-        maker.appendAlternate(true, EmoticonHelper.getChars(icon, false), "  " + info, ": " + content + "\n");
+    private static void addAtrib(MessageMaker maker, String icon, String info, Object o){
+        maker.appendAlternate(true, EmoticonHelper.getChars(icon, false), "  " + info, ": " + String.valueOf(o) + "\n");
     }
 }

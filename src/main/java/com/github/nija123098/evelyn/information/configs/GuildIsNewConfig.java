@@ -9,24 +9,31 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordGuildJoin;
+import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordMessageSend;
 import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.moderation.logging.BotChannelConfig;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class GuildIsNewConfig extends AbstractConfig<Boolean, Guild> {
+    private static final Set<Guild> GUILDS = new HashSet<>();
     public GuildIsNewConfig() {
         super("guild_is_new", ConfigCategory.STAT_TRACKING, true, "If the guild had been served previously");
-        Launcher.registerAsyncStartup(() -> DiscordClient.getGuilds().forEach(guild -> {
-            if (!this.getValue(guild)) return;
-            this.setValue(guild, false);
-            welcome(guild);
-        }));
+    }
+    @EventListener
+    public void handle(DiscordMessageSend send){
+        if (send.getChannel().isPrivate()) return;
+        welcome(send.getGuild());
     }
     @EventListener
     public void handle(DiscordGuildJoin join){
-        this.setValue(join.getGuild(), false);
         welcome(join.getGuild());
     }
-    private static void welcome(Guild guild){
+    private void welcome(Guild guild){
+        if (!GUILDS.add(guild)) return;
+        if (!this.getValue(guild)) return;
+        this.setValue(guild, false);
         Channel channel = ConfigHandler.getSetting(BotChannelConfig.class, guild);
         MessageMaker maker = new MessageMaker(channel == null ? guild.getGeneralChannel() != null ? guild.getGeneralChannel() : guild.getChannels().get(0) : channel);
         maker.append("Thank you for adding me to this server!\nI always respond to being mentioned!  To add a prefix do @Evelyn prefix myPrefix.\nI also come with a `@Evelyn guide`\nFeel free to complain to my developers before you send me away, they are so desperate it's a joke.").send();

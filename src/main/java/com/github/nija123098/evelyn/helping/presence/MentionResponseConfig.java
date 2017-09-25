@@ -27,7 +27,7 @@ public class MentionResponseConfig extends AbstractConfig<Boolean, Guild> {
         if (users.isEmpty()) return;
         if (users.size() != 1) users.removeIf(User::isBot);
         Set<String> set = users.stream().map(user -> user.getDisplayName(event.getGuild()) + " is " + (user.getPresence().getStatus() == Presence.Status.ONLINE ? "AFK" : user.getPresence().getStatus())).collect(Collectors.toSet());
-        if (set.isEmpty()) return;
-        new MessageMaker(event.getMessage()).appendRaw(Joiner.on(", ").join(set)).withDeleteDelay(Math.max(5_000, set.size() * 1_500L)).send();
+        if (set.isEmpty() || set.size() > 5) return;
+        new MessageMaker(event.getMessage()).appendRaw(Joiner.on(", ").join(set)).withDeleteDelay(5_000L).send();
     }
 }

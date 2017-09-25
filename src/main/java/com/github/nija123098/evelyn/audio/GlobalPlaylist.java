@@ -10,14 +10,12 @@ import com.github.nija123098.evelyn.exeption.PermissionsException;
 import com.github.nija123098.evelyn.favor.FavorHandler;
 import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.util.Rand;
-import com.github.nija123098.evelyn.util.ThreadProvider;
 import com.google.common.util.concurrent.AtomicDouble;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Made by nija123098 on 7/4/2017.
@@ -46,7 +44,7 @@ public class GlobalPlaylist extends Playlist {
     }
     @Override
     public Track getNext(Guild guild) {
-        if (TRACKS.size() < 50) loadTracks();
+        if (TRACKS.size() < 5) loadTracks();
         return TRACKS.isEmpty() ? null : Rand.getRand(TRACKS, true);
     }
     @Override
@@ -56,16 +54,16 @@ public class GlobalPlaylist extends Playlist {
     private static final List<Track> TRACKS = new CopyOnWriteArrayList<>();
     private static int size = Integer.MAX_VALUE;
     private static void loadTracks(){
-        Map<Track, Float> map = new HashMap<>();
+        Map<Track, Double> map = new HashMap<>();
         List<Track> list = ConfigHandler.getTypeInstances(Track.class);
-        list.stream().filter(track -> !ConfigHandler.getSetting(BannedTrackConfig.class, track)).forEach(track -> map.put(track, FavorHandler.getFavorAmount(track)));
+        list.stream().filter(track -> !ConfigHandler.getSetting(BannedTrackConfig.class, track)).forEach(track -> map.put(track, Math.log(Math.min(1, FavorHandler.getFavorAmount(track)))));
         AtomicDouble favor = new AtomicDouble();
         map.values().forEach(favor::addAndGet);
         favor.set(favor.get() / map.size() * 2);
         size = 0;
         TRACKS.clear();
-        map.forEach((track, aFloat) -> {
-            if (aFloat >= favor.get()) {
+        map.forEach((track, favorAmount) -> {
+            if (favorAmount >= favor.get()) {
                 TRACKS.add(track);
                 ++size;
             }

@@ -28,7 +28,7 @@ public class Launcher {
     private static final Set<Runnable> STARTUPS = new HashSet<>();
     private static final Set<Runnable> ASYNC_STARTUPS = new HashSet<>();
     private static final Set<Runnable> SHUTDOWNS = new HashSet<>();
-    private static final AtomicBoolean IS_READY = new AtomicBoolean();
+    private static final AtomicBoolean IS_READY = new AtomicBoolean(), IS_STARTING_UP = new AtomicBoolean();
     private static final AtomicReference<ScheduleService.ScheduledTask> SHUTDOWN_TASK = new AtomicReference<>();
     static {
         try {
@@ -39,10 +39,12 @@ public class Launcher {
         }
     }
     public static void registerStartup(Runnable runnable){
-        STARTUPS.add(runnable);
+        if (IS_STARTING_UP.get()) runnable.run();
+        else STARTUPS.add(runnable);
     }
     public static void registerAsyncStartup(Runnable runnable){
-        ASYNC_STARTUPS.add(runnable);
+        if (IS_STARTING_UP.get()) runnable.run();
+        else ASYNC_STARTUPS.add(runnable);
     }
     public static void registerShutdown(Runnable runnable){
         SHUTDOWNS.add(runnable);
@@ -86,6 +88,7 @@ public class Launcher {
         ServiceHandler.initialize();// this order
         CommandHandler.initialize();// could break
         DiscordAdapter.initialize();// EVERYTHING
+        IS_STARTING_UP.set(true);
         STARTUPS.forEach(Runnable::run);
         ASYNC_STARTUPS.forEach(ThreadProvider::sub);
         IS_READY.set(true);

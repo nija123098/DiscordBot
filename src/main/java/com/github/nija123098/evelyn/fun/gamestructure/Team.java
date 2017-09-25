@@ -3,6 +3,7 @@ package com.github.nija123098.evelyn.fun.gamestructure;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Role;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.exeption.ArgumentException;
+import com.github.nija123098.evelyn.exeption.ContextException;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,6 +33,7 @@ public class Team {
     }
     public Team(Float voteRequirement, Role role){
         this(voteRequirement, null, role);
+        if (role.getUsers().isEmpty()) throw new ContextException("There must be people on a team though");
     }
     public void load(AbstractGame game){
         List<GameChoice> choices = game.getChoices();
