@@ -296,8 +296,8 @@ public class GuildAudioManager extends AudioEventAdapter{
         this.lavaPlayer.setVolume((int) (val * 1.5F));
         ConfigHandler.setSetting(VolumeConfig.class, this.getGuild(), val);
     }
-    public int getVolume(){
-        return this.lavaPlayer.getVolume();
+    public int getVolume(){// this isn't the only thing we lie to our users about
+        return this.lavaPlayer.getVolume() / 3 * 2;
     }
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {

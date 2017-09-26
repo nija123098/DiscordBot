@@ -3,7 +3,6 @@ package com.github.nija123098.evelyn.command;
 import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
-import com.github.nija123098.evelyn.discordobjects.wrappers.event.botevents.DiscordDataReload;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordGuildJoin;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordNicknameChange;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordUserJoin;
@@ -19,6 +18,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class UserNameMonitor {
     private static final Map<Guild, Set<String>> MAP = new ConcurrentHashMap<>();
+    static {
+        DiscordClient.getGuilds().forEach(UserNameMonitor::loadGuild);
+    }
     @EventListener
     public static void handle(DiscordGuildJoin join){
         loadGuild(join.getGuild());
@@ -40,10 +42,6 @@ public class UserNameMonitor {
         Set<String> set = MAP.computeIfAbsent(change.getGuild(), guild -> new ConcurrentHashSet<>());
         if (change.getNewUsername() != null) set.add(change.getNewUsername());
         if (change.getOldUsername() != null) set.remove(change.getOldUsername());
-    }
-    @EventListener
-    public static void handle(DiscordDataReload reload){
-        DiscordClient.getGuilds().forEach(UserNameMonitor::loadGuild);
     }
     private static void loadGuild(Guild guild){
         Set<String> strings = new ConcurrentHashSet<>();

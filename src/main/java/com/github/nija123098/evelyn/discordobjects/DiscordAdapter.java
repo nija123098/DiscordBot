@@ -1,7 +1,6 @@
 package com.github.nija123098.evelyn.discordobjects;
 
 import com.github.nija123098.evelyn.audio.SpeechParser;
-import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.*;
 import com.github.nija123098.evelyn.moderation.DeletePinNotificationConfig;
 import com.github.nija123098.evelyn.moderation.messagefiltering.MessageMonitor;
@@ -14,7 +13,6 @@ import com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager.Gui
 import com.github.nija123098.evelyn.discordobjects.wrappers.*;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.BotEvent;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventDistributor;
-import com.github.nija123098.evelyn.discordobjects.wrappers.event.botevents.DiscordDataReload;
 import com.github.nija123098.evelyn.launcher.BotConfig;
 import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.launcher.Reference;
@@ -43,8 +41,6 @@ import sx.blah.discord.handle.impl.events.guild.channel.message.MentionEvent;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageUpdateEvent;
 import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.ReactionEvent;
-import sx.blah.discord.handle.impl.events.guild.member.UserBanEvent;
-import sx.blah.discord.handle.impl.events.guild.member.UserLeaveEvent;
 import sx.blah.discord.handle.impl.events.guild.role.RoleUpdateEvent;
 import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelMoveEvent;
 import sx.blah.discord.handle.impl.events.shard.ShardReadyEvent;
@@ -107,7 +103,6 @@ public class DiscordAdapter {
             DiscordClient.clients().forEach(client -> client.getDispatcher().registerListener(ThreadProvider.getExecutorService(), DiscordAdapter.class));
             EventDistributor.register(ReactionBehavior.class);
             EventDistributor.register(MessageMonitor.class);
-            EventDistributor.distribute(DiscordDataReload.class, null);
         });
         if (!BotConfig.GHOST_MODE) ScheduleService.scheduleRepeat(PLAY_TEXT_SPEED + 10_000, PLAY_TEXT_SPEED, () -> {
             Template template = TemplateHandler.getTemplate(KeyPhrase.PLAY_TEXT, null, PREVIOUS_TEXTS);

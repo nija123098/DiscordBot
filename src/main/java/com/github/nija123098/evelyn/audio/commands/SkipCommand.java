@@ -39,6 +39,7 @@ public class SkipCommand extends AbstractCommand {
             else maker.append("There are no more songs to play from the queue");
         }
         else maker.append((percent - required) + "% is required to skip this track");
+        maker.withDeleteDelay(10_000L);
     }
     @EventListener
     public void handle(DiscordTrackEnd end){

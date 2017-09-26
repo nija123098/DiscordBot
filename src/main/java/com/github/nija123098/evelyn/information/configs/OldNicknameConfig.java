@@ -2,12 +2,9 @@ package com.github.nija123098.evelyn.information.configs;
 
 import com.github.nija123098.evelyn.config.AbstractConfig;
 import com.github.nija123098.evelyn.config.ConfigCategory;
-import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.GuildUser;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
-import com.github.nija123098.evelyn.discordobjects.wrappers.event.botevents.DiscordDataReload;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordNicknameChange;
-import com.github.nija123098.evelyn.perms.BotRole;
 
 import java.util.HashSet;
 import java.util.Set;

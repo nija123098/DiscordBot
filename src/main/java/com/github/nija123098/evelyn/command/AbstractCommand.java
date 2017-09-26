@@ -454,7 +454,7 @@ public class AbstractCommand {
         return false;
     }
 
-    protected boolean interpretSuccess(Object o){
-        return true;
+    boolean interpretSuccess(Object o){
+        return !(o instanceof Boolean) || (boolean) o;
     }
 }

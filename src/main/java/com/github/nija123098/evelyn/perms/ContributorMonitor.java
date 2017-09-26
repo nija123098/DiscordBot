@@ -3,9 +3,9 @@ package com.github.nija123098.evelyn.perms;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Role;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventDistributor;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
-import com.github.nija123098.evelyn.discordobjects.wrappers.event.botevents.DiscordDataReload;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordUserRolesUpdateEvent;
 import com.github.nija123098.evelyn.launcher.BotConfig;
+import com.github.nija123098.evelyn.launcher.Launcher;
 
 /**
  * Made by nija123098 on 5/15/2017.
@@ -18,11 +18,10 @@ public class ContributorMonitor {
         System.out.println(CONTRIB_SIGN_ROLE.getName());
         System.out.println(CONTRIB_SIGN_ROLE.getGuild().getName());
         EventDistributor.register(ContributorMonitor.class);
-    }
-    @EventListener
-    public static void handle(DiscordDataReload reload){
-        reload(SUPPORT_SIGN_ROLE, BotRole.SUPPORTER);
-        reload(CONTRIB_SIGN_ROLE, BotRole.CONTRIBUTOR);
+        Launcher.registerStartup(() -> {
+            reload(SUPPORT_SIGN_ROLE, BotRole.SUPPORTER);
+            reload(CONTRIB_SIGN_ROLE, BotRole.CONTRIBUTOR);
+        });
     }
     private static void reload(Role role, BotRole botRole){
         role.getGuild().getUsers().forEach(user -> {

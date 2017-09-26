@@ -29,7 +29,8 @@ public class ConfigSetCommand extends AbstractCommand {
             if (target == null) throw new ArgumentException("Received to target value, if resetting the value wsa intended use the cfg reset command, if unsetting the config was intended use the cfg setnull command");
             ConfigHandler.setSetting((Class<? extends AbstractConfig<V, T>>) config.getClass(), (T) (guild == null ? user : guild),  (V) target.convert((Class<? extends Configurable>) config.getValueType()));
         }else{
-            if (target == null) target = (T) new Configurable[]{track, playlist, user, channel, guildUser, target instanceof Role ? target : null, guild, GlobalConfigurable.GLOBAL, target}[config.getConfigLevel().ordinal()].convert(config.getConfigLevel().getType());
+            if (target == null) target = (T) new Configurable[]{track, playlist, user, channel, guildUser, target instanceof Role ? target : null, guild, GlobalConfigurable.GLOBAL, guild == null ? user : guild}[config.getConfigLevel().ordinal()];
+            if (config.getConfigLevel() != ConfigLevel.ALL) target = (T) target.convert(config.getConfigLevel().getType());
             target.checkPermissionToEdit(user, guild);// morph exception should throw before cast exception
             config.setExteriorValue(target, user, channel, guild, message, arg);
         }

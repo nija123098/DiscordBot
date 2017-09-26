@@ -68,11 +68,11 @@ public class CallCommand extends AbstractCommand {
         if (integer == null) throw new ArgumentException("You are not currently in a call");
         Set<Channel> set = CALLS.get(integer);
         set.remove(channel);
-        if (set.size() == 2) {
+        if (set.size() == 1) {
             CALLS.remove(integer);
-            set.forEach(chan -> new MessageMaker(chan).append("Ending the call.").send());
-        }
-        else set.forEach(chan -> new MessageMaker(chan).appendRaw(channel.getGuild().getName() + " ").append("has hung up.").send());
+            set.forEach(CALL_IDS::remove);
+            set.forEach(chan -> new MessageMaker(chan).append("Ending the call.").send());// no point in making an iterator object
+        }else set.forEach(chan -> new MessageMaker(chan).appendRaw(channel.getGuild().getName() + " ").append("has hung up.").send());
     }
     @Override
     public long getCoolDown(Class<? extends Configurable> clazz) {
