@@ -28,6 +28,7 @@ public class StoriesCommand extends AbstractCommand {
     public StoriesCommand() {
         super("stories", ModuleLevel.FUN, "story", null, "Shows a list of bed time stories or reads one to you, from tonightsbedtimestory.com");
         try {
+            if (BotConfig.TESTING_MODE) return;
             Jsoup.connect("http://www.tonightsbedtimestory.com/stories/").userAgent(BotConfig.USER_AGENT).get().body().getElementsByAttributeValue("class", "post").forEach(element -> {
                 String text = element.text();
                 STORY_TITLES.add(text);

@@ -151,7 +151,16 @@ public class InvocationObjectGetter {
                 user = pair.getKey();
                 args = args.substring(0, pair.getValue());
             }
-            if (guild != null && (split[0].equalsIgnoreCase("server") || split[0].equalsIgnoreCase("guild") || split[0].equalsIgnoreCase("s"))){
+            Pair<Guild, Integer> guildPair = null;
+            if (split.length > 1){
+                try{guildPair = InvocationObjectGetter.convert(Guild.class, user, null, null, guild, null, null, args);
+                } catch (ArgumentException ignored){}
+            }
+            if (guildPair != null){
+                guild = guildPair.getKey();
+                args = args.substring(0, guildPair.getValue());
+            }
+            if (guild != null && (guildPair != null || split[0].equalsIgnoreCase("server") || split[0].equalsIgnoreCase("guild") || split[0].equalsIgnoreCase("s"))){
                 if (ConfigHandler.getSetting(GuildPlaylistsConfig.class, guild).contains(split[1])){
                     return new Pair<>(Playlist.getPlaylist(guild, split[1]), split[0].length() + 1 + split[1].length());
                 }

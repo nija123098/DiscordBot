@@ -15,9 +15,7 @@ import com.github.nija123098.evelyn.util.Log;
 import java.lang.reflect.Type;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -38,6 +36,7 @@ public class AbstractConfig<V, T extends Configurable> {
     private final Class<V> valueType;
     private final boolean normalViewing;
     private final Map<T, V> cache;
+    private final Set<T> change;
     public AbstractConfig(String name, ConfigCategory category, V defaul, String description) {
         this(name, category, v -> defaul, description);
     }
@@ -55,15 +54,19 @@ public class AbstractConfig<V, T extends Configurable> {
         this.category = category;
         this.category.addConfig(this);
         Type[] types = TypeChanger.getRawClasses(this.getClass());
-        this.valueType = types.length == 1 ? (Class<V>) Integer.class : (Class<V>) types[0];
+        this.valueType = (Class<V>) types[0];
         if (!ObjectCloner.supports(this.valueType)) throw new DevelopmentException("Cloner does not support type: " + this.valueType.getName());
         this.normalViewing = TypeChanger.normalStorage(this.valueType);
         this.configLevel = ConfigLevel.getLevel((Class<T>) types[types.length - 1]);
         if (this.configLevel.mayCache()){
             this.cache = new ConcurrentHashMap<>();
+            this.change = new HashSet<>();
             Launcher.registerShutdown(this::saveCashed);
             ScheduleService.scheduleRepeat(600_000, 600_000, this::saveCashed);
-        }else this.cache = null;
+        }else {
+            this.cache = null;
+            this.change = null;
+        }
         EventDistributor.register(this);
         this.configLevel.getAssignable().forEach(level -> {
             if (level == ConfigLevel.ALL) return;
@@ -80,9 +83,11 @@ public class AbstractConfig<V, T extends Configurable> {
     }
 
     private void saveCashed(){// make slowly change, not all at once unless shutting down
-        this.cache.forEach((t, integer) -> {
+        this.cache.forEach((t, val) -> {
+            V v = this.cache.remove(t);
+            if (v == null || !this.change.remove(t)) return;
+            this.saveValue(t, v);
             Care.lessSleep(10);
-            this.saveValue(t, this.cache.remove(t));
         });
     }
 
@@ -174,7 +179,10 @@ public class AbstractConfig<V, T extends Configurable> {
         if (!(value == null || this.valueType.isInstance(value))) throw new ArgumentException("Attempted passing incorrect type of argument");
         value = validateInput(configurable, value);
         if (this.cache == null || value == null) saveValue(configurable, value);
-        else this.cache.put(configurable, value);
+        else {
+            this.cache.put(configurable, value);
+            this.change.add(configurable);
+        }
         return value;
     }
     private V saveValue(T configurable, V value){
@@ -185,7 +193,10 @@ public class AbstractConfig<V, T extends Configurable> {
         return value;
     }
     public void reset(T configurable){
-        if (this.cache != null) this.cache.remove(configurable);
+        if (this.cache != null) {
+            this.change.remove(configurable);
+            this.cache.remove(configurable);
+        }
         Database.query("DELETE FROM " + this.getNameForType(configurable.getConfigLevel()) + " WHERE id = " + Database.quote(configurable.getID()));
     }
 
@@ -198,13 +209,10 @@ public class AbstractConfig<V, T extends Configurable> {
      */
     public V getValue(T configurable){// slq here as well
         V value;
-        if (this.cache == null){
-            value = grabValue(configurable);
-        }else{
+        if (this.cache == null) value = grabValue(configurable);
+        else{
             value = this.cache.get(configurable);
-            if (value == null){
-                value = grabValue(configurable);
-            }
+            if (value == null) value = grabValue(configurable);
         }
         if (this.cache != null && value != null) return this.cache.computeIfAbsent(configurable, this::grabValue);
         return value;

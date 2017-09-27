@@ -88,4 +88,6 @@ public class BotConfig {
     public static Integer MESSAGE_FILTERING_SERVER_SIZE = 150;
     @ConfigurationOption
     public static Long TRACK_EXPIRATION_TIME = 432000000L;
+    @ConfigurationOption
+    public static Boolean TESTING_MODE = false;
 }

@@ -6,18 +6,19 @@ import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Message;
+import com.github.nija123098.evelyn.exeption.PermissionsException;
 
 /**
  * Made by nija123098 on 5/10/2017.
  */
 public class PurgeCommand extends AbstractCommand {
     public PurgeCommand() {
-        super("purge", ModuleLevel.ADMINISTRATIVE, null, null, "Deletes old messages");
+        super("purge", ModuleLevel.ADMINISTRATIVE, null, null, "Deletes a certain number of messages");
         this.okOnSuccess = false;
     }
     @Command
     public void command(@Argument Integer count, Channel channel, Message message){
-        message.delete();
         MessageDeleteService.delete(channel.getMessages(count));
+        message.delete();
     }
 }

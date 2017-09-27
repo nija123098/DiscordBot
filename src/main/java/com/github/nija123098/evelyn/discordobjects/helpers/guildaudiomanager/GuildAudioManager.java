@@ -7,14 +7,12 @@ import com.github.nija123098.evelyn.audio.configs.GreetingsVoiceConfig;
 import com.github.nija123098.evelyn.audio.configs.guild.QueueTrackOnlyConfig;
 import com.github.nija123098.evelyn.audio.configs.guild.SkipPercentConfig;
 import com.github.nija123098.evelyn.audio.configs.track.PlayCountConfig;
+import com.github.nija123098.evelyn.discordobjects.wrappers.*;
 import com.github.nija123098.evelyn.moderation.logging.MusicChannelConfig;
 import com.github.nija123098.evelyn.config.AbstractConfig;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.configs.guild.GuildActivePlaylistConfig;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
-import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
-import com.github.nija123098.evelyn.discordobjects.wrappers.User;
-import com.github.nija123098.evelyn.discordobjects.wrappers.VoiceChannel;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventDistributor;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordVoiceLeave;
@@ -42,6 +40,7 @@ import sx.blah.discord.handle.audio.AudioEncodingType;
 import sx.blah.discord.handle.audio.IAudioProvider;
 import sx.blah.discord.handle.obj.IVoiceState;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -114,6 +113,7 @@ public class GuildAudioManager extends AudioEventAdapter{
     private AudioProvider audioProvider;
     private VoiceChannel channel;
     private AudioPlayer lavaPlayer;
+    private final List<Message> currentDisplays = new ArrayList<>(3);
     private final Set<User> skipSet = new ConcurrentHashSet<>();
     private final List<LangString> speeches = new CopyOnWriteArrayList<>();
     private final List<Track> queue = new CopyOnWriteArrayList<>();
@@ -144,7 +144,7 @@ public class GuildAudioManager extends AudioEventAdapter{
             this.clearQueue();
             this.interups.clear();
             this.speeches.clear();
-            this.queueSpeech(new LangString(true, "Goodbye"));
+            if (ConfigHandler.getSetting(GreetingsVoiceConfig.class, channel.getGuild())) this.interrupt(new LangString(true, "Goodbye"));
             if (this.current != null) this.skipTrack();
             this.loop = false;
             this.leaveAfterThis = true;
@@ -203,12 +203,19 @@ public class GuildAudioManager extends AudioEventAdapter{
         if (position != 0) this.lavaPlayer.getPlayingTrack().setPosition(position);
         this.lavaPlayer.setPaused(false);
         if (this.destroyed) throw new RuntimeException("Hey lava player, I destroyed you, NOW GO AWAY");
-        ThreadProvider.sub(() -> {
+        if (!this.loop) ThreadProvider.sub(() -> {
             Track current = this.currentTrack();
             if (current instanceof SpeechTrack) return;
-            MessageMaker maker = new MessageMaker(ConfigHandler.getSetting(MusicChannelConfig.class, this.getGuild()));
-            if (!this.leaving) CurrentCommand.command(this.getGuild(), maker, current);
-            maker.send();
+            Channel channel = ConfigHandler.getSetting(MusicChannelConfig.class, this.getGuild());
+            if (channel == null) return;
+            MessageMaker maker = new MessageMaker(channel);
+            if (this.leaving) this.currentDisplays.forEach(Message::delete);
+            else{
+                CurrentCommand.command(this.getGuild(), maker, current);
+                maker.send();
+                this.currentDisplays.add(maker.sentMessage());
+                if (this.currentDisplays.size() > 2) this.currentDisplays.remove(0).delete();
+            }
         });
     }
     public void seek(long time) {
@@ -306,7 +313,7 @@ public class GuildAudioManager extends AudioEventAdapter{
     @EventListener
     public static void handle(DiscordVoiceLeave event){
         GuildAudioManager manager = MAP.get(event.getGuild().getID());
-        if (manager == null) return;
+        if (manager == null || !manager.channel.equals(event.getChannel())) return;
         if (!hasValidListeners(event.getChannel())) {
             manager.leaving = true;
             manager.leave();
