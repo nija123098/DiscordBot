@@ -1,9 +1,10 @@
 package com.github.nija123098.evelyn.fun.tictactoe;
 
-import com.github.nija123098.evelyn.fun.gamestructure.AbstractGame;
+import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
 import com.github.nija123098.evelyn.fun.gamestructure.GameChoice;
 import com.github.nija123098.evelyn.fun.gamestructure.GameResultException;
 import com.github.nija123098.evelyn.fun.gamestructure.Team;
+import com.github.nija123098.evelyn.fun.gamestructure.neuralnet.AbstractNeuralNetGame;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
 import com.github.nija123098.evelyn.util.LanguageHelper;
 import com.github.nija123098.evelyn.util.ArrayUtils;
@@ -13,7 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class TicTacToe extends AbstractGame {
+public class TicTacToe extends AbstractNeuralNetGame {
     private final int size;
     private Boolean[][] grid;
     private int turn;
@@ -133,5 +134,32 @@ public class TicTacToe extends AbstractGame {
             }
         }
         return doubles;
+    }
+    @Override
+    public int getInputCount() {
+        return 27;
+    }
+    @Override
+    public int getHiddenLayerWidth() {
+        return 27;
+    }
+    @Override
+    public int getHiddenLayerCount() {
+        return 2;
+    }
+    @Override
+    public int getOutputCount() {
+        return 9;
+    }
+    @Override
+    public GameChoice getDecision(double[] output) {
+        double highestWeight = -1;
+        int choice = -1;
+        List<GameChoice> choices = this.getChoices();
+        for (int i = 0; i < output.length; i++) {
+            if (choices.get(i).mayChose(this.getTeam(DiscordClient.getOurUser())) && highestWeight < output[i]) choice = i;
+        }
+        if (choice == -1) throw new GameResultException(this, null);
+        return choices.get(choice);
     }
 }

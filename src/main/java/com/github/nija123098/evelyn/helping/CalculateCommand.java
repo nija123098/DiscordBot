@@ -23,7 +23,7 @@ public class CalculateCommand extends AbstractCommand {
         public double apply(double... doubles) {
             double total = 0;
             int actual = (int) doubles[1] - 1;
-            for (int i = 0; i < doubles[0]; ++i)  total += Rand.getRand(actual) + 1;
+            for (int i = 0; i < doubles[0]; ++i)  total += Rand.getRand(actual + 1) + 1;
             return total;
         }
     };

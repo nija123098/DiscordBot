@@ -4,6 +4,9 @@ import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.ConfigLevel;
 import com.github.nija123098.evelyn.config.Configurable;
 import com.github.nija123098.evelyn.discordobjects.exception.ErrorWrapper;
+import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventDistributor;
+import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordUserJoin;
+import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordUserLeave;
 import com.github.nija123098.evelyn.economy.configs.LastCookieUseConfig;
 import com.github.nija123098.evelyn.perms.BotRole;
 import com.github.nija123098.evelyn.service.services.MemoryManagementService;
@@ -94,9 +97,23 @@ public class User implements Configurable {
         }
     }
 
-    public Set<Guild> getGuilds(){
-        return DiscordClient.getGuilds().stream().filter(guild -> guild.getUsers().contains(this)).collect(Collectors.toSet());
+    static {
+        EventDistributor.register(User.class);
     }
+    private transient Set<Guild> guilds;
+    public Set<Guild> getGuilds(){
+        if (this.guilds == null) this.guilds = DiscordClient.getGuilds().stream().filter(guild -> guild.getUsers().contains(this)).collect(Collectors.toSet());
+        return guilds;
+    }
+
+    public static void handle(DiscordUserJoin join){
+        join.getUser().guilds.add(join.getGuild());
+    }
+
+    public static void handle(DiscordUserLeave leave){
+        leave.getUser().guilds.add(leave.getGuild());
+    }
+
 
     public String getNameAndDiscrim(){
         return getName() + "#" + getDiscriminator();

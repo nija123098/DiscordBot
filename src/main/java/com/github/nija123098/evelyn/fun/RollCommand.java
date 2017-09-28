@@ -35,18 +35,18 @@ public class RollCommand extends AbstractCommand {
         final Pattern dice = Pattern.compile("(\\d+)d(\\d+)");
         if (first != null) {
             if (second == null) {
-                value = Rand.getRand(first - 1) + 1;
+                value = Rand.getRand(first) + 1;
                 maker.append("Rolling between: 1 and " + first + " | Rolled: " + value);
             } else {
                 if (first < second) {
-                    value = Rand.getRand(second - first) + first;
+                    value = Rand.getRand(second - first + 1) + first;
                     maker.append("Rolling between: " + first + " and " + second + " | Rolled: " + value);
                 } else {
                     maker.append("I can't roll between two numbers like that, format it properly " + EmoticonHelper.getChars("slight_frown", false));
                 }
             }
         } else if (arg.isEmpty()) {
-            value = Rand.getRand(5) + 1;
+            value = Rand.getRand(6) + 1;
             maker.append("Rolling 1 [6] sided " + EmoticonHelper.getChars("game_die", false) + " | Rolled: " + value).mustEmbed();
         } else {
             int max_dice = 144, min_sides = 2;
@@ -88,7 +88,7 @@ public class RollCommand extends AbstractCommand {
             }
         }
         GuildAudioManager manager = GuildAudioManager.getManager(guild);
-        if (manager != null && manager.currentTrack() == null && Rand.getRand(999) == 2) manager.queueTrack(new YoutubeTrack("dQw4w9WgXcQ"));
+        if (manager != null && manager.currentTrack() == null && Rand.getRand(1000) == 0) manager.queueTrack(new YoutubeTrack("dQw4w9WgXcQ"));
     }
 
     private static String multiDice(int dices, int sides, int bonus) {
@@ -129,7 +129,7 @@ public class RollCommand extends AbstractCommand {
     public static int[][] fancyGrid(int dice, int sides) {
         int [] randArray = new int[dice];
         for (int k = 0; k < dice; k++) {
-            randArray[k] = (Rand.getRand(sides) + 1);
+            randArray[k] = (Rand.getRand(sides + 1) + 1);
         }
         int [] tableArray = Counter(dice);
         int [][] gridArray = new int[tableArray[0]][tableArray[1]];

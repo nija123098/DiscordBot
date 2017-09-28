@@ -37,7 +37,7 @@ public class EightBallCommand extends AbstractCommand {
     }
     @Command
     public void command(MessageMaker maker){
-        maker.append(OPTIONS[Rand.getRand(OPTIONS.length - 1)]);
+        maker.append(OPTIONS[Rand.getRand(OPTIONS.length)]);
     }
 
     @Override

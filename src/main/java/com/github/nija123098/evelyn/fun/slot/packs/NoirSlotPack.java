@@ -14,7 +14,7 @@ public class NoirSlotPack extends AbstractSlotPack {
     public int[][] getTable() {
         int[][] ints = new int[3][3];
         for (int i = 0; i < ints.length; ++i) {
-            ints[i][0] = Rand.getRand(this.vals.length - 2);
+            ints[i][0] = Rand.getRand(this.vals.length);
             for (int j = 1; j < ints[i].length; j++) {
                 ints[i][j] = (ints[i][j - 1] + 1) % (this.vals.length - 1);
             }

@@ -8,24 +8,24 @@ import java.util.*;
 public class Rand {
     private static final Random RANDOM = new Random();
     public static <E> E getRand(List<E> es, boolean remove){
-        int index = Rand.getRand(es.size() - 1);
+        int index = Rand.getRand(es.size());
         return remove ? es.remove(index) : es.get(index);
     }
-    public static int getRand(int max){// 0 inclusive
-        return max < 1 ? 0 : Math.abs(RANDOM.nextInt()) % (max);
+    public static int getRand(int bound){// 0 inclusive
+        return RANDOM.nextInt(bound);
     }
-    public static Integer getRand(int max, Integer...exclude){
-        if (exclude.length == 0 || exclude.length > max) return getRand(max);
-        Map<Integer, Integer> map = new HashMap<>(max - exclude.length);
+    public static Integer getRand(int bound, Integer...exclude){
+        Map<Integer, Integer> map = new HashMap<>(bound - exclude.length + 1, 1);
         Set<Integer> excludes = new HashSet<>();
         Collections.addAll(excludes, exclude);
+        if (excludes.size() == 0 || excludes.size() >= bound) return getRand(bound);
         int current = -1;
-        for (int i = 0; i < max + 1; ++i) {
+        for (int i = 0; i < bound; ++i) {
             if (excludes.contains(i)) {
                 continue;
             }
             map.put(++current, i);
         }
-        return map.get(getRand(map.size() - 1));
+        return map.get(getRand(map.size()));
     }
 }

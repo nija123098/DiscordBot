@@ -21,7 +21,7 @@ public class SpaceSlotPack extends AbstractSlotPack {
     @Override
     public int[][] getTable() {
         int[][] ints = super.getTable();
-        ints[Rand.getRand(ints.length - 1)][0] = -1;
+        ints[Rand.getRand(ints.length)][0] = -1;
         return ints;
     }
     @Override

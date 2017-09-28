@@ -250,7 +250,7 @@ public class MessageMaker {
         return withColor(this.user);
     }
     public MessageMaker withRandomColor(){
-        this.withColor(new Color(Rand.getRand(0xFFFFFF)));
+        this.withColor(new Color(Rand.getRand(16777216)));
         return this;
     }
     public MessageMaker withColor(User user){

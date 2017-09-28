@@ -19,6 +19,8 @@ public class BotConfig {
     @ConfigurationOption
     public static String TEMP_PATH = CONTAINER_PATH + "tempfiles\\";
     @ConfigurationOption
+    public static String NEURAL_NET_FOLDER = CONTAINER_PATH + "neuralnets\\";
+    @ConfigurationOption
     public static String CONTRIBUTOR_SIGN_ROLE = "-1";
     @ConfigurationOption
     public static String SUPPORTER_SIGN_ROLE = "-1";

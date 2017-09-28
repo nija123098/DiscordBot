@@ -25,6 +25,9 @@ import java.util.stream.Stream;
  */
 public class TypeChanger {
     private static final XStream X_STREAM = new XStream();
+    public static XStream getXStream() {
+        return X_STREAM;
+    }
     static {
         XStream.setupDefaultSecurity(X_STREAM);
         X_STREAM.aliasPackage("evelyn-package", Reference.BASE_PACKAGE);

@@ -83,11 +83,9 @@ public class CardDeck {
             }
         }
         public Card draw(){
-            int ind = Rand.getRand(this.deck.inPile.size() - 1);
-            Card val = this.deck.inPile.get(ind);
-            this.hand.add(val);
-            this.deck.inPile.remove(ind);
-            return val;
+            Card card = Rand.getRand(this.deck.inPile, true);
+            this.hand.add(card);
+            return card;
         }
         public List<Card> getHand() {
             return this.hand;
