@@ -1,9 +1,14 @@
 package com.github.nija123098.evelyn.discordobjects.exception;
 
 import com.github.nija123098.evelyn.util.Care;
+import com.github.nija123098.evelyn.util.Log;
 import sx.blah.discord.util.DiscordException;
 import sx.blah.discord.util.MissingPermissionsException;
+import sx.blah.discord.util.RateLimitException;
 import sx.blah.discord.util.RequestBuffer;
+
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * An class to assist in error wrapping and rate limiting.
@@ -23,14 +28,6 @@ import sx.blah.discord.util.RequestBuffer;
  * @see DException
  */
 public class ErrorWrapper {
-    private static final String CLOUDFLAIR_MESSAGE =
-            "<html>\n" +
-                    "<head><title>400 Bad Request</title></head>\n" +
-                    "<body bgcolor=\"white\">\n" +
-                    "<center><h1>400 Bad Request</h1></center>\n" +
-                    "<hr><center>cloudflare-nginx</center>\n" +
-                    "</body>\n" +
-                    "</html>";
     public static <E> E wrap(Request<E> request) {
         return innerWrap(request);
     }
@@ -38,12 +35,28 @@ public class ErrorWrapper {
         innerWrap(request);
     }
     private static <E> E innerWrap(Request<E> request) {
+        AtomicBoolean complete = new AtomicBoolean();
+        AtomicReference<E> objectReference = new AtomicReference<>();
+        AtomicReference<RuntimeException> exceptionReference = new AtomicReference<>();
+        RequestBuffer.request(() -> {
+            try {
+                objectReference.set(request.request());
+            } catch (RuntimeException e){
+                if (e instanceof RateLimitException) throw e;
+                exceptionReference.set(e);
+            }
+            complete.set(true);
+        }).get();
         try {
-            return RequestBuffer.request((RequestBuffer.IRequest<E>) request::request).get();
-        } catch (MissingPermissionsException e){
+            while (true) {
+                if (!complete.get()) continue;
+                if (exceptionReference.get() == null) return objectReference.get();
+                throw exceptionReference.get();
+            }
+        } catch (MissingPermissionsException e){// return RequestBuffer.request((RequestBuffer.IRequest<E>) request::request).get();
             throw new MissingPermException(e);
         } catch (DiscordException e){
-            if (e.getMessage().startsWith(CLOUDFLAIR_MESSAGE)) {
+            if (e.getMessage().contains("cloudflare-nginx")) {
                 Care.lessSleep(250);
                 return innerWrap(request);
             }

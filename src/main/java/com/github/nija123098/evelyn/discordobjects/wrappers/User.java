@@ -94,13 +94,8 @@ public class User implements Configurable {
         }
     }
 
-    private transient final AtomicReference<Set<Guild>> guilds = new AtomicReference<>();
     public Set<Guild> getGuilds(){
-        if (this.guilds.get() == null) {
-            this.guilds.set(DiscordClient.getGuilds().stream().filter(guild -> guild.getUsers().contains(this)).collect(Collectors.toSet()));
-            ScheduleService.schedule(120_000, () -> this.guilds.set(null));
-        }
-        return this.guilds.get();
+        return DiscordClient.getGuilds().stream().filter(guild -> guild.getUsers().contains(this)).collect(Collectors.toSet());
     }
 
     public String getNameAndDiscrim(){

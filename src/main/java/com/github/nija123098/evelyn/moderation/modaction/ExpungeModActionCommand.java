@@ -1,5 +1,6 @@
 package com.github.nija123098.evelyn.moderation.modaction;
 
+import com.github.nija123098.evelyn.information.configs.OldUserNameConfig;
 import com.github.nija123098.evelyn.moderation.GuildUserJoinTimeConfig;
 import com.github.nija123098.evelyn.moderation.MessageDeleteService;
 import com.github.nija123098.evelyn.moderation.modaction.support.AbstractModAction;
@@ -38,6 +39,7 @@ public class ExpungeModActionCommand extends AbstractCommand {
                         "Press the ok reaction to finalize these decisions.  " +
                         "This is irreversible, chose wisely.");
         List<String> names = new ArrayList<>(ConfigHandler.getSetting(OldNicknameConfig.class, GuildUser.getGuildUser(guild, target)));
+        names.addAll(ConfigHandler.getSetting(OldUserNameConfig.class, target));
         int setSize = names.size() / 20 + 1;
         List<List<String>> nameSet = new ArrayList<>();
         for (int i = 0; i < setSize; i++) nameSet.add(new ArrayList<>(i == setSize - 1 ? names.size() % 20 : 20));

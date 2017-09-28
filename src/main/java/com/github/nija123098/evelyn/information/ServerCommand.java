@@ -10,6 +10,7 @@ import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Presence;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
+import com.github.nija123098.evelyn.exeption.ContextException;
 import com.github.nija123098.evelyn.util.Time;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class ServerCommand extends AbstractCommand {
     }
     @Command
     public void command(@Argument(optional = true) Guild guild, MessageMaker maker){
+        if (guild == null) throw new ContextException("You have to be in a server to use that command!");
         maker.withAuthorIcon(guild.getIconURL())
                 .getAuthorName().appendRaw(guild.getName()).getMaker()
                 .withThumb(guild.getIconURL()).withColor(guild.getIconURL());

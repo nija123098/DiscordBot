@@ -27,7 +27,6 @@ public class MissingPermException extends BotException {
         this.missing.stream()
                 .map(Enum::name)
                 .forEach(joiner::add);
-        String s = joiner.toString();
-        return "Missing permissions: " + s.substring(0, s.length() - 2) + "!";
+        return "Missing permissions: " + joiner.toString();
     }
 }

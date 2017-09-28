@@ -6,7 +6,7 @@ import com.github.nija123098.evelyn.fun.gamestructure.GameResultException;
 import com.github.nija123098.evelyn.fun.gamestructure.Team;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
 import com.github.nija123098.evelyn.util.LanguageHelper;
-import com.github.nija123098.evelyn.util.ObjectUtils;
+import com.github.nija123098.evelyn.util.ArrayUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,9 +64,9 @@ public class TicTacToe extends AbstractGame {
         if (++this.turn > 4 && !this.noCheck){
             this.noCheck = true;
             Boolean[][] originalGrid = this.grid;
-            this.grid = ObjectUtils.fillNull(ObjectUtils.copy(originalGrid), true);
+            this.grid = ArrayUtils.fillNull(ArrayUtils.copy(originalGrid), true);
             if (getWinner() == null){
-                this.grid = ObjectUtils.fillNull(ObjectUtils.copy(originalGrid), false);
+                this.grid = ArrayUtils.fillNull(ArrayUtils.copy(originalGrid), false);
                 if (this.getWinner() == null) {
                     this.grid = originalGrid;
                     throw new GameResultException(this, null);

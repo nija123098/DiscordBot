@@ -2,6 +2,7 @@ package com.github.nija123098.evelyn.discordobjects;
 
 import com.github.nija123098.evelyn.audio.SpeechParser;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.*;
+import com.github.nija123098.evelyn.exeption.InvalidEventException;
 import com.github.nija123098.evelyn.moderation.DeletePinNotificationConfig;
 import com.github.nija123098.evelyn.moderation.messagefiltering.MessageMonitor;
 import com.github.nija123098.evelyn.chatbot.ChatBot;
@@ -212,6 +213,7 @@ public class DiscordAdapter {
         if (constructor != null) {
             try{EventDistributor.distribute(constructor.newInstance(event));
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+                if (e.getCause() instanceof InvalidEventException) return;
                 throw new RuntimeException("Improperly built BotEvent constructor", e);
             }
         }
