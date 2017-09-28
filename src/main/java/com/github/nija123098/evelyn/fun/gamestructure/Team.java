@@ -1,5 +1,6 @@
 package com.github.nija123098.evelyn.fun.gamestructure;
 
+import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Role;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.exeption.ArgumentException;
@@ -72,5 +73,8 @@ public class Team {
     }
     public Float getVoteRequirement() {
         return this.voteRequirement;
+    }
+    public boolean isOurTeam(){
+        return DiscordClient.getOurUser().equals(this.user);
     }
 }

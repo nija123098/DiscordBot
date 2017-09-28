@@ -1,9 +1,7 @@
 package com.github.nija123098.evelyn.fun.gamestructure;
 
-import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.exeption.ArgumentException;
-import com.github.nija123098.evelyn.exeption.DevelopmentException;
 
 import java.util.HashMap;
 import java.util.List;
@@ -37,7 +35,7 @@ public abstract class AbstractGame {
         if (winner != null) throw new GameResultException(this, winner);
         ++this.teamTurn;
         this.teamTurn %= this.teams.size();
-        if (this.teams.get(teamTurn).getUsers().get(0).equals(DiscordClient.getOurUser())) GamePlayHandler.decideGame(this);
+        if (this.teams.get(teamTurn).isOurTeam()) GamePlayHandler.decideGame(this);
         return null;
     }
     public List<Team> getTeams() {

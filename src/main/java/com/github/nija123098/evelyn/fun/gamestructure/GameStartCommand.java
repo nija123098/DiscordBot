@@ -21,7 +21,7 @@ public class GameStartCommand extends AbstractCommand {
         Class<? extends AbstractGame> clazz = GameCommand.CLASS_MAP.get(FormatHelper.filtering(name, Character::isLetter).toLowerCase());
         if (clazz == null) throw new ArgumentException("That is not a game supported by this command");
         try {
-            if (red.getUsers().get(0).equals(DiscordClient.getOurUser())){
+            if (red.isOurTeam()){
                 Team team = red;
                 red = blue;
                 blue = team;

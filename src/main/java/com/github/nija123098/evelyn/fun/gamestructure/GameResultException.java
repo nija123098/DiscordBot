@@ -3,6 +3,7 @@ package com.github.nija123098.evelyn.fun.gamestructure;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.exeption.BotException;
+import com.github.nija123098.evelyn.fun.gamestructure.neuralnet.AbstractNeuralNetGame;
 
 import java.awt.Color;
 import java.util.concurrent.atomic.AtomicReference;
@@ -14,6 +15,7 @@ public class GameResultException extends BotException {
         this.game = game;
         this.winner = winner;
         GameHandler.deregister(game);
+        if (winner != null && winner.isOurTeam()) GamePlayHandler.reportWin((AbstractNeuralNetGame) game);
     }
     @Override
     public MessageMaker makeMessage(Channel channel) {
