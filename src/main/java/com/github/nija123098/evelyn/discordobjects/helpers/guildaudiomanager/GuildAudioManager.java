@@ -214,7 +214,7 @@ public class GuildAudioManager extends AudioEventAdapter{
                 CurrentCommand.command(this.getGuild(), maker, current);
                 maker.send();
                 this.currentDisplays.add(maker.sentMessage());
-                if (this.currentDisplays.size() > 2) this.currentDisplays.remove(0).delete();
+                if (this.currentDisplays.size() > 2 && !this.currentDisplays.isEmpty()) this.currentDisplays.remove(0).delete();
             }
         });
     }

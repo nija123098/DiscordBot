@@ -61,7 +61,6 @@ public class AbstractConfig<V, T extends Configurable> {
         if (this.configLevel.mayCache()){
             this.cache = new ConcurrentHashMap<>();
             this.change = new HashSet<>();
-            Launcher.registerShutdown(this::saveCashed);
             ScheduleService.scheduleRepeat(600_000, 600_000, this::saveCashed);
         }else {
             this.cache = null;
@@ -82,7 +81,7 @@ public class AbstractConfig<V, T extends Configurable> {
         });
     }
 
-    private void saveCashed(){// make slowly change, not all at once unless shutting down
+    void saveCashed(){// make slowly change, not all at once unless shutting down
         this.cache.forEach((t, val) -> {
             V v = this.cache.remove(t);
             if (v == null || !this.change.remove(t)) return;

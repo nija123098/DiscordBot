@@ -44,11 +44,7 @@ public class YTUtil {
         return VALID_CODES.computeIfAbsent(s, s1 -> {
             if (s.length() != 11) return false;
             for (char c : s.toCharArray()) if (!(Character.isLetterOrDigit(c) || c == '-' || c == '_')) return false;
-            try{return !StringHelper.readAll("https://www.youtube.com/oembed?url=http%3A//youtube.com/watch%3Fv%3D" + s).equals("Not Found");
-            } catch (IOException | UnirestException e) {
-                Log.log("Issue finding validity of youtube track: " + s);
-                return false;
-            }
+            return getTrackName(s) != null;
         });
     }
     private static String getTrackName(String code){
@@ -65,12 +61,15 @@ public class YTUtil {
             if (s.startsWith("&list=", 43)) throw new ArgumentException("When you give me a link to a song and playlist I don't know what to play!");
             s = s.substring(0, ind);
         }
+        if (s.length() == 11 && isYoutubeVideoCode(s)) return s;
         s = NetworkHelper.stripProtocol(s);
-        if (s.startsWith("www.youtube.com/watch?v=")) s = s.substring(24);
-        else if (s.startsWith("youtu.be/")) s = s.substring(9);
-        else if (s.length() == 11 && isYoutubeVideoCode(s)) return s;
-        else return null;
-        if (isYoutubeVideoCode(s.substring(0, 11))) return s;
+        if (FormatHelper.filtering(s, Character::isLetter).contains("youtube")){
+            String cut;
+            for (int i = 7; i < s.length() - 10; i++) {//7 for youtube, 10 for the code
+                cut = s.substring(i, i + 11);
+                if (isYoutubeVideoCode(cut)) return cut;
+            }// backwards might be more efficient but parameters in links are being used more
+        }
         return null;
     }
     private static boolean isYoutubePlaylistCode(String s){

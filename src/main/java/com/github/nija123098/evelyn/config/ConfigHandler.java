@@ -402,4 +402,8 @@ public class ConfigHandler {
     public static <T extends Configurable> T moveID(T oldConfig, String newID){// SQL
         return ConfigHandler.getConfigurable((Class<T>) oldConfig.getClass(), newID);
     }
+
+    public static void saveAndDumpCaches(){
+        CLASS_MAP.values().stream().filter(abstractConfig -> abstractConfig.getConfigLevel().mayCache()).forEach(AbstractConfig::saveCashed);
+    }
 }

@@ -124,7 +124,7 @@ public class TicTacToe extends AbstractNeuralNetGame {
     @Override
     public double[] inputNodes() {
         int index = 0;
-        double[] doubles = new double[3 * this.size];
+        double[] doubles = new double[3 * this.size * this.size];
         for (int i = 0; i < this.size; i++) {
             for (int j = 0; j < this.size; j++) {
                 if (this.grid[i][j] == null) doubles[index] = 1;
