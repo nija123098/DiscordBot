@@ -25,6 +25,9 @@ public class GamePlayHandler {
     private static final double ALTER_PERCENT = .005D;
     private static final Map<String, NeuralNet> LOADED_NEURAL_NETS = new HashMap<>();
     private static final Map<AbstractGame, NeuralNet> GAME_NET_MAP = new HashMap<>();
+    static {
+        new File(BotConfig.NEURAL_NET_FOLDER).mkdirs();
+    }
     static void decideGame(AbstractGame game){
         Team team = game.getTeam(DiscordClient.getOurUser());
         if (game instanceof AbstractNeuralNetGame) {
@@ -36,14 +39,14 @@ public class GamePlayHandler {
                 neuralNet = newNet;
                 GAME_NET_MAP.put(game, neuralNet);
             }
-            nGame.getDecision(neuralNet.compute(game.inputNodes())).chose(team);
+            nGame.chose(DiscordClient.getOurUser(), nGame.getDecision(neuralNet.compute(game.inputNodes())).getName());
         }else{// random
             List<GameChoice> list = game.getChoices().stream().filter(gameChoice -> gameChoice.mayChose(team)).collect(Collectors.toList());
             if (list.isEmpty()) throw new GameResultException(game, null);// this should not happen
             game.chose(DiscordClient.getOurUser(), Rand.getRand(list, false).getName());
         }
     }
-    public static void reportWin(AbstractNeuralNetGame game){
+    static void reportWin(AbstractNeuralNetGame game){
         NeuralNet net = GAME_NET_MAP.get(game);
         String gameNetName = getNeuralNetName(game);
         if (net.incrementWin() > LOADED_NEURAL_NETS.get(gameNetName).getWinCount()) {

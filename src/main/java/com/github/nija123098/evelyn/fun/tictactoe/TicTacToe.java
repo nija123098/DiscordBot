@@ -157,7 +157,10 @@ public class TicTacToe extends AbstractNeuralNetGame {
         int choice = -1;
         List<GameChoice> choices = this.getChoices();
         for (int i = 0; i < output.length; i++) {
-            if (choices.get(i).mayChose(this.getTeam(DiscordClient.getOurUser())) && highestWeight < output[i]) choice = i;
+            if (choices.get(i).mayChose(this.getTeam(DiscordClient.getOurUser())) && highestWeight < output[i]) {
+                choice = i;
+                highestWeight = output[i];
+            }
         }
         if (choice == -1) throw new GameResultException(this, null);
         return choices.get(choice);

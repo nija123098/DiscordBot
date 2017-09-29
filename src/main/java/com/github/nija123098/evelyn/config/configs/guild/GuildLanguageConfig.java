@@ -16,12 +16,9 @@ public class GuildLanguageConfig extends AbstractConfig<String, Guild> {
     }
     @Override
     protected String validateInput(Guild configurable, String v) {
-        if (!LangString.isLangCode(v) && !LangString.isLangName(v)) throw new ArgumentException("Please input a valid language code or name");
+        if (LangString.isLangName(v)) v = LangString.getLangCode(v);
+        if (!LangString.isLangCode(v)) throw new ArgumentException("Please input a valid language code or name");
         return v;
-    }
-    @Override
-    public String wrapTypeIn(String e, Guild configurable) {
-        return LangString.isLangCode(e) ? e : LangString.getLangCode(e);
     }
     @Override
     public String wrapTypeOut(String s, Guild configurable) {

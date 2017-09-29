@@ -189,10 +189,12 @@ public class User implements Configurable {
     }
 
     public void addRole(Role role) {
+        if (role.getUsers().contains(this)) return;
         ErrorWrapper.wrap(() -> user().addRole(role.role()));
     }
 
     public void removeRole(Role role) {
+        if (!role.getUsers().contains(this)) return;
         ErrorWrapper.wrap(() -> user().removeRole(role.role()));
     }
 }

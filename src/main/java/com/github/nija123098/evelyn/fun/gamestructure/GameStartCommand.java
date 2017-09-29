@@ -25,7 +25,6 @@ public class GameStartCommand extends AbstractCommand {
                 Team team = red;
                 red = blue;
                 blue = team;
-                maker.append("You go first!");
             }
             AbstractGame game = clazz.getConstructor(Team.class, Team.class).newInstance(red, blue);
             GameHandler.register(guild, game);
