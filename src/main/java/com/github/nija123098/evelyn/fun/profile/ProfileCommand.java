@@ -7,7 +7,8 @@ import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 
-public class ProfileCommand extends AbstractCommand {
+// Making this abstract disables it, it's now the recommended way to disable commands in the code, because I determine that.
+public abstract class ProfileCommand extends AbstractCommand {
     public ProfileCommand() {
         super("profile", ModuleLevel.FUN, null, null, "Shows info on a user");
     }

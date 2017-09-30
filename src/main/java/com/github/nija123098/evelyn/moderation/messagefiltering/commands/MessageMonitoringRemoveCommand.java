@@ -16,7 +16,7 @@ import com.github.nija123098.evelyn.moderation.messagefiltering.configs.MessageM
 
 public class MessageMonitoringRemoveCommand extends AbstractCommand {
     public MessageMonitoringRemoveCommand() {
-        super(MessageMonitoringCommand.class, "add", null, null, null, "Adds a filtering level");
+        super(MessageMonitoringCommand.class, "remove", null, null, null, "Removes a filtering level");
     }
     @Command
     public void command(@Argument(optional = true, replacement = ContextType.NONE) Channel channel, Guild guild, @Argument MessageMonitoringLevel level, MessageMaker maker){

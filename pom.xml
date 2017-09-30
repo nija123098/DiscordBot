@@ -93,10 +93,10 @@
             <artifactId>json-simple</artifactId>
             <version>1.1.1</version>
         </dependency>
-        <dependency>
-            <groupId>com.github.go-ive</groupId>
+        <dependency><!--My branch to remove the logger implementation-->
+            <groupId>com.github.nija123098</groupId>
             <artifactId>steam-api</artifactId>
-            <version>5.0</version>
+            <version>77b445d4da</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>

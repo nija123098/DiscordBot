@@ -14,6 +14,6 @@ import java.util.Map;
  */
 public class GlobalTemplateConfig extends AbstractConfig<Map<KeyPhrase, List<Template>>, GlobalConfigurable> {
     public GlobalTemplateConfig() {
-        super("global_templates", ConfigCategory.STAT_TRACKING, guild -> new HashMap<>(), "All global templates");
+        super("global_templates", ConfigCategory.STAT_TRACKING, new HashMap<>(), "All global templates");
     }
 }

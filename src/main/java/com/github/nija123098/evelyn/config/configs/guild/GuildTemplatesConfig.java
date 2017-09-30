@@ -16,6 +16,6 @@ import java.util.Map;
  */
 public class GuildTemplatesConfig extends AbstractConfig<Map<KeyPhrase, List<Template>>, Guild> {
     public GuildTemplatesConfig() {
-        super("guild_templates", ConfigCategory.GUILD_PERSONALIZATION, guild -> new HashMap<>(), "All global templates");
+        super("guild_templates", ConfigCategory.GUILD_PERSONALIZATION, new HashMap<>(), "All global templates");
     }
 }

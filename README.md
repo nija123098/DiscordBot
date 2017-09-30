@@ -5,6 +5,8 @@ A multipurpose Discord bot with an emphasis on music, moderation, economy, and m
 ## Technology
 DiscordBot uses the Java reflection API, this is rumored to be incredibly slow, it's not.  There are many things wrong with the JVM, reflection is no longer one of them.
 
+Neural networks are used in some games when playing against the bot.  The implementation is generational and writen in such a way that XStream can properly Serialize it without messing up references.
+
 DiscordBot utilizes many APIs in an effort to provide as many **meaningful** integrations as possible.  While this includes mostly data collection from other services, it does not necessarily mean it is limited to data collection and that data collection is all it will utilize going into the future.
 
 SQL (MariaDB) Utilized for large data storage, though everything is stored as strings as many values are XML, this is in the queue to be optimized.

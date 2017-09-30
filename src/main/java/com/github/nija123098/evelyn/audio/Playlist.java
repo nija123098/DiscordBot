@@ -24,7 +24,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 
 /**
- * Made by nija123098 on 3/30/2017.
+ * A list of tracks for either guilds or users.
+ *
  */
 @LaymanName(value = "Playlist", help = "The playlist type (global, guild, user) followed by the name")
 public class Playlist implements Configurable {

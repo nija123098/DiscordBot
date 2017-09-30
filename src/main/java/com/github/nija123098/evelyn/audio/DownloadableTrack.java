@@ -27,7 +27,13 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Made by nija123098 on 6/10/2017.
+ * An abstract Track type which describes a track that
+ * could be downloaded for efficiency as to not expend
+ * an excessive amount of total bandwidth usage.  These
+ * tracks should only be used when above a request threshold.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public abstract class DownloadableTrack extends Track {
     private static final List<String> TYPES = Stream.of(BotConfig.AUDIO_FILE_TYPES.split(",")).map(String::trim).collect(Collectors.toList());

@@ -133,6 +133,7 @@ public class GuildAudioManager extends AudioEventAdapter{
     }
     public void leave(){
         if (this.leaving || !hasValidListeners(this.channel) || ConfigHandler.getSetting(GreetingsVoiceConfig.class, channel.getGuild())){
+            this.leaving = true;
             MAP.remove(this.channel.getGuild().getID());
             this.channel.leave();
             this.audioProvider.run.set(false);

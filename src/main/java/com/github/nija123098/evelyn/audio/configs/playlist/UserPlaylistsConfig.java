@@ -10,6 +10,6 @@ import java.util.Set;
 
 public class UserPlaylistsConfig extends AbstractConfig<Set<String>, User> {
     public UserPlaylistsConfig() {
-        super("user_playlists", ConfigCategory.STAT_TRACKING, user -> new HashSet<>(0), "The playlists a user has");
+        super("user_playlists", ConfigCategory.STAT_TRACKING, new HashSet<>(0), "The playlists a user has");
     }
 }

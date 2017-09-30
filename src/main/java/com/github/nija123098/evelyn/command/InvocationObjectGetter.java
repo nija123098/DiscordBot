@@ -351,6 +351,28 @@ public class InvocationObjectGetter {
             if (rolePair != null) return new Pair<>(new Team(.5F, rolePair.getKey()), rolePair.getValue());
             throw new ArgumentException("Please specify a team by role or user");
         });
+        addConverter(ColorRange.class, (invoker, shard, channel, guild, message, reaction, args) -> {
+            List<Color> colors = new ArrayList<>(4);
+            Pair<Color, Integer> pair;
+            int total = 0, skipAmount;
+            while (true){
+                pair = convert(Color.class, invoker, shard, channel, guild, message, reaction, args);
+                if (pair == null) return new Pair<>(new ColorRange(colors), total);
+                else {
+                    colors.add(pair.getKey());
+                    total += pair.getValue();
+                    args = args.substring(pair.getValue());
+                    skipAmount = 0;
+                    for (int i = 0; i < args.length(); i++) {
+                        if (Character.isWhitespace(args.charAt(i))) ++skipAmount;
+                        else break;
+                    }
+                    args = args.substring(skipAmount);
+                    total += skipAmount;
+                }
+                if (total == 0) throw new ArgumentException("No colors specified to make color range");
+            }
+        });
     }
 
     private static <T> void addConverter(Class<T> clazz, ArgumentConverter<T> argumentConverter, ContextRequirement...requirements){

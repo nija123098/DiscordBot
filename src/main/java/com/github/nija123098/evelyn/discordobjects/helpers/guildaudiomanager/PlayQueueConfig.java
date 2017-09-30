@@ -14,6 +14,6 @@ import java.util.List;
  */
 public class PlayQueueConfig extends AbstractConfig<List<Track>, VoiceChannel> {
     public PlayQueueConfig() {
-        super("play_queue", ConfigCategory.STAT_TRACKING, vc -> new ArrayList<>(0), "The play Q for shutdown situations.");
+        super("play_queue", ConfigCategory.STAT_TRACKING, new ArrayList<>(0), "The play Q for shutdown situations.");
     }
 }

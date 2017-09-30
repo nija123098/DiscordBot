@@ -284,6 +284,17 @@ public class ConfigHandler {
         }
     }
 
+    /**
+     * Resets the configurable's data for the given config
+     * @param configurable the configurable to reset
+     * @param config the config type
+     * @param <T> the type of configurable
+     * @param <V> the value type
+     */
+    public static <T extends Configurable, V> void reset(Class<? extends AbstractConfig<V, T>> config, T configurable) {
+        getConfig(config).reset(configurable);
+    }
+
     public static <T extends Configurable, V> Map<T, V> getNonDefaultSettings(Class<? extends AbstractConfig<V, T>> config){
         return getNonDefaultSettings(config, getConfig(config).getConfigLevel().getType());
     }

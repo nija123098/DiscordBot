@@ -4,9 +4,11 @@ import com.github.nija123098.evelyn.exeption.DevelopmentException;
 import com.github.nija123098.evelyn.perms.configs.specialperms.SpecialPermsContainer;
 import com.github.nija123098.evelyn.util.ReflectionHelper;
 import javafx.util.Pair;
+import org.eclipse.jetty.util.ConcurrentHashSet;
 
 import java.io.File;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
 
@@ -23,8 +25,8 @@ public class ObjectCloner {
         add(String.class);
         add(Configurable.class);
         add(List.class, CopyOnWriteArrayList::new);
-        add(Set.class, Collections::synchronizedSet);
-        add(Map.class, Collections::synchronizedMap);
+        add(Set.class, ObjectCloner::getSet);
+        add(Map.class, ObjectCloner::getMap);
         add(Pair.class, or -> new Pair(or.getKey(), or.getValue()));
         add(SpecialPermsContainer.class, SpecialPermsContainer::copy);
     }
@@ -47,5 +49,15 @@ public class ObjectCloner {
             if (function != null) return (I) function.apply(i);
         }
         throw new DevelopmentException("Attempted to clone a object of non-supported type");
+    }
+    private static <E> Set<E> getSet(Set<E> es){
+        Set<E> objects = new ConcurrentHashSet<>();
+        objects.addAll(es);
+        return objects;
+    }
+    private static <E, F> Map<E, F> getMap(Map<E, F> es){
+        Map<E, F> objects = new ConcurrentHashMap<>();
+        objects.putAll(es);
+        return objects;
     }
 }

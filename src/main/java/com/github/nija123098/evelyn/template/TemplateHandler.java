@@ -40,7 +40,7 @@ public class TemplateHandler {
             return null;
         }// should not throw an exception since nothing failed
         if (exemptions.size() >= templates.size()) return Rand.getRand(templates, false);
-        else return templates.get(Rand.getRand(templates.size() - 1, exemptions.toArray(new Integer[exemptions.size()])));
+        else return templates.get(Rand.getRand(templates.size(), exemptions.toArray(new Integer[exemptions.size()])));
     }
     public static Template addTemplate(KeyPhrase keyPhrase, Guild guild, String s){
         Template template = new Template(s, keyPhrase.getDefinition());

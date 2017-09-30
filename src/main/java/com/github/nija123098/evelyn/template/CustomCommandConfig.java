@@ -13,6 +13,6 @@ import java.util.List;
  */
 public class CustomCommandConfig extends AbstractConfig<List<CustomCommand>, Guild> {
     public CustomCommandConfig() {
-        super("custom_commands", ConfigCategory.STAT_TRACKING, guild -> new ArrayList<>(0), "The map of custom command by name then functions");
+        super("custom_commands", ConfigCategory.STAT_TRACKING, new ArrayList<>(0), "The map of custom command by name then functions");
     }
 }

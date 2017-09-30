@@ -32,6 +32,7 @@ public class PlayCommand extends AbstractCommand {
             if (trackList.isEmpty() && !(s == null || s.isEmpty())) {
                 Track t = YTUtil.getTrack(s);
                 if (t == null) throw new ArgumentException("I couldn't find a track for that");
+                maker.withDeleteDelay(10_000L).appendRaw(t.getName());
                 trackList.add(t);
                 Track track = PREVIOUS_MAP.get(user);
                 if (trackList.size() > 1){

@@ -18,7 +18,11 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * Made by nija123098 on 7/4/2017.
+ * A special playlist which has no contents, it's
+ * tracks are determined by popularity of all tracks.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public class GlobalPlaylist extends Playlist {
     public static final GlobalPlaylist GLOBAL_PLAYLIST = new GlobalPlaylist();

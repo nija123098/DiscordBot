@@ -10,6 +10,6 @@ import java.util.function.Function;
 
 public class UnknownReactionConfig extends AbstractConfig<Boolean, Guild> {
     public UnknownReactionConfig() {
-        super("unknown_command_response", ConfigCategory.GUILD_PERSONALIZATION, (Function<Guild, Boolean>) guild -> guild.getUsers().stream().filter(User::isBot).count() > 5, "If the bot ignores unknown commands");
+        super("unknown_command_response", ConfigCategory.GUILD_PERSONALIZATION, guild -> guild.getUsers().stream().filter(User::isBot).count() > 5, "If the bot ignores unknown commands");
     }
 }

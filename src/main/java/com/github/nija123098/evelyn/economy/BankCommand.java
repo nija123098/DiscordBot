@@ -27,7 +27,7 @@ public class BankCommand extends AbstractCommand {
             configurable = user;
             getFormat(maker, "Your bank contains ", configurable);
         } else {
-            getFormat(maker, "" + configurable.getName() + "'s bank contains ", configurable);
+            getFormat(maker, configurable.getName() + "'s bank contains ", configurable);
         }
         if (user.equals(configurable) && guildUser != null){
             getFormat(maker, "\nIn this server you have ", guildUser);

@@ -21,7 +21,7 @@ import com.github.nija123098.evelyn.util.Time;
  */
 public class UserCommand extends AbstractCommand {
     public UserCommand() {
-        super("user", ModuleLevel.INFO, "whois", null, "Shows information about the user");
+        super("user", ModuleLevel.INFO, "whois, profile", null, "Shows information about the user");
     }
     @Command
     public void command(@Argument(optional = true) User user, @Context(softFail = true) Guild guild, MessageMaker maker){
