@@ -14,7 +14,11 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Made by nija123098 on 3/31/2017.
+ * Assists in keeping an active list of
+ * all names any user goes by in a guild.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public class UserNameMonitor {
     private static final Map<Guild, Set<String>> MAP = new ConcurrentHashMap<>();

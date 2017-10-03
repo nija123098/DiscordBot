@@ -12,10 +12,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * An enum for every command module
+ * An enum for every command module which assists in defining
+ * default values for commands which are in the module.
  *
  * @author nija123098
- * @since 2.0.0
+ * @since 1.0.0
  */
 @LaymanName(value = "Module", help = "A group of commands.  MUSIC, FUN, BOT_ADMINISTRATIVE, ADMINISTRATIVE, ECONOMY, DEVELOPMENT, INFO, HELPER, NONE")
 public enum ModuleLevel {

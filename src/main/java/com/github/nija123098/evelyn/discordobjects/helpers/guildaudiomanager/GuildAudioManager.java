@@ -53,7 +53,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * Made by nija123098 on 3/28/2017.
+ * The manager for a single guild for a single voice connection.
+ * This is trashed after the bot leaves the voice channel this managed.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public class GuildAudioManager extends AudioEventAdapter{
     private static final int BUFFER_SIZE = 40;
@@ -85,6 +89,16 @@ public class GuildAudioManager extends AudioEventAdapter{
         EventDistributor.register(GuildAudioManager.class);
     }
     public static void init(){}
+
+    /**
+     * Gets a instance based on the {@link VoiceChannel} and
+     * if a manager should be made if no such manager exists.
+     *
+     * @param channel the channel to get a manager for
+     * @param make if a manager should be made if one does not exist for this guild
+     * @return a manager instance for the given channel
+     * @throws ArgumentException if the bot would have no valid listeners or if a manager exists elsewhere in the guild
+     */
     public static GuildAudioManager getManager(VoiceChannel channel, boolean make){
         if (channel == null) return null;// this might not happen anymore
         if (BotConfig.GHOST_MODE) throw new GhostException();
@@ -104,9 +118,24 @@ public class GuildAudioManager extends AudioEventAdapter{
         }
         return null;
     }
+
+    /**
+     * Gets a instance based on the {@link VoiceChannel}
+     *
+     * @param channel the channel to get a manager for
+     * @return a manager instance for the given channel
+     * @throws ArgumentException if the bot would have no valid listeners or if a manager exists elsewhere in the guild
+     */
     public static GuildAudioManager getManager(VoiceChannel channel){
         return getManager(channel, true);
     }
+
+    /**
+     * Gets a manager instance if one exists for the given guild.
+     *
+     * @param guild the guild to get a manager for if one exists
+     * @return a manager instance if one exists for the guild or null
+     */
     public static GuildAudioManager getManager(Guild guild){
         return MAP.get(guild.getID());
     }
@@ -152,17 +181,41 @@ public class GuildAudioManager extends AudioEventAdapter{
             this.leaving = true;
         }
     }
+
+    /**
+     * Pauses of un-pauses the current track.
+     *
+     * @param pause if the current track should be paused
+     */
     public void pause(boolean pause){
         this.lavaPlayer.setPaused(pause);
         this.pause = pause;
     }
+
+    /**
+     * Removes all songs from the queue, not the currently playing song.
+     */
     public void clearQueue(){
         this.queue.clear();
     }
+
+    /**
+     * Queues a new speech which will be played now
+     * or if a track is currently playing afterword.
+     *
+     * @param string the thing the bot should say
+     */
     public void queueSpeech(LangString string){
         if (this.current == null) this.queueTrack(new SpeechTrack(string, MessageMaker.getLang(null, this.channel)));
         else this.speeches.add(string);
     }
+
+    /**
+     * Queues a new speech which will be played now or
+     * if a track is currently playing be placed in queue.
+     *
+     * @param track the track to queue or play next
+     */
     public void queueTrack(Track track){
         if (track == null) this.current = null;
         else {
@@ -170,14 +223,31 @@ public class GuildAudioManager extends AudioEventAdapter{
             else this.queue.add(track);
         }
     }
-    public void swap(AudioTrack track){
+
+    /**
+     * Swaps the currently playing if it is equivalent and
+     * resumes using the new provision of {@link AudioTrack}.
+     *
+     * @param track the track to swap if applicable
+     */
+    public void swap(Track track){
+        if (!track.equals(this.currentTrack())) return;
+        AudioTrack audioTrack = track.getAudioTrack(null);
         this.lavaPlayer.setPaused(true);
         this.swapping = true;
-        track.setPosition(this.currentTime());
+        audioTrack.setPosition(this.currentTime());
         this.lavaPlayer.stopTrack();
-        this.lavaPlayer.startTrack(track, false);
+        this.lavaPlayer.startTrack(audioTrack, false);
         this.lavaPlayer.setPaused(false);
     }
+
+    /**
+     * Interrupts any currently playing music and
+     * makes the bot say the translated string or
+     * queues it behind any current interrupts.
+     *
+     * @param langString the thing to interrupt
+     */
     public void interrupt(LangString langString){// must fully exist
         if (this.current == null && this.queue.isEmpty()) {
             this.queueTrack(new SpeechTrack(langString, MessageMaker.getLang(null, this.channel)));
@@ -191,9 +261,6 @@ public class GuildAudioManager extends AudioEventAdapter{
         this.paused = this.current;
         this.interups.add(langString);
         this.lavaPlayer.stopTrack();
-    }
-    public void setPlaylistOn(boolean on){
-        ConfigHandler.setSetting(QueueTrackOnlyConfig.class, this.channel.getGuild(), on);
     }
     private void start(Track track, int position){
         this.skipped = false;
@@ -219,9 +286,22 @@ public class GuildAudioManager extends AudioEventAdapter{
             }
         });
     }
+
+    /**
+     * Changes the time of the track to the given time.
+     *
+     * @param time the time to change a track to.
+     */
     public void seek(long time) {
+        if (time < 0 || time > this.lavaPlayer.getPlayingTrack().getInfo().length) throw new ArgumentException("The song is only " + this.lavaPlayer.getPlayingTrack().getInfo().length + " seconds long");
         this.lavaPlayer.getPlayingTrack().setPosition(time);
     }
+
+    /**
+     * Forces the skipping of the current track, regardless of the vote.
+     *
+     * @return the number of songs left in queue
+     */
     public int skipTrack() {
         this.audioProvider.clearBuffer();
         int size = this.queue.size() - 1;
@@ -260,6 +340,13 @@ public class GuildAudioManager extends AudioEventAdapter{
             this.lavaPlayer.setPaused(true);
         }
     }
+
+    /**
+     * Gets the track that should play next.
+     *
+     * @param take if that track should be removed from the possible next play
+     * @return the track to play next
+     */
     public Track getNext(boolean take){
         if (this.loop) return this.current;
         if (!this.queue.isEmpty()) return take ? this.queue.remove(0) : this.queue.get(0);
@@ -267,43 +354,111 @@ public class GuildAudioManager extends AudioEventAdapter{
         if (!ConfigHandler.getSetting(QueueTrackOnlyConfig.class, this.channel.getGuild())) return (this.next = ConfigHandler.getSetting(GuildActivePlaylistConfig.class, this.channel.getGuild()).getNext(this.channel.getGuild()));
         return this.next;
     }
+
+    /**
+     * Sets the bot to leave the voice channel after the currently playing song.
+     */
     public void leaveAfterThis(){
         this.leaveAfterThis = true;
     }
+
+    /**
+     * Sets if the bot should loop the currently playing {@link Track}.
+     *
+     * @param loop if the bot should loop the currently playing {@link Track}
+     */
     public void loop(boolean loop){
         this.loop = loop;
     }
+
+    /**
+     * Gets if the bot is currently playing a {@link Track} on loop.
+     *
+     * @return if the bot is currently playing a {@link Track} on loop
+     */
     public boolean isLooping() {
         return this.loop;
     }
+
+    /**
+     * Gets the currently playing {@link Track}.
+     *
+     * @return teh currently playing {@link Track}
+     */
     public Track currentTrack() {
         return this.current;
     }
+
+    /**
+     * Gets the current time of the current {@link Track} in seconds.
+     *
+     * @return the current time of the current {@link Track} in seconds
+     */
     public long currentTime(){
         AudioTrack track = this.lavaPlayer.getPlayingTrack();
         return track == null ? 0 : track.getPosition();
     }
+
+    /**
+     * Gets a list of the {@link Track}s to be played after the current in order.
+     *
+     * @return the {@link Track}s to be played after the current in order.
+     */
     public List<Track> getQueue() {
         return this.queue;
     }
+
+    /**
+     * Gets the {@link VoiceChannel} this manager manages.
+     *
+     * @return the {@link VoiceChannel} this manager manages
+     */
     public VoiceChannel voiceChannel() {
         return this.channel;
     }
+
+    /**
+     * Gets if the current song is paused.
+     *
+     * @return if the current song is paused
+     */
     public boolean isPaused() {
         return this.lavaPlayer.isPaused();
     }
-    public void checkSkip(){
+
+    /**
+     * Checks the vote if the current song should be skipped and does so if it should.
+     */
+    private void checkSkip(){
         if (this.skipSet.size() / (float) validListeners(this.channel) >= ConfigHandler.getSetting(SkipPercentConfig.class, this.channel.getGuild()) / 100F){
             this.skipTrack();
         }
     }
+
+    /**
+     * Gets the guild this manager is managing.
+     *
+     * @return the guild this manager is managing
+     */
     public Guild getGuild() {
         return this.channel.getGuild();
     }
+
+    /**
+     * Sets the volume the manager should play at.
+     *
+     * @param val the volume the manager should play at
+     */
     public void setVolume(int val){
         this.lavaPlayer.setVolume((int) (val * 1.5F));
         ConfigHandler.setSetting(VolumeConfig.class, this.getGuild(), val);
     }
+
+    /**
+     * Gets the volume the manager should play at.
+     *
+     * @return the volume the manager should play at
+     */
     public int getVolume(){// this isn't the only thing we lie to our users about
         return this.lavaPlayer.getVolume() / 3 * 2;
     }

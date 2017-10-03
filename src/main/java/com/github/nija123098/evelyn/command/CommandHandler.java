@@ -23,6 +23,7 @@ import com.github.nija123098.evelyn.util.*;
 import javafx.util.Pair;
 import org.reflections.Reflections;
 
+import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
@@ -46,6 +47,7 @@ public class CommandHandler {
     static {
         Map<Class<? extends AbstractCommand>, Set<AbstractCommand>> typeMap = new HashMap<>();
         Set<Class<? extends AbstractCommand>> classes = new Reflections(Reference.BASE_PACKAGE).getSubTypesOf(AbstractCommand.class);
+        classes.removeIf(clazz -> Modifier.isAbstract(clazz.getModifiers()));
         CLASS_MAP = new HashMap<>(classes.size() + 10, 1);
         classes.forEach(clazz -> {
             try {
@@ -86,7 +88,13 @@ public class CommandHandler {
         });
     }
 
-
+    /**
+     * Loads a command hierarchically as determined by pre-sorted maps.
+     *
+     * @param superCommand the command to load it and it's sub-commands
+     * @param typeMap the map sorted so the type of the super-command
+     *                is the key and the value is a set of sub-command objects
+     */
     private static void load(AbstractCommand superCommand, Map<Class<? extends AbstractCommand>, Set<AbstractCommand>> typeMap){
         superCommand.load();
         if (typeMap.containsKey(superCommand.getClass())) typeMap.get(superCommand.getClass()).forEach(command -> load(command, typeMap));
@@ -99,6 +107,11 @@ public class CommandHandler {
         Log.log("Command Handler initialized");
     }
 
+    /**
+     * Returns a set of all command instances.
+     *
+     * @return returns a set of all command instances
+     */
     public static Set<? extends AbstractCommand> getCommands(){
         return new HashSet<>(CLASS_MAP.values());
     }
@@ -276,6 +289,14 @@ public class CommandHandler {
         return false;
     }
 
+    /**
+     * Attempts to execute a command invoked from a voice channel.
+     *
+     * @param s the words used to invoke the command
+     * @param user the user invoking the command
+     * @param manager the audio manager that got the command
+     * @return if a command was invoked and succeeded
+     */
     public static boolean attemptInvocation(String s, User user, GuildAudioManager manager){
         if (s == null || s.isEmpty()) return false;
         String prefix = ConfigHandler.getSetting(VoicePrefixConfig.class, user);

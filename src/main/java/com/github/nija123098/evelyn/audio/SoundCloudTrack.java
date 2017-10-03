@@ -1,7 +1,10 @@
 package com.github.nija123098.evelyn.audio;
 
 /**
- * Made by nija123098 on 6/10/2017.
+ * A track type representing a track from Soundcloud.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public class SoundCloudTrack extends DownloadableTrack {
     static {

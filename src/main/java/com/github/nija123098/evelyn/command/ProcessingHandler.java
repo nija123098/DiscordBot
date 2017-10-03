@@ -7,7 +7,11 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Made by nija123098 on 5/11/2017.
+ * An assistant for making the bot display
+ * the typing status during command processing.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public class ProcessingHandler {
     private static final Map<Channel, Integer> PROCESSING_MAP = new ConcurrentHashMap<>();

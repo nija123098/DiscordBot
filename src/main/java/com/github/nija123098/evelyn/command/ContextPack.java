@@ -7,10 +7,11 @@ import com.github.nija123098.evelyn.exeption.ContextException;
 import com.github.nija123098.evelyn.template.commands.functions.ContextCommand;
 
 /**
- * Context Command must be updated if this type's getters are changed
+ * Context Command must be updated if this type's getters are changed.
  *
- * @see ContextCommand
  * @author nija123098
+ * @since 1.0.0
+ * @see ContextCommand
  */
 public class ContextPack {
     private User user;
@@ -20,6 +21,18 @@ public class ContextPack {
     private Message message;
     private Reaction reaction;
     private String args;
+
+    /**
+     * A constructor for every possible source of inferring a command's meaning
+     *
+     * @param user the invoking user
+     * @param shard the shard the invocation occurred on
+     * @param channel the channel a invocation occurred in
+     * @param guild the guild a command occurred in or null
+     * @param message the message the command occurred by or a message a reaction command was invoked on or null
+     * @param reaction the reaction the command occured by or null
+     * @param args the arguments for a command
+     */
     public ContextPack(User user, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, String args) {
         this.user = user;
         this.shard = shard;

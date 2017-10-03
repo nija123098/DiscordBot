@@ -12,7 +12,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * Made by nija123098 on 6/10/2017.
+ * The track defining the audio portion of the video.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public class YoutubeTrack extends DownloadableTrack {
     private static final CallBuffer CALL_BUFFER = new CallBuffer(250);

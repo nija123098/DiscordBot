@@ -32,7 +32,27 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * Made by nija123098 on 3/27/2017.
+ * The source for getting context and arguments for arguments for a command.
+ *
+ * The first part of this class deals with context and simply
+ * gets instances of objects based on a command's context.
+ * All functions are defined by {@link InvocationGetter}
+ * and stored in CONTEXT_MAP for invocation.
+ *
+ * The second part of the class contains definitions for
+ * converting parts of {@link String} instances to objects.
+ * Functions are defined by {@link ArgumentConverter} which
+ * returns a {@link Pair} with the object as the key and the
+ * number of characters used to define the object as the value.
+ * {@link Pair} relationships are not constant and should not
+ * be confused to have a 1 to 1 behavior.
+ *
+ * The third part of the class is the utilization of the defined
+ * context and conversion functions.  Primarily converting to get
+ * an array of objects for command invocation.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public class InvocationObjectGetter {
     private static final Map<Class<?>, Map<ContextType, Pair<InvocationGetter<?>, Set<ContextRequirement>>>> CONTEXT_MAP = new HashMap<>();
@@ -79,6 +99,15 @@ public class InvocationObjectGetter {
         addContext(Configurable.class, ContextType.DEFAULT, (user, shard, channel, guild, message, reaction, args) -> null);
     }// ^ is for the optional on configurable conversions
 
+    /**
+     * Adds a context class type specified by the class instance.
+     *
+     * @param clazz the context class type
+     * @param contextType the enum representation for use of when multiple contexts are gotten
+     * @param invocationGetter the function to define the context return
+     * @param requirements enum representations of context requirements for requiring certain contexts in command invocation
+     * @param <T> the type of objects to return
+     */
     private static <T> void addContext(Class<T> clazz, ContextType contextType, InvocationGetter<T> invocationGetter, ContextRequirement...requirements){
         Pair<InvocationGetter<?>, Set<ContextRequirement>> pair = new Pair<>(invocationGetter, EnumHelper.getSet(ContextRequirement.class, requirements));
         CONTEXT_MAP.computeIfAbsent(clazz, c -> {
@@ -93,6 +122,11 @@ public class InvocationObjectGetter {
         return CONTEXT_MAP.get(type).get(contextType).getValue();
     }
 
+    /**
+     * A function to get context instances for
+     *
+     * @param <E> the type of object to return
+     */
     @FunctionalInterface
     private interface InvocationGetter<E>{
         E getObject(User invoker, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, String args);
@@ -139,7 +173,8 @@ public class InvocationObjectGetter {
             return new Pair<>(users.get(0), length);
         });
         addConverter(Playlist.class, (user, shard, channel, guild, message, reaction, args) -> {
-            if (args.toLowerCase().startsWith("global")) return new Pair<>(GlobalPlaylist.GLOBAL_PLAYLIST, args.equalsIgnoreCase("global playlist") ? 15 : 6);
+            args = args.toLowerCase();
+            if (args.startsWith("global")) return new Pair<>(GlobalPlaylist.GLOBAL_PLAYLIST, args.equalsIgnoreCase("global playlist") ? 15 : 6);
             String[] split = args.split(" ");
             Pair<User, Integer> p = null;
             if (split.length > 1){
@@ -375,6 +410,14 @@ public class InvocationObjectGetter {
         });
     }
 
+    /**
+     * Adds a conversion definition for a specified type.
+     *
+     * @param clazz the class type to convert part of a string to
+     * @param argumentConverter the function to define converting a command
+     * @param requirements enum representations of context requirements for requiring certain contexts in command invocation
+     * @param <T> the type to return
+     */
     private static <T> void addConverter(Class<T> clazz, ArgumentConverter<T> argumentConverter, ContextRequirement...requirements){
         EnumSet<ContextRequirement> req = EnumHelper.getSet(ContextRequirement.class, requirements);
         req.add(ContextRequirement.STRING);
@@ -385,6 +428,24 @@ public class InvocationObjectGetter {
         return type.isEnum() ? Collections.emptySet() :  CONVERTER_MAP.get(type).getValue();
     }
 
+    /**
+     * Converts part of a string to a {@link Pair} whose
+     * key is an object of type T and whose value is the
+     * number of characters of the string used to define
+     * the instance of the key.
+     *
+     * @param clazz the type of object to define
+     * @param user the invoking user
+     * @param shard the shard the invocation occurred on
+     * @param channel the channel a invocation occurred in
+     * @param guild the guild a command occurred in or null
+     * @param message the message the command occurred by or a message a reaction command was invoked on or null
+     * @param reaction the reaction the command occurred by or null
+     * @param args the arguments for a command
+     * @param <T> the type of object
+     * @return A {@link Pair} whose key is the derived object and the
+     * @throws ArgumentException for when no instace was able to be derived from the given object
+     */
     public static <T> Pair<T, Integer> convert(Class<T> clazz, User user, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, String args){
         if (args.equalsIgnoreCase("null")) return new Pair<>(null, 4);
         if (clazz.isEnum()) return (Pair<T, Integer>) EnumHelper.getValue(clazz, args);
@@ -395,6 +456,12 @@ public class InvocationObjectGetter {
         return CONVERTER_MAP.keySet();
     }
 
+    /**
+     * The function that defines converting
+     * part of a string to an object of type E
+     *
+     * @param <E> the type of key to return
+     */
     @FunctionalInterface
     private interface ArgumentConverter<E>{
         Pair<E, Integer> getObject(User invoker, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, String args);
@@ -407,6 +474,22 @@ public class InvocationObjectGetter {
         Log.log("Invocation Object Getter initialized");
     }
 
+    /**
+     *
+     *
+     * @param command the command to fill command arguments for.
+     * @param parameters the {@link Parameter}s for the command method's arguments
+     * @param objects the array to fill objects for the command's invocation
+     * @param user the invoking user
+     * @param shard the shard the invocation occurred on
+     * @param channel the channel a invocation occurred in
+     * @param guild the guild a command occurred in or null
+     * @param message the message the command occurred by or a message a reaction command was invoked on or null
+     * @param reaction the reaction the command occurred by or null
+     * @param args the arguments for a command
+     * @param argOverride overrides for argument invocation
+     * @return an array of objects for command paramaters for the command's invocation
+     */
     public static Object[] replace(AbstractCommand command, Parameter[] parameters, Object[] objects, User user, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, String args, boolean[] argOverride){
         int commandArgIndex = 0;
         for (int i = 0; i < parameters.length; i++) {

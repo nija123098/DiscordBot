@@ -14,7 +14,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 
 public class ConfigDescriptionsCommand extends AbstractCommand {
     public ConfigDescriptionsCommand() {
-        super(ConfigCommand.class, "descriptions", "info, desc", null, null, "Displays what a config does");
+        super(ConfigCommand.class, "descriptions", "cfginfo, cfgdesc", null, null, "Displays what a config does");
     }
     @Command
     public <C extends Configurable> void command(@Argument(optional = true, replacement = ContextType.NONE, info = "the configurable to get descriptions for") C configurable, @Argument(optional = true, info = "the config to get descriptions of", replacement = ContextType.NONE) AbstractConfig<?, C> config, @Context(softFail = true) Guild guild, User user, MessageMaker maker){

@@ -6,7 +6,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Made by nija123098 on 4/9/2017.
+ * An annotation for making an object's name
+ * user understandable when it is used an argument.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

@@ -7,6 +7,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventDistribut
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordGuildJoin;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordUserJoin;
+import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordUserLeave;
 import com.github.nija123098.evelyn.exeption.ConfigurableConvertException;
 import com.github.nija123098.evelyn.exeption.DevelopmentException;
 import com.github.nija123098.evelyn.launcher.Launcher;
@@ -18,7 +19,10 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * The configurable for users within a guild
+ * The configurable for users in relation to a guild.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public class GuildUser implements Configurable {
     /**
@@ -36,6 +40,11 @@ public class GuildUser implements Configurable {
     public static void handle(DiscordUserJoin join){
         orderGuildUsers(join.getGuild());
         NEXT_USER_INTEGER.compute(join.getGuild(), (guild, integer) -> getGuildUser(join.getGuild(), join.getUser()).number = ++integer);
+    }
+
+    @EventListener
+    public static void handle(DiscordUserLeave leave){
+        orderGuildUsers(leave.getGuild());
     }
 
     @EventListener
@@ -71,7 +80,14 @@ public class GuildUser implements Configurable {
         return getGuildUser("gu-" + guild.getID() + "-id-" + user.getID());
     }
 
-    public static void orderGuildUsers(Guild guild){
+    /**
+     * Orders the {@link GuildUser}s and sets the
+     * {@link GuildUser#number} to the order
+     * which the user joined.
+     *
+     * @param guild the guild to order {@link GuildUser}s for
+     */
+    private static void orderGuildUsers(Guild guild){
         Map<Long, GuildUser> map = new ConcurrentHashMap<>();
         guild.getUsers().forEach(user -> map.put(guild.getJoinTimeForUser(user), getGuildUser(guild, user)));
         Long[] longs = map.keySet().toArray(new Long[map.keySet().size()]);
@@ -92,6 +108,12 @@ public class GuildUser implements Configurable {
     public String getID() {
         return this.id;
     }
+
+    /**
+     * Returns the position in which the user joined.
+     *
+     * @return the position in which the user joined
+     */
     public int getJoinPosition() {
         return this.number;
     }
@@ -110,10 +132,6 @@ public class GuildUser implements Configurable {
         BotRole.GUILD_TRUSTEE.checkRequiredRole(user, guild);
     }
     @Override
-    public boolean shouldCache() {
-        return false;
-    }
-    @Override
     public Configurable getGoverningObject(){
         return getGuild();
     }
@@ -128,10 +146,22 @@ public class GuildUser implements Configurable {
     public boolean equals(Object o){
         return Configurable.class.isInstance(o) && this.getID().equals(((Configurable) o).getID());
     }
+
+    /**
+     * Returns the guild which the guild user is a member of.
+     *
+     * @return the guild which the guild user is a member of
+     */
     public Guild getGuild(){
         String s = this.id.split("-id-")[0];
         return Guild.getGuild(s.substring(3, s.length()));
     }
+
+    /**
+     * Returns the user which is the member of a guild.
+     *
+     * @return the user which is the member of a guild
+     */
     public User getUser(){
         return User.getUser(this.id.split("-id-")[1]);
     }

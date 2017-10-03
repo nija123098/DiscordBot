@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
  * {@link String} arguments for argument passing.
  *
  * @author nija123098
- * @since 2.0.0
+ * @since 1.0.0
  * @see InvocationObjectGetter
  */
 @Retention(RetentionPolicy.RUNTIME)

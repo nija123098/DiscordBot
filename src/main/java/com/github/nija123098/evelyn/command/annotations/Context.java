@@ -19,7 +19,7 @@ import java.lang.annotation.Target;
  * conversion assigned to that type.
  *
  * @author nija123098
- * @since 2.0.0
+ * @since 1.0.0
  * @see InvocationObjectGetter
  */
 @Retention(RetentionPolicy.RUNTIME)

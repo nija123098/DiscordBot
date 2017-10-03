@@ -22,18 +22,18 @@ public class NeuralNet {
         }
         for (int i = 0; i < inputNodes; i++) {
             for (int j = 0; j < hiddenWidth; j++) {
-                this.weights[0][i][j] = 1D;
+                this.weights[0][i][j] = 0;
             }
         }
         for (int i = 0; i < hiddenWidth; i++) {
             for (int j = 0; j < outNodes; j++) {
-                this.weights[this.weights.length - 1][i][j] = 1D;
+                this.weights[this.weights.length - 1][i][j] = 0;
             }
         }
         for (int i = 1; i < this.weights.length - 1; i++) {
             for (int j = 0; j < hiddenWidth; j++) {
                 for (int k = 0; k < hiddenWidth; k++) {
-                    this.weights[i][j][k] = 1D;
+                    this.weights[i][j][k] = 0;
                 }
             }
         }

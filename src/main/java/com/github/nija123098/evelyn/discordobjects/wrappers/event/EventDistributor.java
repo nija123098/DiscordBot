@@ -18,17 +18,29 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
 /**
- * Made by nija123098 on 3/12/2017.
+ * A utility class to distribute all {@link BotEvent} instances.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public class EventDistributor {
     private static final Map<Class<?>, Set<Listener>> LISTENER_MAP = new ConcurrentHashMap<>();
-    public static final Map<Class<?>, List<Listener>> LISENER_CASH = new ConcurrentHashMap<>();
+    private static final Map<Class<?>, List<Listener>> LISTENER_CASH = new ConcurrentHashMap<>();
+
+    /**
+     * Registers a {@link Class} or {@link Object} listener
+     * which invokes a {@link Method} with the appropriate
+     * {@link BotEvent} and a {@link EventListener} annotation on it.
+     *
+     * @param o the thing to register
+     * @param <E> the type of event to register
+     */
     public static <E extends BotEvent> void register(Object o){
         Class<?> clazz = o instanceof Class ? (Class<?>) o : o.getClass();
         Stream.of(clazz.getMethods()).filter(method -> method.isAnnotationPresent(EventListener.class)).filter(method -> method.getParameterCount() == 1).filter(method -> BotEvent.class.isAssignableFrom(method.getParameterTypes()[0])).forEach(method -> {
             Class<E> peram = (Class<E>) method.getParameterTypes()[0];
-            ReflectionHelper.getAssignableTypes(clazz).forEach(LISENER_CASH::remove);
-            LISENER_CASH.remove(peram);
+            ReflectionHelper.getAssignableTypes(clazz).forEach(LISTENER_CASH::remove);
+            LISTENER_CASH.remove(peram);
             Set<Listener> listeners = LISTENER_MAP.computeIfAbsent(peram, cl -> new ConcurrentHashSet<>());
             if (Modifier.isStatic(method.getModifiers())){
                 listeners.add(new Listener<E>(method, null));
@@ -37,22 +49,29 @@ public class EventDistributor {
             } else throw new DevelopmentException("Unknown event listener type");// Check if the listener is static
         });
     }
+
+    /**
+     * Distributes the given event.
+     *
+     * @param event the event to distribute
+     * @param <E> the type of event to distribute
+     */
     public static <E extends BotEvent> void distribute(E event){
-        ThreadProvider.sub(() -> distribute((Class<E>) event.getClass(), event));
-    }
-    public static <E extends BotEvent> void distribute(Class<E> clazz, E event){
-        try{LISENER_CASH.computeIfAbsent(clazz, c -> {
-                List<Listener> listeners = new ArrayList<>();
-                ReflectionHelper.getAssignableTypes(c).forEach(cl -> {
-                    Set<Listener> newListeners = LISTENER_MAP.get(cl);
-                    if (newListeners != null) listeners.addAll(newListeners);
-                });
-                return listeners;
-            }).forEach(listener -> listener.handle(event));
-        } catch (Exception e){
-            if (GhostException.isGhostCaused(e)) return;
-            throw e;
-        }
+        ThreadProvider.sub(() -> {
+            try{
+                LISTENER_CASH.computeIfAbsent(event.getClass(), c -> {
+                    List<Listener> listeners = new ArrayList<>();
+                    ReflectionHelper.getAssignableTypes(c).forEach(cl -> {
+                        Set<Listener> newListeners = LISTENER_MAP.get(cl);
+                        if (newListeners != null) listeners.addAll(newListeners);
+                    });
+                    return listeners;
+                }).forEach(listener -> listener.handle(event));
+            } catch (Exception e){
+                if (GhostException.isGhostCaused(e)) return;
+                throw e;
+            }
+        });
     }
     private static class Listener<E extends BotEvent> {
         Method m;

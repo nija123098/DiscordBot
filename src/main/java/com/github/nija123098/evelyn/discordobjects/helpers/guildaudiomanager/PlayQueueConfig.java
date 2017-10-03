@@ -10,7 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Made by nija123098 on 5/3/2017.
+ * The play queue for storing songs the bot should play after it shuts down.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public class PlayQueueConfig extends AbstractConfig<List<Track>, VoiceChannel> {
     public PlayQueueConfig() {

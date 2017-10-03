@@ -5,7 +5,11 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.perms.BotRole;
 
 /**
- * The class for the global configurable
+ * The class for the global configurable, a singleton utilized
+ * for saving global {@link AbstractConfig}s using the config system.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public class GlobalConfigurable implements Configurable {
     /**
@@ -29,7 +33,6 @@ public class GlobalConfigurable implements Configurable {
     public ConfigLevel getConfigLevel() {
         return ConfigLevel.GLOBAL;
     }
-
     @Override
     public void checkPermissionToEdit(User user, Guild guild) {
         BotRole.BOT_ADMIN.checkRequiredRole(user, null);

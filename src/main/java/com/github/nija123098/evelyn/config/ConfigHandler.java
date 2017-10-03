@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
  * config values for configurable objects.
  *
  * @author nija123098
- * @since 2.0.0
+ * @since 1.0.0
  * @see AbstractConfig
  * @see Configurable
  */
@@ -77,14 +77,14 @@ public class ConfigHandler {
     }
 
     /**
-     * Forces the initialization of this class
+     * Forces the initialization of this class.
      */
     public static void initialize(){
         Log.log("Config Handler initialized");
     }
 
     /**
-     * Gets all config instances
+     * Gets all config instances.
      *
      * @return the set of configurable instances
      */
@@ -93,7 +93,7 @@ public class ConfigHandler {
     }
 
     /**
-     * Gets config instances for the type
+     * Gets config instances for the type.
      *
      * @param type the type of configurable
      * @param <T> the type of configurable
@@ -104,7 +104,8 @@ public class ConfigHandler {
     }
 
     /**
-     * Gets the config object representing a certain config
+     * Gets the config object representing a certain config.
+     *
      * @param configName the config name for the config being gotten
      * @return the object representing the config that is being searched for
      */
@@ -113,7 +114,7 @@ public class ConfigHandler {
     }
 
     /**
-     * Gets the config object representing a certain config
+     * Gets the config object representing a certain config.
      *
      * @param clazz the class object of the config
      * @return the config that is being represented by the given class
@@ -126,12 +127,20 @@ public class ConfigHandler {
         throw new DevelopmentException("Attempted searching for a non-existent config by using Class search: " + clazz.getClass().getName());
     }
 
+    /**
+     * Gets the length of time the config has been set at the current value.
+     *
+     * @param clazz the class type for the {@link AbstractConfig}
+     * @param configurable the configurable which the value is asociated with
+     * @param <E> the type of the {@link AbstractConfig}
+     * @return the length of time the config has been set
+     */
     public static <E extends AbstractConfig<?, ? extends Configurable>> long getAge(Class<E> clazz, Configurable configurable){
         return getConfig(clazz).getAge(configurable);
     }
 
     /**
-     * Sets the config value for the given configurable and config
+     * Sets the config value for the given configurable and config.
      *
      * @param clazz the class object representing the config
      * @param configurable the configurable the config is to be set for
@@ -142,7 +151,7 @@ public class ConfigHandler {
     }
 
     /**
-     * Sets the config value for the given configurable and config
+     * Sets the config value for the given configurable and config.
      *
      * @param clazz the class object representing the config
      * @param configurable the configurable the config is to be set for
@@ -227,7 +236,7 @@ public class ConfigHandler {
     }
 
     /**
-     * A setter for a config for a given configurable
+     * A setter for a config for a given configurable.
      *
      * @param clazz the class object that types a config
      * @param configurable the configurable the config
@@ -239,7 +248,7 @@ public class ConfigHandler {
     }
 
     /**
-     * A setter for a config for a given configurable
+     * A setter for a config for a given configurable.
      *
      * @param clazz the class object that types a config
      * @param configurable the configurable the config
@@ -251,7 +260,7 @@ public class ConfigHandler {
     }
 
     /**
-     * A setter for a config for a given configurable
+     * A setter for a config for a given configurable.
      *
      * @param configName the name of the config to be gotten
      * @param configurable the configurable that the config value
@@ -268,7 +277,7 @@ public class ConfigHandler {
     }
 
     /**
-     * A setter for a config for a given configurable
+     * A setter for a config for a given configurable.
      *
      * @param configName the name of the config to be gotten
      * @param configurable the configurable that the config value
@@ -285,7 +294,8 @@ public class ConfigHandler {
     }
 
     /**
-     * Resets the configurable's data for the given config
+     * Resets the configurable's data for the given config.
+     *
      * @param configurable the configurable to reset
      * @param config the config type
      * @param <T> the type of configurable
@@ -303,7 +313,7 @@ public class ConfigHandler {
     }
 
     /**
-     * Gets the count of that type according to database memory
+     * Gets the count of that type according to database memory.
      *
      * @param type the type of instance to get the count for
      * @return the count of the type instances
@@ -314,7 +324,7 @@ public class ConfigHandler {
 
     /**
      * Gets a function to get a instance
-     * of the specified type from the id
+     * of the specified type from the id.
      *
      * @param type the class type to get the function for
      * @param <T> the configurable type
@@ -325,7 +335,7 @@ public class ConfigHandler {
     }
 
     /**
-     * Gets the configurable from the type and arguments
+     * Gets the configurable from the type and arguments.
      *
      * @param type the type of configurable
      * @param id the id of the configurable
@@ -337,7 +347,7 @@ public class ConfigHandler {
     }
 
     /**
-     * Gets the configurable from the type and arguments
+     * Gets the configurable from the type and arguments.
      *
      * @param id the id of the configurable
      * @return the configurable according to the id
@@ -352,7 +362,7 @@ public class ConfigHandler {
 
     /**
      * Gets the list of the type starting at the index
-     * and with the next count of elements specified by size
+     * and with the next count of elements specified by size.
      *
      * @param type the type of
      * @param start the start index of the type
@@ -373,7 +383,7 @@ public class ConfigHandler {
     }
 
     /**
-     * Gets a list of all instances of a configurable
+     * Gets a list of all instances of a configurable.
      *
      * @param type the type of configurable
      * @param <T> the type of configurable
@@ -385,7 +395,7 @@ public class ConfigHandler {
 
     /**
      * Gets the list of the type starting at the index
-     * and with the next count of elements specified by size
+     * and with the next count of elements specified by size.
      *
      * @param type the type of
      * @param start the start index of the type
@@ -405,7 +415,7 @@ public class ConfigHandler {
 
     /**
      * Moves the values of this config to the new ID
-     * and returns the new config for those values
+     * and returns the new config for those values.
      *
      * @param newID the id to move the config's values to
      * @return the new Configurable instance

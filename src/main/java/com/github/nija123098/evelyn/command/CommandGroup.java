@@ -3,7 +3,10 @@ package com.github.nija123098.evelyn.command;
 import java.util.function.Consumer;
 
 /**
- * Made by nija123098 on 5/22/2017.
+ * A object representing a module or abstract command.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public class CommandGroup {
     private final ModuleLevel moduleLevel;

@@ -8,7 +8,11 @@ import java.util.EnumSet;
 import java.util.StringJoiner;
 
 /**
- * Made by nija123098 on 3/8/2017.
+ * A wrapper method indicating missing
+ * permissions for some Discord action.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public class MissingPermException extends BotException {
     private EnumSet<DiscordPermission> missing;

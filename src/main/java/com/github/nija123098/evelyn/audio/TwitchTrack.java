@@ -12,7 +12,12 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
- * Made by nija123098 on 6/11/2017.
+ * Track for defencing a Twitch stream.
+ * The track's audio will defined as the
+ * current audio from the stream.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public class TwitchTrack extends Track {
     private static final TwitchStreamAudioSourceManager TWITCH_AUDIO_SOURCE_MANAGER = new TwitchStreamAudioSourceManager();

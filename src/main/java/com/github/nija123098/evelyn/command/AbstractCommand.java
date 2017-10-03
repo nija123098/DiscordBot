@@ -32,8 +32,10 @@ import java.util.*;
 import java.util.stream.Stream;
 
 /**
+ * The super class type for all class commands, even sub-commands.
+ *
  * @author nija123098
- * @since 2.0.0
+ * @since 1.0.0
  */
 @LaymanName(value = "Command", help = "The command represented by a string or some alias")
 public class AbstractCommand {
@@ -54,6 +56,20 @@ public class AbstractCommand {
     private Set<AbstractCommand> subCommands;
     private boolean prefixRequired = true;
     protected boolean okOnSuccess = true;
+
+    /**
+     * The high constructor for a command which all other constructors call.
+     *
+     * This is most commonly used as a constructor for sub-commands.
+     * All values not set here will default to the super-command's values.
+     *
+     * @param superCommand the type of the super command, or null
+     * @param name the name of the command, not including the super command name
+     * @param absoluteAliases the list of names which are separated by a comma and space
+     * @param emoticonAliases the list of emoticon names separated by a comma and space
+     * @param relativeAliases the list of names which the super command's names are prefixed before separated by a comma and space
+     * @param help the help text for this command
+     */
     public AbstractCommand(Class<? extends AbstractCommand> superCommand, String name, String absoluteAliases, String emoticonAliases, String relativeAliases, String help){
         this.superCommand = superCommand;
         this.name = name;
@@ -64,17 +80,40 @@ public class AbstractCommand {
         this.help = help != null ? help : "No provided help for this command";
     }
 
+    /**
+     * The constructor for a super command.
+     *
+     * @param name the full name of a command
+     * @param module the module for the command
+     * @param absoluteAliases the names for which the command can also be called separated by a comma and space
+     * @param emoticonAliases the list of emoticon names separated by a comma and space
+     * @param help the help text for this command
+     */
     public AbstractCommand(String name, ModuleLevel module, String absoluteAliases, String emoticonAliases, String help){
         this(null, name, absoluteAliases, emoticonAliases, null, help);
         this.module = module;
         this.name = name;
     }
 
+    /**
+     * The constructor for a super command.
+     *
+     * @param name the full name of a command
+     * @param botRole the override for the botrole of the command
+     * @param module the module for the command
+     * @param absoluteAliases the names for which the command can also be called separated by a comma and space
+     * @param emoticonAliases the list of emoticon names separated by a comma and space
+     * @param help the help text for this command
+     */
     public AbstractCommand(String name, BotRole botRole, ModuleLevel module, String absoluteAliases, String emoticonAliases, String help){
         this(name, module, absoluteAliases, emoticonAliases, help);
         this.botRole = botRole;
     }
 
+    /**
+     * Called once after all configs are initialized to link
+     * super-commands and sub-commands called hierarchically.
+     */
     void load(){
         AbstractCommand superCommand = getSuperCommand();
         this.allNames = new HashSet<>();
@@ -159,7 +198,8 @@ public class AbstractCommand {
     }
 
     /**
-     * A getter for the object of the super command.
+     * A getter for the object representing the super command.
+     * This gives the command directly above this command.
      *
      * @return this command's super command
      */
@@ -167,10 +207,21 @@ public class AbstractCommand {
         return CommandHandler.getCommand(this.superCommand);
     }
 
+    /**
+     * Gets the highest command in the command's hierarchy.
+     *
+     * @return the command's high command
+     */
     public AbstractCommand getHighCommand(){
         return this.highCommand;
     }
 
+    /**
+     * Returns if this command is the highest
+     * command in this command's hierarchy.
+     *
+     * @return if this has no higher command
+     */
     public boolean isHighCommand() {
         return this.highCommand == this;
     }
@@ -270,10 +321,20 @@ public class AbstractCommand {
         return this.help;
     }
 
+    /**
+     * Gets a string showing an example of the command's usage.
+     *
+     * @return a command's example
+     */
     public String getExample(){
         return null;
     }
 
+    /**
+     * This command and the sub-command's help text and usage.
+     *
+     * @return a string representing the sub-command's and this command's help text and usage
+     */
     protected String getLocalUsages(){
         StringBuilder builder = new StringBuilder("# ").append(this.name).append(" ");
         Stream.of(this.parameters).filter(parameter -> parameter.isAnnotationPresent(Argument.class)).forEach(parameter -> {
@@ -287,6 +348,12 @@ public class AbstractCommand {
         return builder.toString();
     }
 
+    /**
+     * Gets the string representation of usages.
+     * This is only called in instances of high commands.
+     *
+     * @return gets the string usages of a command
+     */
     public String getUsages(){
         StringBuilder builder = new StringBuilder();
         builder.append(getLocalUsages()).append("\n");
@@ -294,20 +361,35 @@ public class AbstractCommand {
         return builder.substring(0, builder.length() - 1);
     }
 
+    /**
+     * If a prefix is required for using this command.
+     *
+     * @return if a prefix is required for using this command.
+     */
     public boolean prefixRequired(){
         return this.prefixRequired;
     }
 
+    /**
+     * Returns the set of all sub-commands.
+     *
+     * @return a set of all sub-commands
+     */
     public Set<AbstractCommand> getSubCommands(){
         return this.subCommands;
     }
 
+    /**
+     * The set of words to naturally trigger the command.
+     *
+     * @return the set of words to naturally trigger the command
+     */
     public Set<String> getNaturalTriggers(){
         return Collections.emptySet();
     }
 
     /**
-     * A check if the user can use a command in the context
+     * A check if the user can use a command in the context.
      *
      * @param user the user that is being checked for permission
      * @param channel the channel in which permissions are being checked,
@@ -359,7 +441,7 @@ public class AbstractCommand {
     }
 
     /**
-     * Method to be called when the command is invoked
+     * Method to be called when the command is invoked.
      *
      * @param channel the channel checked for rate limiting
      * @param user the user checked for rate limiting
@@ -413,7 +495,10 @@ public class AbstractCommand {
     }
 
     /**
-     *
+     * Differs to {@link InvocationObjectGetter} to get
+     * objects for the command's arguments and invokes
+     * the command and returns the object the command
+     * returns or false if the command fails.
      *
      * @param user the user that invokes the command
      * @param message the message sent or reacted to
@@ -454,6 +539,12 @@ public class AbstractCommand {
         return false;
     }
 
+    /**
+     * Returns if the command succeeded determined by it's output
+     *
+     * @param o the output of the command's invocation
+     * @return if the command succeeded determined by it's output
+     */
     boolean interpretSuccess(Object o){
         return !(o instanceof Boolean) || (boolean) o;
     }

@@ -65,11 +65,6 @@ public class Role implements Configurable {
     }
 
     @Override
-    public boolean shouldCache() {
-        return false;
-    }
-
-    @Override
     public Configurable getGoverningObject(){
         return getGuild();
     }

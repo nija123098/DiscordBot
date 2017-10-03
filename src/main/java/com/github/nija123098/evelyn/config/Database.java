@@ -13,7 +13,10 @@ import org.apache.commons.dbutils.ResultSetHandler;
 import java.sql.*;
 
 /**
- * Created by Soarnir on 16/7/17.
+ * Controls interaction with the database.
+ *
+ * @author Soarnir
+ * @author nija123098
  */
 public class Database {
     private static final CallBuffer CALL_BUFFER = new CallBuffer(250);

@@ -3,7 +3,14 @@ package com.github.nija123098.evelyn.command;
 import com.github.nija123098.evelyn.discordobjects.wrappers.*;
 
 /**
- * Made by nija123098 on 4/17/2017.
+ * Enum representations for possible sources of context
+ * in order to mark if a command requires some context
+ * in it's invocation context.  This is useful in
+ * postprocessing as to not get context object when
+ * an exception will be thrown later in the process.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public enum ContextRequirement {
     USER(User.class, "This must have an invoker"),

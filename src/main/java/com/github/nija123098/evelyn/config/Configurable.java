@@ -8,20 +8,23 @@ import com.github.nija123098.evelyn.exeption.ArgumentException;
 /**
  * A helper class that all objects that can
  * have configuration values may implement.
- * Such object types are indicated by ConfigLevel
+ * Such object types are indicated by a {@link ConfigLevel}.
  *
  * @author nija123098
- * @since 2.0.0
+ * @since 1.0.0
  * @see ConfigLevel
  */
 public interface Configurable {
     /**
-     * Gets the snowflake for this object
+     * Gets the snowflake for this object.
      *
      * @return the snowflake
      */
     String getID();
 
+    /**
+     * @return the name of this configurable.
+     */
     String getName();
 
     /**
@@ -49,19 +52,31 @@ public interface Configurable {
      */
     void checkPermissionToEdit(User user, Guild guild);
 
+    /**
+     * Gets the governing object, the object being deterministic
+     * and has the same relation between every configurable.
+     *
+     * @return the governing object
+     */
     default Configurable getGoverningObject(){
         return GlobalConfigurable.GLOBAL;
     }
 
-    default boolean shouldCache(){
-        return false;
-    }
-
+    /**
+     * Converts this to a different {@link Configurable}.
+     *
+     * @param t the class type
+     * @param <T> the class type
+     * @return the configurable this is converted to
+     */
     default <T extends Configurable> Configurable convert(Class<T> t){
         if (t.equals(this.getClass())) return this;
         throw new ArgumentException("This configurable can not be morphed into that type of configurable: " + t.getName());
     }
 
+    /**
+     * Registers this instance as having existed at one point.
+     */
     default void registerExistence(){
         Database.bufferCall(() -> ConfigHandler.setSetting(ConfigurableExistsConfig.class, this, true));
     }

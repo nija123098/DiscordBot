@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * will not fail without the bot being notified programmatically.
  *
  * @author nija123098
- * @since 2.0.0
+ * @since 1.0.0
  * @see MissingPermException
  * @see DException
  */
@@ -34,6 +34,15 @@ public class ErrorWrapper {
     public static void wrap(VoidRequest request) {
         innerWrap(request);
     }
+
+    /**
+     * Executes a {@link Request} and blocks until it completes
+     * or throws wrapped exceptions the request caused.
+     *
+     * @param request the request to wrap and block for
+     * @param <E> the type to return
+     * @return the value returned by the request
+     */
     private static <E> E innerWrap(Request<E> request) {
         AtomicBoolean complete = new AtomicBoolean();
         AtomicReference<E> objectReference = new AtomicReference<>();

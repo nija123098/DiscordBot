@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
  * will be the method invoked for the command
  *
  * @author nija123098
- * @since 2.0.0
+ * @since 1.0.0
  * @see AbstractCommand
  */
 @Target(ElementType.METHOD)

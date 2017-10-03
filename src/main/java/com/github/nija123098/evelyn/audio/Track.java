@@ -18,7 +18,15 @@ import java.util.*;
 import java.util.function.Function;
 
 /**
- * Made by nija123098 on 3/28/2017.
+ * A audio track for playing audio in a voice channel
+ * by the bot.  Every implementation of this class has
+ * a platform for which the track is intended to be
+ * pulled from.  IE:  YoutubeTrack for Youtube videos
+ *
+ * Tracks only specify audio data, no video data is used.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public abstract class Track implements Configurable {
     private static final Map<String, Class<? extends Track>> CLASS_MAP = new HashMap<>();
@@ -32,11 +40,31 @@ public abstract class Track implements Configurable {
             }
         });
     }
+
+    /**
+     * Registers a class type for a track object.
+     * Every track type implementation must cal this in it's initializer.
+     *
+     * @param clazz the type of the implementation
+     * @param fromCode the function to get the track from a given video or audio code
+     * @param fromID the function to get an instance from a given ID
+     * @param <T> the type for the track implementation
+     */
     static <T extends Track> void registerTrackType(Class<T> clazz, Function<String, Track> fromCode, Function<String, Track> fromID){
         CLASS_MAP.put(clazz.getSimpleName().toUpperCase(), clazz);
         CODE_MAP.put(clazz, fromCode);
         ID_MAP.put(clazz, fromID);
     }
+
+    /**
+     * Gets the track with a given full ID.  Where the full ID is
+     * the type name in caps dash a id based on the platform's code.
+     * The id from the platform's code is to ensure that this formatting
+     * for the id is not broken to not break other things.
+     *
+     * @param id the ID of the track
+     * @return the track instance for the given ID
+     */
     public static Track getTrack(String id){
         if (id == null) return null;
         String[] split = id.split("-");
@@ -45,9 +73,24 @@ public abstract class Track implements Configurable {
         Function<String, Track> function = ID_MAP.get(clazz);
         return function == null ? null : function.apply(id);
     }
+
+    /**
+     * Gets the track instance based on ID and platform dependent audio code
+     *
+     * @param clazz the intended type of the track
+     * @param code the platform's code for the track
+     * @return the instance of the track specified by track type and code
+     */
     public static Track getTrack(Class<? extends Track> clazz, String code){
         return CODE_MAP.get(clazz).apply(code);
     }
+
+    /**
+     * Given the string get a id or keywords to search Youtube
+     *
+     * @param s the id or the keywords to search on Youtube
+     * @return the best related track instance for the given string
+     */
     public static List<Track> getTracks(String s){// may want to move
         Track track = getTrack(s);
         if (track != null) return Collections.singletonList(track);
@@ -102,7 +145,7 @@ public abstract class Track implements Configurable {
     @Override
     public int hashCode(){
         return this.id.hashCode();
-    }// id is interned
+    }
     @Override
     public void manage(){}
     @Override

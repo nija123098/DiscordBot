@@ -7,13 +7,20 @@ import javafx.util.Pair;
 import org.eclipse.jetty.util.ConcurrentHashSet;
 
 import java.io.File;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
- * Made by nija123098 on 5/31/2017.
+ * Clones objects mainly for {@link AbstractConfig#alterSetting(Configurable, Consumer)}.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public class ObjectCloner {
     private static final Map<Class<?>, Function<Object, Object>> MAP = new HashMap<>();
@@ -36,12 +43,27 @@ public class ObjectCloner {
     private static <T> void add(Class<T> clazz){
         MAP.put(clazz, o -> o);
     }
-    public static boolean supports(Class<?> c){
+
+    /**
+     * Returns if the {@link ObjectCloner} supports cloning the class type
+     *
+     * @param c the class type for checking if cloning is supported
+     * @return if the {@link ObjectCloner} supports cloning the class type
+     */
+    static boolean supports(Class<?> c){
         if (c.isEnum()) return true;
         for (Class<?> clazz : ReflectionHelper.getAssignableTypes(c)) if (MAP.get(clazz) != null) return true;
         return false;
     }
-    public static <I> I clone(I i){
+
+    /**
+     * Clones an object.
+     *
+     * @param i the object to clone
+     * @param <I> the type of the cloned object
+     * @return a cloned object
+     */
+    static <I> I clone(I i){
         if (i == null) return null;
         if (i.getClass().isEnum()) return i;
         for (Class<?> clazz : ReflectionHelper.getAssignableTypes(i.getClass())) {

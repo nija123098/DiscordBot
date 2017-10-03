@@ -34,7 +34,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * Made by nija123098 on 6/19/2017.
+ * A type for defining a speech parser for a single
+ * GuildAudioManager which determines what every user
+ * says individually.  It handles the determining if a
+ * command is invoked by voice .
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public class SpeechParser implements IAudioReceiver {
     private static final InitBuffer<StreamSpeechRecognizer> SPEECH_RECOGNIZER_BUFFER;

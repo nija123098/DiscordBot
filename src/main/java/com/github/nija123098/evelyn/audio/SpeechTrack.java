@@ -9,7 +9,11 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import java.io.File;
 
 /**
- * Made by nija123098 on 6/12/2017.
+ * The type of track for defining something
+ * the bot says in a voice channel.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public class SpeechTrack extends Track {
     private final File file;
@@ -19,7 +23,7 @@ public class SpeechTrack extends Track {
     }
     @Override
     public String getSource() {
-        return "Emily Herself";
+        return "Evelyn herself";
     }
     @Override
     public String getPreviewURL() {
@@ -27,7 +31,7 @@ public class SpeechTrack extends Track {
     }
     @Override
     public String getInfo() {
-        return "Emily saying stuff";
+        return "Evelyn saying stuff";
     }
     @Override
     public AudioTrack getAudioTrack(GuildAudioManager manager) {

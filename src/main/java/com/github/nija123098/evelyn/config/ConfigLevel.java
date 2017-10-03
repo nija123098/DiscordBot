@@ -19,7 +19,7 @@ import java.util.stream.Stream;
  * Objects that can be configured must have a type.
  *
  * @author nija123098
- * @since 2.0.0
+ * @since 1.0.0
  */
 public enum ConfigLevel {
     /** The type for audio tracks */

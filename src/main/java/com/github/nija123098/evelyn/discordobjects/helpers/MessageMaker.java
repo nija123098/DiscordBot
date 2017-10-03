@@ -30,7 +30,16 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Made by nija123098 on 4/7/2017.
+ * A utility class to help with message responses and sending
+ * messages in the proper format dependent on how it is used.
+ *
+ * Editing the values of an instance after send and
+ * calling {@link MessageMaker#forceCompile()} will
+ * result in the editing of the previously sent message.
+ *
+ * @author nija13098
+ * @since 1.0.0
+ * @see ReactionBehavior
  */
 public class MessageMaker {
     static {
@@ -56,6 +65,14 @@ public class MessageMaker {
     private Long deleteDelay;
     private File file;
     private boolean okHand, maySend, mustEmbed, forceCompile, colored, isMessageError, autoSend = true;
+
+    /**
+     * Builds the message maker and sets it up.
+     *
+     * @param user the user that the message is intended for
+     * @param channel the channel the message is intended for
+     * @param message the message the build message is intended as response to
+     */
     private MessageMaker(User user, Channel channel, Message message){
         this.authorName = new TextPart(this);
         this.title = new TextPart(this);
@@ -86,230 +103,572 @@ public class MessageMaker {
         this(maker.user, maker.channel, Message.getMessage(maker.origin));
     }
     // setup methods
+
+    /**
+     * Removes the previously sent message from history,
+     * usually to prevent editing of that message.
+     *
+     * @return the instance
+     */
     public MessageMaker clearMessage(){
         this.message = null;
         this.ourMessage = null;
         return this;
     }
+
+    /**
+     * Sets if the message should be sent automatically.
+     *
+     * @param autoSend if the message should be sent automatically
+     * @return the instance
+     */
     public MessageMaker withAutoSend(boolean autoSend){
         this.autoSend = autoSend;
         return this;
     }
+
+    /**
+     * Forces the recompiling of the message content for this builder.
+     *
+     * @return the instance
+     */
     public MessageMaker forceCompile(){
         this.forceCompile = true;
         return this;
     }
+
+    /**
+     * Forces the non-embedding of the building message.
+     *
+     * @return the instance
+     */
     public MessageMaker asNormalMessage(){
         this.embed = null;
         return this;
     }
+
+    /**
+     * Forces the embeding of the building message.
+     *
+     * @return the instance
+     */
     public MessageMaker mustEmbed(){
         return this.mustEmbed(true);
     }
+
+    /**
+     * Sets if the embeding of the building message should be forced to embed.
+     *
+     * @param mustEmbed if the building message should be forced to embed
+     * @return the instance
+     */
     public MessageMaker mustEmbed(boolean mustEmbed){
         this.mustEmbed = mustEmbed;
         return this;
     }
+
+    /**
+     * Returns if the building message could be sent as a non-embeded message.
+     *
+     * @return if the building message could be sent as a non-embeded message
+     */
     public boolean couldNormalize(){
         return !this.mustEmbed && this.fieldList.size() == 0 && this.textList.size() == 0 && !this.authorName.appended && !this.title.appended && !this.footer.appended && !this.note.appended;
     }
+
+    /**
+     * Sets the {@link Channel} the building message should be sent in.
+     *
+     * @param channel the {@link Channel} the building message should be sent in
+     * @return the instance
+     */
     public MessageMaker withChannel(Channel channel){
         if (channel.equals(this.channel)) return this;
         ProcessingHandler.swapProcess(this.channel, channel);
         this.channel = channel;
         return this;
     }
+
+    /**
+     * Sets a {@link ReactionBehavior} which only is invoked to the user
+     * specified by {@link MessageMaker#user} if a {@link Reaction}
+     * by the given name is done on the built message.
+     *
+     * A call to this is ignored in the case that a reaction behavior
+     * has already been set for the specified {@link Reaction} name.
+     *
+     * @param reactionName the {@link Reaction} to activate on specified by name for the intended user
+     * @param behavior the behavior to preform when the built message has been reacted to
+     * @return the instance
+     */
     public MessageMaker withReactionBehavior(String reactionName, ReactionBehavior behavior){
         if (!this.reactionBehaviors.containsKey(reactionName)) this.reactionBehaviors.put(reactionName, (add, reaction, user) -> {
             if (user.equals(this.user)) behavior.behave(add, reaction, user);
         });
         return this;
     }
+
+    /**
+     * Sets a {@link ReactionBehavior} which is invoked if a
+     * {@link Reaction} by the given name is done on the built message.
+     *
+     * @param reactionName the {@link Reaction} to activate on specified by name
+     * @param behavior the behavior to preform when the built message has been reacted to
+     * @return the instance
+     */
     public MessageMaker withPublicReactionBehavior(String reactionName, ReactionBehavior behavior){
         if (!this.reactionBehaviors.containsKey(reactionName)) this.reactionBehaviors.put(reactionName, behavior);
         return this;
     }
+
+    /**
+     * Removes a {@link ReactionBehavior} for the specified
+     * {@link Reaction} specified by name if one exists.
+     *
+     * @param reactionName the name specification for
+     * @return the instance
+     */
     public MessageMaker withoutReactionBehavior(String reactionName){
         if (this.reactionBehaviors.remove(reactionName) != null) ReactionBehavior.deregisterListener(this.ourMessage, reactionName);
         return this;
     }
+
+    /**
+     * Deregisters all {@link ReactionBehavior} for the building message.
+     *
+     * @return the instance
+     */
     public MessageMaker clearReactionBehaviors(){
         this.getReactionBehaved().forEach(this::withoutReactionBehavior);
         return this;
     }
+
+    /**
+     * Reacts to the building message when the message is sent.
+     *
+     * @param name the {@link Reaction} to react with on the building message specified by name.
+     * @return the instance
+     */
     public MessageMaker withReaction(String name){
         String chars = EmoticonHelper.getChars(name, false);
         if (chars == null) throw new DevelopmentException("Invalid emoticon name name");
         this.reactions.add(chars.endsWith("\u200B") ? chars.substring(0, chars.length() - 1) : chars);
         return this;
     }
+
+    /**
+     * Makes the building message send a response to a {@link User} as a direct message.
+     *
+     * @return the instance
+     */
     public MessageMaker withDM(){
+        if (this.channel.isPrivate()) return this;
         return this.withChannel(this.user.getOrCreatePMChannel());
     }
+
+    /**
+     * If the message this is responding to should be reacted with a :ok_hand: {@link Reaction}.
+     *
+     * @param ok If the message this is responding to should be reacted with a :ok_hand: {@link Reaction}
+     * @return the instance
+     */
     public MessageMaker withOK(boolean ok){
         this.okHand = ok;
         return this;
     }
+
+    /**
+     * Sets that the message this is responding to should be reacted with a :ok_hand: {@link Reaction}.
+     *
+     * @return the instance
+     */
     public MessageMaker withOK(){
         this.okHand = true;
         return this;
     }
     public MessageMaker ensureListSize(int size){
-        List<TextPart> textList = new ArrayList<>(size);
-        textList.addAll(this.textList);
-        this.textList = textList;
+        ((ArrayList<TextPart>) this.textList).ensureCapacity(size);
         return this;
     }
     public MessageMaker ensureFieldSize(int size){
-        List<FieldPart> fieldList = new ArrayList<>(size);
-        fieldList.addAll(this.fieldList);
-        this.fieldList = fieldList;
+        ((ArrayList<FieldPart>) this.fieldList).ensureCapacity(size);
         return this;
     }
+
+    /**
+     * Sets the delay in millis to delete the building message.
+     * The message will not be deleted by this builder otherwise.
+     *
+     * @param deleteDelay the millis from sending when the building message should be deleted
+     * @return the instance
+     */
     public MessageMaker withDeleteDelay(Long deleteDelay){
         this.deleteDelay = deleteDelay;
         return this;
     }
+
+    /**
+     * Sets if the building message may be sent.
+     *
+     * @param maySend if the building message may be sent
+     * @return the instance
+     */
     public MessageMaker maySend(boolean maySend){
         this.maySend = maySend;
         return this;
     }
+
+    /**
+     * Sets that the building message may be sent.
+     *
+     * @return the instance
+     */
     public MessageMaker maySend(){
         return this.maySend(true);
     }
     // text methods
+
+    /**
+     * Sets the given {@link User} as the author to make all
+     * author fields with the relevant information of that user.
+     *
+     * @param author the {@link User} to set all author fields for
+     * @return the instance
+     */
     public MessageMaker withAuthor(User author){
         this.getAuthorName().appendRaw(author.getNameAndDiscrim() + " " + author.getID());
         return this.withAuthorIcon(author.getAvatarURL());
     }
+
+    /**
+     * Gets the {@link TextPart} for altering the embed field for the author name.
+     *
+     * @return the {@link TextPart} for altering the embed field for the author name
+     */
     public TextPart getAuthorName(){
         return this.authorName;
     }
+
+    /**
+     * Gets the {@link TextPart} for altering the embed field for the title.
+     *
+     * @return the {@link TextPart} for altering the embed field for the title
+     */
     public TextPart getTitle(){
         return this.title;
     }
+
+    /**
+     * Gets the {@link TextPart} for altering the embed field for the normal
+     * text or if a embed is not nessisary or forced the normal text.
+     *
+     * @return the {@link TextPart} for altering the embed field for the
+     * normal text or if a embed is not nessisary or forced the normal text.
+     */
     public TextPart getHeader(){
         return this.header;
     }
+
+    /**
+     * Gets the {@link TextPart} for the content to appear below listings.
+     *
+     * @return the {@link TextPart} for the content to appear below listings
+     */
     public TextPart getFooter(){
         return this.footer;
     }
+
+    /**
+     * Gets the {@link TextPart} for the note content when the bulding message is to be embed.
+     *
+     * @return the {@link TextPart} for the note content when the bulding message is to be embed
+     */
     public TextPart getNote(){
         return this.note;
     }
+
+    /**
+     * Gets the {@link TextPart} for the content to be written outside an embed.
+     *
+     * @return the {@link TextPart} for the content to be written outside an embed
+     */
     public TextPart getExternal(){
         return this.external;
     }
+
+    /**
+     * Gets a {@link FieldPart} for the content of a single field part.
+     *
+     * @return a {@link FieldPart} for the content of a single field part
+     */
     public FieldPart getNewFieldPart(){
         return new FieldPart(this);// adds self in the constructor
     }
+
+    /**
+     * Removes all entries for {@link FieldPart}s associated with this maker.
+     *
+     * @return the instance
+     */
     public MessageMaker clearFieldParts(){
         this.fieldList.clear();
         return this;
     }
+
+    /**
+     * Gets a {@link TextPart} for a list in the embed.
+     *
+     * @return a {@link TextPart} for a list in the embed
+     */
     public TextPart getNewListPart(){
         TextPart part = new TextPart(this);
         this.textList.add(part);
         return part;
     }
+
+    /**
+     * Makes a new page when listing.
+     *
+     * @return the instance
+     */
     public MessageMaker guaranteeNewListPage(){
         this.textList.add(null);
         return this;
     }
+
+    /**
+     * Makes a new page when listing.
+     *
+     * @return the instance
+     */
     public MessageMaker guaranteeNewFieldPage(){
         this.fieldList.add(null);
         return this;
     }
+
+    /**
+     * A shortcut method for {@link MessageMaker#header#appendRaw(String)}
+     *
+     * @param s the thing to {@link LangString#appendRaw(String)} to {@link MessageMaker#header}
+     * @return the instance
+     */
     public MessageMaker appendRaw(String s){
         this.header.appendRaw(s);
         return this;
     }
+
+    /**
+     * A shortcut method for {@link MessageMaker#header#append(boolean, String)}
+     *
+     * @param s the thing to {@link LangString#append(boolean, String)} to {@link MessageMaker#header}
+     * @return the instance
+     */
     public MessageMaker append(String s){
         this.header.append(s);
         return this;
     }
+
+    /**
+     * A shortcut method for {@link MessageMaker#header#appendAlternate(boolean, String...)}
+     *
+     * @param s the thing to {@link LangString#appendRaw(String)} to {@link MessageMaker#header}
+     * @return the instance
+     */
     public MessageMaker appendAlternate(boolean raw, String...s){
         this.header.appendAlternate(raw, s);
         return this;
     }
+
+    /**
+     * A shortcut method for {@link MessageMaker#header#append(boolean, String)}
+     *
+     * @param s the thing to {@link LangString#append(boolean, String)} to {@link MessageMaker#header}
+     * @return the instance
+     */
     public MessageMaker append(boolean raw, String s){
         this.header.append(!raw, s);
         return this;
     }
     // embed methods
+
+    /**
+     * Sets a {@link Color} for the building message's embed color.
+     *
+     * @param color the color for the building message's embed color
+     * @return the instance
+     */
     public MessageMaker withColor(Color color){
         this.embed.withColor(color);
         this.colored = true;
         return this;
     }
+
+    /**
+     * Sets the {@link Color} for the embed color based on the average color of the url's image
+     *
+     * @param url the url to get a image average color from
+     * @return the instance
+     */
     public MessageMaker withColor(String url){
         this.withColor(GraphicsHelper.getColor(url));
         return this;
     }
+
+    /**
+     * Sets the embed's {@link Color} as the {@link MessageMaker#user}'s avatar average color.
+     *
+     * @return the instance
+     */
     public MessageMaker withColor(){
         return withColor(this.user);
     }
+
+    /**
+     * Sets the embed color to a random color.
+     *
+     * @return the instance
+     */
     public MessageMaker withRandomColor(){
         this.withColor(new Color(Rand.getRand(16777216)));
         return this;
     }
+
+    /**
+     * Sets the embed color as the {@link User}'s average avitar color.
+     *
+     * @param user the user whose color portrait
+     * @return the instance
+     */
     public MessageMaker withColor(User user){
         if (user != null) this.withColor(user.getAvatarURL());
         return this;
     }
+
+    /**
+     * Sets an embed's color to the {@link Role}'s color.
+     *
+     * @param color the role whose color should be used in the embed
+     * @return the instance
+     */
     public MessageMaker withColor(Role color){
         return this.withColor(color.getColor());
     }
+
+    /**
+     * Sets the footer icon of an embed.
+     *
+     * @param url the url of the icon
+     * @return the instance
+     */
     public MessageMaker withFooterIcon(String url){
         this.embed.withFooterIcon(url);
         this.mustEmbed = true;
         return this.maySend();
     }
+
+    /**
+     * Sets the author icon of an embed.
+     *
+     * @param url the author's icon
+     * @return the instance
+     */
     public MessageMaker withAuthorIcon(String url){
         this.embed.withAuthorIcon(url);
         this.mustEmbed = true;
         return this.maySend();
     }
+
+    /**
+     * Sets the url clicking on the header/author causes redirection to.
+     *
+     * @param url the url to set the header/author icon link to
+     * @return the instance
+     */
     public MessageMaker withUrl(String url){
         if (url != null) this.embed.withUrl(url);
         this.mustEmbed = true;
         return this;
     }
+
+    /**
+     * Sets the thumb image in an embed.
+     *
+     * @param url the url the thumb
+     * @return the instance
+     */
     public MessageMaker withThumb(String url){
         this.embed.withThumbnail(url);
         this.mustEmbed = true;
         return this.maySend();
     }
+
+    /**
+     * Sets the embed image to the one pointed to by the url.
+     *
+     * @param url the image to add to the embed
+     * @return the instance
+     */
     public MessageMaker withImage(String url){
         this.embed.withImage(url);
         this.mustEmbed = true;
         return this.maySend();
     }
+
+    /**
+     * Sets a file to be attached to the building message.
+     *
+     * @param file the file to be attached to the building message
+     * @return the instance
+     */
     public MessageMaker withFile(File file){
         this.file = file;
         return this.appendRaw("");
     }
-    public MessageMaker withTimestamp(LocalDateTime time){
-        this.embed.withTimestamp(time);
-        this.mustEmbed = true;
-        return this;
-    }
+
+    /**
+     * Sets the embed timestamp.
+     *
+     * @param millis the millis to set the embed timestamp to
+     * @return the instance
+     */
     public MessageMaker withTimestamp(long millis){
         this.embed.withTimestamp(millis);
         this.mustEmbed = true;
         return this;
     }
     // getting
+
+    /**
+     * Gets the message that was built and sent, otherwise null.
+     *
+     * @return the message that was built and sent, otherwise null
+     */
     public Message sentMessage(){
         return Message.getMessage(this.message);
     }
+
+    /**
+     * Gets the string representations of {@link Reaction}s which have associated {@link ReactionBehavior}s.
+     *
+     * @return the string representations of {@link Reaction}s which have associated {@link ReactionBehavior}s
+     */
     public Set<String> getReactionBehaved(){
         return this.reactionBehaviors.keySet();
     }
     // building
+
+    /**
+     * Sends the message if it should depending on if it is being sent aromatically.
+     *
+     * @param auto if this is being sent automatically
+     */
     public void send(boolean auto){
         if (!(!this.autoSend && auto)) send();
     }
+
+    /**
+     * Sends or edits the building message.
+     */
     public void send(){
         try{send(0);
         } catch (Exception e){
@@ -321,6 +680,12 @@ public class MessageMaker {
             }
         }
     }
+
+    /**
+     * Sends the building message dependent on the page.
+     *
+     * @param page the page to sent
+     */
     private void send(int page){
         if (BotConfig.GHOST_MODE) return;
         if (!this.maySend) {
@@ -363,12 +728,24 @@ public class MessageMaker {
         this.reactionBehaviors.forEach((s, behavior) -> ReactionBehavior.registerListener(this.ourMessage, s, behavior));
         ProcessingHandler.endProcess(this.channel);
     }
+
+    /**
+     * Gets the language the message should be sent in.
+     *
+     * @param user the user to consider getting the language for
+     * @param channel the channel to consider getting the language for
+     * @return the language code to send the message as
+     */
     public static String getLang(User user, Channel channel){
         String lang = null;
         if (user != null) lang = ConfigHandler.getSetting(UserLanguageConfig.class, user);
         if (!channel.isPrivate() && lang == null) lang = ConfigHandler.getSetting(GuildLanguageConfig.class, channel.getGuild());
         return lang == null ? "en" : lang;
     }
+
+    /**
+     * Compiles how the building message should be sent.
+     */
     private void compile(){
         if (this.lang != null && !this.forceCompile) return;
         if (!this.colored) this.withRandomColor();
@@ -467,6 +844,13 @@ public class MessageMaker {
             }
         }
     }
+
+    /**
+     * Determines what the message note should say dependent on page.
+     *
+     * @param page the page to consider
+     * @return the content of the message
+     */
     private String generateNote(int page){
         String note = this.note.langString.translate(lang);
         if (this.fieldIndices.length > 1) {
@@ -475,6 +859,10 @@ public class MessageMaker {
         }
         return note;
     }
+
+    /**
+     * The wrapping of two {@link LangString}s which wraps a field content.
+     */
     public class FieldPart {
         private MessageMaker maker;
         private FieldTextPart title, value;
@@ -494,72 +882,159 @@ public class MessageMaker {
             return this;
         }
 
+        /**
+         * Gets the {@link FieldTextPart} which wraps the field title.
+         *
+         * @return the {@link FieldTextPart} which wraps the field title
+         */
         public FieldTextPart getTitle(){
             return this.title;
         }
+
+        /**
+         * Gets the {@link FieldTextPart} which wraps the field value.
+         *
+         * @return the {@link FieldTextPart} which wraps the field value
+         */
         public FieldTextPart getValue(){
             return this.value;
         }
+
+        /**
+         * Sets the raw content of the {@link FieldPart}.
+         *
+         * @param title the raw title content
+         * @param value teh raw value content
+         * @return the {@link FieldPart} instance
+         */
         public FieldPart withBoth(String title, String value){
             this.title.append(title);
             this.value.append(value);
             return this;
         }
+
+        /**
+         * The maker instance this {@link FieldPart} came from.
+         *
+         * @return maker instance this {@link FieldPart} came from
+         */
         public MessageMaker getMessageProducer(){
             return this.maker;
         }
     }
+
+    /**
+     * A wrapping of {@link LangString} which
+     * contains a reference to the parent maker.
+     */
     public class TextPart {
         private MessageMaker maker;
-        public LangString langString;
+        LangString langString;
         private boolean appended;
         private TextPart(MessageMaker maker) {
             this.maker = maker;
             this.langString = new LangString();
         }
-        public boolean isAppended(){
-            return this.appended;
-        }
+
+        /**
+         * Appends text that will not be translated to the given field.
+         *
+         * @param s text that will not be translated to the given field
+         * @return the instance
+         */
         public TextPart appendRaw(String s){
             this.appended = true;
             this.append(true, s);
             return this;
         }
+
+        /**
+         * Appends text that will be translated to the given field.
+         *
+         * @param s text that will be translated to the given field
+         * @return the instance
+         */
         public TextPart append(String s){
             this.appended = true;
             this.append(false, s);
             return this;
         }
+
+        /**
+         * Appends text that will append raw/not raw in alternating fashion.
+         *
+         * @param raw if the first text should not be translated
+         * @param s the strings to append in raw/not raw in alternating fashion
+         * @return the instance
+         */
         public TextPart appendAlternate(boolean raw, String...s){
             this.appended = true;
             this.maker.maySend();
             this.langString.appendToggle(raw, s);
             return this;
         }
+
+        /**
+         * Appends content to the given field and translates dependent on raw.
+         *
+         * @param raw if the text to append should not be translated
+         * @param s the text to append
+         * @return the instance
+         */
         public TextPart append(boolean raw, String s){
             this.appended = true;
             this.maker.maySend();
             this.langString.append(!raw, s);
             return this;
         }
+
+        /**
+         * Appends a {@link LangString} to the content of the represented field.
+         *
+         * @param langString the lang string to append
+         * @return the isntance
+         */
         public TextPart append(LangString langString){
             this.appended = true;
             this.maker.maySend();
             this.langString.append(langString);
             return this;
         }
+
+        /**
+         * Gets the parent maker.
+         *
+         * @return the parent maker
+         */
         public MessageMaker getMaker(){
             return this.maker;
         }
+
+        /**
+         * Clears the content of the maker.
+         *
+         * @return the instance
+         */
         public TextPart clear() {
             this.langString = new LangString();
             this.appended = false;
             return this;
         }
+
+        /**
+         * Gets a translation of the {@link LangString} content.
+         *
+         * @param langCode the language code to translate the {@link LangString} to
+         * @return a translation of the {@link LangString} content
+         */
         public String translate(String langCode) {
             return this.langString.translate(langCode);
         }
     }
+
+    /**
+     * Represents a field value or title for a {@link FieldPart}.
+     */
     public class FieldTextPart extends TextPart {
         private FieldPart part;
         private FieldTextPart(MessageMaker helper, FieldPart part) {

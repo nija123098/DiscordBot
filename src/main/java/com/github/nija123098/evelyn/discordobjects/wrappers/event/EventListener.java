@@ -6,7 +6,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Made by nija123098 on 3/12/2017.
+ * Used to indicate a method that listens to a {@link BotEvent}.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
