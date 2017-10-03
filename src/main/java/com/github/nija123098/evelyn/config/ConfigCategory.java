@@ -29,8 +29,8 @@ public enum ConfigCategory {
      * The override for setting the {@link BotRole} as the
      * default for setting configs which are under this category.
      *
-     * @param level the module level this config category
-     * @param botRole the bot
+     * @param level the module level this config category.
+     * @param botRole the {@link BotRole} required to edit a config from the category.
      */
     ConfigCategory(ModuleLevel level, BotRole botRole) {
         this.level = level;
@@ -38,7 +38,7 @@ public enum ConfigCategory {
     }
 
     /**
-     * A constructor which sets the {@link ModuleLevel} for the {@link ConfigCategory}
+     * A constructor which sets the {@link ModuleLevel} for the {@link ConfigCategory}.
      *
      * @param level the {@link ModuleLevel} this belongs to.
      */
@@ -60,7 +60,7 @@ public enum ConfigCategory {
      * list of {@link AbstractConfig}s which
      * are under this {@link ConfigCategory}.
      *
-     * @param abstractConfig the config to add
+     * @param abstractConfig the config to add to the category.
      */
     public void addConfig(AbstractConfig<? extends Configurable, ?> abstractConfig){
         this.configs.add(abstractConfig);

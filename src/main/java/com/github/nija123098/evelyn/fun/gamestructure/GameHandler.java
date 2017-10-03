@@ -9,6 +9,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Handles tracking for existing games.
+ *
+ * @author nija123098
+ * @since 1.0.0
+ */
 public class GameHandler {
     private static final Map<Guild, Map<User, AbstractGame>> GAME_MAP = new ConcurrentHashMap<>();
     public static void register(Guild guild, AbstractGame game){

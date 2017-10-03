@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 /**
  * An method annotated with this annotation
  * in an class that extends AbstractCommand
- * will be the method invoked for the command
+ * will be the method invoked for the command.
  *
  * @author nija123098
  * @since 1.0.0

@@ -4,9 +4,18 @@ import com.github.nija123098.evelyn.util.ArrayUtils;
 
 import java.util.Random;
 
+/**
+ * An instance of this is a basic generational neural net.
+ *
+ * This is not written in an object oriented fashion
+ * so XStream will properly serialize instances.
+ *
+ * @author nija123098
+ * @since 1.0.0
+ */
 public class NeuralNet {
     private int winCount = 0;// written like this for XStream so it actually functions when unloading from XML, also space.
-    private double[][][] weights;// level, first node, second node
+    private double[][][] synapses;// level, first node, second node
     private int inputNodes, outNodes, hiddenLayers, hiddenWidth;
     private transient double[][] nodes;
     public NeuralNet(int inputNodes, int outNodes, int hiddenLayers, int hiddenWidth) {
@@ -14,26 +23,26 @@ public class NeuralNet {
         this.outNodes = outNodes;
         this.hiddenLayers = hiddenLayers;
         this.hiddenWidth = hiddenWidth;
-        this.weights = new double[this.hiddenLayers + 1][][];
-        this.weights[0] = new double[this.inputNodes][this.hiddenWidth];
-        this.weights[this.weights.length - 1] = new double[this.hiddenWidth][this.outNodes];
-        for (int i = 1; i < this.weights.length - 1; i++) {
-            this.weights[i] = new double[this.hiddenWidth][this.hiddenWidth];
+        this.synapses = new double[this.hiddenLayers + 1][][];
+        this.synapses[0] = new double[this.inputNodes][this.hiddenWidth];
+        this.synapses[this.synapses.length - 1] = new double[this.hiddenWidth][this.outNodes];
+        for (int i = 1; i < this.synapses.length - 1; i++) {
+            this.synapses[i] = new double[this.hiddenWidth][this.hiddenWidth];
         }
         for (int i = 0; i < inputNodes; i++) {
             for (int j = 0; j < hiddenWidth; j++) {
-                this.weights[0][i][j] = 0;
+                this.synapses[0][i][j] = 0;
             }
         }
         for (int i = 0; i < hiddenWidth; i++) {
             for (int j = 0; j < outNodes; j++) {
-                this.weights[this.weights.length - 1][i][j] = 0;
+                this.synapses[this.synapses.length - 1][i][j] = 0;
             }
         }
-        for (int i = 1; i < this.weights.length - 1; i++) {
+        for (int i = 1; i < this.synapses.length - 1; i++) {
             for (int j = 0; j < hiddenWidth; j++) {
                 for (int k = 0; k < hiddenWidth; k++) {
-                    this.weights[i][j][k] = 0;
+                    this.synapses[i][j][k] = 0;
                 }
             }
         }
@@ -43,11 +52,22 @@ public class NeuralNet {
         this.outNodes = other.outNodes;
         this.hiddenLayers = other.hiddenLayers;
         this.hiddenWidth = other.hiddenWidth;
-        this.weights = ArrayUtils.copy(other.weights);
+        this.synapses = ArrayUtils.copy(other.synapses);
     }
+
+    /**
+     * Makes a deep copy of the neural net isntance.
+     *
+     * @return a deep copy of the neural net isntance.
+     */
     public NeuralNet copy(){
         return new NeuralNet(this);
     }
+
+    /**
+     * Ensures that {@link NeuralNet#nodes} is initialized
+     * which matches the structure of the {@link NeuralNet}.
+     */
     private void ensureLayerNodes(){
         if (this.nodes != null) return;
         this.nodes = new double[this.hiddenLayers + 2][];
@@ -57,23 +77,39 @@ public class NeuralNet {
             this.nodes[i] = new double[this.hiddenWidth];
         }
     }
+
+    /**
+     * Alters the {@link NeuralNet#synapses} of the network
+     * by adding a Gaussian times half the ratio where the
+     * multiplied by either 1 or -1.
+     *
+     * @param ratio the amount to vary alterations by.
+     */
     public void alter(double ratio){
         Random random = new Random();
-        for (int i = 0; i < this.weights.length; i++) {
-            for (int j = 0; j < this.weights[i].length; j++) {
-                for (int k = 0; k < this.weights[i][j].length; k++) {
-                    this.weights[i][j][k] += random.nextGaussian() * (ratio / 2) * (random.nextInt(2) == 0 ? 1 : -1);
+        for (int i = 0; i < this.synapses.length; i++) {
+            for (int j = 0; j < this.synapses[i].length; j++) {
+                for (int k = 0; k < this.synapses[i][j].length; k++) {
+                    this.synapses[i][j][k] += random.nextGaussian() * (ratio / 2) * (random.nextInt(2) == 0 ? 1 : -1);
                 }
             }
         }
     }
+
+    /**
+     * Computes the result of the neural net instance
+     * when the input is set to the given values.
+     *
+     * @param input the values to set the input nodes to.
+     * @return the value of the output nodes.
+     */
     public double[] compute(double[] input){
         this.ensureLayerNodes();
         this.nodes[0] = input;
         for (int i = 0; i < this.inputNodes; i++) {
             double total = 0;
             for (int j = 0; j < this.hiddenWidth; j++) {
-                total += this.weights[0][i][j] * this.nodes[0][i];
+                total += this.synapses[0][i][j] * this.nodes[0][i];
             }
             this.nodes[1][i] = total / this.inputNodes;
         }
@@ -81,7 +117,7 @@ public class NeuralNet {
             for (int i = 0; i < this.hiddenWidth; i++) {
                 double total = 0;
                 for (int j = 0; j < this.hiddenWidth; j++) {
-                    total += this.weights[l][i][j] * this.nodes[l][j];
+                    total += this.synapses[l][i][j] * this.nodes[l][j];
                 }
                 this.nodes[l + 1][i] = total / this.hiddenWidth;
             }
@@ -89,7 +125,7 @@ public class NeuralNet {
         for (int i = 0; i < this.outNodes; i++) {
             double total = 0;
             for (int j = 0; j < this.hiddenWidth; j++) {
-                total += this.weights[this.weights.length - 2][i][j] * this.nodes[this.nodes.length - 2][i];
+                total += this.synapses[this.synapses.length - 2][i][j] * this.nodes[this.nodes.length - 2][i];
             }
             this.nodes[this.nodes.length - 1][i] = total / this.outNodes;
         }

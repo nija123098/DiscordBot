@@ -9,11 +9,7 @@ import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.template.KeyPhrase;
 import com.github.nija123098.evelyn.template.TemplateHandler;
-import com.github.nija123098.evelyn.util.FormatHelper;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**

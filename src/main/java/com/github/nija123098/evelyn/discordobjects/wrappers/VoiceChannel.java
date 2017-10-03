@@ -1,15 +1,17 @@
 package com.github.nija123098.evelyn.discordobjects.wrappers;
 
-import com.github.nija123098.evelyn.discordobjects.exception.ErrorWrapper;
+import com.github.nija123098.evelyn.discordobjects.ErrorWrapper;
 import com.github.nija123098.evelyn.util.GetterUtil;
-import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IVoiceChannel;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Made by nija123098 on 3/7/2017.
+ * Wraps a Discord4j {@link IVoiceChannel} object.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public class VoiceChannel extends Channel {
     static VoiceChannel getVoiceChannel(String id){// I have no clue how this hasn't thrown any NumberFormatExceptions so far

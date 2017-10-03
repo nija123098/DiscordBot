@@ -5,7 +5,12 @@ import com.wezinkhof.configuration.ConfigurationOption;
 import java.io.File;
 
 /**
- * Made by nija123098 on 3/13/2017.
+ * A class which utilizes reflection to get values from a file.
+ *
+ * Values indicated here are defaults.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public class BotConfig {
     @ConfigurationOption

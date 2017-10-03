@@ -6,7 +6,12 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import java.awt.*;
 
 /**
- * Made by nija123098 on 3/31/2017.
+ * A exception which can be made into a message.
+ * An exception subclassing this class does not
+ * necessarily indicate that something went wrong.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public class BotException extends RuntimeException {
     public BotException() {
@@ -24,6 +29,12 @@ public class BotException extends RuntimeException {
         super(cause);
     }
 
+    /**
+     * Generates a {@link MessageMaker} for the instance exception.
+     *
+     * @param channel the channel to set as the destination.
+     * @return the {@link MessageMaker} instance which can displays the exception.
+     */
     public MessageMaker makeMessage(Channel channel){
         return new MessageMaker(channel).maySend().withColor(Color.RED).getHeader().append(this.getMessage()).getMaker().getTitle().appendRaw(this.getClass().getSimpleName()).getMaker();
     }

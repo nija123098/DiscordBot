@@ -6,6 +6,7 @@ import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.discordobjects.DiscordAdapter;
 import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
+import com.github.nija123098.evelyn.perms.BotRole;
 import com.github.nija123098.evelyn.service.ServiceHandler;
 import com.github.nija123098.evelyn.service.services.ScheduleService;
 import com.github.nija123098.evelyn.template.TemplateHandler;
@@ -21,7 +22,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * Made by nija123098 on 2/20/2017.
+ * The main class of the bot from which everything launches.
+ *
+ * This class takes care initializing order,
+ * registration of startup and shutdown {@link Runnable}s,
+ * and the shutdown process.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public class Launcher {
     public static final Set<User> USERS = new HashSet<>();
@@ -38,27 +46,77 @@ public class Launcher {
             System.exit(-1);
         }
     }
+
+    /**
+     * Registers a {@link Runnable} which will be run on startup
+     * which will block the bot's responding until complete.
+     *
+     * @param runnable the {@link Runnable} to run on startup.
+     */
     public static void registerStartup(Runnable runnable){
         if (IS_STARTING_UP.get()) runnable.run();
         else STARTUPS.add(runnable);
     }
+
+    /**
+     * Registers a {@link Runnable} which will be run on startup
+     * which will not block the bot's responding until complete.
+     *
+     * @param runnable the {@link Runnable} to run on startup.
+     */
     public static void registerAsyncStartup(Runnable runnable){
         if (IS_STARTING_UP.get()) runnable.run();
         else ASYNC_STARTUPS.add(runnable);
     }
+    /**
+     * Registers a shutdown {@link Runnable} which will be
+     * ran before the bot is disconnected from Discord.
+     *
+     * @param runnable the {@link Runnable} to run on shutdown.
+     */
     public static void registerShutdown(Runnable runnable){
         SHUTDOWNS.add(runnable);
     }
+
+    /**
+     * Gets if the bot is ready to respond to commands.
+     *
+     * @return if the bot is ready to respond to commands.
+     */
     public static boolean isReady(){
         return IS_READY.get();
     }
+
+    /**
+     * Grants the {@link User} specified the {@link BotRole#SYSTEM} role.
+     *
+     * @param user the user to give {@link BotRole#SYSTEM} permissions to.
+     */
     public static void grantSystemAccess(User user){
         USERS.add(user);
         ScheduleService.schedule(300_000, () -> USERS.remove(user));
     }
+
+    /**
+     * Gets if the specified {@link User} has {@link BotRole#SYSTEM} rights.
+     *
+     * @param user the user to check {@link BotRole#SYSTEM} permissions for.
+     * @return if the specified {@link User} has {@link BotRole#SYSTEM} rights.
+     */
     public static boolean hasSystemAccess(User user){
         return USERS.contains(user);
     }
+
+    /**
+     * Registers a new shutdown or cancels a scheduled shutdown.
+     * The bot will be forcibly shutdown two seconds after shutdown should have
+     * occurred should a thread not have been properly marked a daemon Thread.
+     *
+     * The bot will be logged out of Discord before this.
+     *
+     * @param code the code to shutdown the JVM.
+     * @param delay the amount of time before the shutdown begins.
+     */
     public synchronized static void shutdown(Integer code, long delay){
         ScheduleService.ScheduledTask task = SHUTDOWN_TASK.get();
         if (task != null) {
@@ -82,6 +140,12 @@ public class Launcher {
             }));
         }
     }
+
+    /**
+     * Starts and logs the bot in.
+     *
+     * @param args the program arguments.
+     */
     public static void main(String[] args) {
         TemplateHandler.initialize();
         InvocationObjectGetter.initialize();

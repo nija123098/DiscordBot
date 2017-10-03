@@ -2,7 +2,6 @@ package com.github.nija123098.evelyn.fun.gamestructure;
 
 import com.github.nija123098.evelyn.config.TypeChanger;
 import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
-import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.fun.gamestructure.neuralnet.NeuralNet;
 import com.github.nija123098.evelyn.fun.gamestructure.neuralnet.AbstractNeuralNetGame;
 import com.github.nija123098.evelyn.launcher.BotConfig;
@@ -61,14 +60,14 @@ public class GamePlayHandler {
         Path path = getNeuralNetPath(game);
         NeuralNet neuralNet;
         if (!path.toFile().exists()){
-            neuralNet = new NeuralNet(game.getInputCount(), game.getOutputCount(), game.getHiddenLayerCount(), game.getHiddenLayerWidth());
+            neuralNet = new NeuralNet(game.getInputWidth(), game.getOutputWidth(), game.getHiddenLayerCount(), game.getHiddenLayerWidth());
         } else {// I'm tempted to inline this
             neuralNet = (NeuralNet) TypeChanger.getXStream().fromXML(path.toFile());
         }
         return neuralNet;
     }
     private static String getNeuralNetName(AbstractNeuralNetGame game){
-        return game.getName() + "-" + Joiner.on("-").join(new Integer[]{game.getInputCount(), game.getOutputCount(), game.getHiddenLayerWidth(), game.getHiddenLayerCount()}) + ".txt";
+        return game.getName() + "-" + Joiner.on("-").join(new Integer[]{game.getInputWidth(), game.getOutputWidth(), game.getHiddenLayerWidth(), game.getHiddenLayerCount()}) + ".txt";
     }
     private static Path getNeuralNetPath(AbstractNeuralNetGame game){
         return Paths.get(BotConfig.NEURAL_NET_FOLDER, getNeuralNetName(game));

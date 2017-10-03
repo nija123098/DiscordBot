@@ -86,7 +86,7 @@ public class ConfigHandler {
     /**
      * Gets all config instances.
      *
-     * @return the set of configurable instances
+     * @return the set of configurable instances.
      */
     public static Set<AbstractConfig<?, ? extends Configurable>> getConfigs(){
         return new HashSet<>(CLASS_MAP.values());
@@ -95,9 +95,9 @@ public class ConfigHandler {
     /**
      * Gets config instances for the type.
      *
-     * @param type the type of configurable
-     * @param <T> the type of configurable
-     * @return the set of Configs for that type
+     * @param type the type of configurable.
+     * @param <T> the type of configurable.
+     * @return the set of Configs for that type.
      */
     public static <T extends Configurable> Set<AbstractConfig<?, T>> getConfigs(Class<T> type){
         return getConfigs().stream().filter(config -> config.getConfigLevel().isAssignableFrom(ConfigLevel.getLevel(type))).map(abstractConfig -> ((AbstractConfig<?, T>) abstractConfig)).collect(Collectors.toSet());
@@ -106,8 +106,8 @@ public class ConfigHandler {
     /**
      * Gets the config object representing a certain config.
      *
-     * @param configName the config name for the config being gotten
-     * @return the object representing the config that is being searched for
+     * @param configName the config name for the config being gotten.
+     * @return the object representing the config that is being searched for.
      */
     public static AbstractConfig<?, ? extends Configurable> getConfig(String configName){
         return STRING_MAP.get(configName);
@@ -116,8 +116,8 @@ public class ConfigHandler {
     /**
      * Gets the config object representing a certain config.
      *
-     * @param clazz the class object of the config
-     * @return the config that is being represented by the given class
+     * @param clazz the class object of the config.
+     * @return the config that is being represented by the given class.
      */
     public static <E extends AbstractConfig<?, ? extends Configurable>> E getConfig(Class<E> clazz){
         Object e = CLASS_MAP.get(clazz);
@@ -130,10 +130,10 @@ public class ConfigHandler {
     /**
      * Gets the length of time the config has been set at the current value.
      *
-     * @param clazz the class type for the {@link AbstractConfig}
-     * @param configurable the configurable which the value is asociated with
-     * @param <E> the type of the {@link AbstractConfig}
-     * @return the length of time the config has been set
+     * @param clazz the class type for the {@link AbstractConfig}.
+     * @param configurable the configurable which the value is associated with.
+     * @param <E> the type of the {@link AbstractConfig}.
+     * @return the length of time the config has been set.
      */
     public static <E extends AbstractConfig<?, ? extends Configurable>> long getAge(Class<E> clazz, Configurable configurable){
         return getConfig(clazz).getAge(configurable);
@@ -142,9 +142,9 @@ public class ConfigHandler {
     /**
      * Sets the config value for the given configurable and config.
      *
-     * @param clazz the class object representing the config
-     * @param configurable the configurable the config is to be set for
-     * @param value the value the config is being set at
+     * @param clazz the class object representing the config.
+     * @param configurable the configurable the config is to be set for.
+     * @param value the value the config is being set at.
      */
     public static <C extends AbstractConfig<I, T>, I, T extends Configurable> void setExteriorSetting(Class<C> clazz, T configurable, User user, Channel channel, Guild guild, Message message, String value){
         getConfig(clazz).setExteriorValue(configurable, user, channel, guild, message, value);
@@ -153,21 +153,21 @@ public class ConfigHandler {
     /**
      * Sets the config value for the given configurable and config.
      *
-     * @param clazz the class object representing the config
-     * @param configurable the configurable the config is to be set for
-     * @param value the value the config is being set at
+     * @param clazz the class object representing the config.
+     * @param configurable the configurable the config is to be set for.
+     * @param value the value the config is being set at.
      */
     public static <V, T extends Configurable> V setSetting(Class<? extends AbstractConfig<V, T>> clazz, T configurable, V value){
         return getConfig(clazz).setValue(configurable, value);
     }
 
     /**
-     * Sets the config value for the given configurable and config
+     * Sets the config value for the given configurable and config.
      *
-     * @param configName the config name of the config to be set
-     * @param configurable the configurable the config is to be set for
-     * @param value the value to be set
-     * @return if the value is set
+     * @param configName the {@link AbstractConfig} specified by {@link String} to set the config for.
+     * @param configurable the configurable the config is to be set for.
+     * @param value the value to be set for the given config and {@link Configurable}.
+     * @return if the value was set.
      */
     public static boolean setSetting(String configName, Configurable configurable, Object value){
         AbstractConfig config = getConfig(configName);
@@ -186,9 +186,9 @@ public class ConfigHandler {
     /**
      * Uses a function to set the value of the config to a new value.
      *
-     * @param clazz the class object representing the config
-     * @param configurable the configurable the config is to be set for
-     * @param function the function the config gives the old value to and gets a new value from
+     * @param clazz the class object representing the config.
+     * @param configurable the configurable the config is to be set for.
+     * @param function the function the config gives the old value to and gets a new value from.
      */
     public static <V, T extends Configurable> V changeSetting(Class<? extends AbstractConfig<V, T>> clazz, T configurable, Function<V, V> function){
         return getConfig(clazz).changeSetting(configurable, function);
@@ -197,9 +197,9 @@ public class ConfigHandler {
     /**
      * Uses a consumer to set the value of the config to a new value.
      *
-     * @param clazz the class object representing the config
-     * @param configurable the configurable the config is to be set for
-     * @param consumer the consumer the config gives the old value to and gets a new value from
+     * @param clazz the class object representing the config.
+     * @param configurable the configurable the config is to be set for.
+     * @param consumer the consumer the config gives the old value to and gets a new value from.
      */
     public static <V, T extends Configurable> V alterSetting(Class<? extends AbstractConfig<V, T>> clazz, T configurable, Consumer<V> consumer){
         return getConfig(clazz).alterSetting(configurable, consumer);
@@ -214,12 +214,12 @@ public class ConfigHandler {
     }
 
     /**
-     * Sets the config value for the given configurable and config
+     * Sets the config value for the given configurable and config.
      *
-     * @param configName the config name of the config to be set
-     * @param configurable the configurable the config is to be set for
-     * @param value the value to be set
-     * @return if the value is set
+     * @param configName the config name of the config to be set.
+     * @param configurable the configurable the config is to be set for.
+     * @param value the value to be set.
+     * @return if the value is set.
      */
     public static boolean setExteriorSetting(String configName, Configurable configurable, User user, Channel channel, Guild guild, Message message, String value){
         AbstractConfig config = getConfig(configName);
@@ -238,10 +238,10 @@ public class ConfigHandler {
     /**
      * A setter for a config for a given configurable.
      *
-     * @param clazz the class object that types a config
+     * @param clazz the class object that types a config.
      * @param configurable the configurable the config
-     *                     is to be set for
-     * @return the value of the config for the configurable
+     *                     is to be set for.
+     * @return the value of the config for the configurable.
      */
     public static <I, T extends Configurable> I getSetting(Class<? extends AbstractConfig<I, T>> clazz, T configurable){
         return getConfig(clazz).getValue(configurable);
@@ -250,10 +250,10 @@ public class ConfigHandler {
     /**
      * A setter for a config for a given configurable.
      *
-     * @param clazz the class object that types a config
+     * @param clazz the class object that types a config.
      * @param configurable the configurable the config
-     *                     is to be set for
-     * @return the value of the config for the configurable
+     *                     is to be set for.
+     * @return the value of the config for the configurable.
      */
     public static <I, T extends Configurable> String getExteriorSetting(Class<? extends AbstractConfig<I, T>> clazz, T configurable){
         return getConfig(clazz).getExteriorValue(configurable);
@@ -262,10 +262,10 @@ public class ConfigHandler {
     /**
      * A setter for a config for a given configurable.
      *
-     * @param configName the name of the config to be gotten
+     * @param configName the name of the config to be gotten.
      * @param configurable the configurable that the config value
-     *                     is to be gotten for
-     * @return the value of the config for the configurable
+     *                     is to be gotten for.
+     * @return the value of the config for the configurable.
      */
     public static Object getSetting(String configName, Configurable configurable){
         AbstractConfig config = getConfig(configName);
@@ -279,10 +279,10 @@ public class ConfigHandler {
     /**
      * A setter for a config for a given configurable.
      *
-     * @param configName the name of the config to be gotten
+     * @param configName the name of the config to be gotten.
      * @param configurable the configurable that the config value
-     *                     is to be gotten for
-     * @return the value of the config for the configurable
+     *                     is to be gotten for.
+     * @return the value of the config for the configurable.
      */
     public static String getExteriorSetting(String configName, Configurable configurable){
         AbstractConfig config = getConfig(configName);
@@ -296,10 +296,10 @@ public class ConfigHandler {
     /**
      * Resets the configurable's data for the given config.
      *
-     * @param configurable the configurable to reset
-     * @param config the config type
-     * @param <T> the type of configurable
-     * @param <V> the value type
+     * @param configurable the configurable to reset.
+     * @param config the config type.
+     * @param <T> the type of configurable.
+     * @param <V> the value type.
      */
     public static <T extends Configurable, V> void reset(Class<? extends AbstractConfig<V, T>> config, T configurable) {
         getConfig(config).reset(configurable);
@@ -315,8 +315,8 @@ public class ConfigHandler {
     /**
      * Gets the count of that type according to database memory.
      *
-     * @param type the type of instance to get the count for
-     * @return the count of the type instances
+     * @param type the type of instance to get the count for.
+     * @return the count of the type instances.
      */
     public static int getTypeCount(Class<? extends Configurable> type){
         return getNonDefaultSettings(ConfigurableExistsConfig.class, type).size();
@@ -326,9 +326,9 @@ public class ConfigHandler {
      * Gets a function to get a instance
      * of the specified type from the id.
      *
-     * @param type the class type to get the function for
-     * @param <T> the configurable type
-     * @return the function to get a instance of the type from an id
+     * @param type the class type to get the function for.
+     * @param <T> the configurable type.
+     * @return the function to get a instance of the type from an id.
      */
     public static <T extends Configurable> Function<String, T> getIDFunction(Class<T> type){
         return (Function<String, T>) FUNCTION_MAP.get(type);
@@ -337,10 +337,10 @@ public class ConfigHandler {
     /**
      * Gets the configurable from the type and arguments.
      *
-     * @param type the type of configurable
-     * @param id the id of the configurable
-     * @param <T> the type of configurable
-     * @return the configurable according to the id
+     * @param type the type of configurable.
+     * @param id the id of the configurable.
+     * @param <T> the type of configurable.
+     * @return the configurable according to the id.
      */
     public static <T extends Configurable> T getConfigurable(Class<T> type, String id){
         return getIDFunction(type).apply(id);
@@ -349,8 +349,8 @@ public class ConfigHandler {
     /**
      * Gets the configurable from the type and arguments.
      *
-     * @param id the id of the configurable
-     * @return the configurable according to the id
+     * @param id the id of the configurable.
+     * @return the configurable according to the id.
      */
     public static Configurable getConfigurable(String id){
         Configurable c;
@@ -364,14 +364,14 @@ public class ConfigHandler {
      * Gets the list of the type starting at the index
      * and with the next count of elements specified by size.
      *
-     * @param type the type of
-     * @param start the start index of the type
+     * @param type the type of.
+     * @param start the start index of the type.
      * @param size the size of the list to get instances of.
-     *             The size will be adjusted if it is to big
-     * @param <T> the configurable type
+     *             The size will be adjusted if it is to big.
+     * @param <T> the configurable type.
      * @return a list of the configurable types
      * starting with the start index and ending
-     * with the start index plus size
+     * with the start index plus size.
      */
     public static <T extends Configurable> List<T> getTypeInstances(Class<T> type, long start, int size){
         Function<String, T> function = getIDFunction(type);
@@ -385,9 +385,9 @@ public class ConfigHandler {
     /**
      * Gets a list of all instances of a configurable.
      *
-     * @param type the type of configurable
-     * @param <T> the type of configurable
-     * @return all instances of the configurable
+     * @param type the type of configurable.
+     * @param <T> the type of configurable.
+     * @return all instances of the configurable.
      */
     public static <T extends Configurable> List<T> getTypeInstances(Class<T> type){
         return getTypeInstances(type, 0, getTypeCount(type));
@@ -397,12 +397,12 @@ public class ConfigHandler {
      * Gets the list of the type starting at the index
      * and with the next count of elements specified by size.
      *
-     * @param type the type of
-     * @param start the start index of the type
-     * @param size the size of the list to get instances of
+     * @param type the type of.
+     * @param start the start index of the type.
+     * @param size the size of the list to get instances of.
      * @return a list of the string ids to the
      * type starting with the start index and
-     * ending with the start index plus size
+     * ending with the start index plus size.
      */
     private static List<String> getTypeIDs(Class<? extends Configurable> type, long start, int size){
         List<String> list = new ArrayList<>(size);
@@ -417,8 +417,8 @@ public class ConfigHandler {
      * Moves the values of this config to the new ID
      * and returns the new config for those values.
      *
-     * @param newID the id to move the config's values to
-     * @return the new Configurable instance
+     * @param newID the id to move the config's values to.
+     * @return the new Configurable instance.
      */
     public static <T extends Configurable> T moveID(T oldConfig, String newID){// SQL
         return ConfigHandler.getConfigurable((Class<T>) oldConfig.getClass(), newID);

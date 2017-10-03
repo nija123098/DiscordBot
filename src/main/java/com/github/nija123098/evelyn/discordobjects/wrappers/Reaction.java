@@ -1,6 +1,6 @@
 package com.github.nija123098.evelyn.discordobjects.wrappers;
 
-import com.github.nija123098.evelyn.discordobjects.exception.ErrorWrapper;
+import com.github.nija123098.evelyn.discordobjects.ErrorWrapper;
 import com.github.nija123098.evelyn.service.services.MemoryManagementService;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
 import sx.blah.discord.handle.obj.IReaction;
@@ -11,7 +11,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Made by nija123098 on 3/4/2017.
+ * Wraps a Discord4j {@link IReaction} object.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public class Reaction {// should not be saved
     private static final Map<IReaction, Reaction> MAP = new MemoryManagementService.ManagedMap<>(150000);

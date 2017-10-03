@@ -18,15 +18,17 @@ import java.nio.file.Paths;
 import java.util.*;
 
 /**
- * If you are Google and you don't like this email Kaaz
+ * Assists in translation for segments of {@link String}
+ * where part of the {@link String} is not to be translated.
  *
- * Made by nija123098 on 3/17/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class LangString {
     /**
      * The value of the lang string in pairs
      * of strings and booleans, representing
-     * if that string should be translated
+     * if that string should be translated.
      */
     private final List<Pair<Boolean, String>> value = new ArrayList<>();
     private final Map<String, String> translated = new HashMap<>(1);
@@ -72,9 +74,9 @@ public class LangString {
      * Returns the value of the string
      * without translation, which should be
      * equivalent to translating the LangString
-     * with the original language
+     * with the original language.
      *
-     * @return the value without any translation
+     * @return the value without any translation.
      */
     public String asBuilt() {
         final StringBuilder builder = new StringBuilder();
@@ -83,18 +85,18 @@ public class LangString {
     }
 
     /**
-     * The storage for API calls for translated content
+     * The cache for API calls for translated content.
      */
     private static final Map<String, Map<String, String>> MAP = new HashMap<>();
 
     /**
      * Translates the content, but unlike
      * {@link LangString#call(String, String)}
-     * it formats the calls properly
+     * it formats the calls properly.
      *
-     * @param lang the lang code to translate to
-     * @param content the content to translate
-     * @return the translated content
+     * @param lang the lang code to translate to.
+     * @param content the content to translate.
+     * @return the translated content.
      */
     public static String translate(String lang, String content) {
         return MAP.computeIfAbsent(lang, s -> new HashMap<>()).computeIfAbsent(content, s -> {
@@ -129,9 +131,9 @@ public class LangString {
     /**
      * Calls the Google api to get a translation
      *
-     * @param lang the language code to translate to
-     * @param content the content to translate
-     * @return the translated content
+     * @param lang the language code to translate to.
+     * @param content the content to translate.
+     * @return the translated content.
      */
     private static String call(String lang, String content) {
         try {

@@ -1,4 +1,4 @@
-package com.github.nija123098.evelyn.discordobjects.exception;
+package com.github.nija123098.evelyn.exeption;
 
 import sx.blah.discord.util.DiscordException;
 
@@ -9,7 +9,7 @@ import sx.blah.discord.util.DiscordException;
  * @since 1.0.0
  */
 public class DException extends RuntimeException {
-    DException(DiscordException e){
+    public DException(DiscordException e){
         super(e);
     }
 }

@@ -1,7 +1,11 @@
 package com.github.nija123098.evelyn.exeption;
 
 /**
- * Made by nija123098 on 7/19/2017.
+ * An exception thrown when a action which should not be done by
+ * a bot running silently under the main bot is about to occur.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public class GhostException extends BotException {
     public GhostException() {

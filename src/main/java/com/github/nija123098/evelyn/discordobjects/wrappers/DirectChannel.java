@@ -7,7 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Made by nija123098 on 3/11/2017.
+ * Wraps a Discord4J {@link IPrivateChannel} object.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public class DirectChannel extends Channel {
     public static DirectChannel getDirectChannel(String id){

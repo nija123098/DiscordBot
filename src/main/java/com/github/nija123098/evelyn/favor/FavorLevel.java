@@ -12,7 +12,7 @@ import java.awt.*;
  * The amount indicated is inclusive.
  *
  * @author nija123098
- * @since 2.0.0
+ * @since 1.0.0
  */
 public enum FavorLevel {
     DISTRUSTED(-50000, "Should get banned"),
@@ -37,10 +37,10 @@ public enum FavorLevel {
 
     /**
      * A getter for the associated enum
-     * where the value is inclusive
+     * where the value is inclusive.
      *
-     * @param value the float value
-     * @return the favor level enum for the amount
+     * @param value the float value.
+     * @return the favor level enum for the amount.
      */
     static FavorLevel getFavorLevel(float value){
         if (value < DISTRUSTED.amount){

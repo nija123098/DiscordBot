@@ -91,9 +91,9 @@ public class CommandHandler {
     /**
      * Loads a command hierarchically as determined by pre-sorted maps.
      *
-     * @param superCommand the command to load it and it's sub-commands
+     * @param superCommand the command to load it and it's sub-commands.
      * @param typeMap the map sorted so the type of the super-command
-     *                is the key and the value is a set of sub-command objects
+     *                is the key and the value is a set of sub-command objects.
      */
     private static void load(AbstractCommand superCommand, Map<Class<? extends AbstractCommand>, Set<AbstractCommand>> typeMap){
         superCommand.load();
@@ -101,7 +101,7 @@ public class CommandHandler {
     }
 
     /**
-     * Forces the initialization of this class
+     * Forces the initialization of this class.
      */
     public static void initialize(){
         Log.log("Command Handler initialized");
@@ -110,37 +110,37 @@ public class CommandHandler {
     /**
      * Returns a set of all command instances.
      *
-     * @return returns a set of all command instances
+     * @return returns a set of all command instances.
      */
     public static Set<? extends AbstractCommand> getCommands(){
         return new HashSet<>(CLASS_MAP.values());
     }
 
     /**
-     * Gets the command instance by the class type
+     * Gets the command instance by the class type.
      *
-     * @param commandType the command type
-     * @return the command instance
+     * @param commandType the command type.
+     * @return the command singleton of the given type.
      */
     public static AbstractCommand getCommand(Class<? extends AbstractCommand> commandType){
         return CLASS_MAP.get(commandType);
     }
 
     /**
-     * The method to get a command from a reaction name
+     * The method to get a command from a reaction name.
      *
-     * @param reactionName the reaction name
-     * @return the abstract command whose ailiase is the reaction chars
+     * @param reactionName the {@link Reaction} specified by name.
+     * @return the abstract command whose ailiase is the reaction chars.
      */
     public static AbstractCommand getReactionCommand(String reactionName){
         return REACTION_COMMAND_MAP.get(EmoticonHelper.getChars(reactionName, false));
     }
 
     /**
-     * Gets the command for the name given expecting no arguments
+     * Gets the command for the name given expecting no arguments.
      *
-     * @param name the exact name of the command
-     * @return the exact command
+     * @param name the exact name of the command.
+     * @return the exactly specified command.
      */
     public static AbstractCommand getCommand(String name){
         return EXACT_COMMAND_MAP.get(name);
@@ -150,8 +150,8 @@ public class CommandHandler {
      * Gets the command and its arguments from a sting.
      *
      * @param in the string to derive the command
-     *           and command parameters from
-     * @return the command and parameters for that command
+     *           and command parameters from.
+     * @return the command and parameters for that command.
      */
     public static Pair<AbstractCommand, String> getMessageCommand(String in){// make return Pair<AbstractCommand, Integer>
         String[] strings = FormatHelper.reduceRepeats(in, ' ').split(" ");
@@ -187,10 +187,10 @@ public class CommandHandler {
     /**
      * The method to attempt to run a command.
      *
-     * @param string the command user args or reacted message content
-     * @param user the invoker
-     * @param message the message reacted to or sent to invoke the command
-     * @param reaction the reaction that invoked this command, if applicable
+     * @param string the command user args or reacted message content.
+     * @param user the invoking user.
+     * @param message the message reacted to or sent to invoke the command.
+     * @param reaction the reaction that invoked this command, if applicable.
      */
     public static Boolean attemptInvocation(String string, User user, Message message, Reaction reaction){
         if (reaction != null) string = string == null ? "" : string;
@@ -292,10 +292,10 @@ public class CommandHandler {
     /**
      * Attempts to execute a command invoked from a voice channel.
      *
-     * @param s the words used to invoke the command
-     * @param user the user invoking the command
-     * @param manager the audio manager that got the command
-     * @return if a command was invoked and succeeded
+     * @param s the words used to invoke the command.
+     * @param user the user invoking the command.
+     * @param manager the audio manager that got the command.
+     * @return if a command was invoked and succeeded.
      */
     public static boolean attemptInvocation(String s, User user, GuildAudioManager manager){
         if (s == null || s.isEmpty()) return false;
@@ -331,9 +331,12 @@ public class CommandHandler {
     }
 
     /**
-     * The monitoring for arg based commands
+     * The monitoring for arg based commands.
      *
-     * @param event the monitored event
+     * @param event the monitored event.
+     * @return true if a event was invoked, false if
+     * {@link com.github.nija123098.evelyn.chatbot.ChatBot}
+     * did not find the message acceptable, null otherwise.
      */
     public static Boolean handle(DiscordMessageReceived event){
         try{return attemptInvocation(event.getMessage().getContent(), event.getAuthor(), event.getMessage(), null);// new MessageMaker(event.getMessage()).append(ChatBot.getChatBot(event.getChannel()).think(event.getMessage().getContent())).send();
@@ -344,9 +347,9 @@ public class CommandHandler {
     }
 
     /**
-     * The monitoring for reaction aliased commands
+     * Listens for reaction aliased command.
      *
-     * @param event the monitored event
+     * @param event the monitored event.
      */
     @EventListener
     public static void handle(DiscordReactionEvent event){
@@ -356,9 +359,9 @@ public class CommandHandler {
     }
 
     /**
-     * Monitoring for a reattempt at a command through editing
+     * Listens for a reattempt at a command through editing.
      *
-     * @param event the monitored event
+     * @param event the monitored event.
      */
     @EventListener
     public static void handle(DiscordMessageEditEvent event){

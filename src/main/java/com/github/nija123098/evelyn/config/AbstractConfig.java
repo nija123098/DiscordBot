@@ -25,8 +25,8 @@ import java.util.function.Function;
  *
  * @author nija123098
  * @since 1.0.0
- * @param <V> The stored type of the config within the database
- * @param <T> The type of config that this config defines
+ * @param <V> The stored type of the config within the database.
+ * @param <T> The type of config that this config defines.
  */
 @LaymanName(value = "Configuration name", help = "The config name")
 public class AbstractConfig<V, T extends Configurable> {
@@ -50,13 +50,13 @@ public class AbstractConfig<V, T extends Configurable> {
     }
 
     /**
-     * The constructor to make a config instance
+     * The constructor to make a config instance.
      *
-     * @param name the name of the config, spaces are not allowed
-     * @param botRole the minimum role allowed to change the value
-     * @param category the catagory to that the config is in
-     * @param defaul the function to get the default value for a given config
-     * @param description a description of the config
+     * @param name the name of the config, spaces are not allowed.
+     * @param botRole the minimum role allowed to change the value.
+     * @param category the catagory to that the config is in.
+     * @param defaul the function to get the default value for a given config.
+     * @param description a description of the config.
      */
     public AbstractConfig(String name, BotRole botRole, ConfigCategory category, Function<T, V> defaul, String description) {
         this.name = name;
@@ -94,7 +94,7 @@ public class AbstractConfig<V, T extends Configurable> {
     }
 
     /**
-     * Saves any cached values and removes them from the cache
+     * Saves any cached values and removes them from the cache.
      */
     void saveCashed(){// make slowly change, not all at once unless shutting down
         this.cache.forEach((t, val) -> {
@@ -106,18 +106,18 @@ public class AbstractConfig<V, T extends Configurable> {
     }
 
     /**
-     * A standard getter
+     * A standard getter.
      *
-     * @return the name of the config
+     * @return the name of the config.
      */
     public String getName() {
         return this.name;
     }
 
     /**
-     * A standard getter
+     * A standard getter.
      *
-     * @return the multi-line config description
+     * @return the multi-line config description.
      */
     public String getDescription() {
         return this.description;
@@ -133,9 +133,9 @@ public class AbstractConfig<V, T extends Configurable> {
     }
 
     /**
-     * A standard getter
+     * A standard getter.
      *
-     * @return the default value of this config
+     * @return the default value of this config.
      */
     public V getDefault(T t){
         return this.defaul.apply(t);
@@ -144,7 +144,7 @@ public class AbstractConfig<V, T extends Configurable> {
     /**
      * A standard getter.
      *
-     * @return The config level for this config
+     * @return The {@link ConfigLevel} for this config.
      */
     public ConfigLevel getConfigLevel(){
         return this.configLevel;
@@ -153,8 +153,8 @@ public class AbstractConfig<V, T extends Configurable> {
     /**
      * Gets the table name for this config and a config level.
      *
-     * @param level the config level
-     * @return the table name for this config and a config level
+     * @param level the config level.
+     * @return the table name for this config and a config level.
      */
     private String getNameForType(ConfigLevel level){
         return this.name + "_" + level.name().toLowerCase();
@@ -170,9 +170,9 @@ public class AbstractConfig<V, T extends Configurable> {
     }
 
     /**
-     * If this config is fit for normal viewing.
+     * If this config is fit for viewing by a user.
      *
-     * @return if this config is fit for normal viewing
+     * @return if this config is fit for viewing by a user.
      */
     public boolean isNormalViewing() {
         return this.normalViewing;
@@ -181,7 +181,7 @@ public class AbstractConfig<V, T extends Configurable> {
     /**
      * Gets the value type for this config.
      *
-     * @return the value type for this config
+     * @return the value type for this config.
      */
     public Class<V> getValueType(){
         return this.valueType;
@@ -191,8 +191,8 @@ public class AbstractConfig<V, T extends Configurable> {
      * Gets the time the config was last set, give or
      * take for caching or -1 if the value was default.
      *
-     * @param configurable the configurable to get the last set age for
-     * @return Gets the time the config was last set, give or take for caching or -1 if the value was default.
+     * @param configurable the configurable to get the last set age for.
+     * @return the time the config was last set, give or take for caching or -1 if the value was default.
      */
     public long getAge(Configurable configurable){
         return Database.select("SELECT * FROM " + this.getNameForType(configurable.getConfigLevel()) + " WHERE id = " + Database.quote(configurable.getID()), set -> {
@@ -210,8 +210,8 @@ public class AbstractConfig<V, T extends Configurable> {
      * Returns a {@link String} representation of the value.
      *
      * @param v the value to wrap out.
-     * @param configurable the configurable being wrapped out
-     * @return the {@link String} representation of the value
+     * @param configurable the configurable being wrapped out.
+     * @return the {@link String} representation of the value.
      */
     public String wrapTypeOut(V v, T configurable){// configurable may be used in over ride methods
         return v instanceof Configurable ? v instanceof Channel && !(v instanceof VoiceChannel) ? ((Channel) v).mention() : ((Configurable) v).getName() : TypeChanger.toString(this.valueType, v);
@@ -221,18 +221,18 @@ public class AbstractConfig<V, T extends Configurable> {
      * Cleans the input if possible and returns that
      * or throws and exception if the input is invalid.
      *
-     * @param configurable the onfigurable for
-     * @param v the value to clean or throw an exception for if iss invalid
-     * @return the validated input
+     * @param configurable the configurable for.
+     * @param v the value to clean or throw an exception for if is invalid.
+     * @return the validated input.
      */
     protected V validateInput(T configurable, V v) {return v;}
 
     /**
      * Sets the config value for the given configurable.
      *
-     * @param configurable the configurable to set the value for
-     * @param value the value to set the config to for the given configurable
-     * @return the value set to the config
+     * @param configurable the configurable to set the value for.
+     * @param value the value to set the config to for the given configurable.
+     * @return the value set to the config.
      */
     public V setValue(T configurable, V value){
         if (!(value == null || this.valueType.isInstance(value))) throw new ArgumentException("Attempted passing incorrect type of argument");
@@ -248,9 +248,9 @@ public class AbstractConfig<V, T extends Configurable> {
     /**
      * Saves the value to the database for this config and the given configurable.
      *
-     * @param configurable the configurable to save the value for
-     * @param value the value to save the config to for the given configurable
-     * @return the value saved to the database
+     * @param configurable the configurable to save the value for.
+     * @param value the value to save the config to for the given configurable.
+     * @return the value saved to the database.
      */
     private V saveValue(T configurable, V value){
         reset(configurable);
@@ -263,7 +263,7 @@ public class AbstractConfig<V, T extends Configurable> {
     /**
      * Resets the value of the config for the given configurable.
      *
-     * @param configurable the configurable to reset the config value for
+     * @param configurable the configurable to reset the config value for.
      */
     public void reset(T configurable){
         if (this.cache != null) {
@@ -274,10 +274,10 @@ public class AbstractConfig<V, T extends Configurable> {
     }
 
     /**
-     * Gets the value for the given value.
+     * Gets the value for the given {@link Configurable}.
      *
-     * @param configurable the configurable that the setting is being gotten for
-     * @return the config's value
+     * @param configurable the configurable that the setting is being gotten for.
+     * @return the config's value for the given {@link Configurable}.
      */
     public V getValue(T configurable){// slq here as well
         V value;
@@ -291,10 +291,10 @@ public class AbstractConfig<V, T extends Configurable> {
     }
 
     /**
-     * Grabs the value for this config from the database.
+     * Grabs the value for this config from the {@link Database} for the given {@link Configurable}.
      *
-     * @param configurable the configurable that the setting is being gotten for
-     * @return the config's value
+     * @param configurable the {@link Configurable} that the setting is being gotten for.
+     * @return the config's value for the given {@link Configurable}.
      */
     private V grabValue(T configurable){
         return Database.select("SELECT * FROM " + this.getNameForType(configurable.getConfigLevel()) + " WHERE id = " + Database.quote(configurable.getID()), set -> {
@@ -310,8 +310,8 @@ public class AbstractConfig<V, T extends Configurable> {
     /**
      * Uses a function to set the value of the config to a new value.
      *
-     * @param configurable the configurable the config is to be set for
-     * @param function the function the config gives the old value to and gets a new value from
+     * @param configurable the configurable the config is to be set for.
+     * @param function the function the config gives the old value to and gets a new value from.
      */
     public V changeSetting(T configurable, Function<V, V> function) {
         return this.setValue(configurable, function.apply(this.getValue(configurable)));
@@ -320,8 +320,8 @@ public class AbstractConfig<V, T extends Configurable> {
     /**
      * Used to alter the value for configs which's value is a object.
      *
-     * @param configurable the configurable for which the value is being saved
-     * @param consumer consumer to alter the current value to then save
+     * @param configurable the configurable for which the value is being saved.
+     * @param consumer consumer to alter the current value to then save.
      * @return the value saved to the database.
      */
     public V alterSetting(T configurable, Consumer<V> consumer) {
@@ -333,9 +333,9 @@ public class AbstractConfig<V, T extends Configurable> {
     /**
      * Sets the value of a config for a given configurable if the value is a default.
      *
-     * @param configurable the configurable to dry a config for
-     * @param function the function to determine a config for
-     * @return the value set for the given configurable
+     * @param configurable the configurable to dry a config for.
+     * @param function the function to determine a config for.
+     * @return the value set for the given configurable.
      */
     public V setIfDefault(T configurable, Function<V, V> function) {
         V value = getValue(configurable);
@@ -347,9 +347,9 @@ public class AbstractConfig<V, T extends Configurable> {
      * Computes and sets the config if the value is old.
      *
      * @param configurable the configurable to set the value for.
-     * @param age the age a config must be to change the value for the given configurable
-     * @param function the function to compute and set to the result for
-     * @return the value set or kept from the
+     * @param age the age a config must be to change the value for the given configurable.
+     * @param function the function to compute and set to the result for.
+     * @return the value set or kept from the.
      */
     public V setIfOld(T configurable, long age, Function<V, V> function) {
         V val = this.getValue(configurable);
@@ -360,9 +360,9 @@ public class AbstractConfig<V, T extends Configurable> {
     /**
      * Gets the string representation for a config value.
      *
-     * @param configurable the configurable to get the representation for
+     * @param configurable the configurable to get the representation for.
      * @return gets the {@link String} representation
-     * of the config value for the given configurable
+     * of the config value for the given configurable.
      */
     public String getExteriorValue(T configurable) {
         String result = wrapTypeOut(getValue(configurable), configurable);
@@ -373,12 +373,12 @@ public class AbstractConfig<V, T extends Configurable> {
     /**
      * Sets the value of a config for the given configurable based on a string conversion.
      *
-     * @param configurable the configurable to set the config value for
-     * @param user the user in the context
-     * @param channel the channel in the context
-     * @param guild the guild in the context
-     * @param message the message in the context
-     * @param value the string value to derive the configurable's new value from
+     * @param configurable the configurable to set the config value for.
+     * @param user the user in the context.
+     * @param channel the channel in the context.
+     * @param guild the guild in the context.
+     * @param message the message in the context.
+     * @param value the string value to derive the configurable's new value from.
      */
     public void setExteriorValue(T configurable, User user, Channel channel, Guild guild, Message message, String value) {
         if (!this.isNormalViewing()) throw new ArgumentException("Slow down there malicious user, we have that covered!");
@@ -387,14 +387,22 @@ public class AbstractConfig<V, T extends Configurable> {
     }
 
     /**
-     * The defualt version of {@link AbstractConfig#getNonDefaultSettings(Class)} where the argument is the default class for .
+     * The default version of {@link AbstractConfig#getNonDefaultSettings(Class)}
+     * where the argument is {@link AbstractConfig#getConfigLevel()#getValueType()}.
      *
-     * @return a map for
+     * @return a map representation of {@link Configurable}s and values for this config.
      */
     public Map<T, V> getNonDefaultSettings() {
         return getNonDefaultSettings(this.getConfigLevel().getType());
     }
 
+    /**
+     * Gets a map representation if {@link Configurable}s
+     * and their values if the values are not default.
+     *
+     * @param clazz the class type to get configurables and values for.
+     * @return a map representation of {@link Configurable}s and values for this config.
+     */
     public Map<T, V> getNonDefaultSettings(Class<? extends Configurable> clazz){
         return Database.select("SELECT * FROM " + this.getNameForType(ConfigLevel.getLevel(clazz)), set -> {
             Map<T, V> map = new HashMap<>();

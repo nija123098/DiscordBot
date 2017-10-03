@@ -18,19 +18,21 @@ public interface Configurable {
     /**
      * Gets the snowflake for this object.
      *
-     * @return the snowflake
+     * @return the snowflake.
      */
     String getID();
 
     /**
+     * Gets the name of the configurable.
+     *
      * @return the name of this configurable.
      */
     String getName();
 
     /**
-     * Gets the config level of this object
+     * Gets the config level of this object.
      *
-     * @return the config level of this object
+     * @return the config level of this object.
      */
     ConfigLevel getConfigLevel();
 
@@ -47,8 +49,8 @@ public interface Configurable {
      * of config permission checks, config
      * specific permission checks are used after this.
      *
-     * @param user the user attempting to edit a config
-     * @param guild the guild in which the config is trying to be edited
+     * @param user the user attempting to edit a config.
+     * @param guild the guild in which the config is trying to be edited.
      */
     void checkPermissionToEdit(User user, Guild guild);
 
@@ -56,7 +58,7 @@ public interface Configurable {
      * Gets the governing object, the object being deterministic
      * and has the same relation between every configurable.
      *
-     * @return the governing object
+     * @return the governing object.
      */
     default Configurable getGoverningObject(){
         return GlobalConfigurable.GLOBAL;
@@ -65,9 +67,9 @@ public interface Configurable {
     /**
      * Converts this to a different {@link Configurable}.
      *
-     * @param t the class type
-     * @param <T> the class type
-     * @return the configurable this is converted to
+     * @param t the class type.
+     * @param <T> the class type.
+     * @return the configurable this is converted to.
      */
     default <T extends Configurable> Configurable convert(Class<T> t){
         if (t.equals(this.getClass())) return this;

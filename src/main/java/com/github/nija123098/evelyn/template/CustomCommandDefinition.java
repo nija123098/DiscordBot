@@ -9,15 +9,22 @@ import com.github.nija123098.evelyn.util.EnumHelper;
 import java.util.Set;
 
 /**
- * Made by nija123098 on 8/11/2017.
+ * Used as an object representation of arguments for a
+ * custom command and context requirements for postprocessing.
+ *
+ * This is essentially the argument part
+ * of a method contract for custom commands.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public class CustomCommandDefinition {
     private String name;
     private Class<?>[] argTypes;
     private Set<ContextRequirement> availableContext;
-    public CustomCommandDefinition(String name, ContextRequirement[] availableContext, Class<?>... argTypes) {
+    public CustomCommandDefinition(String name, ContextRequirement[] required, Class<?>... argTypes) {
         this.name = name;
-        this.availableContext = EnumHelper.getSet(ContextRequirement.class, availableContext);
+        this.availableContext = EnumHelper.getSet(ContextRequirement.class, required);
         this.argTypes = argTypes;
     }
     public Class<?>[] getArgTypes(){

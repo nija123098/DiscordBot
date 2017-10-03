@@ -28,9 +28,9 @@ public interface ReactionBehavior {
     /**
      * Registers a listener to preform a
      *
-     * @param message the message to listen to reactions for
-     * @param emoticonName the {@link Reaction} to listen for specified by name
-     * @param behavior the behavior to preform
+     * @param message the message to listen to reactions for.
+     * @param emoticonName the {@link Reaction} to listen for specified by name.
+     * @param behavior the behavior to preform.
      */
     static void registerListener(Message message, String emoticonName, ReactionBehavior behavior){
         if (message == null) return;
@@ -42,8 +42,8 @@ public interface ReactionBehavior {
      * De-registers the listener for the {@link Reaction}
      * specified by name for the specified {@link Message}.
      *
-     * @param message the message to deregister a reaction for
-     * @param emoticonName the {@link Reaction} to deregister a {@link ReactionBehavior} specified by name
+     * @param message the message to deregister a reaction for.
+     * @param emoticonName the {@link Reaction} to deregister a {@link ReactionBehavior} specified by name.
      */
     static void deregisterListener(Message message, String emoticonName){
         if (message == null) return;
@@ -66,7 +66,7 @@ public interface ReactionBehavior {
     /**
      * Listens to {@link Reaction}s to activate the appropriate {@link ReactionBehavior}s for.
      *
-     * @param reaction the event to listen to
+     * @param reaction the event to listen to.
      */
     @EventListener
     static void handle(DiscordReactionEvent reaction){

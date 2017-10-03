@@ -14,9 +14,18 @@ import java.lang.reflect.Parameter;
 import java.util.*;
 
 /**
- * Made by nija123098 on 4/17/2017.
+ * A object representation of text that compiles to text and
+ * possibly nested function calls, which when interpreted,
+ * produces a line of text based on the results of the calls.
+ *
+ * This can essentially be used as a custom command implementation
+ * with guaranteed return as well as a light programing language.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public class Template {
+    private static final char ARGUMENT_CHARACTER = '%', ARGUMENT_SPLITTER = '|', RIGHT_BRACE = '}', LEFT_BRACE = '{';
     private String text;
     private CustomCommandDefinition definition;
     private transient CombinedArg arg;
@@ -36,8 +45,8 @@ public class Template {
         int leftBraceCount = 0, rightBraceCount = 0;
         for (int i = 0; i < this.text.length(); i++) {
             char c = this.text.charAt(i);
-            if (c == TemplateHandler.LEFT_BRACE) ++leftBraceCount;
-            else if (c == TemplateHandler.RIGHT_BRACE) ++rightBraceCount;
+            if (c == LEFT_BRACE) ++leftBraceCount;
+            else if (c == RIGHT_BRACE) ++rightBraceCount;
         }
         if (leftBraceCount != rightBraceCount) throw new ArgumentException("Brace count miss-match, make sure every function is closed");
     }
@@ -61,10 +70,19 @@ public class Template {
     public String getText() {
         return this.text;
     }
+
+    /**
+     * An abstract utility which is used to calculate
+     * the result of a {@link Template} interpretation.
+     */
     private abstract static class Arg{
         abstract Object calculate(User user, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, Object...objects);
         abstract Class<?> getReturnType();
     }
+
+    /**
+     * An argument implementation which always calculates to a static {@link String}.
+     */
     private static class StaticArg extends Arg {
         private Object arg;
         StaticArg(Object arg) {
@@ -79,6 +97,11 @@ public class Template {
             return arg.getClass();
         }
     }
+
+    /**
+     * An argument implementation which always calculates to a
+     * argument based on the interpretation of the entire template.
+     */
     private static class GrantedArg extends Arg {
         private int i;
         private CustomCommandDefinition keyPhrase;
@@ -96,6 +119,12 @@ public class Template {
             return this.keyPhrase.getArgTypes()[this.i];
         }
     }
+
+    /**
+     * An argument implementation which contains possibly
+     * nested functions and invokes at least one command
+     * and can be calculated to an object of any type.
+     */
     private static class CalculatedArg extends Arg {
         private AbstractCommand command;
         private Arg[] args;
@@ -140,6 +169,11 @@ public class Template {
             return this.command.getReturnType();
         }
     }
+
+    /**
+     * An argument implementation which calculates to a
+     * {@link String} and is the result of multiple arguments.
+     */
     private static class CombinedArg extends Arg {
         private Arg[] args;
         CombinedArg(List<Arg> args) {
@@ -161,7 +195,11 @@ public class Template {
             return String.class;
         }
     }
-    private static class ArgBuilder{// might want to make a builder for this
+
+    /**
+     * A utility class that compiles a {@link Template}.
+     */
+    private static class ArgBuilder{
         private CustomCommandDefinition commandDefinition;
         private String template, wordBuilder = "", sectionBuilder = "";
         private List<Arg> args = new ArrayList<>();
@@ -171,11 +209,11 @@ public class Template {
         }
         void forEach(Iterator<Character> iterator){
             char c = iterator.next();
-            if (TemplateHandler.ARGUMENT_SPLITTER == c){
+            if (ARGUMENT_SPLITTER == c){
                 args.add(null);
             }
             switch (c){
-                case TemplateHandler.LEFT_BRACE:
+                case LEFT_BRACE:
                     String command = this.wordBuilder;
                     this.sectionBuilder = this.sectionBuilder.substring(0, this.sectionBuilder.length() - command.length());
                     endSection();
@@ -183,29 +221,29 @@ public class Template {
                     String comArgs = "";
                     while (true){
                         c = iterator.next();
-                        if (TemplateHandler.RIGHT_BRACE == c){
+                        if (RIGHT_BRACE == c){
                             if (--left == 0){
                                 break;
                             }
-                        } else if (TemplateHandler.LEFT_BRACE == c) ++left;
+                        } else if (LEFT_BRACE == c) ++left;
                         comArgs += c;
                     }
                     command = FormatHelper.filtering(command, character -> Character.isLetterOrDigit(character) || character == '_');
                     args.add(new CalculatedArg(CommandHandler.getCommand(command.replace("_", " ")), comArgs, commandDefinition));
                     return;
-                case TemplateHandler.ARGUMENT_CHARACTER:
+                case ARGUMENT_CHARACTER:
                     endSection();
-                    if (!iterator.hasNext()) throw new ArgumentException("Improperly formed argument, please follow every " + TemplateHandler.ARGUMENT_CHARACTER + " with a argument number");
+                    if (!iterator.hasNext()) throw new ArgumentException("Improperly formed argument, please follow every " + ARGUMENT_CHARACTER + " with a argument number");
                     try{args.add(new GrantedArg(Integer.parseInt(iterator.next() + ""), commandDefinition));
                     } catch (NumberFormatException e){
-                        throw new ArgumentException("Improperly formed argument, please follow every " + TemplateHandler.ARGUMENT_CHARACTER + " with a argument number", e);
+                        throw new ArgumentException("Improperly formed argument, please follow every " + ARGUMENT_CHARACTER + " with a argument number", e);
                     }
                     return;
-                case TemplateHandler.ARGUMENT_SPLITTER:
+                case ARGUMENT_SPLITTER:
                     endSection();
                     args.add(null);
             }
-            if (c != TemplateHandler.ARGUMENT_SPLITTER){
+            if (c != ARGUMENT_SPLITTER){
                 if (c == ' ') wordBuilder = ""; else wordBuilder += c;
                 sectionBuilder += c;
             }

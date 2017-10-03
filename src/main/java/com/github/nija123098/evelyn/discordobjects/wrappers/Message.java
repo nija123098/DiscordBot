@@ -1,11 +1,10 @@
 package com.github.nija123098.evelyn.discordobjects.wrappers;
 
-import com.github.nija123098.evelyn.discordobjects.exception.ErrorWrapper;
+import com.github.nija123098.evelyn.discordobjects.ErrorWrapper;
 import com.github.nija123098.evelyn.exeption.GhostException;
 import com.github.nija123098.evelyn.launcher.BotConfig;
 import com.github.nija123098.evelyn.service.services.MemoryManagementService;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
-import com.github.nija123098.evelyn.util.Log;
 import com.github.nija123098.evelyn.util.Time;
 import sx.blah.discord.handle.impl.obj.ReactionEmoji;
 import sx.blah.discord.handle.obj.IMessage;
@@ -15,7 +14,10 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * Made by nija123098 on 3/4/2017.
+ * Wraps a Discord4j {@link IMessage} object.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public class Message {// should not be kept stored, too many are made
     private static final Map<String, Message> MAP = new MemoryManagementService.ManagedMap<>(120000);

@@ -14,6 +14,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * A type for organizing a single user or members with a role's
+ * actions in order to play a instance of {@link AbstractGame}.
+ */
 public class Team {
     private final Float voteRequirement;
     private final User user;
@@ -29,9 +33,23 @@ public class Team {
         if (this.role == null) voteMap = null;
         else this.voteMap = new HashMap<>();
     }
+
+    /**
+     * The constructor for a solo team.
+     *
+     * @param user the user to go solo.
+     */
     public Team(User user){
         this(1F, user, null);
     }
+
+    /**
+     * The constructor for a {@link Role} based team.
+     *
+     * @param voteRequirement the value 1 through 0 to require voting for.
+     *                        The majority wins once enough users have voted.
+     * @param role the {@link Role} to track all users as a member of the team.
+     */
     public Team(Float voteRequirement, Role role){
         this(voteRequirement, null, role);
         if (role.getUsers().isEmpty()) throw new ContextException("There must be people on a team though");
@@ -41,7 +59,7 @@ public class Team {
         this.choiceMap = new HashMap<>(choices.size() + 2, 1);
         choices.forEach(gameChoice -> this.choiceMap.put(gameChoice.getName(), gameChoice));
     }
-    Float chose(User user, String choice){
+    Float chose(User user, String choice){// don't use this to make decisions in command aliasing
         if (!this.choiceMap.containsKey(choice)) throw new ArgumentException("Invalid move: " + choice);
         if (this.voteMap != null){
             this.voteMap.put(user, choice);
@@ -65,15 +83,34 @@ public class Team {
         gameChoice.chose(this);
         return null;
     }
+
+    /**
+     * Gets the users registered tho the playing team.
+     *
+     * @return the users registered tho the playing team.
+     */
     public List<User> getUsers() {
         return this.user == null ? this.role.getUsers() : Collections.singletonList(this.user);
     }
+
+    /**
+     * Gets the string representation of a mention to the team.
+     *
+     * @return the string representation of a mention to the team.
+     */
     public String mention(){
         return this.user == null ? this.role.mention() : this.user.mention();
     }
+
     public Float getVoteRequirement() {
         return this.voteRequirement;
     }
+
+    /**
+     * Gets if the bot is the only team member on the instance team.
+     *
+     * @return if the bot is the only team member on the instance team.
+     */
     public boolean isOurTeam(){
         return DiscordClient.getOurUser().equals(this.user);
     }

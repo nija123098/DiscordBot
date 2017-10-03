@@ -32,8 +32,8 @@ public class EventDistributor {
      * which invokes a {@link Method} with the appropriate
      * {@link BotEvent} and a {@link EventListener} annotation on it.
      *
-     * @param o the thing to register
-     * @param <E> the type of event to register
+     * @param o the thing to register.
+     * @param <E> the type of event to register.
      */
     public static <E extends BotEvent> void register(Object o){
         Class<?> clazz = o instanceof Class ? (Class<?>) o : o.getClass();
@@ -53,8 +53,8 @@ public class EventDistributor {
     /**
      * Distributes the given event.
      *
-     * @param event the event to distribute
-     * @param <E> the type of event to distribute
+     * @param event the event to distribute.
+     * @param <E> the type of event to distribute.
      */
     public static <E extends BotEvent> void distribute(E event){
         ThreadProvider.sub(() -> {

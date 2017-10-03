@@ -1,7 +1,8 @@
-package com.github.nija123098.evelyn.discordobjects.exception;
+package com.github.nija123098.evelyn.discordobjects;
 
+import com.github.nija123098.evelyn.exeption.DException;
+import com.github.nija123098.evelyn.exeption.PermissionsException;
 import com.github.nija123098.evelyn.util.Care;
-import com.github.nija123098.evelyn.util.Log;
 import sx.blah.discord.util.DiscordException;
 import sx.blah.discord.util.MissingPermissionsException;
 import sx.blah.discord.util.RateLimitException;
@@ -24,7 +25,7 @@ import java.util.concurrent.atomic.AtomicReference;
  *
  * @author nija123098
  * @since 1.0.0
- * @see MissingPermException
+ * @see PermissionsException
  * @see DException
  */
 public class ErrorWrapper {
@@ -39,9 +40,9 @@ public class ErrorWrapper {
      * Executes a {@link Request} and blocks until it completes
      * or throws wrapped exceptions the request caused.
      *
-     * @param request the request to wrap and block for
-     * @param <E> the type to return
-     * @return the value returned by the request
+     * @param request the request to wrap and block for.
+     * @param <E> the type to return.
+     * @return the value returned by the request.
      */
     private static <E> E innerWrap(Request<E> request) {
         AtomicBoolean complete = new AtomicBoolean();
@@ -63,7 +64,7 @@ public class ErrorWrapper {
                 throw exceptionReference.get();
             }
         } catch (MissingPermissionsException e){// return RequestBuffer.request((RequestBuffer.IRequest<E>) request::request).get();
-            throw new MissingPermException(e);
+            throw new PermissionsException(e);
         } catch (DiscordException e){
             if (e.getMessage().contains("cloudflare-nginx")) {
                 Care.lessSleep(250);

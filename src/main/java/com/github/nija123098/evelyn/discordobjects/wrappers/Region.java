@@ -9,7 +9,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * Made by nija123098 on 3/9/2017.
+ * Wraps a Discord4j {@link IRegion} object.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public class Region {
     private static final Map<String, Region> MAP = new ConcurrentHashMap<>(10);// never needs to be cleared

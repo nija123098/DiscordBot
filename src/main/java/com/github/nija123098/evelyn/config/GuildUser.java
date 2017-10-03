@@ -26,7 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class GuildUser implements Configurable {
     /**
-     * The map containing guild user configurables
+     * The map containing guild user configurables.
      */
     private static final Map<String, GuildUser> GUILD_USERS = new HashMap<>();
     private static final Map<Guild, Integer> NEXT_USER_INTEGER = new ConcurrentHashMap<>();
@@ -53,10 +53,10 @@ public class GuildUser implements Configurable {
     }
 
     /**
-     * The getter for a object that represents a guild user
+     * The getter for a object that represents a guild user.
      *
-     * @param id the id of the guild user
-     * @return the guild user object for the guild and user
+     * @param id the id of the guild user.
+     * @return the guild user object for the guild and user.
      */
     public static GuildUser getGuildUser(String id){
         if (id.startsWith("gu-")){
@@ -70,11 +70,11 @@ public class GuildUser implements Configurable {
     }
 
     /**
-     * The getter for a object that represents a guild user
+     * The getter for a object that represents a guild user.
      *
-     * @param guild the guild for a guild user object
-     * @param user the user for the guild object
-     * @return the guild user object for the guild and user
+     * @param guild the guild for a guild user object.
+     * @param user the user for the guild object.
+     * @return the guild user object for the guild and user.
      */
     public static GuildUser getGuildUser(Guild guild, User user){
         return getGuildUser("gu-" + guild.getID() + "-id-" + user.getID());
@@ -85,7 +85,7 @@ public class GuildUser implements Configurable {
      * {@link GuildUser#number} to the order
      * which the user joined.
      *
-     * @param guild the guild to order {@link GuildUser}s for
+     * @param guild the guild to order {@link GuildUser}s for.
      */
     private static void orderGuildUsers(Guild guild){
         Map<Long, GuildUser> map = new ConcurrentHashMap<>();
@@ -110,9 +110,9 @@ public class GuildUser implements Configurable {
     }
 
     /**
-     * Returns the position in which the user joined.
+     * Returns the position in which the user joined..
      *
-     * @return the position in which the user joined
+     * @return the position in which the user joined.
      */
     public int getJoinPosition() {
         return this.number;
@@ -150,7 +150,7 @@ public class GuildUser implements Configurable {
     /**
      * Returns the guild which the guild user is a member of.
      *
-     * @return the guild which the guild user is a member of
+     * @return the guild which the guild user is a member of.
      */
     public Guild getGuild(){
         String s = this.id.split("-id-")[0];
@@ -160,7 +160,7 @@ public class GuildUser implements Configurable {
     /**
      * Returns the user which is the member of a guild.
      *
-     * @return the user which is the member of a guild
+     * @return the user which is the member of a guild.
      */
     public User getUser(){
         return User.getUser(this.id.split("-id-")[1]);

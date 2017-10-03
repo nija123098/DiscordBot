@@ -6,7 +6,12 @@ import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.perms.BotRole;
 
 /**
- * Made by nija123098 on 7/4/2017.
+ * Tracks if a track is banned from the global playlist.
+ * Such tracks will not be considered in global playlist
+ * nor be considered for favor balancing in the global playlist.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public class BannedTrackConfig extends AbstractConfig<Boolean, Track> {
     private static BannedTrackConfig CONFIG;

@@ -1,6 +1,6 @@
 package com.github.nija123098.evelyn.discordobjects.wrappers;
 
-import com.github.nija123098.evelyn.discordobjects.exception.ErrorWrapper;
+import com.github.nija123098.evelyn.discordobjects.ErrorWrapper;
 import sx.blah.discord.api.IShard;
 
 import java.util.ArrayList;
@@ -10,7 +10,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * Made by nija123098 on 2/27/2017.
+ * Wraps a Discord4j {@link IShard} object.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public class Shard {
     private static final Map<Integer, Shard> MAP = new ConcurrentHashMap<>();// never clear

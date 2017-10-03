@@ -3,14 +3,13 @@ package com.github.nija123098.evelyn.discordobjects.wrappers;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.ConfigLevel;
 import com.github.nija123098.evelyn.config.Configurable;
-import com.github.nija123098.evelyn.discordobjects.exception.ErrorWrapper;
+import com.github.nija123098.evelyn.discordobjects.ErrorWrapper;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventDistributor;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordUserJoin;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordUserLeave;
 import com.github.nija123098.evelyn.economy.configs.LastCookieUseConfig;
 import com.github.nija123098.evelyn.perms.BotRole;
 import com.github.nija123098.evelyn.service.services.MemoryManagementService;
-import com.github.nija123098.evelyn.service.services.ScheduleService;
 import com.github.nija123098.evelyn.util.FormatHelper;
 import com.github.nija123098.evelyn.util.Time;
 import sx.blah.discord.handle.obj.IUser;
@@ -20,7 +19,10 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 /**
- * Made by nija123098 on 2/20/2017.
+ * Wraps a Discord4j {@link IUser} object.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public class User implements Configurable {
     private static final Map<String, User> MAP = new MemoryManagementService.ManagedMap<>(180000);

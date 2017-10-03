@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
+/**
+ * Simplifies templates for non-programmer users.
+ */
 public class TemplatePrepossessing {
     private static final Map<String, String> REPLACEMENT_MAP = new HashMap<>();
     static {// this will have to be updated if TemplateHandler constants change
@@ -19,6 +22,13 @@ public class TemplatePrepossessing {
     private static void add(String name, String function){
         REPLACEMENT_MAP.put("%" + name + "%", function);
     }
+
+    /**
+     * Replaces %my-arg% with appropriate the method calls for simplicity.
+     *
+     * @param input the argument to add appropriate method calls instead of.
+     * @return the compilable template.
+     */
     static String substitute(String input){
         AtomicReference<String> reference = new AtomicReference<>(input);
         REPLACEMENT_MAP.forEach((s, s2) -> reference.updateAndGet(in -> in.replace(s, s2)));

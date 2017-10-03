@@ -78,9 +78,9 @@ public class TypeChanger {
     /**
      * Takes care of making the object XStream compatible
      *
-     * @param o the object to make compatible
-     * @param <T> the type
-     * @return a new comparable object
+     * @param o the object to make compatible.
+     * @param <T> the type.
+     * @return a new comparable object.
      */
     private static <T> Object alter(T o){
         Function<T, Object> function = (Function<T, Object>) X_STREAM_OBJECT_ALTERING.get(o.getClass());
@@ -91,8 +91,8 @@ public class TypeChanger {
     /**
      * Checks if the given class type can be stored without use of XStream.
      *
-     * @param clazz the class type to check
-     * @return if the class type can be stored without using XStream
+     * @param clazz the class type to check.
+     * @return if the class type can be stored without using XStream.
      */
     static boolean normalStorage(Class<?> clazz){
         return clazz.isEnum() || clazz.equals(String.class) || !Collections.disjoint(TO_STRING.keySet(), ReflectionHelper.getAssignableTypes(clazz));
@@ -102,9 +102,9 @@ public class TypeChanger {
      * Converts a object of the given type to a {@link String}
      * representation that can be converted back.
      *
-     * @param from the type the object is expected to be
-     * @param o the object to get a {@link String} representation for
-     * @return the string representation of the object
+     * @param from the type the object is expected to be.
+     * @param o the object to get a {@link String} representation for.
+     * @return the string representation of the object.
      */
     public static String toString(Class<?> from, Object o){
         if (o == null) return "null";
@@ -125,10 +125,10 @@ public class TypeChanger {
      * Converts a {@link String} representation
      * of an {@link Object} to an instance.
      *
-     * @param to the object type to return
-     * @param s the string representation
-     * @param <T> the type to change the representation to
-     * @return the {@link Object} the {@link String} representation equaled
+     * @param to the object type to return.
+     * @param s the string representation.
+     * @param <T> the type to change the representation to.
+     * @return the {@link Object} the {@link String} representation equaled.
      */
     public static <T> T toObject(Class<T> to, String s){
         if (s.equals("null")) return null;
@@ -147,8 +147,8 @@ public class TypeChanger {
     /**
      * Gets the class instances of implemented generic types.
      *
-     * @param o the class instance to get implemented generic types for
-     * @return a array of implemented generic types
+     * @param o the class instance to get implemented generic types for.
+     * @return a array of implemented generic types.
      */
     public static Class<?>[] getRawClasses(Class<?> o){
         Type[] t = ((ParameterizedType) o.getGenericSuperclass()).getActualTypeArguments();

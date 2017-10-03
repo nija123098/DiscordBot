@@ -7,7 +7,10 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Made by nija123098 on 3/25/2017.
+ * Wraps a Discord4J {@link IMessage.Attachment} object.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public class Attachment {// probably don't want to store this at all
     static List<Attachment> getAttachments(List<IMessage.Attachment> attachments){

@@ -1,6 +1,6 @@
 package com.github.nija123098.evelyn.discordobjects.wrappers;
 
-import com.github.nija123098.evelyn.discordobjects.exception.ErrorWrapper;
+import com.github.nija123098.evelyn.discordobjects.ErrorWrapper;
 import com.github.nija123098.evelyn.launcher.BotConfig;
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.handle.obj.IUser;
@@ -9,7 +9,10 @@ import java.util.*;
 import java.util.function.Function;
 
 /**
- * Made by nija123098 on 3/7/2017.
+ * Wraps the Discord4J {@link IDiscordClient} class for general user controls.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public class DiscordClient {
     private static List<IDiscordClient> clients;

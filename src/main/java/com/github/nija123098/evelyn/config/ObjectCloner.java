@@ -47,8 +47,8 @@ public class ObjectCloner {
     /**
      * Returns if the {@link ObjectCloner} supports cloning the class type
      *
-     * @param c the class type for checking if cloning is supported
-     * @return if the {@link ObjectCloner} supports cloning the class type
+     * @param c the class type for checking if cloning is supported.
+     * @return if the {@link ObjectCloner} supports cloning the class type.
      */
     static boolean supports(Class<?> c){
         if (c.isEnum()) return true;
@@ -59,15 +59,15 @@ public class ObjectCloner {
     /**
      * Clones an object.
      *
-     * @param i the object to clone
-     * @param <I> the type of the cloned object
-     * @return a cloned object
+     * @param i the object to clone.
+     * @param <I> the type of the cloned object.
+     * @return a shallow cloned instance of the input.
      */
     static <I> I clone(I i){
         if (i == null) return null;
         if (i.getClass().isEnum()) return i;
         for (Class<?> clazz : ReflectionHelper.getAssignableTypes(i.getClass())) {
-            Function<Object, Object> function = MAP.get(clazz);
+                    Function<Object, Object> function = MAP.get(clazz);
             if (function != null) return (I) function.apply(i);
         }
         throw new DevelopmentException("Attempted to clone a object of non-supported type");

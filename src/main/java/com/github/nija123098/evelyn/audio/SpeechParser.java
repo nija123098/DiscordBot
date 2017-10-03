@@ -1,6 +1,8 @@
 package com.github.nija123098.evelyn.audio;
 
+import com.github.nija123098.evelyn.chatbot.ChatBot;
 import com.github.nija123098.evelyn.command.CommandHandler;
+import com.github.nija123098.evelyn.discordobjects.DiscordAdapter;
 import com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
@@ -35,9 +37,14 @@ import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * A type for defining a speech parser for a single
- * GuildAudioManager which determines what every user
- * says individually.  It handles the determining if a
- * command is invoked by voice .
+ * GuildAudioManager and user combination which
+ * determines what every user says individually.
+ *
+ * It handles voices like {@link DiscordAdapter}
+ * does message processing but does not consider {@link ChatBot}.
+ *
+ * This class implements Discord4J's {@link IAudioReceiver}
+ * to receive a single user's audio data.
  *
  * @author nija123098
  * @since 1.0.0
@@ -75,6 +82,16 @@ public class SpeechParser implements IAudioReceiver {
         this.audioManager = audioManager;
         this.audioManager.getGuild().guild().getAudioManager().subscribeReceiver(this);
     }
+
+    /**
+     * Recives the user's voice data and stops
+     * listening if the cumulative data becomes too long.
+     *
+     * @param audio the raw OPUS data sent by the user.
+     * @param user the user whose data is being received.
+     * @param sequence no clue what this does.
+     * @param timestamp the time stamp.
+     */
     @Override
     public synchronized void receive(byte[] audio, IUser user, char sequence, int timestamp) {
         if (this.lon) return;
@@ -85,6 +102,10 @@ public class SpeechParser implements IAudioReceiver {
         }
         for (byte anAudio : audio) this.bytes.add(anAudio);
     }
+
+    /**
+     * Clears the user's data and attempts parsing if enough data was given.
+     */
     private synchronized void onStop(){
         if (this.lon) {
             this.lon = false;
@@ -95,9 +116,20 @@ public class SpeechParser implements IAudioReceiver {
         }
         this.bytes.clear();
     }
+
+    /**
+     * De-registers the instance as a {@link IAudioReceiver}.
+     */
     private void close(){
         this.audioManager.getGuild().guild().getAudioManager().unsubscribeReceiver(this);
     }
+
+    /**
+     * Writes the raw OPUS data to the given file.
+     *
+     * @param file the file to write the current data to.
+     * @return the input file.
+     */
     private File write(File file){
         byte[] bytes = new byte[this.bytes.size()];
         for (int i = 0; i < this.bytes.size(); i++) {
@@ -113,6 +145,13 @@ public class SpeechParser implements IAudioReceiver {
         }
         return file;
     }
+
+    /**
+     * Adds a WAV header to the PCM data at the file.
+     *
+     * @param file the file to add the WAV header for.
+     * @return the input file.
+     */
     private static File alter(File file){
         File ret = new File(file.getPath().replace(".pcm", ".wav"));
         if (ret.exists()) ret.delete();
@@ -146,6 +185,13 @@ public class SpeechParser implements IAudioReceiver {
         file.delete();
         return ret;
     }
+
+    /**
+     * Scans the given file for voice data to determine what the user said.
+     *
+     * @param file the file to scan voice data for.
+     * @return the {@link String} representation of what the user said.
+     */
     private static String scan(File file){
         AtomicReference<String> reference = new AtomicReference<>();
         SPEECH_RECOGNIZER_BUFFER.borrow(recognizer -> {
@@ -168,6 +214,12 @@ public class SpeechParser implements IAudioReceiver {
         if (s == null || s.isEmpty()) return;
         CommandHandler.attemptInvocation(s, this.user, this.audioManager);
     }
+
+    /**
+     * Assists in detecting if a {@link User}'s utterance is complete.
+     *
+     * @param event the speaking detection event.
+     */
     @EventListener
     public static void handle(DiscordSpeakingEvent event){
         if (!PARSER_MAP.containsKey(event.getGuild())) return;

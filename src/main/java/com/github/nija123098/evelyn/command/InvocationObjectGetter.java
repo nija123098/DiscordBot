@@ -102,11 +102,11 @@ public class InvocationObjectGetter {
     /**
      * Adds a context class type specified by the class instance.
      *
-     * @param clazz the context class type
-     * @param contextType the enum representation for use of when multiple contexts are gotten
-     * @param invocationGetter the function to define the context return
-     * @param requirements enum representations of context requirements for requiring certain contexts in command invocation
-     * @param <T> the type of objects to return
+     * @param clazz the context class type.
+     * @param contextType the enum representation for use of when multiple contexts are gotten.
+     * @param invocationGetter the function to define the context return.
+     * @param requirements enum representations of context requirements for requiring certain contexts in command invocation.
+     * @param <T> the type of objects to return.
      */
     private static <T> void addContext(Class<T> clazz, ContextType contextType, InvocationGetter<T> invocationGetter, ContextRequirement...requirements){
         Pair<InvocationGetter<?>, Set<ContextRequirement>> pair = new Pair<>(invocationGetter, EnumHelper.getSet(ContextRequirement.class, requirements));
@@ -123,9 +123,9 @@ public class InvocationObjectGetter {
     }
 
     /**
-     * A function to get context instances for
+     * A function to get context instances for.
      *
-     * @param <E> the type of object to return
+     * @param <E> the type of object to return.
      */
     @FunctionalInterface
     private interface InvocationGetter<E>{
@@ -413,10 +413,10 @@ public class InvocationObjectGetter {
     /**
      * Adds a conversion definition for a specified type.
      *
-     * @param clazz the class type to convert part of a string to
-     * @param argumentConverter the function to define converting a command
-     * @param requirements enum representations of context requirements for requiring certain contexts in command invocation
-     * @param <T> the type to return
+     * @param clazz the class type to convert part of a string to.
+     * @param argumentConverter the function to define converting a command.
+     * @param requirements enum representations of context requirements for requiring certain contexts in command invocation.
+     * @param <T> the type to return.
      */
     private static <T> void addConverter(Class<T> clazz, ArgumentConverter<T> argumentConverter, ContextRequirement...requirements){
         EnumSet<ContextRequirement> req = EnumHelper.getSet(ContextRequirement.class, requirements);
@@ -434,15 +434,15 @@ public class InvocationObjectGetter {
      * number of characters of the string used to define
      * the instance of the key.
      *
-     * @param clazz the type of object to define
-     * @param user the invoking user
-     * @param shard the shard the invocation occurred on
-     * @param channel the channel a invocation occurred in
-     * @param guild the guild a command occurred in or null
-     * @param message the message the command occurred by or a message a reaction command was invoked on or null
-     * @param reaction the reaction the command occurred by or null
-     * @param args the arguments for a command
-     * @param <T> the type of object
+     * @param clazz the type of object to define.
+     * @param user the invoking user.
+     * @param shard the shard the invocation occurred on.
+     * @param channel the channel a invocation occurred in.
+     * @param guild the guild a command occurred in or null.
+     * @param message the message the command occurred by or a message a reaction command was invoked on or null.
+     * @param reaction the reaction the command occurred by or null.
+     * @param args the arguments for a command.
+     * @param <T> the type of object.
      * @return A {@link Pair} whose key is the derived object and the
      * @throws ArgumentException for when no instace was able to be derived from the given object
      */
@@ -458,9 +458,9 @@ public class InvocationObjectGetter {
 
     /**
      * The function that defines converting
-     * part of a string to an object of type E
+     * part of a string to an object of type E.
      *
-     * @param <E> the type of key to return
+     * @param <E> the type of key to return.
      */
     @FunctionalInterface
     private interface ArgumentConverter<E>{
@@ -468,27 +468,29 @@ public class InvocationObjectGetter {
     }
 
     /**
-     * Forces the initialization of this class
+     * Forces the initialization of this class.
      */
     public static void initialize(){
         Log.log("Invocation Object Getter initialized");
     }
 
     /**
-     *
+     * Process the argument input and converts it into an
+     * expected object based on the given {@link Parameter}s
+     * and places the converted object into the {@link Object[]}.
      *
      * @param command the command to fill command arguments for.
-     * @param parameters the {@link Parameter}s for the command method's arguments
-     * @param objects the array to fill objects for the command's invocation
-     * @param user the invoking user
-     * @param shard the shard the invocation occurred on
-     * @param channel the channel a invocation occurred in
-     * @param guild the guild a command occurred in or null
-     * @param message the message the command occurred by or a message a reaction command was invoked on or null
-     * @param reaction the reaction the command occurred by or null
-     * @param args the arguments for a command
-     * @param argOverride overrides for argument invocation
-     * @return an array of objects for command paramaters for the command's invocation
+     * @param parameters the {@link Parameter}s for the command method's arguments.
+     * @param objects the array to fill objects for the command's invocation.
+     * @param user the invoking user.
+     * @param shard the shard the invocation occurred on.
+     * @param channel the channel a invocation occurred in.
+     * @param guild the guild a command occurred in or null.
+     * @param message the message the command occurred by or a message a reaction command was invoked on or null.
+     * @param reaction the reaction the command occurred by or null.
+     * @param args the arguments for a command.
+     * @param argOverride overrides for argument invocation.
+     * @return an array of objects for command parameters for the command's invocation.
      */
     public static Object[] replace(AbstractCommand command, Parameter[] parameters, Object[] objects, User user, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, String args, boolean[] argOverride){
         int commandArgIndex = 0;

@@ -11,23 +11,22 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventDistribut
  *
  * Services will not often do not block, but if they
  * do they must indicate so, so the service handler may
- * handle the service appropriately.  A check for blocking
- * is only made a single time, changing the return value
- * will do nothing after initalization for the ServiceHandler
- * class.
+ * handle the service appropriately.  A check for
+ * blocking is only made a single time, changing the
+ * return value will do nothing after initialization
+ * for the {@link ServiceHandler} class.
  *
  * @author nija123098
- * @since 2.0.0
+ * @since 1.0.0
  * @see ServiceHandler
  */
 public abstract class AbstractService implements Runnable {
     private long delayBetween;
 
     /**
-     * A standard constructor to assign
-     * the delay between executions of run
+     * Assigns the delay between executions of run.
      *
-     * @param delayBetween the delay in millis between running
+     * @param delayBetween the delay in millis between running.
      */
     public AbstractService(long delayBetween) {
         this.delayBetween = delayBetween;
@@ -35,10 +34,10 @@ public abstract class AbstractService implements Runnable {
     }
 
     /**
-     * A standard getter
+     * A standard getter.
      *
      * @return the delay between run calls,
-     * including run invocation time
+     * including run invocation time.
      */
     public long getDelayBetween(){
         return this.delayBetween;
@@ -49,7 +48,7 @@ public abstract class AbstractService implements Runnable {
      * of ServiceHandler to indicate if calling run
      * may block the thread.
      *
-     * @return if calling run may block
+     * @return if calling run may block.
      */
     public boolean mayBlock(){
         return false;
@@ -62,7 +61,7 @@ public abstract class AbstractService implements Runnable {
      * will start once again.
      *
      * @return if the thread should run
-     * the service
+     * the service.
      */
     public boolean shouldRun(){
         return true;

@@ -3,7 +3,10 @@ package com.github.nija123098.evelyn.exeption;
 import com.github.nija123098.evelyn.command.ContextRequirement;
 
 /**
- * Made by nija123098 on 4/10/2017.
+ * Thrown when insufficient context has been given to infer an desired output.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public class ContextException extends BotException {
     public ContextException() {

@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * a program's runtime.
  *
  * @author nija123098
- * @since 2.0.0
+ * @since 1.0.0
  * @see AbstractService
  */
 public class ServiceHandler {
@@ -91,7 +91,7 @@ public class ServiceHandler {
     }
 
     /**
-     * Forces the initialization of this class
+     * Forces the initialization of this class.
      */
     public static void initialize(){
         Log.log("Service Handler initialized");

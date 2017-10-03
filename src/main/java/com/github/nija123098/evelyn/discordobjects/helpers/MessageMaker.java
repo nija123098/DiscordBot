@@ -6,7 +6,7 @@ import com.github.nija123098.evelyn.command.ProcessingHandler;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.configs.guild.GuildLanguageConfig;
 import com.github.nija123098.evelyn.config.configs.user.UserLanguageConfig;
-import com.github.nija123098.evelyn.discordobjects.exception.ErrorWrapper;
+import com.github.nija123098.evelyn.discordobjects.ErrorWrapper;
 import com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 import com.github.nija123098.evelyn.discordobjects.wrappers.*;
 import com.github.nija123098.evelyn.exeption.DevelopmentException;
@@ -23,10 +23,8 @@ import sx.blah.discord.util.MessageBuilder;
 import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -69,9 +67,9 @@ public class MessageMaker {
     /**
      * Builds the message maker and sets it up.
      *
-     * @param user the user that the message is intended for
-     * @param channel the channel the message is intended for
-     * @param message the message the build message is intended as response to
+     * @param user the user that the message is intended for.
+     * @param channel the channel the message is intended for.
+     * @param message the message the build message is intended as response to.
      */
     private MessageMaker(User user, Channel channel, Message message){
         this.authorName = new TextPart(this);
@@ -108,7 +106,7 @@ public class MessageMaker {
      * Removes the previously sent message from history,
      * usually to prevent editing of that message.
      *
-     * @return the instance
+     * @return the instance.
      */
     public MessageMaker clearMessage(){
         this.message = null;
@@ -119,8 +117,8 @@ public class MessageMaker {
     /**
      * Sets if the message should be sent automatically.
      *
-     * @param autoSend if the message should be sent automatically
-     * @return the instance
+     * @param autoSend if the message should be sent automatically.
+     * @return the instance.
      */
     public MessageMaker withAutoSend(boolean autoSend){
         this.autoSend = autoSend;
@@ -130,7 +128,7 @@ public class MessageMaker {
     /**
      * Forces the recompiling of the message content for this builder.
      *
-     * @return the instance
+     * @return the instance.
      */
     public MessageMaker forceCompile(){
         this.forceCompile = true;
@@ -140,7 +138,7 @@ public class MessageMaker {
     /**
      * Forces the non-embedding of the building message.
      *
-     * @return the instance
+     * @return the instance.
      */
     public MessageMaker asNormalMessage(){
         this.embed = null;
@@ -150,7 +148,7 @@ public class MessageMaker {
     /**
      * Forces the embeding of the building message.
      *
-     * @return the instance
+     * @return the instance.
      */
     public MessageMaker mustEmbed(){
         return this.mustEmbed(true);
@@ -159,8 +157,8 @@ public class MessageMaker {
     /**
      * Sets if the embeding of the building message should be forced to embed.
      *
-     * @param mustEmbed if the building message should be forced to embed
-     * @return the instance
+     * @param mustEmbed if the building message should be forced to embed.
+     * @return the instance.
      */
     public MessageMaker mustEmbed(boolean mustEmbed){
         this.mustEmbed = mustEmbed;
@@ -170,7 +168,7 @@ public class MessageMaker {
     /**
      * Returns if the building message could be sent as a non-embeded message.
      *
-     * @return if the building message could be sent as a non-embeded message
+     * @return if the building message could be sent as a non-embeded message.
      */
     public boolean couldNormalize(){
         return !this.mustEmbed && this.fieldList.size() == 0 && this.textList.size() == 0 && !this.authorName.appended && !this.title.appended && !this.footer.appended && !this.note.appended;
@@ -179,8 +177,8 @@ public class MessageMaker {
     /**
      * Sets the {@link Channel} the building message should be sent in.
      *
-     * @param channel the {@link Channel} the building message should be sent in
-     * @return the instance
+     * @param channel the {@link Channel} the building message should be sent in.
+     * @return the instance.
      */
     public MessageMaker withChannel(Channel channel){
         if (channel.equals(this.channel)) return this;
@@ -197,9 +195,9 @@ public class MessageMaker {
      * A call to this is ignored in the case that a reaction behavior
      * has already been set for the specified {@link Reaction} name.
      *
-     * @param reactionName the {@link Reaction} to activate on specified by name for the intended user
-     * @param behavior the behavior to preform when the built message has been reacted to
-     * @return the instance
+     * @param reactionName the {@link Reaction} to activate on specified by name for the intended user.
+     * @param behavior the behavior to preform when the built message has been reacted to.
+     * @return the instance.
      */
     public MessageMaker withReactionBehavior(String reactionName, ReactionBehavior behavior){
         if (!this.reactionBehaviors.containsKey(reactionName)) this.reactionBehaviors.put(reactionName, (add, reaction, user) -> {
@@ -212,9 +210,9 @@ public class MessageMaker {
      * Sets a {@link ReactionBehavior} which is invoked if a
      * {@link Reaction} by the given name is done on the built message.
      *
-     * @param reactionName the {@link Reaction} to activate on specified by name
-     * @param behavior the behavior to preform when the built message has been reacted to
-     * @return the instance
+     * @param reactionName the {@link Reaction} to activate on specified by name.
+     * @param behavior the behavior to preform when the built message has been reacted to.
+     * @return the instance.
      */
     public MessageMaker withPublicReactionBehavior(String reactionName, ReactionBehavior behavior){
         if (!this.reactionBehaviors.containsKey(reactionName)) this.reactionBehaviors.put(reactionName, behavior);
@@ -225,8 +223,8 @@ public class MessageMaker {
      * Removes a {@link ReactionBehavior} for the specified
      * {@link Reaction} specified by name if one exists.
      *
-     * @param reactionName the name specification for
-     * @return the instance
+     * @param reactionName the name specification for.
+     * @return the instance.
      */
     public MessageMaker withoutReactionBehavior(String reactionName){
         if (this.reactionBehaviors.remove(reactionName) != null) ReactionBehavior.deregisterListener(this.ourMessage, reactionName);
@@ -247,7 +245,7 @@ public class MessageMaker {
      * Reacts to the building message when the message is sent.
      *
      * @param name the {@link Reaction} to react with on the building message specified by name.
-     * @return the instance
+     * @return the instance.
      */
     public MessageMaker withReaction(String name){
         String chars = EmoticonHelper.getChars(name, false);
@@ -259,7 +257,7 @@ public class MessageMaker {
     /**
      * Makes the building message send a response to a {@link User} as a direct message.
      *
-     * @return the instance
+     * @return the instance.
      */
     public MessageMaker withDM(){
         if (this.channel.isPrivate()) return this;
@@ -269,8 +267,8 @@ public class MessageMaker {
     /**
      * If the message this is responding to should be reacted with a :ok_hand: {@link Reaction}.
      *
-     * @param ok If the message this is responding to should be reacted with a :ok_hand: {@link Reaction}
-     * @return the instance
+     * @param ok if the message this is responding to should be reacted with a ok_hand {@link Reaction}
+     * @return the instance.
      */
     public MessageMaker withOK(boolean ok){
         this.okHand = ok;
@@ -278,9 +276,9 @@ public class MessageMaker {
     }
 
     /**
-     * Sets that the message this is responding to should be reacted with a :ok_hand: {@link Reaction}.
+     * Sets that the message this is responding to should be reacted with a ok_hand {@link Reaction}.
      *
-     * @return the instance
+     * @return the instance.
      */
     public MessageMaker withOK(){
         this.okHand = true;
@@ -299,8 +297,8 @@ public class MessageMaker {
      * Sets the delay in millis to delete the building message.
      * The message will not be deleted by this builder otherwise.
      *
-     * @param deleteDelay the millis from sending when the building message should be deleted
-     * @return the instance
+     * @param deleteDelay the millis from sending when the building message should be deleted.
+     * @return the instance.
      */
     public MessageMaker withDeleteDelay(Long deleteDelay){
         this.deleteDelay = deleteDelay;
@@ -310,8 +308,8 @@ public class MessageMaker {
     /**
      * Sets if the building message may be sent.
      *
-     * @param maySend if the building message may be sent
-     * @return the instance
+     * @param maySend if the building message may be sent.
+     * @return the instance.
      */
     public MessageMaker maySend(boolean maySend){
         this.maySend = maySend;
@@ -321,7 +319,7 @@ public class MessageMaker {
     /**
      * Sets that the building message may be sent.
      *
-     * @return the instance
+     * @return the instance.
      */
     public MessageMaker maySend(){
         return this.maySend(true);
@@ -332,8 +330,8 @@ public class MessageMaker {
      * Sets the given {@link User} as the author to make all
      * author fields with the relevant information of that user.
      *
-     * @param author the {@link User} to set all author fields for
-     * @return the instance
+     * @param author the {@link User} to set all author fields for.
+     * @return the instance.
      */
     public MessageMaker withAuthor(User author){
         this.getAuthorName().appendRaw(author.getNameAndDiscrim() + " " + author.getID());
@@ -343,7 +341,7 @@ public class MessageMaker {
     /**
      * Gets the {@link TextPart} for altering the embed field for the author name.
      *
-     * @return the {@link TextPart} for altering the embed field for the author name
+     * @return the {@link TextPart} for altering the embed field for the author name.
      */
     public TextPart getAuthorName(){
         return this.authorName;
@@ -352,7 +350,7 @@ public class MessageMaker {
     /**
      * Gets the {@link TextPart} for altering the embed field for the title.
      *
-     * @return the {@link TextPart} for altering the embed field for the title
+     * @return the {@link TextPart} for altering the embed field for the title.
      */
     public TextPart getTitle(){
         return this.title;
@@ -372,7 +370,7 @@ public class MessageMaker {
     /**
      * Gets the {@link TextPart} for the content to appear below listings.
      *
-     * @return the {@link TextPart} for the content to appear below listings
+     * @return the {@link TextPart} for the content to appear below listings.
      */
     public TextPart getFooter(){
         return this.footer;
@@ -381,7 +379,7 @@ public class MessageMaker {
     /**
      * Gets the {@link TextPart} for the note content when the bulding message is to be embed.
      *
-     * @return the {@link TextPart} for the note content when the bulding message is to be embed
+     * @return the {@link TextPart} for the note content when the bulding message is to be embed.
      */
     public TextPart getNote(){
         return this.note;
@@ -390,7 +388,7 @@ public class MessageMaker {
     /**
      * Gets the {@link TextPart} for the content to be written outside an embed.
      *
-     * @return the {@link TextPart} for the content to be written outside an embed
+     * @return the {@link TextPart} for the content to be written outside an embed.
      */
     public TextPart getExternal(){
         return this.external;
@@ -399,7 +397,7 @@ public class MessageMaker {
     /**
      * Gets a {@link FieldPart} for the content of a single field part.
      *
-     * @return a {@link FieldPart} for the content of a single field part
+     * @return a {@link FieldPart} for the content of a single field part.
      */
     public FieldPart getNewFieldPart(){
         return new FieldPart(this);// adds self in the constructor
@@ -408,7 +406,7 @@ public class MessageMaker {
     /**
      * Removes all entries for {@link FieldPart}s associated with this maker.
      *
-     * @return the instance
+     * @return the instance.
      */
     public MessageMaker clearFieldParts(){
         this.fieldList.clear();
@@ -418,7 +416,7 @@ public class MessageMaker {
     /**
      * Gets a {@link TextPart} for a list in the embed.
      *
-     * @return a {@link TextPart} for a list in the embed
+     * @return a {@link TextPart} for a list in the embed.
      */
     public TextPart getNewListPart(){
         TextPart part = new TextPart(this);
@@ -429,7 +427,7 @@ public class MessageMaker {
     /**
      * Makes a new page when listing.
      *
-     * @return the instance
+     * @return the instance.
      */
     public MessageMaker guaranteeNewListPage(){
         this.textList.add(null);
@@ -439,7 +437,7 @@ public class MessageMaker {
     /**
      * Makes a new page when listing.
      *
-     * @return the instance
+     * @return the instance.
      */
     public MessageMaker guaranteeNewFieldPage(){
         this.fieldList.add(null);
@@ -447,10 +445,10 @@ public class MessageMaker {
     }
 
     /**
-     * A shortcut method for {@link MessageMaker#header#appendRaw(String)}
+     * A shortcut method for {@link MessageMaker#header#appendRaw(String)}.
      *
-     * @param s the thing to {@link LangString#appendRaw(String)} to {@link MessageMaker#header}
-     * @return the instance
+     * @param s the thing to {@link LangString#appendRaw(String)} to {@link MessageMaker#header}.
+     * @return the instance.
      */
     public MessageMaker appendRaw(String s){
         this.header.appendRaw(s);
@@ -458,10 +456,10 @@ public class MessageMaker {
     }
 
     /**
-     * A shortcut method for {@link MessageMaker#header#append(boolean, String)}
+     * A shortcut method for {@link MessageMaker#header#append(boolean, String)}.
      *
-     * @param s the thing to {@link LangString#append(boolean, String)} to {@link MessageMaker#header}
-     * @return the instance
+     * @param s the thing to {@link LangString#append(boolean, String)} to {@link MessageMaker#header}.
+     * @return the instance.
      */
     public MessageMaker append(String s){
         this.header.append(s);
@@ -469,10 +467,10 @@ public class MessageMaker {
     }
 
     /**
-     * A shortcut method for {@link MessageMaker#header#appendAlternate(boolean, String...)}
+     * A shortcut method for {@link MessageMaker#header#appendAlternate(boolean, String...)}.
      *
-     * @param s the thing to {@link LangString#appendRaw(String)} to {@link MessageMaker#header}
-     * @return the instance
+     * @param s the thing to {@link LangString#appendRaw(String)} to {@link MessageMaker#header}.
+     * @return the instance.
      */
     public MessageMaker appendAlternate(boolean raw, String...s){
         this.header.appendAlternate(raw, s);
@@ -480,10 +478,10 @@ public class MessageMaker {
     }
 
     /**
-     * A shortcut method for {@link MessageMaker#header#append(boolean, String)}
+     * A shortcut method for {@link MessageMaker#header#append(boolean, String)}.
      *
-     * @param s the thing to {@link LangString#append(boolean, String)} to {@link MessageMaker#header}
-     * @return the instance
+     * @param s the thing to {@link LangString#append(boolean, String)} to {@link MessageMaker#header}.
+     * @return the instance.
      */
     public MessageMaker append(boolean raw, String s){
         this.header.append(!raw, s);
@@ -494,8 +492,8 @@ public class MessageMaker {
     /**
      * Sets a {@link Color} for the building message's embed color.
      *
-     * @param color the color for the building message's embed color
-     * @return the instance
+     * @param color the color for the building message's embed color.
+     * @return the instance.
      */
     public MessageMaker withColor(Color color){
         this.embed.withColor(color);
@@ -504,10 +502,10 @@ public class MessageMaker {
     }
 
     /**
-     * Sets the {@link Color} for the embed color based on the average color of the url's image
+     * Sets the {@link Color} for the embed color based on the average color of the url's image.
      *
-     * @param url the url to get a image average color from
-     * @return the instance
+     * @param url the url to get a image average color from.
+     * @return the instance.
      */
     public MessageMaker withColor(String url){
         this.withColor(GraphicsHelper.getColor(url));
@@ -517,7 +515,7 @@ public class MessageMaker {
     /**
      * Sets the embed's {@link Color} as the {@link MessageMaker#user}'s avatar average color.
      *
-     * @return the instance
+     * @return the instance.
      */
     public MessageMaker withColor(){
         return withColor(this.user);
@@ -526,7 +524,7 @@ public class MessageMaker {
     /**
      * Sets the embed color to a random color.
      *
-     * @return the instance
+     * @return the instance.
      */
     public MessageMaker withRandomColor(){
         this.withColor(new Color(Rand.getRand(16777216)));
@@ -534,10 +532,10 @@ public class MessageMaker {
     }
 
     /**
-     * Sets the embed color as the {@link User}'s average avitar color.
+     * Sets the embed color as the {@link User}'s average avatar color.
      *
-     * @param user the user whose color portrait
-     * @return the instance
+     * @param user the user whose color portrait.
+     * @return the instance.
      */
     public MessageMaker withColor(User user){
         if (user != null) this.withColor(user.getAvatarURL());
@@ -547,8 +545,8 @@ public class MessageMaker {
     /**
      * Sets an embed's color to the {@link Role}'s color.
      *
-     * @param color the role whose color should be used in the embed
-     * @return the instance
+     * @param color the role whose color should be used in the embed.
+     * @return the instance.
      */
     public MessageMaker withColor(Role color){
         return this.withColor(color.getColor());
@@ -557,8 +555,8 @@ public class MessageMaker {
     /**
      * Sets the footer icon of an embed.
      *
-     * @param url the url of the icon
-     * @return the instance
+     * @param url the url of the icon.
+     * @return the instance.
      */
     public MessageMaker withFooterIcon(String url){
         this.embed.withFooterIcon(url);
@@ -569,8 +567,8 @@ public class MessageMaker {
     /**
      * Sets the author icon of an embed.
      *
-     * @param url the author's icon
-     * @return the instance
+     * @param url the author's icon.
+     * @return the instance.
      */
     public MessageMaker withAuthorIcon(String url){
         this.embed.withAuthorIcon(url);
@@ -581,8 +579,8 @@ public class MessageMaker {
     /**
      * Sets the url clicking on the header/author causes redirection to.
      *
-     * @param url the url to set the header/author icon link to
-     * @return the instance
+     * @param url the url to set the header/author icon link to.
+     * @return the instance.
      */
     public MessageMaker withUrl(String url){
         if (url != null) this.embed.withUrl(url);
@@ -593,8 +591,8 @@ public class MessageMaker {
     /**
      * Sets the thumb image in an embed.
      *
-     * @param url the url the thumb
-     * @return the instance
+     * @param url the url the thumb.
+     * @return the instance.
      */
     public MessageMaker withThumb(String url){
         this.embed.withThumbnail(url);
@@ -605,8 +603,8 @@ public class MessageMaker {
     /**
      * Sets the embed image to the one pointed to by the url.
      *
-     * @param url the image to add to the embed
-     * @return the instance
+     * @param url the image to add to the embed.
+     * @return the instance.
      */
     public MessageMaker withImage(String url){
         this.embed.withImage(url);
@@ -617,8 +615,8 @@ public class MessageMaker {
     /**
      * Sets a file to be attached to the building message.
      *
-     * @param file the file to be attached to the building message
-     * @return the instance
+     * @param file the file to be attached to the building message.
+     * @return the instance.
      */
     public MessageMaker withFile(File file){
         this.file = file;
@@ -628,8 +626,8 @@ public class MessageMaker {
     /**
      * Sets the embed timestamp.
      *
-     * @param millis the millis to set the embed timestamp to
-     * @return the instance
+     * @param millis the millis to set the embed timestamp to.
+     * @return the instance.
      */
     public MessageMaker withTimestamp(long millis){
         this.embed.withTimestamp(millis);
@@ -641,7 +639,7 @@ public class MessageMaker {
     /**
      * Gets the message that was built and sent, otherwise null.
      *
-     * @return the message that was built and sent, otherwise null
+     * @return the message that was built and sent, otherwise null.
      */
     public Message sentMessage(){
         return Message.getMessage(this.message);
@@ -650,7 +648,7 @@ public class MessageMaker {
     /**
      * Gets the string representations of {@link Reaction}s which have associated {@link ReactionBehavior}s.
      *
-     * @return the string representations of {@link Reaction}s which have associated {@link ReactionBehavior}s
+     * @return the string representations of {@link Reaction}s which have associated {@link ReactionBehavior}s.
      */
     public Set<String> getReactionBehaved(){
         return this.reactionBehaviors.keySet();
@@ -660,14 +658,15 @@ public class MessageMaker {
     /**
      * Sends the message if it should depending on if it is being sent aromatically.
      *
-     * @param auto if this is being sent automatically
+     * @param auto if this is being sent automatically.
      */
     public void send(boolean auto){
         if (!(!this.autoSend && auto)) send();
     }
 
     /**
-     * Sends or edits the building message.
+     * Sends the building message or edits the message
+     * if it has already been sent and has not been cleared.
      */
     public void send(){
         try{send(0);
@@ -684,7 +683,7 @@ public class MessageMaker {
     /**
      * Sends the building message dependent on the page.
      *
-     * @param page the page to sent
+     * @param page the page to sent.
      */
     private void send(int page){
         if (BotConfig.GHOST_MODE) return;
@@ -732,9 +731,9 @@ public class MessageMaker {
     /**
      * Gets the language the message should be sent in.
      *
-     * @param user the user to consider getting the language for
-     * @param channel the channel to consider getting the language for
-     * @return the language code to send the message as
+     * @param user the user to consider getting the language for.
+     * @param channel the channel to consider getting the language for.
+     * @return the language code to send the message as.
      */
     public static String getLang(User user, Channel channel){
         String lang = null;
@@ -848,8 +847,8 @@ public class MessageMaker {
     /**
      * Determines what the message note should say dependent on page.
      *
-     * @param page the page to consider
-     * @return the content of the message
+     * @param page the page to consider.
+     * @return the content of the message.
      */
     private String generateNote(int page){
         String note = this.note.langString.translate(lang);
@@ -885,7 +884,7 @@ public class MessageMaker {
         /**
          * Gets the {@link FieldTextPart} which wraps the field title.
          *
-         * @return the {@link FieldTextPart} which wraps the field title
+         * @return the {@link FieldTextPart} which wraps the field title.
          */
         public FieldTextPart getTitle(){
             return this.title;
@@ -894,7 +893,7 @@ public class MessageMaker {
         /**
          * Gets the {@link FieldTextPart} which wraps the field value.
          *
-         * @return the {@link FieldTextPart} which wraps the field value
+         * @return the {@link FieldTextPart} which wraps the field value.
          */
         public FieldTextPart getValue(){
             return this.value;
@@ -903,9 +902,9 @@ public class MessageMaker {
         /**
          * Sets the raw content of the {@link FieldPart}.
          *
-         * @param title the raw title content
-         * @param value teh raw value content
-         * @return the {@link FieldPart} instance
+         * @param title the raw title content.
+         * @param value teh raw value content.
+         * @return the instance.
          */
         public FieldPart withBoth(String title, String value){
             this.title.append(title);
@@ -916,7 +915,7 @@ public class MessageMaker {
         /**
          * The maker instance this {@link FieldPart} came from.
          *
-         * @return maker instance this {@link FieldPart} came from
+         * @return maker instance this {@link FieldPart} came from.
          */
         public MessageMaker getMessageProducer(){
             return this.maker;
@@ -939,8 +938,8 @@ public class MessageMaker {
         /**
          * Appends text that will not be translated to the given field.
          *
-         * @param s text that will not be translated to the given field
-         * @return the instance
+         * @param s text that will not be translated to the given field.
+         * @return the instance.
          */
         public TextPart appendRaw(String s){
             this.appended = true;
@@ -951,8 +950,8 @@ public class MessageMaker {
         /**
          * Appends text that will be translated to the given field.
          *
-         * @param s text that will be translated to the given field
-         * @return the instance
+         * @param s text that will be translated to the given field.
+         * @return the instance.
          */
         public TextPart append(String s){
             this.appended = true;
@@ -963,9 +962,9 @@ public class MessageMaker {
         /**
          * Appends text that will append raw/not raw in alternating fashion.
          *
-         * @param raw if the first text should not be translated
-         * @param s the strings to append in raw/not raw in alternating fashion
-         * @return the instance
+         * @param raw if the first text should not be translated.
+         * @param s the strings to append in raw/not raw in alternating fashion.
+         * @return the instance.
          */
         public TextPart appendAlternate(boolean raw, String...s){
             this.appended = true;
@@ -977,9 +976,9 @@ public class MessageMaker {
         /**
          * Appends content to the given field and translates dependent on raw.
          *
-         * @param raw if the text to append should not be translated
-         * @param s the text to append
-         * @return the instance
+         * @param raw if the text to append should not be translated.
+         * @param s the text to append.
+         * @return the instance.
          */
         public TextPart append(boolean raw, String s){
             this.appended = true;
@@ -991,8 +990,8 @@ public class MessageMaker {
         /**
          * Appends a {@link LangString} to the content of the represented field.
          *
-         * @param langString the lang string to append
-         * @return the isntance
+         * @param langString the lang string to append.
+         * @return the instance.
          */
         public TextPart append(LangString langString){
             this.appended = true;
@@ -1004,7 +1003,7 @@ public class MessageMaker {
         /**
          * Gets the parent maker.
          *
-         * @return the parent maker
+         * @return the parent maker.
          */
         public MessageMaker getMaker(){
             return this.maker;
@@ -1013,7 +1012,7 @@ public class MessageMaker {
         /**
          * Clears the content of the maker.
          *
-         * @return the instance
+         * @return the instance.
          */
         public TextPart clear() {
             this.langString = new LangString();
@@ -1024,8 +1023,8 @@ public class MessageMaker {
         /**
          * Gets a translation of the {@link LangString} content.
          *
-         * @param langCode the language code to translate the {@link LangString} to
-         * @return a translation of the {@link LangString} content
+         * @param langCode the language code to translate the {@link LangString} to.
+         * @return a translation of the {@link LangString} content.
          */
         public String translate(String langCode) {
             return this.langString.translate(langCode);

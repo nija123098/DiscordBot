@@ -9,7 +9,11 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import java.lang.reflect.Parameter;
 
 /**
- * Made by nija123098 on 3/31/2017.
+ * Should be thrown when an improper argument has
+ * been passed and the user should be notified.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public class ArgumentException extends BotException {
     private AbstractCommand command;

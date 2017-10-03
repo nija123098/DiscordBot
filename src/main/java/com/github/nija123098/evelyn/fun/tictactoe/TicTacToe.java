@@ -136,7 +136,7 @@ public class TicTacToe extends AbstractNeuralNetGame {
         return doubles;
     }
     @Override
-    public int getInputCount() {
+    public int getInputWidth() {
         return 27;
     }
     @Override
@@ -148,7 +148,7 @@ public class TicTacToe extends AbstractNeuralNetGame {
         return 2;
     }
     @Override
-    public int getOutputCount() {
+    public int getOutputWidth() {
         return 9;
     }
     @Override

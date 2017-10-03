@@ -63,12 +63,12 @@ public class AbstractCommand {
      * This is most commonly used as a constructor for sub-commands.
      * All values not set here will default to the super-command's values.
      *
-     * @param superCommand the type of the super command, or null
-     * @param name the name of the command, not including the super command name
-     * @param absoluteAliases the list of names which are separated by a comma and space
-     * @param emoticonAliases the list of emoticon names separated by a comma and space
-     * @param relativeAliases the list of names which the super command's names are prefixed before separated by a comma and space
-     * @param help the help text for this command
+     * @param superCommand the type of the super command, or null.
+     * @param name the name of the command, not including the super command name.
+     * @param absoluteAliases the list of names which are separated by a comma and space.
+     * @param emoticonAliases the list of emoticon names separated by a comma and space.
+     * @param relativeAliases the list of names which the super command's names are prefixed before separated by a comma and space.
+     * @param help the help text for this command.
      */
     public AbstractCommand(Class<? extends AbstractCommand> superCommand, String name, String absoluteAliases, String emoticonAliases, String relativeAliases, String help){
         this.superCommand = superCommand;
@@ -83,11 +83,11 @@ public class AbstractCommand {
     /**
      * The constructor for a super command.
      *
-     * @param name the full name of a command
-     * @param module the module for the command
-     * @param absoluteAliases the names for which the command can also be called separated by a comma and space
-     * @param emoticonAliases the list of emoticon names separated by a comma and space
-     * @param help the help text for this command
+     * @param name the full name of a command.
+     * @param module the module for the command.
+     * @param absoluteAliases the names for which the command can also be called separated by a comma and space.
+     * @param emoticonAliases the list of emoticon names separated by a comma and space.
+     * @param help the help text for this command.
      */
     public AbstractCommand(String name, ModuleLevel module, String absoluteAliases, String emoticonAliases, String help){
         this(null, name, absoluteAliases, emoticonAliases, null, help);
@@ -98,12 +98,12 @@ public class AbstractCommand {
     /**
      * The constructor for a super command.
      *
-     * @param name the full name of a command
-     * @param botRole the override for the botrole of the command
-     * @param module the module for the command
-     * @param absoluteAliases the names for which the command can also be called separated by a comma and space
-     * @param emoticonAliases the list of emoticon names separated by a comma and space
-     * @param help the help text for this command
+     * @param name the full name of a command.
+     * @param botRole the override for the botrole of the command.
+     * @param module the module for the command.
+     * @param absoluteAliases the names for which the command can also be called separated by a comma and space.
+     * @param emoticonAliases the list of emoticon names separated by a comma and space.
+     * @param help the help text for this command.
      */
     public AbstractCommand(String name, BotRole botRole, ModuleLevel module, String absoluteAliases, String emoticonAliases, String help){
         this(name, module, absoluteAliases, emoticonAliases, help);
@@ -201,7 +201,7 @@ public class AbstractCommand {
      * A getter for the object representing the super command.
      * This gives the command directly above this command.
      *
-     * @return this command's super command
+     * @return this command's super command.
      */
     public AbstractCommand getSuperCommand(){
         return CommandHandler.getCommand(this.superCommand);
@@ -210,7 +210,7 @@ public class AbstractCommand {
     /**
      * Gets the highest command in the command's hierarchy.
      *
-     * @return the command's high command
+     * @return the command's high command.
      */
     public AbstractCommand getHighCommand(){
         return this.highCommand;
@@ -220,7 +220,7 @@ public class AbstractCommand {
      * Returns if this command is the highest
      * command in this command's hierarchy.
      *
-     * @return if this has no higher command
+     * @return if this has no higher command.
      */
     public boolean isHighCommand() {
         return this.highCommand == this;
@@ -229,7 +229,7 @@ public class AbstractCommand {
     /**
      * A standard getter.
      *
-     * @return the type of the super command
+     * @return the type of the super command.
      */
     public Class<? extends AbstractCommand> getSuperCommandType(){
         return this.superCommand;
@@ -240,7 +240,7 @@ public class AbstractCommand {
      * by which the command can be called
      *
      * @return the HashSet of the emoticon's chars
-     * that can represent this command
+     * that can represent this command.
      */
     public Set<String> getEmoticonAliases() {
         return this.emoticonAliases;
@@ -249,7 +249,7 @@ public class AbstractCommand {
     /**
      * A standard getter.
      *
-     * @return the name of the command
+     * @return the name of the command.
      */
     public String getName(){
         return this.name;
@@ -257,56 +257,55 @@ public class AbstractCommand {
 
     /**
      * The method to get the set off all names
-     * by which the command goes by
+     * by which the command goes by.
      *
      * @return the HashSet of all names
-     * by which the command goes by
+     * by which the command goes by.
      */
     public Set<String> getNames() {
         return this.allNames;
     }
 
     /**
-     * Returns the command's module
+     * Returns the command's module.
      *
-     * @return the module of which the command is part of
+     * @return the module of which the command is part of.
      */
     public ModuleLevel getModule(){
         return this.module;
     }
 
     /**
-     * Gets the bot role required to run this command,
-     * default USER
+     * Gets the bot role required to run this command and defaults to USER.
      *
-     * @return the required bot role to run this command
+     * @return the required bot role to run this command.
      */
     public BotRole getBotRole(){
         return this.botRole;
     }
 
     /**
-     * Gets if the current command is a template command
+     * Gets if the current command is a template command.
      *
-     * @return if the command is a template command
+     * @return if the command is a template command.
      */
     public boolean isTemplateCommand(){
         return this.getClass().getPackage().getName().contains(".template.");
     }
 
     /**
-     * Gets the return type of the command
+     * Gets the return type of the command.
      *
-     * @return the return type of the command
+     * @return the return type of the command.
      */
     public Class<?> getReturnType(){
         return this.method.getReturnType();
     }
 
     /**
-     * A standard getter
+     * A standard getter.
      *
-     * @return the Java reflection results for getting the paramaters
+     * @return the Java reflection results for getting the parameters.
      */
     public Parameter[] getParameters(){
         return this.parameters;
@@ -324,7 +323,7 @@ public class AbstractCommand {
     /**
      * Gets a string showing an example of the command's usage.
      *
-     * @return a command's example
+     * @return a command's example.
      */
     public String getExample(){
         return null;
@@ -333,7 +332,7 @@ public class AbstractCommand {
     /**
      * This command and the sub-command's help text and usage.
      *
-     * @return a string representing the sub-command's and this command's help text and usage
+     * @return a string representing the sub-command's and this command's help text and usage.
      */
     protected String getLocalUsages(){
         StringBuilder builder = new StringBuilder("# ").append(this.name).append(" ");
@@ -352,7 +351,7 @@ public class AbstractCommand {
      * Gets the string representation of usages.
      * This is only called in instances of high commands.
      *
-     * @return gets the string usages of a command
+     * @return gets the string usages of a command.
      */
     public String getUsages(){
         StringBuilder builder = new StringBuilder();
@@ -373,7 +372,7 @@ public class AbstractCommand {
     /**
      * Returns the set of all sub-commands.
      *
-     * @return a set of all sub-commands
+     * @return a set of all sub-commands.
      */
     public Set<AbstractCommand> getSubCommands(){
         return this.subCommands;
@@ -382,7 +381,7 @@ public class AbstractCommand {
     /**
      * The set of words to naturally trigger the command.
      *
-     * @return the set of words to naturally trigger the command
+     * @return the set of words to naturally trigger the command.
      */
     public Set<String> getNaturalTriggers(){
         return Collections.emptySet();
@@ -391,10 +390,9 @@ public class AbstractCommand {
     /**
      * A check if the user can use a command in the context.
      *
-     * @param user the user that is being checked for permission
-     * @param channel the channel in which permissions are being checked,
-     * @return if the user can use this command
-     * in the guild, if one exists
+     * @param user the user that is being checked for permission.
+     * @param channel the channel in which permissions are being checked.
+     * @return if the user can use this command in the guild, if one exists.
      */
     public boolean hasPermission(User user, Channel channel) {
         Set<String> blocked = ConfigHandler.getSetting(DisabledCommandsConfig.class, GlobalConfigurable.GLOBAL);
@@ -417,9 +415,9 @@ public class AbstractCommand {
     /**
      * A method to check the cool down on a command.
      *
-     * @param channel the channel checked for rate limiting
-     * @param user the user checked for rate limiting
-     * @return if the command is not being rate limited
+     * @param channel the channel checked for rate limiting.
+     * @param user the user checked for rate limiting.
+     * @return if the command is not being rate limited.
      */
     boolean checkCoolDown(Channel channel, User user){
         if (this.globalUseTime != -1 && this.globalUseTime > System.currentTimeMillis()){
@@ -443,8 +441,8 @@ public class AbstractCommand {
     /**
      * Method to be called when the command is invoked.
      *
-     * @param channel the channel checked for rate limiting
-     * @param user the user checked for rate limiting
+     * @param channel the channel checked for rate limiting.
+     * @param user the user checked for rate limiting.
      */
     public void invoked(Channel channel, User user, Message message){
         if (this.globalUseTime != -1){
@@ -475,20 +473,20 @@ public class AbstractCommand {
     }
 
     /**
-     * Returns the cool down in millis dependent
-     * on the type of configurable which is being rate limited
+     * Returns the cool down in millis dependent on the
+     * type of configurable which is being rate limited.
      *
-     * @param clazz the configurable type
-     * @return the cool down in millis dependent on the tyoe
+     * @param clazz the configurable type.
+     * @return the cool down in millis dependent on the type.
      */
     public long getCoolDown(Class<? extends Configurable> clazz){
         return -1;
     }
 
     /**
-     * A standard getter to get the set of context requirements for the command
+     * A standard getter to get the set of context requirements for the command.
      *
-     * @return The context requirements for the command
+     * @return The context requirements for the command.
      */
     public Set<ContextRequirement> getContextRequirements(){
         return this.contextRequirements;
@@ -500,12 +498,12 @@ public class AbstractCommand {
      * the command and returns the object the command
      * returns or false if the command fails.
      *
-     * @param user the user that invokes the command
-     * @param message the message sent or reacted to
+     * @param user the user that invokes the command.
+     * @param message the message sent or reacted to.
      * @param reaction the reaction if the invocation
-     *                 was caused by reacting to a message
-     * @param args the user args for invocation
-     * @return if the command was successful
+     *                 was caused by reacting to a message.
+     * @param args the user args for invocation.
+     * @return if the command was successful.
      */
     public Object invoke(User user, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, String args, Object...argOverrides){
         ProcessingHandler.startProcess(channel);
@@ -540,10 +538,10 @@ public class AbstractCommand {
     }
 
     /**
-     * Returns if the command succeeded determined by it's output
+     * Returns if the command succeeded determined by it's output.
      *
-     * @param o the output of the command's invocation
-     * @return if the command succeeded determined by it's output
+     * @param o the output of the command's invocation.
+     * @return if the command succeeded determined by it's output.
      */
     boolean interpretSuccess(Object o){
         return !(o instanceof Boolean) || (boolean) o;

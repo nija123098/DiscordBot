@@ -94,10 +94,10 @@ public class GuildAudioManager extends AudioEventAdapter{
      * Gets a instance based on the {@link VoiceChannel} and
      * if a manager should be made if no such manager exists.
      *
-     * @param channel the channel to get a manager for
-     * @param make if a manager should be made if one does not exist for this guild
-     * @return a manager instance for the given channel
-     * @throws ArgumentException if the bot would have no valid listeners or if a manager exists elsewhere in the guild
+     * @param channel the channel to get a manager for.
+     * @param make if a manager should be made if one does not exist for this guild.
+     * @return a manager instance for the given channel.
+     * @throws ArgumentException if the bot would have no valid listeners or if a manager exists elsewhere in the guild.
      */
     public static GuildAudioManager getManager(VoiceChannel channel, boolean make){
         if (channel == null) return null;// this might not happen anymore
@@ -120,11 +120,11 @@ public class GuildAudioManager extends AudioEventAdapter{
     }
 
     /**
-     * Gets a instance based on the {@link VoiceChannel}
+     * Gets a instance based on the {@link VoiceChannel}.
      *
-     * @param channel the channel to get a manager for
-     * @return a manager instance for the given channel
-     * @throws ArgumentException if the bot would have no valid listeners or if a manager exists elsewhere in the guild
+     * @param channel the channel to get a manager for.
+     * @return a manager instance for the given channel.
+     * @throws ArgumentException if the bot would have no valid listeners or if a manager exists elsewhere in the guild.
      */
     public static GuildAudioManager getManager(VoiceChannel channel){
         return getManager(channel, true);
@@ -133,8 +133,8 @@ public class GuildAudioManager extends AudioEventAdapter{
     /**
      * Gets a manager instance if one exists for the given guild.
      *
-     * @param guild the guild to get a manager for if one exists
-     * @return a manager instance if one exists for the guild or null
+     * @param guild the guild to get a manager for if one exists.
+     * @return a manager instance if one exists for the guild or null.
      */
     public static GuildAudioManager getManager(Guild guild){
         return MAP.get(guild.getID());
@@ -185,7 +185,7 @@ public class GuildAudioManager extends AudioEventAdapter{
     /**
      * Pauses of un-pauses the current track.
      *
-     * @param pause if the current track should be paused
+     * @param pause if the current track should be paused.
      */
     public void pause(boolean pause){
         this.lavaPlayer.setPaused(pause);
@@ -203,7 +203,7 @@ public class GuildAudioManager extends AudioEventAdapter{
      * Queues a new speech which will be played now
      * or if a track is currently playing afterword.
      *
-     * @param string the thing the bot should say
+     * @param string the thing the bot should say.
      */
     public void queueSpeech(LangString string){
         if (this.current == null) this.queueTrack(new SpeechTrack(string, MessageMaker.getLang(null, this.channel)));
@@ -214,7 +214,7 @@ public class GuildAudioManager extends AudioEventAdapter{
      * Queues a new speech which will be played now or
      * if a track is currently playing be placed in queue.
      *
-     * @param track the track to queue or play next
+     * @param track the track to queue or play next.
      */
     public void queueTrack(Track track){
         if (track == null) this.current = null;
@@ -228,7 +228,7 @@ public class GuildAudioManager extends AudioEventAdapter{
      * Swaps the currently playing if it is equivalent and
      * resumes using the new provision of {@link AudioTrack}.
      *
-     * @param track the track to swap if applicable
+     * @param track the track to swap if applicable.
      */
     public void swap(Track track){
         if (!track.equals(this.currentTrack())) return;
@@ -246,7 +246,7 @@ public class GuildAudioManager extends AudioEventAdapter{
      * makes the bot say the translated string or
      * queues it behind any current interrupts.
      *
-     * @param langString the thing to interrupt
+     * @param langString the thing to interrupt.
      */
     public void interrupt(LangString langString){// must fully exist
         if (this.current == null && this.queue.isEmpty()) {
@@ -300,7 +300,7 @@ public class GuildAudioManager extends AudioEventAdapter{
     /**
      * Forces the skipping of the current track, regardless of the vote.
      *
-     * @return the number of songs left in queue
+     * @return the number of songs left in queue.
      */
     public int skipTrack() {
         this.audioProvider.clearBuffer();
@@ -344,8 +344,8 @@ public class GuildAudioManager extends AudioEventAdapter{
     /**
      * Gets the track that should play next.
      *
-     * @param take if that track should be removed from the possible next play
-     * @return the track to play next
+     * @param take if that track should be removed from the possible next play.
+     * @return the track to play next.
      */
     public Track getNext(boolean take){
         if (this.loop) return this.current;
@@ -365,7 +365,7 @@ public class GuildAudioManager extends AudioEventAdapter{
     /**
      * Sets if the bot should loop the currently playing {@link Track}.
      *
-     * @param loop if the bot should loop the currently playing {@link Track}
+     * @param loop if the bot should loop the currently playing {@link Track}.
      */
     public void loop(boolean loop){
         this.loop = loop;
@@ -374,7 +374,7 @@ public class GuildAudioManager extends AudioEventAdapter{
     /**
      * Gets if the bot is currently playing a {@link Track} on loop.
      *
-     * @return if the bot is currently playing a {@link Track} on loop
+     * @return if the bot is currently playing a {@link Track} on loop.
      */
     public boolean isLooping() {
         return this.loop;
@@ -383,7 +383,7 @@ public class GuildAudioManager extends AudioEventAdapter{
     /**
      * Gets the currently playing {@link Track}.
      *
-     * @return teh currently playing {@link Track}
+     * @return the currently playing {@link Track}.
      */
     public Track currentTrack() {
         return this.current;
@@ -392,7 +392,7 @@ public class GuildAudioManager extends AudioEventAdapter{
     /**
      * Gets the current time of the current {@link Track} in seconds.
      *
-     * @return the current time of the current {@link Track} in seconds
+     * @return the current time of the current {@link Track} in seconds.
      */
     public long currentTime(){
         AudioTrack track = this.lavaPlayer.getPlayingTrack();
@@ -402,7 +402,7 @@ public class GuildAudioManager extends AudioEventAdapter{
     /**
      * Gets a list of the {@link Track}s to be played after the current in order.
      *
-     * @return the {@link Track}s to be played after the current in order.
+     * @return the {@link Track}s to be played after the current in order..
      */
     public List<Track> getQueue() {
         return this.queue;
@@ -411,7 +411,7 @@ public class GuildAudioManager extends AudioEventAdapter{
     /**
      * Gets the {@link VoiceChannel} this manager manages.
      *
-     * @return the {@link VoiceChannel} this manager manages
+     * @return the {@link VoiceChannel} this manager manages.
      */
     public VoiceChannel voiceChannel() {
         return this.channel;
@@ -420,7 +420,7 @@ public class GuildAudioManager extends AudioEventAdapter{
     /**
      * Gets if the current song is paused.
      *
-     * @return if the current song is paused
+     * @return if the current song is paused.
      */
     public boolean isPaused() {
         return this.lavaPlayer.isPaused();
@@ -438,7 +438,7 @@ public class GuildAudioManager extends AudioEventAdapter{
     /**
      * Gets the guild this manager is managing.
      *
-     * @return the guild this manager is managing
+     * @return the guild this manager is managing.
      */
     public Guild getGuild() {
         return this.channel.getGuild();
@@ -447,7 +447,7 @@ public class GuildAudioManager extends AudioEventAdapter{
     /**
      * Sets the volume the manager should play at.
      *
-     * @param val the volume the manager should play at
+     * @param val the volume the manager should play at.
      */
     public void setVolume(int val){
         this.lavaPlayer.setVolume((int) (val * 1.5F));
@@ -457,7 +457,7 @@ public class GuildAudioManager extends AudioEventAdapter{
     /**
      * Gets the volume the manager should play at.
      *
-     * @return the volume the manager should play at
+     * @return the volume the manager should play at.
      */
     public int getVolume(){// this isn't the only thing we lie to our users about
         return this.lavaPlayer.getVolume() / 3 * 2;
@@ -520,6 +520,15 @@ public class GuildAudioManager extends AudioEventAdapter{
             return AudioEncodingType.OPUS;
         }
     }
+
+    /**
+     * Gets the number of valid listeners in a {@link VoiceChannel},
+     * where a valid listener is a non-bot {@link User} who can hear the bot.
+     *
+     * @param channel the channel to get valid listeners for.
+     * @return the number of valid listeners in a {@link VoiceChannel},
+     * where a valid listener is a non-bot {@link User} who can hear the bot.
+     */
     public static int validListeners(VoiceChannel channel){
         return (int) channel.getConnectedUsers().stream().filter(user -> !user.isBot()).filter(user -> {
             IVoiceState voiceState = user.user().getVoiceStateForGuild(channel.getGuild().guild());

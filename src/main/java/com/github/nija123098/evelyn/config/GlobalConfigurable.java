@@ -14,7 +14,7 @@ import com.github.nija123098.evelyn.perms.BotRole;
 public class GlobalConfigurable implements Configurable {
     /**
      * The global configurable object
-     * for access to global configs
+     * for access to global configs.
      */
     public static final GlobalConfigurable GLOBAL = new GlobalConfigurable();
 

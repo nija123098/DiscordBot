@@ -23,10 +23,10 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
- * The handler for favor levels for guilds and users.
+ * The handler for favor levels.
  *
  * @author nija123098
- * @since 2.0.0
+ * @since 1.0.0
  * @see FavorLevel
  */
 public class FavorHandler {
@@ -55,8 +55,8 @@ public class FavorHandler {
     /**
      * A getter for the FavorLevel config.
      *
-     * @param configurable the guild or user to get the favor amount for
-     * @return the favor amount
+     * @param configurable the guild or user to get the favor amount for.
+     * @return the favor amount.
      */
     public static Float getFavorAmount(Configurable configurable){
         Function<Configurable, Float> function = (Function<Configurable, Float>) TYPE_DERIVATIONS.get(configurable.getConfigLevel());
@@ -66,14 +66,15 @@ public class FavorHandler {
     /**
      * Gets the enum by the favor amount indicated.
      *
-     * @param configurable the guild or user to get the favor level
-     * @return the corresponding favor enum
+     * @param configurable the guild or user to get the favor level.
+     * @return the corresponding favor enum.
      */
     public static FavorLevel getFavorLevel(Configurable configurable){
         return FavorLevel.getFavorLevel(getFavorAmount(configurable));
     }
     static {
-        EventDistributor.register(FavorHandler.class);}
+        EventDistributor.register(FavorHandler.class);
+    }
     @EventListener
     public static void handle(FavorLevelChangeEvent event){
         if (event.getNewLevel() == FavorLevel.DISTRUSTED && event.getConfigurable() instanceof User){

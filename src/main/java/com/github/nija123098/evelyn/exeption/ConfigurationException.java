@@ -1,7 +1,10 @@
 package com.github.nija123098.evelyn.exeption;
 
 /**
- * Made by nija123098 on 5/13/2017.
+ * Should be thrown when a user has not properly set up a config.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public class ConfigurationException extends BotException {
     public ConfigurationException(String message) {

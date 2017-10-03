@@ -8,7 +8,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
  * error that is the developer's fault.
  *
  * @author nija123098
- * @since 2.0.0
+ * @since 1.0.0
  */
 public class DevelopmentException extends BotException {
     public DevelopmentException() {

@@ -8,9 +8,23 @@ import com.github.nija123098.evelyn.fun.gamestructure.neuralnet.AbstractNeuralNe
 import java.awt.Color;
 import java.util.concurrent.atomic.AtomicReference;
 
+/**
+ * An exception which indicates a winner and travels
+ * up the stack to leave a message for the teams.
+ *
+ * An exception is used to ensure no further processing
+ * is done on the game since such might change the outcome.
+ */
 public class GameResultException extends BotException {
     private Team winner;
     private AbstractGame game;
+
+    /**
+     * Makes an exception which reports a winner.
+     *
+     * @param game the game to register results for.
+     * @param winner the winner, or null if stalemate.
+     */
     public GameResultException(AbstractGame game, Team winner) {
         this.game = game;
         this.winner = winner;

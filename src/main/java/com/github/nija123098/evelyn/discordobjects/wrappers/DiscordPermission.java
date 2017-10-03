@@ -6,7 +6,10 @@ import java.util.Collection;
 import java.util.EnumSet;
 
 /**
- * Made by nija123098 on 2/23/2017.
+ * Wraps a Discord4J {@link Permissions} flag.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public enum DiscordPermission {
     CREATE_INVITE,

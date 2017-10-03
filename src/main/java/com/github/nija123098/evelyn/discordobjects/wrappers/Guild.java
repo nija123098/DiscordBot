@@ -2,7 +2,7 @@ package com.github.nija123098.evelyn.discordobjects.wrappers;
 
 import com.github.nija123098.evelyn.config.ConfigLevel;
 import com.github.nija123098.evelyn.config.Configurable;
-import com.github.nija123098.evelyn.discordobjects.exception.ErrorWrapper;
+import com.github.nija123098.evelyn.discordobjects.ErrorWrapper;
 import com.github.nija123098.evelyn.exeption.ConfigurableConvertException;
 import com.github.nija123098.evelyn.exeption.GhostException;
 import com.github.nija123098.evelyn.launcher.BotConfig;
@@ -20,7 +20,10 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 /**
- * Made by nija123098 on 2/20/2017.
+ * Wraps a Discord4J {@link IGuild} object.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public class Guild implements Configurable {
     private static final Map<String, Guild> MAP = new MemoryManagementService.ManagedMap<>(180000);

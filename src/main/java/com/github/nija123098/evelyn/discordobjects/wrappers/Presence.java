@@ -8,7 +8,10 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Made by nija123098 on 3/13/2017.
+ * Wraps a Discord4j {@link IPresence} object.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public class Presence {
     private static final Map<IPresence, Presence> MAP = new MemoryManagementService.ManagedMap<>(60000);

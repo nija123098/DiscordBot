@@ -1,6 +1,7 @@
 package com.github.nija123098.evelyn.discordobjects.wrappers;
 
 import sx.blah.discord.handle.obj.IChannel;
+import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.Permissions;
 import sx.blah.discord.util.cache.LongMap;
 
@@ -9,7 +10,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Made by nija123098 on 3/10/2017.
+ * Wraps a Discord4j {@link IChannel.PermissionOverride} object.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public class PermOverride {// no need to store this, it doesn't get used right now
     static Map<User, PermOverride> getUserMap(LongMap<IChannel.PermissionOverride> overrideMap){

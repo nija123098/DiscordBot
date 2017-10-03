@@ -21,7 +21,7 @@ import java.util.function.Function;
  * A audio track for playing audio in a voice channel
  * by the bot.  Every implementation of this class has
  * a platform for which the track is intended to be
- * pulled from.  IE:  YoutubeTrack for Youtube videos
+ * pulled from.  IE:  YoutubeTrack for Youtube videos.
  *
  * Tracks only specify audio data, no video data is used.
  *
@@ -45,10 +45,10 @@ public abstract class Track implements Configurable {
      * Registers a class type for a track object.
      * Every track type implementation must cal this in it's initializer.
      *
-     * @param clazz the type of the implementation
-     * @param fromCode the function to get the track from a given video or audio code
-     * @param fromID the function to get an instance from a given ID
-     * @param <T> the type for the track implementation
+     * @param clazz the type of the implementation.
+     * @param fromCode the function to get the track from a given video or audio code.
+     * @param fromID the function to get an instance from a given ID.
+     * @param <T> the type for the track implementation.
      */
     static <T extends Track> void registerTrackType(Class<T> clazz, Function<String, Track> fromCode, Function<String, Track> fromID){
         CLASS_MAP.put(clazz.getSimpleName().toUpperCase(), clazz);
@@ -62,8 +62,8 @@ public abstract class Track implements Configurable {
      * The id from the platform's code is to ensure that this formatting
      * for the id is not broken to not break other things.
      *
-     * @param id the ID of the track
-     * @return the track instance for the given ID
+     * @param id the ID of the track.
+     * @return the track instance for the given ID.
      */
     public static Track getTrack(String id){
         if (id == null) return null;
@@ -75,21 +75,21 @@ public abstract class Track implements Configurable {
     }
 
     /**
-     * Gets the track instance based on ID and platform dependent audio code
+     * Gets the track instance based on ID and platform dependent audio code.
      *
-     * @param clazz the intended type of the track
-     * @param code the platform's code for the track
-     * @return the instance of the track specified by track type and code
+     * @param clazz the intended type of the track.
+     * @param code the platform's code for the track.
+     * @return the instance of the track specified by track type and code.
      */
     public static Track getTrack(Class<? extends Track> clazz, String code){
         return CODE_MAP.get(clazz).apply(code);
     }
 
     /**
-     * Given the string get a id or keywords to search Youtube
+     * Given the string get a id or keywords to search Youtube.
      *
-     * @param s the id or the keywords to search on Youtube
-     * @return the best related track instance for the given string
+     * @param s the id or the keywords to search on Youtube.
+     * @return the best related track instance for the given string.
      */
     public static List<Track> getTracks(String s){// may want to move
         Track track = getTrack(s);
@@ -124,9 +124,21 @@ public abstract class Track implements Configurable {
     public String getID() {
         return this.id;
     }
+
+    /**
+     * Gets the instance ID without the type prefix.
+     *
+     * @return the instance ID without the type prefix.
+     */
     final String getSpecificID(){
         return this.id.substring(this.id.split("-")[0].length() + 1);
     }
+
+    /**
+     * Gets the platform specific ID.
+     *
+     * @return the platform specific ID.
+     */
     public String getCode() {
         return this.getSpecificID();
     }
@@ -147,14 +159,31 @@ public abstract class Track implements Configurable {
         return this.id.hashCode();
     }
     @Override
-    public void manage(){}
-    @Override
     public void checkPermissionToEdit(User user, Guild guild) {
         BotRole.BOT_ADMIN.checkRequiredRole(user, null);
     }
+
+    /**
+     * Gets the URL of the location the track source was gotten from.
+     *
+     * @return the URL of the location the track source was gotten from.
+     */
     public abstract String getSource();
     public abstract String getPreviewURL();
     public abstract String getInfo();
+
+    /**
+     * Gets the audio track for Lavaplayer to process
+     *
+     * @param manager the manager that will play the {@link AudioTrack}.
+     * @return the Lavaplayer {@link AudioTrack} to play.
+     */
     public abstract AudioTrack getAudioTrack(GuildAudioManager manager);
+
+    /**
+     * Gets the length in millis or null if the instance is a stream.
+     *
+     * @return the length in millis or null if the instance is a stream.
+     */
     public abstract Long getLength();
 }

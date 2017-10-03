@@ -7,7 +7,6 @@ import com.github.nija123098.evelyn.moderation.DeletePinNotificationConfig;
 import com.github.nija123098.evelyn.moderation.messagefiltering.MessageMonitor;
 import com.github.nija123098.evelyn.chatbot.ChatBot;
 import com.github.nija123098.evelyn.command.CommandHandler;
-import com.github.nija123098.evelyn.discordobjects.exception.ErrorWrapper;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.helpers.ReactionBehavior;
 import com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
@@ -65,7 +64,10 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 /**
- * Made by nija123098 on 3/12/2017.
+ * Adapts Discord4J to the bot's wrappings.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public class DiscordAdapter {
     private static final Map<Class<? extends Event>, Constructor<? extends BotEvent>> EVENT_MAP;
@@ -141,7 +143,7 @@ public class DiscordAdapter {
         });
     }
     /**
-     * Forces the initialization of this class
+     * Forces the initialization of this class.
      */
     public static void initialize(){
         Log.log("Discord adapter initialized");
@@ -179,33 +181,60 @@ public class DiscordAdapter {
     public static void handle(ReactionEvent event){// it's cleaner than the alternative
         EventDistributor.distribute(new DiscordReactionEvent(event));
     }
+
+    /**
+     * A {@link MemoryManagementService.ManagedList} for keeping track
+     * of the messages that contain a non-blanket mentions to the bot.
+     */
     private static final List<IMessage> MENTIONED_MESSAGES = new MemoryManagementService.ManagedList<>(2_000);
+
+    /**
+     * Registers messages that contain non-blanket mentions
+     * of the bot and schedules an eye {@link Reaction} after 500 millis.
+     *
+     * @param event handles the Discord4J {@link MentionEvent} for tracking mentions.
+     */
     @EventSubscriber
     public static void handle(MentionEvent event){
         if (event.getMessage().mentionsEveryone() || event.getMessage().mentionsHere() || !event.getChannel().getModifiedPermissions(DiscordClient.getOurUser().user()).contains(Permissions.ADD_REACTIONS)) return;
-        ScheduleService.schedule(500, () -> {
+        ScheduleService.schedule(1500, () -> {
             if (MENTIONED_MESSAGES.contains(event.getMessage())) ErrorWrapper.wrap(() -> event.getMessage().addReaction(ReactionEmoji.of(EmoticonHelper.getChars("eyes", false))));
         });
     }
+
+    /**
+     * Handles receiving messages from users.
+     * First it is processed through {@link MessageMonitor},
+     * then invoked if it is read as a command,
+     * then distributed to other {@link MessageReceivedEvent} listeners.
+     *
+     * @param event the Discord4J event to listen for.
+     */
     @EventSubscriber
     public static void handle(MessageReceivedEvent event){
         if (event.getAuthor().isBot() || !Launcher.isReady() || event.getMessage().getContent() == null) return;
         if (event.getMessage().getContent().isEmpty()) DeletePinNotificationConfig.handle(new DiscordMessageReceived(event));
         DiscordMessageReceived receivedEvent = new DiscordMessageReceived(event);
         if (MessageMonitor.monitor(receivedEvent)) return;
-        Boolean parseForCommand = CommandHandler.handle(receivedEvent);
-        if (parseForCommand == null){
+        Boolean isCommand = CommandHandler.handle(receivedEvent);
+        if (isCommand == null){
             String thought = receivedEvent.getMessage().getContent();
             if (ChatBot.mayChat(receivedEvent.getChannel(), receivedEvent.getMessage().getContent())) {
                 new MessageMaker(receivedEvent.getChannel()).appendRaw(ChatBot.getChatBot(receivedEvent.getChannel()).think(thought)).send();
-            }
-            receivedEvent.setCommand(true);
-        } else {
-            receivedEvent.setCommand(parseForCommand);
-            if (!parseForCommand) MENTIONED_MESSAGES.add(receivedEvent.getMessage().message());
+                receivedEvent.setCommand(true);
+                isCommand = true;
+            } else isCommand = false;
         }
+        receivedEvent.setCommand(isCommand);
+        if (!isCommand) MENTIONED_MESSAGES.add(receivedEvent.getMessage().message());
         EventDistributor.distribute(receivedEvent);
     }
+
+    /**
+     * Listens for Discord4J {@link Event}s and redistributes wrapped versions.
+     *
+     * @param event the Discord4J {@link Event} to listen for.
+     */
     @EventSubscriber
     public static void handle(Event event){
         if (BOT_LAG_LOCKED.get()) return;
