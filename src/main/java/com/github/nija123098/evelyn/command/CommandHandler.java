@@ -32,7 +32,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * Handles all command registration and invocation.
  *
  * @author nija123098
- * @since 2.0.0
+ * @since 1.0.0
  * @see AbstractCommand
  */
 public class CommandHandler {
@@ -204,9 +204,13 @@ public class CommandHandler {
             }else if (string.startsWith(MENTION.get())){
                 mayChat = true;
                 string = string.substring(MENTION.get().length());
-            } else while (!Character.isLetterOrDigit(string.charAt(0))) {
-                mayChat = false;
-                string = string.substring(1);
+            } else {
+                String original = string;
+                while (!string.isEmpty() && !Character.isLetterOrDigit(string.charAt(0))) {
+                    mayChat = false;
+                    string = string.substring(1);
+                }
+                if (string.isEmpty()) string = original;
             }
             if (string.toLowerCase().startsWith("evelyn")) string = string.substring(5);
         }else{

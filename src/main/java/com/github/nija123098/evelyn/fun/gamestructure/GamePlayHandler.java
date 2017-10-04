@@ -38,7 +38,7 @@ public class GamePlayHandler {
                 neuralNet = newNet;
                 GAME_NET_MAP.put(game, neuralNet);
             }
-            nGame.chose(DiscordClient.getOurUser(), nGame.getDecision(neuralNet.compute(game.inputNodes())).getName());
+            nGame.chose(DiscordClient.getOurUser(), nGame.getDecision(neuralNet.compute(nGame.inputNodes())).getName());
         }else{// random
             List<GameChoice> list = game.getChoices().stream().filter(gameChoice -> gameChoice.mayChose(team)).collect(Collectors.toList());
             if (list.isEmpty()) throw new GameResultException(game, null);// this should not happen

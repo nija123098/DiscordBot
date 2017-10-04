@@ -81,12 +81,8 @@ public class Playlist implements Configurable {
     @Override
     public void checkPermissionToEdit(User user, Guild guild){
         if (this.id.startsWith("pl-u-")){
-            if (!this.getOwner().equals(user)){
-                throw new PermissionsException("You don't own this playlist, " + ((User) this.getOwner()).getDisplayName(guild) + " does");
-            }
-        }else{
-            if (!BotRole.GUILD_TRUSTEE.hasRequiredRole(user, guild)) throw new PermissionsException("You must at least be a trustee edit a server playlist");
-        }
+            if (!this.getOwner().equals(user)) throw new PermissionsException("You don't own this playlist, " + ((User) this.getOwner()).getDisplayName(guild) + " does");
+        }else if (!(BotRole.GUILD_TRUSTEE.hasRequiredRole(user, guild) && BotRole.GUILD_DJ.hasRole(user, guild))) throw new PermissionsException("You must at least be a trustee edit a server playlist");
     }
 
     @Override

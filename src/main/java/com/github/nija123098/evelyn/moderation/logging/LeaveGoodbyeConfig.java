@@ -24,6 +24,6 @@ public class LeaveGoodbyeConfig extends AbstractConfig<Channel, Guild> {
         if (channel == null) return;
         Template template = TemplateHandler.getTemplate(KeyPhrase.USER_LEAVE, leave.getGuild(), Collections.emptyList());
         if (template == null) return;
-        new MessageMaker(channel).appendRaw(template.interpret(leave.getUser(), null, null, leave.getGuild(), null, null, leave.responsibleUser(), leave.wasKicked(), leave.wasBanned()));
+        new MessageMaker(channel).appendRaw(template.interpret(leave.getUser(), null, null, leave.getGuild(), null, null, leave.responsibleUser(), leave.wasKicked(), leave.wasBanned())).send();
     }
 }

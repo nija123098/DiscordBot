@@ -1,7 +1,6 @@
 package com.github.nija123098.evelyn.discordobjects.wrappers;
 
 import sx.blah.discord.handle.obj.IChannel;
-import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.Permissions;
 import sx.blah.discord.util.cache.LongMap;
 
