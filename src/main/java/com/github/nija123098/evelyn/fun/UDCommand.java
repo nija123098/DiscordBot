@@ -19,12 +19,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 /**
  * Made by nija123098 on 6/5/2017.
@@ -68,6 +63,7 @@ public class UDCommand extends AbstractCommand {
     private static void getMessage(MessageMaker maker, String link, JSONArray listObject, int definition) {
         maker.getHeader().clear();
         maker.clearFieldParts();
+        maker.forceCompile();
         JSONObject firstResult = (JSONObject) listObject.get(definition);
         maker.withUrl(link).getTitle().append(firstResult.get("word").toString());
         maker.append(StringEscapeUtils.unescapeHtml4(firstResult.get("definition").toString()));

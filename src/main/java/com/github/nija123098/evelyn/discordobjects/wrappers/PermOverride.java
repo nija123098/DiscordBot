@@ -1,6 +1,6 @@
 package com.github.nija123098.evelyn.discordobjects.wrappers;
 
-import sx.blah.discord.handle.obj.IChannel;
+import sx.blah.discord.handle.obj.PermissionOverride;
 import sx.blah.discord.handle.obj.Permissions;
 import sx.blah.discord.util.cache.LongMap;
 
@@ -9,18 +9,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Wraps a Discord4j {@link IChannel.PermissionOverride} object.
+ * Wraps a Discord4j {@link PermissionOverride} object.
  *
  * @author nija123098
  * @since 1.0.0
  */
 public class PermOverride {// no need to store this, it doesn't get used right now
-    static Map<User, PermOverride> getUserMap(LongMap<IChannel.PermissionOverride> overrideMap){
+    static Map<User, PermOverride> getUserMap(LongMap<PermissionOverride> overrideMap){
         HashMap<User, PermOverride> map = new HashMap<>(overrideMap.size());
         overrideMap.forEach((user, permOverride) -> map.put(User.getUser(String.valueOf(user)), get(permOverride)));
         return map;
     }
-    static Map<Role, PermOverride> getRoleMap(LongMap<IChannel.PermissionOverride> overrideMap){
+    static Map<Role, PermOverride> getRoleMap(LongMap<PermissionOverride> overrideMap){
         HashMap<Role, PermOverride> map = new HashMap<>(overrideMap.size());
         overrideMap.forEach((role, permOverride) -> map.put(Role.getRole(String.valueOf(role)), get(permOverride)));
         return map;
@@ -28,7 +28,7 @@ public class PermOverride {// no need to store this, it doesn't get used right n
     static PermOverride get(EnumSet<Permissions> allow, EnumSet<Permissions> deny){
         return new PermOverride(allow, deny);
     }
-    static PermOverride get(IChannel.PermissionOverride permissionOverride){
+    static PermOverride get(PermissionOverride permissionOverride){
         return new PermOverride(permissionOverride.allow(), permissionOverride.deny());
     }
     private final EnumSet<Permissions> allow;

@@ -4,9 +4,13 @@ import com.github.nija123098.evelyn.config.ConfigLevel;
 import com.github.nija123098.evelyn.config.Configurable;
 import com.github.nija123098.evelyn.config.GlobalConfigurable;
 import com.github.nija123098.evelyn.discordobjects.ErrorWrapper;
+import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventDistributor;
+import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
+import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordMessageReceived;
 import com.github.nija123098.evelyn.exeption.ConfigurableConvertException;
 import com.github.nija123098.evelyn.perms.BotRole;
 import com.github.nija123098.evelyn.service.services.MemoryManagementService;
+import com.github.nija123098.evelyn.service.services.ScheduleService;
 import com.github.nija123098.evelyn.util.FormatHelper;
 import com.github.nija123098.evelyn.util.GetterUtil;
 import com.github.nija123098.evelyn.util.Time;
@@ -16,6 +20,8 @@ import sx.blah.discord.handle.obj.IVoiceChannel;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Wraps a Discord4J {@link IChannel} object.
@@ -182,11 +188,11 @@ public class Channel implements Configurable {
     }
 
     public Map<User, PermOverride> getUserOverrides() {
-        return PermOverride.getUserMap(channel().getUserOverridesLong());
+        return PermOverride.getUserMap(channel().getRoleOverrides());
     }
 
     public Map<Role, PermOverride> getRoleOverrides() {
-        return PermOverride.getRoleMap(channel().getRoleOverridesLong());
+        return PermOverride.getRoleMap(channel().getUserOverrides());
     }
 
     public EnumSet<DiscordPermission> getModifiedPermissions(User user) {
@@ -222,11 +228,29 @@ public class Channel implements Configurable {
     }
 
     public List<Message> getMessages(){
-        return Message.getMessages(Arrays.asList(this.channel().getMessageHistory().asArray()));
+        return Message.getMessages(Arrays.asList(this.channel().getMessageHistoryTo(this.channel().getCreationDate()).asArray()));
     }
 
+    static {
+        EventDistributor.register(Channel.class);
+    }// this is done since D4J doesn't update the cache with messages for ~30 seconds
+    private static final long CACHE_RETENTION = 60_000;
+    private static final Map<Channel, List<Message>> SENT_MESSAGES_CACHE = new HashMap<>();
+    @EventListener
+    public static void messageListen(DiscordMessageReceived event){
+        List<Message> messages = SENT_MESSAGES_CACHE.computeIfAbsent(event.getChannel(), channel -> new ArrayList<>());
+        messages.add(event.getMessage());
+        ScheduleService.schedule(CACHE_RETENTION, () -> messages.remove(0));
+    }// will remove the message from the event barring something peculiar
+
     public List<Message> getMessages(int count){
-        return Message.getMessages(channel().getMessageHistory(count));
+        Map<Long, Message> timeCache = new HashMap<>(count + 20, 1);
+        List<Message> cached = SENT_MESSAGES_CACHE.computeIfAbsent(this, channel -> new ArrayList<>());
+        if (cached.size() >= count) return cached.subList(count - cached.size(), count);// for if we have all the messages cached
+        Stream.concat(Message.getMessages(channel().getMessageHistory(count)).stream(), cached.stream()).forEach(message -> timeCache.put(message.getTime(), message));
+        Long[] timeArray = timeCache.keySet().toArray(new Long[timeCache.size()]);
+        Arrays.sort(timeArray);
+        return Stream.of(Arrays.copyOfRange(timeArray, timeCache.size() - count, timeCache.size())).map(timeCache::get).collect(Collectors.toList());
     }
 
     public List<Message> getMessagesTo(long date){

@@ -1,5 +1,6 @@
 package com.github.nija123098.evelyn.moderation.modaction;
 
+import com.github.nija123098.evelyn.command.ContextType;
 import com.github.nija123098.evelyn.moderation.MuteRoleConfig;
 import com.github.nija123098.evelyn.moderation.modaction.support.AbstractModAction;
 import com.github.nija123098.evelyn.moderation.modaction.support.MuteActionConfig;
@@ -27,7 +28,7 @@ public class MuteModActionCommand extends AbstractCommand {
         super(ModActionCommand.class, "mute", "mute", null, "m", "Mutes an annoying user for a specified amount of time or 1 hour by default");
     }
     @Command
-    public void command(Guild guild, User user, @Argument(info = "the user to be muted") User target, @Argument(optional = true, info = "duration of punishment") Time time, @Argument(info = "the reason", optional = true) String reason){
+    public void command(Guild guild, User user, @Argument(info = "the user to be muted") User target, @Argument(optional = true, replacement = ContextType.NONE, info = "duration of punishment") Time time, @Argument(info = "the reason", optional = true) String reason){
         if (ConfigHandler.getSetting(MuteRoleConfig.class, guild) == null) throw new ConfigurationException("No mute role is configured");
         long length = time != null ? time.timeUntil() : 3600000;
         mute(guild, target, length);

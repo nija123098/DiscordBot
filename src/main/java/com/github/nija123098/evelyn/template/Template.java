@@ -5,6 +5,7 @@ import com.github.nija123098.evelyn.command.CommandHandler;
 import com.github.nija123098.evelyn.command.ContextPack;
 import com.github.nija123098.evelyn.command.ContextRequirement;
 import com.github.nija123098.evelyn.command.annotations.Argument;
+import com.github.nija123098.evelyn.config.Configurable;
 import com.github.nija123098.evelyn.exeption.ArgumentException;
 import com.github.nija123098.evelyn.util.FormatHelper;
 import com.github.nija123098.evelyn.util.StringIterator;
@@ -186,7 +187,7 @@ public class Template {
         String calculate(User user, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, Object... objects) {
             String s = "";
             for (Arg arg : args) {
-                s += arg.calculate(user, shard, channel, guild, message, reaction, objects);
+                s += Template.toString(arg.calculate(user, shard, channel, guild, message, reaction, objects));
             }
             return s;
         }
@@ -194,6 +195,9 @@ public class Template {
         Class<String> getReturnType() {
             return String.class;
         }
+    }
+    private static String toString(Object o){
+        return o instanceof Configurable ? ((Configurable) o).getName() : String.valueOf(o);
     }
 
     /**

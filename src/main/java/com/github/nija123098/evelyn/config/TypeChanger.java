@@ -13,8 +13,6 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -71,8 +69,8 @@ public class TypeChanger {
         X_STREAM_OBJECT_ALTERING.put(clazz, function);
     }
     static {
-        alter(CopyOnWriteArrayList.class, ArrayList::new);
-        alter(ConcurrentHashMap.class, HashMap::new);
+        alter(List.class, ArrayList::new);
+        alter(Map.class, HashMap::new);
     }
 
     /**
@@ -83,9 +81,11 @@ public class TypeChanger {
      * @return a new comparable object.
      */
     private static <T> Object alter(T o){
-        Function<T, Object> function = (Function<T, Object>) X_STREAM_OBJECT_ALTERING.get(o.getClass());
-        if (function == null) return o;
-        return function.apply(o);
+        for (Class<?> clazz : ReflectionHelper.getAssignableTypes(o.getClass())){
+            Function<T, Object> function = (Function<T, Object>) X_STREAM_OBJECT_ALTERING.get(clazz);
+            if (function != null) return function.apply(o);
+        }
+        return o;
     }
 
     /**
@@ -111,12 +111,10 @@ public class TypeChanger {
         if (from.isEnum()) return o.toString();
         if (from.equals(String.class)) return (String) o;
         AtomicReference<String> reference = new AtomicReference<>();
-        ReflectionHelper.getAssignableTypes(from).forEach(clazz -> {
+        for (Class<?> clazz : ReflectionHelper.getAssignableTypes(from)){
             Function<Object, String> f = (Function<Object, String>) TO_STRING.get(clazz);
-            if (reference.get() == null && f != null) {
-                reference.set(f.apply(o));
-            }
-        });
+            if (f != null) return f.apply(o);
+        }
         if (reference.get() != null) return reference.get();
         return X_STREAM.toXML(alter(o)).replace("\n", "");
     }

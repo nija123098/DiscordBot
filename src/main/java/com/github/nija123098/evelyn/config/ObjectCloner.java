@@ -4,14 +4,13 @@ import com.github.nija123098.evelyn.exeption.DevelopmentException;
 import com.github.nija123098.evelyn.perms.configs.specialperms.SpecialPermsContainer;
 import com.github.nija123098.evelyn.util.ReflectionHelper;
 import javafx.util.Pair;
-import org.eclipse.jetty.util.ConcurrentHashSet;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -73,12 +72,12 @@ public class ObjectCloner {
         throw new DevelopmentException("Attempted to clone a object of non-supported type");
     }
     private static <E> Set<E> getSet(Set<E> es){
-        Set<E> objects = new ConcurrentHashSet<>();
+        Set<E> objects = new HashSet<>();
         objects.addAll(es);
         return objects;
     }
     private static <E, F> Map<E, F> getMap(Map<E, F> es){
-        Map<E, F> objects = new ConcurrentHashMap<>();
+        Map<E, F> objects = new HashMap<>();
         objects.putAll(es);
         return objects;
     }
