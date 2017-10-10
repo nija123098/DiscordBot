@@ -75,7 +75,7 @@ public class Role implements Configurable {
     @Override
     public <T extends Configurable> Configurable convert(Class<T> t) {
         if (t.equals(Role.class)) return this;
-        if (!this.getGuild().getEveryoneRole().equals(this)){
+        if (this.getGuild().getEveryoneRole().equals(this)){
             if (t.equals(Guild.class)) return this.getGuild();
             if (t.equals(Channel.class) && this.getGuild().getGeneralChannel() != null) return this.getGuild().getGeneralChannel();
         }

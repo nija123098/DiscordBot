@@ -12,6 +12,7 @@ import com.github.nija123098.evelyn.config.GlobalConfigurable;
 import com.github.nija123098.evelyn.config.GuildUser;
 import com.github.nija123098.evelyn.config.configs.user.LastCommandTimeConfig;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
+import com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 import com.github.nija123098.evelyn.discordobjects.wrappers.*;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventDistributor;
 import com.github.nija123098.evelyn.exeption.BotException;
@@ -162,7 +163,7 @@ public class AbstractCommand {
             }else if (parameter.isAnnotationPresent(Argument.class) && !parameter.getAnnotation(Argument.class).optional() && !this.isTemplateCommand()){
                 this.contextRequirements.addAll(InvocationObjectGetter.getConvertRequirements(parameter.getType(), parameter.getAnnotation(Argument.class).replacement()));
             }
-            if (MessageMaker.class.equals(parameter.getType())) this.okOnSuccess = false;
+            if (parameter.getType().equals(MessageMaker.class) || parameter.getType().equals(GuildAudioManager.class)) this.okOnSuccess = false;
         }// makes it into a more efficient set
         this.contextRequirements = this.contextRequirements.isEmpty() ? Collections.emptySet() : EnumSet.copyOf(this.contextRequirements);
         this.subCommands = new HashSet<>();

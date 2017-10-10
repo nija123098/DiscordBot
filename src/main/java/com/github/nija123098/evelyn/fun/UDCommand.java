@@ -61,9 +61,7 @@ public class UDCommand extends AbstractCommand {
     }
 
     private static void getMessage(MessageMaker maker, String link, JSONArray listObject, int definition) {
-        maker.getHeader().clear();
-        maker.clearFieldParts();
-        maker.forceCompile();
+        maker.clearFieldParts().getHeader().clear();
         JSONObject firstResult = (JSONObject) listObject.get(definition);
         maker.withUrl(link).getTitle().append(firstResult.get("word").toString());
         maker.append(StringEscapeUtils.unescapeHtml4(firstResult.get("definition").toString()));
@@ -71,7 +69,7 @@ public class UDCommand extends AbstractCommand {
             maker.getNewFieldPart().getTitle().append("Example").getFieldPart().getValue().append("\n\n*" + firstResult.get("example") + "*\n");
         maker.getNewFieldPart().getTitle().append("Rating").getFieldPart().getValue().append(EmoticonHelper.getChars("+1", false) + firstResult.get("thumbs_up") + "  " + EmoticonHelper.getChars("-1", false) + firstResult.get("thumbs_down"));
         maker.getNote().appendRaw("By " + firstResult.get("author").toString());
-        maker.send();
+        maker.forceCompile().send();
     }
 
     @Override

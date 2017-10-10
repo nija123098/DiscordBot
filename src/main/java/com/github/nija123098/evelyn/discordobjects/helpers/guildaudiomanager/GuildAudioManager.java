@@ -137,6 +137,7 @@ public class GuildAudioManager extends AudioEventAdapter{
      * @return a manager instance if one exists for the guild or null.
      */
     public static GuildAudioManager getManager(Guild guild){
+        if (guild == null) return null;
         return MAP.get(guild.getID());
     }
     private AudioProvider audioProvider;

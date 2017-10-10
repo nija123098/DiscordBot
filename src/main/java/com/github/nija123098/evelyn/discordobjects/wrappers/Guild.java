@@ -335,4 +335,8 @@ public class Guild implements Configurable {
     public long getCreationDate() {
         return Time.toMillis(guild().getCreationDate());
     }
+
+    public List<Category> getCategories() {
+        return Category.getCategories(this.guild().getCategories());
+    }
 }

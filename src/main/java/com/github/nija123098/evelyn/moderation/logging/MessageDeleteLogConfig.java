@@ -23,5 +23,6 @@ public class MessageDeleteLogConfig extends AbstractConfig<Channel, Guild> {
         maker.getNote().appendRaw("ID: " + delete.getMessage().getID());
         Attachment attachment = delete.getMessage().getAttachments().stream().filter(att -> att.getUrl().endsWith("gif") || att.getUrl().endsWith("webv")).findFirst().orElse(null);
         if (attachment != null) maker.withImage(attachment.getUrl());
+        maker.send();
     }
 }

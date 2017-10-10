@@ -52,6 +52,8 @@ public class BotConfig {
     @ConfigurationOption
     public static String STATS_OVER_TIME = CONTAINER_PATH + "TimeStats.txt";
     @ConfigurationOption
+    public static String VERIFIED_GAMES = CONTAINER_PATH + "VerifiedGames.txt";
+    @ConfigurationOption
     public static String BADGE_PATH = CONTAINER_PATH + "badges\\";
     @ConfigurationOption
     public static int MUSIC_DOWNLOAD_THREAD_COUNT = 1;

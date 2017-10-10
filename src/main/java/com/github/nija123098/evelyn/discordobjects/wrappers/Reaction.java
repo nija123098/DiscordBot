@@ -46,7 +46,7 @@ public class Reaction {// should not be saved
 
     @Override
     public int hashCode() {
-        return reaction().getMessage().hashCode();
+        return reaction().hashCode();
     }
 
     public Message getMessage(){

@@ -33,15 +33,12 @@ public class PermissionsException extends BotException {
         super(e);
     }
 
-    public static void checkPermissions(Channel channel, User user, DiscordPermission...permissions){
+    public static void checkPermissions(Channel channel, DiscordPermission...permissions){
         if (channel.isPrivate()) return;
-        EnumSet<DiscordPermission> perm = user.getPermissionsForGuild(channel.getGuild());
+        EnumSet<DiscordPermission> perm = DiscordClient.getOurUser().getPermissionsForGuild(channel.getGuild());
         Set<DiscordPermission> required = new HashSet<>();
         Collections.addAll(required, permissions);
         required.removeAll(perm);
         if (!required.isEmpty()) throw new PermissionsException("I require more permissions to do that: " + required);
-    }
-    public static void checkPermissions(Channel channel, DiscordPermission...permissions){
-        checkPermissions(channel, DiscordClient.getOurUser(), permissions);
     }
 }

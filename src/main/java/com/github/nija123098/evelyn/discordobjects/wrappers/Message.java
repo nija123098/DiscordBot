@@ -2,6 +2,7 @@ package com.github.nija123098.evelyn.discordobjects.wrappers;
 
 import com.github.nija123098.evelyn.discordobjects.ErrorWrapper;
 import com.github.nija123098.evelyn.exeption.GhostException;
+import com.github.nija123098.evelyn.exeption.PermissionsException;
 import com.github.nija123098.evelyn.launcher.BotConfig;
 import com.github.nija123098.evelyn.service.services.MemoryManagementService;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
@@ -163,7 +164,9 @@ public class Message {// should not be kept stored, too many are made
     }
 
     private Reaction addReaction(ReactionEmoji reactionEmoji){
-        ErrorWrapper.wrap(() -> this.message().addReaction(reactionEmoji));
+        try {
+            ErrorWrapper.wrap(() -> this.message().addReaction(reactionEmoji));
+        } catch (PermissionsException ignored){}// scilent falior here is acceptable
         return Reaction.getReaction(this.message().getReactionByEmoji(reactionEmoji));
     }
 

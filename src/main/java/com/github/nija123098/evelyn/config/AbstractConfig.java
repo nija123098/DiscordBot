@@ -6,7 +6,6 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.*;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventDistributor;
 import com.github.nija123098.evelyn.exeption.ArgumentException;
 import com.github.nija123098.evelyn.exeption.DevelopmentException;
-import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.perms.BotRole;
 import com.github.nija123098.evelyn.service.services.ScheduleService;
 import com.github.nija123098.evelyn.util.Care;
@@ -176,6 +175,15 @@ public class AbstractConfig<V, T extends Configurable> {
      */
     public boolean isNormalViewing() {
         return this.normalViewing;
+    }
+
+    /**
+     * Gets if the config should be set after a default is gotten.
+     *
+     * @return if the config should be set after a default is gotten.
+     */
+    protected boolean setDefault(){
+        return false;
     }
 
     /**

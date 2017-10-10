@@ -1,4 +1,4 @@
-package com.github.nija123098.evelyn.moderation.temporarychannels;
+package com.github.nija123098.evelyn.moderation.temporary;
 
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ContextType;
@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Predicate;
 
 public class TemporaryChannelCommand extends AbstractCommand {
     private static final int TEXT_INACTIVITY = 3_600_000, VOICE_INACTIVITY = 1_800_000, CHECKING_INTERVAL = 60_000, ITERATIONS = VOICE_INACTIVITY / CHECKING_INTERVAL;

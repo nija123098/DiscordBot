@@ -268,4 +268,8 @@ public class Channel implements Configurable {
     public boolean isDeleted() {
         return channel().isDeleted();
     }
+
+    public Category getCategory() {
+        return Category.getCategory(channel().getCategory());
+    }
 }

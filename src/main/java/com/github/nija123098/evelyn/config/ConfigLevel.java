@@ -2,11 +2,8 @@ package com.github.nija123098.evelyn.config;
 
 import com.github.nija123098.evelyn.audio.Playlist;
 import com.github.nija123098.evelyn.audio.Track;
-import com.github.nija123098.evelyn.discordobjects.wrappers.Role;
+import com.github.nija123098.evelyn.discordobjects.wrappers.*;
 import com.github.nija123098.evelyn.exeption.DevelopmentException;
-import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
-import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
-import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 
 import java.util.HashSet;
 import java.util.List;
@@ -21,24 +18,27 @@ import java.util.stream.Stream;
  * @author nija123098
  * @since 1.0.0
  */
+@ConfigurableTypeAddLocation("A enum representation must be added")
 public enum ConfigLevel {
-    /** The type for audio tracks */
+    /** The enum representation for audio tracks */
     TRACK(Track.class, false),
-    /** The type for any playlist type */
+    /** The enum representation for any playlist type */
     PLAYLIST(Playlist.class, false),
-    /** The type for a user's config */
+    /** The enum representation for a user's config */
     USER(User.class, false),
-    /** The type for a channel's config */
+    /** The enum representation for a channel's config */
     CHANNEL(Channel.class, true),
-    /** The type for a user's config within a guild */
+    /** The enum representation for a category's config */
+    CATEGORY(Category.class, true),
+    /** The enum representation for a user's config within a guild */
     GUILD_USER(GuildUser.class, true),
-    /** The type for a role within a guild */
+    /** The enum representation for a role within a guild */
     ROLE(Role.class, true),
-    /** The type for a guild's config */
+    /** The enum representation for a guild's config */
     GUILD(Guild.class, true),
-    /** The type for global config */
+    /** The enum representation for global config */
     GLOBAL(GlobalConfigurable.class, false),
-    /** The type for a config that applies to all configurable types */
+    /** The enum representation for a config that applies to all configurable types */
     ALL(Configurable.class, false),;
     private final Class<? extends Configurable> clazz;
     private final Set<ConfigLevel> assignables = new HashSet<>();

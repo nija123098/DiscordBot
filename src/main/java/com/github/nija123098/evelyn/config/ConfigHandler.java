@@ -6,13 +6,10 @@ import com.github.nija123098.evelyn.config.configs.ConfigurableExistsConfig;
 import com.github.nija123098.evelyn.discordobjects.wrappers.*;
 import com.github.nija123098.evelyn.exeption.DevelopmentException;
 import com.github.nija123098.evelyn.launcher.Reference;
-import com.github.nija123098.evelyn.util.Care;
 import com.github.nija123098.evelyn.util.Log;
-import com.github.nija123098.evelyn.util.ThreadProvider;
 import org.reflections.Reflections;
 
 import java.lang.reflect.Modifier;
-import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -30,6 +27,7 @@ import java.util.stream.Collectors;
  * @see AbstractConfig
  * @see Configurable
  */
+@ConfigurableTypeAddLocation("The class constructor call a add function for the new Configurable")
 public class ConfigHandler {
     private static final Map<Class<? extends AbstractConfig<?, ? extends Configurable>>, AbstractConfig<?, ? extends Configurable>> CLASS_MAP;
     private static final Map<String, AbstractConfig<?, ? extends Configurable>> STRING_MAP;
@@ -54,6 +52,7 @@ public class ConfigHandler {
         add(Playlist.class, Playlist::getPlaylist);
         add(User.class, User::getUser);
         add(Channel.class, Channel::getChannel);
+        add(Category.class, Category::getCategory);
         add(GuildUser.class, GuildUser::getGuildUser);
         add(Role.class, Role::getRole);
         add(Guild.class, Guild::getGuild);
