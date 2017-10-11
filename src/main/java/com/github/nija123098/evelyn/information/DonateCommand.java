@@ -18,13 +18,13 @@ public class DonateCommand extends AbstractCommand {
     public void command(MessageMaker maker){
         maker.getTitle().append("Contributions!");
         maker.append("**Did you find a bug?**\n" +
-                "You can report them on `!discord`.\n" +
+                "You can report them on").appendRaw("`!discord`.\n").append(
                 "\n" +
                 "**Want to contribute or share your thoughts?**\n" +
-                "Feel free to join `!discord` and let your voice be heard! Feedback and suggestions are always welcome!\n" +
+                "Feel free to join ").appendRaw("`!discord`").append(" and let your voice be heard! Feedback and suggestions are always welcome!\n" +
                 "\n" +
                 "**You'd like to donate?**  (Yes you would)\n" +
-                "You can do this though my " + FormatHelper.embedLink("Patreon", "https://www.patreon.com/soarnija") + ".");
+                "You can do this though my ").appendRaw(FormatHelper.embedLink("Patreon", "https://www.patreon.com/soarnija") + ".");
         maker.withThumb(DiscordClient.getOurUser().getAvatarURL());
     }
 }

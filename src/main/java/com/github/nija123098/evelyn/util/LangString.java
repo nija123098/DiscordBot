@@ -15,7 +15,11 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * Assists in translation for segments of {@link String}
@@ -94,11 +98,39 @@ public class LangString {
      * {@link LangString#call(String, String)}
      * it formats the calls properly.
      *
+     * This is used to ensure that the requested translation
+     * is short enough or it is split into fragments for translation.
+     *
      * @param lang the lang code to translate to.
      * @param content the content to translate.
      * @return the translated content.
      */
-    public static String translate(String lang, String content) {
+    public static String translate(String lang, String content){
+        if (content.length() < 101) return preCall(lang, content);
+        StringBuilder total = new StringBuilder();
+        String building = "";
+        String[] split = content.split(Pattern.quote(". "));
+        for (int i = 0; i < split.length; i++) {
+            if (split[i].length() + building.length() > 100){
+                --i;
+                total.append(preCall(building, lang));
+                building = "";
+            }
+            if (i == split.length - 1) return total.append(preCall(building, lang)).toString();
+        }
+        throw new DevelopmentException("nija123098 did something horribly wrong!");
+    }// should never be called since "i == split.length - 1" should happen on the last iteration
+
+    /**
+     * Translates the content, but unlike
+     * {@link LangString#call(String, String)}
+     * it formats the calls properly.
+     *
+     * @param lang the lang code to translate to.
+     * @param content the content to translate.
+     * @return the translated content.
+     */
+    private static String preCall(String lang, String content) {
         return MAP.computeIfAbsent(lang, s -> new HashMap<>()).computeIfAbsent(content, s -> {
             if (content == null) return null;
             if (content.equals("\n")) return "\n";
