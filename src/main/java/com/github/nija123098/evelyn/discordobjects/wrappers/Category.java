@@ -16,7 +16,11 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Category implements Configurable {
     private static final Map<ICategory, Category> MAP = new MemoryManagementService.ManagedMap<>(150000);
     public static Category getCategory(String id){
-        return getCategory((ICategory) DiscordClient.getAny(client -> client.getCategoryByID(Long.valueOf(id))));
+        try {
+            return getCategory((ICategory) DiscordClient.getAny(client -> client.getCategoryByID(Long.valueOf(id))));
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
     public static Category getCategory(ICategory iCategory){
         if (iCategory == null) return null;

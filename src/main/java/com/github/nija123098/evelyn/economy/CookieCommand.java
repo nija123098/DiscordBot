@@ -4,6 +4,7 @@ import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.config.ConfigHandler;
+import com.github.nija123098.evelyn.config.Configurable;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
@@ -11,7 +12,6 @@ import com.github.nija123098.evelyn.economy.configs.CurrentMoneyConfig;
 import com.github.nija123098.evelyn.economy.configs.LastCookieUseConfig;
 import com.github.nija123098.evelyn.economy.configs.MoneyNameConfig;
 import com.github.nija123098.evelyn.economy.configs.MoneySymbolConfig;
-import com.github.nija123098.evelyn.util.EmoticonHelper;
 
 /**
  * Made by nija123098 on 6/6/2017.
@@ -31,5 +31,10 @@ public class CookieCommand extends AbstractCommand {
         maker.append("\nYou can retrieve a " + ConfigHandler.getSetting(MoneyNameConfig.class, user.getGoverningObject()) + " every 120 minutes, I'll save up to 12 for you");
         if (count != 0) MoneyTransfer.transact(guild, user, null, count, "Cookies from the cookie oven!");
         ConfigHandler.setSetting(LastCookieUseConfig.class, user, time);
+    }
+    @Override
+    public long getCoolDown(Class<? extends Configurable> clazz) {
+        if (clazz.equals(User.class)) return 600_000;
+        return super.getCoolDown(clazz);
     }
 }

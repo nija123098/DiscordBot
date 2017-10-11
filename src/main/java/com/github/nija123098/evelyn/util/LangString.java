@@ -107,16 +107,18 @@ public class LangString {
      */
     public static String translate(String lang, String content){
         if (content.length() < 101) return preCall(lang, content);
-        StringBuilder total = new StringBuilder();
-        String building = "";
+        StringBuilder total = new StringBuilder((int) (content.length() * 1.5));
+        StringBuilder building = new StringBuilder((int) (content.length() * 1.5));
         String[] split = content.split(Pattern.quote(". "));
         for (int i = 0; i < split.length; i++) {
-            if (split[i].length() + building.length() > 100){
+            if (building.length() == 0) {
+                total.append(preCall(lang, split[i]));
+            } else if (split[i].length() + building.length() > 100){
                 --i;
-                total.append(preCall(building, lang));
-                building = "";
-            }
-            if (i == split.length - 1) return total.append(preCall(building, lang)).toString();
+                total.append(preCall(lang, building.toString()));
+                building.delete(0, building.length());
+            } else building.append(split[i]);
+            if (i == split.length - 1) return total.append(preCall(lang, building.toString())).toString();
         }
         throw new DevelopmentException("nija123098 did something horribly wrong!");
     }// should never be called since "i == split.length - 1" should happen on the last iteration
