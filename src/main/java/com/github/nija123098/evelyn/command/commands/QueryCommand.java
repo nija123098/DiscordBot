@@ -21,13 +21,13 @@ public class QueryCommand extends AbstractCommand {
         super("query", ModuleLevel.DEVELOPMENT, null, null, "Gets data from the db");
     }
     @Command
-    public void command(@Argument String queary, MessageMaker maker){
-        if (queary == null || queary.isEmpty()) {
+    public void command(@Argument String query, MessageMaker maker){
+        if (query == null || query.isEmpty()) {
             maker.append("You should know this requires a SQL code argument");
             return;
         }
-        if (queary.startsWith("select")) queary += "query ";
-        String output = Database.select(queary, r -> {
+        if (query.startsWith("select")) query += "query ";
+        String output = Database.select(query, r -> {
             List<String> header = new ArrayList<>();
             List<List<String>> table = new ArrayList<>();
             ResultSetMetaData metaData = r.getMetaData();
