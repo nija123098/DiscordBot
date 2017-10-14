@@ -34,6 +34,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * A type for defining a speech parser for a single
@@ -249,9 +251,7 @@ public class SpeechParser implements IAudioReceiver {
     }
     private static void register(Guild guild, List<User> users){
         GuildAudioManager manager = GuildAudioManager.getManager(guild);
-        Map<User, SpeechParser> map = new HashMap<>();
-        users.stream().filter(user -> !user.isBot()).forEach(u -> map.put(u, new SpeechParser(u, manager)));
-        PARSER_MAP.put(guild, map);
+        PARSER_MAP.put(guild, users.stream().filter(user -> !user.isBot()).collect(Collectors.toMap(Function.identity(), o -> new SpeechParser(o, manager))));
     }
     @EventListener
     public static void handle(DiscordVoiceLeave event){

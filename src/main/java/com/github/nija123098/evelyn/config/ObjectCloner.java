@@ -40,7 +40,7 @@ public class ObjectCloner {
         MAP.put(clazz, (Function<Object, Object>) function);
     }
     private static <T> void add(Class<T> clazz){
-        MAP.put(clazz, o -> o);
+        MAP.put(clazz, Function.identity());
     }
 
     /**

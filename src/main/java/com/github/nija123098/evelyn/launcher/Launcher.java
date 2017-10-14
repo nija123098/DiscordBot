@@ -32,7 +32,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * @since 1.0.0
  */
 public class Launcher {
-    public static final Set<User> USERS = new HashSet<>();
+    private static final Set<User> SYSTEM_PERM_USERS = new HashSet<>();
     private static final Set<Runnable> STARTUPS = new HashSet<>();
     private static final Set<Runnable> ASYNC_STARTUPS = new HashSet<>();
     private static final Set<Runnable> SHUTDOWNS = new HashSet<>();
@@ -93,8 +93,8 @@ public class Launcher {
      * @param user the user to give {@link BotRole#SYSTEM} permissions to.
      */
     public static void grantSystemAccess(User user){
-        USERS.add(user);
-        ScheduleService.schedule(300_000, () -> USERS.remove(user));
+        SYSTEM_PERM_USERS.add(user);
+        ScheduleService.schedule(300_000, () -> SYSTEM_PERM_USERS.remove(user));
     }
 
     /**
@@ -104,7 +104,7 @@ public class Launcher {
      * @return if the specified {@link User} has {@link BotRole#SYSTEM} rights.
      */
     public static boolean hasSystemAccess(User user){
-        return USERS.contains(user);
+        return SYSTEM_PERM_USERS.contains(user);
     }
 
     /**

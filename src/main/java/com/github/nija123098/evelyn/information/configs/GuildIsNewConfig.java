@@ -9,6 +9,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordGuildJoin;
+import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordGuildLeave;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordMessageSend;
 import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.moderation.logging.BotChannelConfig;
@@ -29,6 +30,11 @@ public class GuildIsNewConfig extends AbstractConfig<Boolean, Guild> {
     @EventListener
     public void handle(DiscordGuildJoin join){
         welcome(join.getGuild());
+    }
+    @EventListener
+    public void handle(DiscordGuildLeave leave){
+        GUILDS.remove(leave.getGuild());
+        this.reset(leave.getGuild());
     }
     private void welcome(Guild guild){
         if (!GUILDS.add(guild)) return;

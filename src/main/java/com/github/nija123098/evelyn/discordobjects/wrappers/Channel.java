@@ -233,8 +233,8 @@ public class Channel implements Configurable {
 
     static {
         EventDistributor.register(Channel.class);
-    }// this is done since D4J doesn't update the cache with messages for ~30 seconds
-    private static final long CACHE_RETENTION = 60_000;
+    }// this is done since D4J doesn't update the cache with messages for ~60 seconds
+    private static final long CACHE_RETENTION = 120_000;
     private static final Map<Channel, List<Message>> SENT_MESSAGES_CACHE = new HashMap<>();
     @EventListener
     public static void messageListen(DiscordMessageReceived event){

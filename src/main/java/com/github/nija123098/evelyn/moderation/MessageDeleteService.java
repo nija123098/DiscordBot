@@ -1,5 +1,6 @@
 package com.github.nija123098.evelyn.moderation;
 
+import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordPermission;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Message;
 import com.github.nija123098.evelyn.exeption.PermissionsException;
@@ -19,10 +20,11 @@ public class MessageDeleteService extends AbstractService {
         PermissionsException.checkPermissions(messages.get(0).getChannel(), DiscordPermission.MANAGE_MESSAGES, DiscordPermission.READ_MESSAGES, DiscordPermission.READ_MESSAGE_HISTORY);
         messages = messages.stream().filter(message -> !message.isPinned()).collect(Collectors.toList());
         if (messages.isEmpty()) return;
-        if (!messages.get(0).getChannel().isPrivate()){
+        Channel channel = messages.get(0).getChannel();
+        if (!channel.isPrivate()){
             List<Message> deleted;
-            do {if (messages.isEmpty()) return;
-                deleted = messages.get(0).getChannel().bulkDelete(messages.subList(0, Math.min(100, messages.size())));
+            do {if (messages.size() < 3) break;
+                deleted = channel.bulkDelete(messages.subList(0, Math.min(100, messages.size())));
                 messages.removeAll(deleted);
             } while (deleted.size() == 100);
         }

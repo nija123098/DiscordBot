@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * A type for organizing a single user or members with a role's
@@ -55,9 +57,7 @@ public class Team {
         if (role.getUsers().isEmpty()) throw new ContextException("There must be people on a team though");
     }
     public void load(AbstractGame game){
-        List<GameChoice> choices = game.getChoices();
-        this.choiceMap = new HashMap<>(choices.size() + 2, 1);
-        choices.forEach(gameChoice -> this.choiceMap.put(gameChoice.getName(), gameChoice));
+        this.choiceMap = game.getChoices().stream().collect(Collectors.toMap(GameChoice::getName, Function.identity()));
     }
     Float chose(User user, String choice){// don't use this to make decisions in command aliasing
         if (!this.choiceMap.containsKey(choice)) throw new ArgumentException("Invalid move: " + choice);

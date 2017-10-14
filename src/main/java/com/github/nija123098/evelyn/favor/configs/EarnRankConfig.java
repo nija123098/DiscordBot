@@ -32,7 +32,7 @@ public class EarnRankConfig extends AbstractConfig<Float, Role> {
         if (!event.getConfigurable().getClass().equals(GuildUser.class)) return;
         GuildUser user = (GuildUser) event.getConfigurable();
         if (user.getUser().isBot()) return;
-        if (USERS.add(user)) return;
+        if (!USERS.add(user)) return;
         ScheduleService.schedule(300_000, () -> USERS.remove(user));// 5 min
         Set<Role> roles = user.getGuild().getRoles().stream().filter(role -> this.getValue(role) != null).collect(Collectors.toSet());
         Set<Role> independents = roles.stream().filter(role -> ConfigHandler.getSetting(StackFavorRankConfig.class, role)).collect(Collectors.toSet());

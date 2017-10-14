@@ -97,12 +97,6 @@
             <groupId>com.github.nija123098</groupId>
             <artifactId>steam-api</artifactId>
             <version>77b445d4da</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-log4j12</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>ca.pjer</groupId>

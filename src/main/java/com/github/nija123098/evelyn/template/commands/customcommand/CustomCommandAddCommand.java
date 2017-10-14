@@ -12,6 +12,8 @@ import com.github.nija123098.evelyn.template.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Made by nija123098 on 8/11/2017.
@@ -19,9 +21,7 @@ import java.util.Set;
 public class CustomCommandAddCommand extends AbstractCommand {
     private static final Map<String, Class<?>> APPROVED_ARGUMENT_TYPES;
     static {
-        Set<Class<?>> classes = InvocationObjectGetter.getConversionTypes();
-        APPROVED_ARGUMENT_TYPES = new HashMap<>(classes.size() + 1, 1);
-        classes.forEach(clazz -> APPROVED_ARGUMENT_TYPES.put(clazz.getSimpleName().toLowerCase(), clazz));
+        APPROVED_ARGUMENT_TYPES = InvocationObjectGetter.getConversionTypes().stream().collect(Collectors.toMap(clazz -> clazz.getSimpleName().toLowerCase(), Function.identity()));
     }
     public CustomCommandAddCommand() {
         super(CustomCommandCommand.class, "add", null, null, "make", "Adds a command, if adding arguments split them with a ;");
