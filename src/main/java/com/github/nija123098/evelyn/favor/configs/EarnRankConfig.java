@@ -9,6 +9,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.favor.FavorChangeEvent;
 import com.github.nija123098.evelyn.perms.BotRole;
+import com.github.nija123098.evelyn.service.services.MemoryManagementService;
 import com.github.nija123098.evelyn.service.services.ScheduleService;
 import com.google.common.util.concurrent.AtomicDouble;
 import org.apache.commons.collections4.BidiMap;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
  * Made by nija123098 on 5/6/2017.
  */
 public class EarnRankConfig extends AbstractConfig<Float, Role> {
-    private static final Set<GuildUser> USERS = new HashSet<>();
+    private static final Set<GuildUser> USERS = new MemoryManagementService.ManagedSet<>(300_000);// 5 min
     public EarnRankConfig() {
         super("favor_requirement", ConfigCategory.FAVOR, (Float) null, "A map of roles earned by users due to their favor in a guild");
     }
@@ -33,7 +34,6 @@ public class EarnRankConfig extends AbstractConfig<Float, Role> {
         GuildUser user = (GuildUser) event.getConfigurable();
         if (user.getUser().isBot()) return;
         if (!USERS.add(user)) return;
-        ScheduleService.schedule(300_000, () -> USERS.remove(user));// 5 min
         Set<Role> roles = user.getGuild().getRoles().stream().filter(role -> this.getValue(role) != null).collect(Collectors.toSet());
         Set<Role> independents = roles.stream().filter(role -> ConfigHandler.getSetting(StackFavorRankConfig.class, role)).collect(Collectors.toSet());
         independents.forEach(role -> {

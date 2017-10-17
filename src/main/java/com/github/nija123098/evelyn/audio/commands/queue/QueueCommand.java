@@ -1,4 +1,4 @@
-package com.github.nija123098.evelyn.audio.commands;
+package com.github.nija123098.evelyn.audio.commands.queue;
 
 import com.github.nija123098.evelyn.audio.Track;
 import com.github.nija123098.evelyn.command.AbstractCommand;

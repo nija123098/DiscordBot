@@ -389,6 +389,15 @@ public class AbstractCommand {
     }
 
     /**
+     * Returns if the bot responds to reactions for this command.
+     *
+     * @return if the bot responds to reactions for this command.
+     */
+    public boolean useReactions(){
+        return false;
+    }
+
+    /**
      * A check if the user can use a command in the context.
      *
      * @param user the user that is being checked for permission.

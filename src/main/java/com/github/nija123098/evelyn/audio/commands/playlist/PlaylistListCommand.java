@@ -23,7 +23,6 @@ public class PlaylistListCommand extends AbstractCommand {
     }
     @Command
     public void command(@Argument(optional = true) Playlist playlist, User user, Guild guild, MessageMaker maker){
-        playlist.checkPermissionToEdit(user, guild);
         if (GlobalPlaylist.GLOBAL_PLAYLIST.equals(playlist)){
             maker.append("Whoa, that is way to long to list");
         }

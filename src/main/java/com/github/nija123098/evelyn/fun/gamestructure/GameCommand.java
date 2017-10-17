@@ -7,6 +7,7 @@ import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.launcher.Reference;
 import org.reflections.Reflections;
 
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,6 +22,6 @@ public class GameCommand extends AbstractCommand {
     @Command
     public static void command(MessageMaker maker){
         maker.getTitle().append("Games with team support");
-        CLASS_MAP.values().forEach(s -> maker.getNewListPart().appendRaw(s.getSimpleName()));
+        CLASS_MAP.values().stream().filter(clazz -> !Modifier.isAbstract(clazz.getModifiers())).forEach(s -> maker.getNewListPart().appendRaw(s.getSimpleName()));
     }
 }

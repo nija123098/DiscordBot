@@ -29,4 +29,9 @@ public class ReputationCommand extends AbstractCommand {
     protected String getLocalUsages() {
         return "This is a reaction based command, react to a user's message to activate it";
     }
+
+    @Override
+    public boolean useReactions() {
+        return true;
+    }
 }

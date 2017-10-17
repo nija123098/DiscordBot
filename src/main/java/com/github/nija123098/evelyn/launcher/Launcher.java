@@ -8,6 +8,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.perms.BotRole;
 import com.github.nija123098.evelyn.service.ServiceHandler;
+import com.github.nija123098.evelyn.service.services.MemoryManagementService;
 import com.github.nija123098.evelyn.service.services.ScheduleService;
 import com.github.nija123098.evelyn.template.TemplateHandler;
 import com.github.nija123098.evelyn.util.Care;
@@ -32,7 +33,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * @since 1.0.0
  */
 public class Launcher {
-    private static final Set<User> SYSTEM_PERM_USERS = new HashSet<>();
+    private static final Set<User> SYSTEM_PERM_USERS = new MemoryManagementService.ManagedSet<>(300_000);// 5 min
     private static final Set<Runnable> STARTUPS = new HashSet<>();
     private static final Set<Runnable> ASYNC_STARTUPS = new HashSet<>();
     private static final Set<Runnable> SHUTDOWNS = new HashSet<>();
@@ -94,7 +95,6 @@ public class Launcher {
      */
     public static void grantSystemAccess(User user){
         SYSTEM_PERM_USERS.add(user);
-        ScheduleService.schedule(300_000, () -> SYSTEM_PERM_USERS.remove(user));
     }
 
     /**

@@ -44,6 +44,7 @@ public class RSSMonitorService extends AbstractService {
         LAST_UPDATED.computeIfAbsent(url, s -> new Date());
         try {
             SyndFeed feed = new SyndFeedInput().build(new XmlReader(new URL(url)));
+            if (feed.getEntries().isEmpty()) return Collections.emptyList();
             List<RSSNote> notes = new ArrayList<>();
             for (SyndEntry entry : feed.getEntries()){
                 if (!entry.getPublishedDate().after(LAST_UPDATED.get(url))) break;

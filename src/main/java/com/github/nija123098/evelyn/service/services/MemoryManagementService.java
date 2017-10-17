@@ -6,10 +6,9 @@ import com.github.nija123098.evelyn.config.Configurable;
 import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.service.AbstractService;
 import com.github.nija123098.evelyn.util.Log;
+import org.eclipse.jetty.util.ConcurrentHashSet;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
@@ -96,6 +95,19 @@ public class MemoryManagementService extends AbstractService {
         @Override
         public synchronized void forEach(Consumer<? super E> action) {
             super.forEach(action);
+        }
+    }
+    public static class ManagedSet<E> extends ConcurrentHashSet<E> {
+        private final long persistence;
+        private final Map<E, ScheduleService.ScheduledTask> removalTasks = new HashMap<>();
+        public ManagedSet(long persistence) {
+            this.persistence = persistence;
+        }
+        @Override
+        public boolean add(E e) {
+            ScheduleService.ScheduledTask service = this.removalTasks.put(e, ScheduleService.schedule(this.persistence, () -> this.remove(e)));
+            if (service != null) service.cancel();
+            return super.add(e);
         }
     }
 }

@@ -247,6 +247,7 @@ public class CommandHandler {
         Pair<AbstractCommand, String> pair = reaction == null ? getMessageCommand(string) : ((command = getReactionCommand(reaction.getName())) == null ? null : new Pair<>(command, null));
         if (pair == null && REACTION_COMMAND_MAP.containsKey(string)) pair = new Pair<>(REACTION_COMMAND_MAP.get(string), "");
         if (pair != null){
+            if (pair.getKey().useReactions() && reaction == null) return false;
             if (!message.getChannel().getModifiedPermissions(DiscordClient.getOurUser()).contains(DiscordPermission.SEND_MESSAGES) && NO_RESPONSE_LOCATION.computeIfAbsent(message.getChannel().getGuild(), guild -> new ConcurrentHashMap<>()).computeIfAbsent(message.getAuthor(), u -> new HashSet<>()).add(message.getChannel()) && !message.getChannel().isPrivate() && message.getGuild().getUsers().stream().filter(User::isBot).count() < 6){
                 new MessageMaker(message.getAuthor()).append("I can't send a command there and I won't tell you again!").send();
             }

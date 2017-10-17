@@ -18,6 +18,7 @@ public class ReactionCommand extends AbstractCommand {
     }
     @Command
     public void command(@Argument(info = "text") String s, MessageMaker maker){
+        s = s.toLowerCase();
         ReactionEmoji emoji = EmoticonHelper.getReactionEmoji(s);
         String display;
         if (emoji == null) {

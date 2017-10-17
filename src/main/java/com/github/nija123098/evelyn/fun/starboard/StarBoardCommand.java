@@ -39,4 +39,9 @@ public class StarBoardCommand extends AbstractCommand {
         maker.withColor(starLevel.getColor()).forceCompile().send();
         if (!message.getAttachments().isEmpty()) maker.withImage(message.getAttachments().get(0).getUrl());
     }
+
+    @Override
+    public boolean useReactions() {
+        return true;
+    }
 }
