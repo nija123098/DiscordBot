@@ -29,6 +29,7 @@ public class ConfigSetCommand extends AbstractCommand {
             ConfigHandler.setSetting((Class<? extends AbstractConfig<V, T>>) config.getClass(), (T) (guild == null ? user : guild),  (V) target.convert((Class<? extends Configurable>) config.getValueType()));
         }else{
             if (target == null) target = (T) new Configurable[]{track, playlist, user, channel, channel.getCategory(), guildUser, target instanceof Role ? target : null, guild, GlobalConfigurable.GLOBAL, guild == null ? user : guild}[config.getConfigLevel().ordinal()];
+            if (target == null) throw new ArgumentException("No context for " + config.getConfigLevel() + " was able to be gotten, check your spelling");
             if (config.getConfigLevel() != ConfigLevel.ALL) target = (T) target.convert(config.getConfigLevel().getType());
             target.checkPermissionToEdit(user, guild);// morph exception should throw before cast exception
             config.setExteriorValue(target, user, channel, guild, message, arg);

@@ -29,7 +29,7 @@ public class CatFactCommand extends AbstractCommand {
         else maker.append("Unable to get cat fact, try again later");
     }
     private static String getCatFact() {
-        return getFact("http://catfacts-api.appspot.com/api/facts");
+        return getFact("https://catfact.ninja/fact");
     }
     public static String getFact(String url){
         try {
@@ -38,7 +38,7 @@ public class CatFactCommand extends AbstractCommand {
             yc.setConnectTimeout(10_000);
             BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
             String inputLine = in.readLine();
-            return new JsonParser().parse(inputLine).getAsJsonObject().get("facts").getAsString();
+            return new JsonParser().parse(inputLine).getAsJsonObject().get("fact").getAsString();
         } catch (Exception e) {
             Log.log("Exception getting cat facts", e);
         }

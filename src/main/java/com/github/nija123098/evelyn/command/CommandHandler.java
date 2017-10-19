@@ -244,6 +244,7 @@ public class CommandHandler {
             }
         }
         string = FormatHelper.trimFront(string);
+        if (string.isEmpty() || !Character.isLetterOrDigit(string.charAt(0))) return false;
         Pair<AbstractCommand, String> pair = reaction == null ? getMessageCommand(string) : ((command = getReactionCommand(reaction.getName())) == null ? null : new Pair<>(command, null));
         if (pair == null && REACTION_COMMAND_MAP.containsKey(string)) pair = new Pair<>(REACTION_COMMAND_MAP.get(string), "");
         if (pair != null){

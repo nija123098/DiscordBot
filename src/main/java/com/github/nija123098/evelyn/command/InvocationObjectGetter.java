@@ -172,6 +172,10 @@ public class InvocationObjectGetter {
             }else length = args.split(" ")[0].length();
             return new Pair<>(users.get(0), length);
         });
+        addConverter(GuildUser.class, (user, shard, channel, guild, message, reaction, args) -> {
+            Pair<User, Integer> pair = convert(User.class, user, shard, channel, guild, message, reaction, args);
+            return new Pair<>(GuildUser.getGuildUser(guild, pair.getKey()), pair.getValue());
+        }, ContextRequirement.GUILD);
         addConverter(Playlist.class, (user, shard, channel, guild, message, reaction, args) -> {
             args = args.toLowerCase();
             if (args.startsWith("global")) return new Pair<>(GlobalPlaylist.GLOBAL_PLAYLIST, args.equalsIgnoreCase("global playlist") ? 15 : 6);

@@ -1,6 +1,5 @@
 package com.github.nija123098.evelyn.moderation.modaction.support;
 
-import com.github.nija123098.evelyn.moderation.logging.ModLogConfig;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.GuildUser;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
@@ -8,8 +7,10 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.exeption.ArgumentException;
+import com.github.nija123098.evelyn.moderation.logging.ModLogConfig;
 
 import java.awt.*;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -28,6 +29,14 @@ public class AbstractModAction {
         AbstractModAction action = ConfigHandler.getSetting(ModActionConfig.class, guild).get(cas);
         if (action == null || OLDEST_CASE_MAP.getOrDefault(guild, Integer.MAX_VALUE) < cas) throw new ArgumentException("The entered case is too old to modify or doesn't exist (yet)");
         if (action.logMaker != null) action.update(reason);
+        if (action.level == ModActionLevel.WARN) {
+            GuildUser guildUser = GuildUser.getGuildUser(guild, action.offender);
+            List<String> list = ConfigHandler.getSetting(WarningLogConfig.class, guildUser);
+            if (list.get(list.size() - 1).equals("no reason given")) {
+                list.add(list.size() - 1, reason);
+                ConfigHandler.setSetting(WarningLogConfig.class, guildUser, list);
+            }
+        }
     }
     private MessageMaker logMaker, warningMaker;
     private ModActionLevel level;
