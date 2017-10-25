@@ -18,7 +18,7 @@ public class WhoAreNotCommand extends AbstractCommand {
     public void command(@Argument Role role, Guild guild, MessageMaker maker){
         List<User> users = guild.getUsers();
         users.removeAll(role.getUsers());
-        maker.getTitle().appendRaw("Users with the " + role.getName() + " role");
+        maker.getTitle().appendRaw("Users without the " + role.getName() + " role");
         maker.append("There " + (users.size() > 1 ? "are " + users.size() + " users" : "is 1 user") + " with that role").appendRaw("\n");
         maker.withColor(role);
         users.stream().map(user -> {
