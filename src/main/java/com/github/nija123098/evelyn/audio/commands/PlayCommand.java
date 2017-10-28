@@ -51,4 +51,9 @@ public class PlayCommand extends AbstractCommand {
         }
         trackList.forEach(manager::queueTrack);
     }
+
+    @Override
+    public boolean useReactions() {
+        return true;
+    }
 }

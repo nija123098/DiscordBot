@@ -1,6 +1,7 @@
 package com.github.nija123098.evelyn.moderation.modaction;
 
 import com.github.nija123098.evelyn.command.ContextType;
+import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.moderation.MuteRoleConfig;
 import com.github.nija123098.evelyn.moderation.modaction.support.AbstractModAction;
 import com.github.nija123098.evelyn.moderation.modaction.support.MuteActionConfig;
@@ -33,6 +34,7 @@ public class MuteModActionCommand extends AbstractCommand {
         long length = time != null ? time.timeUntil() : 3600000;
         mute(guild, target, length);
         new AbstractModAction(guild, AbstractModAction.ModActionLevel.MUTE, target, user, reason);
+        new MessageMaker(target).append("You were muted in " + guild.getName() + (reason == null || reason.isEmpty() ? "" :  " for " + reason)).send();
     }
     private static void mute(Guild guild, User user, long length){
         Set<Role> roles = new HashSet<>(user.getRolesForGuild(guild));

@@ -72,6 +72,7 @@ public class ExpungeModActionCommand extends AbstractCommand {
                 });
             }else computeRound(maker, nameSet.get(set.incrementAndGet()), removes);
         });
+        new MessageMaker(target).append("You were expunged from " + guild.getName() + (reason == null || reason.isEmpty() ? "" :  " for " + reason)).send();
     }
     @Override
     public long getCoolDown(Class<? extends Configurable> clazz){

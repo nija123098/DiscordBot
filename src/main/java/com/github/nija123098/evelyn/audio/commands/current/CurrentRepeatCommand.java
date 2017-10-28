@@ -17,4 +17,9 @@ public class CurrentRepeatCommand extends AbstractCommand {
     public void command(GuildAudioManager manager, @Argument(optional = true, replacement = ContextType.NONE) Boolean loop){
         manager.loop(loop == null ? !manager.isLooping() : loop);
     }
+
+    @Override
+    public boolean useReactions() {
+        return true;
+    }
 }

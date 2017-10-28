@@ -1,5 +1,6 @@
 package com.github.nija123098.evelyn.moderation.modaction;
 
+import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.moderation.modaction.support.AbstractModAction;
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.annotations.Argument;
@@ -20,6 +21,7 @@ public class KickModActionCommand extends AbstractCommand {
     public void command(Guild guild, User user, @Argument(info = "The user to be kicked") User target, @Argument(optional = true, info = "The reason") String reason){
         guild.kickUser(target, reason);
         new AbstractModAction(guild, AbstractModAction.ModActionLevel.KICK, target, user, reason);
+        new MessageMaker(target).append("You were kicked from " + guild.getName() + (reason == null || reason.isEmpty() ? "" :  " for " + reason)).send();
     }
     @Override
     public boolean hasPermission(User user, Channel channel) {

@@ -46,4 +46,9 @@ public class SkipCommand extends AbstractCommand {
         GuildAudioManager manager = GuildAudioManager.getManager(end.getGuild());
         if (manager != null) MAP.remove(manager);
     }
+
+    @Override
+    public boolean useReactions() {
+        return true;
+    }
 }

@@ -16,4 +16,9 @@ public class PauseCommand extends AbstractCommand {
     public void command(GuildAudioManager manager){
         manager.pause(!manager.isPaused());
     }
+
+    @Override
+    public boolean useReactions() {
+        return true;
+    }
 }
