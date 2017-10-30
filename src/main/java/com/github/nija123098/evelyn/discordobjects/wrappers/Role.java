@@ -43,7 +43,7 @@ public class Role implements Configurable {
     public static void update(IRole role){// hash is based on id, so no old channel is necessary
         MAP.computeIfAbsent(role.getStringID(), s -> new Role(role)).reference.set(role);
     }
-    private transient final AtomicReference<IRole> reference;
+    private transient AtomicReference<IRole> reference;
     private String ID;
     public Role() {
         this.reference = new AtomicReference<>(DiscordClient.getAny(client -> client.getRoleByID(Long.parseLong(ID))));
@@ -54,6 +54,7 @@ public class Role implements Configurable {
         this.registerExistence();
     }
     IRole role(){
+        if (this.reference == null) this.reference = new AtomicReference<>(DiscordClient.getAny(client -> client.getRoleByID(Long.parseLong(ID))));
         return this.reference.get();
     }
 

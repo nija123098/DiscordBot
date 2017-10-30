@@ -54,9 +54,8 @@ public class EventDistributor {
      * Distributes the given event.
      *
      * @param event the event to distribute.
-     * @param <E> the type of event to distribute.
      */
-    public static <E extends BotEvent> void distribute(E event){
+    public static void distribute(BotEvent event){
         ThreadProvider.sub(() -> {
             try{
                 LISTENER_CASH.computeIfAbsent(event.getClass(), c -> {

@@ -49,7 +49,7 @@ public class HelpCommand extends AbstractCommand {
                 maker.getHeader().clear();
                 maker.forceCompile();
                 maker.clearFieldParts();
-                command(null, maker, u, channel, guild, level, String.valueOf(0));
+                command(null, maker, u, channel, guild, level, "");
                 maker.send();
             }));
         } else {
