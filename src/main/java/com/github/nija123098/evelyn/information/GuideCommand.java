@@ -5,6 +5,7 @@ import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.launcher.BotConfig;
+import com.github.nija123098.evelyn.util.Log;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -42,15 +43,13 @@ public class GuideCommand extends AbstractCommand {
             StringBuilder texty = new StringBuilder();
             List<String> text = Files.readAllLines(Paths.get(BotConfig.CONTAINER_PATH, "guide.txt"));
             text.forEach(s -> {
-                if (s.isEmpty()) {
-                    texty.append("|");
-                } else {
-                    texty.append(s + "\n");
-                }
+                if (s.isEmpty()) texty.append("|");
+                else texty.append(s + "\n");
             });
             return texty.toString();
         } catch (IOException e) {
-            return "can't find guide.txt /shrug";
+            Log.log("guide.txt not found, do you need a guide for this?");
+            return "missing guide.txt, do you need a guide for this?";
         }
     }
 }
