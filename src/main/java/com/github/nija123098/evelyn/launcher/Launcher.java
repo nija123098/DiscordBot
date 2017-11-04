@@ -117,7 +117,7 @@ public class Launcher {
      * @param code the code to shutdown the JVM.
      * @param delay the amount of time before the shutdown begins.
      */
-    public synchronized static void shutdown(Integer code, long delay){
+    public synchronized static void shutdown(Integer code, long delay, boolean firm){
         ScheduleService.ScheduledTask task = SHUTDOWN_TASK.get();
         if (task != null) {
             Log.log("Canceling a shutdown");
@@ -138,6 +138,28 @@ public class Launcher {
                 Care.lessSleep(2_000);
                 System.exit(code);
             }));
+        }
+        if (firm) {
+            Thread firmThread = new Thread(() -> {
+                try{Thread.sleep(150_000);
+                } catch (InterruptedException e) {
+                    Log.log("Ended end sleep early", e);
+                    e.printStackTrace();
+                }
+                Thread halt = new Thread(() -> {
+                    try{Thread.sleep(150_000);
+                    } catch (InterruptedException e) {
+                        Log.log("Ended halt sleep early", e);
+                        e.printStackTrace();
+                    }
+                    if (SHUTDOWN_TASK.get() != null) Runtime.getRuntime().halt(code == null ? -1 : code);
+                }, "Halt-Thread");
+                halt.setDaemon(true);
+                halt.start();
+                if (SHUTDOWN_TASK.get() != null) System.exit(code == null ? -1 : code);
+            }, "Firm-Thread");
+            firmThread.setDaemon(true);
+            firmThread.start();
         }
     }
 

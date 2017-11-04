@@ -19,7 +19,7 @@ import java.util.List;
 
 public class CryptocurrencyCommand extends AbstractCommand {
     private static final List<MutablePair<String, String>> ORDER = new ArrayList<>();
-    private static final String STATEMENT = "Trading should not be done using Evelyn and no responsibility is taken by the bot's developers for accuracy of information nor trades done.";
+    private static final String STATEMENT = "Trading should not be done using Evelyn and no responsibility is taken by the bot's developers for accuracy of information nor for trades done.";
     static {
         for (int i = 0; i < 10; i++) ORDER.add(new MutablePair<>());
         ScheduleService.scheduleRepeat(0, 300_000, () -> Cryptocurrency.COIN_LIST.get().getAsJsonObject().entrySet().forEach(entry -> {

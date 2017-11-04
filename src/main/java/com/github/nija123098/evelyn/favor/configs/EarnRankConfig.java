@@ -5,17 +5,12 @@ import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.GuildUser;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Role;
-import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.favor.FavorChangeEvent;
-import com.github.nija123098.evelyn.perms.BotRole;
 import com.github.nija123098.evelyn.service.services.MemoryManagementService;
-import com.github.nija123098.evelyn.service.services.ScheduleService;
+import com.github.nija123098.evelyn.util.CallBuffer;
 import com.google.common.util.concurrent.AtomicDouble;
-import org.apache.commons.collections4.BidiMap;
-import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -24,6 +19,7 @@ import java.util.stream.Collectors;
  * Made by nija123098 on 5/6/2017.
  */
 public class EarnRankConfig extends AbstractConfig<Float, Role> {
+    private static final CallBuffer CALL_BUFFER = new CallBuffer(500);
     private static final Set<GuildUser> USERS = new MemoryManagementService.ManagedSet<>(300_000);// 5 min
     public EarnRankConfig() {
         super("favor_requirement", ConfigCategory.FAVOR, (Float) null, "A map of roles earned by users due to their favor in a guild");
@@ -52,7 +48,9 @@ public class EarnRankConfig extends AbstractConfig<Float, Role> {
         });
         if (highest.get() == -1) return;
         roles.remove(highestRole.get());
-        roles.forEach(role -> user.getUser().removeRole(role));
-        user.getUser().addRole(highestRole.get());
+        CALL_BUFFER.call(() -> {
+            roles.forEach(role -> user.getUser().removeRole(role));
+            user.getUser().addRole(highestRole.get());
+        });
     }
 }

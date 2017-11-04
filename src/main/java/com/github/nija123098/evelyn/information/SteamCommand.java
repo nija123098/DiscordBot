@@ -33,8 +33,8 @@ public class SteamCommand extends AbstractCommand {
         if (name.isEmpty()) throw new ArgumentException("Please give me the name of a game");
         try {
             SteamApp app = STEAM_API.retrieve(name);
-            maker.getAuthorName().appendRaw(app.getName());
-            maker.withImage(app.getWebsite());
+            maker.withUrl("https://" + app.getWebsite());
+            maker.getTitle().appendRaw(app.getName());
             maker.append(StringHelper.ensureSize(app.getAboutTheGame(), 200));
             maker.getNewFieldPart().withBoth("Price", app.isFreeToPlay() ? "FREE" : app.getPriceCurrency().getSymbol() + app.getPrice());
             maker.getNewFieldPart().withBoth("metacritic", app.getMetacriticScore() == null ? "none" : app.getMetacriticScore() + "");

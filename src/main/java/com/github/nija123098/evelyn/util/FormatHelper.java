@@ -228,14 +228,15 @@ public class FormatHelper {
     }
     public static String addComas(double l){
         String str = String.valueOf(l);
+        if (str.endsWith(".0")) str = str.substring(0, str.length() - 2);
         int eIndex = str.indexOf("E");
         if (eIndex != -1) return str.substring(0, 4) + str.substring(eIndex);
         if (l < 9999) return str;
         StringBuilder builder = new StringBuilder();
         int bound = l % 1 == 0 ? str.length() : str.indexOf(".");
-        for (int i = bound - 1; i > 0; --i) {
-            builder.append(str.charAt(bound - i));
-            if (i % 3 == 1 && i != 1) builder.append(",");
+        for (int i = bound - 1; i > -1; --i) {
+            builder.append(str.charAt(bound - i - 1));
+            if (i % 3 == bound % 3 && i != 0) builder.append(",");
         }
         if (bound != str.length()){
             for (int i = bound; i < str.length(); i++) {

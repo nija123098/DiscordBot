@@ -10,15 +10,12 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Presence;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Role;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.favor.configs.EarnRankConfig;
-import com.github.nija123098.evelyn.util.CallBuffer;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class RanksForceUpdateCommand extends AbstractCommand  {
-    private static final CallBuffer CALL_BUFFER = new CallBuffer(100);
     public RanksForceUpdateCommand() {
         super(RanksCommand.class, "forceupdate", null, null, null, "Forces all ranks on a server to update");
     }
@@ -32,7 +29,7 @@ public class RanksForceUpdateCommand extends AbstractCommand  {
             return false;
         }).collect(Collectors.toSet());
         users.removeAll(priorityUsers);
-        Stream.concat(priorityUsers.stream(), users.stream()).map(user -> GuildUser.getGuildUser(guild, user)).forEach(guildUser -> CALL_BUFFER.call(() -> FavorChangeEvent.process(guildUser, () -> {})));
+        Stream.concat(priorityUsers.stream(), users.stream()).map(user -> GuildUser.getGuildUser(guild, user)).forEach(guildUser -> FavorChangeEvent.process(guildUser, () -> {}));
     }
 
     @Override

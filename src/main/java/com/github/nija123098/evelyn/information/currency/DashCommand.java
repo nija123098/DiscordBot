@@ -6,6 +6,7 @@ import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.exeption.DevelopmentException;
 import com.github.nija123098.evelyn.service.services.MemoryManagementService;
+import com.github.nija123098.evelyn.util.FormatHelper;
 import com.google.common.util.concurrent.AtomicDouble;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -68,8 +69,8 @@ public class DashCommand extends AbstractCommand {
     public void command(MessageMaker maker, User user){
         Cryptocurrency dash = Cryptocurrency.getCryptocurrency("dash");
         maker.getNewFieldPart().withBoth("Masternodes", ONLINE_NODES.get() + " online of " + MASTERNODE_ARRAYS.get().size() + " " + String.valueOf(((double) ONLINE_NODES.get() / MASTERNODE_ARRAYS.get().size() * 100)).substring(0, 5) + "%");
-        maker.getNewFieldPart().withBoth("24H Difficulty", String.valueOf(DIFFICULTY.get()));
-        maker.getNewFieldPart().withBoth("Dash in Masternodes", String.valueOf(DASH_IN_MASTER_NODES.get() / dash.getCoinsMinted() * 100).substring(0, 5) + "%");
+        maker.getNewFieldPart().withBoth("24H Average Difficulty", FormatHelper.addComas(DIFFICULTY.get()));
+        maker.getNewFieldPart().withBoth("Dash in Masternodes", FormatHelper.addComas(String.valueOf(Math.floor(DASH_IN_MASTER_NODES.get()))) + " " + String.valueOf(DASH_IN_MASTER_NODES.get() / dash.getCoinsMinted() * 100).substring(0, 5) + "%");
         maker.getNewFieldPart().withBoth("Masternode Monthly Earnings", String.valueOf(PAYOUT_AVERAGE.get() / ONLINE_NODES.get() * 30).substring(0, 4) + " Dash");
         CryptocurrencyCommand.command(maker, user, dash);
         maker.append("Dash, it's Digital Cash").withColor(COLOR);

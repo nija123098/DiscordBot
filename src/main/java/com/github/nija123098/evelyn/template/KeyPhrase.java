@@ -21,7 +21,8 @@ public enum KeyPhrase {
             (new ContextRequirement[]{ContextRequirement.GUILD, ContextRequirement.SHARD, ContextRequirement.USER}, Boolean.class, Float.class),
     USER_LEAVE//              location,                 location,                 kicker,                   target  invoker     kicked         banned
             (new ContextRequirement[]{ContextRequirement.GUILD, ContextRequirement.SHARD, ContextRequirement.USER}, User.class, Boolean.class, Boolean.class),
-    ADVANCED_TESTING(new ContextRequirement[]{ContextRequirement.CHANNEL, ContextRequirement.MESSAGE}, User.class),;
+    REBOOT_NOTIFICATION//              location,                 location,                invoker
+            (new ContextRequirement[]{ContextRequirement.GUILD, ContextRequirement.SHARD, ContextRequirement.USER}),;
     private CustomCommandDefinition definition;
     KeyPhrase(ContextRequirement[] availableContext, Class<?>...argTypes) {
         this.definition = new CustomCommandDefinition(this.name(), availableContext, argTypes);
