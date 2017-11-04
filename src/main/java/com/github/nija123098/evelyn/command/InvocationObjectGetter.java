@@ -22,6 +22,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.*;
 import com.github.nija123098.evelyn.fun.gamestructure.AbstractGame;
 import com.github.nija123098.evelyn.fun.gamestructure.GameHandler;
 import com.github.nija123098.evelyn.fun.gamestructure.Team;
+import com.github.nija123098.evelyn.information.currency.Cryptocurrency;
 import com.github.nija123098.evelyn.util.*;
 import javafx.util.Pair;
 
@@ -411,6 +412,18 @@ public class InvocationObjectGetter {
                 }
                 if (total == 0) throw new ArgumentException("No colors specified to make color range");
             }
+        });
+        addConverter(Cryptocurrency.class, (invoker, shard, channel, guild, message, reaction, args) -> {
+            String[] split = args.split(" ");
+            StringBuilder total = new StringBuilder();
+            Cryptocurrency cryptocurrency;
+            for (int i = 0; i < 4; i++) {
+                if (total.length() != 0) total.append(" ");
+                total.append(split[i]);
+                cryptocurrency = Cryptocurrency.getCryptocurrency(total.toString());
+                if (cryptocurrency != null) return new Pair<>(cryptocurrency, total.length());
+            }
+            throw new ArgumentException("Could not identify Cryptocurrency");
         });
     }
 

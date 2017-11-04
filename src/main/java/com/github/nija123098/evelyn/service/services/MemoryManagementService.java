@@ -1,17 +1,16 @@
 package com.github.nija123098.evelyn.service.services;
 
-import com.github.nija123098.evelyn.config.ConfigHandler;
-import com.github.nija123098.evelyn.config.ConfigLevel;
-import com.github.nija123098.evelyn.config.Configurable;
-import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.service.AbstractService;
-import com.github.nija123098.evelyn.util.Log;
 import org.eclipse.jetty.util.ConcurrentHashSet;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * Made by nija123098 on 3/26/2017.
@@ -108,6 +107,19 @@ public class MemoryManagementService extends AbstractService {
             ScheduleService.ScheduledTask service = this.removalTasks.put(e, ScheduleService.schedule(this.persistence, () -> this.remove(e)));
             if (service != null) service.cancel();
             return super.add(e);
+        }
+    }
+    public static class ManagedReference<E> {
+        private Supplier<E> supplier;
+        private long duration;
+        private E reference;
+        public ManagedReference(long duration, Supplier<E> supplier) {
+            this.duration = duration;
+            this.supplier = supplier;
+        }
+        public E get(){
+            ScheduleService.schedule(this.duration, () -> this.reference = null);
+            return this.reference != null ? this.reference : (this.reference = this.supplier.get());
         }
     }
 }

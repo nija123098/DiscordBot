@@ -1,6 +1,5 @@
 package com.github.nija123098.evelyn.util;
 
-import com.github.nija123098.evelyn.discordobjects.wrappers.Message;
 import com.github.nija123098.evelyn.exeption.DevelopmentException;
 import com.google.common.base.Strings;
 
@@ -8,7 +7,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -227,5 +225,34 @@ public class FormatHelper {
     }
     public static Set<String> reduce(Set<String> strings){
         return strings.stream().map(FormatHelper::reduce).collect(Collectors.toSet());
+    }
+    public static String addComas(double l){
+        String str = String.valueOf(l);
+        int eIndex = str.indexOf("E");
+        if (eIndex != -1) return str.substring(0, 4) + str.substring(eIndex);
+        if (l < 9999) return str;
+        StringBuilder builder = new StringBuilder();
+        int bound = l % 1 == 0 ? str.length() : str.indexOf(".");
+        for (int i = bound - 1; i > 0; --i) {
+            builder.append(str.charAt(bound - i));
+            if (i % 3 == 1 && i != 1) builder.append(",");
+        }
+        if (bound != str.length()){
+            for (int i = bound; i < str.length(); i++) {
+                builder.append(str.charAt(i));
+            }
+        }
+        return builder.toString();
+    }
+    public static String addComas(String bigInteger) {
+        if (bigInteger.length() < 5) return bigInteger;
+        int decimal = bigInteger.indexOf(".");
+        if (decimal != -1) bigInteger = bigInteger.substring(0, decimal);
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < bigInteger.length(); i++) {
+            if (i % 3 == bigInteger.length() % 3 && i != 0) builder.append(",");
+            builder.append(bigInteger.charAt(i));
+        }
+        return builder.toString();
     }
 }

@@ -2,6 +2,7 @@ package com.github.nija123098.evelyn.information.currency;
 
 import com.github.nija123098.evelyn.exeption.DevelopmentException;
 import com.github.nija123098.evelyn.service.services.MemoryManagementService;
+import com.github.nija123098.evelyn.util.FormatHelper;
 import com.google.gson.JsonParser;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
@@ -28,7 +29,7 @@ public enum Currency {
     USD("$"),
     EUR("€"),
     GBP("£"),
-    RUB("₽", "ruble"),
+    RUB(amount -> FormatHelper.addComas(amount) + "₽", "₽", "ruble"),
     CAD("C$", "Can$"),
     SGD("S$"),
     JPY(),
@@ -48,7 +49,7 @@ public enum Currency {
     PKR(),
     MXN("Mex$"),;
     Currency(String...names){
-        this((amount) -> amount + (names.length > 1 ? names[1] : " " + names[0]), names);
+        this((amount) -> FormatHelper.addComas(amount) + (names.length > 1 ? names[1] : " " + names[0]), names);
     }
     Currency(Function<Double, String> display, String...names){
         this.display = display;
@@ -58,13 +59,16 @@ public enum Currency {
     private Map<Currency, Double> conversion = new MemoryManagementService.ManagedMap<>(10_000);
     private Function<Double, String> display;
     private List<String> names = new ArrayList<>(1);
-    private String getDisplay(Double amount){
-        return this.display.apply(amount);
+    public String getDisplay(Double amount){
+        String s = this.display.apply(amount);
+        int index = s.indexOf(".");
+        if (index != -1) s = s.substring(0, index + 2);
+        return s;
     }
     public double getConversion(Currency other) {
         Double value = other.conversion.get(this);
         if (value != null) return Math.pow(value, -1);
-        return getConversion(this.name(), other.name());
+        return this.conversion.computeIfAbsent(other, (o) -> getConversion(this.name(), other.name()));
     }
     private static final Map<String, Currency> NAME_MAP = new HashMap<>();
     static {
@@ -72,17 +76,6 @@ public enum Currency {
     }
     public static Currency getUnitForName(String name){
         return NAME_MAP.get(name);
-    }
-
-    private class ReverseDisplay implements Function<Double, String> {
-        private Currency currency;
-        private ReverseDisplay(Currency currency){
-            this.currency = currency;
-        }
-        @Override
-        public String apply(Double aDouble) {
-            return aDouble + this.currency.names.get(1);
-        }
     }
     public static double getConversion(String from, String to) {
         try {
