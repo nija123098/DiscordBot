@@ -16,7 +16,7 @@ import java.util.Set;
 public class GameRolesSetupCommand extends AbstractCommand {
     private static final Set<String> VERIFIED_GAMES = new HashSet<>();
     static {
-        try{VERIFIED_GAMES.addAll(Files.readAllLines(Paths.get(BotConfig.VERIFIED_GAMES)));
+        try{VERIFIED_GAMES.addAll(Files.readAllLines(Paths.get(BotConfig.VERIFIED_GAMES_NAME)));
         } catch (IOException e) {
             Log.log("Could not load verified games", e);
         }

@@ -37,7 +37,7 @@ public class MessageMonitor {
             }
         });
         try {
-            Path path = Paths.get(BotConfig.LANGUAGE_FILTERING_PATH);
+            Path path = Paths.get(BotConfig.LANGUAGE_FILTERING_NAME);
             if (Files.exists(path)) {
                 Files.readAllLines(path).forEach(s -> {
                     MessageMonitoringLevel type = MessageMonitoringLevel.valueOf(s.split(" ")[0].toUpperCase());

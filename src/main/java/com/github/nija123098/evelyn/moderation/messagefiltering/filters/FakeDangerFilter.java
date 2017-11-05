@@ -29,7 +29,7 @@ public class FakeDangerFilter implements MessageFilter {
     static {
         Map<String, Double> map = new HashMap<>();
         try {
-            Path path = Paths.get(BotConfig.FAKE_DANGER_PATH);
+            Path path = Paths.get(BotConfig.FAKE_DANGER_NAME);
             if (path.toFile().exists()){
                 Files.readAllLines(path).forEach(s -> {
                     if (s.isEmpty()) return;

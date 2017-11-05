@@ -86,7 +86,7 @@ public class DiscordAdapter {
         builder.registerListener((IListener<ShardReadyEvent>) event -> event.getShard().idle("with the login screen!"));
         int total = Requests.GENERAL_REQUESTS.GET.makeRequest(DiscordEndpoints.GATEWAY + "/bot", GatewayBotResponse.class, new BasicNameValuePair("Authorization", "Bot " + BotConfig.BOT_TOKEN), new BasicNameValuePair("Content-Type", "application/json")).shards;
         List<Integer> list = new ArrayList<>(total);
-        for (int i = 0; i < total; i++) if (i % BotConfig.TOTAL_EMILYS == BotConfig.EMILY_NUMBER) list.add(i);
+        for (int i = 0; i < total; i++) if (i % BotConfig.TOTAL_EVELYNS == BotConfig.EVELYN_NUMBER) list.add(i);
         DiscordClient.set(list.stream().map(integer -> builder.setShard(integer, total)).map(ClientBuilder::login).collect(Collectors.toList()));
         int i = 20 + 25 * DiscordClient.getShardCount();
         for (; i > -1; --i) {
@@ -124,7 +124,7 @@ public class DiscordAdapter {
                 }
             }else count.set(0);
         });
-        Path path = Paths.get(BotConfig.STATS_OVER_TIME);
+        Path path = Paths.get(BotConfig.STATS_OVER_TIME_NAME);
         File file = path.toFile();
         if (!file.exists()) {
             try{file.createNewFile();

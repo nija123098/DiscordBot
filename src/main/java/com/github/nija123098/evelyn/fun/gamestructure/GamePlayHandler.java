@@ -25,7 +25,7 @@ public class GamePlayHandler {
     private static final Map<String, NeuralNet> LOADED_NEURAL_NETS = new HashMap<>();
     private static final Map<AbstractGame, NeuralNet> GAME_NET_MAP = new HashMap<>();
     static {
-        new File(BotConfig.NEURAL_NET_FOLDER).mkdirs();
+        new File(BotConfig.NEURAL_NET_FOLDER_PATH).mkdirs();
     }
     static void decideGame(AbstractGame game){
         Team team = game.getTeam(DiscordClient.getOurUser());
@@ -70,6 +70,6 @@ public class GamePlayHandler {
         return game.getName() + "-" + Joiner.on("-").join(new Integer[]{game.getInputWidth(), game.getOutputWidth(), game.getHiddenLayerWidth(), game.getHiddenLayerCount()}) + ".txt";
     }
     private static Path getNeuralNetPath(AbstractNeuralNetGame game){
-        return Paths.get(BotConfig.NEURAL_NET_FOLDER, getNeuralNetName(game));
+        return Paths.get(BotConfig.NEURAL_NET_FOLDER_PATH, getNeuralNetName(game));
     }
 }
