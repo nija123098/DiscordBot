@@ -11,8 +11,6 @@ public class BotConfig {
     public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36";
 
     //Bot Settings
-    private static final String BotSettings = "####################\n### Bot Settings ###\n####################";
-
     @ConfigurationOption
     public static String BOT_TOKEN = "Bot Token";
 
@@ -54,8 +52,6 @@ public class BotConfig {
 
 
     //Database Settings
-    private static final String DatabaseSettings = "\n########################\n### Database Settigs ###\n########################";
-
     @ConfigurationOption
     public static String DB_HOST = "database-IP-address";
 
@@ -73,8 +69,6 @@ public class BotConfig {
 
 
     //Service Auth Keys
-    private static final String ServiceAuthKeys = "\n#########################\n### Service Auth Keys ###\n#########################";
-
     @ConfigurationOption
     public static String BITLY_TOKEN = "bitly-token";
 
@@ -101,8 +95,6 @@ public class BotConfig {
 
 
     //Audio Settings
-    private static final String AudioSettings = "\n######################\n### Audio Settings ###\n######################";
-
     @ConfigurationOption
     public static String AUDIO_FILE_TYPES = "opus, mp3";
 
@@ -120,8 +112,6 @@ public class BotConfig {
 
 
     //Folder Paths
-    private static final String FolderPaths = "\n####################\n### Folder Paths ###\n####################";
-
     @ConfigurationOption
     public static String AUDIO_PATH = CONTAINER_PATH + "musicFiles" + PathEnding();
 
@@ -142,8 +132,6 @@ public class BotConfig {
 
 
     //File Names
-    private static final String FileNames = "\n##################\n### File Names ###\n##################";
-
     @ConfigurationOption
     public static String FAKE_DANGER_NAME = REQUIRED_TXTS_FOLDER_PATH + "FakeDangerContents.txt";
 
@@ -158,8 +146,6 @@ public class BotConfig {
 
 
     //Libraries Paths
-    private static final String LibrariesPaths = "\n#######################\n### Libraries Paths ###\n#######################";
-
     @ConfigurationOption
     public static String FFM_PEG_PATH = CONTAINER_PATH + "ffmpeg.exe";
 
