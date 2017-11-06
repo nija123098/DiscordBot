@@ -1,7 +1,7 @@
 package com.github.nija123098.evelyn.fun.profile;
 
+import com.github.nija123098.evelyn.BotConfig.ReadConfig;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
-import com.github.nija123098.evelyn.launcher.BotConfig;
 import com.github.nija123098.evelyn.util.FormatHelper;
 import com.github.nija123098.evelyn.util.Log;
 import javafx.util.Pair;
@@ -24,7 +24,7 @@ public enum Badge {
     private Function<User, Integer> levelFunction;
     private List<BufferedImage> images = new ArrayList<>();
     Badge(int max){
-        try{BufferedImage badge = ImageIO.read(new File(BotConfig.BADGE_PATH + this.name().toLowerCase() + ".png"));
+        try{BufferedImage badge = ImageIO.read(new File(ReadConfig.BADGE_PATH + this.name().toLowerCase() + ".png"));
             Font font = new Font("Times New Roman", Font.PLAIN, badge.getHeight() / 3 * 2);
             BufferedImage image;
             Graphics2D graphics;

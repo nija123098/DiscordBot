@@ -4,7 +4,6 @@ import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
-import com.github.nija123098.evelyn.launcher.BotConfig;
 import com.github.nija123098.evelyn.util.Log;
 import org.jsoup.Jsoup;
 
@@ -23,7 +22,7 @@ public class InspiroCommand extends AbstractCommand {
     }
     private static String getImage(){
         try {
-            return Jsoup.connect("http://inspirobot.me/api?generate=true").timeout(5_000).userAgent(BotConfig.USER_AGENT).get().body().getElementsByTag("body").text();
+            return Jsoup.connect("http://inspirobot.me/api?generate=true").timeout(5_000).userAgent("Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36").get().body().getElementsByTag("body").text();
         } catch (IOException e) {
             Log.log("Exception getting inspiro image", e);
             return null;

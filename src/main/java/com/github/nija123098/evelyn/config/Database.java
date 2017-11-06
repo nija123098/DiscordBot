@@ -1,7 +1,7 @@
 package com.github.nija123098.evelyn.config;
 
+import com.github.nija123098.evelyn.BotConfig.ReadConfig;
 import com.github.nija123098.evelyn.exeption.DevelopmentException;
-import com.github.nija123098.evelyn.launcher.BotConfig;
 import com.github.nija123098.evelyn.util.CallBuffer;
 import com.github.nija123098.evelyn.util.Log;
 import com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource;
@@ -17,6 +17,8 @@ import java.sql.*;
  *
  * @author Soarnir
  * @author nija123098
+ *
+ * Modified by Celestialdeath99 on 11/5/2017
  */
 public class Database {
     private static final CallBuffer CALL_BUFFER = new CallBuffer(250);
@@ -26,11 +28,11 @@ public class Database {
         Connection c = null;
         try {
             MysqlConnectionPoolDataSource dataSource = new MysqlConnectionPoolDataSource();
-            dataSource.setUser(BotConfig.DB_USER);
-            dataSource.setPassword(BotConfig.DB_PASS);
-            dataSource.setServerName(BotConfig.DB_HOST);
+            dataSource.setUser(ReadConfig.DB_USER);
+            dataSource.setPassword(ReadConfig.DB_PASS);
+            dataSource.setServerName(ReadConfig.DB_HOST);
             dataSource.setPort(3306);
-            dataSource.setDatabaseName(BotConfig.DB_NAME);
+            dataSource.setDatabaseName(ReadConfig.DB_NAME);
             dataSource.setZeroDateTimeBehavior("convertToNull");
             dataSource.setUseUnicode(true);
             c = dataSource.getConnection();
@@ -40,10 +42,10 @@ public class Database {
         CONNECTION = c;
         HikariConfig config = new HikariConfig();
         config.setMaximumPoolSize(20);
-        config.setJdbcUrl("jdbc:mariadb://" + BotConfig.DB_HOST + ":" + BotConfig.DB_PORT + "/" + BotConfig.DB_NAME);
+        config.setJdbcUrl("jdbc:mariadb://" + ReadConfig.DB_HOST + ":" + ReadConfig.DB_PORT + "/" + ReadConfig.DB_NAME);
         config.setDriverClassName("org.mariadb.jdbc.Driver");
-        config.setUsername(BotConfig.DB_USER);
-        config.setPassword(BotConfig.DB_PASS);
+        config.setUsername(ReadConfig.DB_USER);
+        config.setPassword(ReadConfig.DB_PASS);
         RUNNER = new QueryRunner(new HikariDataSource(config));
         query("SET NAMES utf8mb4");
     }

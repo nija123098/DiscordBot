@@ -5,7 +5,6 @@ import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
-import com.github.nija123098.evelyn.launcher.BotConfig;
 import com.github.nija123098.evelyn.util.FormatHelper;
 import org.apache.http.message.BasicNameValuePair;
 import sx.blah.discord.api.internal.DiscordEndpoints;

@@ -1,5 +1,6 @@
 package com.github.nija123098.evelyn.launcher;
 
+import com.github.nija123098.evelyn.BotConfig.VerifyConfig;
 import com.github.nija123098.evelyn.command.CommandHandler;
 import com.github.nija123098.evelyn.command.InvocationObjectGetter;
 import com.github.nija123098.evelyn.config.ConfigHandler;
@@ -17,6 +18,7 @@ import com.github.nija123098.evelyn.util.ThreadProvider;
 import com.wezinkhof.configuration.ConfigurationBuilder;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -39,14 +41,6 @@ public class Launcher {
     private static final Set<Runnable> SHUTDOWNS = new HashSet<>();
     private static final AtomicBoolean IS_READY = new AtomicBoolean(), IS_STARTING_UP = new AtomicBoolean();
     private static final AtomicReference<ScheduleService.ScheduledTask> SHUTDOWN_TASK = new AtomicReference<>();
-    static {
-        try {
-            new ConfigurationBuilder(BotConfig.class, new File("bot_config.cfg")).build();
-        } catch (Exception e) {
-            Log.log("Failed to initialize configuration", e);
-            System.exit(-1);
-        }
-    }
 
     /**
      * Registers a {@link Runnable} which will be run on startup
@@ -168,7 +162,8 @@ public class Launcher {
      *
      * @param args the program arguments.
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+        VerifyConfig.main();
         TemplateHandler.initialize();
         InvocationObjectGetter.initialize();
         ConfigHandler.initialize();//  changing

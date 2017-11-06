@@ -1,8 +1,8 @@
 package com.github.nija123098.evelyn.util;
 
 import com.darkprograms.speech.synthesiser.Synthesiser;
+import com.github.nija123098.evelyn.BotConfig.ReadConfig;
 import com.github.nija123098.evelyn.exeption.DevelopmentException;
-import com.github.nija123098.evelyn.launcher.BotConfig;
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;
@@ -56,7 +56,7 @@ public class SpeechHelper {
         if (first == null) return second;
         File to = FileHelper.getTempFile("speech", "mp3");
         List<String> arguments = new ArrayList<>();
-        arguments.add(BotConfig.FFM_PEG_PATH);
+        arguments.add(ReadConfig.FFM_PEG_PATH);
         arguments.add("-i");
         arguments.add("\"concat:" + first.getPath() + "|" + second.getPath() + "\"");
         arguments.add("-acodec");

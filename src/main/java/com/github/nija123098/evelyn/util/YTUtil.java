@@ -1,11 +1,11 @@
 package com.github.nija123098.evelyn.util;
 
+import com.github.nija123098.evelyn.BotConfig.ReadConfig;
 import com.github.nija123098.evelyn.audio.Track;
 import com.github.nija123098.evelyn.audio.YoutubeTrack;
 import com.github.nija123098.evelyn.exeption.ArgumentException;
 import com.github.nija123098.evelyn.exeption.BotException;
 import com.github.nija123098.evelyn.exeption.DevelopmentException;
-import com.github.nija123098.evelyn.launcher.BotConfig;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
@@ -98,7 +98,7 @@ public class YTUtil {
         YouTube.PlaylistItems.List playlist = YTUtil.errorWrap(() -> YTUtil.YOUTUBE.playlistItems().list("id,contentDetails,snippet"));
         playlist.setFields("items(contentDetails/videoId,snippet/title,snippet/publishedAt),nextPageToken,pageInfo");
         PLAYLIST = playlist;
-        Collections.addAll(KEYS, BotConfig.GOOGLE_API_KEY.split(" "));
+        Collections.addAll(KEYS, ReadConfig.GOOGLE_API_KEY.split(" "));
     }
     public static String getKey(){
         return KEYS.get(KEY_INDEX.incrementAndGet() % KEYS.size());

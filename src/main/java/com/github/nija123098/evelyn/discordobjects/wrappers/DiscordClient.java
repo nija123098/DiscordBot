@@ -1,7 +1,7 @@
 package com.github.nija123098.evelyn.discordobjects.wrappers;
 
+import com.github.nija123098.evelyn.BotConfig.ReadConfig;
 import com.github.nija123098.evelyn.discordobjects.ErrorWrapper;
-import com.github.nija123098.evelyn.launcher.BotConfig;
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.handle.obj.IUser;
 
@@ -100,7 +100,7 @@ public class DiscordClient {
     }
 
     public static Guild getSupportServer(){
-        return Guild.getGuild(BotConfig.SUPPORT_SERVER);
+        return Guild.getGuild(ReadConfig.SUPPORT_SERVER);
     }
 
     public static List<Channel> getChannels(boolean includePrivate) {

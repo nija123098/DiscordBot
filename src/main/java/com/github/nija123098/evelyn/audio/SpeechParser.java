@@ -1,5 +1,6 @@
 package com.github.nija123098.evelyn.audio;
 
+import com.github.nija123098.evelyn.BotConfig.ReadConfig;
 import com.github.nija123098.evelyn.chatbot.ChatBot;
 import com.github.nija123098.evelyn.command.CommandHandler;
 import com.github.nija123098.evelyn.discordobjects.DiscordAdapter;
@@ -12,7 +13,6 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordSpeakingEvent;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordVoiceJoin;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordVoiceLeave;
-import com.github.nija123098.evelyn.launcher.BotConfig;
 import com.github.nija123098.evelyn.perms.BotRole;
 import com.github.nija123098.evelyn.service.services.ScheduleService;
 import com.github.nija123098.evelyn.util.*;
@@ -55,7 +55,7 @@ public class SpeechParser implements IAudioReceiver {
     private static final InitBuffer<StreamSpeechRecognizer> SPEECH_RECOGNIZER_BUFFER;
     private static final Map<Guild, Map<User, SpeechParser>> PARSER_MAP;
     static {
-        if (BotConfig.VOICE_COMMANDS_ENABLED){
+        if (ReadConfig.VOICE_COMMANDS_ENABLED){
             PARSER_MAP = new ConcurrentHashMap<>();
             Configuration configuration = new Configuration();
             configuration.setAcousticModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us");
@@ -158,7 +158,7 @@ public class SpeechParser implements IAudioReceiver {
         File ret = new File(file.getPath().replace(".pcm", ".wav"));
         if (ret.exists()) ret.delete();
         List<String> command = new ArrayList<>();
-        command.add(BotConfig.FFM_PEG_PATH);
+        command.add(ReadConfig.FFM_PEG_PATH);
         command.add("-f");// depth
         command.add("s16be");
         command.add("-ar");

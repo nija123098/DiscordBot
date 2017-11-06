@@ -3,7 +3,6 @@ package com.github.nija123098.evelyn.fun.meme;
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
-import com.github.nija123098.evelyn.launcher.BotConfig;
 import com.github.nija123098.evelyn.util.FormatHelper;
 import com.github.nija123098.evelyn.util.Log;
 import org.eclipse.jetty.util.ConcurrentHashSet;
@@ -32,7 +31,7 @@ public class MemeTypesCommand extends AbstractCommand {
     }
     static void loadMemeTypes() {
         try {
-            Document document = Jsoup.connect("https://memegen.link/").userAgent(BotConfig.USER_AGENT).timeout(5_000).get();
+            Document document = Jsoup.connect("https://memegen.link/").userAgent("Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36").timeout(5_000).get();
             if (document != null) {
                 Elements fmls = document.select(".js-meme-selector option");
                 if (!fmls.isEmpty()) {

@@ -1,9 +1,9 @@
 package com.github.nija123098.evelyn.discordobjects.wrappers;
 
+import com.github.nija123098.evelyn.BotConfig.ReadConfig;
 import com.github.nija123098.evelyn.discordobjects.ErrorWrapper;
 import com.github.nija123098.evelyn.exeption.GhostException;
 import com.github.nija123098.evelyn.exeption.PermissionsException;
-import com.github.nija123098.evelyn.launcher.BotConfig;
 import com.github.nija123098.evelyn.service.services.MemoryManagementService;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
 import com.github.nija123098.evelyn.util.Time;
@@ -121,7 +121,7 @@ public class Message {// should not be kept stored, too many are made
     }
 
     public void delete() {
-        if (BotConfig.GHOST_MODE) return;
+        if (ReadConfig.GHOST_MODE) return;
         ErrorWrapper.wrap(() -> message().delete());
     }
 
@@ -154,7 +154,7 @@ public class Message {// should not be kept stored, too many are made
     }
 
     public Reaction addReaction(String s) {
-        if (BotConfig.GHOST_MODE) throw new GhostException();
+        if (ReadConfig.GHOST_MODE) throw new GhostException();
         ErrorWrapper.wrap(() -> this.message().addReaction(ReactionEmoji.of(s)));
         return getReaction(s);
     }

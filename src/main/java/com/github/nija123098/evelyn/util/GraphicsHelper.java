@@ -1,6 +1,5 @@
 package com.github.nija123098.evelyn.util;
 
-import com.github.nija123098.evelyn.launcher.BotConfig;
 import com.google.api.client.util.Joiner;
 
 import javax.imageio.ImageIO;
@@ -79,7 +78,7 @@ public class GraphicsHelper {
             return URL_COLOR_MAP.computeIfAbsent(url, s -> {
                 try {
                     HttpURLConnection connection = ((HttpURLConnection) new URL(s.replace(".webp", ".png")).openConnection());
-                    connection.setRequestProperty("User-Agent", BotConfig.USER_AGENT);
+                    connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36");
                     BufferedImage image = ImageIO.read(connection.getInputStream());
                     int r = 0, g = 0, b = 0;
                     for (int i = 0; i < image.getHeight(); ++i) {

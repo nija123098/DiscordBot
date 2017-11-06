@@ -1,5 +1,6 @@
 package com.github.nija123098.evelyn.fun;
 
+import com.github.nija123098.evelyn.BotConfig.ReadConfig;
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Command;
@@ -9,7 +10,6 @@ import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Region;
 import com.github.nija123098.evelyn.exeption.DevelopmentException;
-import com.github.nija123098.evelyn.launcher.BotConfig;
 import com.github.nija123098.evelyn.util.FileHelper;
 import com.github.nija123098.evelyn.util.Rand;
 import javafx.util.Pair;
@@ -37,7 +37,7 @@ public class MapCommand extends AbstractCommand {
         try {
             Map<Region, Integer> map = new HashMap<>();
             DiscordClient.getGuilds().forEach(guild -> map.compute(guild.getRegion(), (region, integer) -> integer == null ? 1 : integer + 1));
-            BufferedImage image = ImageIO.read(Paths.get(BotConfig.CONTAINER_PATH, "final_map.png").toFile());
+            BufferedImage image = ImageIO.read(Paths.get(ReadConfig.FINAL_MAP_NAME).toFile());
             Map<ColorAria, List<Pair<Integer, Integer>>> setMap = new HashMap<>();
             for (int i = 0; i < image.getWidth(); i++) for (int j = 0; j < image.getHeight(); j++) setMap.computeIfAbsent(getColorAria(image.getRGB(i, j)), region -> new ArrayList<>(1000)).add(new Pair<>(i, j));
             Set<Pair<Integer, Integer>> pairs = new HashSet<>();

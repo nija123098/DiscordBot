@@ -1,5 +1,6 @@
 package com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager;
 
+import com.github.nija123098.evelyn.BotConfig.ReadConfig;
 import com.github.nija123098.evelyn.audio.SpeechTrack;
 import com.github.nija123098.evelyn.audio.Track;
 import com.github.nija123098.evelyn.audio.commands.current.CurrentCommand;
@@ -18,7 +19,6 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordVoiceLeave;
 import com.github.nija123098.evelyn.exeption.ArgumentException;
 import com.github.nija123098.evelyn.exeption.GhostException;
-import com.github.nija123098.evelyn.launcher.BotConfig;
 import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.service.services.ScheduleService;
 import com.github.nija123098.evelyn.util.Care;
@@ -101,7 +101,7 @@ public class GuildAudioManager extends AudioEventAdapter{
      */
     public static GuildAudioManager getManager(VoiceChannel channel, boolean make){
         if (channel == null) return null;// this might not happen anymore
-        if (BotConfig.GHOST_MODE) throw new GhostException();
+        if (ReadConfig.GHOST_MODE) throw new GhostException();
         GuildAudioManager current = getManager(channel.getGuild());
         if (current != null) {
             if (!current.voiceChannel().isConnected()) MAP.replace(channel.getID(), new GuildAudioManager(channel));

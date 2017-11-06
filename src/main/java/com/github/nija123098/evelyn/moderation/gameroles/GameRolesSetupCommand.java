@@ -1,10 +1,10 @@
 package com.github.nija123098.evelyn.moderation.gameroles;
 
+import com.github.nija123098.evelyn.BotConfig.ReadConfig;
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
-import com.github.nija123098.evelyn.launcher.BotConfig;
 import com.github.nija123098.evelyn.util.Log;
 
 import java.io.IOException;
@@ -16,7 +16,7 @@ import java.util.Set;
 public class GameRolesSetupCommand extends AbstractCommand {
     private static final Set<String> VERIFIED_GAMES = new HashSet<>();
     static {
-        try{VERIFIED_GAMES.addAll(Files.readAllLines(Paths.get(BotConfig.VERIFIED_GAMES_NAME)));
+        try{VERIFIED_GAMES.addAll(Files.readAllLines(Paths.get(ReadConfig.VERIFIED_GAMES_NAME)));
         } catch (IOException e) {
             Log.log("Could not load verified games", e);
         }

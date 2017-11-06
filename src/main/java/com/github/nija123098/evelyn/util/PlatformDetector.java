@@ -16,14 +16,30 @@ public class PlatformDetector {
         return (OS.indexOf("nix") >= 0 || OS.indexOf("nux") >= 0 || OS.indexOf("aix") > 0 );
     }
 
-    public static String fileEnding() {
-        String fileEnding = null;
+    public static String PathEnding() {
+        String ending = null;
         if (isUnix()) {
-            fileEnding = "/";
+            ending = "/";
         }
         else if (isWindows()) {
-            fileEnding = "\\";
+            ending = "/";
         }
-        return fileEnding;
+        return ending;
     }
+
+    public static String ConverPath(String path) {
+        StringBuffer result = new StringBuffer(path.length());
+        char from = '\\';
+        char to = '/';
+
+        for (int i = 0; i < path.length(); i++) {
+            if (path.charAt(i) == from) {
+                result.append(to);
+            } else {
+                result.append(path.charAt(i));
+            }
+        }
+        return result.toString();
+    }
+
 }

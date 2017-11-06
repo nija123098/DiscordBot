@@ -1,6 +1,6 @@
 package com.github.nija123098.evelyn.util;
 
-import com.github.nija123098.evelyn.launcher.BotConfig;
+import com.github.nija123098.evelyn.BotConfig.ReadConfig;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
@@ -15,7 +15,7 @@ public class TwitterHelper {
         ConfigurationBuilder builder = new ConfigurationBuilder();
         builder.setApplicationOnlyAuthEnabled(true);
         APPLICATION = new TwitterFactory(builder.build()).getInstance();
-        APPLICATION.setOAuthConsumer(BotConfig.TWITTER_KEY, BotConfig.TWITTER_SECRET);
+        APPLICATION.setOAuthConsumer(ReadConfig.TWITTER_KEY, ReadConfig.TWITTER_SECRET);
         try{APPLICATION.getOAuth2Token();
         } catch (TwitterException e) {Log.log("Could not load Twitter", e);}
     }

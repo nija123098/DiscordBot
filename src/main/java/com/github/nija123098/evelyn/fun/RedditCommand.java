@@ -5,7 +5,6 @@ import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.exeption.ArgumentException;
-import com.github.nija123098.evelyn.launcher.BotConfig;
 import com.github.nija123098.evelyn.util.Rand;
 import com.github.nija123098.evelyn.util.RedditLink;
 import ga.dryco.redditjerk.implementation.RedditApi;
@@ -20,7 +19,7 @@ import java.util.stream.Collectors;
  */
 public class RedditCommand extends AbstractCommand {
     static {
-        RedditApi.getRedditInstance(BotConfig.USER_AGENT);
+        RedditApi.getRedditInstance("Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36");
     }
     public RedditCommand() {
         super("reddit", ModuleLevel.FUN, null, null, "Posts something from Reddit");
