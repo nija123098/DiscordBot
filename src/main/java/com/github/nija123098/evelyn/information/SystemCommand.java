@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class SystemCommand extends AbstractCommand {
     private static AtomicInteger integer = new AtomicInteger();
     public SystemCommand() {
-        super("system", ModuleLevel.INFO, "sys", null, "Shows memory usage and Emily's version");
+        super("system", ModuleLevel.INFO, "sys", null, "Shows memory usage and Evelyns's version");
     }
     @Command
     public void command(MessageMaker maker){
