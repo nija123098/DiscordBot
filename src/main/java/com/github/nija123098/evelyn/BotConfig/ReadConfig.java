@@ -42,6 +42,7 @@ public class ReadConfig {
     public static final boolean VOICE_COMMANDS_ENABLED = Boolean.parseBoolean(getPropertyValue("Voice-Commands-Enabled"));
     public static final String CONTRIBUTOR_SIGN_ROLE = getPropertyValue("Contributor-Sign-Role");
     public static final String SUPPORTER_SIGN_ROLE = getPropertyValue("Supporter-Sign-Role");
+    public static final String BOT_UPDATE_SCRIPT = getPropertyValue("Update-Script=");
 
     //Database Settings
     public static final String DB_HOST = getPropertyValue("Database-IP");
