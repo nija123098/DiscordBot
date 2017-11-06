@@ -1,4 +1,4 @@
-package com.github.nija123098.evelyn.botmanagement;
+package com.github.nija123098.evelyn.command.commands;
 
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
@@ -11,7 +11,7 @@ import java.io.*;
 
 public class ServerIPCommand extends AbstractCommand{
     public ServerIPCommand() {
-        super("serverip", ModuleLevel.BOT_ADMINISTRATIVE, null, null, "Gets the current server ip address");
+        super("serverip", ModuleLevel.DEVELOPMENT, null, null, "Gets the current server ip address");
     }
     @Command
     public void command(MessageMaker maker) throws IOException {
