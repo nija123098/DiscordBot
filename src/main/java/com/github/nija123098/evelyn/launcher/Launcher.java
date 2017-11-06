@@ -15,9 +15,7 @@ import com.github.nija123098.evelyn.template.TemplateHandler;
 import com.github.nija123098.evelyn.util.Care;
 import com.github.nija123098.evelyn.util.Log;
 import com.github.nija123098.evelyn.util.ThreadProvider;
-import com.wezinkhof.configuration.ConfigurationBuilder;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
