@@ -35,7 +35,6 @@ public class GuideCommand extends AbstractCommand {
             counter++;
         }
         maker.getTitle().append("A beginner's guide to me");
-
     }
 
     public String reader() {

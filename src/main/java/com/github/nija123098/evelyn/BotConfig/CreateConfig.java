@@ -8,14 +8,14 @@ import com.github.nija123098.evelyn.util.PlatformDetector;
 import org.apache.commons.io.FileUtils;
 import java.io.*;
 
-import static com.github.nija123098.evelyn.util.PlatformDetector.ConverPath;
+import static com.github.nija123098.evelyn.util.PlatformDetector.ConvertPath;
 import static com.github.nija123098.evelyn.util.PlatformDetector.PathEnding;
 
 public class CreateConfig {
 
     public static void main() throws IOException {
 
-        String FILEPATH = ConverPath(System.getProperty("user.dir"));
+        String FILEPATH = ConvertPath(System.getProperty("user.dir"));
         String FOLDERPATH = FILEPATH + PathEnding();
         String youtube_dl = null;
 
@@ -89,10 +89,9 @@ public class CreateConfig {
 
         if (PlatformDetector.isWindows()) {
             youtube_dl = FOLDERPATH + "Libraries" + PathEnding() + "youtube-dl.exe";
-        } else  if (PlatformDetector.isUnix()) {
+        } else if (PlatformDetector.isUnix()) {
             youtube_dl = "/usr/local/bin/youtube-dl";
         }
-
-        FileUtils.writeStringToFile(new File(FILEPATH + PathEnding() + "Bot-Config.cfg"), ConfigTemplate + youtube_dl);
+        FileUtils.writeStringToFile(new File(FILEPATH + PathEnding() + "Bot-Config.cfg"), ConfigTemplate + youtube_dl, "UTF-8");
     }
 }
