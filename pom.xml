@@ -4,14 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.github.Kaaz</groupId>
+    <groupId>com.github.nija123098</groupId>
     <artifactId>DiscordBot</artifactId>
-    <version>2.0.0</version>
+    <version>1.0.0</version>
 
     <packaging>jar</packaging>
 
     <description>A discord bot for music and other fun features</description>
-    <url>https://github.com/Kaaz/DiscordBot</url>
+    <url>https://github.com/nija123098/DiscordBot</url>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -21,12 +21,13 @@
 
     <repositories>
         <repository>
-            <id>jcenter</id>
-            <url>http://jcenter.bintray.com</url>
-        </repository>
-        <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
+        </repository>
+        <repository>
+            <id>central</id>
+            <name>bintray</name>
+            <url>http://jcenter.bintray.com</url>
         </repository>
     </repositories>
 
@@ -34,7 +35,7 @@
         <dependency>
             <groupId>com.github.austinv11</groupId>
             <artifactId>Discord4j</artifactId>
-            <version>3d0e660</version>
+            <version>49a6f26</version>
             <classifier>shaded</classifier>
         </dependency>
         <dependency>
@@ -46,11 +47,6 @@
             <groupId>com.thoughtworks.xstream</groupId>
             <artifactId>xstream</artifactId>
             <version>1.4.10</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.MaikWezinkhof</groupId>
-            <artifactId>ConfigurationBuilder</artifactId>
-            <version>c05d1a4455</version>
         </dependency>
         <dependency><!-- https://mvnrepository.com/artifact/org.apache.commons/commons-collections4 -->
             <groupId>org.apache.commons</groupId>
@@ -92,16 +88,10 @@
             <artifactId>json-simple</artifactId>
             <version>1.1.1</version>
         </dependency>
-        <dependency>
-            <groupId>com.github.go-ive</groupId>
+        <dependency><!--My branch to remove the logger implementation-->
+            <groupId>com.github.nija123098</groupId>
             <artifactId>steam-api</artifactId>
-            <version>5.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-log4j12</artifactId>
-                </exclusion>
-            </exclusions>
+            <version>77b445d4da</version>
         </dependency>
         <dependency>
             <groupId>ca.pjer</groupId>
@@ -116,7 +106,7 @@
         <dependency>
             <groupId>com.google.apis</groupId>
             <artifactId>google-api-services-youtube</artifactId>
-            <version>v3-rev178-1.22.0</version>
+            <version>v3-rev184-1.22.0</version>
         </dependency>
         <dependency>
             <groupId>com.sedmelluq</groupId>
@@ -173,6 +163,11 @@
             <artifactId>mariadb-java-client</artifactId>
             <version>2.1.0</version>
         </dependency>
+        <dependency>
+            <groupId>net.swisstech</groupId>
+            <artifactId>bitly-api-client</artifactId>
+            <version>0.8.0</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -186,7 +181,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>com.github.kaaz.emily.launcher.Launcher</mainClass>
+                            <mainClass>com.github.nija123098.evelyn.launcher.Launcher</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
