@@ -39,6 +39,10 @@ public class EmoticonHelper {
         if (noSpace) chars += '\u200B';
         return chars;
     }
+    public static IEmoji getEmoji(String s) {
+        return DiscordClient.getSupportServer().guild().getEmojiByName(s);
+    }
+
     public static ReactionEmoji getReactionEmoji(String s){// re-wrap once D4J v3 releases
         String chars = getChars(s, false);
         if (chars != null) return ReactionEmoji.of(chars);

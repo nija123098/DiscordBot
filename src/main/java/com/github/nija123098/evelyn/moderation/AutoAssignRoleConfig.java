@@ -10,6 +10,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordUserJoin;
 import com.github.nija123098.evelyn.exeption.ArgumentException;
 import com.github.nija123098.evelyn.perms.BotRole;
+import com.github.nija123098.evelyn.util.Log;
 
 /**
  * Made by nija123098 on 6/19/2017.
@@ -25,7 +26,7 @@ public class AutoAssignRoleConfig extends AbstractConfig<Role, Guild> {
     }
     @Override
     protected Role validateInput(Guild configurable, Role role) {
-        if (role.getPosition() < DiscordClient.getOurUser().getRolesForGuild(configurable).get(0).getPosition()) throw new ArgumentException("For me to assign roles I must have a higher role");
+        if (role.getPosition() > DiscordClient.getOurUser().getRolesForGuild(configurable).get(0).getPosition()) throw new ArgumentException("For me to assign roles I must have a higher role");
         return role;
     }
 }
