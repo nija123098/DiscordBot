@@ -19,10 +19,10 @@ public class AnnounceCommand extends AbstractCommand {
     }
     @Command
     public void command(@Argument(info = "The stuff to say") String text){
-        MessageMaker maker = new MessageMaker((Channel) null);
-        maker.append(text);
+        MessageMaker message = new MessageMaker((Channel) null);
+        message.append(text);
         Set<Channel> channels = DiscordClient.getGuilds().stream().map((guild -> ConfigHandler.getSetting(BotChannelConfig.class, guild))).collect(Collectors.toSet());
         channels.remove(null);
-        channels.forEach(channel -> maker.clearMessage().withChannel(channel).send());
+        channels.forEach(channel -> message.send());
     }
 }

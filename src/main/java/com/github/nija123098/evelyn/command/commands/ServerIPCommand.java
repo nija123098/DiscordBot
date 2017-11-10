@@ -16,16 +16,17 @@ public class ServerIPCommand extends AbstractCommand{
     @Command
     public void command(MessageMaker maker) throws IOException {
         maker.append("The current server IP address is: " + getIP());
+        maker.send();
+        maker.clearMessage();
         maker.append("Please do not share this IP as it may produce security concerns.");
+        maker.send();
     }
 
     private String getIP() throws IOException {
         String ip;
-
         URL checkIP = new URL("http://checkip.amazonaws.com");
         BufferedReader in = new BufferedReader(new InputStreamReader(checkIP.openStream()));
         ip = in.readLine();
-
         return ip;
     }
 }
