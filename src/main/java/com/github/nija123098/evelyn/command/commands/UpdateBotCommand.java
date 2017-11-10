@@ -45,7 +45,7 @@ public class UpdateBotCommand extends AbstractCommand {
             ScheduleService.schedule(17, () -> ExecuteShellCommand.commandToExecute("./Build.sh"));
             ScheduleService.schedule(77, () -> message.append("The new jarfile is ready. The bot will now go offline to update."));
             ScheduleService.schedule(80, () -> ExecuteShellCommand.commandToExecute("./Update.sh"));
-            Launcher.shutdown( 1, 83, true);
+            ScheduleService.schedule(83, () -> Launcher.shutdown( 1, 0, true));
         }
     }
 }
