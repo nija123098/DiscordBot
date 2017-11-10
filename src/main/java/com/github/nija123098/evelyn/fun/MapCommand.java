@@ -30,7 +30,7 @@ public class MapCommand extends AbstractCommand {
     private static final int DOT_SIZE = 2;
     private static final File FILE = FileHelper.getTempFile("map", "png", "map");
     public MapCommand() {
-        super("map", ModuleLevel.FUN, null, null, "Displays a map of Emily's server distribution");
+        super("map", ModuleLevel.FUN, null, null, "Displays a map of Evelyn's server distribution");
     }
     @Command
     public void command(MessageMaker maker){

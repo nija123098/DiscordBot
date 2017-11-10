@@ -15,7 +15,7 @@ import com.github.nija123098.evelyn.information.configs.SubscriptionsConfig;
  */
 public class SubscribeCommand extends AbstractCommand {
     public SubscribeCommand() {
-        super("subscribe", ModuleLevel.ADMINISTRATIVE, "sub", null, "Subscribe this channel to certain events, take a look at @Emily rss");
+        super("subscribe", ModuleLevel.ADMINISTRATIVE, "sub", null, "Subscribe this channel to certain events, take a look at @Evelyn rss");
     }
     @Command
     public void command(@Argument(optional = true, replacement = ContextType.NONE, info = "The thing to subscribe to") SubscriptionLevel level, Channel channel, MessageMaker maker){

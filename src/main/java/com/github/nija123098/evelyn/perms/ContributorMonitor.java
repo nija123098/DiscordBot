@@ -14,7 +14,7 @@ public class ContributorMonitor {
     private static final Role CONTRIB_SIGN_ROLE = Role.getRole(ReadConfig.CONTRIBUTOR_SIGN_ROLE);
     private static final Role SUPPORT_SIGN_ROLE = Role.getRole(ReadConfig.SUPPORTER_SIGN_ROLE);
     public static void init(){
-        if (CONTRIB_SIGN_ROLE == null) return;// is not the instance serving Emily's Space
+        if (CONTRIB_SIGN_ROLE == null) return;// is not the instance serving Evelyn's Space
         System.out.println(CONTRIB_SIGN_ROLE.getName());
         System.out.println(CONTRIB_SIGN_ROLE.getGuild().getName());
         EventDistributor.register(ContributorMonitor.class);

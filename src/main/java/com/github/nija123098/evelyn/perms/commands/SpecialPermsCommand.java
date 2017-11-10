@@ -15,7 +15,7 @@ import com.github.nija123098.evelyn.perms.configs.specialperms.SpecialPermsConta
  */
 public class SpecialPermsCommand extends AbstractCommand {
     public SpecialPermsCommand() {
-        super("commandadmin", BotRole.GUILD_TRUSTEE, ModuleLevel.ADMINISTRATIVE, "ca, specialperms, spc", null, "Helps set command approval and restrictions on Emily commands based on channel and ranks");
+        super("commandadmin", BotRole.GUILD_TRUSTEE, ModuleLevel.ADMINISTRATIVE, "ca, specialperms, spc", null, "Helps set command approval and restrictions on Evelyn commands based on channel and ranks");
     }
     @Command
     public void command(Guild guild, @Argument Boolean enable){

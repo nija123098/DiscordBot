@@ -46,7 +46,7 @@ public class CallCommand extends AbstractCommand {
             callID = IDS.addAndGet(Rand.getRand(100) + 52);
             CALLS.put(callID, new HashSet<>(Collections.singletonList(channel)));
             CALL_IDS.put(channel, callID);
-            maker.withDM().append("Opening call to with ID: " + callID + "\nGive the ID to another server so they may join you by doing `@Emily call " + callID + "`");
+            maker.withDM().append("Opening call to with ID: " + callID + "\nGive the ID to another server so they may join you by doing `@Evelyn call " + callID + "`");
             return;
         }
         if (CALL_IDS.containsKey(channel)) throw new ArgumentException("You can't be in more than one call at a time, it might confuse me.  You must hang up first");
