@@ -5,7 +5,6 @@ import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.config.GuildUser;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordUserJoin;
-import com.github.nija123098.evelyn.perms.BotRole;
 
 /**
  * Made by nija123098 on 5/1/2017.
