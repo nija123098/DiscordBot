@@ -11,14 +11,11 @@ import java.io.*;
 
 public class ServerIPCommand extends AbstractCommand{
     public ServerIPCommand() {
-        super("serverip", ModuleLevel.DEVELOPMENT, null, null, "Gets the current server ip address");
+        super("serverip", ModuleLevel.DEVELOPMENT, "ip", null, "Gets the current server ip address");
     }
     @Command
     public void command(MessageMaker maker) throws IOException {
-        maker.append("The current server IP address is: " + getIP());
-        maker.send();
-        maker.clearMessage();
-        maker.append("Please do not share this IP as it may produce security concerns.");
+        maker.appendRaw("The current server IP address is: " + getIP() + "\n" + "Please do not share this IP as it may produce security concerns.");
         maker.send();
     }
 
