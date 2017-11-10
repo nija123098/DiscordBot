@@ -31,19 +31,16 @@ public class UpdateBotCommand extends AbstractCommand {
         if (PlatformDetector.isWindows()) {
             osType = "Windows";
             message.append("This command can only be run whe the bot is being hosted on a Linux server not " + osType + " which it is currently on");
-            message.send();
         } else if (PlatformDetector.isMac()) {
             osType = "macOS";
             message.append("This command can only be run whe the bot is being hosted on a Linux server not " + osType + " which it is currently on");
-            message.send();
         } else if (PlatformDetector.isUnix()) {
-            SubscriptionLevel.BOT_STATUS.send(message.append("I'm going down for an update. This may take a few minutes."));
             message.append("The bot is now pulling changes from GitHib.");
             ExecuteShellCommand.commandToExecute("./Pull.sh");
-            ScheduleService.schedule(15000, () -> message.append("The changes have now been pulled."));
-            ScheduleService.schedule(16000, () -> message.append("The bot will now build the new jarfile to run."));
+            ScheduleService.schedule(15000, () -> message.clearMessage().append("The changes have now been pulled."));
+            ScheduleService.schedule(16000, () -> message.clearMessage().append("The bot will now build the new jarfile to run."));
             ScheduleService.schedule(17000, () -> ExecuteShellCommand.commandToExecute("./Build.sh"));
-            ScheduleService.schedule(77000, () -> message.append("The new jarfile is ready. The bot will now go offline to update."));
+            ScheduleService.schedule(77000, () -> message.clearMessage().append("The new jarfile is ready. The bot will now go offline to update."));
             ScheduleService.schedule(80000, () -> ExecuteShellCommand.commandToExecute("./Update.sh"));
             ScheduleService.schedule(83000, () -> Launcher.shutdown( 1, 0, false));
         }
