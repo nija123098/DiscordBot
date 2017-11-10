@@ -1,12 +1,16 @@
 package com.github.nija123098.evelyn.command.commands;
 
 import com.github.nija123098.evelyn.command.AbstractCommand;
+import com.github.nija123098.evelyn.command.CommandHandler;
+import com.github.nija123098.evelyn.command.ContextType;
 import com.github.nija123098.evelyn.command.ModuleLevel;
+import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.information.subsription.SubscriptionLevel;
 import com.github.nija123098.evelyn.launcher.Launcher;
+import com.github.nija123098.evelyn.service.services.ScheduleService;
 import com.github.nija123098.evelyn.template.KeyPhrase;
 import com.github.nija123098.evelyn.template.Template;
 import com.github.nija123098.evelyn.template.TemplateHandler;
@@ -23,6 +27,7 @@ public class UpdateBotCommand extends AbstractCommand {
     @Command
     public void command(MessageMaker message) throws IOException {
         String osType;
+
         if (PlatformDetector.isWindows()) {
             osType = "Windows";
             message.append("This command can only be run whe the bot is being hosted on a Linux server not " + osType + " which it is currently on");
@@ -32,12 +37,15 @@ public class UpdateBotCommand extends AbstractCommand {
             message.append("This command can only be run whe the bot is being hosted on a Linux server not " + osType + " which it is currently on");
             message.send();
         } else if (PlatformDetector.isUnix()) {
-            message.append("The bot will now be updated to the latest version stored in github");
-            message.send();
             SubscriptionLevel.BOT_STATUS.send(new MessageMaker((Channel) null).append("I'm going down for an update. This may take a few minutes."));
+            message.append("The bot is now pulling changes from GitHib.");
+            ExecuteShellCommand.commandToExecute("./Pull.sh");
+            ScheduleService.schedule(15, () -> message.append("The changes have now been pulled."));
+            message.append("The bot will now build the new jarfile to run.");
+            ExecuteShellCommand.commandToExecute("./Build.sh");
+            ScheduleService.schedule(60, () -> message.append("The new jarfile is ready. The bot will now go offline to update."));
             ExecuteShellCommand.commandToExecute("./Update.sh");
-            SubscriptionLevel.BOT_STATUS.send(new MessageMaker((Channel) null).append("I'm going down for an update. This may take a few minutes."));
-            Launcher.shutdown( -1, 0, false);
+            Launcher.shutdown( 1, 0, true);
         }
     }
 }
