@@ -37,14 +37,14 @@ public class UpdateBotCommand extends AbstractCommand {
             message.append("This command can only be run whe the bot is being hosted on a Linux server not " + osType + " which it is currently on");
             message.send();
         } else if (PlatformDetector.isUnix()) {
-            SubscriptionLevel.BOT_STATUS.send(new MessageMaker((Channel) null).append("I'm going down for an update. This may take a few minutes."));
+            SubscriptionLevel.BOT_STATUS.send(message.append("I'm going down for an update. This may take a few minutes."));
             message.append("The bot is now pulling changes from GitHib.");
             ExecuteShellCommand.commandToExecute("./Pull.sh");
             ScheduleService.schedule(15, () -> message.append("The changes have now been pulled."));
-            message.append("The bot will now build the new jarfile to run.");
-            ExecuteShellCommand.commandToExecute("./Build.sh");
-            ScheduleService.schedule(60, () -> message.append("The new jarfile is ready. The bot will now go offline to update."));
-            ExecuteShellCommand.commandToExecute("./Update.sh");
+            ScheduleService.schedule(16, () -> message.append("The bot will now build the new jarfile to run."));
+            ScheduleService.schedule(17, () -> ExecuteShellCommand.commandToExecute("./Build.sh"));
+            ScheduleService.schedule(77, () -> message.append("The new jarfile is ready. The bot will now go offline to update."));
+            ScheduleService.schedule(80, () -> ExecuteShellCommand.commandToExecute("./Update.sh"));
             Launcher.shutdown( 1, 0, true);
         }
     }
