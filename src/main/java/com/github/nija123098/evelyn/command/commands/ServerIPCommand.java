@@ -15,7 +15,7 @@ public class ServerIPCommand extends AbstractCommand{
     }
     @Command
     public void command(MessageMaker maker) throws IOException {
-        maker.appendRaw("The current server IP address is: " + getIP() + "\n" + "**Please do not share this IP as it may produce security concerns.**");
+        maker.append("The current server IP address is: " + getIP() + "\n" + "**Please do not share this IP as it may produce security concerns.**");
     }
 
     private String getIP() throws IOException {
