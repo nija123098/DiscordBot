@@ -10,3 +10,13 @@ dependency-reduced-pom.xml
 src/main/java/discordbot/command/fun/MyTestCommand.java
 src/main/resources/logback.xml
 modules/
+
+src/main/java/META-INF/MANIFEST.MF
+
+*.txt
+
+*.cfg
+
+*.png
+
+Required/
