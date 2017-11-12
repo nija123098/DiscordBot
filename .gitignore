@@ -5,6 +5,18 @@ logs
 application.cfg
 bot_config.cfg
 log/
+dependency-reduced-pom.xml
 #so I can uglyfy this file without worries
 src/main/java/discordbot/command/fun/MyTestCommand.java
 src/main/resources/logback.xml
+modules/
+
+src/main/java/META-INF/MANIFEST.MF
+
+*.txt
+
+*.cfg
+
+*.png
+
+Required/
