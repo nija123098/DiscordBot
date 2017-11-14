@@ -23,7 +23,7 @@ public class AnnounceCommand extends AbstractCommand {
         Set<Channel> channels = DiscordClient.getGuilds().stream().map((guild -> ConfigHandler.getSetting(BotChannelConfig.class, guild))).collect(Collectors.toSet());
         channels.remove(null);
         for (Channel channel : channels) {
-                maker.forceCompile().withChannel(channel).append(text).send();
+                maker.forceCompile().withChannel(channel).appendRaw(text).send();
                 maker.forceCompile().clearMessage();
         }
     }

@@ -136,6 +136,14 @@ public class FormatHelper {
     }
 
     /**
+     * @param items items in the controllers
+     * @return formatted controllers
+     */
+    public static String makeTable(List<String> items, boolean codeBlock) {
+        return makeTable(items, 20, 3, codeBlock);
+    }
+
+    /**
      * Makes a controllers-like display of list of items
      *
      * @param items        items in the controllers
@@ -144,19 +152,46 @@ public class FormatHelper {
      * @return formatted controllers
      */
     public static String makeTable(List<String> items, int columnLength, int columns) {
-        String ret = "```\n";
+        StringBuilder ret = new StringBuilder("```\n");
         int counter = 0;
         for (String item : items) {
             counter++;
-            ret += String.format("%-" + columnLength + "s", item);
+            ret.append(String.format("%-" + columnLength + "s", item));
             if (counter % columns == 0) {
-                ret += "\n";
+                ret.append("\n");
             }
         }
         if (counter % columns != 0) {
-            ret += "\n";
+            ret.append("\n");
         }
         return ret + "```\n";
+    }
+
+    /**
+     * Makes a controllers-like display of list of items
+     *
+     * @param items        items in the controllers
+     * @param columnLength length of a column(filled up with whitespace)
+     * @param columns      amount of columns
+     * @param codeBlock    whether to make it a code block
+     * @return formatted controllers
+     */
+    public static String makeTable(List<String> items, int columnLength, int columns, boolean codeBlock) {
+        StringBuilder ret = new StringBuilder();
+        if (codeBlock) ret.insert(0, "```");
+        int counter = 0;
+        for (String item : items) {
+            counter++;
+            ret.append(String.format(("%-" + columnLength + "s"), item));
+            if (counter % columns == 0) {
+                ret.append("\n");
+            }
+        }
+        if (counter % columns != 0) {
+            ret.append("\n");
+        }
+        if (codeBlock) return ret + "```";
+        return ret.toString();
     }
 
     private static final String DASH = EmoticonHelper.getChars("wavy_dash", true);
