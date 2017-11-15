@@ -7,7 +7,6 @@ import com.github.nija123098.evelyn.config.GuildUser;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
-import com.github.nija123098.evelyn.util.Log;
 
 /**
  * Written by Soarnir 12/10/17
@@ -26,7 +25,6 @@ public class UserListCommand extends AbstractCommand {
         int magnitude = String.valueOf(userCount).length();
         String[] zeroes = new String[magnitude];
         String zero = "";
-        Log.log(String.valueOf(magnitude));
         for (int l = magnitude; l > 0; l--) {
             zeroes[l - 1] = zero;
             zero = zero + "0";
@@ -34,14 +32,12 @@ public class UserListCommand extends AbstractCommand {
         maker.getTitle().appendRaw(guild.getName() + " | " + guild.getUserSize() + " users");
         for (User user : guild.getUsers()) {
             GuildUser guildUser = GuildUser.getGuildUser(guild, user);
-            Log.log(guildUser.getName() + " " + String.valueOf(guildUser.getJoinPosition()));
             users[guildUser.getJoinPosition()] = "`" + zeroes[String.valueOf(guildUser.getJoinPosition() + 1).length() - 1] + (guildUser.getJoinPosition() + 1) + " |` " + guildUser.getName();
             count++;
         }
         int counter = 0;
         for (String name : users) {
             maker.getNewListPart().appendRaw(name);
-            Log.log(name);
             if (counter == 35) {
                 maker.guaranteeNewListPage();
                 counter = 0;
