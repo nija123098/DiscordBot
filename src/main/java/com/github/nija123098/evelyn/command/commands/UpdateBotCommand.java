@@ -33,16 +33,16 @@ public class UpdateBotCommand extends AbstractCommand {
         String osType;
         if (PlatformDetector.isWindows()) {
             osType = "Windows";
-            maker.append("This command can only be run whe the bot is being hosted on a Linux server not " + osType + " which it is currently on").send();
+            maker.append("This command can only be run whe the bot is being hosted on a Linux server not " + osType + " which it is currently on");
         } else if (PlatformDetector.isMac()) {
             osType = "macOS";
-            maker.append("This command can only be run whe the bot is being hosted on a Linux server not " + osType + " which it is currently on").send();
+            maker.append("This command can only be run whe the bot is being hosted on a Linux server not " + osType + " which it is currently on");
         } else if (PlatformDetector.isUnix()) {
-            maker.appendRaw("The bot will now download, compile and update itself from the latest version on GitHub." + "\n" + "This usually takes 2-3 minutes.").send();
+            maker.append("The bot will now download, compile and update itself from the latest version on GitHub.\nThis usually takes 2-3 minutes.");
             ExecuteShellCommand.commandToExecute("./Pull.sh");
-            ScheduleService.schedule(17000, () -> maker.appendRaw("*The GIT folder has been updated. Now compiling.*").send());
+            ScheduleService.schedule(17000, () -> maker.append("The GIT folder has been updated. Now compiling."));
             ScheduleService.schedule(18000, () -> ExecuteShellCommand.commandToExecute("./Build.sh"));
-            ScheduleService.schedule(80000, () -> maker.appendRaw("*The sources have been compiled. The bot will now restart and apply the update.*").send());
+            ScheduleService.schedule(80000, () -> maker.append("The sources have been compiled. The bot will now restart and apply the update."));
             ScheduleService.schedule(80500, () -> ExecuteShellCommand.commandToExecute("./Update.sh"));
             ScheduleService.schedule(82000, () -> Launcher.shutdown( 1, 0, false));
         }
