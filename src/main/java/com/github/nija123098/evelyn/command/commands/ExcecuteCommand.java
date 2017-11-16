@@ -24,6 +24,6 @@ public class ExcecuteCommand extends AbstractCommand {
     public void command(String args, MessageMaker maker){
         if (PlatformDetector.isWindows()) args = "cmd /c" + args;
         ExecuteShellCommand.commandToExecute(args);
-        maker.append("Command Output:\n").appendRaw(ExecuteShellCommand.getOutput());
+        maker.append("Command Output:\n```").appendRaw(ExecuteShellCommand.getOutput()).append("```");
     }
 }

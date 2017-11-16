@@ -40,11 +40,11 @@ public class UpdateBotCommand extends AbstractCommand {
         } else if (PlatformDetector.isUnix()) {
             maker.append("The bot will now download, compile and update itself from the latest version on GitHub.\nThis usually takes 2-3 minutes.");
             ExecuteShellCommand.commandToExecute("./Pull.sh");
-            ScheduleService.schedule(17000, () -> maker.append("The GIT folder has been updated. Now compiling."));
-            ScheduleService.schedule(18000, () -> ExecuteShellCommand.commandToExecute("./Build.sh"));
-            ScheduleService.schedule(80000, () -> maker.append("The sources have been compiled. The bot will now restart and apply the update."));
-            ScheduleService.schedule(80500, () -> ExecuteShellCommand.commandToExecute("./Update.sh"));
-            ScheduleService.schedule(82000, () -> Launcher.shutdown( 1, 0, false));
+            maker.append("The GIT pull has completed with the following message:\n```").appendRaw(ExecuteShellCommand.getOutput()).append("```");
+            ExecuteShellCommand.commandToExecute("./Build.sh");
+            maker.append("The sources have been compiled. The bot will now restart to complete the update.");
+            Launcher.shutdown( 1, 3, false);
+            ExecuteShellCommand.commandToExecute("./Update.sh");
         }
     }
 }
