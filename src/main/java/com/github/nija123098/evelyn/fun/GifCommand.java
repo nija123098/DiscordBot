@@ -1,6 +1,6 @@
 package com.github.nija123098.evelyn.fun;
 
-import com.github.nija123098.evelyn.BotConfig.ReadConfig;
+import com.github.nija123098.evelyn.BotConfig.BotConfig;
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Command;
@@ -24,7 +24,7 @@ public class GifCommand extends AbstractCommand {
             if (args.length > 0) {
                 tags = "&tag=" + Joiner.on("+").join(args);
             }
-            HttpResponse<JsonNode> response = Unirest.get("http://api.giphy.com/v1/gifs/random?api_key=" + ReadConfig.GIPHY_TOKEN + tags).asJson();
+            HttpResponse<JsonNode> response = Unirest.get("http://api.giphy.com/v1/gifs/random?api_key=" + BotConfig.GIPHY_TOKEN + tags).asJson();
             maker.appendRaw(response.getBody().getObject().getJSONObject("data").getString("url"));
         } catch (Exception ignored) {}
         maker.append("Sorry, there are no gifs right now, check back later.");

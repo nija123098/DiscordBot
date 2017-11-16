@@ -20,26 +20,31 @@ import com.github.nija123098.evelyn.util.PlatformDetector;
 import java.io.IOException;
 import java.util.Collections;
 
+/**
+ * @author Celestialdeath99
+ */
+
 public class UpdateBotCommand extends AbstractCommand {
     public UpdateBotCommand() {
         super("updatebot", ModuleLevel.DEVELOPMENT, null, null, "Updates bot to latest git version. LINUX SERVER ONLY!");
     }
     @Command
-    public void command(MessageMaker message) throws IOException {
+    public void command(MessageMaker maker) throws IOException {
         String osType;
-
         if (PlatformDetector.isWindows()) {
             osType = "Windows";
-            message.append("This command can only be run whe the bot is being hosted on a Linux server not " + osType + " which it is currently on");
+            maker.append("This command can only be run whe the bot is being hosted on a Linux server not " + osType + " which it is currently on").send();
         } else if (PlatformDetector.isMac()) {
             osType = "macOS";
-            message.append("This command can only be run whe the bot is being hosted on a Linux server not " + osType + " which it is currently on");
+            maker.append("This command can only be run whe the bot is being hosted on a Linux server not " + osType + " which it is currently on").send();
         } else if (PlatformDetector.isUnix()) {
-            message.appendRaw("The bot will now download, compile and update itself from the latest version on GitHub." + "\n" + "This usually takes 2-3 minutes.");
+            maker.appendRaw("The bot will now download, compile and update itself from the latest version on GitHub." + "\n" + "This usually takes 2-3 minutes.").send();
             ExecuteShellCommand.commandToExecute("./Pull.sh");
-            ScheduleService.schedule(17000, () -> ExecuteShellCommand.commandToExecute("./Build.sh"));
-            ScheduleService.schedule(80000, () -> ExecuteShellCommand.commandToExecute("./Update.sh"));
-            ScheduleService.schedule(83000, () -> Launcher.shutdown( 1, 0, false));
+            ScheduleService.schedule(17000, () -> maker.appendRaw("*The GIT folder has been updated. Now compiling.*").send());
+            ScheduleService.schedule(18000, () -> ExecuteShellCommand.commandToExecute("./Build.sh"));
+            ScheduleService.schedule(80000, () -> maker.appendRaw("*The sources have been compiled. The bot will now restart and apply the update.*").send());
+            ScheduleService.schedule(80500, () -> ExecuteShellCommand.commandToExecute("./Update.sh"));
+            ScheduleService.schedule(82000, () -> Launcher.shutdown( 1, 0, false));
         }
     }
 }

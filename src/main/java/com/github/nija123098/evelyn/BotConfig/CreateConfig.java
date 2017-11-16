@@ -1,7 +1,3 @@
-/**
- * @author Celestialdeath99
- */
-
 package com.github.nija123098.evelyn.BotConfig;
 
 import com.github.nija123098.evelyn.util.PlatformDetector;
@@ -10,6 +6,11 @@ import java.io.*;
 
 import static com.github.nija123098.evelyn.util.PlatformDetector.ConvertPath;
 import static com.github.nija123098.evelyn.util.PlatformDetector.PathEnding;
+
+/**
+ * @author Celestialdeath99
+ */
+
 
 public class CreateConfig {
 

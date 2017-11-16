@@ -1,6 +1,6 @@
 package com.github.nija123098.evelyn.discordobjects.wrappers;
 
-import com.github.nija123098.evelyn.BotConfig.ReadConfig;
+import com.github.nija123098.evelyn.BotConfig.BotConfig;
 import com.github.nija123098.evelyn.config.ConfigLevel;
 import com.github.nija123098.evelyn.config.Configurable;
 import com.github.nija123098.evelyn.discordobjects.ErrorWrapper;
@@ -214,22 +214,22 @@ public class Guild implements Configurable {
     }
 
     public void banUser(User user, int delete, String reason) {
-        if (ReadConfig.GHOST_MODE) return;
+        if (BotConfig.GHOST_MODE) return;
         ErrorWrapper.wrap(() -> guild().banUser(user.user(), reason, delete));
     }
 
     public void pardonUser(String s) {
-        if (ReadConfig.GHOST_MODE) return;
+        if (BotConfig.GHOST_MODE) return;
         ErrorWrapper.wrap(() -> guild().pardonUser(Long.parseLong(s)));
     }
 
     public void kickUser(User user, String reason) {
-        if (ReadConfig.GHOST_MODE) return;
+        if (BotConfig.GHOST_MODE) return;
         ErrorWrapper.wrap(() -> guild().kickUser(user.user(), reason));
     }
 
     public void editUserRoles(User user, Role...roles) {
-        if (ReadConfig.GHOST_MODE) return;
+        if (BotConfig.GHOST_MODE) return;
         List<IRole> iRoles = new ArrayList<>(roles.length);
         for (Role role : roles) {
             iRoles.add(role.role());
@@ -238,52 +238,52 @@ public class Guild implements Configurable {
     }
 
     public void setDeafenUser(User user, boolean b) {
-        if (ReadConfig.GHOST_MODE) return;
+        if (BotConfig.GHOST_MODE) return;
         ErrorWrapper.wrap(() -> guild().setDeafenUser(user.user(), b));
     }
 
     public void setMuteUser(User user, boolean b) {
-        if (ReadConfig.GHOST_MODE) return;
+        if (BotConfig.GHOST_MODE) return;
         ErrorWrapper.wrap(() -> guild().setMuteUser(user.user(), b));
     }
 
     public void setUserNickname(User user, String s) {
-        if (ReadConfig.GHOST_MODE) return;
+        if (BotConfig.GHOST_MODE) return;
         ErrorWrapper.wrap(() -> guild().setUserNickname(user.user(), s));
     }
 
     public void changeName(String s) {
-        if (ReadConfig.GHOST_MODE) return;
+        if (BotConfig.GHOST_MODE) return;
         ErrorWrapper.wrap(() -> guild().changeName(s));
     }
 
     public void changeRegion(Region region) {
-        if (ReadConfig.GHOST_MODE) return;
+        if (BotConfig.GHOST_MODE) return;
         ErrorWrapper.wrap(() -> guild().changeRegion(region.region()));
     }
 
     public void changeAFKChannel(VoiceChannel voiceChannel) {
-        if (ReadConfig.GHOST_MODE) return;
+        if (BotConfig.GHOST_MODE) return;
         ErrorWrapper.wrap(() -> guild().changeAFKChannel(voiceChannel.channel()));
     }
 
     public void changeAFKTimeout(int i) {
-        if (ReadConfig.GHOST_MODE) return;
+        if (BotConfig.GHOST_MODE) return;
         ErrorWrapper.wrap(() -> guild().changeAFKTimeout(i));
     }
 
     public void leave() {
-        if (ReadConfig.GHOST_MODE) return;
+        if (BotConfig.GHOST_MODE) return;
         ErrorWrapper.wrap(() -> guild().leave());
     }
 
     public Channel createChannel(String s) {
-        if (ReadConfig.GHOST_MODE) throw new GhostException();
+        if (BotConfig.GHOST_MODE) throw new GhostException();
         return ErrorWrapper.wrap((ErrorWrapper.Request<Channel>) () -> Channel.getChannel(guild().createChannel(s)));
     }
 
     public VoiceChannel createVoiceChannel(String s) {
-        if (ReadConfig.GHOST_MODE) throw new GhostException();
+        if (BotConfig.GHOST_MODE) throw new GhostException();
         return ErrorWrapper.wrap((ErrorWrapper.Request<VoiceChannel>) () -> VoiceChannel.getVoiceChannel(guild().createVoiceChannel(s)));
     }
 
@@ -300,7 +300,7 @@ public class Guild implements Configurable {
     }
 
     public void reorderRoles(Role...roles) {
-        if (ReadConfig.GHOST_MODE) return;
+        if (BotConfig.GHOST_MODE) return;
         List<IRole> iRoles = new ArrayList<>(roles.length);
         for (Role role : roles) {
             iRoles.add(role.role());

@@ -1,6 +1,6 @@
 package com.github.nija123098.evelyn.moderation.messagefiltering;
 
-import com.github.nija123098.evelyn.BotConfig.ReadConfig;
+import com.github.nija123098.evelyn.BotConfig.BotConfig;
 import com.github.nija123098.evelyn.moderation.messagefiltering.configs.MessageMonitoringAdditionsConfig;
 import com.github.nija123098.evelyn.moderation.messagefiltering.configs.MessageMonitoringConfig;
 import com.github.nija123098.evelyn.moderation.messagefiltering.configs.MessageMonitoringExceptionsConfig;
@@ -37,7 +37,7 @@ public class MessageMonitor {
             }
         });
         try {
-            Path path = Paths.get(ReadConfig.LANGUAGE_FILTERING_NAME);
+            Path path = Paths.get(BotConfig.LANGUAGE_FILTERING_NAME);
             if (Files.exists(path)) {
                 Files.readAllLines(path).forEach(s -> {
                     MessageMonitoringLevel type = MessageMonitoringLevel.valueOf(s.split(" ")[0].toUpperCase());
@@ -57,7 +57,7 @@ public class MessageMonitor {
         }
     }
     public static boolean monitor(DiscordMessageReceived received){
-        if (received.getChannel().isPrivate() || received.getGuild().getUserSize() < ReadConfig.MESSAGE_FILTERING_SERVER_SIZE || received.getChannel().isNSFW() || received.getMessage().getContent() == null || received.getMessage().getContent().isEmpty()) return false;
+        if (received.getChannel().isPrivate() || received.getGuild().getUserSize() < BotConfig.MESSAGE_FILTERING_SERVER_SIZE || received.getChannel().isNSFW() || received.getMessage().getContent() == null || received.getMessage().getContent().isEmpty()) return false;
         try{CHANNEL_MAP.computeIfAbsent(received.getChannel(), MessageMonitor::calculate).forEach(filter -> filter.checkFilter(received));
         } catch (MessageMonitoringException exception){
             new MessageMaker(received.getMessage()).withDM().append("Your message on ").appendRaw(received.getGuild().getName()).append(" in ").appendRaw(received.getChannel().mention()).append(" has been deleted.  Reason: " + exception.getMessage()).send();

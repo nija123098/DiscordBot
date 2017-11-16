@@ -1,6 +1,6 @@
 package com.github.nija123098.evelyn.fun.stories;
 
-import com.github.nija123098.evelyn.BotConfig.ReadConfig;
+import com.github.nija123098.evelyn.BotConfig.BotConfig;
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Argument;
@@ -28,7 +28,7 @@ public class StoriesCommand extends AbstractCommand {
     public StoriesCommand() {
         super("stories", ModuleLevel.FUN, "story", null, "Shows a list of bed time stories or reads one to you, from tonightsbedtimestory.com");
         try {
-            if (ReadConfig.TESTING_MODE) return;
+            if (BotConfig.TESTING_MODE) return;
             Jsoup.connect("http://www.tonightsbedtimestory.com/stories/").userAgent("Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36")
                     .get().body().getElementsByAttributeValue("class", "post").forEach(element -> {
                 String text = element.text();
