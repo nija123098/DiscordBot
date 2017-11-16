@@ -38,11 +38,14 @@ public class UpdateBotCommand extends AbstractCommand {
             osType = "macOS";
             maker.append("This command can only be run whe the bot is being hosted on a Linux server not " + osType + " which it is currently on");
         } else if (PlatformDetector.isUnix()) {
-            maker.append("The bot will now download, compile and update itself from the latest version on GitHub.\nThis usually takes 2-3 minutes.");
+            maker.append("The bot will now download, compile and update itself from the latest version on GitHub." + "\n" + "This usually takes 2-3 minutes.").send();
             ExecuteShellCommand.commandToExecute("./Pull.sh");
-            ExecuteShellCommand.commandToExecute("./Build.sh");
-            Launcher.shutdown( 1, 3, false);
-            ExecuteShellCommand.commandToExecute("./Update.sh");
+            maker.clearMessage().append("The GIT pull complete with the following message:\n```").appendRaw(ExecuteShellCommand.getOutput()).append("```");
+            ScheduleService.schedule(17000, () -> ExecuteShellCommand.commandToExecute("./Build.sh"));
+            ScheduleService.schedule(80000, () -> ExecuteShellCommand.commandToExecute("./Update.sh"));
+            ScheduleService.schedule(83000, () -> Launcher.shutdown( 1, 0, false));
+
         }
+
     }
 }
