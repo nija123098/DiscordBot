@@ -6,6 +6,7 @@ import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.exeption.DevelopmentException;
 import com.github.nija123098.evelyn.util.ExecuteShellCommand;
+import com.github.nija123098.evelyn.util.HastebinUtil;
 import com.github.nija123098.evelyn.util.PlatformDetector;
 
 import java.io.BufferedReader;
@@ -24,6 +25,7 @@ public class ExcecuteCommand extends AbstractCommand {
     public void command(String args, MessageMaker maker){
         if (PlatformDetector.isWindows()) args = "cmd /c" + args;
         ExecuteShellCommand.commandToExecute(args);
-        maker.append("Command Output:\n```").appendRaw(ExecuteShellCommand.getOutput()).append("```");
+        maker.append("Command Output:\n```").appendRaw(ExecuteShellCommand.getOutput().length() < 2000 ?
+                ExecuteShellCommand.getOutput() : HastebinUtil.handleHastebin(ExecuteShellCommand.getOutput()));
     }
 }
