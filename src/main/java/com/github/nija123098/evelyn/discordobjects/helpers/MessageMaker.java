@@ -688,7 +688,7 @@ public class MessageMaker {
     private void send(int page){
         if (BotConfig.GHOST_MODE) return;
         if (!this.maySend) {
-            if (this.origin != null) ErrorWrapper.wrap(() -> this.origin.addReaction(ReactionEmoji.of(EmoticonHelper.getChars("ok_hand", false))));
+            if (this.origin != null) ErrorWrapper.wrap(() -> null);
             return;
         }
         if (!this.channel.getModifiedPermissions(DiscordClient.getOurUser()).contains(DiscordPermission.SEND_MESSAGES)) return;// only will effect emoticon commands, normal commands are already checked
@@ -699,7 +699,7 @@ public class MessageMaker {
                 throw new DevelopmentException("File not made by time of sending", e);
             }
         }
-        if (this.origin != null && this.okHand) ErrorWrapper.wrap(() -> this.origin.addReaction(ReactionEmoji.of(EmoticonHelper.getChars("ok_hand", false))));
+        if (this.origin != null && this.okHand) ErrorWrapper.wrap(() -> null);
         this.compile();
         if (this.embed != null){
             if (page < 0 || page >= this.fieldIndices.length) throw new DevelopmentException("Attempted to get a page that doesn't exit");

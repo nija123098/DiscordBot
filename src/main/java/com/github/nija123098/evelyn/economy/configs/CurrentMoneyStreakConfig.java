@@ -2,14 +2,14 @@ package com.github.nija123098.evelyn.economy.configs;
 
 import com.github.nija123098.evelyn.config.AbstractConfig;
 import com.github.nija123098.evelyn.config.ConfigCategory;
-import com.github.nija123098.evelyn.config.Configurable;
+import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 
 /**
- * Made by Celestialdeath99 on 11/16/2017.
+ * Written by Soarnir 25/9/17
  */
 
-public class CurrentMoneyStreakConfig extends AbstractConfig<Integer, Configurable> {
+public class CurrentMoneyStreakConfig extends AbstractConfig<Integer, User> {
     public CurrentMoneyStreakConfig() {
-        super("current_streak", ConfigCategory.STAT_TRACKING, 0, "The number of times a user has used the claim command in a row");
+        super("current_streak", ConfigCategory.STAT_TRACKING, 0, "streak in days where user has used claim command");
     }
 }

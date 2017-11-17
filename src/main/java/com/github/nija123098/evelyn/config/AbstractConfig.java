@@ -374,7 +374,7 @@ public class AbstractConfig<V, T extends Configurable> {
      */
     public String getExteriorValue(T configurable) {
         String result = wrapTypeOut(getValue(configurable), configurable);
-        if (result.equals("null")) result = "not set";
+        if (result.equals("null")) result = getValueType().getSimpleName() + " not set";
         return result;
     }
 

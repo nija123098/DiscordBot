@@ -56,7 +56,7 @@ public class AbstractCommand {
     private Set<ContextRequirement> contextRequirements;
     private Set<AbstractCommand> subCommands;
     private boolean prefixRequired = true;
-    protected boolean okOnSuccess = true;
+    protected boolean okOnSuccess = false;
 
     /**
      * The high constructor for a command which all other constructors call.
