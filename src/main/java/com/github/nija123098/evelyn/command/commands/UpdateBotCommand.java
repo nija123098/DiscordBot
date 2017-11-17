@@ -39,14 +39,14 @@ public class UpdateBotCommand extends AbstractCommand {
             osType = "macOS";
             maker.append("This command can only be run whe the bot is being hosted on a Linux server not " + osType + " which it is currently on");
         } else if (PlatformDetector.isUnix()) {
-            maker.appendRaw("The bot will now download, compile and update itself from the latest version on GitHub." + "\n" + "This usually takes 2-3 minutes.");
+            maker.append("The bot will now download, compile and update itself from the latest version on GitHub." + "\n" + "This usually takes 2-3 minutes.");
             ExecuteShellCommand.commandToExecute("./Pull.sh");
-            maker.appendRaw("\n\nGIT Pull Results:\n```" + ExecuteShellCommand.getOutput() + "```\n");
+            maker.appendRaw("\nGIT Pull Results:\n```" + ExecuteShellCommand.getOutput() + "```");
             ExecuteShellCommand.commandToExecute("./Build.sh");
             if (ExecuteShellCommand.getOutput().length() < 2000) {
-                maker.appendRaw("Compilation Results:\n```").appendRaw(ExecuteShellCommand.getOutput()).appendRaw("```");
-            } else maker.appendRaw("Compilation Results:\n").appendRaw(HastebinUtil.handleHastebin(ExecuteShellCommand.getOutput()));
-            maker.appendRaw("\n\nThe bot will now restart to apply the updates.");
+                maker.appendRaw("\nCompilation Results:\n```" + ExecuteShellCommand.getOutput() + "```");
+            } else maker.appendRaw("\nCompilation Results:\n" + HastebinUtil.handleHastebin(ExecuteShellCommand.getOutput()));
+            maker.append("\nThe bot will now restart to apply the updates.").send();
             ScheduleService.schedule(5000, () -> Launcher.shutdown(1,0,false));
             ExecuteShellCommand.commandToExecute("./Update.sh");
         }
