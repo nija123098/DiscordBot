@@ -43,7 +43,7 @@ public class UpdateBotCommand extends AbstractCommand {
                     } else
                         maker.appendRaw("\nCompilation Results:\n" + HastebinUtil.handleHastebin(ExecuteShellCommand.getOutput()));
                     maker.append("\n\n**The bot will now restart to apply the updates.**").send();
-                    ScheduleService.schedule(5000, () -> Launcher.shutdown(1, 0, false));
+                    ScheduleService.schedule(10000, () -> Launcher.shutdown(1, 0, false));
                     ExecuteShellCommand.commandToExecute("./Update.sh");
                 } else
                     maker.appendRaw("\n**ERROR COMPILING BOT**. You can view the log here:\n" + HastebinUtil.handleHastebin(ExecuteShellCommand.getOutput()));
