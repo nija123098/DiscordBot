@@ -39,7 +39,7 @@ public class UpdateBotCommand extends AbstractCommand {
             osType = "macOS";
             maker.append("This command can only be run whe the bot is being hosted on a Linux server not " + osType + " which it is currently on");
         } else if (PlatformDetector.isUnix()) {
-            maker.append("The bot will now download, compile and update itself from the latest version on GitHub." + "\n" + );
+            maker.append("The bot will now download, compile and update itself from the latest version on GitHub." + "\n");
             ExecuteShellCommand.commandToExecute("./Pull.sh");
             maker.appendRaw("\n\n*GIT Pull Results:*\n```" + ExecuteShellCommand.getOutput() + "```");
             ExecuteShellCommand.commandToExecute("./Build.sh");
