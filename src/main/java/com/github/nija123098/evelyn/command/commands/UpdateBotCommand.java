@@ -27,7 +27,7 @@ import java.util.Collections;
 
 public class UpdateBotCommand extends AbstractCommand {
     public UpdateBotCommand() {
-        super("updatebot", ModuleLevel.DEVELOPMENT, null, null, "Updates bot to latest git version. LINUX SERVER ONLY!");
+        super("updatebot", ModuleLevel.DEVELOPMENT, "update", null, "Updates bot to latest git version.");
     }
     @Command
     public void command(MessageMaker maker) throws IOException {
@@ -41,14 +41,16 @@ public class UpdateBotCommand extends AbstractCommand {
         } else if (PlatformDetector.isUnix()) {
             maker.append("The bot will now download, compile and update itself from the latest version on GitHub." + "\n" + "This usually takes 2-3 minutes.");
             ExecuteShellCommand.commandToExecute("./Pull.sh");
-            maker.appendRaw("\nGIT Pull Results:\n```" + ExecuteShellCommand.getOutput() + "```");
+            maker.appendRaw("\n\n*GIT Pull Results:*\n```" + ExecuteShellCommand.getOutput() + "```");
             ExecuteShellCommand.commandToExecute("./Build.sh");
-            if (ExecuteShellCommand.getOutput().length() < 2000) {
-                maker.appendRaw("\nCompilation Results:\n```" + ExecuteShellCommand.getOutput() + "```");
-            } else maker.appendRaw("\nCompilation Results:\n" + HastebinUtil.handleHastebin(ExecuteShellCommand.getOutput()));
-            maker.append("\nThe bot will now restart to apply the updates.").send();
-            ScheduleService.schedule(5000, () -> Launcher.shutdown(1,0,false));
-            ExecuteShellCommand.commandToExecute("./Update.sh");
+            if (ExecuteShellCommand.getOutput().contains("BUILD SUCCESS")) {
+                if (ExecuteShellCommand.getOutput().length() < 2000) {
+                    maker.appendRaw("\n*Compilation Results:*\n```" + ExecuteShellCommand.getOutput() + "```");
+                } else maker.appendRaw("\nCompilation Results:\n" + HastebinUtil.handleHastebin(ExecuteShellCommand.getOutput()));
+                maker.append("\n\n**The bot will now restart to apply the updates.**").send();
+                ScheduleService.schedule(5000, () -> Launcher.shutdown(1,0,false));
+                ExecuteShellCommand.commandToExecute("./Update.sh");
+            } else maker.appendRaw("\n**ERROR COMPILING BOT**. You can view the log here:\n" + HastebinUtil.handleHastebin(ExecuteShellCommand.getOutput()));
         }
     }
 }
