@@ -24,7 +24,7 @@ public class SpecialPermsModuleCommand extends AbstractCommand {
     public void command(Guild guild, MessageMaker maker, @Argument(optional = true, replacement = ContextType.NONE) Role role, @Argument(optional = true, replacement = ContextType.NONE) Channel channel, @Argument Boolean allow, @Argument ModuleLevel level){
         SpecialPermsContainer container = ConfigHandler.getSetting(GuildSpecialPermsConfig.class, guild);
         if (container == null) {
-            maker.append("You must enable special perms using @Emily commandadmin enable");
+            maker.append("You must enable special perms using @Evelyn commandadmin enable");
             return;
         }
         container.addModule(allow, channel, role, level);

@@ -1,6 +1,6 @@
 package com.github.nija123098.evelyn.helping;
 
-import com.github.nija123098.evelyn.BotConfig.ReadConfig;
+import com.github.nija123098.evelyn.BotConfig.BotConfig;
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Argument;
@@ -15,7 +15,7 @@ import net.swisstech.bitly.BitlyClient;
  */
 
 public class ShortenCommand extends AbstractCommand {
-    private BitlyClient client = new BitlyClient(ReadConfig.BITLY_TOKEN);
+    private BitlyClient client = new BitlyClient(BotConfig.BITLY_TOKEN);
     public ShortenCommand(){
         super("shorten", ModuleLevel.HELPER, "shrt", "scissors", "shorten links with Bit.ly");
     }

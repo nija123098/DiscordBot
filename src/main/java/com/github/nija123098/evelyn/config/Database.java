@@ -1,6 +1,6 @@
 package com.github.nija123098.evelyn.config;
 
-import com.github.nija123098.evelyn.BotConfig.ReadConfig;
+import com.github.nija123098.evelyn.BotConfig.BotConfig;
 import com.github.nija123098.evelyn.exeption.DevelopmentException;
 import com.github.nija123098.evelyn.util.CallBuffer;
 import com.github.nija123098.evelyn.util.Log;
@@ -28,11 +28,11 @@ public class Database {
         Connection c = null;
         try {
             MysqlConnectionPoolDataSource dataSource = new MysqlConnectionPoolDataSource();
-            dataSource.setUser(ReadConfig.DB_USER);
-            dataSource.setPassword(ReadConfig.DB_PASS);
-            dataSource.setServerName(ReadConfig.DB_HOST);
+            dataSource.setUser(BotConfig.DB_USER);
+            dataSource.setPassword(BotConfig.DB_PASS);
+            dataSource.setServerName(BotConfig.DB_HOST);
             dataSource.setPort(3306);
-            dataSource.setDatabaseName(ReadConfig.DB_NAME);
+            dataSource.setDatabaseName(BotConfig.DB_NAME);
             dataSource.setZeroDateTimeBehavior("convertToNull");
             dataSource.setUseUnicode(true);
             c = dataSource.getConnection();
@@ -42,10 +42,10 @@ public class Database {
         CONNECTION = c;
         HikariConfig config = new HikariConfig();
         config.setMaximumPoolSize(20);
-        config.setJdbcUrl("jdbc:mariadb://" + ReadConfig.DB_HOST + ":" + ReadConfig.DB_PORT + "/" + ReadConfig.DB_NAME);
+        config.setJdbcUrl("jdbc:mariadb://" + BotConfig.DB_HOST + ":" + BotConfig.DB_PORT + "/" + BotConfig.DB_NAME);
         config.setDriverClassName("org.mariadb.jdbc.Driver");
-        config.setUsername(ReadConfig.DB_USER);
-        config.setPassword(ReadConfig.DB_PASS);
+        config.setUsername(BotConfig.DB_USER);
+        config.setPassword(BotConfig.DB_PASS);
         RUNNER = new QueryRunner(new HikariDataSource(config));
         query("SET NAMES utf8mb4");
     }

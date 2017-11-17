@@ -1,6 +1,6 @@
 package com.github.nija123098.evelyn.audio;
 
-import com.github.nija123098.evelyn.BotConfig.ReadConfig;
+import com.github.nija123098.evelyn.BotConfig.BotConfig;
 import com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 import com.mb3364.twitch.api.Twitch;
 import com.mb3364.twitch.api.handlers.UserResponseHandler;
@@ -23,7 +23,7 @@ public class TwitchTrack extends Track {
     private static final TwitchStreamAudioSourceManager TWITCH_AUDIO_SOURCE_MANAGER = new TwitchStreamAudioSourceManager();
     private static final Twitch TWITCH = new Twitch();
     static {
-        TWITCH.setClientId(ReadConfig.TWITCH_ID);
+        TWITCH.setClientId(BotConfig.TWITCH_ID);
         Track.registerTrackType(TwitchTrack.class, TwitchTrack::new, TwitchTrack::new);
     }
     TwitchTrack(String id) {

@@ -4,10 +4,12 @@ import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
-
-
 import java.net.*;
 import java.io.*;
+
+/**
+ * @author Celestialdeath99
+ */
 
 public class ServerIPCommand extends AbstractCommand{
     public ServerIPCommand() {

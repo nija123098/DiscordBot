@@ -1,6 +1,3 @@
-/**
- * @author Celestialdeath99
- */
 package com.github.nija123098.evelyn.BotConfig;
 
 import java.io.FileInputStream;
@@ -9,7 +6,11 @@ import java.util.Properties;
 
 import static com.github.nija123098.evelyn.util.PlatformDetector.PathEnding;
 
-public class ReadConfig {
+/**
+ * @author Celestialdeath99
+ */
+
+public class BotConfig {
 
     private static Properties config;
 

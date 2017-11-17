@@ -5,6 +5,9 @@ import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.exeption.DevelopmentException;
+import com.github.nija123098.evelyn.util.ExecuteShellCommand;
+import com.github.nija123098.evelyn.util.HastebinUtil;
+import com.github.nija123098.evelyn.util.PlatformDetector;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,17 +23,10 @@ public class ExcecuteCommand extends AbstractCommand {
     }
     @Command
     public void command(String args, MessageMaker maker){
-        try {
-            if (System.getProperty("os.name").startsWith("Windows")) args = "cmd /c " + args;
-            Process process = Runtime.getRuntime().exec(args);
-            process.waitFor(1, TimeUnit.MINUTES);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) sb.append(line).append("\n");
-            maker.append("Command output:\n").appendRaw(sb.toString());
-        } catch (InterruptedException | IOException e) {
-            throw new DevelopmentException("Attempted to execute a command but failed: " + args, e);
-        }
+        if (PlatformDetector.isWindows()) args = "cmd /c" + args;
+        ExecuteShellCommand.commandToExecute(args);
+        if (ExecuteShellCommand.getOutput().length() >= 2000) {
+            maker.append("Command Output:\n").appendRaw(HastebinUtil.handleHastebin(ExecuteShellCommand.getOutput()));
+        } else maker.append("Command Output:\n```").appendRaw(ExecuteShellCommand.getOutput()).appendRaw("```");
     }
 }

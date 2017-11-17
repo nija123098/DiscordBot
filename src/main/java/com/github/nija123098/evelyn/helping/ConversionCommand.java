@@ -22,13 +22,11 @@ import java.util.*;
 public class ConversionCommand extends AbstractCommand {
     static final Map<String, Un> UN_MAP = new HashMap<>();
     static {
-        Sets.union(new HashSet<>(Collections.singletonList(SI.GRAM)), Sets.union(SI.getInstance().getUnits(), NonSI.getInstance().getUnits())).forEach(o -> UN_MAP.put(o.toString(), new Un(o)));
+        Sets.union(new HashSet<>(Collections.singletonList(SI.GRAM)), Sets.union(SI.getInstance().getUnits(), NonSI.getInstance().getUnits())).forEach(o -> UN_MAP.put(o.toString().toLowerCase(), new Un(o)));
         Map<Currency, Un> map = new HashMap<>();
         Currency.getAvailableCurrencies().forEach(currency -> map.put(currency, new Un(currency)));
         Currency.getAvailableCurrencies().forEach(currency -> {
-            UN_MAP.put(currency.getDisplayName(), map.get(currency));
             UN_MAP.put(currency.getDisplayName().toLowerCase(), map.get(currency));
-            UN_MAP.put(currency.getCurrencyCode(), map.get(currency));
             UN_MAP.put(currency.getCurrencyCode().toLowerCase(), map.get(currency));
         });
     }
@@ -37,27 +35,21 @@ public class ConversionCommand extends AbstractCommand {
     }
     @Command
     public void command(String args, MessageMaker maker){
-        String[] strings = args.split(" to ");
-        if (strings.length == 1) throw new ArgumentException("Please include \"to\" in your input.  The proper format is <amount> <unit> to <unit>");
-        if (strings.length != 2) throw new ArgumentException("Please format arguments in <amount> <unit> ***TO*** <unit>, it is case sensitive and uses abbreviations");
-        String builder = "";
-        char c;
-        for (int i = 0; i < strings[0].length(); i++) {
-            c = strings[0].charAt(i);
-            if (Character.isDigit(c) || c == '.') builder += c;
-            else if (c != ',' && c != '_') break;
-        }
-        double val = 1D;
-        if (!builder.isEmpty()){
-            val = Double.parseDouble(builder);
-            strings[0] = strings[0].substring(builder.length()).trim();
-        }
-        strings[1] = strings[1].trim();
-        Un from = UN_MAP.get(strings[0]), to = UN_MAP.get(strings[1]);
-        if (from == null) throw new ArgumentException("Unrecognized unit: " + strings[0]);
-        if (to == null) throw new ArgumentException("Unrecognized unit: " + strings[1]);
+        args = args.toLowerCase();
+        String[] split = args.split(" to ");
+        if (split.length != 2) throw new ArgumentException("Please format arguments in <amount> <unit> ***TO*** <unit>, it is case sensitive and uses abbreviations");
+        int amountIndex = split[0].indexOf(" ");
+        if (amountIndex == -1) throw new ArgumentException("Please specify an amount");
+        String[] strings = new String[]{split[0].substring(0, amountIndex), split[0].substring(amountIndex + 1, split[0].length()), split[1]};
+        Un from = UN_MAP.get(strings[1]), to = UN_MAP.get(strings[2]);
+        if (from == null) throw new ArgumentException("Unrecognized unit: " + strings[1]);
+        if (to == null) throw new ArgumentException("Unrecognized unit: " + strings[2]);
         if (!from.isCompatible(to)) throw new ArgumentException("The chosen units are not compatible.");
-        maker.appendRaw(from.getConversion(to, val) + " " + strings[1]);
+        try {
+            maker.appendRaw(from.getConversion(to, Double.parseDouble(strings[0])) + " " + strings[2]);
+        } catch (NumberFormatException e){
+            throw new ArgumentException("Invalid amount " + strings[0]);
+        }
     }
     private static class Un {
         Unit<?> unit;

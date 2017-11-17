@@ -1,6 +1,6 @@
 package com.github.nija123098.evelyn.util;
 
-import com.github.nija123098.evelyn.BotConfig.ReadConfig;
+import com.github.nija123098.evelyn.BotConfig.BotConfig;
 import com.github.nija123098.evelyn.exeption.ArgumentException;
 import com.github.nija123098.evelyn.exeption.DevelopmentException;
 import com.github.nija123098.evelyn.launcher.Reference;
@@ -194,7 +194,7 @@ public class LangString {
     private static final Map<String, String> LANG_MAP = new HashMap<>();
     private static Map<String, String> REVERSE_MAP;
     static {
-        try{Files.readAllLines(Paths.get(ReadConfig.SUPPORTED_LANGS_NAME)).forEach(s -> {
+        try{Files.readAllLines(Paths.get(BotConfig.SUPPORTED_LANGS_NAME)).forEach(s -> {
             String[] strings = s.toLowerCase().split(" ");
             LANG_MAP.put(strings[0], strings[1]);
         });

@@ -26,7 +26,7 @@ public class TemplateSearchCommand extends AbstractCommand {
             TemplateListCommand.command(maker);
         } else if (results.size() == 1) maker.append("You are looking for ").appendRaw(results.get(0));
         else {
-            maker.append("You may be looking for one of these, all options are listed at `@Emily template list`");
+            maker.append("You may be looking for one of these, all options are listed at `@Evelyn template list`");
             results.forEach(s1 -> maker.getNewFieldPart().withBoth(s1, ""));
         }
     }

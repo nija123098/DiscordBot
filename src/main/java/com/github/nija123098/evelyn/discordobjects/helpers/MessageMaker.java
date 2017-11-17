@@ -1,6 +1,6 @@
 package com.github.nija123098.evelyn.discordobjects.helpers;
 
-import com.github.nija123098.evelyn.BotConfig.ReadConfig;
+import com.github.nija123098.evelyn.BotConfig.BotConfig;
 import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.moderation.logging.VoiceCommandPrintChannelConfig;
 import com.github.nija123098.evelyn.command.ProcessingHandler;
@@ -686,7 +686,7 @@ public class MessageMaker {
      * @param page the page to sent.
      */
     private void send(int page){
-        if (ReadConfig.GHOST_MODE) return;
+        if (BotConfig.GHOST_MODE) return;
         if (!this.maySend) {
             if (this.origin != null) ErrorWrapper.wrap(() -> this.origin.addReaction(ReactionEmoji.of(EmoticonHelper.getChars("ok_hand", false))));
             return;

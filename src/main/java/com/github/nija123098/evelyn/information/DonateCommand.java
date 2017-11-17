@@ -12,7 +12,7 @@ import com.github.nija123098.evelyn.util.FormatHelper;
  */
 public class DonateCommand extends AbstractCommand {
     public DonateCommand() {
-        super("donate", ModuleLevel.INFO, "contribute", null, "Provides general info about how to contribute or donate to Emily");
+        super("donate", ModuleLevel.INFO, "contribute", null, "Provides general info about how to contribute or donate to Evelyn");
     }
     @Command
     public void command(MessageMaker maker){

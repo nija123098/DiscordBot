@@ -1,7 +1,3 @@
-/**
- * @author Celestialdeath99
- */
-
 package com.github.nija123098.evelyn.BotConfig;
 
 import java.io.FileInputStream;
@@ -9,6 +5,10 @@ import java.io.IOException;
 import java.util.Properties;
 
 import static com.github.nija123098.evelyn.util.PlatformDetector.PathEnding;
+
+/**
+ * @author Celestialdeath99
+ */
 
 public class VerifyConfig {
 

@@ -15,7 +15,7 @@ public class DiscordMessageSend implements BotEvent {
     public DiscordMessageSend(MessageSendEvent event) {
         this.event = event;
     }
-    public User getUser(){// should always return Emily
+    public User getUser(){// should always return Evelyn
         return User.getUser(this.event.getAuthor());
     }
     public Guild getGuild(){

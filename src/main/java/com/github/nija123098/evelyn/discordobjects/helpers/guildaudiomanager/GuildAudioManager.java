@@ -1,6 +1,6 @@
 package com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager;
 
-import com.github.nija123098.evelyn.BotConfig.ReadConfig;
+import com.github.nija123098.evelyn.BotConfig.BotConfig;
 import com.github.nija123098.evelyn.audio.SpeechTrack;
 import com.github.nija123098.evelyn.audio.Track;
 import com.github.nija123098.evelyn.audio.commands.current.CurrentCommand;
@@ -101,7 +101,7 @@ public class GuildAudioManager extends AudioEventAdapter{
      */
     public static GuildAudioManager getManager(VoiceChannel channel, boolean make){
         if (channel == null) return null;// this might not happen anymore
-        if (ReadConfig.GHOST_MODE) throw new GhostException();
+        if (BotConfig.GHOST_MODE) throw new GhostException();
         GuildAudioManager current = getManager(channel.getGuild());
         if (current != null) {
             if (!current.voiceChannel().isConnected()) MAP.replace(channel.getID(), new GuildAudioManager(channel));
