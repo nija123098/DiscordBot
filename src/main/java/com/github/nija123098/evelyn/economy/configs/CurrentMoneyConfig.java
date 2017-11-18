@@ -9,6 +9,6 @@ import com.github.nija123098.evelyn.config.Configurable;
  */
 public class CurrentMoneyConfig extends AbstractConfig<Integer, Configurable> {
     public CurrentMoneyConfig() {
-        super("current_money", ConfigCategory.STAT_TRACKING, 0, "The amount of money a user has");
+        super("current_money", ConfigCategory.STAT_TRACKING, 0, "The amount of money a config has has");
     }
 }

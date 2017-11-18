@@ -63,7 +63,7 @@ public class UDCommand extends AbstractCommand {
     private static void getMessage(MessageMaker maker, String link, JSONArray listObject, int definition) {
         maker.clearFieldParts().getHeader().clear();
         JSONObject firstResult = (JSONObject) listObject.get(definition);
-        maker.withUrl(link).getTitle().append(firstResult.get("word").toString());
+        maker.withUrl(link).getTitle().appendRaw(firstResult.get("word").toString());
         maker.append(StringEscapeUtils.unescapeHtml4(firstResult.get("definition").toString()));
         if (!firstResult.get("example").toString().isEmpty())
             maker.getNewFieldPart().getTitle().append("Example").getFieldPart().getValue().append("\n\n*" + firstResult.get("example") + "*\n");

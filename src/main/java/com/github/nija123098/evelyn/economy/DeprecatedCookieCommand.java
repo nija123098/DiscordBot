@@ -15,6 +15,6 @@ public class DeprecatedCookieCommand extends AbstractCommand {
 
     @Command
     public void command(MessageMaker maker) {
-        maker.appendRaw("Hi! I recently shifted to a new kind of system, from now on you'll need to use `!claim` to claim your cookies or guild set currency");
+        maker.appendRaw("Hi! I recently shifted to a new kind of currency system, from now on you'll need to use `!bank` to claim your cookies or guild set currency.");
     }
 }
