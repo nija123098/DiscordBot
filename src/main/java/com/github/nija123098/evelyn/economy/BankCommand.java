@@ -106,7 +106,7 @@ public class BankCommand extends AbstractCommand {
         ret.append("════════════════════════════════════════════════\n");
         if (claim) {
             ret.append(" Claim: " + moneySymbol + " +256\n");
-            ret.append(" Daily: " + moneySymbol + " +" + (streak * 8) + " (" + streak + "*8)\n");
+            ret.append(" Daily: " + moneySymbol + " +" + (streak * 8) + " (" + streak + " \uD83D\uDCC6)\n");
             if (bonus > 0) ret.append(" Bonus: " + moneySymbol + " +" + bonus + "\n");
             if (ConfigHandler.getSetting(EventActiveConfig.class, GlobalConfigurable.GLOBAL)) ret.append(" Event: " + moneySymbol + " +" + ConfigHandler.getSetting(EventBonusConfig.class, GlobalConfigurable.GLOBAL) + " [" + ConfigHandler.getSetting(EventNameConfig.class, GlobalConfigurable.GLOBAL) + ", " + eventStart + " to " + eventEnd + "]\n");
         } else {
@@ -114,7 +114,7 @@ public class BankCommand extends AbstractCommand {
         }
         ret.append("════════════════════════════════════════════════\n");
         if (claim) {
-            ret.append(" Funds: " + moneySymbol + " " + (ConfigHandler.getSetting(CurrentMoneyConfig.class, user) + bonus + (streak * 8) + 256) + " Daily: \uD83D\uDCC6 " + streak + "/8\n");
+            ret.append(" Funds: " + moneySymbol + " " + (ConfigHandler.getSetting(CurrentMoneyConfig.class, user) + bonus + (streak * 8) + 256) + " Daily: \uD83D\uDCC6 " + (streak + (streak == 8 ? 0 : 1)) + "/8\n");
         } else {
             ret.append(" Funds: " + moneySymbol + " " + ConfigHandler.getSetting(CurrentMoneyConfig.class, user) + " Daily: \uD83D\uDCC6 " + streak + "/8\n");
         }
