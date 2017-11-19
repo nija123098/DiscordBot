@@ -1,14 +1,16 @@
 package com.github.nija123098.evelyn.economy;
 
 import com.github.nija123098.evelyn.command.AbstractCommand;
-import com.github.nija123098.evelyn.command.ContextType;
 import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.command.annotations.Context;
-import com.github.nija123098.evelyn.config.Configurable;
-import com.github.nija123098.evelyn.config.GuildUser;
+import com.github.nija123098.evelyn.config.ConfigHandler;
+import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
+import com.github.nija123098.evelyn.economy.configs.CurrencyNameConfig;
+import com.github.nija123098.evelyn.economy.configs.CurrencySymbolConfig;
+import com.github.nija123098.evelyn.economy.configs.CurrentCurrencyConfig;
 import com.github.nija123098.evelyn.exeption.ArgumentException;
 
 /**
@@ -16,21 +18,18 @@ import com.github.nija123098.evelyn.exeption.ArgumentException;
  */
 public class BankSendCommand extends AbstractCommand {
     public BankSendCommand() {
-        super(BankCommand.class, "send", "send", null, null, "Sends currency to another user, guild, or guild user");
+        super(BankCommand.class, "send", null, null, null, "Sends currency to another user, guild, or guild user");
     }
     @Command
-    public void command(@Argument Configurable one, @Argument(optional = true, replacement = ContextType.NONE) Configurable two, @Argument Integer integer, User user, @Context(softFail = true) Guild guild){
-        if (integer < 0) throw new ArgumentException("You can't take money from other users without their consent");
-        if (integer == 0) throw new ArgumentException("You can't send them nothing");
-        Configurable receiver, sender;
-        if (two != null){
-            sender = one;
-            receiver = two;
-        }else{
-            receiver = one instanceof User ? GuildUser.getGuildUser(guild, (User) one) : one;
-            sender = GuildUser.getGuildUser(guild, user);
-        }
-        sender.checkPermissionToEdit(user, guild);
-        CurrencyTransfer.transact(sender, receiver, 0, integer, "Sending");
+    public void command(@Argument User receiver, @Argument Integer currencyTransfer, User user, @Context(softFail = true) Guild guild, MessageMaker maker){
+        String name = ConfigHandler.getSetting(CurrencyNameConfig.class, guild), symbol = ConfigHandler.getSetting(CurrencySymbolConfig.class, guild);
+        int senderCurrency = ConfigHandler.getSetting(CurrentCurrencyConfig.class, user);
+        int receiverCurrency = ConfigHandler.getSetting(CurrentCurrencyConfig.class, receiver);
+        if (currencyTransfer < 0) throw new ArgumentException("You can't take " + name + " from other users without their consent.");
+        if (currencyTransfer == 0) throw new ArgumentException("You can't send them nothing.");
+        if (senderCurrency < currencyTransfer) throw new ArgumentException("You need `\u200b " + symbol + " " + (currencyTransfer - senderCurrency) + " \u200b` more to perform this transaction.");
+        ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, (senderCurrency - currencyTransfer));
+        ConfigHandler.setSetting(CurrentCurrencyConfig.class, receiver, (receiverCurrency + senderCurrency));
+        maker.appendRaw("You successfully sent `\u200b " + symbol + " " + currencyTransfer + " \u200b`  to " + receiver.getDisplayName(guild)).mustEmbed();
     }
 }

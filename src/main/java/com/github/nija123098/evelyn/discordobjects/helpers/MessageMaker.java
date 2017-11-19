@@ -747,7 +747,7 @@ public class MessageMaker {
      */
     private void compile(){
         if (this.lang != null && !this.forceCompile) return;
-        if (!this.colored) this.withRandomColor();
+        if (!this.colored) this.withColor(new Color(54, 57, 62));
         this.lang = getLang(this.user, this.channel);
         // message
         if (this.couldNormalize()) this.asNormalMessage();
