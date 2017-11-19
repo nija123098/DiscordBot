@@ -76,7 +76,7 @@ public class SlotCommand extends AbstractCommand {
         }
 
         //print the second frame after delay
-        TimeUnit.SECONDS.sleep(3);
+        TimeUnit.SECONDS.sleep(2);
         maker.appendRaw("```\uD83C\uDFB0 @" + user.getDisplayName(guild) + " \uD83C\uDFB0\n");
         maker.appendRaw("════════════════════════════════════════\n");
         maker.appendRaw(" " + gSlots[0] + "|" + gSlots[1] + "|" + gSlots[2] + "     Bet: " + currency_symbol + " " + bet.toString() + "\n");
