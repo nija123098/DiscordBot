@@ -44,7 +44,7 @@ public class SlotCommand extends AbstractCommand {
         if (userBalance < bet) {
 
             //not enough funds
-            throw new ArgumentException("Insufficient funds :/\n\nYou only have: `\u200B " + currency_symbol + " " + userBalance + " \u200B`");
+            throw new ArgumentException("You need `\u200B " + currency_symbol + " " + (bet - userBalance) + " \u200B` more to perform this transaction.");
         }
         ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, userBalance - bet);
         userBalance -= bet;
