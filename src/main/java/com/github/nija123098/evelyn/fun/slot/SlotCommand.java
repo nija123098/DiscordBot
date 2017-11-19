@@ -16,7 +16,9 @@ import com.github.nija123098.evelyn.util.Rand;
 
 import java.awt.*;
 import java.util.concurrent.TimeUnit;
-
+/**
+ * Made by Dxeo on 19/11/2017.
+ */
 public class SlotCommand extends AbstractCommand {
 
     //constructor
