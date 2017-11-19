@@ -12,6 +12,8 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.*;
 import com.github.nija123098.evelyn.exeption.ArgumentException;
 import com.github.nija123098.evelyn.exeption.PermissionsException;
 
+import java.awt.*;
+
 /**
  * Made by nija123098 on 4/2/2017.
  */
@@ -34,7 +36,7 @@ public class ConfigSetCommand extends AbstractCommand {
             if (config.getConfigLevel() != ConfigLevel.ALL) target = (T) target.convert(config.getConfigLevel().getType());
             target.checkPermissionToEdit(user, guild);// morph exception should throw before cast exception
             config.setExteriorValue(target, user, channel, guild, message, arg);
-            maker.appendRaw("Set " + config.getName() + " to " + arg);
+            maker.appendRaw("Set " + config.getName() + " to " + arg).mustEmbed().withColor(new Color(0, 206, 209));
         }
     }
 }

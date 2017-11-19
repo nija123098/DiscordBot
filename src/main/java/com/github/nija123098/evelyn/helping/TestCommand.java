@@ -4,10 +4,9 @@ import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
-import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
-import com.github.nija123098.evelyn.economy.configs.LastMoneyUseConfig;
+import com.github.nija123098.evelyn.exeption.ArgumentException;
 
 
 /**
@@ -33,8 +32,12 @@ public class TestCommand extends AbstractCommand {
                 "\u200b--------.+" +
                 "```").mustEmbed();
         */
-        ConfigHandler.setSetting(LastMoneyUseConfig.class, user, "test");
-        //ConfigHandler.setSetting(CurrentMoneyConfig.class, user, Integer.valueOf(arg));
+        maker.appendRaw("lol");
+        maker.clearMessage();
+        maker.appendRaw("lel");
+        throw new ArgumentException("Lmao you got bamboozled");
+        //ConfigHandler.setSetting(LastCurrencyUseConfig.class, user, "test");
+        //ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, Integer.valueOf(arg));
         /*
         String[] args = arg.split(" ");
         switch (args[0]) {
@@ -52,7 +55,7 @@ public class TestCommand extends AbstractCommand {
                 ConfigHandler.setSetting(HasCoffeeConfig.class, user, Boolean.valueOf(args[1]));
                 break;
             case "money":
-                ConfigHandler.setSetting(CurrentMoneyConfig.class, user, Integer.valueOf(args[1]));
+                ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, Integer.valueOf(args[1]));
             default:
                 break;
         }

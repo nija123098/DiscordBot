@@ -12,7 +12,7 @@ import com.github.nija123098.evelyn.config.GuildUser;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
-import com.github.nija123098.evelyn.economy.configs.CurrentMoneyConfig;
+import com.github.nija123098.evelyn.economy.configs.CurrentCurrencyConfig;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
 import com.github.nija123098.evelyn.util.Time;
 
@@ -28,7 +28,7 @@ public class UserCommand extends AbstractCommand {
         maker.appendAlternate(false, "Querying for **", (guild == null ? user.getName() : user.getDisplayName(guild)) + "**\n").withImage(user.getAvatarURL()).withColor(user);
         addAtrib(maker, "bust_in_silhouette", "User", user.getNameAndDiscrim());
         addAtrib(maker, "keyboard", "Commands used", ConfigHandler.getSetting(CommandsUsedCountConfig.class, user));
-        addAtrib(maker, "cookie", "Cookies", ConfigHandler.getSetting(CurrentMoneyConfig.class, user));
+        addAtrib(maker, "cookie", "Cookies", ConfigHandler.getSetting(CurrentCurrencyConfig.class, user));
         if (guild != null) {
             GuildUser guildUser = GuildUser.getGuildUser(guild, user);
             addAtrib(maker, "hash", "User Number", guildUser.getJoinPosition() + 1);

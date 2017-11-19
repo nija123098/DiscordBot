@@ -53,6 +53,7 @@ public class FormatHelper {
         return l;
     }
     public static String embedLink(String text, String link){
+        if (link.isEmpty()) return "[" + text + "](https://youtu.be/dQw4w9WgXcQ)";
         return "[" + text + "](" + link + ")";
     }
     /**

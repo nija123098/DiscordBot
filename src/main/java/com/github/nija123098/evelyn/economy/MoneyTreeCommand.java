@@ -6,7 +6,7 @@ import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.Configurable;
-import com.github.nija123098.evelyn.economy.configs.CurrentMoneyConfig;
+import com.github.nija123098.evelyn.economy.configs.CurrentCurrencyConfig;
 import com.github.nija123098.evelyn.perms.BotRole;
 
 /**
@@ -18,6 +18,6 @@ public class MoneyTreeCommand extends AbstractCommand {
     }
     @Command
     public void handle(@Argument Integer amount, @Argument Configurable configurable){
-        ConfigHandler.changeSetting(CurrentMoneyConfig.class, configurable, aFloat -> aFloat + amount);
+        ConfigHandler.changeSetting(CurrentCurrencyConfig.class, configurable, aFloat -> aFloat + amount);
     }
 }
