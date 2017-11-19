@@ -6,6 +6,7 @@ import com.github.nija123098.evelyn.command.annotations.LaymanName;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 
+import java.awt.*;
 import java.lang.reflect.Parameter;
 
 /**
@@ -71,6 +72,6 @@ public class ArgumentException extends BotException {
 
     @Override
     public MessageMaker makeMessage(Channel channel) {
-        return super.makeMessage(channel).getNote().append("Please check the help command for more information on how to use this command.").getMaker();
+        return super.makeMessage(channel).getNote().append("Please check the help command for more information on how to use this command.").getMaker().withColor(new Color(255, 183, 76));
     }
 }
