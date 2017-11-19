@@ -25,7 +25,7 @@ public class SlotCommand extends AbstractCommand {
     }
 
     //emotes: Diamond, Lollipop, Candy, Cherries, Melon, Orange, Lemon, Grapes
-    //DO NOT CHANGE ORDER WITHOUT CHANGING THE calculateWin() METHOD
+    //DO NOT CHANGE THE ORDER WITHOUT CHANGING THE calculateWin() METHOD
     private String[] emotes = {"\uD83D\uDC8E", "\uD83C\uDF6D", "\uD83C\uDF6C", "\uD83C\uDF52", "\uD83C\uDF48", "\uD83C\uDF4A", "\uD83C\uDF4B", "\uD83C\uDF47"};
 
     //win multiplier
