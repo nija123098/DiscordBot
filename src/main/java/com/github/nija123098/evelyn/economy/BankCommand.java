@@ -88,12 +88,12 @@ public class BankCommand extends AbstractCommand {
          * Checks if it's been a day since the last time the user claimed, this is checked against 00:00 UTC, if it was more recent, display the time until 00:00 UTC
          */
         if (nowDays.compareTo(thenDays) == 1) {
-            maker.appendRaw(ClaimBuilder((hours + "h " + minutes + "m"), symbol, bonus, streak, user, guild, true)).mustEmbed().withColor(new Color(52,54,59));
+            maker.appendRaw(ClaimBuilder((hours + "h " + minutes + "m"), symbol, bonus, streak, user, guild, true)).mustEmbed().withColor(new Color(54,57,62));
             ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, (currentMoney + totalClaim));
             ConfigHandler.setSetting(LastCurrencyUseConfig.class, user, now.truncatedTo(ChronoUnit.SECONDS).toString());
             if (streak < 8) ConfigHandler.setSetting(CurrentCurrencyStreakConfig.class, user, (streak + 1));
         } else {
-            maker.appendRaw(ClaimBuilder((hours + "h " + minutes + "m"), symbol, bonus, streak, user, guild, false)).mustEmbed().withColor(new Color(52,54,59));
+            maker.appendRaw(ClaimBuilder((hours + "h " + minutes + "m"), symbol, bonus, streak, user, guild, false)).mustEmbed().withColor(new Color(54,57,62));
         }
     }
 
@@ -105,7 +105,7 @@ public class BankCommand extends AbstractCommand {
             eventEnd = ConfigHandler.getSetting(EventEndConfig.class, GlobalConfigurable.GLOBAL).substring(8, 10) + ConfigHandler.getSetting(EventEndConfig.class, GlobalConfigurable.GLOBAL).substring(4, 7).replace('-', '/');
         }
         ret.append("\uD83C\uDFE7 @" + user.getDisplayName(guild) + " \uD83C\uDFE7\n");
-        ret.append("════════════════════════════════════════════════\n");
+        ret.append("════════════════════════════════════════\n");
         if (claim) {
             ret.append(" Claim: " + moneySymbol + " +256\n");
             ret.append(" Daily: " + moneySymbol + " +" + (streak * 8) + " (" + streak + " \uD83D\uDCC6)\n");
@@ -114,7 +114,7 @@ public class BankCommand extends AbstractCommand {
         } else {
             ret.append(" Claim: \u23f0 " + time + "\n");
         }
-        ret.append("════════════════════════════════════════════════\n");
+        ret.append("════════════════════════════════════════\n");
         if (claim) {
             ret.append(" Funds: " + moneySymbol + " " + (ConfigHandler.getSetting(CurrentCurrencyConfig.class, user) + bonus + (streak * 8) + 256) + " Daily: \uD83D\uDCC6 " + (streak + (streak == 8 ? 0 : 1)) + "/8\n");
         } else {

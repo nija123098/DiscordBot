@@ -9,8 +9,8 @@ import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
-import com.github.nija123098.evelyn.economy.configs.CurrentMoneyConfig;
-import com.github.nija123098.evelyn.economy.configs.MoneySymbolConfig;
+import com.github.nija123098.evelyn.economy.configs.CurrencySymbolConfig;
+import com.github.nija123098.evelyn.economy.configs.CurrentCurrencyConfig;
 import com.github.nija123098.evelyn.exeption.ArgumentException;
 import com.github.nija123098.evelyn.util.Rand;
 
@@ -25,6 +25,7 @@ public class SlotCommand extends AbstractCommand {
     }
 
     //emotes: Diamond, Lollipop, Candy, Cherries, Melon, Orange, Lemon, Grapes
+    //DO NOT CHANGE ORDER WITHOUT CHANGING THE calculateWin() METHOD
     private String[] emotes = {"\uD83D\uDC8E", "\uD83C\uDF6D", "\uD83C\uDF6C", "\uD83C\uDF52", "\uD83C\uDF48", "\uD83C\uDF4A", "\uD83C\uDF4B", "\uD83C\uDF47"};
 
     //win multiplier
@@ -34,20 +35,21 @@ public class SlotCommand extends AbstractCommand {
     public void command(@Context(softFail = true) Guild guild, User user, MessageMaker maker, @Argument(info = "The amount bet") Integer bet) throws InterruptedException {
 
         //save guild money symbol
-        String currency_symbol = ConfigHandler.getSetting(MoneySymbolConfig.class, guild);
+        String currency_symbol = ConfigHandler.getSetting(CurrencySymbolConfig.class, guild);
 
         //subtract bet
-        int userBalance = ConfigHandler.getSetting(CurrentMoneyConfig.class, user);
+        int userBalance = ConfigHandler.getSetting(CurrentCurrencyConfig.class, user);
         if (userBalance < bet) {
+
             //not enough funds
             throw new ArgumentException("Insufficient funds :/\n\nYou only have: `\u200B " + currency_symbol + " " + userBalance + " \u200B`");
         }
-        ConfigHandler.setSetting(CurrentMoneyConfig.class, user, userBalance - bet);
+        ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, userBalance - bet);
         userBalance -= bet;
 
         //configure message maker
         maker.withAutoSend(false);
-        maker.mustEmbed().withColor(new Color(52,54,59));
+        maker.mustEmbed().withColor(new Color(54,57,62));
 
         //print the first frame
         maker.appendRaw("```\uD83C\uDFB0 @" + user.getDisplayName(guild) + " \uD83C\uDFB0\n");
@@ -69,8 +71,8 @@ public class SlotCommand extends AbstractCommand {
             win = 0;
         } else {
             win = bet * winM;
-            userBalance = ConfigHandler.getSetting(CurrentMoneyConfig.class, user) + win;
-            ConfigHandler.setSetting(CurrentMoneyConfig.class, user, userBalance);
+            userBalance = ConfigHandler.getSetting(CurrentCurrencyConfig.class, user) + win;
+            ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, userBalance);
         }
 
         //print the second frame after delay
@@ -124,6 +126,8 @@ public class SlotCommand extends AbstractCommand {
     private int calculateWin(int first, int second, int third){
         if (first == second && first == third){
             switch (first){
+
+                //return based on emotes array order, use this to adjust win multiplier
                 case 0:
                     return 10;
                 case 1:
