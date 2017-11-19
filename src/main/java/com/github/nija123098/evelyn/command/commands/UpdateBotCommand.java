@@ -35,7 +35,11 @@ public class UpdateBotCommand extends AbstractCommand {
             if (ExecuteShellCommand.getOutput().contains("Already up-to-date.")) {
                 maker.appendRaw("\n**The bot is already at the latest version. Aborting update sequence.**");
             } else {
-                maker.appendRaw("\n\n*GIT Pull Results:*\n```" + ExecuteShellCommand.getOutput() + "```");
+                if (ExecuteShellCommand.getOutput().length() < 2000) {
+                    maker.appendRaw("\n\n*GIT Pull Results:*\n```" + ExecuteShellCommand.getOutput() + "```");
+                } else {
+                    maker.appendRaw("\n\n*GIT Pull Results:*\n" + HastebinUtil.handleHastebin(ExecuteShellCommand.getOutput()));
+                }
                 ExecuteShellCommand.commandToExecute("./Build.sh");
                 if (ExecuteShellCommand.getOutput().contains("BUILD SUCCESS")) {
                     if (ExecuteShellCommand.getOutput().length() < 2000) {
