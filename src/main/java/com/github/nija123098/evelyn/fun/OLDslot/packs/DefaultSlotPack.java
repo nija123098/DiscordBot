@@ -1,6 +1,6 @@
-package com.github.nija123098.evelyn.fun.slot.packs;
+package com.github.nija123098.evelyn.fun.OLDslot.packs;
 
-import com.github.nija123098.evelyn.fun.slot.AbstractSlotPack;
+import com.github.nija123098.evelyn.fun.OLDslot.AbstractSlotPack;
 
 /**
  * Made by nija123098 on 5/19/2017.

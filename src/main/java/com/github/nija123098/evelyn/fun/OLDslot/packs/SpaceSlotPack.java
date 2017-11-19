@@ -1,6 +1,6 @@
-package com.github.nija123098.evelyn.fun.slot.packs;
+package com.github.nija123098.evelyn.fun.OLDslot.packs;
 
-import com.github.nija123098.evelyn.fun.slot.AbstractSlotPack;
+import com.github.nija123098.evelyn.fun.OLDslot.AbstractSlotPack;
 import com.github.nija123098.evelyn.service.services.ScheduleService;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
 import com.github.nija123098.evelyn.util.Rand;

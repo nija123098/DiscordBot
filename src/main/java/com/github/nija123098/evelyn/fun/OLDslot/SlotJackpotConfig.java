@@ -1,10 +1,9 @@
-package com.github.nija123098.evelyn.fun.slot;
+package com.github.nija123098.evelyn.fun.OLDslot;
 
 import com.github.nija123098.evelyn.config.AbstractConfig;
 import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.GlobalConfigurable;
-import com.github.nija123098.evelyn.perms.BotRole;
 
 /**
  * Made by nija123098 on 5/18/2017.

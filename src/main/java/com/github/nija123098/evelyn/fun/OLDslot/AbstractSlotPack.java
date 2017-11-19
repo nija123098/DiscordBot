@@ -1,4 +1,4 @@
-package com.github.nija123098.evelyn.fun.slot;
+package com.github.nija123098.evelyn.fun.OLDslot;
 
 import com.github.nija123098.evelyn.util.EmoticonHelper;
 import com.github.nija123098.evelyn.util.Rand;
