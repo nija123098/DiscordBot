@@ -828,12 +828,12 @@ public class MessageMaker {
             }
             if (this.embed != null){
                 if (this.fieldIndices.length > 1){
-                    this.withReactionBehavior("point_left", (add, reaction, user) -> {
+                    this.withReactionBehavior("arrow_left", (add, reaction, user) -> {
                         if (currentPage.get() == 0) return;
                         this.embed.withFooterText(generateNote(currentPage.decrementAndGet()));
                         this.send(currentPage.get());
                     });
-                    this.withReactionBehavior("point_right", (add, reaction, user) -> {
+                    this.withReactionBehavior("arrow_right", (add, reaction, user) -> {
                         if (currentPage.get() == fieldIndices.length - 1) return;
                         this.embed.withFooterText(generateNote(currentPage.incrementAndGet()));
                         this.send(currentPage.get());

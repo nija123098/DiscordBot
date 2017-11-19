@@ -8,8 +8,8 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.User;
  * Written by Soarnir 25/9/17
  */
 
-public class CurrentMoneyStreakConfig extends AbstractConfig<Integer, User> {
-    public CurrentMoneyStreakConfig() {
+public class CurrentCurrencyStreakConfig extends AbstractConfig<Integer, User> {
+    public CurrentCurrencyStreakConfig() {
         super("current_streak", ConfigCategory.STAT_TRACKING, 0, "streak in days where user has used claim command");
     }
 }

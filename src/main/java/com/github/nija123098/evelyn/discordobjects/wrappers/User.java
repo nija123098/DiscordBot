@@ -92,8 +92,8 @@ public class User implements Configurable {
 
     @Override
     public void manage() {// this should probably be more dependent on constants
-        /*if (ConfigHandler.getSetting(LastMoneyUseConfig.class, this) > System.currentTimeMillis() - 86_400_000){
-            ConfigHandler.setSetting(LastMoneyUseConfig.class, this, 0L);
+        /*if (ConfigHandler.getSetting(LastCurrencyUseConfig.class, this) > System.currentTimeMillis() - 86_400_000){
+            ConfigHandler.setSetting(LastCurrencyUseConfig.class, this, 0L);
         }*/
     }
 

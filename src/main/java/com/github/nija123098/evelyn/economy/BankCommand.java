@@ -10,6 +10,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.economy.configs.*;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
+import com.github.nija123098.evelyn.util.Log;
 
 import java.awt.*;
 import java.time.*;
@@ -25,18 +26,19 @@ public class BankCommand extends AbstractCommand {
     }
     @Command
     public void command(Guild guild, User user, MessageMaker maker){
-        String name = ConfigHandler.getSetting(MoneyNameConfig.class, guild), symbol = ConfigHandler.getSetting(MoneySymbolConfig.class, guild), booster = EmoticonHelper.getChars("rocket", false), claim = EmoticonHelper.getChars("inbox_tray", false);
+        String name = ConfigHandler.getSetting(CurrencyNameConfig.class, guild), symbol = ConfigHandler.getSetting(CurrencySymbolConfig.class, guild), booster = EmoticonHelper.getChars("rocket", false), claim = EmoticonHelper.getChars("inbox_tray", false);
         int totalClaim = 256, bonus = 0;
-        int streak = ConfigHandler.getSetting(CurrentMoneyStreakConfig.class, user);
+        int streak = ConfigHandler.getSetting(CurrentCurrencyStreakConfig.class, user);
 
         /**
          * Check for old money timer in database or if empty
          */
         try {
-            Instant.parse(ConfigHandler.getSetting(LastMoneyUseConfig.class, user));
-            if (ConfigHandler.getSetting(LastMoneyUseConfig.class, user).isEmpty()) throw new IllegalArgumentException();
+            Instant.parse(ConfigHandler.getSetting(LastCurrencyUseConfig.class, user));
+            Log.log(ConfigHandler.getSetting(LastCurrencyUseConfig.class, user));
+            if (ConfigHandler.getSetting(LastCurrencyUseConfig.class, user).isEmpty() || ConfigHandler.getSetting(LastCurrencyUseConfig.class, user) == null) throw new IllegalArgumentException();
         } catch (DateTimeParseException |IllegalArgumentException e) {
-            ConfigHandler.setSetting(LastMoneyUseConfig.class, user, "2017-11-10T00:00:00.000Z");
+            ConfigHandler.setSetting(LastCurrencyUseConfig.class, user, "2017-11-10T00:00:00.000Z");
             maker.appendRaw("Hi " + user.getDisplayName(guild) + ", I recently switched to a new currency format! You can now claim the value in full after midnight UTC every day\nYou keep all your current " + name + " and as consolation for all the trouble you get a free claim! (as well as a bonus `\u200b " + symbol + " 1000 \u200b`)\n\n");
             bonus = 1000;
             totalClaim += 1000;
@@ -45,8 +47,8 @@ public class BankCommand extends AbstractCommand {
         /**
          * Get most variables and check how many days it's been since last claim
          */
-        int currentMoney = ConfigHandler.getSetting(CurrentMoneyConfig.class, user);
-        Instant then = Instant.parse(ConfigHandler.getSetting(LastMoneyUseConfig.class, user)), thenDays = then.truncatedTo(ChronoUnit.DAYS), thenDaysCount = then.truncatedTo(ChronoUnit.DAYS);
+        int currentMoney = ConfigHandler.getSetting(CurrentCurrencyConfig.class, user);
+        Instant then = Instant.parse(ConfigHandler.getSetting(LastCurrencyUseConfig.class, user)), thenDays = then.truncatedTo(ChronoUnit.DAYS), thenDaysCount = then.truncatedTo(ChronoUnit.DAYS);
         Instant now = Clock.systemUTC().instant(), nowDays = now.truncatedTo(ChronoUnit.DAYS), nowDaysCount = now.truncatedTo(ChronoUnit.DAYS);
         Instant utcMidnight = Instant.parse((ZonedDateTime.now(ZoneId.of("Z")).plusDays(1)).toString());
         int timeUntil = Math.abs(Integer.valueOf(String.valueOf(now.until(utcMidnight.atZone(ZoneId.of("Z")).truncatedTo(ChronoUnit.DAYS), ChronoUnit.MINUTES))));
@@ -87,9 +89,9 @@ public class BankCommand extends AbstractCommand {
          */
         if (nowDays.compareTo(thenDays) == 1) {
             maker.appendRaw(ClaimBuilder((hours + "h " + minutes + "m"), symbol, bonus, streak, user, guild, true)).mustEmbed().withColor(new Color(52,54,59));
-            ConfigHandler.setSetting(CurrentMoneyConfig.class, user, (currentMoney + totalClaim));
-            ConfigHandler.setSetting(LastMoneyUseConfig.class, user, now.truncatedTo(ChronoUnit.SECONDS).toString());
-            if (streak < 8) ConfigHandler.setSetting(CurrentMoneyStreakConfig.class, user, (streak + 1));
+            ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, (currentMoney + totalClaim));
+            ConfigHandler.setSetting(LastCurrencyUseConfig.class, user, now.truncatedTo(ChronoUnit.SECONDS).toString());
+            if (streak < 8) ConfigHandler.setSetting(CurrentCurrencyStreakConfig.class, user, (streak + 1));
         } else {
             maker.appendRaw(ClaimBuilder((hours + "h " + minutes + "m"), symbol, bonus, streak, user, guild, false)).mustEmbed().withColor(new Color(52,54,59));
         }
@@ -114,9 +116,9 @@ public class BankCommand extends AbstractCommand {
         }
         ret.append("════════════════════════════════════════════════\n");
         if (claim) {
-            ret.append(" Funds: " + moneySymbol + " " + (ConfigHandler.getSetting(CurrentMoneyConfig.class, user) + bonus + (streak * 8) + 256) + " Daily: \uD83D\uDCC6 " + (streak + (streak == 8 ? 0 : 1)) + "/8\n");
+            ret.append(" Funds: " + moneySymbol + " " + (ConfigHandler.getSetting(CurrentCurrencyConfig.class, user) + bonus + (streak * 8) + 256) + " Daily: \uD83D\uDCC6 " + (streak + (streak == 8 ? 0 : 1)) + "/8\n");
         } else {
-            ret.append(" Funds: " + moneySymbol + " " + ConfigHandler.getSetting(CurrentMoneyConfig.class, user) + " Daily: \uD83D\uDCC6 " + streak + "/8\n");
+            ret.append(" Funds: " + moneySymbol + " " + ConfigHandler.getSetting(CurrentCurrencyConfig.class, user) + " Daily: \uD83D\uDCC6 " + streak + "/8\n");
         }
         ret.append("```");
         return ret.toString();

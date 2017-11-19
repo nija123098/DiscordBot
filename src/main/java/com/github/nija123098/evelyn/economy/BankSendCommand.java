@@ -31,6 +31,6 @@ public class BankSendCommand extends AbstractCommand {
             sender = GuildUser.getGuildUser(guild, user);
         }
         sender.checkPermissionToEdit(user, guild);
-        MoneyTransfer.transact(sender, receiver, 0, integer, "Sending");
+        CurrencyTransfer.transact(sender, receiver, 0, integer, "Sending");
     }
 }

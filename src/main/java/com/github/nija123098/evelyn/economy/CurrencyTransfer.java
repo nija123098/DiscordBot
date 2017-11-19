@@ -7,8 +7,8 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.economy.configs.CurrentComponentsConfig;
-import com.github.nija123098.evelyn.economy.configs.CurrentMoneyConfig;
-import com.github.nija123098.evelyn.economy.configs.MoneyHistoryConfig;
+import com.github.nija123098.evelyn.economy.configs.CurrentCurrencyConfig;
+import com.github.nija123098.evelyn.economy.configs.CurrencyHistoryConfig;
 import com.github.nija123098.evelyn.exeption.ArgumentException;
 import com.github.nija123098.evelyn.exeption.TransactionException;
 import com.github.nija123098.evelyn.perms.BotRole;
@@ -21,7 +21,7 @@ import java.util.stream.Stream;
 /**
  * Made by nija123098 on 5/16/2017.
  */
-public class MoneyTransfer {
+public class CurrencyTransfer {
     public static void transact(Configurable firstParty, Configurable secondParty, int firstPartyMoney, int secondPartyMoney, String note){
         transact(firstParty, secondParty, null, null, firstPartyMoney, secondPartyMoney, note);
     }
@@ -30,12 +30,12 @@ public class MoneyTransfer {
         if (!DiscordClient.getOurUser().equals(secondParty) && !firstParty.getGoverningObject().equals(secondParty.getGoverningObject())) throw new ArgumentException("You can't send global currency to guild currency and vice versa");
         if (firstPartyComponents == null) firstPartyComponents = Collections.emptyMap();
         if (secondPartyComponents == null) secondPartyComponents = Collections.emptyMap();
-        MoneyTransfer moneyTransfer = new MoneyTransfer(firstParty, secondParty, firstPartyComponents, secondPartyComponents, firstPartyMoney, secondPartyMoney, note);
-        int money = ConfigHandler.getSetting(CurrentMoneyConfig.class, firstParty) + moneyTransfer.firstPartyMoney;
+        CurrencyTransfer moneyTransfer = new CurrencyTransfer(firstParty, secondParty, firstPartyComponents, secondPartyComponents, firstPartyMoney, secondPartyMoney, note);
+        int money = ConfigHandler.getSetting(CurrentCurrencyConfig.class, firstParty) + moneyTransfer.firstPartyMoney;
         if ((firstParty instanceof User || firstParty instanceof GuildUser) && !firstParty.convert(User.class).equals(DiscordClient.getOurUser()) && money < 0) throw new TransactionException(firstParty, -money);
-        int secondMoney = ConfigHandler.getSetting(CurrentMoneyConfig.class, firstParty) + moneyTransfer.secondPartyMoney;
+        int secondMoney = ConfigHandler.getSetting(CurrentCurrencyConfig.class, firstParty) + moneyTransfer.secondPartyMoney;
         if ((secondParty instanceof User || secondParty instanceof GuildUser) && !secondParty.convert(User.class).equals(DiscordClient.getOurUser()) && secondMoney < 0) throw new TransactionException(secondParty, -secondMoney);
-        Map<ItemComponent, Integer> components = ConfigHandler.getSetting(CurrentComponentsConfig.class, firstParty);
+        Map<ItemComponent, Integer> components = ConfigHandler.getSetting(CurrentComponentsConfig.class, User.getUser(firstParty.getID()));
         moneyTransfer.firstPartyComponents.forEach((itemComponent, integer) -> components.compute(itemComponent, (c, i) -> {
             if (i == null) i = 0;
             return i - integer;
@@ -43,7 +43,7 @@ public class MoneyTransfer {
         if ((firstParty instanceof User || firstParty instanceof GuildUser) && !firstParty.convert(User.class).equals(DiscordClient.getOurUser())) components.forEach((itemComponent, integer) -> {
             if (integer < 0) throw new TransactionException(firstParty, itemComponent, -integer);
         });
-        Map<ItemComponent, Integer> secondComponents = ConfigHandler.getSetting(CurrentComponentsConfig.class, firstParty);
+        Map<ItemComponent, Integer> secondComponents = ConfigHandler.getSetting(CurrentComponentsConfig.class, User.getUser(firstParty.getID()));
         moneyTransfer.secondPartyComponents.forEach((itemComponent, integer) -> secondComponents.compute(itemComponent, (c, i) -> {
             if (i == null) i = 0;
             return i - integer;
@@ -51,15 +51,15 @@ public class MoneyTransfer {
         if ((secondParty instanceof User || secondParty instanceof GuildUser) && !secondParty.convert(User.class).equals(DiscordClient.getOurUser())) secondComponents.forEach((itemComponent, integer) -> {
             if (integer < 0) throw new TransactionException(firstParty, itemComponent, -integer);
         });
-        ConfigHandler.setSetting(CurrentMoneyConfig.class, firstParty, money);
-        ConfigHandler.setSetting(CurrentMoneyConfig.class, secondParty, secondMoney);
-        ConfigHandler.setSetting(CurrentComponentsConfig.class, firstParty, components);
-        ConfigHandler.setSetting(CurrentComponentsConfig.class, secondParty, secondComponents);
-        ConfigHandler.alterSetting(MoneyHistoryConfig.class, firstParty, moneyMovements -> {
+        ConfigHandler.setSetting(CurrentCurrencyConfig.class, firstParty, money);
+        ConfigHandler.setSetting(CurrentCurrencyConfig.class, secondParty, secondMoney);
+        ConfigHandler.setSetting(CurrentComponentsConfig.class, User.getUser(firstParty.getID()), components);
+        ConfigHandler.setSetting(CurrentComponentsConfig.class, User.getUser(secondParty.getID()), secondComponents);
+        ConfigHandler.alterSetting(CurrencyHistoryConfig.class, firstParty, moneyMovements -> {
             moneyMovements.add(moneyTransfer);
             if (moneyMovements.size() > 15) moneyMovements.remove(0);
         });
-        ConfigHandler.alterSetting(MoneyHistoryConfig.class, secondParty, moneyMovements -> {
+        ConfigHandler.alterSetting(CurrencyHistoryConfig.class, secondParty, moneyMovements -> {
             moneyMovements.add(moneyTransfer.getReverse());
             if (moneyMovements.size() > 15) moneyMovements.remove(0);
         });
@@ -79,8 +79,8 @@ public class MoneyTransfer {
     private Map<ItemComponent, Integer> firstPartyComponents, secondPartyComponents;
     private int firstPartyMoney, secondPartyMoney;// items are the offers, not gains
     private String note;
-    protected MoneyTransfer() {}
-    private MoneyTransfer(Configurable firstParty, Configurable secondParty, Map<ItemComponent, Integer> firstPartyComponents, Map<ItemComponent, Integer> secondPartyComponents, int firstPartyMoney, int secondPartyMoney, String note) {
+    protected CurrencyTransfer() {}
+    private CurrencyTransfer(Configurable firstParty, Configurable secondParty, Map<ItemComponent, Integer> firstPartyComponents, Map<ItemComponent, Integer> secondPartyComponents, int firstPartyMoney, int secondPartyMoney, String note) {
         this.firstParty = firstParty;
         this.secondParty = secondParty;
         this.firstPartyComponents = firstPartyComponents;
@@ -108,8 +108,8 @@ public class MoneyTransfer {
             this.secondPartyMoney = -diff;
         }
     }
-    private MoneyTransfer getReverse(){
-        return new MoneyTransfer(this.secondParty, this.firstParty, this.secondPartyComponents, this.firstPartyComponents, this.secondPartyMoney, this.firstPartyMoney, this.note);
+    private CurrencyTransfer getReverse(){
+        return new CurrencyTransfer(this.secondParty, this.firstParty, this.secondPartyComponents, this.firstPartyComponents, this.secondPartyMoney, this.firstPartyMoney, this.note);
     }
     public Configurable getParty(boolean first){
         return first ? this.firstParty : this.secondParty;

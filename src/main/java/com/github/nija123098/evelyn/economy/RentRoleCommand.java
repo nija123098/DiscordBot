@@ -13,7 +13,7 @@ import com.github.nija123098.evelyn.economy.configs.RoleSubscriptionsConfig;
 import com.github.nija123098.evelyn.exeption.ArgumentException;
 import com.github.nija123098.evelyn.util.FormatHelper;
 import com.github.nija123098.evelyn.util.Time;
-import com.github.nija123098.evelyn.economy.configs.MoneySymbolConfig;
+import com.github.nija123098.evelyn.economy.configs.CurrencySymbolConfig;
 import com.github.nija123098.evelyn.economy.configs.RoleRentConfig;
 
 import java.util.List;
@@ -30,7 +30,7 @@ public class RentRoleCommand extends AbstractCommand {
     @Command
     public void command(@Argument(optional = true, replacement = ContextType.NONE) Role role, @Argument Time time, GuildUser guildUser, MessageMaker maker){
         if (role == null){
-            String icon = ConfigHandler.getSetting(MoneySymbolConfig.class, guildUser.getGuild());
+            String icon = ConfigHandler.getSetting(CurrencySymbolConfig.class, guildUser.getGuild());
             List<String> list = guildUser.getGuild().getRoles().stream().map(role1 -> {
                 Integer price = ConfigHandler.getSetting(RoleRentConfig.class, role1);
                 return price == null ? null : role1.getName() + (price != 0 ? " for " + price + "" + icon : "");
@@ -44,7 +44,7 @@ public class RentRoleCommand extends AbstractCommand {
             int hours = (int) (time.timeUntil() / 3600);
             Integer currency = ConfigHandler.getSetting(RoleRentConfig.class, role);
             if (currency == null) throw new ArgumentException("You can't rent this role");
-            MoneyTransfer.transact(guildUser, guildUser.getGuild(), 0, currency * hours, "The purchase of the role " + role.getName() + " for " + hours + " hours");
+            CurrencyTransfer.transact(guildUser, guildUser.getGuild(), 0, currency * hours, "The purchase of the role " + role.getName() + " for " + hours + " hours");
             ConfigHandler.alterSetting(RoleSubscriptionsConfig.class, guildUser, map -> map.compute(role, (r, lon) -> lon == null ? time.schedualed() : time.timeUntil() + lon));
             RoleSubscriptionsConfig.scheduleRemoval(time.timeUntil(), guildUser, role);
         }
