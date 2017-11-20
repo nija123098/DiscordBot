@@ -6,7 +6,7 @@ import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
-import com.github.nija123098.evelyn.exeption.ArgumentException;
+import com.github.nija123098.evelyn.exeption.DevelopmentException;
 
 
 /**
@@ -32,10 +32,8 @@ public class TestCommand extends AbstractCommand {
                 "\u200b--------.+" +
                 "```").mustEmbed();
         */
-        maker.appendRaw("lol");
-        maker.clearMessage();
-        maker.appendRaw("lel");
-        throw new ArgumentException("Lmao you got bamboozled");
+
+        throw new DevelopmentException("Lmao you got bamboozled");
         //ConfigHandler.setSetting(LastCurrencyUseConfig.class, user, "test");
         //ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, Integer.valueOf(arg));
         /*

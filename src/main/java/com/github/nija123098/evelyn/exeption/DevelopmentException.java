@@ -2,6 +2,7 @@ package com.github.nija123098.evelyn.exeption;
 
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
+import com.github.nija123098.evelyn.util.FormatHelper;
 
 /**
  * The exception thrown when there is an internal
@@ -32,6 +33,6 @@ public class DevelopmentException extends BotException {
 
     @Override
     public MessageMaker makeMessage(Channel channel) {
-        return super.makeMessage(channel).getNote().append("The developers have been notified").getMaker();
+        return super.makeMessage(channel).getFooter().append("Click " + FormatHelper.embedLink("here", "https://discord.gg/UW5X5BU") + " to notify the developers.").getMaker().getTitle().clear().appendRaw("Development Error").getMaker();
     }
 }

@@ -1,6 +1,10 @@
 package com.github.nija123098.evelyn.exeption;
 
 import com.github.nija123098.evelyn.command.ContextRequirement;
+import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
+import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
+
+import java.awt.*;
 
 /**
  * Thrown when insufficient context has been given to infer an desired output.
@@ -20,5 +24,10 @@ public class ContextException extends BotException {
     }
     public ContextException(String message) {
         super(message);
+    }
+
+    @Override
+    public MessageMaker makeMessage(Channel channel) {
+        return super.makeMessage(channel).withColor(new Color(255, 183, 76)).getTitle().clear().appendRaw("Invalid Context").getMaker();
     }
 }
