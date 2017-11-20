@@ -10,6 +10,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.economy.configs.CurrencySymbolConfig;
 import com.github.nija123098.evelyn.economy.configs.CurrentCurrencyConfig;
+import com.github.nija123098.evelyn.economy.configs.LootCrateConfig;
 import com.github.nija123098.evelyn.exeption.ArgumentException;
 import com.github.nija123098.evelyn.util.Rand;
 
@@ -23,7 +24,7 @@ public class FishCommand extends AbstractCommand {
 
     //constructor
     public FishCommand() {
-        super("fish", ModuleLevel.FUN, null, null, "fish for shtuff");
+        super("fish", ModuleLevel.FUN, null, null, "fish for stuff");
     }
 
     //fishingEmotes: Fish, Tropical_Fish, Blowfish, Gift
@@ -98,7 +99,8 @@ public class FishCommand extends AbstractCommand {
             rewardAtPole = fishingEmotes[eReward];
             rewardAtLoot = fishingEmotes[eReward] + " 1";
 
-            //>>insert gift to user config here<<
+            //save gift to loot box inventory
+            ConfigHandler.setSetting(LootCrateConfig.class, user, (ConfigHandler.getSetting(LootCrateConfig.class, user) + 1));
 
         } else {
 
@@ -122,6 +124,35 @@ public class FishCommand extends AbstractCommand {
                         "\u200b  /  /            `" + rewardAtPole + "\n" +
                         "\u200b──────────┐ ~~~~~~~~~~~~~~~~~~~~~~~~" +
                         "```");
+
+        //add reaction for repeating the command
+        int finalUserBalance = userBalance;
+        maker.withReactionBehavior("fishing_pole_and_fish", ((add, reaction, u) -> {
+
+            //print the first frame
+            maker.appendRaw("```\uD83C\uDFA3 @" + user.getDisplayName(guild) + " \uD83C\uDFA3\n");
+            maker.appendRaw("════════════════════════════════════════\n");
+            maker.appendRaw(
+                    "\u200b       ,-.\n" +
+                            "\u200b    O /   `.        Cast: " + currency_symbol + " " + cost + "\n" +
+                            "\u200b   <\\/      `.      Loot: -\n" +
+                            "\u200b    |*        `.   Funds: " + currency_symbol + " " + finalUserBalance + "\n" +
+                            "\u200b   / \\          `.\n" +
+                            "\u200b  /  /            `,\n" +
+                            "\u200b──────────┐ ~~~~~~~~~~~~~~~~~~~~~~~~" +
+                            "```");
+            maker.send();
+
+            //reset the message maker
+            maker.getHeader().clear();
+
+            try {
+                command(guild,user,maker);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        }));
         maker.send();
 
 
@@ -177,7 +208,7 @@ public class FishCommand extends AbstractCommand {
 
             //roll for gift
             case 3:
-                roll = Rand.getRand(15);
+                roll = Rand.getRand(8);
                 if (roll == 0){
                     gift = true;
                     rewardToEmote = 3;

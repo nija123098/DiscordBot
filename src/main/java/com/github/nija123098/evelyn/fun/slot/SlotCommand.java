@@ -16,7 +16,7 @@ import com.github.nija123098.evelyn.util.Rand;
 
 import java.util.concurrent.TimeUnit;
 /**
- * Made by Dxeo on 19/11/2017.
+ * Written by Dxeo on 19/11/2017.
  */
 public class SlotCommand extends AbstractCommand {
 
@@ -83,6 +83,29 @@ public class SlotCommand extends AbstractCommand {
         maker.appendRaw(" " + gSlots[0] + "|" + gSlots[1] + "|" + gSlots[2] + "     Bet: " + currency_symbol + " " + bet.toString() + "\n");
         maker.appendRaw(">" + gSlots[3] + "|" + gSlots[4] + "|" + gSlots[5] + "<    Won: " + currency_symbol + " " + win + "\n");
         maker.appendRaw(" " + gSlots[6] + "|" + gSlots[7] + "|" + gSlots[8] + "   Funds: " + currency_symbol + " " + userBalance + "```");
+
+        //add reaction for repeating the command
+        int finalUserBalance = userBalance;
+        maker.withReactionBehavior("slot_machine", ((add, reaction, u) -> {
+
+            //print the first frame
+            maker.appendRaw("```\uD83C\uDFB0 @" + user.getDisplayName(guild) + " \uD83C\uDFB0\n");
+            maker.appendRaw("════════════════════════════════════════\n");
+            maker.appendRaw(" \uD83C\uDFB2|\uD83C\uDFB2|\uD83C\uDFB2     Bet: " + currency_symbol + " " + bet.toString() + "\n");
+            maker.appendRaw(">\uD83C\uDFB2|\uD83C\uDFB2|\uD83C\uDFB2<    Won: " + currency_symbol + " -\n");
+            maker.appendRaw(" \uD83C\uDFB2|\uD83C\uDFB2|\uD83C\uDFB2   Funds: " + currency_symbol + " " + finalUserBalance + "```");
+            maker.send();
+
+            //reset the message maker
+            maker.getHeader().clear();
+
+            try {
+                command(guild,user,maker,bet);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        }));
         maker.send();
 
 
