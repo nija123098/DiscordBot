@@ -1,13 +1,13 @@
 package com.github.nija123098.evelyn.exeption;
 
+import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
 import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordPermission;
-import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.perms.BotRole;
 import sx.blah.discord.util.MissingPermissionsException;
 
-import java.security.Permissions;
+import java.awt.*;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
@@ -39,6 +39,11 @@ public class PermissionsException extends BotException {
         Set<DiscordPermission> required = new HashSet<>();
         Collections.addAll(required, permissions);
         required.removeAll(perm);
-        if (!required.isEmpty()) throw new PermissionsException("I require more permissions to do that: " + required);
+        if (!required.isEmpty()) throw new PermissionsException("I am missing the " + required + " permission to perform this action");
+    }
+
+    @Override
+    public MessageMaker makeMessage(Channel channel) {
+        return super.makeMessage(channel).withColor(new Color(255, 183, 76)).getTitle().clear().appendRaw("Missing Permission").getMaker();
     }
 }
