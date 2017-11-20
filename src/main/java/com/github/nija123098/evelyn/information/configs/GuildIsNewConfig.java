@@ -5,13 +5,11 @@ import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
-import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordGuildJoin;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordGuildLeave;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordMessageSend;
-import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.moderation.logging.BotChannelConfig;
 
 import java.util.HashSet;
@@ -20,7 +18,7 @@ import java.util.Set;
 public class GuildIsNewConfig extends AbstractConfig<Boolean, Guild> {
     private static final Set<Guild> GUILDS = new HashSet<>();
     public GuildIsNewConfig() {
-        super("guild_is_new", ConfigCategory.STAT_TRACKING, true, "If the guild had been served previously");
+        super("guild_is_new", "", ConfigCategory.STAT_TRACKING, true, "If the guild had been served previously");
     }
     @EventListener
     public void handle(DiscordMessageSend send){

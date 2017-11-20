@@ -10,6 +10,6 @@ import com.github.nija123098.evelyn.config.GlobalConfigurable;
 
 public class EventBonusConfig extends AbstractConfig<Integer, GlobalConfigurable> {
     public EventBonusConfig() {
-        super("event_bonus", ConfigCategory.STAT_TRACKING, 0, "base event bonus");
+        super("event_bonus", "", ConfigCategory.STAT_TRACKING, 0, "base event bonus");
     }
 }

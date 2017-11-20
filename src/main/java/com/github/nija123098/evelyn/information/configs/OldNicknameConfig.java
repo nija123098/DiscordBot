@@ -14,7 +14,7 @@ import java.util.Set;
  */
 public class OldNicknameConfig extends AbstractConfig<Set<String>, GuildUser> {
     public OldNicknameConfig() {
-        super("old_nickname_config", ConfigCategory.STAT_TRACKING, new HashSet<>(0), "A list of old nicknames used by a user");
+        super("old_nickname_config", "", ConfigCategory.STAT_TRACKING, new HashSet<>(0), "A list of old nicknames used by a user");
     }
     @EventListener
     public void handle(DiscordNicknameChange event){

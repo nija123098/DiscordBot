@@ -9,6 +9,6 @@ import com.github.nija123098.evelyn.config.ConfigCategory;
  */
 public class PlayCountConfig extends AbstractConfig<Integer, Track> {
     public PlayCountConfig() {
-        super("play_count", ConfigCategory.STAT_TRACKING, 0, "The number of times a track has been played");
+        super("play_count", "", ConfigCategory.STAT_TRACKING, 0, "The number of times a track has been played");
     }
 }

@@ -11,6 +11,7 @@ import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
+import com.github.nija123098.evelyn.util.Log;
 import com.github.nija123098.evelyn.util.Rand;
 
 import java.util.Arrays;
@@ -29,9 +30,8 @@ public class RollCommand extends AbstractCommand {
         int value;
         String[] notOperands = arg.split("(\\s*[^0-z]+\\s*)");
         String[] operands = arg.split("([\\w]+)");
-        String[] res = new String[operands.length + notOperands.length - 1];
-
-
+        String[] res = new String[operands.length + notOperands.length];
+        Log.log("res length: " + (operands.length + notOperands.length));
         final Pattern dice = Pattern.compile("(\\d+)d(\\d+)");
         if (first != null) {
             if (second == null) {
@@ -50,12 +50,12 @@ public class RollCommand extends AbstractCommand {
             maker.append("Rolling 1 [6] sided " + EmoticonHelper.getChars("game_die", false) + " | Rolled: " + value).mustEmbed();
         } else {
             int max_dice = 144, min_sides = 2;
-            System.out.println("operands: " + Arrays.toString(operands));
-            System.out.println("notOperands: " + Arrays.toString(notOperands));
+            Log.log("operands: " + Arrays.toString(operands));
+            Log.log("notOperands: " + Arrays.toString(notOperands));
             for(int i = 0; i < res.length; i++) {
                 res[i] = i%2==0 ? notOperands[i / 2] : operands[i / 2 + 1];
             }
-            System.out.println("res: " + Arrays.toString(res));
+            Log.log("res: " + Arrays.toString(res));
 
             int dicecount = 0;
             int bonuscount = 0;
@@ -66,8 +66,8 @@ public class RollCommand extends AbstractCommand {
                     bonuscount++;
                 }
             }
-            System.out.println("dicecount: " + dicecount);
-            System.out.println("other numbers: " + bonuscount);
+            Log.log("dicecount: " + dicecount);
+            Log.log("other numbers: " + bonuscount);
 
             Matcher match = dice.matcher(arg);
             if (match.find() && dicecount == 1) {
@@ -84,7 +84,7 @@ public class RollCommand extends AbstractCommand {
                     maker.append(multiDice(die, sides, bonus));
                 }
             } else {
-
+                maker.appendRaw("how did you get here?");
             }
         }
         GuildAudioManager manager = GuildAudioManager.getManager(guild);

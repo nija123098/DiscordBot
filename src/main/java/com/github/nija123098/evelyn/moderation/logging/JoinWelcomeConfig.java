@@ -19,7 +19,7 @@ import java.util.Collections;
 
 public class JoinWelcomeConfig extends AbstractConfig<Channel, Guild>{
     public JoinWelcomeConfig() {
-        super("join_welcome", ConfigCategory.LOGGING, (Channel) null, "If the bot should welcome a user when they join");
+        super("join_welcome", "", ConfigCategory.LOGGING, (Channel) null, "If the bot should welcome a user when they join");
     }
     @EventListener
     public void handle(DiscordUserJoin leave){

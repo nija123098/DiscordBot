@@ -13,6 +13,6 @@ import java.util.Map;
  */
 public class CurrentComponentsConfig extends AbstractConfig<Map<ItemComponent, Integer>, User> {
     public CurrentComponentsConfig() {
-        super("current_components", ConfigCategory.STAT_TRACKING, new HashMap<>(), "The current components a user has");
+        super("current_components", "", ConfigCategory.STAT_TRACKING, new HashMap<>(), "The current components a user has");
     }
 }

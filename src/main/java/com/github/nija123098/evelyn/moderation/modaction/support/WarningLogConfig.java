@@ -10,6 +10,6 @@ import java.util.List;
 
 public class WarningLogConfig extends AbstractConfig<List<String>, GuildUser>{
     public WarningLogConfig() {
-        super("warning_log", BotRole.SYSTEM, ConfigCategory.LOGGING, new ArrayList<>(0), "The list of warnings for a server user");
+        super("warning_log", "", BotRole.SYSTEM, ConfigCategory.LOGGING, new ArrayList<>(0), "The list of warnings for a server user");
     }
 }

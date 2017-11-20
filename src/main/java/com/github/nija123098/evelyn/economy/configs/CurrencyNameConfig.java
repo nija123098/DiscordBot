@@ -9,6 +9,6 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
  */
 public class CurrencyNameConfig extends AbstractConfig<String, Guild> {
     public CurrencyNameConfig() {
-        super("currency_name", ConfigCategory.ECONOMY, "cookies", "The name of the guild currency");
+        super("currency_name", "", ConfigCategory.ECONOMY, "cookies", "The name of the guild currency");
     }
 }
