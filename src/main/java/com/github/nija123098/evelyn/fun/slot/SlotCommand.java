@@ -50,6 +50,7 @@ public class SlotCommand extends AbstractCommand {
 
         //configure message maker
         maker.withAutoSend(false);
+        maker.mustEmbed();
 
         //print the first frame
         maker.appendRaw("```\uD83C\uDFB0 @" + user.getDisplayName(guild) + " \uD83C\uDFB0\n");
@@ -93,7 +94,7 @@ public class SlotCommand extends AbstractCommand {
         int[] slots = new int[9];
 
         //save emotes length
-        int emoteLength = emotes.length - 1;
+        int emoteLength = emotes.length -1;
 
         //initialize middle row
         slots[3] = Rand.getRand(emoteLength);
