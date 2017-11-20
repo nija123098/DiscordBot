@@ -9,6 +9,6 @@ import com.github.nija123098.evelyn.config.Configurable;
  */
 public class CurrentCurrencyConfig extends AbstractConfig<Integer, Configurable> {
     public CurrentCurrencyConfig() {
-        super("current_currency", ConfigCategory.STAT_TRACKING, 0, "The amount of currency a config has");
+        super("current_currency", "", ConfigCategory.STAT_TRACKING, 0, "The amount of currency a config has");
     }
 }

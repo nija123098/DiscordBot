@@ -30,7 +30,7 @@ import java.util.function.Function;
 @LaymanName(value = "Configuration name", help = "The config name")
 public class AbstractConfig<V, T extends Configurable> {
     private final Function<T, V> defaul;
-    private final String name, description;
+    private final String tableName, name, description;
     private final BotRole botRole;
     private final ConfigLevel configLevel;
     private final ConfigCategory category;
@@ -38,26 +38,27 @@ public class AbstractConfig<V, T extends Configurable> {
     private final boolean normalViewing;
     private final Map<T, V> cache;
     private final Set<T> change;
-    public AbstractConfig(String name, ConfigCategory category, V defaul, String description) {
-        this(name, category, v -> defaul, description);
+    public AbstractConfig(String tableName, String name, ConfigCategory category, V defaul, String description) {
+        this(tableName, name, category, v -> defaul, description);
     }
-    public AbstractConfig(String name, BotRole botRole, ConfigCategory category, V defaul, String description) {
-        this(name, botRole, category, v -> defaul, description);
+    public AbstractConfig(String tableName, String name, BotRole botRole, ConfigCategory category, V defaul, String description) {
+        this(tableName, name, botRole, category, v -> defaul, description);
     }
-    public AbstractConfig(String name, ConfigCategory category, Function<T, V> defaul, String description) {
-        this(name, category.getBotRole(), category, defaul, description);
+    public AbstractConfig(String tableName, String name, ConfigCategory category, Function<T, V> defaul, String description) {
+        this(tableName, name, category.getBotRole(), category, defaul, description);
     }
 
     /**
      * The constructor to make a config instance.
      *
-     * @param name the name of the config, spaces are not allowed.
+     * @param tableName the tableName of the config, spaces are not allowed.
      * @param botRole the minimum role allowed to change the value.
      * @param category the catagory to that the config is in.
      * @param defaul the function to get the default value for a given config.
      * @param description a description of the config.
      */
-    public AbstractConfig(String name, BotRole botRole, ConfigCategory category, Function<T, V> defaul, String description) {
+    public AbstractConfig(String tableName, String name, BotRole botRole, ConfigCategory category, Function<T, V> defaul, String description) {
+        this.tableName = tableName;
         this.name = name;
         this.botRole = botRole;
         this.defaul = defaul;
@@ -110,7 +111,7 @@ public class AbstractConfig<V, T extends Configurable> {
      * @return the name of the config.
      */
     public String getName() {
-        return this.name;
+        return this.tableName;
     }
 
     /**
@@ -156,7 +157,7 @@ public class AbstractConfig<V, T extends Configurable> {
      * @return the table name for this config and a config level.
      */
     private String getNameForType(ConfigLevel level){
-        return this.name + "_" + level.name().toLowerCase();
+        return this.tableName + "_" + level.name().toLowerCase();
     }
 
     /**

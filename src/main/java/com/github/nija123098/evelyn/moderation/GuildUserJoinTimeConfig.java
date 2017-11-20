@@ -11,7 +11,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.Discord
  */
 public class GuildUserJoinTimeConfig extends AbstractConfig<Long, GuildUser> {
     public GuildUserJoinTimeConfig() {
-        super("user_join_time", ConfigCategory.STAT_TRACKING, guildUser -> guildUser.getGuild().getJoinTimeForUser(guildUser.getUser()), "The first time a user joins a guild");
+        super("user_join_time", "", ConfigCategory.STAT_TRACKING, guildUser -> guildUser.getGuild().getJoinTimeForUser(guildUser.getUser()), "The first time a user joins a guild");
         config = this;
     }
     private static GuildUserJoinTimeConfig config;

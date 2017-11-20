@@ -10,6 +10,6 @@ import com.github.nija123098.evelyn.config.GlobalConfigurable;
 
 public class EventNameConfig extends AbstractConfig<String, GlobalConfigurable> {
     public EventNameConfig() {
-        super("event_name", ConfigCategory.STAT_TRACKING, "", "name of the event");
+        super("event_name", "", ConfigCategory.STAT_TRACKING, "", "name of the event");
     }
 }

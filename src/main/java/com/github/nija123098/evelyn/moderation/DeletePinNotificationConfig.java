@@ -9,7 +9,6 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordMessagePin;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordMessageReceived;
-import com.github.nija123098.evelyn.perms.BotRole;
 import com.github.nija123098.evelyn.service.services.MemoryManagementService;
 
 import java.util.List;
@@ -22,7 +21,7 @@ public class DeletePinNotificationConfig extends AbstractConfig<Boolean, Guild> 
     private static final List<DiscordMessagePin> PIN_ENTRIES = new MemoryManagementService.ManagedList<>(5_000);
     private static final List<DiscordMessageReceived> MESSAGE_ENTRIES = new MemoryManagementService.ManagedList<>(5_000);
     public DeletePinNotificationConfig() {
-        super("delete_pin_notification", ConfigCategory.GUILD_PERSONALIZATION, true, "Deletes the <user> has pined a message notification");
+        super("delete_pin_notification", "", ConfigCategory.GUILD_PERSONALIZATION, true, "Deletes the <user> has pined a message notification");
         config = this;
     }
     // @EventListener

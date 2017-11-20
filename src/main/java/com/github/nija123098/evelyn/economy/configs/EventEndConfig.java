@@ -10,6 +10,6 @@ import com.github.nija123098.evelyn.config.GlobalConfigurable;
 
 public class EventEndConfig extends AbstractConfig<String, GlobalConfigurable> {
     public EventEndConfig() {
-        super("event_end", ConfigCategory.STAT_TRACKING, "", "when the event will end");
+        super("event_end", "", ConfigCategory.STAT_TRACKING, "", "when the event will end");
     }
 }

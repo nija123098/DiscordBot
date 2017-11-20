@@ -12,7 +12,7 @@ import com.github.nija123098.evelyn.util.FormatHelper;
  */
 public class BotChannelConfig extends AbstractConfig<Channel, Guild> {
     public BotChannelConfig() {
-        super("bot_channel", ConfigCategory.LOGGING, guild -> guild.getChannels().stream().filter(channel -> {
+        super("bot_channel", "", ConfigCategory.LOGGING, guild -> guild.getChannels().stream().filter(channel -> {
             String name = FormatHelper.filtering(channel.getName(), Character::isLetter).toLowerCase();
             return name.contains("bot") || name.contains("spam") || name.contains("command") || name.contains("music") || name.contains("testing");
         }).findFirst().orElse(null), "Channel where the bot's output goes to");

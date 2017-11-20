@@ -11,7 +11,6 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.VoiceChannel;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordVoiceJoin;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordVoiceLeave;
-import com.github.nija123098.evelyn.perms.BotRole;
 import com.github.nija123098.evelyn.service.services.MemoryManagementService;
 import com.github.nija123098.evelyn.util.LangString;
 
@@ -22,7 +21,7 @@ import java.util.List;
  */
 public class HeraldConfig extends AbstractConfig<Boolean, Guild> {
     public HeraldConfig() {
-        super("herald_active", ConfigCategory.GUILD_PERSONALIZATION, true, "Makes the bot announce the join and leave of users");
+        super("herald_active", "herald", ConfigCategory.GUILD_PERSONALIZATION, true, "Makes the bot announce the join and leave of users");
     }
     @EventListener
     public void handle(DiscordVoiceJoin event){

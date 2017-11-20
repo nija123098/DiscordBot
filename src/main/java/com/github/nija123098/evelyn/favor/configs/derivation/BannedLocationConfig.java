@@ -8,7 +8,6 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordUserBanned;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordUserPardoned;
 import com.github.nija123098.evelyn.favor.FavorChangeEvent;
-import com.github.nija123098.evelyn.perms.BotRole;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -18,7 +17,7 @@ import java.util.Set;
  */
 public class BannedLocationConfig extends AbstractConfig<Set<Guild>, User> {
     public BannedLocationConfig() {
-        super("banned_count", ConfigCategory.STAT_TRACKING, new HashSet<>(1, 1), "The number of bans a user has earned");
+        super("banned_count", "", ConfigCategory.STAT_TRACKING, new HashSet<>(1, 1), "The number of bans a user has earned");
     }
     @EventListener
     public void handle(DiscordUserBanned event){

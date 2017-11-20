@@ -10,6 +10,6 @@ import com.github.nija123098.evelyn.config.GlobalConfigurable;
 
 public class EventSymbolConfig extends AbstractConfig<String, GlobalConfigurable> {
     public EventSymbolConfig() {
-        super("event_symbol", ConfigCategory.STAT_TRACKING, "", "event symbol");
+        super("event_symbol", "", ConfigCategory.STAT_TRACKING, "", "event symbol");
     }
 }

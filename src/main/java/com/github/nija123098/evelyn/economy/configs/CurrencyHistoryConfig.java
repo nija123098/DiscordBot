@@ -13,6 +13,6 @@ import java.util.List;
  */
 public class CurrencyHistoryConfig extends AbstractConfig<List<CurrencyTransfer>, Configurable> {
     public CurrencyHistoryConfig() {
-        super("currency_history", ConfigCategory.STAT_TRACKING, new ArrayList<>(0), "The history of money");
+        super("currency_history", "", ConfigCategory.STAT_TRACKING, new ArrayList<>(0), "The history of money");
     }
 }

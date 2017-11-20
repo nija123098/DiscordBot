@@ -10,6 +10,6 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 
 public class CurrentCurrencyStreakConfig extends AbstractConfig<Integer, User> {
     public CurrentCurrencyStreakConfig() {
-        super("current_streak", ConfigCategory.STAT_TRACKING, 0, "streak in days where user has used claim command");
+        super("current_streak", "", ConfigCategory.STAT_TRACKING, 0, "streak in days where user has used claim command");
     }
 }

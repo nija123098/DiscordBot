@@ -14,7 +14,7 @@ import com.github.nija123098.evelyn.moderation.GuildUserJoinTimeConfig;
  */
 public class StartingCurrencyConfig extends AbstractConfig<Integer, User> {
     public StartingCurrencyConfig() {
-        super("starting_currency", ConfigCategory.ECONOMY, 0, "The amount of currency a config starts with");
+        super("starting_currency", "", ConfigCategory.ECONOMY, 0, "The amount of currency a config starts with");
     }
     @EventListener
     public void handle(DiscordUserJoin event){

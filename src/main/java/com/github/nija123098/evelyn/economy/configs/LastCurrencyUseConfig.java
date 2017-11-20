@@ -9,6 +9,6 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.User;
  */
 public class LastCurrencyUseConfig extends AbstractConfig<String, User> {
     public LastCurrencyUseConfig() {
-        super("last_currency_use", ConfigCategory.STAT_TRACKING, "", "The last time the bank command was used");
+        super("last_currency_use", "", ConfigCategory.STAT_TRACKING, "", "The last time the bank command was used");
     }
 }
