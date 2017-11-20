@@ -11,6 +11,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.economy.configs.CurrencySymbolConfig;
 import com.github.nija123098.evelyn.economy.configs.CurrentCurrencyConfig;
+import com.github.nija123098.evelyn.economy.configs.SlotJackpotConfig;
 import com.github.nija123098.evelyn.exeption.ArgumentException;
 import com.github.nija123098.evelyn.util.Rand;
 
@@ -38,6 +39,14 @@ public class SlotCommand extends AbstractCommand {
         //save guild money symbol
         String currency_symbol = ConfigHandler.getSetting(CurrencySymbolConfig.class, guild);
 
+        //bet not zero
+        if (bet < 1){
+            throw new ArgumentException("You cannot bet `\u200B " + currency_symbol + " 0 \u200B` currency.");
+        }
+
+        //save guild jackpot
+        int guildJackpot = ConfigHandler.getSetting(SlotJackpotConfig.class, guild);
+
         //subtract bet
         int userBalance = ConfigHandler.getSetting(CurrentCurrencyConfig.class, user);
         if (userBalance < bet) {
@@ -57,8 +66,33 @@ public class SlotCommand extends AbstractCommand {
         maker.appendRaw("════════════════════════════════════════\n");
         maker.appendRaw(" \uD83C\uDFB2|\uD83C\uDFB2|\uD83C\uDFB2     Bet: " + currency_symbol + " " + bet.toString() + "\n");
         maker.appendRaw(">\uD83C\uDFB2|\uD83C\uDFB2|\uD83C\uDFB2<    Won: " + currency_symbol + " -\n");
-        maker.appendRaw(" \uD83C\uDFB2|\uD83C\uDFB2|\uD83C\uDFB2   Funds: " + currency_symbol + " " + userBalance + "```");
+        maker.appendRaw(" \uD83C\uDFB2|\uD83C\uDFB2|\uD83C\uDFB2   Funds: " + currency_symbol + " " + userBalance + "\n");
+        maker.appendRaw("════════════════════════════════════════\n");
+        maker.appendRaw(" Server Jackpot: " + currency_symbol + " " + guildJackpot + "```");
         maker.send();
+
+        //check for jackpot
+        int jackpotRoll = Rand.getRand(guild.getUserSize());
+        if (jackpotRoll == 0){
+
+            //refund bet and add jackpot
+            ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, userBalance + bet + guildJackpot);
+
+            //reset jackpot
+            ConfigHandler.setSetting(SlotJackpotConfig.class, guild, 0);
+
+            //reset the message maker
+            maker.getHeader().clear();
+
+            //display jackpot frame with delay
+            TimeUnit.SECONDS.sleep(2);
+            maker.appendRaw("```\uD83C\uDFB0 @" + user.getDisplayName(guild) + " \uD83C\uDFB0\n");
+            maker.appendRaw("════════════════════════════════════════\n");
+            maker.appendRaw(" woah dood you won like:" + guildJackpot + "\n");
+            maker.appendRaw("════════════════════════════════════════```");
+            maker.send();
+            return;
+        }
 
         //reset the message maker
         maker.getHeader().clear();
@@ -70,11 +104,15 @@ public class SlotCommand extends AbstractCommand {
         int win;
         if (winM == -1) {
             win = 0;
+            ConfigHandler.setSetting(SlotJackpotConfig.class, guild, ConfigHandler.getSetting(SlotJackpotConfig.class, guild) + bet/2);
         } else {
             win = bet * winM;
             userBalance = ConfigHandler.getSetting(CurrentCurrencyConfig.class, user) + win;
             ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, userBalance);
         }
+
+        //refresh guild jackpot
+        guildJackpot = ConfigHandler.getSetting(SlotJackpotConfig.class, guild);
 
         //print the second frame after delay
         TimeUnit.SECONDS.sleep(2);
@@ -82,10 +120,13 @@ public class SlotCommand extends AbstractCommand {
         maker.appendRaw("════════════════════════════════════════\n");
         maker.appendRaw(" " + gSlots[0] + "|" + gSlots[1] + "|" + gSlots[2] + "     Bet: " + currency_symbol + " " + bet.toString() + "\n");
         maker.appendRaw(">" + gSlots[3] + "|" + gSlots[4] + "|" + gSlots[5] + "<    Won: " + currency_symbol + " " + win + "\n");
-        maker.appendRaw(" " + gSlots[6] + "|" + gSlots[7] + "|" + gSlots[8] + "   Funds: " + currency_symbol + " " + userBalance + "```");
+        maker.appendRaw(" " + gSlots[6] + "|" + gSlots[7] + "|" + gSlots[8] + "   Funds: " + currency_symbol + " " + userBalance + "\n");
+        maker.appendRaw("════════════════════════════════════════\n");
+        maker.appendRaw(" Server Jackpot: " + currency_symbol + " " + guildJackpot + "```");
 
         //add reaction for repeating the command
         int finalUserBalance = userBalance;
+        int finalGuildJackpot = guildJackpot;
         maker.withReactionBehavior("slot_machine", ((add, reaction, u) -> {
 
             //print the first frame
@@ -93,7 +134,9 @@ public class SlotCommand extends AbstractCommand {
             maker.appendRaw("════════════════════════════════════════\n");
             maker.appendRaw(" \uD83C\uDFB2|\uD83C\uDFB2|\uD83C\uDFB2     Bet: " + currency_symbol + " " + bet.toString() + "\n");
             maker.appendRaw(">\uD83C\uDFB2|\uD83C\uDFB2|\uD83C\uDFB2<    Won: " + currency_symbol + " -\n");
-            maker.appendRaw(" \uD83C\uDFB2|\uD83C\uDFB2|\uD83C\uDFB2   Funds: " + currency_symbol + " " + finalUserBalance + "```");
+            maker.appendRaw(" \uD83C\uDFB2|\uD83C\uDFB2|\uD83C\uDFB2   Funds: " + currency_symbol + " " + finalUserBalance + "\n");
+            maker.appendRaw("════════════════════════════════════════\n");
+            maker.appendRaw(" Server Jackpot: " + currency_symbol + " " + finalGuildJackpot + "```");
             maker.send();
 
             //reset the message maker
