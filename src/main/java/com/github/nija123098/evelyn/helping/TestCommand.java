@@ -6,7 +6,6 @@ import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
-import com.github.nija123098.evelyn.exeption.DevelopmentException;
 
 
 /**
@@ -21,7 +20,7 @@ public class TestCommand extends AbstractCommand {
     @Command
     public void command(@Argument String arg, MessageMaker maker, User user) {
         String[] args = arg.split(" ");
-        /*
+
         maker.appendRaw("```" +
                 "\u200b       ,-.\n" +
                 "\u200b    O /   `.\n" +
@@ -31,9 +30,9 @@ public class TestCommand extends AbstractCommand {
                 "\u200b  /  /            `>3s,\n" +
                 "\u200b--------.+" +
                 "```").mustEmbed();
-        */
 
-        throw new DevelopmentException("Lmao you got bamboozled");
+        //maker.appendRaw("Dxeo is pretty decent").mustEmbed().withColor(new Color(46, 204, 113));
+        //throw new DevelopmentException("Lmao you got bamboozled");
         //ConfigHandler.setSetting(LastCurrencyUseConfig.class, user, "test");
         //ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, Integer.valueOf(arg));
         /*
