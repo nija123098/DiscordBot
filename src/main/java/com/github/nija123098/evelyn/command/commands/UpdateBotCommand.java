@@ -36,17 +36,10 @@ public class UpdateBotCommand extends AbstractCommand {
             if (ExecuteShellCommand.getOutput().contains("Already up-to-date.")) {
                 maker.appendRaw("\n**The bot is already at the latest version. Aborting update sequence.**");
             } else {
-                if (ExecuteShellCommand.getOutput().length() < 2000) {
-                    maker.appendRaw("\n*GIT Pull Results:*\n```" + ExecuteShellCommand.getOutput() + "```\n");
-                } else {
-                    maker.appendRaw("\n*GIT Pull Results:*\n" + HastebinUtil.handleHastebin(ExecuteShellCommand.getOutput()) + "\n");
-                }
+                maker.appendRaw("\n*GIT Pull Results:*\n" + HastebinUtil.handleHastebin(ExecuteShellCommand.getOutput()) + "\n");
                 ExecuteShellCommand.commandToExecute("./Build.sh");
                 if (ExecuteShellCommand.getOutput().contains("BUILD SUCCESS")) {
-                    if (ExecuteShellCommand.getOutput().length() < 2000) {
-                        maker.appendRaw("\n*Compilation Results:*\n```" + ExecuteShellCommand.getOutput() + "```\n");
-                    } else
-                        maker.appendRaw("\n*Compilation Results:*\n" + HastebinUtil.handleHastebin(ExecuteShellCommand.getOutput()) + "\n");
+                    maker.appendRaw("\n*Compilation Results:*\n" + HastebinUtil.handleHastebin(ExecuteShellCommand.getOutput()) + "\n");
                     maker.append("\n**The bot will now restart to apply the updates.**").send();
                     ScheduleService.schedule(10000, () -> Launcher.shutdown(1, 0, false));
                     ExecuteShellCommand.commandToExecute("./Update.sh");
