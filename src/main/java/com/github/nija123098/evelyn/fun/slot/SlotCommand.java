@@ -26,9 +26,9 @@ public class SlotCommand extends AbstractCommand {
         super("slot", ModuleLevel.FUN, null, null, "The non-stupid version of the slots command");
     }
 
-    //emotes: Diamond, Lollipop, Candy, Cherries, Melon, Orange, Lemon, Grapes
+    //emotes: Diamond, Lollipop, Candy, Cherries, Melon, Lemon, Grapes
     //DO NOT CHANGE THE ORDER WITHOUT CHANGING THE calculateWin() METHOD
-    private String[] emotes = {"\uD83D\uDC8E", "\uD83C\uDF6D", "\uD83C\uDF6C", "\uD83C\uDF52", "\uD83C\uDF48", "\uD83C\uDF4A", "\uD83C\uDF4B", "\uD83C\uDF47"};
+    private String[] emotes = {"\uD83D\uDC8E", "\uD83C\uDF6D", "\uD83C\uDF6C", "\uD83C\uDF52", "\uD83C\uDF48", "\uD83C\uDF4B", "\uD83C\uDF47"};
 
     //win multiplier
     private int winM;
@@ -126,12 +126,36 @@ public class SlotCommand extends AbstractCommand {
     }
 
     private int calculateWin(int first, int second, int third){
-        if (first == second && first == third){
-            switch (first){
+
+        //make the calculating array
+        int[] array = {first, second, third};
+
+        //calculate number of element 0 in emote array ("win condition")
+        int count = 0;
+        for (int i = 0; i < 3; i++){
+            if (array[i] == 0) count++;
+        }
+        if (count > 0){
+            switch (count){
+
+                //if 1 return bet
+                case 1:
+                    return 1;
+
+                //if 2 set winM to 5
+                case 2:
+                    return 5;
+
+                //if 3 set winM to 10
+                case 3:
+                    return 10;
+            }
+        }
+
+        if (array[0] == array[1] && array[0] == array[2]){
+            switch (array[0]){
 
                 //return based on emotes array order, use this to adjust win multiplier
-                case 0:
-                    return 10;
                 case 1:
                     return 7;
                 case 2:
