@@ -12,13 +12,12 @@ import com.github.nija123098.evelyn.config.Configurable;
 import com.github.nija123098.evelyn.config.GlobalConfigurable;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.helpers.ReactionBehavior;
-import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Message;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
-import com.github.nija123098.evelyn.economy.MoneyTransfer;
-import com.github.nija123098.evelyn.economy.configs.CurrentMoneyConfig;
-import com.github.nija123098.evelyn.economy.configs.MoneySymbolConfig;
+import com.github.nija123098.evelyn.economy.CurrencyTransfer;
+import com.github.nija123098.evelyn.economy.configs.CurrentCurrencyConfig;
+import com.github.nija123098.evelyn.economy.configs.CurrencySymbolConfig;
 import com.github.nija123098.evelyn.exeption.ArgumentException;
 import com.github.nija123098.evelyn.exeption.BotException;
 import com.github.nija123098.evelyn.service.services.MemoryManagementService;
@@ -35,6 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Made by nija123098 on 5/17/2017.
  */
+
 public class SlotCommand extends AbstractCommand {
     private static final Map<User, Integer> BET_MAP = new ConcurrentHashMap<>();
     private static final List<User> ACTIVE_EDITING = new MemoryManagementService.ManagedList<>(6000);// todo make proper command rate-limiter
@@ -50,7 +50,7 @@ public class SlotCommand extends AbstractCommand {
         if (bet == null) bet = 0;
         if (first == null) BET_MAP.put(user, bet);
         else bet = BET_MAP.get(user);
-        if (ConfigHandler.getSetting(CurrentMoneyConfig.class, user) < bet){
+        if (ConfigHandler.getSetting(CurrentCurrencyConfig.class, user) < bet){
             BotException exception = new ArgumentException("You don't have that much currency");
             if (first == null) throw exception;
             exception.makeMessage(user.getOrCreatePMChannel()).send();
@@ -60,8 +60,8 @@ public class SlotCommand extends AbstractCommand {
         SlotPack slotPack = ConfigHandler.getSetting(SlotPackConfig.class, user);
         int[][] ints = slotPack.getTable();
         Integer amount = slotPack.getReturn(ints) * bet;
-        String[] strings = getMessage(ints, slotPack, amount, user, first);
-        if (bet != 0) MoneyTransfer.transact(guild, user, null, amount == 0 ? -bet : amount, "A slot bet");
+        String[] strings = getMessage(ints, slotPack, amount, user, guild, first);
+        if (bet != 0) CurrencyTransfer.transact(guild, user, null, amount == 0 ? -bet : amount, "A slot bet");
         if (amount == 0) {
             Integer finalBet = bet;
             ConfigHandler.changeSetting(SlotJackpotConfig.class, GlobalConfigurable.GLOBAL, aFloat -> aFloat + finalBet / 2);
@@ -82,7 +82,7 @@ public class SlotCommand extends AbstractCommand {
                 int old = BET_MAP.get(u);
                 BET_MAP.compute(u, (us, integer) -> {
                     integer += (name.startsWith("down") ? -1 : 1) * (name.endsWith("small") ? 10 : 1);
-                    int max = ConfigHandler.getSetting(CurrentMoneyConfig.class, user);
+                    int max = ConfigHandler.getSetting(CurrentCurrencyConfig.class, user);
                     return max < integer ? max : integer;
                 });
                 maker.forceCompile().getHeader().clear().appendRaw(FormatHelper.filtering(maker.sentMessage().getContent(), c -> c != 13).replace("  Bet: " + old, "  Bet: " + BET_MAP.get(u)));
@@ -95,8 +95,8 @@ public class SlotCommand extends AbstractCommand {
         }
         if (message != null) message.delete();
     }
-    private static String[] getMessage(int[][] ints, SlotPack pack, Integer amountWon, User user, Boolean first){
-        String currencySymbol = ConfigHandler.getSetting(MoneySymbolConfig.class, GlobalConfigurable.GLOBAL);
+    private static String[] getMessage(int[][] ints, SlotPack pack, Integer amountWon, User user, Guild guild, Boolean first){
+        String currencySymbol = ConfigHandler.getSetting(CurrencySymbolConfig.class, guild);
         String[] strings = new String[4];
         for (int h = 1; h < strings.length; h++) {
             String builder = (first == null && h == 1 ? user.getName() : user.mention()) + "  Bet: " + BET_MAP.get(user) + currencySymbol;
@@ -107,7 +107,7 @@ public class SlotCommand extends AbstractCommand {
                 }
             }
             builder += "\n";
-            if (h > 2) builder += "Winnings: " + amountWon + currencySymbol + "  Balance: " + (ConfigHandler.getSetting(CurrentMoneyConfig.class, user) + (amountWon == 0 ? - BET_MAP.get(user) : amountWon)) + currencySymbol;
+            if (h > 2) builder += "Winnings: " + amountWon + currencySymbol + "  Balance: " + (ConfigHandler.getSetting(CurrentCurrencyConfig.class, user) + (amountWon == 0 ? - BET_MAP.get(user) : amountWon)) + currencySymbol;
             else builder += "Processing";
             strings[h] = builder;
         }
