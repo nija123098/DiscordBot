@@ -14,7 +14,6 @@ import com.github.nija123098.evelyn.economy.configs.CurrentCurrencyConfig;
 import com.github.nija123098.evelyn.exeption.ArgumentException;
 import com.github.nija123098.evelyn.util.Rand;
 
-import java.awt.*;
 import java.util.concurrent.TimeUnit;
 /**
  * Made by Dxeo on 19/11/2017.
@@ -51,7 +50,6 @@ public class SlotCommand extends AbstractCommand {
 
         //configure message maker
         maker.withAutoSend(false);
-        maker.mustEmbed().withColor(new Color(54,57,62));
 
         //print the first frame
         maker.appendRaw("```\uD83C\uDFB0 @" + user.getDisplayName(guild) + " \uD83C\uDFB0\n");
@@ -138,13 +136,13 @@ public class SlotCommand extends AbstractCommand {
         if (count > 0){
             switch (count){
 
-                //if 1 return bet
+                //if 0 return no win
                 case 1:
-                    return 1;
+                    return 0;
 
-                //if 2 set winM to 5
+                //if 2 set winM to 2
                 case 2:
-                    return 5;
+                    return 2;
 
                 //if 3 set winM to 10
                 case 3:
