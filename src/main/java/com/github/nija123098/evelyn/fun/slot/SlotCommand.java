@@ -136,13 +136,13 @@ public class SlotCommand extends AbstractCommand {
         if (count > 0){
             switch (count){
 
-                //if 1 return bet
+                //if 0 return no win
                 case 1:
-                    return 1;
+                    return 0;
 
-                //if 2 set winM to 5
+                //if 2 set winM to 2
                 case 2:
-                    return 5;
+                    return 2;
 
                 //if 3 set winM to 10
                 case 3:
