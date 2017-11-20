@@ -10,6 +10,7 @@ import com.github.nija123098.evelyn.util.ExecuteShellCommand;
 import com.github.nija123098.evelyn.util.HastebinUtil;
 import com.github.nija123098.evelyn.util.PlatformDetector;
 
+import java.awt.*;
 import java.io.IOException;
 
 /**
@@ -30,23 +31,23 @@ public class UpdateBotCommand extends AbstractCommand {
             osType = "macOS";
             maker.append("This command can only be run whe the bot is being hosted on a Linux server not " + osType + " which it is currently on");
         } else if (PlatformDetector.isUnix()) {
-            maker.append("The bot will now download, compile and update itself from the latest version on GitHub." + "\n");
+            maker.append("The bot will now download, compile and update itself from the latest version on GitHub." + "\n").mustEmbed().withColor(new Color(46, 204, 113));
             ExecuteShellCommand.commandToExecute("./Pull.sh");
             if (ExecuteShellCommand.getOutput().contains("Already up-to-date.")) {
                 maker.appendRaw("\n**The bot is already at the latest version. Aborting update sequence.**");
             } else {
                 if (ExecuteShellCommand.getOutput().length() < 2000) {
-                    maker.appendRaw("\n\n*GIT Pull Results:*\n```" + ExecuteShellCommand.getOutput() + "```");
+                    maker.appendRaw("\n*GIT Pull Results:*\n```" + ExecuteShellCommand.getOutput() + "```\n");
                 } else {
-                    maker.appendRaw("\n\n*GIT Pull Results:*\n" + HastebinUtil.handleHastebin(ExecuteShellCommand.getOutput()));
+                    maker.appendRaw("\n*GIT Pull Results:*\n" + HastebinUtil.handleHastebin(ExecuteShellCommand.getOutput()) + "\n");
                 }
                 ExecuteShellCommand.commandToExecute("./Build.sh");
                 if (ExecuteShellCommand.getOutput().contains("BUILD SUCCESS")) {
                     if (ExecuteShellCommand.getOutput().length() < 2000) {
-                        maker.appendRaw("\n*Compilation Results:*\n```" + ExecuteShellCommand.getOutput() + "```");
+                        maker.appendRaw("\n*Compilation Results:*\n```" + ExecuteShellCommand.getOutput() + "```\n");
                     } else
-                        maker.appendRaw("\nCompilation Results:\n" + HastebinUtil.handleHastebin(ExecuteShellCommand.getOutput()));
-                    maker.append("\n\n**The bot will now restart to apply the updates.**").send();
+                        maker.appendRaw("\n*Compilation Results:*\n" + HastebinUtil.handleHastebin(ExecuteShellCommand.getOutput()) + "\n");
+                    maker.append("\n**The bot will now restart to apply the updates.**").send();
                     ScheduleService.schedule(10000, () -> Launcher.shutdown(1, 0, false));
                     ExecuteShellCommand.commandToExecute("./Update.sh");
                 } else
