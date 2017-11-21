@@ -125,18 +125,22 @@ public class SlotCommand extends AbstractCommand {
         maker.appendRaw(" Server Jackpot: " + currency_symbol + " " + guildJackpot + "```");
 
         //add reaction for repeating the command
-        int finalUserBalance = userBalance;
-        int finalGuildJackpot = guildJackpot;
         maker.withReactionBehavior("slot_machine", ((add, reaction, u) -> {
+
+            //save guild jackpot
+            int mGuildJackpot = ConfigHandler.getSetting(SlotJackpotConfig.class, guild);
+
+            //save user balance
+            int mUserBalance = ConfigHandler.getSetting(CurrentCurrencyConfig.class, user);
 
             //print the first frame
             maker.appendRaw("```\uD83C\uDFB0 @" + user.getDisplayName(guild) + " \uD83C\uDFB0\n");
             maker.appendRaw("════════════════════════════════════════\n");
             maker.appendRaw(" \uD83C\uDFB2|\uD83C\uDFB2|\uD83C\uDFB2     Bet: " + currency_symbol + " " + bet.toString() + "\n");
             maker.appendRaw(">\uD83C\uDFB2|\uD83C\uDFB2|\uD83C\uDFB2<    Won: " + currency_symbol + " -\n");
-            maker.appendRaw(" \uD83C\uDFB2|\uD83C\uDFB2|\uD83C\uDFB2   Funds: " + currency_symbol + " " + finalUserBalance + "\n");
+            maker.appendRaw(" \uD83C\uDFB2|\uD83C\uDFB2|\uD83C\uDFB2   Funds: " + currency_symbol + " " + mUserBalance + "\n");
             maker.appendRaw("════════════════════════════════════════\n");
-            maker.appendRaw(" Server Jackpot: " + currency_symbol + " " + finalGuildJackpot + "```");
+            maker.appendRaw(" Server Jackpot: " + currency_symbol + " " + mGuildJackpot + "```");
             maker.send();
 
             //reset the message maker
@@ -203,9 +207,9 @@ public class SlotCommand extends AbstractCommand {
         if (count > 0){
             switch (count){
 
-                //if 0 return no win
+                //if -1 return no win
                 case 1:
-                    return 0;
+                    return -1;
 
                 //if 2 set winM to 2
                 case 2:

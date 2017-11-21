@@ -129,6 +129,9 @@ public class FishCommand extends AbstractCommand {
         int finalUserBalance = userBalance;
         maker.withReactionBehavior("fishing_pole_and_fish", ((add, reaction, u) -> {
 
+            //save user balance
+            int mUserBalance = ConfigHandler.getSetting(CurrentCurrencyConfig.class, user);
+
             //print the first frame
             maker.appendRaw("```\uD83C\uDFA3 @" + user.getDisplayName(guild) + " \uD83C\uDFA3\n");
             maker.appendRaw("════════════════════════════════════════\n");
@@ -136,7 +139,7 @@ public class FishCommand extends AbstractCommand {
                     "\u200b       ,-.\n" +
                             "\u200b    O /   `.        Cast: " + currency_symbol + " " + cost + "\n" +
                             "\u200b   <\\/      `.      Loot: -\n" +
-                            "\u200b    |*        `.   Funds: " + currency_symbol + " " + finalUserBalance + "\n" +
+                            "\u200b    |*        `.   Funds: " + currency_symbol + " " + mUserBalance + "\n" +
                             "\u200b   / \\          `.\n" +
                             "\u200b  /  /            `,\n" +
                             "\u200b──────────┐ ~~~~~~~~~~~~~~~~~~~~~~~~" +

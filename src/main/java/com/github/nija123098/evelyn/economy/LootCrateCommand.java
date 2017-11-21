@@ -76,15 +76,17 @@ public class LootCrateCommand extends AbstractCommand {
             maker.appendRaw(" Crate: " + crate_symbol + " " + userCrates + "```" );
 
             //add reaction for repeating the command
-            int finalUserCrates = userCrates;
             maker.withReactionBehavior("package", ((add, reaction, u) -> {
+
+                //save user loot crate amount
+                int mUserCrates = ConfigHandler.getSetting(LootCrateConfig.class, user);
 
                 //print the first frame
                 maker.appendRaw("```" + frame_symbol + " @" + user.getDisplayName(guild) + " " + frame_symbol + "\n");
                 maker.appendRaw("════════════════════════════════════════\n");
                 maker.appendRaw("first\n");
                 maker.appendRaw("════════════════════════════════════════\n");
-                maker.appendRaw(" Crate: " + crate_symbol + " " + finalUserCrates + "```" );
+                maker.appendRaw(" Crate: " + crate_symbol + " " + mUserCrates + "```" );
                 maker.send();
 
                 //clear the maker
