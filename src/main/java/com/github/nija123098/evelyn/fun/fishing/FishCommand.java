@@ -63,6 +63,7 @@ public class FishCommand extends AbstractCommand {
         //configure message maker
         maker.withAutoSend(false);
         maker.mustEmbed();
+        maker.withColor(new Color(54,57,62));
 
         //print the first frame
         maker.appendRaw("```\uD83C\uDFA3 @" + user.getDisplayName(guild) + " \uD83C\uDFA3\n");

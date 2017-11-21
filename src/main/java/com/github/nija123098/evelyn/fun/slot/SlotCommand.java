@@ -64,6 +64,7 @@ public class SlotCommand extends AbstractCommand {
         //configure message maker
         maker.withAutoSend(false);
         maker.mustEmbed();
+        maker.withColor(new Color(54,57,62));
 
         //print the first frame
         maker.appendRaw("```\uD83C\uDFB0 @" + user.getDisplayName(guild) + " \uD83C\uDFB0\n");
@@ -153,6 +154,8 @@ public class SlotCommand extends AbstractCommand {
 
                 //not enough funds
                 maker.withColor(new Color(255, 183, 76));
+                maker.getNote().append("Please check the help command for more information on how to use this command.");
+                maker.getTitle().appendRaw("Insufficient Amount");
                 maker.appendRaw("You need `\u200B " + currency_symbol + " " + (bet - mUserBalance) + " \u200B` more to perform this transaction.");
                 maker.send();
                 return;

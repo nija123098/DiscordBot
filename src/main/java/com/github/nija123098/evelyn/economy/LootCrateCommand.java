@@ -44,6 +44,7 @@ public class LootCrateCommand extends AbstractCommand {
         //configure message maker
         maker.withAutoSend(false);
         maker.mustEmbed();
+        maker.withColor(new Color(54,57,62));
 
         //display the first frame if there are crates
         maker.appendRaw("```" + frame_symbol + " @" + user.getDisplayName(guild) + " " + frame_symbol + "\n");

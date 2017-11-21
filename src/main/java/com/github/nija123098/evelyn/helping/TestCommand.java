@@ -4,10 +4,11 @@ import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
+import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
-import com.github.nija123098.evelyn.util.EmoticonHelper;
+import com.github.nija123098.evelyn.economy.configs.CurrentCurrencyConfig;
 
 
 /**
@@ -20,13 +21,16 @@ public class TestCommand extends AbstractCommand {
     }
 
     @Command
-    public void command(@Argument String arg, MessageMaker maker, User user, Guild guild) {
+    public void command(@Argument Integer arg, MessageMaker maker, User user, Guild guild) {
 
-        String seedling = EmoticonHelper.getChars("seedling", false);
+        ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, arg);
+
+        /*String seedling = EmoticonHelper.getChars("seedling", false);
         String home = EmoticonHelper.getChars("house_with_garden", false);
         String seedlings = seedling + seedling + seedling + seedling + seedling + "\n" + seedling + seedling + seedling + seedling + seedling;
 
         maker.getNewFieldPart().withInline(true).withBoth("\u200b",home + " " + seedlings);
+        */
 
 
 
