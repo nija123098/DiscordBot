@@ -6,7 +6,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Role;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
-import com.github.nija123098.evelyn.exeption.ArgumentException;
+import com.github.nija123098.evelyn.exception.ArgumentException;
 import com.github.nija123098.evelyn.perms.BotRole;
 
 import java.util.*;

@@ -9,7 +9,7 @@ import com.github.nija123098.evelyn.config.GlobalConfigurable;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Region;
-import com.github.nija123098.evelyn.exeption.DevelopmentException;
+import com.github.nija123098.evelyn.exception.DevelopmentException;
 import com.github.nija123098.evelyn.util.FileHelper;
 import com.github.nija123098.evelyn.util.Rand;
 import javafx.util.Pair;

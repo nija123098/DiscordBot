@@ -8,8 +8,8 @@ import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.DiscordAdapter;
 import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Presence;
-import com.github.nija123098.evelyn.exeption.ArgumentException;
-import com.github.nija123098.evelyn.exeption.DevelopmentException;
+import com.github.nija123098.evelyn.exception.ArgumentException;
+import com.github.nija123098.evelyn.exception.DevelopmentException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

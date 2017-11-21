@@ -15,9 +15,9 @@ import com.github.nija123098.evelyn.config.configs.guild.GuildActivePlaylistConf
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventDistributor;
-import com.github.nija123098.evelyn.exeption.ArgumentException;
-import com.github.nija123098.evelyn.exeption.ContextException;
-import com.github.nija123098.evelyn.exeption.DevelopmentException;
+import com.github.nija123098.evelyn.exception.ArgumentException;
+import com.github.nija123098.evelyn.exception.ContextException;
+import com.github.nija123098.evelyn.exception.DevelopmentException;
 import com.github.nija123098.evelyn.discordobjects.wrappers.*;
 import com.github.nija123098.evelyn.fun.gamestructure.AbstractGame;
 import com.github.nija123098.evelyn.fun.gamestructure.GameHandler;

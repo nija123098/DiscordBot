@@ -1,6 +1,6 @@
 package com.github.nija123098.evelyn.moderation.messagefiltering;
 
-import com.github.nija123098.evelyn.exeption.BotException;
+import com.github.nija123098.evelyn.exception.BotException;
 
 /**
  * Made by nija123098 on 7/19/2017.

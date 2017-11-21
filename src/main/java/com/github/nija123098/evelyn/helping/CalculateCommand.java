@@ -5,7 +5,7 @@ import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
-import com.github.nija123098.evelyn.exeption.ArgumentException;
+import com.github.nija123098.evelyn.exception.ArgumentException;
 import com.github.nija123098.evelyn.util.Rand;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import net.objecthunter.exp4j.operator.Operator;

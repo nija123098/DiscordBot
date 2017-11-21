@@ -60,7 +60,7 @@ public class TestCommand extends AbstractCommand {
                 ConfigHandler.setSetting(CurrentGroundsConfig.class, user, Integer.valueOf(args[1]));
                 break;
             case "coffee":
-                ConfigHandler.setSetting(HasCoffeeConfig.class, user, Boolean.valueOf(args[1]));
+                ConfigHandler.setSetting(CurrentCoffeeConfig.class, user, Boolean.valueOf(args[1]));
                 break;
             case "money":
                 ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, Integer.valueOf(args[1]));

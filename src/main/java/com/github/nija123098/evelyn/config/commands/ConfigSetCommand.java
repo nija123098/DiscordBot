@@ -9,8 +9,8 @@ import com.github.nija123098.evelyn.command.annotations.Context;
 import com.github.nija123098.evelyn.config.*;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.*;
-import com.github.nija123098.evelyn.exeption.ArgumentException;
-import com.github.nija123098.evelyn.exeption.PermissionsException;
+import com.github.nija123098.evelyn.exception.ArgumentException;
+import com.github.nija123098.evelyn.exception.PermissionsException;
 
 import java.awt.*;
 

@@ -10,7 +10,7 @@ import com.github.nija123098.evelyn.config.GuildUser;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Role;
 import com.github.nija123098.evelyn.economy.configs.RoleSubscriptionsConfig;
-import com.github.nija123098.evelyn.exeption.ArgumentException;
+import com.github.nija123098.evelyn.exception.ArgumentException;
 import com.github.nija123098.evelyn.util.FormatHelper;
 import com.github.nija123098.evelyn.util.Time;
 import com.github.nija123098.evelyn.economy.configs.CurrencySymbolConfig;

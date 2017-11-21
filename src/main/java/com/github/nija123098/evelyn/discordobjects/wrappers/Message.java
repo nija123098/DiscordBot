@@ -2,8 +2,8 @@ package com.github.nija123098.evelyn.discordobjects.wrappers;
 
 import com.github.nija123098.evelyn.BotConfig.BotConfig;
 import com.github.nija123098.evelyn.discordobjects.ErrorWrapper;
-import com.github.nija123098.evelyn.exeption.GhostException;
-import com.github.nija123098.evelyn.exeption.PermissionsException;
+import com.github.nija123098.evelyn.exception.GhostException;
+import com.github.nija123098.evelyn.exception.PermissionsException;
 import com.github.nija123098.evelyn.service.services.MemoryManagementService;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
 import com.github.nija123098.evelyn.util.Time;

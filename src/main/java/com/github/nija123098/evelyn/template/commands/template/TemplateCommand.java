@@ -10,7 +10,7 @@ import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
-import com.github.nija123098.evelyn.exeption.PermissionsException;
+import com.github.nija123098.evelyn.exception.PermissionsException;
 import com.github.nija123098.evelyn.perms.BotRole;
 import com.github.nija123098.evelyn.template.KeyPhrase;
 

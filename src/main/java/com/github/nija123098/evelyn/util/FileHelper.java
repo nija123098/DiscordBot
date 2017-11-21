@@ -1,7 +1,7 @@
 package com.github.nija123098.evelyn.util;
 
 import com.github.nija123098.evelyn.BotConfig.BotConfig;
-import com.github.nija123098.evelyn.exeption.DevelopmentException;
+import com.github.nija123098.evelyn.exception.DevelopmentException;
 import org.eclipse.jetty.util.ConcurrentHashSet;
 
 import java.io.File;

@@ -4,7 +4,7 @@ import com.github.nija123098.evelyn.audio.Playlist;
 import com.github.nija123098.evelyn.audio.Track;
 import com.github.nija123098.evelyn.config.configs.ConfigurableExistsConfig;
 import com.github.nija123098.evelyn.discordobjects.wrappers.*;
-import com.github.nija123098.evelyn.exeption.DevelopmentException;
+import com.github.nija123098.evelyn.exception.DevelopmentException;
 import com.github.nija123098.evelyn.launcher.Reference;
 import com.github.nija123098.evelyn.util.Log;
 import org.reflections.Reflections;

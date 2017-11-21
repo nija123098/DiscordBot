@@ -8,7 +8,7 @@ import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.GuildUser;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
-import com.github.nija123098.evelyn.exeption.ContextException;
+import com.github.nija123098.evelyn.exception.ContextException;
 
 /**
  * @author nija123098

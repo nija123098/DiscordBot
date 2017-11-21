@@ -6,12 +6,10 @@ import com.github.nija123098.evelyn.command.InvocationObjectGetter;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
-import com.github.nija123098.evelyn.exeption.ArgumentException;
+import com.github.nija123098.evelyn.exception.ArgumentException;
 import com.github.nija123098.evelyn.template.*;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 

@@ -23,7 +23,7 @@ public class EventCreateCommand extends AbstractCommand {
 
     @Command
     public void command(@Argument String arg, MessageMaker maker, User user) {
-        String[] args = arg.split(" ");
+        String[] args = arg.split(":");
         if (Boolean.valueOf(args[0])) {
             ConfigHandler.setSetting(EventNameConfig.class, GlobalConfigurable.GLOBAL, String.valueOf(args[0]));
             ConfigHandler.setSetting(EventBonusConfig.class, GlobalConfigurable.GLOBAL, Integer.valueOf(args[1]));
@@ -37,6 +37,6 @@ public class EventCreateCommand extends AbstractCommand {
 
     @Override
     protected String getLocalUsages() {
-        return "<event name> <event bonus> <event start> <event end>";
+        return "#  event create <event name>:<event bonus>:<event start>:<event end> // event create Christmas:1000:2017-12-24:2017-12-25";
     }
 }

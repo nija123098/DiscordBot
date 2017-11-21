@@ -2,8 +2,7 @@ package com.github.nija123098.evelyn.command;
 
 import com.github.nija123098.evelyn.config.GuildUser;
 import com.github.nija123098.evelyn.discordobjects.wrappers.*;
-import com.github.nija123098.evelyn.exeption.ArgumentException;
-import com.github.nija123098.evelyn.exeption.ContextException;
+import com.github.nija123098.evelyn.exception.ContextException;
 import com.github.nija123098.evelyn.template.commands.functions.ContextCommand;
 
 /**

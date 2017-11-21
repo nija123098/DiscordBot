@@ -4,7 +4,7 @@ import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
-import com.github.nija123098.evelyn.exeption.DevelopmentException;
+import com.github.nija123098.evelyn.exception.DevelopmentException;
 import com.github.nija123098.evelyn.service.services.MemoryManagementService;
 import com.github.nija123098.evelyn.util.FormatHelper;
 import com.google.common.util.concurrent.AtomicDouble;

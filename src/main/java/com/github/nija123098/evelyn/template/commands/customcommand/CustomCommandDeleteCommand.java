@@ -4,7 +4,7 @@ import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
-import com.github.nija123098.evelyn.exeption.ArgumentException;
+import com.github.nija123098.evelyn.exception.ArgumentException;
 import com.github.nija123098.evelyn.template.CustomCommand;
 import com.github.nija123098.evelyn.template.CustomCommandConfig;
 import com.github.nija123098.evelyn.template.CustomCommandHandler;

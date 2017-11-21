@@ -3,7 +3,7 @@ package com.github.nija123098.evelyn.moderation;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordPermission;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Message;
-import com.github.nija123098.evelyn.exeption.PermissionsException;
+import com.github.nija123098.evelyn.exception.PermissionsException;
 import com.github.nija123098.evelyn.service.AbstractService;
 
 import java.util.List;

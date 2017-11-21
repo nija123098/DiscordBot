@@ -3,8 +3,8 @@ package com.github.nija123098.evelyn.fun.gamestructure;
 import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Role;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
-import com.github.nija123098.evelyn.exeption.ArgumentException;
-import com.github.nija123098.evelyn.exeption.ContextException;
+import com.github.nija123098.evelyn.exception.ArgumentException;
+import com.github.nija123098.evelyn.exception.ContextException;
 
 import java.util.Collections;
 import java.util.HashMap;

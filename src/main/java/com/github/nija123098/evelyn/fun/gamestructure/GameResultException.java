@@ -2,7 +2,7 @@ package com.github.nija123098.evelyn.fun.gamestructure;
 
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
-import com.github.nija123098.evelyn.exeption.BotException;
+import com.github.nija123098.evelyn.exception.BotException;
 import com.github.nija123098.evelyn.fun.gamestructure.neuralnet.AbstractNeuralNetGame;
 
 import java.awt.Color;

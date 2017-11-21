@@ -4,7 +4,7 @@ import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
-import com.github.nija123098.evelyn.exeption.ArgumentException;
+import com.github.nija123098.evelyn.exception.ArgumentException;
 import com.github.nija123098.evelyn.util.Rand;
 import com.github.nija123098.evelyn.util.RedditLink;
 import ga.dryco.redditjerk.implementation.RedditApi;

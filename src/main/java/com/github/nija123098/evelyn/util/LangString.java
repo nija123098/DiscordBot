@@ -1,8 +1,8 @@
 package com.github.nija123098.evelyn.util;
 
 import com.github.nija123098.evelyn.BotConfig.BotConfig;
-import com.github.nija123098.evelyn.exeption.ArgumentException;
-import com.github.nija123098.evelyn.exeption.DevelopmentException;
+import com.github.nija123098.evelyn.exception.ArgumentException;
+import com.github.nija123098.evelyn.exception.DevelopmentException;
 import com.github.nija123098.evelyn.launcher.Reference;
 import javafx.util.Pair;
 import org.json.JSONArray;

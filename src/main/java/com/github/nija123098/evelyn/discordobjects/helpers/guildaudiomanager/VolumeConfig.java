@@ -3,7 +3,7 @@ package com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager;
 import com.github.nija123098.evelyn.config.AbstractConfig;
 import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
-import com.github.nija123098.evelyn.exeption.ArgumentException;
+import com.github.nija123098.evelyn.exception.ArgumentException;
 import com.github.nija123098.evelyn.perms.BotRole;
 
 /**

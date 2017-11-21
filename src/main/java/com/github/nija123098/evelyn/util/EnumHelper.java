@@ -1,6 +1,6 @@
 package com.github.nija123098.evelyn.util;
 
-import com.github.nija123098.evelyn.exeption.ArgumentException;
+import com.github.nija123098.evelyn.exception.ArgumentException;
 import javafx.util.Pair;
 
 import java.util.Arrays;

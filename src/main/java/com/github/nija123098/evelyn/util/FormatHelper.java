@@ -1,6 +1,6 @@
 package com.github.nija123098.evelyn.util;
 
-import com.github.nija123098.evelyn.exeption.DevelopmentException;
+import com.github.nija123098.evelyn.exception.DevelopmentException;
 import com.google.common.base.Strings;
 
 import java.util.Arrays;

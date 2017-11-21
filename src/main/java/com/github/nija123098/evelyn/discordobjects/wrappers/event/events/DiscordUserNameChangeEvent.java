@@ -2,7 +2,7 @@ package com.github.nija123098.evelyn.discordobjects.wrappers.event.events;
 
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.BotEvent;
-import com.github.nija123098.evelyn.exeption.InvalidEventException;
+import com.github.nija123098.evelyn.exception.InvalidEventException;
 import sx.blah.discord.handle.impl.events.user.UserUpdateEvent;
 
 public class DiscordUserNameChangeEvent implements BotEvent {

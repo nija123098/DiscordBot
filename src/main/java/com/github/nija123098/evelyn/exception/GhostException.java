@@ -1,4 +1,4 @@
-package com.github.nija123098.evelyn.exeption;
+package com.github.nija123098.evelyn.exception;
 
 /**
  * An exception thrown when a action which should not be done by

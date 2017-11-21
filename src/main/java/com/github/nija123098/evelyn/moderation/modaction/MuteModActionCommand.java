@@ -11,7 +11,7 @@ import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.GuildUser;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Role;
-import com.github.nija123098.evelyn.exeption.ConfigurationException;
+import com.github.nija123098.evelyn.exception.ConfigurationException;
 import com.github.nija123098.evelyn.service.services.ScheduleService;
 import com.github.nija123098.evelyn.util.Time;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;

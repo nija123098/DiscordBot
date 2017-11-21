@@ -6,7 +6,7 @@ import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Message;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventDistributor;
-import com.github.nija123098.evelyn.exeption.ArgumentException;
+import com.github.nija123098.evelyn.exception.ArgumentException;
 import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.service.services.ScheduleService;
 import com.github.nija123098.evelyn.util.EmoticonHelper;

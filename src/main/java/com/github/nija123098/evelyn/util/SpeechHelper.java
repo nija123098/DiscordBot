@@ -2,7 +2,7 @@ package com.github.nija123098.evelyn.util;
 
 import com.darkprograms.speech.synthesiser.Synthesiser;
 import com.github.nija123098.evelyn.BotConfig.BotConfig;
-import com.github.nija123098.evelyn.exeption.DevelopmentException;
+import com.github.nija123098.evelyn.exception.DevelopmentException;
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;

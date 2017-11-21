@@ -1,4 +1,4 @@
-package com.github.nija123098.evelyn.exeption;
+package com.github.nija123098.evelyn.exception;
 
 import com.github.nija123098.evelyn.command.ContextRequirement;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;

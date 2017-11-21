@@ -1,6 +1,6 @@
 package com.github.nija123098.evelyn.information.currency;
 
-import com.github.nija123098.evelyn.exeption.DevelopmentException;
+import com.github.nija123098.evelyn.exception.DevelopmentException;
 import com.github.nija123098.evelyn.service.services.MemoryManagementService;
 import com.github.nija123098.evelyn.util.FormatHelper;
 import com.google.gson.JsonParser;

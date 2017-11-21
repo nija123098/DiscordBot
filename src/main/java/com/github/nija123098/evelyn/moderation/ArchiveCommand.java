@@ -7,7 +7,7 @@ import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Message;
-import com.github.nija123098.evelyn.exeption.DevelopmentException;
+import com.github.nija123098.evelyn.exception.DevelopmentException;
 import com.github.nija123098.evelyn.perms.BotRole;
 import com.github.nija123098.evelyn.util.FileHelper;
 import com.github.nija123098.evelyn.util.Time;

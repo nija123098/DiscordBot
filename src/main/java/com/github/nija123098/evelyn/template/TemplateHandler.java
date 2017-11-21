@@ -4,7 +4,7 @@ import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.GlobalConfigurable;
 import com.github.nija123098.evelyn.config.configs.guild.GuildTemplatesConfig;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
-import com.github.nija123098.evelyn.exeption.ArgumentException;
+import com.github.nija123098.evelyn.exception.ArgumentException;
 import com.github.nija123098.evelyn.util.Log;
 import com.github.nija123098.evelyn.util.Rand;
 

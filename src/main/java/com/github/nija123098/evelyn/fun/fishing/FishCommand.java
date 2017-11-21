@@ -11,7 +11,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.economy.configs.CurrencySymbolConfig;
 import com.github.nija123098.evelyn.economy.configs.CurrentCurrencyConfig;
 import com.github.nija123098.evelyn.economy.configs.LootCrateConfig;
-import com.github.nija123098.evelyn.exeption.ArgumentException;
+import com.github.nija123098.evelyn.exception.ArgumentException;
 import com.github.nija123098.evelyn.util.Rand;
 
 import java.util.concurrent.TimeUnit;

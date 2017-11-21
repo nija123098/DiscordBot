@@ -9,8 +9,8 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.economy.configs.CurrentComponentsConfig;
 import com.github.nija123098.evelyn.economy.configs.CurrentCurrencyConfig;
 import com.github.nija123098.evelyn.economy.configs.CurrencyHistoryConfig;
-import com.github.nija123098.evelyn.exeption.ArgumentException;
-import com.github.nija123098.evelyn.exeption.TransactionException;
+import com.github.nija123098.evelyn.exception.ArgumentException;
+import com.github.nija123098.evelyn.exception.TransactionException;
 import com.github.nija123098.evelyn.perms.BotRole;
 
 import java.util.Collections;

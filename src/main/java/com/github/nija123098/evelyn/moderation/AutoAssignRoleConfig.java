@@ -8,7 +8,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Role;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordUserJoin;
-import com.github.nija123098.evelyn.exeption.ArgumentException;
+import com.github.nija123098.evelyn.exception.ArgumentException;
 
 /**
  * Made by nija123098 on 6/19/2017.

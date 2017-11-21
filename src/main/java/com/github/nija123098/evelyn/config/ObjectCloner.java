@@ -1,6 +1,6 @@
 package com.github.nija123098.evelyn.config;
 
-import com.github.nija123098.evelyn.exeption.DevelopmentException;
+import com.github.nija123098.evelyn.exception.DevelopmentException;
 import com.github.nija123098.evelyn.perms.configs.specialperms.SpecialPermsContainer;
 import com.github.nija123098.evelyn.util.ReflectionHelper;
 import javafx.util.Pair;

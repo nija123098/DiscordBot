@@ -8,7 +8,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Role;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordPresenceUpdate;
-import com.github.nija123098.evelyn.exeption.ArgumentException;
+import com.github.nija123098.evelyn.exception.ArgumentException;
 
 import java.util.HashSet;
 import java.util.Set;

@@ -6,7 +6,7 @@ import com.github.nija123098.evelyn.config.Configurable;
 import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
-import com.github.nija123098.evelyn.exeption.PermissionsException;
+import com.github.nija123098.evelyn.exception.PermissionsException;
 import com.github.nija123098.evelyn.favor.FavorHandler;
 import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.util.Rand;

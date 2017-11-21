@@ -10,11 +10,10 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventDistributor;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.botevents.FavorLevelChangeEvent;
-import com.github.nija123098.evelyn.exeption.DevelopmentException;
+import com.github.nija123098.evelyn.exception.DevelopmentException;
 import com.github.nija123098.evelyn.favor.configs.GuildUserReputationConfig;
 import com.github.nija123098.evelyn.favor.configs.balencing.*;
 import com.github.nija123098.evelyn.favor.configs.derivation.*;
-import com.github.nija123098.evelyn.moderation.linkedgames.GuildLinkedGamesConfig;
 import com.github.nija123098.evelyn.perms.BotRole;
 import com.google.common.util.concurrent.AtomicDouble;
 

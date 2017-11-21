@@ -7,7 +7,6 @@ import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Message;
-import com.github.nija123098.evelyn.exeption.PermissionsException;
 
 /**
  * Made by nija123098 on 5/10/2017.

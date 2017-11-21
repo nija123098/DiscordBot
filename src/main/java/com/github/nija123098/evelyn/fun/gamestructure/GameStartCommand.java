@@ -4,9 +4,8 @@ import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
-import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
-import com.github.nija123098.evelyn.exeption.ArgumentException;
+import com.github.nija123098.evelyn.exception.ArgumentException;
 import com.github.nija123098.evelyn.util.FormatHelper;
 
 import java.lang.reflect.InvocationTargetException;
