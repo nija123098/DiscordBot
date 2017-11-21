@@ -11,6 +11,6 @@ public class LastCommandTimeConfig extends AbstractConfig<Long, User> {
         config = this;
     }
     public static void update(User user){
-        config.setValue(user, System.currentTimeMillis());
+        config.setValue(user, System.currentTimeMillis(), false);
     }
 }

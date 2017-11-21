@@ -19,6 +19,6 @@ public class GuildSpecialPermsConfig extends AbstractConfig<SpecialPermsContaine
     }
     @EventListener
     public void handle(DiscordMessageReceived event){
-        if (!event.getChannel().isPrivate() && event.getMessage().getContent().endsWith(RESET_ENDING)) this.setValue(event.getGuild(), null);
+        if (!event.getChannel().isPrivate() && event.getMessage().getContent().endsWith(RESET_ENDING)) this.setValue(event.getGuild(), null, false);
     }
 }

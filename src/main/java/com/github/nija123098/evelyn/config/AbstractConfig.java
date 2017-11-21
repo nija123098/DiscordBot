@@ -243,9 +243,13 @@ public class AbstractConfig<V, T extends Configurable> {
      * @param value the value to set the config to for the given configurable.
      * @return the value set to the config.
      */
-    public V setValue(T configurable, V value){
+    public V setValue(T configurable, V value, boolean overrideCache){
         if (!(value == null || this.valueType.isInstance(value))) throw new ArgumentException("Attempted passing incorrect type of argument");
         value = validateInput(configurable, value);
+        if (overrideCache) {
+            saveValue(configurable, value);
+            return value;
+        }
         if (this.cache == null || value == null) saveValue(configurable, value);
         else {
             this.cache.put(configurable, value);
@@ -323,7 +327,7 @@ public class AbstractConfig<V, T extends Configurable> {
      * @param function the function the config gives the old value to and gets a new value from.
      */
     public V changeSetting(T configurable, Function<V, V> function) {
-        return this.setValue(configurable, function.apply(this.getValue(configurable)));
+        return this.setValue(configurable, function.apply(this.getValue(configurable)), false);
     }
 
     /**
@@ -336,7 +340,7 @@ public class AbstractConfig<V, T extends Configurable> {
     public V alterSetting(T configurable, Consumer<V> consumer) {
         V val = ObjectCloner.clone(this.getValue(configurable));
         consumer.accept(val);
-        return this.setValue(configurable, val);
+        return this.setValue(configurable, val, false);
     }
 
     /**
@@ -348,7 +352,7 @@ public class AbstractConfig<V, T extends Configurable> {
      */
     public V setIfDefault(T configurable, Function<V, V> function) {
         V value = getValue(configurable);
-        if (Objects.equals(value, this.getDefault(configurable))) value = this.setValue(configurable, function.apply(value));
+        if (Objects.equals(value, this.getDefault(configurable))) value = this.setValue(configurable, function.apply(value), false);
         return value;
     }
 
@@ -392,7 +396,7 @@ public class AbstractConfig<V, T extends Configurable> {
     public void setExteriorValue(T configurable, User user, Channel channel, Guild guild, Message message, String value) {
         if (!this.isNormalViewing()) throw new ArgumentException("Slow down there malicious user, we have that covered!");
         if (value.length() == 7 && value.toLowerCase().equals("not set")) value = "null";
-        setValue(configurable, InvocationObjectGetter.convert(this.getValueType(), user, null, channel, guild, message, null, value).getKey());
+        setValue(configurable, InvocationObjectGetter.convert(this.getValueType(), user, null, channel, guild, message, null, value).getKey(), false);
     }
 
     /**

@@ -157,7 +157,7 @@ public class ConfigHandler {
      * @param value the value the config is being set at.
      */
     public static <V, T extends Configurable> V setSetting(Class<? extends AbstractConfig<V, T>> clazz, T configurable, V value){
-        return getConfig(clazz).setValue(configurable, value);
+        return getConfig(clazz).setValue(configurable, value, false);
     }
 
     /**
@@ -172,7 +172,7 @@ public class ConfigHandler {
         AbstractConfig config = getConfig(configName);
         if (config != null){
             try {
-                config.setValue(configurable, value);
+                config.setValue(configurable, value, false);
                 return true;
             } catch (ClassCastException e){
                 throw new RuntimeException("Attempted generic value config assignment with the wrong type on config \"" + config.getName() + "\" with value type: " + value.getClass().getName(), e);

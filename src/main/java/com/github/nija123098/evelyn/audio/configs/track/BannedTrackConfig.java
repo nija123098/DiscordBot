@@ -19,6 +19,6 @@ public class BannedTrackConfig extends AbstractConfig<Boolean, Track> {
         CONFIG = this;
     }
     public static void ban(Track track){
-        CONFIG.setValue(track, true);
+        CONFIG.setValue(track, true, false);
     }
 }

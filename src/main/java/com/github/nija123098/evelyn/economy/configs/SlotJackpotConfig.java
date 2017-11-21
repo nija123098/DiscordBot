@@ -12,6 +12,11 @@ public class SlotJackpotConfig extends AbstractConfig<Integer, Guild> {
 
     public SlotJackpotConfig() {
         super("guild_slot_jackpot", "Guild Jackpot", ConfigCategory.STAT_TRACKING, 0, "maybe EA");
+
     }
 
+    @Override
+    public Integer setValue(Guild configurable, Integer value, boolean overrideCache) {
+        return super.setValue(configurable, value, true);
+    }
 }

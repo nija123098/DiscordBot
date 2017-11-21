@@ -15,8 +15,8 @@ public class CurrencySymbolConfig extends AbstractConfig<String, Guild> {
     }
 
     @Override
-    public String setValue(Guild configurable, String value) {
+    public String setValue(Guild configurable, String value, boolean overrideCache) {
         if (EmoticonHelper.checkUnicode(value)) throw new ArgumentException("not a unicode character");
-        return super.setValue(configurable, value);
+        return super.setValue(configurable, value, true);
     }
 }

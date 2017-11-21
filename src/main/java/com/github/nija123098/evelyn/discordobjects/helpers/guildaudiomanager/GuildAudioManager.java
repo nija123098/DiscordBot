@@ -81,7 +81,7 @@ public class GuildAudioManager extends AudioEventAdapter{
         LangString bye = new LangString(true, "I have to go restart, I will be back soon.");
         Launcher.registerShutdown(() -> {
             MAP.forEach((s, guildAudioManager) -> {
-                config.setValue(guildAudioManager.channel, guildAudioManager.queue);
+                config.setValue(guildAudioManager.channel, guildAudioManager.queue, false);
                 guildAudioManager.interrupt(bye);
             });
             Care.lessSleep(5_000);
