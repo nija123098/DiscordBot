@@ -336,7 +336,7 @@ public class AbstractCommand {
      * @return a string representing the sub-command's and this command's help text and usage.
      */
     protected String getLocalUsages(){
-        StringBuilder builder = new StringBuilder("# ").append(this.name).append(" ");
+        StringBuilder builder = new StringBuilder("#  ").append(this.name).append(" ");
         Stream.of(this.parameters).filter(parameter -> parameter.isAnnotationPresent(Argument.class)).forEach(parameter -> {
             boolean optional = parameter.getAnnotation(Argument.class).optional();
             String info = parameter.getAnnotation(Argument.class).info();

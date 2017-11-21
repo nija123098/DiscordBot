@@ -5,9 +5,9 @@ import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
+import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
-import com.github.nija123098.evelyn.util.Log;
-import org.apache.commons.lang3.StringEscapeUtils;
+import com.github.nija123098.evelyn.util.EmoticonHelper;
 
 
 /**
@@ -20,17 +20,26 @@ public class TestCommand extends AbstractCommand {
     }
 
     @Command
-    public void command(@Argument String arg, MessageMaker maker, User user) {
+    public void command(@Argument String arg, MessageMaker maker, User user, Guild guild) {
+
+        String seedling = EmoticonHelper.getChars("seedling", false);
+        String home = EmoticonHelper.getChars("house_with_garden", false);
+        String seedlings = seedling + seedling + seedling + seedling + seedling + "\n" + seedling + seedling + seedling + seedling + seedling;
+
+        maker.getNewFieldPart().withInline(true).withBoth("\u200b",home + " " + seedlings);
+
+
+
         //maker.appendRaw(String.valueOf(arg.length()));
+        /*
         Log.log(StringEscapeUtils.escapeJava(arg));
         char codePointHigh = arg.charAt(0);
         char codePointLow = arg.charAt(1);
         maker.appendRaw("Pair: " + StringEscapeUtils.escapeJava(String.valueOf(codePointHigh)) + " " + StringEscapeUtils.escapeJava(String.valueOf(codePointLow)) + "\ncodePoint: ");
-
-
         maker.appendRaw(String.valueOf(Character.toCodePoint(codePointHigh, codePointLow)) + "\nIs unicode?: ");
         maker.appendRaw(String.valueOf(Character.toCodePoint(codePointHigh, codePointLow) > 0));
         //maker.appendRaw(EmoticonHelper.getChars(Character.getName(127850).toLowerCase(),false));
+        */
         //ConfigHandler.setSetting(LastCurrencyUseConfig.class, user, "testlol");
         //ConfigHandler.setSetting(LastHarvestUseConfig.class, user, "2017-11-16T01:46:07Z");
         //maker.appendRaw("Dxeo is pretty decent").mustEmbed().withColor(new Color(46, 204, 113));

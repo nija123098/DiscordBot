@@ -74,6 +74,6 @@ public class UDCommand extends AbstractCommand {
 
     @Override
     protected String getLocalUsages() {
-        return "# ud <term>\n// search urban dictionary for <term>";
+        return "#  ud <term> // search urban dictionary for <term>";
     }
 }

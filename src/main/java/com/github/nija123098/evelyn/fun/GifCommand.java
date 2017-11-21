@@ -32,6 +32,6 @@ public class GifCommand extends AbstractCommand {
 
     @Override
     protected String getLocalUsages() {
-        return "gif <tag> // Get a gif from giphy based on <tag>";
+        return "#  gif <tag> // Get a gif from giphy based on <tag>";
     }
 }

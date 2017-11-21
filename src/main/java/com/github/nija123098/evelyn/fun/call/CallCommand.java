@@ -82,6 +82,6 @@ public class CallCommand extends AbstractCommand {
 
     @Override
     protected String getLocalUsages() {
-        return "call [call id] // use call without the ID to initialize the call and get the ID, then share the ID with the server you want to call";
+        return "#  call [call id] // use call without the ID to initialize the call and get the ID, then share the ID with the server you want to call";
     }
 }

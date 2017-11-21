@@ -9,6 +9,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Reaction;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.favor.configs.GuildUserReputationConfig;
+import com.github.nija123098.evelyn.util.EmoticonHelper;
 
 /**
  * Made by nija123098 on 7/19/2017.
@@ -27,7 +28,7 @@ public class ReputationCommand extends AbstractCommand {
 
     @Override
     protected String getLocalUsages() {
-        return "This is a reaction based command, react to a user's message to activate it";
+        return "This is a reaction based command, react to a user's message with " + EmoticonHelper.getChars("thumbsup", false) + " to activate it";
     }
 
     @Override

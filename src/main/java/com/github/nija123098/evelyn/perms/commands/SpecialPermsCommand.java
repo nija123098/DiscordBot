@@ -24,6 +24,6 @@ public class SpecialPermsCommand extends AbstractCommand {
 
     @Override
     protected String getLocalUsages() {
-        return "ca <boolean> // enables or disables the special command settings";
+        return "#  ca <boolean> // enables or disables the special command settings";
     }
 }

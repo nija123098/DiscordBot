@@ -45,6 +45,6 @@ public class RedditCommand extends AbstractCommand {
 
     @Override
     protected String getLocalUsages() {
-        return "reddit <search> // Get a random post from reddit based on <search>";
+        return "#  reddit <search> // Get a random post from reddit based on <search>";
     }
 }

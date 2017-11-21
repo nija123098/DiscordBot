@@ -79,6 +79,6 @@ public class ConversionCommand extends AbstractCommand {
 
     @Override
     protected String getLocalUsages() {
-        return "convert <amount> <unit> to <unit> // convert between two units, case sensitive";
+        return "#  convert <amount> <unit> to <unit> // convert between two units, case sensitive";
     }
 }

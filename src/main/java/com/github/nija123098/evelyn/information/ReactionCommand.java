@@ -30,6 +30,6 @@ public class ReactionCommand extends AbstractCommand {
 
     @Override
     protected String getLocalUsages() {
-        return "reaction <text> // converts the text to an emoji, or vice versa";
+        return "#  reaction <text> // converts the text to an emoji, or vice versa";
     }
 }

@@ -42,6 +42,6 @@ public class EightBallCommand extends AbstractCommand {
 
     @Override
     protected String getLocalUsages() {
-        return "8ball <question> // predict the outcome of your yes/no question with the mystical 8ball";
+        return "#  8ball <question> // predict the outcome of your yes/no question with the mystical 8ball";
     }
 }

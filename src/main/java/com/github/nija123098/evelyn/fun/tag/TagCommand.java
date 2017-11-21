@@ -34,6 +34,6 @@ public class TagCommand extends AbstractCommand {
 
     @Override
     protected String getLocalUsages() {
-        return "tag <name> <text> // Create your own tag!";
+        return "#  tag <name> <text> // Create your own tag!";
     }
 }

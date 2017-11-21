@@ -40,6 +40,6 @@ public class TodoListCommand extends AbstractCommand {
 
     @Override
     protected String getLocalUsages() {
-        return "todo // get your todo list";
+        return "#  todo // get your todo list";
     }
 }

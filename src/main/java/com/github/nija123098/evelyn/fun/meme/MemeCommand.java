@@ -56,6 +56,6 @@ public class MemeCommand extends AbstractCommand {
 
     @Override
     protected String getLocalUsages() {
-        return "meme <meme type> [top text] | [bottom text] // replace the top and bottom text for immense hilarity";
+        return "#  meme <meme type> [top text] | [bottom text] // replace the top and bottom text for immense hilarity";
     }
 }
