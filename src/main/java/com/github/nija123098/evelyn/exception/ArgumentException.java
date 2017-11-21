@@ -75,5 +75,4 @@ public class ArgumentException extends BotException {
         return super.makeMessage(channel).getNote().append("Please check the help command for more information on how to use this command.").getMaker().withColor(new Color(255, 183, 76)).getTitle().clear().appendRaw("Invalid Argument").getMaker();
     }
 
-
 }
