@@ -10,7 +10,6 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.economy.configs.*;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
-import com.github.nija123098.evelyn.util.Log;
 
 import java.awt.*;
 import java.time.*;
@@ -35,7 +34,6 @@ public class BankCommand extends AbstractCommand {
          */
         try {
             Instant.parse(ConfigHandler.getSetting(LastCurrencyUseConfig.class, user));
-            Log.log(ConfigHandler.getSetting(LastCurrencyUseConfig.class, user));
             if (ConfigHandler.getSetting(LastCurrencyUseConfig.class, user).isEmpty() || ConfigHandler.getSetting(LastCurrencyUseConfig.class, user) == null) throw new IllegalArgumentException();
         } catch (DateTimeParseException |IllegalArgumentException e) {
             ConfigHandler.setSetting(LastCurrencyUseConfig.class, user, "2017-11-10T00:00:00.000Z");

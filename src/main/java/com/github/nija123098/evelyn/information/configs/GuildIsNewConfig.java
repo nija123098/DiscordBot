@@ -40,6 +40,6 @@ public class GuildIsNewConfig extends AbstractConfig<Boolean, Guild> {
         this.setValue(guild, false);
         Channel channel = ConfigHandler.getSetting(BotChannelConfig.class, guild);
         MessageMaker maker = new MessageMaker(channel == null ? guild.getGeneralChannel() != null ? guild.getGeneralChannel() : guild.getChannels().get(0) : channel);
-        maker.append("Thank you for adding me to this server!\nI always respond to being mentioned!  To add a prefix do @Evelyn prefix myPrefix.\nI also come with a `@Evelyn guide`\nFeel free to complain to my developers before you send me away, they are so desperate it's a joke.").send();
+        maker.append("Thank you for adding me to this server!\nI always respond to being mentioned!  To change the default `!` prefix do @Evelyn prefix `new prefix`.\nI also come with a `@Evelyn guide`").mustEmbed().send();
     }
 }

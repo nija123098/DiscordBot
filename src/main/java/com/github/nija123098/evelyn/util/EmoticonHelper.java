@@ -16,6 +16,7 @@ import java.util.*;
  */
 public class EmoticonHelper {
     private static final Map<String, String> EMOTICON_MAP = new HashMap<>();
+    private static final Map<String, String> EMOTICON_UNICODE_MAP = new HashMap<>();
     private static final Map<String, String> NAME_MAP = new HashMap<>();
     private static final Map<String, Set<String>> MAP = new HashMap<>();
     static {
@@ -24,6 +25,7 @@ public class EmoticonHelper {
                 String[] strings = s.split(" ");
                 MAP.put(strings[0], new HashSet<>(Arrays.asList(Arrays.copyOfRange(strings, 1, strings.length))));
                 for (int i = 1; i < strings.length; i++) EMOTICON_MAP.put(strings[i], strings[0]);
+                for (int i = 0; i < strings.length; i++) EMOTICON_UNICODE_MAP.put(strings[0], strings[i]);
                 NAME_MAP.put(strings[0], strings[1]);
             });
         } catch (IOException e) {
@@ -35,6 +37,14 @@ public class EmoticonHelper {
         if (chars == null) return null;
         if (noSpace) chars += '\u200B';
         return chars;
+    }
+    public static boolean checkUnicode(String name){
+        String chars = EMOTICON_UNICODE_MAP.get(name);
+        try {
+            return chars.equals(name);
+        } catch (NullPointerException e) {
+            return false;
+        }
     }
     public static IEmoji getEmoji(String s) {
         return DiscordClient.getSupportServer().guild().getEmojiByName(s);

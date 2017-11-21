@@ -1,6 +1,7 @@
 package com.github.nija123098.evelyn.config;
 
 import com.github.nija123098.evelyn.launcher.Reference;
+import com.github.nija123098.evelyn.util.EmoticonHelper;
 import com.github.nija123098.evelyn.util.LanguageHelper;
 import com.github.nija123098.evelyn.util.Log;
 import com.github.nija123098.evelyn.util.ReflectionHelper;
@@ -107,6 +108,7 @@ public class TypeChanger {
      * @return the string representation of the object.
      */
     public static String toString(Class<?> from, Object o){
+        if (EmoticonHelper.checkUnicode(o.toString())) return o.toString();
         if (o == null) return "null";
         if (from.isEnum()) return o.toString();
         if (from.equals(String.class)) return (String) o;
