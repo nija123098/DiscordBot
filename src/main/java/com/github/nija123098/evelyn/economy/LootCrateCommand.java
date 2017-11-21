@@ -9,8 +9,9 @@ import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.economy.configs.LootCrateConfig;
-import com.github.nija123098.evelyn.exeption.ArgumentException;
+import com.github.nija123098.evelyn.exception.InsufficientException;
 
+import java.awt.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -37,7 +38,7 @@ public class LootCrateCommand extends AbstractCommand {
 
         //if user has crates
         if (userCrates < 1) {
-            throw new ArgumentException("You have: `\u200B " + crate_symbol + " " + userCrates + " \u200B`");
+            throw new InsufficientException("You have: `\u200B " + crate_symbol + " " + userCrates + " \u200B`");
         }
 
         //configure message maker
@@ -78,6 +79,19 @@ public class LootCrateCommand extends AbstractCommand {
 
             //save user loot crate amount
             int mUserCrates = ConfigHandler.getSetting(LootCrateConfig.class, user);
+
+            //if user has crates
+            if (mUserCrates < 1) {
+
+                //reset the message maker
+                maker.getHeader().clear();
+
+                //not enough funds
+                maker.withColor(new Color(255, 183, 76));
+                maker.appendRaw("You have: `\u200B " + crate_symbol + " " + mUserCrates + " \u200B`");
+                maker.send();
+                return;
+            }
 
             //print the first frame
             maker.appendRaw("```" + frame_symbol + " @" + user.getDisplayName(guild) + " " + frame_symbol + "\n");

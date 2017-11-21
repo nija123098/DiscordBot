@@ -11,9 +11,10 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.economy.configs.CurrencySymbolConfig;
 import com.github.nija123098.evelyn.economy.configs.CurrentCurrencyConfig;
 import com.github.nija123098.evelyn.economy.configs.LootCrateConfig;
-import com.github.nija123098.evelyn.exception.ArgumentException;
+import com.github.nija123098.evelyn.exception.InsufficientException;
 import com.github.nija123098.evelyn.util.Rand;
 
+import java.awt.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -54,7 +55,7 @@ public class FishCommand extends AbstractCommand {
         if (userBalance < cost) {
 
             //not enough funds
-            throw new ArgumentException("You need `\u200B " + currency_symbol + " " + (cost - userBalance) + " \u200B` more to perform this transaction.");
+            throw new InsufficientException("You need `\u200B " + currency_symbol + " " + (cost - userBalance) + " \u200B` more to perform this transaction.");
         }
         ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, userBalance - cost);
         userBalance -= cost;
@@ -130,6 +131,18 @@ public class FishCommand extends AbstractCommand {
 
             //save user balance
             int mUserBalance = ConfigHandler.getSetting(CurrentCurrencyConfig.class, user);
+
+            if (mUserBalance < cost) {
+
+                //reset the message maker
+                maker.getHeader().clear();
+
+                //not enough funds
+                maker.withColor(new Color(255, 183, 76));
+                maker.appendRaw("You need `\u200B " + currency_symbol + " " + (cost - mUserBalance) + " \u200B` more to perform this transaction.");
+                maker.send();
+                return;
+            }
 
             //print the first frame
             maker.appendRaw("```\uD83C\uDFA3 @" + user.getDisplayName(guild) + " \uD83C\uDFA3\n");

@@ -15,6 +15,7 @@ import com.github.nija123098.evelyn.economy.configs.SlotJackpotConfig;
 import com.github.nija123098.evelyn.exception.ArgumentException;
 import com.github.nija123098.evelyn.util.Rand;
 
+import java.awt.*;
 import java.util.concurrent.TimeUnit;
 /**
  * Written by Dxeo on 19/11/2017.
@@ -144,6 +145,18 @@ public class SlotCommand extends AbstractCommand {
 
             //save user balance
             int mUserBalance = ConfigHandler.getSetting(CurrentCurrencyConfig.class, user);
+
+            if (mUserBalance < bet) {
+
+                //reset the message maker
+                maker.getHeader().clear();
+
+                //not enough funds
+                maker.withColor(new Color(255, 183, 76));
+                maker.appendRaw("You need `\u200B " + currency_symbol + " " + (bet - mUserBalance) + " \u200B` more to perform this transaction.");
+                maker.send();
+                return;
+            }
 
             //print the first frame
             maker.appendRaw("```\uD83C\uDFB0 @" + user.getDisplayName(guild) + " \uD83C\uDFB0\n");
