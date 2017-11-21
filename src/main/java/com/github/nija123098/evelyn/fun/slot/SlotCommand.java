@@ -154,8 +154,8 @@ public class SlotCommand extends AbstractCommand {
 
                 //not enough funds
                 maker.withColor(new Color(255, 183, 76));
-                maker.getNote().append("Please check the help command for more information on how to use this command.");
-                maker.getTitle().appendRaw("Insufficient Amount");
+                //maker.getNote().append("Please check the help command for more information on how to use this command.");
+                //maker.getTitle().appendRaw("Insufficient Amount");
                 maker.appendRaw("You need `\u200B " + currency_symbol + " " + (bet - mUserBalance) + " \u200B` more to perform this transaction.");
                 maker.send();
                 return;
