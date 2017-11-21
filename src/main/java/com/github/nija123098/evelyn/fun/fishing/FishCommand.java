@@ -31,8 +31,8 @@ public class FishCommand extends AbstractCommand {
     //DO NOT CHANGE THE ORDER WITHOUT CHANGING THE gerReward() METHOD
     private String[] fishingEmotes = {"\uD83D\uDC1F", "\uD83D\uDC20", "\uD83D\uDC21", "\uD83C\uDF81"};
 
-    //trashEmotes: Boot, Women_Hat, Anchor, Skull
-    private String[] trashEmotes = {"\uD83D\uDC62", "\uD83D\uDC52", "⚓", "\uD83D\uDC80"};
+    //trashEmotes: Boot, Women_Hat, Anchor, Skull, Sun_glasses, Newspaper
+    private String[] trashEmotes = {"\uD83D\uDC62", "\uD83D\uDC52", "⚓", "\uD83D\uDC80", "\uD83D\uDC53", "\uD83D\uDCF0"};
 
     //cost per use
     private int cost = 8;
@@ -126,7 +126,6 @@ public class FishCommand extends AbstractCommand {
                         "```");
 
         //add reaction for repeating the command
-        int finalUserBalance = userBalance;
         maker.withReactionBehavior("fishing_pole_and_fish", ((add, reaction, u) -> {
 
             //save user balance
