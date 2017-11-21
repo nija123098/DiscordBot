@@ -33,6 +33,9 @@ public class SlotCommand extends AbstractCommand {
     //win multiplier
     private int winM;
 
+    //minimum jackpot bet
+    private int mBet = 20;
+
     @Command
     public void command(@Context(softFail = true) Guild guild, User user, MessageMaker maker, @Argument(info = "The amount bet") Integer bet) throws InterruptedException {
 
@@ -68,15 +71,15 @@ public class SlotCommand extends AbstractCommand {
         maker.appendRaw(">\uD83C\uDFB2|\uD83C\uDFB2|\uD83C\uDFB2<    Won: " + currency_symbol + " -\n");
         maker.appendRaw(" \uD83C\uDFB2|\uD83C\uDFB2|\uD83C\uDFB2   Funds: " + currency_symbol + " " + userBalance + "\n");
         maker.appendRaw("════════════════════════════════════════\n");
-        maker.appendRaw(" Server Jackpot: " + currency_symbol + " " + guildJackpot + "  Min: " + currency_symbol + " 20```");
+        maker.appendRaw(" Server Jackpot: " + currency_symbol + " " + guildJackpot + "  MJB: " + currency_symbol + " " + mBet + "```");
         maker.send();
 
         //check for minimum bet
-        if (bet >= 20){
+        if (bet >= mBet){
 
             //check for jackpot
-            int jackpotRoll = Rand.getRand(guild.getUserSize()*2);
-            if (jackpotRoll == 0){
+            int jackpotRoll = Rand.getRand(guild.getUserSize()*3);
+            if (jackpotRoll == 0 && guildJackpot != 0){
 
                 //refund bet and add jackpot
                 ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, userBalance + bet + guildJackpot);
@@ -84,15 +87,20 @@ public class SlotCommand extends AbstractCommand {
                 //reset jackpot
                 ConfigHandler.setSetting(SlotJackpotConfig.class, guild, 0);
 
+                //refresh user balance
+                userBalance = ConfigHandler.getSetting(CurrentCurrencyConfig.class, user);
+
                 //reset the message maker
                 maker.getHeader().clear();
 
                 //display jackpot frame with delay
                 TimeUnit.SECONDS.sleep(2);
                 maker.appendRaw("```\uD83C\uDFB0 @" + user.getDisplayName(guild) + " \uD83C\uDFB0\n");
+                maker.appendRaw("════════════════════════════════════════\n\n");
+                maker.appendRaw("       Congratulations you won!\n\n");
+                maker.appendRaw("         \uD83C\uDF89 " + currency_symbol + " " + String.format("%010d", guildJackpot) + " \uD83C\uDF89\n\n");
                 maker.appendRaw("════════════════════════════════════════\n");
-                maker.appendRaw(" woah dood you won like: " + currency_symbol + " " + guildJackpot + "\n");
-                maker.appendRaw("════════════════════════════════════════```");
+                maker.appendRaw(" Funds: " + currency_symbol + " " + userBalance + "  Jackpot: " + currency_symbol + " " + guildJackpot + "```");
                 maker.send();
                 return;
             }
@@ -126,7 +134,7 @@ public class SlotCommand extends AbstractCommand {
         maker.appendRaw(">" + gSlots[3] + "|" + gSlots[4] + "|" + gSlots[5] + "<    Won: " + currency_symbol + " " + win + "\n");
         maker.appendRaw(" " + gSlots[6] + "|" + gSlots[7] + "|" + gSlots[8] + "   Funds: " + currency_symbol + " " + userBalance + "\n");
         maker.appendRaw("════════════════════════════════════════\n");
-        maker.appendRaw(" Server Jackpot: " + currency_symbol + " " + guildJackpot  + "  Min: " + currency_symbol + " 20```");
+        maker.appendRaw(" Server Jackpot: " + currency_symbol + " " + guildJackpot  + "  MJB: " + currency_symbol + " " + mBet + "```");
 
         //add reaction for repeating the command
         maker.withReactionBehavior("slot_machine", ((add, reaction, u) -> {
@@ -144,7 +152,7 @@ public class SlotCommand extends AbstractCommand {
             maker.appendRaw(">\uD83C\uDFB2|\uD83C\uDFB2|\uD83C\uDFB2<    Won: " + currency_symbol + " -\n");
             maker.appendRaw(" \uD83C\uDFB2|\uD83C\uDFB2|\uD83C\uDFB2   Funds: " + currency_symbol + " " + mUserBalance + "\n");
             maker.appendRaw("════════════════════════════════════════\n");
-            maker.appendRaw(" Server Jackpot: " + currency_symbol + " " + mGuildJackpot  + "  Min: " + currency_symbol + " 20```");
+            maker.appendRaw(" Server Jackpot: " + currency_symbol + " " + mGuildJackpot  + "  MJB: " + currency_symbol + " " + mBet + "```");
             maker.send();
 
             //reset the message maker
@@ -160,6 +168,11 @@ public class SlotCommand extends AbstractCommand {
         maker.send();
 
 
+    }
+
+    @Override
+    protected String getLocalUsages() {
+        return super.getLocalUsages();
     }
 
     private String[] generateSlots() {
