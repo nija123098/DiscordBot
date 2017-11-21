@@ -68,30 +68,34 @@ public class SlotCommand extends AbstractCommand {
         maker.appendRaw(">\uD83C\uDFB2|\uD83C\uDFB2|\uD83C\uDFB2<    Won: " + currency_symbol + " -\n");
         maker.appendRaw(" \uD83C\uDFB2|\uD83C\uDFB2|\uD83C\uDFB2   Funds: " + currency_symbol + " " + userBalance + "\n");
         maker.appendRaw("════════════════════════════════════════\n");
-        maker.appendRaw(" Server Jackpot: " + currency_symbol + " " + guildJackpot + "```");
+        maker.appendRaw(" Server Jackpot: " + currency_symbol + " " + guildJackpot + "  Min: " + currency_symbol + " 20```");
         maker.send();
 
-        //check for jackpot
-        int jackpotRoll = Rand.getRand(guild.getUserSize());
-        if (jackpotRoll == 0){
+        //check for minimum bet
+        if (bet >= 20){
 
-            //refund bet and add jackpot
-            ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, userBalance + bet + guildJackpot);
+            //check for jackpot
+            int jackpotRoll = Rand.getRand(guild.getUserSize()*2);
+            if (jackpotRoll == 0){
 
-            //reset jackpot
-            ConfigHandler.setSetting(SlotJackpotConfig.class, guild, 0);
+                //refund bet and add jackpot
+                ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, userBalance + bet + guildJackpot);
 
-            //reset the message maker
-            maker.getHeader().clear();
+                //reset jackpot
+                ConfigHandler.setSetting(SlotJackpotConfig.class, guild, 0);
 
-            //display jackpot frame with delay
-            TimeUnit.SECONDS.sleep(2);
-            maker.appendRaw("```\uD83C\uDFB0 @" + user.getDisplayName(guild) + " \uD83C\uDFB0\n");
-            maker.appendRaw("════════════════════════════════════════\n");
-            maker.appendRaw(" woah dood you won like:" + guildJackpot + "\n");
-            maker.appendRaw("════════════════════════════════════════```");
-            maker.send();
-            return;
+                //reset the message maker
+                maker.getHeader().clear();
+
+                //display jackpot frame with delay
+                TimeUnit.SECONDS.sleep(2);
+                maker.appendRaw("```\uD83C\uDFB0 @" + user.getDisplayName(guild) + " \uD83C\uDFB0\n");
+                maker.appendRaw("════════════════════════════════════════\n");
+                maker.appendRaw(" woah dood you won like: " + currency_symbol + " " + guildJackpot + "\n");
+                maker.appendRaw("════════════════════════════════════════```");
+                maker.send();
+                return;
+            }
         }
 
         //reset the message maker
@@ -122,7 +126,7 @@ public class SlotCommand extends AbstractCommand {
         maker.appendRaw(">" + gSlots[3] + "|" + gSlots[4] + "|" + gSlots[5] + "<    Won: " + currency_symbol + " " + win + "\n");
         maker.appendRaw(" " + gSlots[6] + "|" + gSlots[7] + "|" + gSlots[8] + "   Funds: " + currency_symbol + " " + userBalance + "\n");
         maker.appendRaw("════════════════════════════════════════\n");
-        maker.appendRaw(" Server Jackpot: " + currency_symbol + " " + guildJackpot + "```");
+        maker.appendRaw(" Server Jackpot: " + currency_symbol + " " + guildJackpot  + "  Min: " + currency_symbol + " 20```");
 
         //add reaction for repeating the command
         maker.withReactionBehavior("slot_machine", ((add, reaction, u) -> {
@@ -140,7 +144,7 @@ public class SlotCommand extends AbstractCommand {
             maker.appendRaw(">\uD83C\uDFB2|\uD83C\uDFB2|\uD83C\uDFB2<    Won: " + currency_symbol + " -\n");
             maker.appendRaw(" \uD83C\uDFB2|\uD83C\uDFB2|\uD83C\uDFB2   Funds: " + currency_symbol + " " + mUserBalance + "\n");
             maker.appendRaw("════════════════════════════════════════\n");
-            maker.appendRaw(" Server Jackpot: " + currency_symbol + " " + mGuildJackpot + "```");
+            maker.appendRaw(" Server Jackpot: " + currency_symbol + " " + mGuildJackpot  + "  Min: " + currency_symbol + " 20```");
             maker.send();
 
             //reset the message maker
