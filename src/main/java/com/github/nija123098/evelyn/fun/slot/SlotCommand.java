@@ -57,7 +57,7 @@ public class SlotCommand extends AbstractCommand {
         if (userBalance < bet) {
 
             //not enough funds
-            throw new ArgumentException("You need `\u200B " + currency_symbol + " " + (bet - userBalance) + " \u200B` more to perform this transaction.");
+            throw new ArgumentException("You need `\u200B " + currency_symbol + " " + (bet - userBalance) + " \u200B` more to perform this transaction " + user.getDisplayName(guild) + ".");
         }
         ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, userBalance - bet);
         userBalance -= bet;
@@ -156,9 +156,7 @@ public class SlotCommand extends AbstractCommand {
 
                 //print the error
                 maker.withColor(new Color(255, 183, 76));
-                maker.getHeader().clear().appendRaw("You need `\u200B " + currency_symbol + " " + (bet - r_userBalance) + " \u200B` more to perform this transaction.");
-                //maker.getTitle().clear().appendRaw("Insufficient Amount");
-                //maker.getNote().clear().appendRaw("Please check the help command for more information on how to use this command.");
+                maker.getHeader().clear().appendRaw("You need `\u200B " + currency_symbol + " " + (bet - r_userBalance) + " \u200B` more to perform this transaction " + user.getDisplayName(guild) + ".");
                 maker.send();
                 return;
             }

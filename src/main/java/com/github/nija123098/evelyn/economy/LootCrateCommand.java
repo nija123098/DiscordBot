@@ -39,7 +39,7 @@ public class LootCrateCommand extends AbstractCommand {
 
         //if user has crates
         if (userCrates < 1) {
-            throw new InsufficientException("You have: `\u200B " + crate_symbol + " " + userCrates + " \u200B`");
+            throw new InsufficientException("You need `\u200B " + crate_symbol + " 1 \u200B` more to perform this transaction " + user.getDisplayName(guild) + ".");
         }
 
         //configure message maker
@@ -92,9 +92,7 @@ public class LootCrateCommand extends AbstractCommand {
 
                 //print the error
                 maker.withColor(new Color(255, 183, 76));
-                maker.getHeader().clear().appendRaw("You have: `\u200B " + crate_symbol + " " + r_userCrates + " \u200B`");
-                //maker.getTitle().clear().appendRaw("Insufficient Amount");
-                //maker.getNote().clear().appendRaw("Please check the help command for more information on how to use this command.");
+                maker.getHeader().clear().appendRaw("You need `\u200B " + crate_symbol + " 1 \u200B` more to perform this transaction " + user.getDisplayName(guild) + ".");
                 maker.send();
                 return;
             }
