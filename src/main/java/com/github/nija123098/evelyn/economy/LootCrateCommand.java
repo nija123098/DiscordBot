@@ -12,6 +12,7 @@ import com.github.nija123098.evelyn.economy.configs.LootCrateConfig;
 import com.github.nija123098.evelyn.exception.InsufficientException;
 
 import java.awt.*;
+import java.util.ConcurrentModificationException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -79,37 +80,64 @@ public class LootCrateCommand extends AbstractCommand {
         maker.withReactionBehavior("package", ((add, reaction, u) -> {
 
             //save user loot crate amount
-            int mUserCrates = ConfigHandler.getSetting(LootCrateConfig.class, user);
+            int r_userCrates = ConfigHandler.getSetting(LootCrateConfig.class, user);
 
             //if user has crates
-            if (mUserCrates < 1) {
-
-                //reset the message maker
-                maker.getHeader().clear();
+            if (r_userCrates < 1) {
 
                 //not enough funds
+                try {
+                    maker.clearReactionBehaviors();
+                } catch (ConcurrentModificationException IGNORE){ }
+
+                //print the error
                 maker.withColor(new Color(255, 183, 76));
-                maker.appendRaw("You have: `\u200B " + crate_symbol + " " + mUserCrates + " \u200B`");
+                maker.getHeader().clear().appendRaw("You have: `\u200B " + crate_symbol + " " + r_userCrates + " \u200B`");
+                //maker.getTitle().clear().appendRaw("Insufficient Amount");
+                //maker.getNote().clear().appendRaw("Please check the help command for more information on how to use this command.");
                 maker.send();
                 return;
             }
 
-            //print the first frame
+            //configure message maker
+            maker.withAutoSend(false);
+            maker.mustEmbed();
+            maker.withColor(new Color(54,57,62));
+            maker.getHeader().clear();
+
+            //display the first frame if there are crates
             maker.appendRaw("```" + frame_symbol + " @" + user.getDisplayName(guild) + " " + frame_symbol + "\n");
             maker.appendRaw("════════════════════════════════════════\n\n");
             maker.appendRaw("           Opening loot crate...\n\n               ✨ \uD83C\uDF81 ✨\n\n");
             maker.appendRaw("════════════════════════════════════════\n");
-            maker.appendRaw(" Crates: " + crate_symbol + " " + mUserCrates + "```" );
+            maker.appendRaw(" Crates: " + crate_symbol + " " + r_userCrates + "```" );
             maker.send();
 
             //clear the maker
             maker.getHeader().clear();
 
+            //subtract crate
+            r_userCrates = ConfigHandler.getSetting(LootCrateConfig.class, user);
+            ConfigHandler.setSetting(LootCrateConfig.class, user,  (r_userCrates - 1));
+            r_userCrates -= 1;
+
+            //dispense reward
+            String r_reward_symbol = "✨";
+            int r_reward = 500;
+
+            //display the second frame after delay
             try {
-                command(guild,user,maker);
+                TimeUnit.SECONDS.sleep(2);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            maker.appendRaw("```" + frame_symbol + " @" + user.getDisplayName(guild) + " " + frame_symbol + "\n");
+            maker.appendRaw("════════════════════════════════════════\n\n");
+            maker.appendRaw("        Congratulations you got:\n\n");
+            maker.appendRaw("               \uD83C\uDF89 " + r_reward_symbol + " \uD83C\uDF89\n\n");
+            maker.appendRaw("════════════════════════════════════════\n");
+            maker.appendRaw(" Crates: " + crate_symbol + " " + r_userCrates + "  Loot: " + r_reward_symbol + " " + r_reward + "```");
+            maker.send();
 
         }));
         maker.send();

@@ -15,6 +15,7 @@ import com.github.nija123098.evelyn.exception.InsufficientException;
 import com.github.nija123098.evelyn.util.Rand;
 
 import java.awt.*;
+import java.util.ConcurrentModificationException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -130,20 +131,31 @@ public class FishCommand extends AbstractCommand {
         //add reaction for repeating the command
         maker.withReactionBehavior("fishing_pole_and_fish", ((add, reaction, u) -> {
 
-            //save user balance
-            int mUserBalance = ConfigHandler.getSetting(CurrentCurrencyConfig.class, user);
-
-            if (mUserBalance < cost) {
-
-                //reset the message maker
-                maker.getHeader().clear();
+            //subtract cost
+            int r_userBalance = ConfigHandler.getSetting(CurrentCurrencyConfig.class, user);
+            if (r_userBalance < cost) {
 
                 //not enough funds
+                try {
+                    maker.clearReactionBehaviors();
+                } catch (ConcurrentModificationException IGNORE){ }
+
+                //print the error
                 maker.withColor(new Color(255, 183, 76));
-                maker.appendRaw("You need `\u200B " + currency_symbol + " " + (cost - mUserBalance) + " \u200B` more to perform this transaction.");
+                maker.getHeader().clear().appendRaw("You need `\u200B " + currency_symbol + " " + (cost - r_userBalance) + " \u200B` more to perform this transaction.");
+                //maker.getTitle().clear().appendRaw("Insufficient Amount");
+                //maker.getNote().clear().appendRaw("Please check the help command for more information on how to use this command.");
                 maker.send();
                 return;
             }
+            ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, r_userBalance - cost);
+            r_userBalance -= cost;
+
+            //configure message maker
+            maker.withAutoSend(false);
+            maker.mustEmbed();
+            maker.withColor(new Color(54,57,62));
+            maker.getHeader().clear();
 
             //print the first frame
             maker.appendRaw("```\uD83C\uDFA3 @" + user.getDisplayName(guild) + " \uD83C\uDFA3\n");
@@ -152,7 +164,7 @@ public class FishCommand extends AbstractCommand {
                     "\u200b       ,-.\n" +
                             "\u200b    O /   `.        Cast: " + currency_symbol + " " + cost + "\n" +
                             "\u200b   <\\/      `.      Loot: -\n" +
-                            "\u200b    |*        `.   Funds: " + currency_symbol + " " + mUserBalance + "\n" +
+                            "\u200b    |*        `.   Funds: " + currency_symbol + " " + r_userBalance  + "\n" +
                             "\u200b   / \\          `.\n" +
                             "\u200b  /  /            `,\n" +
                             "\u200b──────────┐ ~~~~~~~~~~~~~~~~~~~~~~~~" +
@@ -162,11 +174,55 @@ public class FishCommand extends AbstractCommand {
             //reset the message maker
             maker.getHeader().clear();
 
+            //get reward emote
+            int r_eReward = getReward();
+
+            //add win
+            String r_rewardAtPole;
+            String r_rewardAtLoot;
+            if (r_eReward == - 1){
+
+                //select trash from trash emotes
+                int selectTrash = Rand.getRand(trashEmotes.length);
+                r_rewardAtPole = trashEmotes[selectTrash];
+                r_rewardAtLoot = trashEmotes[selectTrash];
+
+            } else if (gift) {
+
+                //add gift to user
+                r_rewardAtPole = fishingEmotes[r_eReward];
+                r_rewardAtLoot = fishingEmotes[r_eReward] + " 1";
+
+                //save gift to loot box inventory
+                ConfigHandler.setSetting(LootCrateConfig.class, user, (ConfigHandler.getSetting(LootCrateConfig.class, user) + 1));
+
+            } else {
+
+                //add fishing reward
+                r_rewardAtPole = fishingEmotes[r_eReward];
+                r_rewardAtLoot = currency_symbol + " " + reward;
+                r_userBalance = ConfigHandler.getSetting(CurrentCurrencyConfig.class, user) + reward;
+                ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, r_userBalance);
+            }
+
+            //print the second frame after delay
             try {
-                command(guild,user,maker);
+                TimeUnit.SECONDS.sleep(2);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            maker.appendRaw("```\uD83C\uDFA3 @" + user.getDisplayName(guild) + " \uD83C\uDFA3\n");
+            maker.appendRaw("════════════════════════════════════════\n");
+            maker.appendRaw(
+                    "\u200b       ,-.\n" +
+                            "\u200b    O /   `.        Cast: " + currency_symbol + " " + cost + "\n" +
+                            "\u200b   <\\/      `.      Loot: " + r_rewardAtLoot + "\n" +
+                            "\u200b    |*        `.   Funds: " + currency_symbol + " " + r_userBalance  + "\n" +
+                            "\u200b   / \\          `.\n" +
+                            "\u200b  /  /            `" + r_rewardAtPole + "\n" +
+                            "\u200b──────────┐ ~~~~~~~~~~~~~~~~~~~~~~~~" +
+                            "```");
+            maker.send();
 
         }));
         maker.send();

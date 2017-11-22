@@ -16,6 +16,7 @@ import com.github.nija123098.evelyn.exception.ArgumentException;
 import com.github.nija123098.evelyn.util.Rand;
 
 import java.awt.*;
+import java.util.ConcurrentModificationException;
 import java.util.concurrent.TimeUnit;
 /**
  * Written by Dxeo on 19/11/2017.
@@ -73,7 +74,7 @@ public class SlotCommand extends AbstractCommand {
         maker.appendRaw(">\uD83C\uDFB2|\uD83C\uDFB2|\uD83C\uDFB2<    Won: " + currency_symbol + " -\n");
         maker.appendRaw(" \uD83C\uDFB2|\uD83C\uDFB2|\uD83C\uDFB2   Funds: " + currency_symbol + " " + userBalance + "\n");
         maker.appendRaw("════════════════════════════════════════\n");
-        maker.appendRaw(" Server Jackpot: " + currency_symbol + " " + guildJackpot + "  MJB: " + currency_symbol + " " + mBet + "```");
+        maker.appendRaw(" Jackpot: " + currency_symbol + " " + guildJackpot + "  MJB: " + currency_symbol + " " + mBet + "```");
         maker.send();
 
         //check for minimum bet
@@ -136,49 +137,120 @@ public class SlotCommand extends AbstractCommand {
         maker.appendRaw(">" + gSlots[3] + "|" + gSlots[4] + "|" + gSlots[5] + "<    Won: " + currency_symbol + " " + win + "\n");
         maker.appendRaw(" " + gSlots[6] + "|" + gSlots[7] + "|" + gSlots[8] + "   Funds: " + currency_symbol + " " + userBalance + "\n");
         maker.appendRaw("════════════════════════════════════════\n");
-        maker.appendRaw(" Server Jackpot: " + currency_symbol + " " + guildJackpot  + "  MJB: " + currency_symbol + " " + mBet + "```");
+        maker.appendRaw(" Jackpot: " + currency_symbol + " " + guildJackpot  + "  MJB: " + currency_symbol + " " + mBet + "```");
 
         //add reaction for repeating the command
         maker.withReactionBehavior("slot_machine", ((add, reaction, u) -> {
 
             //save guild jackpot
-            int mGuildJackpot = ConfigHandler.getSetting(SlotJackpotConfig.class, guild);
+            int r_guildJackpot = ConfigHandler.getSetting(SlotJackpotConfig.class, guild);
 
-            //save user balance
-            int mUserBalance = ConfigHandler.getSetting(CurrentCurrencyConfig.class, user);
-
-            if (mUserBalance < bet) {
-
-                //reset the message maker
-                maker.getHeader().clear();
+            //subtract bet
+            int r_userBalance = ConfigHandler.getSetting(CurrentCurrencyConfig.class, user);
+            if (r_userBalance < bet) {
 
                 //not enough funds
+                try {
+                    maker.clearReactionBehaviors();
+                } catch (ConcurrentModificationException IGNORE){ }
+
+                //print the error
                 maker.withColor(new Color(255, 183, 76));
-                //maker.getNote().append("Please check the help command for more information on how to use this command.");
-                //maker.getTitle().appendRaw("Insufficient Amount");
-                maker.appendRaw("You need `\u200B " + currency_symbol + " " + (bet - mUserBalance) + " \u200B` more to perform this transaction.");
+                maker.getHeader().clear().appendRaw("You need `\u200B " + currency_symbol + " " + (bet - r_userBalance) + " \u200B` more to perform this transaction.");
+                //maker.getTitle().clear().appendRaw("Insufficient Amount");
+                //maker.getNote().clear().appendRaw("Please check the help command for more information on how to use this command.");
                 maker.send();
                 return;
             }
+            ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, r_userBalance - bet);
+            r_userBalance -= bet;
+
+            //configure message maker
+            maker.withAutoSend(false);
+            maker.mustEmbed();
+            maker.withColor(new Color(54,57,62));
+            maker.getHeader().clear();
 
             //print the first frame
             maker.appendRaw("```\uD83C\uDFB0 @" + user.getDisplayName(guild) + " \uD83C\uDFB0\n");
             maker.appendRaw("════════════════════════════════════════\n");
             maker.appendRaw(" \uD83C\uDFB2|\uD83C\uDFB2|\uD83C\uDFB2     Bet: " + currency_symbol + " " + bet.toString() + "\n");
             maker.appendRaw(">\uD83C\uDFB2|\uD83C\uDFB2|\uD83C\uDFB2<    Won: " + currency_symbol + " -\n");
-            maker.appendRaw(" \uD83C\uDFB2|\uD83C\uDFB2|\uD83C\uDFB2   Funds: " + currency_symbol + " " + mUserBalance + "\n");
+            maker.appendRaw(" \uD83C\uDFB2|\uD83C\uDFB2|\uD83C\uDFB2   Funds: " + currency_symbol + " " + r_userBalance + "\n");
             maker.appendRaw("════════════════════════════════════════\n");
-            maker.appendRaw(" Server Jackpot: " + currency_symbol + " " + mGuildJackpot  + "  MJB: " + currency_symbol + " " + mBet + "```");
+            maker.appendRaw(" Jackpot: " + currency_symbol + " " + r_guildJackpot + "  MJB: " + currency_symbol + " " + mBet + "```");
             maker.send();
+
+            //check for minimum bet
+            if (bet >= mBet){
+
+                //check for jackpot
+                int jackpotRoll = Rand.getRand(guild.getUserSize()*3);
+                if (jackpotRoll == 0 && r_guildJackpot != 0){
+
+                    //refund bet and add jackpot
+                    ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, r_userBalance + bet + r_guildJackpot);
+
+                    //reset jackpot
+                    ConfigHandler.setSetting(SlotJackpotConfig.class, guild, 0);
+
+                    //refresh user balance
+                    r_userBalance = ConfigHandler.getSetting(CurrentCurrencyConfig.class, user);
+
+                    //reset the message maker
+                    maker.getHeader().clear();
+
+                    //display jackpot frame with delay
+                    try {
+                        TimeUnit.SECONDS.sleep(2);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    maker.appendRaw("```\uD83C\uDFB0 @" + user.getDisplayName(guild) + " \uD83C\uDFB0\n");
+                    maker.appendRaw("════════════════════════════════════════\n\n");
+                    maker.appendRaw("       Congratulations you won!\n\n");
+                    maker.appendRaw("         \uD83C\uDF89 " + currency_symbol + " " + String.format("%010d", r_guildJackpot) + " \uD83C\uDF89\n\n");
+                    maker.appendRaw("════════════════════════════════════════\n");
+                    maker.appendRaw(" Funds: " + currency_symbol + " " + r_userBalance + "  Jackpot: " + currency_symbol + " " + r_guildJackpot + "```");
+                    maker.send();
+                    return;
+                }
+            }
 
             //reset the message maker
             maker.getHeader().clear();
 
+            //generate slots
+            String[] r_gSlots = generateSlots();
+
+            //add win
+            int r_win;
+            if (winM == -1) {
+                r_win = 0;
+                ConfigHandler.setSetting(SlotJackpotConfig.class, guild, ConfigHandler.getSetting(SlotJackpotConfig.class, guild) + bet/2);
+            } else {
+                r_win = bet * winM;
+                r_userBalance = ConfigHandler.getSetting(CurrentCurrencyConfig.class, user) + r_win;
+                ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, r_userBalance);
+            }
+
+            //refresh guild jackpot
+            r_guildJackpot = ConfigHandler.getSetting(SlotJackpotConfig.class, guild);
+
+            //print the second frame after delay
             try {
-                command(guild,user,maker,bet);
+                TimeUnit.SECONDS.sleep(2);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            maker.appendRaw("```\uD83C\uDFB0 @" + user.getDisplayName(guild) + " \uD83C\uDFB0\n");
+            maker.appendRaw("════════════════════════════════════════\n");
+            maker.appendRaw(" " + r_gSlots[0] + "|" + r_gSlots[1] + "|" + r_gSlots[2] + "     Bet: " + currency_symbol + " " + bet.toString() + "\n");
+            maker.appendRaw(">" + r_gSlots[3] + "|" + r_gSlots[4] + "|" + r_gSlots[5] + "<    Won: " + currency_symbol + " " + r_win + "\n");
+            maker.appendRaw(" " + r_gSlots[6] + "|" + r_gSlots[7] + "|" + r_gSlots[8] + "   Funds: " + currency_symbol + " " + r_userBalance + "\n");
+            maker.appendRaw("════════════════════════════════════════\n");
+            maker.appendRaw(" Jackpot: " + currency_symbol + " " + r_guildJackpot  + "  MJB: " + currency_symbol + " " + mBet + "```");
+            maker.send();
 
         }));
         maker.send();
