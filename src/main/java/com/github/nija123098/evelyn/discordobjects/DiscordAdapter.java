@@ -2,10 +2,6 @@ package com.github.nija123098.evelyn.discordobjects;
 
 import com.github.nija123098.evelyn.BotConfig.BotConfig;
 import com.github.nija123098.evelyn.audio.SpeechParser;
-import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.*;
-import com.github.nija123098.evelyn.exception.InvalidEventException;
-import com.github.nija123098.evelyn.moderation.DeletePinNotificationConfig;
-import com.github.nija123098.evelyn.moderation.messagefiltering.MessageMonitor;
 import com.github.nija123098.evelyn.chatbot.ChatBot;
 import com.github.nija123098.evelyn.command.CommandHandler;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
@@ -14,8 +10,12 @@ import com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager.Gui
 import com.github.nija123098.evelyn.discordobjects.wrappers.*;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.BotEvent;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventDistributor;
+import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.*;
+import com.github.nija123098.evelyn.exception.InvalidEventException;
 import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.launcher.Reference;
+import com.github.nija123098.evelyn.moderation.DeletePinNotificationConfig;
+import com.github.nija123098.evelyn.moderation.messagefiltering.MessageMonitor;
 import com.github.nija123098.evelyn.perms.ContributorMonitor;
 import com.github.nija123098.evelyn.service.services.MemoryManagementService;
 import com.github.nija123098.evelyn.service.services.ScheduleService;
@@ -109,6 +109,10 @@ public class DiscordAdapter {
         });
         if (!BotConfig.GHOST_MODE) ScheduleService.scheduleRepeat(PLAY_TEXT_SPEED + 10_000, PLAY_TEXT_SPEED, () -> {
             Template template = TemplateHandler.getTemplate(KeyPhrase.PLAY_TEXT, null, PREVIOUS_TEXTS);
+            if (template == null){
+                TemplateHandler.addTemplate(KeyPhrase.PLAY_TEXT, null, "Mee6");
+                Log.log("Template KeyPhrase for " + KeyPhrase.PLAY_TEXT.name() + " has been set to: \"Mee6\"");
+            }
             if (template != null) DiscordClient.getShards().forEach(shard -> shard.online(template.interpret((User) null, shard, null, null, null, null)));
         });
         AtomicInteger count = new AtomicInteger();
