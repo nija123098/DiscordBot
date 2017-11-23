@@ -4,7 +4,6 @@ import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
-import com.github.nija123098.evelyn.command.annotations.Context;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
@@ -24,7 +23,7 @@ public class CurrencyTreeCommand extends AbstractCommand {
         super("currencytree", BotRole.BOT_ADMIN, ModuleLevel.ECONOMY, "ct", null, "Cookies do grow on trees");
     }
     @Command
-    public void command(MessageMaker maker,@Context(softFail = true) Guild guild,@Argument Integer amount, @Argument(optional=true, info = "user to send the amount to")User user, @Argument(optional=true, info = "currency type")String type){
+    public void command(MessageMaker maker, Guild guild,@Argument Integer amount, @Argument(optional=true, info = "user to send the amount to")User user, @Argument(optional=true, info = "currency type")String type){
 
         //configure message maker
         maker.mustEmbed();

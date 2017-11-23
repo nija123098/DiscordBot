@@ -3,7 +3,6 @@ package com.github.nija123098.evelyn.fun.fishing;
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Command;
-import com.github.nija123098.evelyn.command.annotations.Context;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
@@ -46,7 +45,7 @@ public class FishCommand extends AbstractCommand {
     private boolean gift;
 
     @Command
-    public void command(@Context(softFail = true) Guild guild, User user, MessageMaker maker) throws InterruptedException {
+    public void command(Guild guild, User user, MessageMaker maker) throws InterruptedException {
 
         //save guild money symbol
         String currency_symbol = ConfigHandler.getSetting(CurrencySymbolConfig.class, guild);

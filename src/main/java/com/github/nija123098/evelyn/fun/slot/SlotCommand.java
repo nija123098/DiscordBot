@@ -4,7 +4,6 @@ import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
-import com.github.nija123098.evelyn.command.annotations.Context;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
@@ -39,7 +38,7 @@ public class SlotCommand extends AbstractCommand {
     private int mBet = 20;
 
     @Command
-    public void command(@Context(softFail = true) Guild guild, User user, MessageMaker maker, @Argument(info = "The amount bet") Integer bet) throws InterruptedException {
+    public void command(Guild guild, User user, MessageMaker maker, @Argument(info = "The amount bet") Integer bet) throws InterruptedException {
 
         //save guild money symbol
         String currency_symbol = ConfigHandler.getSetting(CurrencySymbolConfig.class, guild);
