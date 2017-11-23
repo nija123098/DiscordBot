@@ -50,7 +50,7 @@ public class LootCrateCommand extends AbstractCommand {
         //display the first frame if there are crates
         maker.appendRaw("```" + frame_symbol + " @" + user.getDisplayName(guild) + " " + frame_symbol + "\n");
         maker.appendRaw("════════════════════════════════════════\n\n");
-        maker.appendRaw("           Opening loot crate...\n\n               ✨ \uD83C\uDF81 ✨\n\n");
+        maker.appendRaw("          Opening loot crate...\n\n               ✨ \uD83C\uDF81 ✨\n\n");
         maker.appendRaw("════════════════════════════════════════\n");
         maker.appendRaw(" Crates: " + crate_symbol + " " + userCrates + "```" );
         maker.send();
@@ -106,7 +106,7 @@ public class LootCrateCommand extends AbstractCommand {
             //display the first frame if there are crates
             maker.appendRaw("```" + frame_symbol + " @" + user.getDisplayName(guild) + " " + frame_symbol + "\n");
             maker.appendRaw("════════════════════════════════════════\n\n");
-            maker.appendRaw("           Opening loot crate...\n\n               ✨ \uD83C\uDF81 ✨\n\n");
+            maker.appendRaw("          Opening loot crate...\n\n               ✨ \uD83C\uDF81 ✨\n\n");
             maker.appendRaw("════════════════════════════════════════\n");
             maker.appendRaw(" Crates: " + crate_symbol + " " + r_userCrates + "```" );
             maker.send();

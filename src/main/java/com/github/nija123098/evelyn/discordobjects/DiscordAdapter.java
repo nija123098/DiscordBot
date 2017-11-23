@@ -110,8 +110,8 @@ public class DiscordAdapter {
         if (!BotConfig.GHOST_MODE) ScheduleService.scheduleRepeat(PLAY_TEXT_SPEED + 10_000, PLAY_TEXT_SPEED, () -> {
             Template template = TemplateHandler.getTemplate(KeyPhrase.PLAY_TEXT, null, PREVIOUS_TEXTS);
             if (template == null){
-                TemplateHandler.addTemplate(KeyPhrase.PLAY_TEXT, null, "Mee6");
-                Log.log("Template KeyPhrase for " + KeyPhrase.PLAY_TEXT.name() + " has been set to: \"Mee6\"");
+                TemplateHandler.addTemplate(KeyPhrase.PLAY_TEXT, null, "with nitroglycerine");
+                Log.log("Template KeyPhrase for " + KeyPhrase.PLAY_TEXT.name() + " has been added: \"with nitroglycerine\"");
             }
             if (template != null) DiscordClient.getShards().forEach(shard -> shard.online(template.interpret((User) null, shard, null, null, null, null)));
         });
