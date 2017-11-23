@@ -1,11 +1,14 @@
 package com.github.nija123098.evelyn.economy;
 
+import com.github.nija123098.evelyn.audio.Track;
+import com.github.nija123098.evelyn.audio.YoutubeTrack;
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.GlobalConfigurable;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
+import com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.economy.configs.*;
@@ -15,6 +18,8 @@ import java.awt.*;
 import java.time.*;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Made by nija123098 on 5/1/2017.
@@ -28,7 +33,7 @@ public class BankCommand extends AbstractCommand {
         String name = ConfigHandler.getSetting(CurrencyNameConfig.class, guild), symbol = ConfigHandler.getSetting(CurrencySymbolConfig.class, guild), booster = EmoticonHelper.getChars("rocket", false), claim = EmoticonHelper.getChars("inbox_tray", false);
         int totalClaim = 256, bonus = 0;
         int streak = ConfigHandler.getSetting(CurrentCurrencyStreakConfig.class, user);
-
+        maker.withColor(new Color(54,57,62));
         /**
          * Check for old money timer in database or if empty
          */
@@ -86,12 +91,26 @@ public class BankCommand extends AbstractCommand {
          * Checks if it's been a day since the last time the user claimed, this is checked against 00:00 UTC, if it was more recent, display the time until 00:00 UTC
          */
         if (nowDays.compareTo(thenDays) == 1) {
-            maker.appendRaw(ClaimBuilder((hours + "h " + minutes + "m"), symbol, bonus, streak, user, guild, true)).mustEmbed().withColor(new Color(54,57,62));
+            maker.appendRaw(ClaimBuilder((hours + "h " + minutes + "m"), symbol, bonus, streak, user, guild, true)).mustEmbed();
             ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, (currentMoney + totalClaim));
             ConfigHandler.setSetting(LastCurrencyUseConfig.class, user, now.truncatedTo(ChronoUnit.SECONDS).toString());
             if (streak < 8) ConfigHandler.setSetting(CurrentCurrencyStreakConfig.class, user, (streak + 1));
         } else {
-            maker.appendRaw(ClaimBuilder((hours + "h " + minutes + "m"), symbol, bonus, streak, user, guild, false)).mustEmbed().withColor(new Color(54,57,62));
+            if (hours >= 0 && minutes >= 0) {
+                GuildAudioManager manager = GuildAudioManager.getManager(guild);
+                if (manager != null) {
+                    List<Track> thing = new ArrayList<>();
+                    thing.add(manager.currentTrack());
+                    thing.addAll(manager.getQueue());
+                    manager.clearQueue();
+                    manager.queueTrack(new YoutubeTrack("9jK-NcRmVcw"));
+                    manager.skipTrack();
+                    thing.forEach(manager::queueTrack);
+                }
+                maker.withImage("https://media.giphy.com/media/iQxHV4HVDJuk8/giphy.gif");
+                return;
+            }
+            maker.appendRaw(ClaimBuilder((hours + "h " + minutes + "m"), symbol, bonus, streak, user, guild, false)).mustEmbed();
         }
     }
 

@@ -108,9 +108,9 @@ public class TypeChanger {
      * @return the string representation of the object.
      */
     public static String toString(Class<?> from, Object o){
-        if (EmoticonHelper.checkUnicode(o.toString())) return o.toString();
         if (o == null) return "null";
         if (from.isEnum()) return o.toString();
+        if (EmoticonHelper.checkUnicode(o.toString())) return o.toString();
         if (from.equals(String.class)) return (String) o;
         AtomicReference<String> reference = new AtomicReference<>();
         for (Class<?> clazz : ReflectionHelper.getAssignableTypes(from)){
