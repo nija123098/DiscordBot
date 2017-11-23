@@ -12,6 +12,7 @@ import com.github.nija123098.evelyn.economy.configs.CurrencySymbolConfig;
 import com.github.nija123098.evelyn.economy.configs.CurrentCurrencyConfig;
 import com.github.nija123098.evelyn.economy.configs.LootCrateConfig;
 import com.github.nija123098.evelyn.economy.configs.SlotJackpotConfig;
+import com.github.nija123098.evelyn.economy.plantation.configs.CurrentBeansConfig;
 import com.github.nija123098.evelyn.exception.ArgumentException;
 import com.github.nija123098.evelyn.perms.BotRole;
 
@@ -61,6 +62,12 @@ public class CurrencyTreeCommand extends AbstractCommand {
             case "jackpot":
                 ConfigHandler.setSetting(SlotJackpotConfig.class, guild, amount);
                 maker.appendRaw(guild.getName() + "'s Jackpot balance has been set to: `\u200B " + ConfigHandler.getSetting(CurrencySymbolConfig.class, guild) + " " + amount + " \u200B`");
+                maker.send();
+                break;
+
+            case "beans":
+                ConfigHandler.setSetting(CurrentBeansConfig.class, user, amount);
+                maker.appendRaw(user.getDisplayName(guild) + "'s coffee beans have been set to: `\u200b " + amount + " \u200b`");
                 maker.send();
                 break;
 
