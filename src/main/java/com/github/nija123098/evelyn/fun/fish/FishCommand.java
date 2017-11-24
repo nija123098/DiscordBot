@@ -1,4 +1,4 @@
-package com.github.nija123098.evelyn.fun.fishing;
+package com.github.nija123098.evelyn.fun.fish;
 
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
@@ -106,7 +106,7 @@ public class FishCommand extends AbstractCommand {
 
         } else {
 
-            //add fishing reward
+            //add fish reward
             rewardAtPole = fishingEmotes[eReward];
             rewardAtLoot = currency_symbol + " " + reward;
             userBalance = ConfigHandler.getSetting(CurrentCurrencyConfig.class, user) + reward;
@@ -195,7 +195,7 @@ public class FishCommand extends AbstractCommand {
 
             } else {
 
-                //add fishing reward
+                //add fish reward
                 r_rewardAtPole = fishingEmotes[r_eReward];
                 r_rewardAtLoot = currency_symbol + " " + reward;
                 r_userBalance = ConfigHandler.getSetting(CurrentCurrencyConfig.class, user) + reward;
@@ -288,7 +288,7 @@ public class FishCommand extends AbstractCommand {
                 }
         }
 
-        //return emote index for fishing emotes
+        //return emote index for fish emotes
         return rewardToEmote;
 
     }

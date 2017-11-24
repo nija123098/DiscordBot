@@ -16,6 +16,8 @@ import com.github.nija123098.evelyn.economy.plantation.configs.CurrentBeansConfi
 import com.github.nija123098.evelyn.exception.ArgumentException;
 import com.github.nija123098.evelyn.perms.BotRole;
 
+import java.util.Objects;
+
 /**
  * Made by nija123098 on 7/7/2017.
  */
@@ -38,7 +40,7 @@ public class CurrencyTreeCommand extends AbstractCommand {
         }
 
         //if no type default to currency
-        if (type.contentEquals("")) {
+        if (Objects.equals(type, "")) {
             type = "currency";
         }
 
@@ -86,12 +88,11 @@ public class CurrencyTreeCommand extends AbstractCommand {
     public String getUsages() {
 
         //command usage:
-        StringBuilder desc = new StringBuilder();
-        desc.append("#  ct <amount> // Set amount of currency for self\n");
-        desc.append("#  ct <amount> <currency_type> // Set amount of currency_type for self OR current guild\n");
-        desc.append("#  ct <amount> <@user> // Set currency for @user\n");
-        desc.append("#  ct <amount> <@user> <currency_type> // Set currency_type for @user");
-        return desc.toString();
+        return
+        "#  ct <amount> // Set amount of currency for self\n" +
+        "#  ct <amount> <currency_type> // Set amount of currency_type for self OR current guild\n" +
+        "#  ct <amount> <@user> // Set amount of currency for @user\n" +
+        "#  ct <amount> <@user> <currency_type> // Set amount of currency_type for @user";
     }
 
     //help command override description
@@ -99,9 +100,8 @@ public class CurrencyTreeCommand extends AbstractCommand {
     public String getHelp() {
 
         //command description:
-        StringBuilder desc = new StringBuilder();
-        desc.append("#  Currency Types:\n// currency\n// lootcrate\n// jackpot\n// beans");
-        return desc.toString();
+        return
+        "#  Currency Types:\n// currency\n// lootcrate\n// jackpot\n// beans";
     }
 
 }

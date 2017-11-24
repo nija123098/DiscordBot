@@ -259,10 +259,9 @@ public class SlotCommand extends AbstractCommand {
     public String getHelp(){
 
         //command description:
-        StringBuilder desc = new StringBuilder();
-        desc.append("#  Jackpot\n// Per server. Every time you lose, a portion of your bet goes to the jackpot\n");
-        desc.append("#  MJB\n// Minimum Jackpot Bet. The minimum amount you have to bet to roll for the jackpot");
-        return desc.toString();
+        return
+        "#  Jackpot\n// Per server. Every time you lose, a portion of your bet goes to the jackpot\n" +
+        "#  MJB\n// Minimum Jackpot Bet. The minimum amount you have to bet to roll for the jackpot";
     }
 
     private String[] generateSlots() {
