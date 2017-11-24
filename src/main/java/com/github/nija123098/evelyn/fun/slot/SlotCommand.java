@@ -24,7 +24,7 @@ public class SlotCommand extends AbstractCommand {
 
     //constructor
     public SlotCommand() {
-        super("slot", ModuleLevel.FUN, null, null, "The non-stupid version of the slots command");
+        super("slot", ModuleLevel.FUN, null, null, "Challenge the RNG and test your fate.");
     }
 
     //emotes: Diamond, Lollipop, Candy, Cherries, Melon, Lemon, Grapes
@@ -256,8 +256,13 @@ public class SlotCommand extends AbstractCommand {
     }
 
     @Override
-    protected String getLocalUsages() {
-        return super.getLocalUsages();
+    public String getHelp(){
+
+        //command description:
+        StringBuilder desc = new StringBuilder();
+        desc.append("#  Jackpot\n// Per server. Every time you lose, a portion of your bet goes to the jackpot\n");
+        desc.append("#  MJB\n// Minimum Jackpot Bet. The minimum amount you have to bet to roll for the jackpot");
+        return desc.toString();
     }
 
     private String[] generateSlots() {

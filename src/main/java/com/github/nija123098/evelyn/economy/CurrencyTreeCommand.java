@@ -21,10 +21,11 @@ import com.github.nija123098.evelyn.perms.BotRole;
  */
 public class CurrencyTreeCommand extends AbstractCommand {
     public CurrencyTreeCommand() {
-        super("currencytree", BotRole.BOT_ADMIN, ModuleLevel.ECONOMY, "ct", null, "Cookies do grow on trees");
+        super("currencytree", BotRole.BOT_ADMIN, ModuleLevel.ECONOMY, "ct", null, null);
     }
+
     @Command
-    public void command(MessageMaker maker, Guild guild,@Argument Integer amount, @Argument(optional=true, info = "user to send the amount to")User user, @Argument(optional=true, info = "currency type")String type){
+    public void command(MessageMaker maker, Guild guild, @Argument Integer amount, @Argument(optional = true, info = "user to set amount for") User user, @Argument(optional = true, info = "currency type") String type) {
 
         //configure message maker
         maker.mustEmbed();
@@ -37,12 +38,13 @@ public class CurrencyTreeCommand extends AbstractCommand {
         }
 
         //if no type default to currency
-        if (type.contentEquals("")){
+        if (type.contentEquals("")) {
             type = "currency";
         }
 
         //set amount according to currency type
-        switch (type){
+        //REMEMBER TO ADD TYPES TO THE HELP DESCRIPTION
+        switch (type.toLowerCase()) {
 
             //set currency
             case "currency":
@@ -78,4 +80,28 @@ public class CurrencyTreeCommand extends AbstractCommand {
         }
 
     }
+
+    //help command override usages
+    @Override
+    public String getUsages() {
+
+        //command usage:
+        StringBuilder desc = new StringBuilder();
+        desc.append("#  ct <amount> // Set amount of currency for self\n");
+        desc.append("#  ct <amount> <currency_type> // Set amount of currency_type for self OR current guild\n");
+        desc.append("#  ct <amount> <@user> // Set currency for @user\n");
+        desc.append("#  ct <amount> <@user> <currency_type> // Set currency_type for @user");
+        return desc.toString();
+    }
+
+    //help command override description
+    @Override
+    public String getHelp() {
+
+        //command description:
+        StringBuilder desc = new StringBuilder();
+        desc.append("#  Currency Types:\n// currency\n// lootcrate\n// jackpot\n// beans");
+        return desc.toString();
+    }
+
 }

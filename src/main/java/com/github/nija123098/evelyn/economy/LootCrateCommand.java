@@ -22,7 +22,7 @@ public class LootCrateCommand extends AbstractCommand {
 
     //constructor
     public LootCrateCommand() {
-        super("lootcrate", ModuleLevel.ECONOMY, "lc", null, "fish for stuff");
+        super("lootcrate", ModuleLevel.ECONOMY, "lc", null, "open your loot crates");
     }
 
 
