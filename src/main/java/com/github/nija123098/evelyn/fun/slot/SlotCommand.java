@@ -38,7 +38,7 @@ public class SlotCommand extends AbstractCommand {
     private int mBet = 20;
 
     @Command
-    public void command(Guild guild, User user, MessageMaker maker, @Argument(info = "The amount bet") Integer bet) throws InterruptedException {
+    public void command(Guild guild, User user, MessageMaker maker, @Argument(info = "bet") Integer bet) throws InterruptedException {
 
         //save guild money symbol
         String currency_symbol = ConfigHandler.getSetting(CurrencySymbolConfig.class, guild);

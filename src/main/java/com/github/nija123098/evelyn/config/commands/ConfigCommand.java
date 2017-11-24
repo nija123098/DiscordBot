@@ -27,7 +27,7 @@ public class ConfigCommand extends AbstractCommand {
     }
     @Command
     public <C extends Configurable> void command(@Argument(optional = true, info = "config/user/channel/role") C configurable, @Argument(optional = true, replacement = ContextType.NONE) ConfigCategory configCategory, @Argument String s, User user, @Context(softFail = true) Guild guild, MessageMaker maker, @Context(softFail = true) Message message){
-        maker.withColor(new Color(0, 206, 209));
+        maker.withColor(new Color(39, 209, 110));
         if (configurable != null || s == null || s.isEmpty()){
             if (configurable == null) configurable = (C) (guild == null ? user : guild);
             C finalConfigurable = configurable;
