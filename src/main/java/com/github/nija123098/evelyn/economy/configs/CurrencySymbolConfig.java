@@ -11,12 +11,18 @@ import com.github.nija123098.evelyn.util.EmoticonHelper;
  */
 public class CurrencySymbolConfig extends AbstractConfig<String, Guild> {
     public CurrencySymbolConfig() {
-        super("currency_symbol", "", ConfigCategory.ECONOMY, EmoticonHelper.getChars("cookie", false), "The symbol currency is represented by");
+        super("currency_symbol", "", ConfigCategory.ECONOMY, "cookie", "The symbol currency is represented by");
     }
 
     @Override
     public String setValue(Guild configurable, String value, boolean overrideCache) {
-        if (EmoticonHelper.checkUnicode(value)) throw new ArgumentException("not a unicode character");
-        return super.setValue(configurable, value, true);
+        if (EmoticonHelper.getChars(value, false) != null) value = EmoticonHelper.getChars(value, false);
+        if (EmoticonHelper.getName(value) == null) throw new ArgumentException("Unknown emote. Please choose a valid Unicode emote.");
+        return super.setValue(configurable, EmoticonHelper.getName(value), true);
+    }
+
+    @Override
+    public String getValue(Guild configurable) {
+        return EmoticonHelper.getChars(super.getValue(configurable), false);
     }
 }

@@ -28,7 +28,7 @@ public class ConfigSetCommand extends AbstractCommand {
             throw new PermissionsException("You must be at least a " + config.requiredBotRole().name() + " to edit that config");
         }
         if (arg.isEmpty()){
-            if (target == null) throw new ArgumentException("Received to target value, if resetting the value wsa intended use the cfg reset command, if unsetting the config was intended use the cfg setnull command");
+            if (target == null) throw new ArgumentException("Received to target value, if resetting the value was intended use the cfg reset command, if unsetting the config was intended use the cfg setnull command");
             ConfigHandler.setSetting((Class<? extends AbstractConfig<V, T>>) config.getClass(), (T) (guild == null ? user : guild),  (V) target.convert((Class<? extends Configurable>) config.getValueType()));
         }else{
             if (target == null) target = (T) new Configurable[]{track, playlist, user, channel, channel.getCategory(), guildUser, target instanceof Role ? target : null, guild, GlobalConfigurable.GLOBAL, guild == null ? user : guild}[config.getConfigLevel().ordinal()];
@@ -36,7 +36,7 @@ public class ConfigSetCommand extends AbstractCommand {
             if (config.getConfigLevel() != ConfigLevel.ALL) target = (T) target.convert(config.getConfigLevel().getType());
             target.checkPermissionToEdit(user, guild);// morph exception should throw before cast exception
             config.setExteriorValue(target, user, channel, guild, message, arg);
-            maker.appendRaw("Set " + config.getName() + " to " + arg).mustEmbed().withColor(new Color(0, 206, 209));
+            maker.appendRaw("Set " + config.getName() + " to " + config.getValue((T) (guild == null ? user : guild))).mustEmbed().withColor(new Color(0, 206, 209));
         }
     }
 }
