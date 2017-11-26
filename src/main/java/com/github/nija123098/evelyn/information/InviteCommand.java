@@ -6,17 +6,13 @@ import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
 import com.github.nija123098.evelyn.util.FormatHelper;
-import org.apache.http.message.BasicNameValuePair;
-import sx.blah.discord.api.internal.DiscordEndpoints;
-import sx.blah.discord.api.internal.Requests;
-import sx.blah.discord.api.internal.json.responses.GatewayBotResponse;
 
 /**
  * Made by nija123098 on 5/11/2017.
  */
 public class InviteCommand extends AbstractCommand {
     public InviteCommand() {
-        super("invite", ModuleLevel.INFO, "inv", null, "Provides an invite link to add the bot to your server.");
+        super("invite", ModuleLevel.INFO, null, null, "Provides an invite link to add the bot to your server.");
     }
     @Command
     public void command(MessageMaker maker){

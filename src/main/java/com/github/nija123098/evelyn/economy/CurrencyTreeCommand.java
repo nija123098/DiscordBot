@@ -13,6 +13,8 @@ import com.github.nija123098.evelyn.economy.configs.CurrentCurrencyConfig;
 import com.github.nija123098.evelyn.economy.configs.LootCrateConfig;
 import com.github.nija123098.evelyn.economy.configs.SlotJackpotConfig;
 import com.github.nija123098.evelyn.economy.plantation.configs.CurrentBeansConfig;
+import com.github.nija123098.evelyn.economy.plantation.configs.CurrentGroundsConfig;
+import com.github.nija123098.evelyn.economy.plantation.configs.CurrentRoastedBeansConfig;
 import com.github.nija123098.evelyn.exception.ArgumentException;
 import com.github.nija123098.evelyn.perms.BotRole;
 
@@ -69,11 +71,27 @@ public class CurrencyTreeCommand extends AbstractCommand {
                 maker.send();
                 break;
 
+            //set coffee beans
             case "beans":
                 ConfigHandler.setSetting(CurrentBeansConfig.class, user, amount);
                 maker.appendRaw(user.getDisplayName(guild) + "'s coffee beans have been set to: `\u200b " + amount + " \u200b`");
                 maker.send();
                 break;
+
+            //set roasted beans
+            case "roast":
+                ConfigHandler.setSetting(CurrentRoastedBeansConfig.class, user, amount);
+                maker.appendRaw(user.getDisplayName(guild) + "'s roasted beans have been set to: `\u200b " + amount + " \u200b`");
+                maker.send();
+                break;
+
+            //set coffee grounds
+            case "grinds":
+                ConfigHandler.setSetting(CurrentGroundsConfig.class, user, amount);
+                maker.appendRaw(user.getDisplayName(guild) + "'s coffee grounds have been set to: `\u200b " + amount + " \u200b`");
+                maker.send();
+                break;
+
 
             //no type found
             default:
