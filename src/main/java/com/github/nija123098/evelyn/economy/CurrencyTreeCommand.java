@@ -10,12 +10,14 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.economy.configs.CurrencySymbolConfig;
 import com.github.nija123098.evelyn.economy.configs.CurrentCurrencyConfig;
-import com.github.nija123098.evelyn.economy.configs.LootCrateConfig;
-import com.github.nija123098.evelyn.economy.configs.SlotJackpotConfig;
+import com.github.nija123098.evelyn.economy.lootcrate.LootCrateConfig;
+import com.github.nija123098.evelyn.economy.lootcrate.LootCrateEmotes;
+import com.github.nija123098.evelyn.economy.plantation.configs.CoffeeEmotes;
 import com.github.nija123098.evelyn.economy.plantation.configs.CurrentBeansConfig;
 import com.github.nija123098.evelyn.economy.plantation.configs.CurrentGroundsConfig;
 import com.github.nija123098.evelyn.economy.plantation.configs.CurrentRoastedBeansConfig;
 import com.github.nija123098.evelyn.exception.ArgumentException;
+import com.github.nija123098.evelyn.fun.slot.SlotJackpotConfig;
 import com.github.nija123098.evelyn.perms.BotRole;
 
 import java.util.Objects;
@@ -60,7 +62,7 @@ public class CurrencyTreeCommand extends AbstractCommand {
             //set loot crates
             case "lootcrate":
                 ConfigHandler.setSetting(LootCrateConfig.class, user, amount);
-                maker.appendRaw(user.getDisplayName(guild) + "'s Lootcrate balance has been set to: `\u200B \uD83C\uDF81 " + amount + " \u200B`");
+                maker.appendRaw(user.getDisplayName(guild) + "'s Lootcrate balance has been set to: `\u200B " + LootCrateEmotes.CRATE + " " + amount + " \u200B`");
                 maker.send();
                 break;
 
@@ -74,21 +76,21 @@ public class CurrencyTreeCommand extends AbstractCommand {
             //set coffee beans
             case "beans":
                 ConfigHandler.setSetting(CurrentBeansConfig.class, user, amount);
-                maker.appendRaw(user.getDisplayName(guild) + "'s coffee beans have been set to: `\u200b " + amount + " \u200b`");
+                maker.appendRaw(user.getDisplayName(guild) + "'s coffee beans have been set to: " + CoffeeEmotes.BEANS + " `" + amount + "`");
                 maker.send();
                 break;
 
             //set roasted beans
-            case "roast":
+            case "roasted":
                 ConfigHandler.setSetting(CurrentRoastedBeansConfig.class, user, amount);
-                maker.appendRaw(user.getDisplayName(guild) + "'s roasted beans have been set to: `\u200b " + amount + " \u200b`");
+                maker.appendRaw(user.getDisplayName(guild) + "'s roasted beans have been set to: " + CoffeeEmotes.ROASTED + " `" + amount + "`");
                 maker.send();
                 break;
 
             //set coffee grounds
-            case "grinds":
+            case "grounds":
                 ConfigHandler.setSetting(CurrentGroundsConfig.class, user, amount);
-                maker.appendRaw(user.getDisplayName(guild) + "'s coffee grounds have been set to: `\u200b " + amount + " \u200b`");
+                maker.appendRaw(user.getDisplayName(guild) + "'s coffee grounds have been set to: " + CoffeeEmotes.GROUNDS + " `" + amount + "`");
                 maker.send();
                 break;
 
@@ -119,7 +121,7 @@ public class CurrencyTreeCommand extends AbstractCommand {
 
         //command description:
         return
-        "#  Currency Types:\n// currency\n// lootcrate\n// jackpot\n// beans";
+        "#  Currency Types:\n// currency\n// lootcrate\n// jackpot\n// beans\n// roasted\n// grounds";
     }
 
 }

@@ -9,7 +9,8 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.economy.configs.CurrencySymbolConfig;
 import com.github.nija123098.evelyn.economy.configs.CurrentCurrencyConfig;
-import com.github.nija123098.evelyn.economy.configs.LootCrateConfig;
+import com.github.nija123098.evelyn.economy.lootcrate.LootCrateConfig;
+import com.github.nija123098.evelyn.economy.lootcrate.LootCrateEmotes;
 import com.github.nija123098.evelyn.exception.InsufficientException;
 import com.github.nija123098.evelyn.util.Rand;
 
@@ -28,9 +29,9 @@ public class FishCommand extends AbstractCommand {
         super("fish", ModuleLevel.FUN, null, null, "fish for stuff");
     }
 
-    //fishingEmotes: Fish, Tropical_Fish, Blowfish, Gift
+    //fishingEmotes: Fish, Tropical_Fish, Blowfish, Loot crate
     //DO NOT CHANGE THE ORDER WITHOUT CHANGING THE gerReward() METHOD
-    private String[] fishingEmotes = {"\uD83D\uDC1F", "\uD83D\uDC20", "\uD83D\uDC21", "\uD83C\uDF81"};
+    private String[] fishingEmotes = {"\uD83D\uDC1F", "\uD83D\uDC20", "\uD83D\uDC21", LootCrateEmotes.CRATE};
 
     //trashEmotes: Boot, Women_Hat, Anchor, Skull, Sun_glasses, Newspaper
     private String[] trashEmotes = {"\uD83D\uDC62", "\uD83D\uDC52", "⚓", "\uD83D\uDC80", "\uD83D\uDC53", "\uD83D\uDCF0"};

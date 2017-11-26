@@ -1,4 +1,4 @@
-package com.github.nija123098.evelyn.economy;
+package com.github.nija123098.evelyn.economy.lootcrate;
 
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
@@ -7,7 +7,6 @@ import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
-import com.github.nija123098.evelyn.economy.configs.LootCrateConfig;
 import com.github.nija123098.evelyn.exception.InsufficientException;
 
 import java.awt.*;
@@ -29,16 +28,12 @@ public class LootCrateCommand extends AbstractCommand {
     @Command
     public void command(Guild guild, User user, MessageMaker maker) throws InterruptedException {
 
-        //save loot crate symbol
-        String frame_symbol = "\uD83D\uDCE6";
-        String crate_symbol = "\uD83C\uDF81";
-
         //save user loot crate amount
         int userCrates = ConfigHandler.getSetting(LootCrateConfig.class, user);
 
         //if user has crates
         if (userCrates < 1) {
-            throw new InsufficientException("You need `\u200B " + crate_symbol + " 1 \u200B` more to perform this transaction.");
+            throw new InsufficientException("You need `\u200B " + LootCrateEmotes.CRATE + " 1 \u200B` more to perform this transaction.");
         }
 
         //configure message maker
@@ -47,11 +42,11 @@ public class LootCrateCommand extends AbstractCommand {
         maker.withColor(new Color(54,57,62));
 
         //display the first frame if there are crates
-        maker.appendRaw("```" + frame_symbol + " @" + user.getDisplayName(guild) + " " + frame_symbol + "\n");
+        maker.appendRaw("```" + LootCrateEmotes.BOX + " @" + user.getDisplayName(guild) + " " + LootCrateEmotes.BOX + "\n");
         maker.appendRaw("════════════════════════════════════════\n\n");
         maker.appendRaw("          Opening loot crate...\n\n               ✨ \uD83C\uDF81 ✨\n\n");
         maker.appendRaw("════════════════════════════════════════\n");
-        maker.appendRaw(" Crates: " + crate_symbol + " " + userCrates + "```" );
+        maker.appendRaw(" Crates: " + LootCrateEmotes.CRATE + " " + userCrates + "```" );
         maker.send();
 
         //clear the maker
@@ -68,12 +63,12 @@ public class LootCrateCommand extends AbstractCommand {
 
         //display the second frame after delay
         TimeUnit.SECONDS.sleep(2);
-        maker.appendRaw("```" + frame_symbol + " @" + user.getDisplayName(guild) + " " + frame_symbol + "\n");
+        maker.appendRaw("```" + LootCrateEmotes.BOX + " @" + user.getDisplayName(guild) + " " + LootCrateEmotes.BOX + "\n");
         maker.appendRaw("════════════════════════════════════════\n\n");
         maker.appendRaw("        Congratulations you got:\n\n");
         maker.appendRaw("               \uD83C\uDF89 " + reward_symbol + " \uD83C\uDF89\n\n");
         maker.appendRaw("════════════════════════════════════════\n");
-        maker.appendRaw(" Crates: " + crate_symbol + " " + userCrates + "  Loot: " + reward_symbol + " " + reward + "```");
+        maker.appendRaw(" Crates: " + LootCrateEmotes.CRATE + " " + userCrates + "  Loot: " + reward_symbol + " " + reward + "```");
 
         //add reaction for repeating the command
         maker.withReactionBehavior("package", ((add, reaction, u) -> {
@@ -91,7 +86,7 @@ public class LootCrateCommand extends AbstractCommand {
 
                 //print the error
                 maker.withColor(new Color(255, 183, 76));
-                maker.getHeader().clear().appendRaw("You need `\u200B " + crate_symbol + " 1 \u200B` more to perform this transaction.");
+                maker.getHeader().clear().appendRaw("You need `\u200B " + LootCrateEmotes.CRATE + " 1 \u200B` more to perform this transaction.");
                 maker.send();
                 return;
             }
@@ -103,11 +98,11 @@ public class LootCrateCommand extends AbstractCommand {
             maker.getHeader().clear();
 
             //display the first frame if there are crates
-            maker.appendRaw("```" + frame_symbol + " @" + user.getDisplayName(guild) + " " + frame_symbol + "\n");
+            maker.appendRaw("```" + LootCrateEmotes.BOX + " @" + user.getDisplayName(guild) + " " + LootCrateEmotes.BOX + "\n");
             maker.appendRaw("════════════════════════════════════════\n\n");
             maker.appendRaw("          Opening loot crate...\n\n               ✨ \uD83C\uDF81 ✨\n\n");
             maker.appendRaw("════════════════════════════════════════\n");
-            maker.appendRaw(" Crates: " + crate_symbol + " " + r_userCrates + "```" );
+            maker.appendRaw(" Crates: " + LootCrateEmotes.CRATE + " " + r_userCrates + "```" );
             maker.send();
 
             //clear the maker
@@ -128,12 +123,12 @@ public class LootCrateCommand extends AbstractCommand {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            maker.appendRaw("```" + frame_symbol + " @" + user.getDisplayName(guild) + " " + frame_symbol + "\n");
+            maker.appendRaw("```" + LootCrateEmotes.BOX + " @" + user.getDisplayName(guild) + " " + LootCrateEmotes.BOX + "\n");
             maker.appendRaw("════════════════════════════════════════\n\n");
             maker.appendRaw("        Congratulations you got:\n\n");
             maker.appendRaw("               \uD83C\uDF89 " + r_reward_symbol + " \uD83C\uDF89\n\n");
             maker.appendRaw("════════════════════════════════════════\n");
-            maker.appendRaw(" Crates: " + crate_symbol + " " + r_userCrates + "  Loot: " + r_reward_symbol + " " + r_reward + "```");
+            maker.appendRaw(" Crates: " + LootCrateEmotes.CRATE + " " + r_userCrates + "  Loot: " + r_reward_symbol + " " + r_reward + "```");
             maker.send();
 
         }));
