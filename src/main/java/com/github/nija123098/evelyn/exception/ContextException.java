@@ -28,6 +28,6 @@ public class ContextException extends BotException {
 
     @Override
     public MessageMaker makeMessage(Channel channel) {
-        return super.makeMessage(channel).withColor(new Color(255, 183, 76)).getTitle().clear().appendRaw("Invalid Context").getMaker();
+        return super.makeMessage(channel).getNote().clear().append("Please check the help command for more information on how to use this command.").getMaker().withColor(new Color(255, 183, 76)).getTitle().clear().appendRaw("Invalid Context").getMaker();
     }
 }
