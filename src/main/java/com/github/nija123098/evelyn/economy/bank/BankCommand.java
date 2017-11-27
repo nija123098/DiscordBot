@@ -1,4 +1,4 @@
-package com.github.nija123098.evelyn.economy;
+package com.github.nija123098.evelyn.economy.bank;
 
 import com.github.nija123098.evelyn.audio.Track;
 import com.github.nija123098.evelyn.audio.YoutubeTrack;
@@ -11,7 +11,11 @@ import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
-import com.github.nija123098.evelyn.economy.configs.*;
+import com.github.nija123098.evelyn.economy.configs.CurrencyNameConfig;
+import com.github.nija123098.evelyn.economy.configs.CurrencySymbolConfig;
+import com.github.nija123098.evelyn.economy.configs.CurrentCurrencyConfig;
+import com.github.nija123098.evelyn.economy.configs.CurrentCurrencyStreakConfig;
+import com.github.nija123098.evelyn.economy.event.configs.*;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
 
 import java.awt.*;

@@ -1,4 +1,4 @@
-package com.github.nija123098.evelyn.economy;
+package com.github.nija123098.evelyn.economy.bank;
 
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.annotations.Command;

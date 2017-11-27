@@ -3,7 +3,7 @@ package com.github.nija123098.evelyn.economy.configs;
 import com.github.nija123098.evelyn.config.AbstractConfig;
 import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
-import com.github.nija123098.evelyn.economy.ItemComponent;
+import com.github.nija123098.evelyn.economy.currencytransfer.ItemComponent;
 
 import java.util.HashMap;
 import java.util.Map;

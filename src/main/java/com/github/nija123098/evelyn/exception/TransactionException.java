@@ -3,8 +3,8 @@ package com.github.nija123098.evelyn.exception;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.Configurable;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
-import com.github.nija123098.evelyn.economy.ItemComponent;
 import com.github.nija123098.evelyn.economy.configs.CurrencySymbolConfig;
+import com.github.nija123098.evelyn.economy.currencytransfer.ItemComponent;
 
 /**
  * Made by nija123098 on 5/17/2017.

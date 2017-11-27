@@ -1,4 +1,4 @@
-package com.github.nija123098.evelyn.economy;
+package com.github.nija123098.evelyn.economy.role;
 
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ContextType;
@@ -9,9 +9,9 @@ import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.GuildUser;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Role;
-import com.github.nija123098.evelyn.economy.configs.CurrentCurrencyConfig;
 import com.github.nija123098.evelyn.economy.configs.CurrencySymbolConfig;
-import com.github.nija123098.evelyn.economy.configs.RoleBuyConfig;
+import com.github.nija123098.evelyn.economy.configs.CurrentCurrencyConfig;
+import com.github.nija123098.evelyn.economy.role.configs.RoleBuyConfig;
 import com.github.nija123098.evelyn.exception.ArgumentException;
 import com.github.nija123098.evelyn.util.FormatHelper;
 

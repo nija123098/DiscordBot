@@ -1,4 +1,4 @@
-package com.github.nija123098.evelyn.economy;
+package com.github.nija123098.evelyn.economy.currencytransfer;
 
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.Configurable;
@@ -6,9 +6,9 @@ import com.github.nija123098.evelyn.config.GuildUser;
 import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
+import com.github.nija123098.evelyn.economy.configs.CurrencyHistoryConfig;
 import com.github.nija123098.evelyn.economy.configs.CurrentComponentsConfig;
 import com.github.nija123098.evelyn.economy.configs.CurrentCurrencyConfig;
-import com.github.nija123098.evelyn.economy.configs.CurrencyHistoryConfig;
 import com.github.nija123098.evelyn.exception.ArgumentException;
 import com.github.nija123098.evelyn.exception.TransactionException;
 import com.github.nija123098.evelyn.perms.BotRole;

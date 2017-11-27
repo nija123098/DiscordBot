@@ -1,4 +1,4 @@
-package com.github.nija123098.evelyn.economy.configs;
+package com.github.nija123098.evelyn.economy.role.configs;
 
 import com.github.nija123098.evelyn.config.AbstractConfig;
 import com.github.nija123098.evelyn.config.ConfigCategory;

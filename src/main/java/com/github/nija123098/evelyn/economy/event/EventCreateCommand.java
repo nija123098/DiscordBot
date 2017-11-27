@@ -1,4 +1,4 @@
-package com.github.nija123098.evelyn.economy;
+package com.github.nija123098.evelyn.economy.event;
 
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
@@ -8,7 +8,10 @@ import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.GlobalConfigurable;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
-import com.github.nija123098.evelyn.economy.configs.*;
+import com.github.nija123098.evelyn.economy.event.configs.EventBonusConfig;
+import com.github.nija123098.evelyn.economy.event.configs.EventEndConfig;
+import com.github.nija123098.evelyn.economy.event.configs.EventNameConfig;
+import com.github.nija123098.evelyn.economy.event.configs.EventStartConfig;
 
 import java.time.Instant;
 

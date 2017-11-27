@@ -1,4 +1,4 @@
-package com.github.nija123098.evelyn.economy;
+package com.github.nija123098.evelyn.economy.currencytransfer;
 
 import com.github.nija123098.evelyn.util.EmoticonHelper;
 
