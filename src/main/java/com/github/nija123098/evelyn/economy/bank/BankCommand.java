@@ -100,7 +100,7 @@ public class BankCommand extends AbstractCommand {
             ConfigHandler.setSetting(LastCurrencyUseConfig.class, user, now.truncatedTo(ChronoUnit.SECONDS).toString());
             if (streak < 8) ConfigHandler.setSetting(CurrentCurrencyStreakConfig.class, user, (streak + 1));
         } else {
-            if (hours == 0 && minutes >= 1) {
+            if (hours == 0 && minutes <= 1) {
                 GuildAudioManager manager = GuildAudioManager.getManager(guild);
                 if (manager != null) {
                     List<Track> thing = new ArrayList<>();
