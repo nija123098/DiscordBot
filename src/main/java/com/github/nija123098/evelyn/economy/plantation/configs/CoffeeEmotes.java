@@ -14,13 +14,28 @@ public class CoffeeEmotes {
         this.emote = emote;
     }
 
+    //coffee emote
+    public final static String COFFEE = EmoticonHelper.getEmoji("Coffee").toString();
+
     //beans emote
     public final static String BEANS = EmoticonHelper.getEmoji("bean").toString();
 
-    //grounds emote
-    public final static String GROUNDS = EmoticonHelper.getEmoji("grind").toString();
+    //roasted beans emote
+    public final static String ROASTBEANS = EmoticonHelper.getEmoji("roastbean").toString();
 
-    //roasted emote
-    public final static String ROASTED = EmoticonHelper.getEmoji("roast").toString();
+    //grounds emote
+    public final static String GROUNDS = EmoticonHelper.getEmoji("coffeegrounds").toString();
+
+    //grinder emote
+    public final static String GRINDER = EmoticonHelper.getEmoji("grinder").toString();
+
+    //brewer emote
+    public final static String BREWER = EmoticonHelper.getEmoji("brewer").toString();
+
+    //roaster emote
+    public final static String ROASTER = EmoticonHelper.getEmoji("roaster").toString();
+
+    //steeper emote
+    public final static String STEEPER = EmoticonHelper.getEmoji("steeper").toString();
 
 }

@@ -45,16 +45,16 @@ public class InventoryCommand extends AbstractCommand {
         maker.getNote().clear().appendRaw("If you'd like to know more about a certain section use " + ConfigHandler.getExteriorSetting(GuildPrefixConfig.class, guild) + "help <section_name>");
 
         //lootcrate section
-        maker.getNewFieldPart().getTitle().appendRaw("Lootcrate").getFieldPart().getValue().appendRaw("`\u200B " +
+        maker.getNewFieldPart().withBoth("Lootcrate", "`\u200B " +
                 LootCrateEmotes.CRATE + " " +
                 ConfigHandler.getSetting(LootCrateConfig.class, user) +
-                " \u200B`").getFieldPart().withInline(true);
+                " \u200B`");
 
-        //plantaion section
-        maker.getNewFieldPart().getTitle().appendRaw("Plantation").getFieldPart().getValue().appendRaw(
+        //plantation section
+        maker.getNewFieldPart().withBoth("Plantation",(
                 CoffeeEmotes.BEANS + " `" + ConfigHandler.getSetting(CurrentBeansConfig.class, user) + "`\n" +
-                CoffeeEmotes.ROASTED + " `" + ConfigHandler.getSetting(CurrentRoastedBeansConfig.class, user) + "`\n" +
-                CoffeeEmotes.GROUNDS + " `" + ConfigHandler.getSetting(CurrentGroundsConfig.class, user) + "`").getFieldPart().withInline(true);
+                CoffeeEmotes.ROASTBEANS + " `" + ConfigHandler.getSetting(CurrentRoastedBeansConfig.class, user) + "`\n" +
+                CoffeeEmotes.GROUNDS + " `" + ConfigHandler.getSetting(CurrentGroundsConfig.class, user) + "`"));
         maker.send();
 
     }

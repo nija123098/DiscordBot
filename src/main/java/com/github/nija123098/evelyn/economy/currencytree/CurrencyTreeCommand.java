@@ -83,7 +83,7 @@ public class CurrencyTreeCommand extends AbstractCommand {
             //set roasted beans
             case "roasted":
                 ConfigHandler.setSetting(CurrentRoastedBeansConfig.class, user, amount + ConfigHandler.getSetting(CurrentRoastedBeansConfig.class, user));
-                maker.appendRaw(user.getDisplayName(guild) + "'s roasted beans have been incremented by: " + CoffeeEmotes.ROASTED + " `" + amount + "`");
+                maker.appendRaw(user.getDisplayName(guild) + "'s roasted beans have been incremented by: " + CoffeeEmotes.ROASTBEANS + " `" + amount + "`");
                 maker.send();
                 break;
 
