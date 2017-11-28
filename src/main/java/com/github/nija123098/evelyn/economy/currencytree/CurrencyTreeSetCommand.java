@@ -75,21 +75,21 @@ public class CurrencyTreeSetCommand extends AbstractCommand {
             //set coffee beans
             case "beans":
                 ConfigHandler.setSetting(CurrentBeansConfig.class, user, amount);
-                maker.appendRaw(user.getDisplayName(guild) + "'s coffee beans have been set to: " + CoffeeEmotes.BEANS + " `" + amount + "`");
+                maker.appendRaw(user.getDisplayName(guild) + "'s coffee beans have been set to: " + CoffeeEmotes.BEANS + " `\u200B " + amount + " \u200B`");
                 maker.send();
                 break;
 
             //set roasted beans
             case "roasted":
                 ConfigHandler.setSetting(CurrentRoastedBeansConfig.class, user, amount);
-                maker.appendRaw(user.getDisplayName(guild) + "'s roasted beans have been set to: " + CoffeeEmotes.ROASTBEANS + " `" + amount + "`");
+                maker.appendRaw(user.getDisplayName(guild) + "'s roasted beans have been set to: " + CoffeeEmotes.ROASTBEANS + " `\u200B " + amount + " \u200B`");
                 maker.send();
                 break;
 
             //set coffee grounds
             case "grounds":
                 ConfigHandler.setSetting(CurrentGroundsConfig.class, user, amount);
-                maker.appendRaw(user.getDisplayName(guild) + "'s coffee grounds have been set to: " + CoffeeEmotes.GROUNDS + " `" + amount + "`");
+                maker.appendRaw(user.getDisplayName(guild) + "'s coffee grounds have been set to: " + CoffeeEmotes.GROUNDS + " `\u200B " + amount + " \u200B`");
                 maker.send();
                 break;
 

@@ -52,9 +52,9 @@ public class InventoryCommand extends AbstractCommand {
 
         //plantation section
         maker.getNewFieldPart().withBoth("Plantation",(
-                CoffeeEmotes.BEANS + " `" + ConfigHandler.getSetting(CurrentBeansConfig.class, user) + "`\n" +
-                CoffeeEmotes.ROASTBEANS + " `" + ConfigHandler.getSetting(CurrentRoastedBeansConfig.class, user) + "`\n" +
-                CoffeeEmotes.GROUNDS + " `" + ConfigHandler.getSetting(CurrentGroundsConfig.class, user) + "`"));
+                CoffeeEmotes.BEANS + " `\u200B " + ConfigHandler.getSetting(CurrentBeansConfig.class, user) + " \u200B`\n" +
+                CoffeeEmotes.ROASTBEANS + " `\u200B " + ConfigHandler.getSetting(CurrentRoastedBeansConfig.class, user) + " \u200B`\n" +
+                CoffeeEmotes.GROUNDS + " `\u200B " + ConfigHandler.getSetting(CurrentGroundsConfig.class, user) + " \u200B`"));
         maker.send();
 
     }

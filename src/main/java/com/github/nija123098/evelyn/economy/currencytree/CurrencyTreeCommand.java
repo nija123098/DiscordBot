@@ -76,21 +76,21 @@ public class CurrencyTreeCommand extends AbstractCommand {
             //set coffee beans
             case "beans":
                 ConfigHandler.setSetting(CurrentBeansConfig.class, user, amount + ConfigHandler.getSetting(CurrentBeansConfig.class, user));
-                maker.appendRaw(user.getDisplayName(guild) + "'s coffee beans have been incremented by: " + CoffeeEmotes.BEANS + " `" + amount + "`");
+                maker.appendRaw(user.getDisplayName(guild) + "'s coffee beans have been incremented by: " + CoffeeEmotes.BEANS + " `\u200B " + amount + " \u200B`");
                 maker.send();
                 break;
 
             //set roasted beans
             case "roasted":
                 ConfigHandler.setSetting(CurrentRoastedBeansConfig.class, user, amount + ConfigHandler.getSetting(CurrentRoastedBeansConfig.class, user));
-                maker.appendRaw(user.getDisplayName(guild) + "'s roasted beans have been incremented by: " + CoffeeEmotes.ROASTBEANS + " `" + amount + "`");
+                maker.appendRaw(user.getDisplayName(guild) + "'s roasted beans have been incremented by: " + CoffeeEmotes.ROASTBEANS + " `\u200B " + amount + " \u200B`");
                 maker.send();
                 break;
 
             //set coffee grounds
             case "grounds":
                 ConfigHandler.setSetting(CurrentGroundsConfig.class, user, amount + ConfigHandler.getSetting(CurrentGroundsConfig.class, user));
-                maker.appendRaw(user.getDisplayName(guild) + "'s coffee grounds have been incremented by: " + CoffeeEmotes.GROUNDS + " `" + amount + "`");
+                maker.appendRaw(user.getDisplayName(guild) + "'s coffee grounds have been incremented by: " + CoffeeEmotes.GROUNDS + " `\u200B " + amount + " \u200B`");
                 maker.send();
                 break;
 
