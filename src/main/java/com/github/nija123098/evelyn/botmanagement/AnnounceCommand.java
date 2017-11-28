@@ -10,7 +10,6 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
 import com.github.nija123098.evelyn.moderation.logging.BotChannelConfig;
 import com.github.nija123098.evelyn.util.FormatHelper;
-import com.github.nija123098.evelyn.util.Log;
 
 import java.awt.*;
 import java.util.ConcurrentModificationException;
@@ -22,10 +21,7 @@ public class AnnounceCommand extends AbstractCommand {
         super("announce", ModuleLevel.BOT_ADMINISTRATIVE, null, null, null);
     }
     @Command
-    public void command(@Argument(info = "The stuff to say") String text, Channel channel_reference){
-        MessageMaker maker = new MessageMaker((Channel) null);
-        Set<Channel> channels = DiscordClient.getGuilds().stream().map((guild -> ConfigHandler.getSetting(BotChannelConfig.class, guild))).collect(Collectors.toSet());
-        channels.remove(null);
+    public void command(@Argument(info = "The stuff to say") String text, MessageMaker maker){
 
         //configure maker
         maker.withAuthorIcon(DiscordClient.getOurUser().getAvatarURL()).getAuthorName().clear().appendRaw("Evelyn Announcement");
@@ -49,11 +45,12 @@ public class AnnounceCommand extends AbstractCommand {
         //confirm message with user
         //if no send
         maker.withReactionBehavior("RedTick", ((add, reaction, u) -> {
-            Log.log("it runs");
             //remove reactions
             try {
                 maker.clearReactionBehaviors();
             } catch (ConcurrentModificationException IGNORE){ }
+            maker.sentMessage().getReactions().forEach(reactions -> maker.sentMessage().removeReaction(reactions));
+
         }));
 
         //if send
@@ -63,14 +60,19 @@ public class AnnounceCommand extends AbstractCommand {
             try {
                 maker.clearReactionBehaviors();
             } catch (ConcurrentModificationException IGNORE){ }
+            maker.sentMessage().getReactions().forEach(reactions -> maker.sentMessage().removeReaction(reactions));
 
             //announce the message on all servers
+            Set<Channel> channels = DiscordClient.getGuilds().stream().map((guild -> ConfigHandler.getSetting(BotChannelConfig.class, guild))).collect(Collectors.toSet());
+            channels.remove(null);
             for (Channel channel : channels) {
-                maker.forceCompile().withChannel(channel).send();
-                maker.forceCompile().clearMessage();
+                maker.clearMessage();
+                MessageMaker maker2 = maker;
+                maker2.forceCompile().withChannel(channel).withoutReactionBehavior("GreenTick").send();
+                maker2.forceCompile().clearMessage();
             }
         }));
-        maker.forceCompile().withChannel(channel_reference).send();
+        maker.forceCompile().send();
 
     }
 
