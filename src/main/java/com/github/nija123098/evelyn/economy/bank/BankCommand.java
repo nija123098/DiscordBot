@@ -137,9 +137,9 @@ public class BankCommand extends AbstractCommand {
         }
         ret.append("════════════════════════════════════════\n");
         if (claim) {
-            ret.append(" Funds: " + moneySymbol + " " + (ConfigHandler.getSetting(CurrentCurrencyConfig.class, user) + bonus + (streak * 8) + 256) + " Daily: \uD83D\uDCC6 " + (streak + (streak == 8 ? 0 : 1)) + "/8\n");
+            ret.append(" Funds: " + moneySymbol + " " + (ConfigHandler.getSetting(CurrentCurrencyConfig.class, user) + bonus + (streak * 8) + 256) + "  Daily: \uD83D\uDCC6 " + (streak + (streak == 8 ? 0 : 1)) + "/8\n");
         } else {
-            ret.append(" Funds: " + moneySymbol + " " + ConfigHandler.getSetting(CurrentCurrencyConfig.class, user) + " Daily: \uD83D\uDCC6 " + streak + "/8\n");
+            ret.append(" Funds: " + moneySymbol + " " + ConfigHandler.getSetting(CurrentCurrencyConfig.class, user) + "  Daily: \uD83D\uDCC6 " + streak + "/8\n");
         }
         ret.append("```");
         return ret.toString();

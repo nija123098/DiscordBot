@@ -8,6 +8,7 @@ import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.economy.configs.CurrentCurrencyConfig;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
+import com.github.nija123098.evelyn.util.FormatHelper;
 
 /**
  * Written by Soarnir 23/11/17
@@ -18,11 +19,18 @@ public class PointlessCommand extends AbstractCommand {
         super("pointless", ModuleLevel.FUN, null, null, "lel");
     }
 
+    private static int currencyLost = 0;
+
     @Command
     public void command(User user, MessageMaker maker) {
         maker.appendRaw(EmoticonHelper.getEmoji("EMPTY").toString());
         maker.withReactionBehavior("red_circle", (add, reaction, user1) -> {
             int currency = ConfigHandler.getSetting(CurrentCurrencyConfig.class, user);
+            currencyLost = currencyLost + 1;
+            if (currencyLost >= 10) {
+                currencyLost = 0;
+                new MessageMaker(user).mustEmbed().appendRaw(FormatHelper.embedLink("you may need help", "http://www.smartrecovery.org/addiction/gambling_addiction.html")).withDM().send();
+            }
             ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, (currency - 1));
         });
     }
