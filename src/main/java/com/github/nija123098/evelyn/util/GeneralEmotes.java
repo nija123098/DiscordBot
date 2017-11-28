@@ -15,4 +15,10 @@ public class GeneralEmotes {
     //empty emote
     public final static String EMPTY = EmoticonHelper.getEmoji("EMPTY").toString();
 
+    //green tick emote
+    public final static String GREENTICK = EmoticonHelper.getEmoji("GreenTick").toString();
+
+    //red tick emote
+    public final static String REDTICK = EmoticonHelper.getEmoji("RedTick").toString();
+
 }
