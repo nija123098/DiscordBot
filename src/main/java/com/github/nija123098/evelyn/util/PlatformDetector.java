@@ -25,7 +25,6 @@ public class PlatformDetector {
         } else if (isWindows()) {
             ending = "/";
         } else if (isMac()) {
-            System.out.println("definitely mac");
             ending = "/";
         }
         return ending;
