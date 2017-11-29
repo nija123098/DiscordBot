@@ -17,6 +17,7 @@ public class PingCommand extends AbstractCommand {
     @Command
     public void command(MessageMaker helper){
         long time = System.currentTimeMillis();
+        helper.mustEmbed();
         helper.appendRaw(EmoticonHelper.getChars("outbox_tray", false) + " ").append("Checking ping").send();
         time = System.currentTimeMillis() - time;
         Log.log("Ping is " + time);

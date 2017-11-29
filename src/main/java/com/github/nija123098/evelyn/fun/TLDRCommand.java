@@ -1,21 +1,22 @@
 package com.github.nija123098.evelyn.fun;
+import com.github.nija123098.evelyn.botConfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.exception.DevelopmentException;
-import com.github.nija123098.evelyn.util.FormatHelper;
-import com.github.nija123098.evelyn.util.Rand;
-import com.github.nija123098.evelyn.util.StringIterator;
-import com.github.nija123098.evelyn.util.TwitterHelper;
+import com.github.nija123098.evelyn.util.*;
 import com.google.common.base.Joiner;
+import com.google.common.base.Objects;
 import javafx.util.Pair;
 import twitter4j.Paging;
 import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.TwitterException;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -28,6 +29,8 @@ public class TLDRCommand extends AbstractCommand {
     private List<String> entries;
     public TLDRCommand() {
         super("tldr", ModuleLevel.FUN, "tl;dr", null, "Shows a tldr from https://twitter.com/tldrwikipedia");
+        //if twitter token not found, do nothing
+        if (Objects.equal(ConfigProvider.authKeys.twitter_secret(),"na")){Log.log("Could not load Twitter. Token not found."); return;}
         List<Status> statuses = new ArrayList<>();
         int page = 0;
         while (true){
@@ -62,14 +65,23 @@ public class TLDRCommand extends AbstractCommand {
     }
     @Command
     public void command(MessageMaker maker, String s) {
-        if (s.isEmpty()) s = Rand.getRand(this.entries, false);
-        else s = FormatHelper.removeChars(s, ' ').toLowerCase();
-        Pair<String, String> pair = this.map.get(s);
-        if (pair == null){
-            maker.append("There is no an entry for that");
-            return;
+        try {
+            if (s.isEmpty()) s = Rand.getRand(this.entries, false);
+            else s = FormatHelper.removeChars(s, ' ').toLowerCase();
+            Pair<String, String> pair = this.map.get(s);
+            if (pair == null){
+                maker.append("There is no an entry for that");
+                return;
+            }
+            maker.getTitle().appendRaw(pair.getKey());
+            maker.withImage(pair.getValue());
+        } catch (NullPointerException e){
+            if (Objects.equal(ConfigProvider.authKeys.twitter_secret(),"na")){
+                maker.mustEmbed().withColor(new Color(255, 0, 0));
+                maker.getHeader().clear().append("Sorry, we are in the process of updating our API key!");
+            } else {
+                Log.log("TLDR Could not load map.",e);
+            }
         }
-        maker.getTitle().appendRaw(pair.getKey());
-        maker.withImage(pair.getValue());
     }
 }

@@ -15,6 +15,7 @@ public class UptimeCommand extends AbstractCommand {
     }
     @Command
     public void command(MessageMaker maker){
+        maker.mustEmbed();
         maker.append("I have been online for " + Time.getAbbreviated(System.currentTimeMillis() - launchTime));
     }
 }

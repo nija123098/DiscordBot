@@ -1,5 +1,6 @@
 package com.github.nija123098.evelyn.economy.currencytree;
 
+import com.github.nija123098.evelyn.botConfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
@@ -35,7 +36,7 @@ public class CurrencyTreeSetCommand extends AbstractCommand {
         //configure message maker
         maker.mustEmbed();
         maker.withAutoSend(false);
-        maker.withImage("https://media.giphy.com/media/ZPFQVis9WAAcE/giphy.gif");
+        maker.withImage(ConfigProvider.urls.currencytree_gif());
 
         //check for valid amount
         if (amount < 0) {

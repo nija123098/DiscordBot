@@ -19,4 +19,7 @@ public class GeneralEmotes {
     //red tick emote
     public final static String REDTICK = EmoticonHelper.getEmoji("RedTick").toString();
 
+    //blob aww emote
+    public final static String BLOBAWW = EmoticonHelper.getEmoji("blobaww").toString();
+
 }

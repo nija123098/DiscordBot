@@ -19,8 +19,10 @@ import net.rithms.riot.api.endpoints.static_data.dto.ChampionSpell;
 import net.rithms.riot.api.endpoints.static_data.dto.Image;
 import net.rithms.riot.constant.Platform;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class LOLChampCommand extends AbstractCommand {
     private final RiotApi api;
@@ -36,7 +38,12 @@ public class LOLChampCommand extends AbstractCommand {
         this.api = ConfigProvider.authKeys.riot_games_token() != null ? new RiotApi(new ApiConfig().setKey(ConfigProvider.authKeys.riot_games_token())) : null;
         try{baseUrl = String.format("http://ddragon.leagueoflegends.com/cdn/%s/img/", api.getDataVersions(Platform.EUW).get(0));
         } catch (RiotApiException e) {
-            throw new DevelopmentException(e);
+            //don't print stack trace if token not found
+            if (Objects.equals(ConfigProvider.authKeys.riot_games_token(),"na")){
+                Log.log("Could not load Riot Api. Token not found.");
+            }else{
+                throw new DevelopmentException(e);
+            }
         }
     }
     private String getImage(Image img) {
@@ -95,7 +102,8 @@ public class LOLChampCommand extends AbstractCommand {
             }
             maker.append(description);
         } catch (RiotApiException e) {
-            maker.getHeader().clear().append("Sorry, we are in the process of updating out API key!");
+            maker.mustEmbed().withColor(new Color(255, 0, 0));
+            maker.getHeader().clear().append("Sorry, we are in the process of updating our API key!");
             if (!e.getMessage().contains("403")) Log.log("Exception loading Riot information", e);
         }
     }

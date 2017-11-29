@@ -19,7 +19,8 @@ public class SystemCommand extends AbstractCommand {
     }
     @Command
     public void command(MessageMaker maker){
-        maker.append("Evelyn Version: " + Reference.EVELYN_VERSION + "\n");
+        maker.mustEmbed();
+        maker.getTitle().clear().appendRaw("Evelyn Version: " + Reference.EVELYN_VERSION + "\n");
         Runtime runtime = Runtime.getRuntime();
         long memoryLimit = runtime.maxMemory();
         long leastMemory = runtime.freeMemory(), freeMemory;

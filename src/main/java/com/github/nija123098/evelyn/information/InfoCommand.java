@@ -1,10 +1,19 @@
 package com.github.nija123098.evelyn.information;
 
+import com.github.nija123098.evelyn.botConfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.CommandHandler;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Command;
+import com.github.nija123098.evelyn.config.ConfigHandler;
+import com.github.nija123098.evelyn.config.configs.guild.GuildPrefixConfig;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
+import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
+import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
+import com.github.nija123098.evelyn.util.EmoticonHelper;
+import com.github.nija123098.evelyn.util.FormatHelper;
+
+import java.awt.*;
 
 /**
  * Made by nija123098 on 5/30/2017.
@@ -15,15 +24,18 @@ public class InfoCommand extends AbstractCommand {
         super("info", ModuleLevel.INFO, "about, information", null, "Gives some information about me");
     }
     @Command
-    public void command(MessageMaker maker){
+    public void command(MessageMaker maker, Guild guild){
         if (totalCommands == -1) totalCommands = (int) CommandHandler.getCommands().stream().filter(AbstractCommand::isHighCommand).filter(o -> !o.isTemplateCommand()).count();
-        maker.appendRaw("I am Evelyn, a music playing auto moderation bot!" +
+        maker.mustEmbed().withColor(new Color(39, 209, 110)).withThumb(DiscordClient.getOurUser().getAvatarURL());
+        maker.getTitle().clear().appendRaw(EmoticonHelper.getChars("bulb",false) + "INFO");
+        String prefix = ConfigHandler.getSetting(GuildPrefixConfig.class, guild);
+        maker.appendRaw("\u200B\nI am Evelyn, a music playing auto moderation bot!\n" +
                 "\n" +
-                "***Type @Evelyn help*** to see a list of commands. In total there are " + totalCommands + " unique commands I can perform.\n" +
+                "Type " + FormatHelper.embedLink("@Evelyn help","") + " to see a list of commands. In total there are " + FormatHelper.embedLink(String.valueOf(totalCommands),"") + " unique commands I can perform.\n" +
                 "\n" +
-                "***For help*** about a command type !help <command>\n" +
-                "An example: `@Evelyn help ping` to see what you can do with the ping command.\n" +
+                "For help about a command type " + FormatHelper.embedLink(prefix + "help <command>\n","") +
+                "An example: " + FormatHelper.embedLink("@Evelyn help ping","") + " to see what you can do with the ping command.\n" +
                 "\n" +
-                "If you need assistance, want to share your thoughts or want to contribute feel free to join my `!discord`");
+                "If you need assistance, want to share your thoughts or want to contribute feel free to join my discord " + FormatHelper.embedLink("here", ConfigProvider.urls.discord_invite_url()) + ".");
     }
 }

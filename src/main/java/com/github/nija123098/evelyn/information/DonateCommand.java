@@ -1,5 +1,6 @@
 package com.github.nija123098.evelyn.information;
 
+import com.github.nija123098.evelyn.botConfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Command;
@@ -17,14 +18,14 @@ public class DonateCommand extends AbstractCommand {
     @Command
     public void command(MessageMaker maker){
         maker.getTitle().append("Contributions!");
-        maker.append("**Did you find a bug?**\n" +
-                "You can report them on").appendRaw("`!discord`.\n").append(
+        maker.append("\u200B\n**Did you find a bug?**\n" +
+                "You can report them on ").appendRaw(FormatHelper.embedLink("here", ConfigProvider.urls.discord_invite_url()) + "\n").append(
                 "\n" +
                 "**Want to contribute or share your thoughts?**\n" +
-                "Feel free to join ").appendRaw("`!discord`").append(" and let your voice be heard! Feedback and suggestions are always welcome!\n" +
+                "Feel free to join ").appendRaw(FormatHelper.embedLink("here", ConfigProvider.urls.discord_invite_url())).append(" and let your voice be heard! Feedback and suggestions are always welcome!\n" +
                 "\n" +
                 "**You'd like to donate?**  (Yes you would)\n" +
-                "You can do this though my ").appendRaw(FormatHelper.embedLink("Patreon", "https://www.patreon.com/soarnija") + ".");
+                "You can do this though my ").appendRaw(FormatHelper.embedLink("Patreon", ConfigProvider.urls.patreon_url()) + ".");
         maker.withThumb(DiscordClient.getOurUser().getAvatarURL());
     }
 }

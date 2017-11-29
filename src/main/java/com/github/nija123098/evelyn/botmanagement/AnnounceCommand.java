@@ -1,5 +1,6 @@
 package com.github.nija123098.evelyn.botmanagement;
 
+import com.github.nija123098.evelyn.botConfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Argument;
@@ -25,7 +26,7 @@ public class AnnounceCommand extends AbstractCommand {
 
         //configure maker
         maker.withAuthorIcon(DiscordClient.getOurUser().getAvatarURL()).getAuthorName().clear().appendRaw("Evelyn Announcement");
-        maker.withThumb("https://cdn.discordapp.com/attachments/374538747229896704/384862519354982403/38153-200.png");
+        maker.withThumb(ConfigProvider.urls.announce_thumb());
         maker.withColor(new Color(175, 30,5));
         maker.withAutoSend(false).mustEmbed();
 
