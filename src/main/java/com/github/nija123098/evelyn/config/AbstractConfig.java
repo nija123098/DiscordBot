@@ -117,6 +117,15 @@ public class AbstractConfig<V, T extends Configurable> {
     /**
      * A standard getter.
      *
+     * @return the display name of the config
+     */
+    public String getDisplayName() {
+        return this.name;
+    }
+
+    /**
+     * A standard getter.
+     *
      * @return the multi-line config description.
      */
     public String getDescription() {

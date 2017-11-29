@@ -11,4 +11,9 @@ public class GuildPrefixConfig extends AbstractConfig<String, Guild> {
     public GuildPrefixConfig() {
         super("guild_prefix", "", ConfigCategory.GUILD_PERSONALIZATION, "!", "The prefix for the guild");
     }
+
+    @Override
+    public String setValue(Guild configurable, String value, boolean overrideCache) {
+        return super.setValue(configurable, value, true);
+    }
 }
