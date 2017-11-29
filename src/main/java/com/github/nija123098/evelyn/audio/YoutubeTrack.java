@@ -1,15 +1,15 @@
 package com.github.nija123098.evelyn.audio;
 
-import com.github.nija123098.evelyn.util.*;
+import com.github.nija123098.evelyn.util.CallBuffer;
+import com.github.nija123098.evelyn.util.Log;
+import com.github.nija123098.evelyn.util.StringHelper;
+import com.github.nija123098.evelyn.util.YTUtil;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.jsoup.Jsoup;
 
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * The track defining the audio portion of the video.

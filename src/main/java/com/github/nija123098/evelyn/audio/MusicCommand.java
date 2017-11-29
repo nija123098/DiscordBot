@@ -1,8 +1,8 @@
 package com.github.nija123098.evelyn.audio;
 
-import com.github.nija123098.evelyn.audio.configs.guild.SkipPercentConfig;
 import com.github.nija123098.evelyn.audio.configs.guild.AutoMusicChannelConfig;
 import com.github.nija123098.evelyn.audio.configs.guild.QueueTrackOnlyConfig;
+import com.github.nija123098.evelyn.audio.configs.guild.SkipPercentConfig;
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Command;

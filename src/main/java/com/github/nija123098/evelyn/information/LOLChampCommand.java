@@ -1,5 +1,5 @@
 package com.github.nija123098.evelyn.information;
-import com.github.nija123098.evelyn.BotConfig.*;
+import com.github.nija123098.evelyn.botConfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Argument;
@@ -33,7 +33,7 @@ public class LOLChampCommand extends AbstractCommand {
     }
     public LOLChampCommand() {
         super("lolchamp", ModuleLevel.INFO, null, null, "check out a league of legends champion");
-        this.api = BotConfig.RIOT_GAMES_TOKEN != null ? new RiotApi(new ApiConfig().setKey(BotConfig.RIOT_GAMES_TOKEN)) : null;
+        this.api = ConfigProvider.authKeys.riot_games_token() != null ? new RiotApi(new ApiConfig().setKey(ConfigProvider.authKeys.riot_games_token())) : null;
         try{baseUrl = String.format("http://ddragon.leagueoflegends.com/cdn/%s/img/", api.getDataVersions(Platform.EUW).get(0));
         } catch (RiotApiException e) {
             throw new DevelopmentException(e);

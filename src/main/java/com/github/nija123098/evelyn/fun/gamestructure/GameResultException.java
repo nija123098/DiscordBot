@@ -5,7 +5,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.exception.BotException;
 import com.github.nija123098.evelyn.fun.gamestructure.neuralnet.AbstractNeuralNetGame;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**

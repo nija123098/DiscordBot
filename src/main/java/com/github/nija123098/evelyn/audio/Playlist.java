@@ -1,9 +1,9 @@
 package com.github.nija123098.evelyn.audio;
 
 import com.github.nija123098.evelyn.audio.configs.guild.GuildPlaylistsConfig;
-import com.github.nija123098.evelyn.audio.configs.playlist.UserPlaylistsConfig;
 import com.github.nija123098.evelyn.audio.configs.playlist.PlaylistContentsConfig;
 import com.github.nija123098.evelyn.audio.configs.playlist.PlaylistPlayTypeConfig;
+import com.github.nija123098.evelyn.audio.configs.playlist.UserPlaylistsConfig;
 import com.github.nija123098.evelyn.command.annotations.LaymanName;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.ConfigLevel;

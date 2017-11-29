@@ -2,9 +2,7 @@ package com.github.nija123098.evelyn.perms;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-import static com.github.nija123098.evelyn.perms.BotRole.BOT_ADMIN;
-import static com.github.nija123098.evelyn.perms.BotRole.BOT_OWNER;
-import static com.github.nija123098.evelyn.perms.BotRole.GUILD_ADMIN;
+import static com.github.nija123098.evelyn.perms.BotRole.*;
 
 /**
  * Made by nija123098 on 4/27/2017.

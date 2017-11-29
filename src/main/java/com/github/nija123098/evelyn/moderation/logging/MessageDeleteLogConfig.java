@@ -9,7 +9,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordMessageDelete;
 
-import java.awt.Color;
+import java.awt.*;
 
 public class MessageDeleteLogConfig extends AbstractConfig<Channel, Guild> {
     public MessageDeleteLogConfig() {

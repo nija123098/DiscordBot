@@ -1,7 +1,7 @@
 package com.github.nija123098.evelyn.service.services;
 
-import com.github.nija123098.evelyn.BotConfig.BotConfig;
 import com.github.nija123098.evelyn.audio.DownloadableTrack;
+import com.github.nija123098.evelyn.botConfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.service.AbstractService;
 import com.github.nija123098.evelyn.util.Log;
 import org.eclipse.jetty.util.ConcurrentHashSet;
@@ -16,7 +16,7 @@ import java.util.function.Consumer;
  * Made by nija123098 on 3/28/2017.
  */
 public class MusicDownloadService extends AbstractService {
-    private static final ThreadPoolExecutor POOL_EXECUTOR = new ThreadPoolExecutor(1, BotConfig.MUSIC_DOWNLOAD_THREAD_COUNT, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<>(10), r -> {
+    private static final ThreadPoolExecutor POOL_EXECUTOR = new ThreadPoolExecutor(1, ConfigProvider.audioSettings.music_download_threads(), 10, TimeUnit.SECONDS, new ArrayBlockingQueue<>(10), r -> {
         Thread t = new Thread(r);
         t.setDaemon(true);
         return t;

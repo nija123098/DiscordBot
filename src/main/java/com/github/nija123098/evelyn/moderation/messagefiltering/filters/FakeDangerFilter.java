@@ -1,9 +1,9 @@
 package com.github.nija123098.evelyn.moderation.messagefiltering.filters;
 
-import com.github.nija123098.evelyn.BotConfig.BotConfig;
+import com.github.nija123098.evelyn.botConfiguration.ConfigProvider;
+import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordMessageReceived;
 import com.github.nija123098.evelyn.moderation.messagefiltering.MessageFilter;
 import com.github.nija123098.evelyn.moderation.messagefiltering.MessageMonitoringLevel;
-import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordMessageReceived;
 import com.github.nija123098.evelyn.util.FormatHelper;
 import com.github.nija123098.evelyn.util.Log;
 import com.github.nija123098.evelyn.util.StringChecker;
@@ -29,7 +29,7 @@ public class FakeDangerFilter implements MessageFilter {
     static {
         Map<String, Double> map = new HashMap<>();
         try {
-            Path path = Paths.get(BotConfig.FAKE_DANGER_NAME);
+            Path path = Paths.get(ConfigProvider.resourceFiles.fake_danger());
             if (path.toFile().exists()){
                 Files.readAllLines(path).forEach(s -> {
                     if (s.isEmpty()) return;

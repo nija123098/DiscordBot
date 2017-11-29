@@ -1,7 +1,6 @@
 package com.github.nija123098.evelyn.favor;
 
 import com.github.nija123098.evelyn.config.Configurable;
-import com.github.nija123098.evelyn.discordobjects.wrappers.Role;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.BotEvent;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventDistributor;
 

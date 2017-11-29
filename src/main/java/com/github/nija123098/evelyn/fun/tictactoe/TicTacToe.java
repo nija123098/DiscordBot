@@ -5,9 +5,9 @@ import com.github.nija123098.evelyn.fun.gamestructure.GameChoice;
 import com.github.nija123098.evelyn.fun.gamestructure.GameResultException;
 import com.github.nija123098.evelyn.fun.gamestructure.Team;
 import com.github.nija123098.evelyn.fun.gamestructure.neuralnet.AbstractNeuralNetGame;
+import com.github.nija123098.evelyn.util.ArrayUtils;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
 import com.github.nija123098.evelyn.util.LanguageHelper;
-import com.github.nija123098.evelyn.util.ArrayUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;

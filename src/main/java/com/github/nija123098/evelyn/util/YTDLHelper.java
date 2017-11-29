@@ -1,8 +1,9 @@
 package com.github.nija123098.evelyn.util;
 
-import com.github.nija123098.evelyn.BotConfig.BotConfig;
+import com.github.nija123098.evelyn.botConfiguration.ConfigProvider;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -13,10 +14,10 @@ import java.util.concurrent.TimeUnit;
 public class YTDLHelper {
     public static boolean download(String url, String id, String format){
         if (!NetworkHelper.isValid(url)) return false;
-        String location = BotConfig.AUDIO_PATH + id;
+        String location = ConfigProvider.folderSettings.audio_folder() + id;
         List<String> commands = new ArrayList<>();
         ProcessBuilder builder = new ProcessBuilder();
-        commands.add(BotConfig.YT_DL_PATH);
+        commands.add(ConfigProvider.librariesFiles.youtube_dl());
         commands.add("--no-check-certificate");
         commands.add("--extract-audio");//-x
         commands.add("--audio-format");
@@ -27,7 +28,7 @@ public class YTDLHelper {
         commands.add("--max-filesize");
         commands.add("1G");
         commands.add("--exec");
-        commands.add("mv {} " + BotConfig.AUDIO_PATH);//-hide_banner -i input.m4a -c:a copy
+        commands.add("mv {} " + ConfigProvider.folderSettings.audio_folder());//-hide_banner -i input.m4a -c:a copy
         commands.add("--output");
         commands.add(location + ".%(ext)s");
         commands.add(url);

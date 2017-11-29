@@ -1,6 +1,6 @@
 package com.github.nija123098.evelyn.information;
 
-import com.github.nija123098.evelyn.BotConfig.BotConfig;
+import com.github.nija123098.evelyn.botConfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Command;
@@ -40,7 +40,7 @@ public class GuideCommand extends AbstractCommand {
     public String reader() {
         try {
             StringBuilder texty = new StringBuilder();
-            List<String> text = Files.readAllLines(Paths.get(BotConfig.GUIDE_NAME));
+            List<String> text = Files.readAllLines(Paths.get(ConfigProvider.resourceFiles.guide()));
             text.forEach(s -> {
                 if (s.isEmpty()) texty.append("|");
                 else texty.append(s + "\n");

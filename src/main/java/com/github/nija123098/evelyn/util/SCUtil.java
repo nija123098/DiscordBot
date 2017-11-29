@@ -1,8 +1,8 @@
 package com.github.nija123098.evelyn.util;
 
-import com.github.nija123098.evelyn.BotConfig.BotConfig;
 import com.github.nija123098.evelyn.audio.SoundCloudTrack;
 import com.github.nija123098.evelyn.audio.Track;
+import com.github.nija123098.evelyn.botConfiguration.ConfigProvider;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -43,7 +43,7 @@ public class SCUtil {
     }
     public static List<Track> getTracksFromList(String code){
         List<String> commands = new ArrayList<>();
-        commands.add(BotConfig.YT_DL_PATH);
+        commands.add(ConfigProvider.librariesFiles.youtube_dl());
         commands.add("--flat-playlist");
         commands.add("--dump-json");
         commands.add("https://soundcloud.com/" + code);

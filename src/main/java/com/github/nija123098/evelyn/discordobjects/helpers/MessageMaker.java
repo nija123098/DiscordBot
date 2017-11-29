@@ -1,8 +1,6 @@
 package com.github.nija123098.evelyn.discordobjects.helpers;
 
-import com.github.nija123098.evelyn.BotConfig.BotConfig;
-import com.github.nija123098.evelyn.launcher.Launcher;
-import com.github.nija123098.evelyn.moderation.logging.VoiceCommandPrintChannelConfig;
+import com.github.nija123098.evelyn.botConfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.command.ProcessingHandler;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.configs.guild.GuildLanguageConfig;
@@ -11,6 +9,8 @@ import com.github.nija123098.evelyn.discordobjects.ErrorWrapper;
 import com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 import com.github.nija123098.evelyn.discordobjects.wrappers.*;
 import com.github.nija123098.evelyn.exception.DevelopmentException;
+import com.github.nija123098.evelyn.launcher.Launcher;
+import com.github.nija123098.evelyn.moderation.logging.VoiceCommandPrintChannelConfig;
 import com.github.nija123098.evelyn.service.services.ScheduleService;
 import com.github.nija123098.evelyn.util.*;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
@@ -686,7 +686,7 @@ public class MessageMaker {
      * @param page the page to sent.
      */
     private void send(int page){
-        if (BotConfig.GHOST_MODE) return;
+        if (ConfigProvider.botSettings.ghost_mode_enabled()) return;
         if (!this.maySend) {
             if (this.origin != null) ErrorWrapper.wrap(() -> null);
             return;

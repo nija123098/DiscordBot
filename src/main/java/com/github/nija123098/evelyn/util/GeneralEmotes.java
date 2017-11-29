@@ -6,10 +6,8 @@ package com.github.nija123098.evelyn.util;
 
 public class GeneralEmotes {
 
-    //constructor block
-    private final String emote;
     GeneralEmotes(String emote){
-        this.emote = emote;
+        String emote1 = emote;
     }
 
     //empty emote

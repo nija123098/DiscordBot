@@ -3,10 +3,10 @@ package com.github.nija123098.evelyn.command.commands;
 import com.github.nija123098.evelyn.command.*;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.command.annotations.Context;
+import com.github.nija123098.evelyn.discordobjects.wrappers.*;
 import com.github.nija123098.evelyn.exception.ArgumentException;
 import com.github.nija123098.evelyn.perms.BotRole;
 import com.github.nija123098.evelyn.util.FormatHelper;
-import com.github.nija123098.evelyn.discordobjects.wrappers.*;
 import javafx.util.Pair;
 
 /**

@@ -1,6 +1,6 @@
 package com.github.nija123098.evelyn.util;
 
-import com.github.nija123098.evelyn.BotConfig.BotConfig;
+import com.github.nija123098.evelyn.botConfiguration.ConfigProvider;
 import sx.blah.discord.Discord4J;
 
 import java.io.FileOutputStream;
@@ -19,7 +19,7 @@ public class Log {
     private static final Path LOG_PATH;
     static {
         String name = "Evelyn-Log-" + System.currentTimeMillis();
-        LOG_PATH = Paths.get(BotConfig.LOGS_PATH, name + ".log");
+        LOG_PATH = Paths.get(ConfigProvider.folderSettings.logs_folder(), name + ".log");
         LOG_PATH.toFile().getParentFile().mkdirs();
         try{Files.write(LOG_PATH, Collections.singletonList("Made log " + name), StandardOpenOption.CREATE);
         } catch (IOException e) {throw new RuntimeException(e);}

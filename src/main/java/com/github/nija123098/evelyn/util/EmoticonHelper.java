@@ -1,7 +1,7 @@
 package com.github.nija123098.evelyn.util;
 
 
-import com.github.nija123098.evelyn.BotConfig.BotConfig;
+import com.github.nija123098.evelyn.botConfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
 import sx.blah.discord.handle.impl.obj.ReactionEmoji;
 import sx.blah.discord.handle.obj.IEmoji;
@@ -21,7 +21,7 @@ public class EmoticonHelper {
     private static final Map<String, Set<String>> MAP = new HashMap<>();
     static {
         try{
-            Files.readAllLines(Paths.get(BotConfig.EMOTICONS_NAME)).forEach(s -> {
+            Files.readAllLines(Paths.get(ConfigProvider.resourceFiles.emoticons())).forEach(s -> {
                 String[] strings = s.split(" ");
                 MAP.put(strings[0], new HashSet<>(Arrays.asList(Arrays.copyOfRange(strings, 1, strings.length))));
                 for (int i = 1; i < strings.length; i++) EMOTICON_MAP.put(strings[i], strings[0]);

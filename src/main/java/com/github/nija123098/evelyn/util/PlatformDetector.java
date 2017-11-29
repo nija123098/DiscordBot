@@ -18,17 +18,6 @@ public class PlatformDetector {
         return (OS.contains("nix") || OS.contains("nux") || OS.contains("aix"));
     }
 
-    public static String PathEnding() {
-        String ending = null;
-        if (isUnix()) {
-            ending = "/";
-        } else if (isWindows()) {
-            ending = "/";
-        } else if (isMac()) {
-            ending = "/";
-        }
-        return ending;
-    }
 
     public static String ConvertPath(String path) {
         StringBuffer result = new StringBuffer(path.length());

@@ -33,6 +33,16 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.cfg4j</groupId>
+            <artifactId>cfg4j-core</artifactId>
+            <version>4.4.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.cfg4j</groupId>
+            <artifactId>cfg4j-git</artifactId>
+            <version>4.4.1</version>
+        </dependency>
+        <dependency>
             <groupId>com.github.austinv11</groupId>
             <artifactId>Discord4j</artifactId>
             <version>49a6f26</version>

@@ -1,7 +1,6 @@
 package com.github.nija123098.evelyn.moderation.messagefiltering.commands;
 
 import com.github.nija123098.evelyn.command.AbstractCommand;
-import com.github.nija123098.evelyn.command.CommandHandler;
 import com.github.nija123098.evelyn.command.ContextType;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Argument;
@@ -15,7 +14,6 @@ import com.github.nija123098.evelyn.moderation.messagefiltering.MessageMonitorin
 import com.github.nija123098.evelyn.moderation.messagefiltering.configs.MessageMonitoringConfig;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
 
-import java.util.EnumSet;
 import java.util.Set;
 
 public class MessageMonitoringCommand extends AbstractCommand {

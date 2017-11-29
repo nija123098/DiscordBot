@@ -1,6 +1,6 @@
 package com.github.nija123098.evelyn.discordobjects.wrappers;
 
-import com.github.nija123098.evelyn.BotConfig.BotConfig;
+import com.github.nija123098.evelyn.botConfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.discordobjects.ErrorWrapper;
 import com.github.nija123098.evelyn.exception.GhostException;
 import com.github.nija123098.evelyn.exception.PermissionsException;
@@ -11,7 +11,10 @@ import sx.blah.discord.handle.impl.obj.ReactionEmoji;
 import sx.blah.discord.handle.obj.IMessage;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -121,7 +124,7 @@ public class Message {// should not be kept stored, too many are made
     }
 
     public void delete() {
-        if (BotConfig.GHOST_MODE) return;
+        if (ConfigProvider.botSettings.ghost_mode_enabled()) return;
         ErrorWrapper.wrap(() -> message().delete());
     }
 
@@ -154,7 +157,7 @@ public class Message {// should not be kept stored, too many are made
     }
 
     public Reaction addReaction(String s) {
-        if (BotConfig.GHOST_MODE) throw new GhostException();
+        if (ConfigProvider.botSettings.ghost_mode_enabled()) throw new GhostException();
         ErrorWrapper.wrap(() -> this.message().addReaction(ReactionEmoji.of(s)));
         return getReaction(s);
     }

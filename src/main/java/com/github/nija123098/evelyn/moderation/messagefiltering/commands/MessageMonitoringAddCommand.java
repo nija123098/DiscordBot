@@ -1,7 +1,6 @@
 package com.github.nija123098.evelyn.moderation.messagefiltering.commands;
 
 import com.github.nija123098.evelyn.command.AbstractCommand;
-import com.github.nija123098.evelyn.command.CommandHandler;
 import com.github.nija123098.evelyn.command.ContextType;
 import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;

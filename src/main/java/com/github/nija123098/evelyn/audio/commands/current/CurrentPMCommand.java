@@ -3,7 +3,6 @@ package com.github.nija123098.evelyn.audio.commands.current;
 import com.github.nija123098.evelyn.audio.Track;
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.annotations.Command;
-import com.github.nija123098.evelyn.command.annotations.Context;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 

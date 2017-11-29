@@ -1,6 +1,6 @@
 package com.github.nija123098.evelyn.fun;
 
-import com.github.nija123098.evelyn.BotConfig.BotConfig;
+import com.github.nija123098.evelyn.botConfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Command;
@@ -21,7 +21,7 @@ public class CatCommand extends AbstractCommand {
     private static final String URL;
     static {
         String builder = "http://thecatapi.com/api/images/get?type=gif&format=html";
-        if (BotConfig.CAT_API_TOKEN != null) builder += "&api_key=" + BotConfig.CAT_API_TOKEN;
+        if (ConfigProvider.authKeys.cat_api_token() != null) builder += "&api_key=" + ConfigProvider.authKeys.cat_api_token();
         URL = builder;
     }
     public CatCommand() {
