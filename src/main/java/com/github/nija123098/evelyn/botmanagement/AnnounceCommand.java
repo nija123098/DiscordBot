@@ -9,6 +9,7 @@ import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
+import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.moderation.logging.BotChannelConfig;
 import com.github.nija123098.evelyn.util.FormatHelper;
 
@@ -22,7 +23,7 @@ public class AnnounceCommand extends AbstractCommand {
         super("announce", ModuleLevel.BOT_ADMINISTRATIVE, null, null, null);
     }
     @Command
-    public void command(@Argument(info = "The stuff to say") String text, MessageMaker maker){
+    public void command(@Argument(info = "The stuff to say") String text, MessageMaker maker, User user){
 
         //configure maker
         maker.withAuthorIcon(DiscordClient.getOurUser().getAvatarURL()).getAuthorName().clear().appendRaw("Evelyn Announcement");
@@ -37,10 +38,10 @@ public class AnnounceCommand extends AbstractCommand {
         if (text.contains(";")){
             String[] textWithSplit = text.split(";",2);
             maker.forceCompile().getHeader().clear().appendRaw("\u200B");
-            maker.forceCompile().getNewFieldPart().withBoth(textWithSplit[0],textWithSplit[1]).getValue().appendRaw("\n\nClick " + FormatHelper.embedLink("here","https://discord.gg/UW5X5BU") + " to join the support server.");
+            maker.forceCompile().getNewFieldPart().withBoth(textWithSplit[0],textWithSplit[1] + "\n\n- " + user.getName()).getValue().appendRaw("\n\nClick " + FormatHelper.embedLink("here", ConfigProvider.urls.discord_invite_url()) + " to join the support server.");
         }else {
-            maker.forceCompile().getFooter().clear().appendRaw("Click " + FormatHelper.embedLink("here","https://discord.gg/UW5X5BU") + " to join the support server.");
-            maker.forceCompile().getHeader().clear().appendRaw("\u200B\n" + text);
+            maker.forceCompile().getFooter().clear().appendRaw("Click " + FormatHelper.embedLink("here", ConfigProvider.urls.discord_invite_url()) + " to join the support server.");
+            maker.forceCompile().getHeader().clear().appendRaw("\u200B\n" + text + "\n\n- " + user.getName());
         }
 
         //confirm message with user
