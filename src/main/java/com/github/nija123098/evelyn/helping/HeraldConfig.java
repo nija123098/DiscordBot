@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class HeraldConfig extends AbstractConfig<Boolean, Guild> {
     public HeraldConfig() {
-        super("herald_active", "herald", ConfigCategory.GUILD_PERSONALIZATION, false, "Makes the bot announce the join and leave of users");
+        super("herald_active", "User Activity Voice", ConfigCategory.GUILD_PERSONALIZATION, false, "Makes the bot announce the join and leave of users");
     }
     @EventListener
     public void handle(DiscordVoiceJoin event){

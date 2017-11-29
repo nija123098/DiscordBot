@@ -11,6 +11,6 @@ import com.github.nija123098.evelyn.util.FormatHelper;
  */
 public class ModLogConfig extends AbstractConfig<Channel, Guild> {
     public ModLogConfig() {
-        super("mod_log", "", ConfigCategory.LOGGING, guild -> guild.getChannels().stream().filter(channel -> FormatHelper.filtering(channel.getName().toLowerCase(), Character::isLetter).contains("modlog")).findFirst().orElse(null), "The channel log of moderator actions");
+        super("mod_log", "Mod Log", ConfigCategory.LOGGING, guild -> guild.getChannels().stream().filter(channel -> FormatHelper.filtering(channel.getName().toLowerCase(), Character::isLetter).contains("modlog")).findFirst().orElse(null), "The channel log of moderator actions");
     }
 }

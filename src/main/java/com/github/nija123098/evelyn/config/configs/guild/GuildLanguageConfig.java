@@ -11,7 +11,7 @@ import com.github.nija123098.evelyn.util.LangString;
  */
 public class GuildLanguageConfig extends AbstractConfig<String, Guild> {
     public GuildLanguageConfig() {
-        super("guild_language", "", ConfigCategory.GUILD_PERSONALIZATION, (String) null, "The language the bot uses to communicate in the guild");
+        super("guild_language", "Guild Language", ConfigCategory.GUILD_PERSONALIZATION, (String) null, "The language the bot uses to communicate in the guild");
     }
     @Override
     protected String validateInput(Guild configurable, String v) {

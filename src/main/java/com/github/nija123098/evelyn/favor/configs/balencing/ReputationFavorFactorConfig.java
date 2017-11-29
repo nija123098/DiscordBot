@@ -9,6 +9,6 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
  */
 public class ReputationFavorFactorConfig extends AbstractConfig<Float, Guild> {
     public ReputationFavorFactorConfig() {
-        super("reputation_favor_factor", "", ConfigCategory.FAVOR, 30f, "The factor by which favor is bestowed on a guild user for a reaction");
+        super("reputation_favor_factor", "Reputation Favor Factor", ConfigCategory.FAVOR, 30f, "The factor by which favor is bestowed on a guild user for a reaction");
     }
 }

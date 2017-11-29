@@ -9,6 +9,6 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
  */
 public class VoiceTimeFavorFactorConfig extends AbstractConfig<Float, Guild> {
     public VoiceTimeFavorFactorConfig() {
-        super("voice_favor_factor", "", ConfigCategory.FAVOR, 5f, "The factor by which favor is bestowed on a guild user for 5 minutes of voice time");
+        super("voice_favor_factor", "Voice Favor Factor", ConfigCategory.FAVOR, 5f, "The factor by which favor is bestowed on a guild user for 5 minutes of voice time");
     }
 }

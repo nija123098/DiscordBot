@@ -12,7 +12,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.Discord
 public class JoinMeConfig extends AbstractConfig<Boolean, User> {
     private static JoinMeConfig config;
     public JoinMeConfig() {
-        super("join_me", "", ConfigCategory.GUILD_PERSONALIZATION, false, "Makes the bot join you if it is available");
+        super("join_me", "Join Me", ConfigCategory.GUILD_PERSONALIZATION, false, "Makes the bot join you if it is available");
         config = this;
     }
     @EventListener

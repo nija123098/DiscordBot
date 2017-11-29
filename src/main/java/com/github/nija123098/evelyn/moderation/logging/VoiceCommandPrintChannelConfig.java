@@ -10,6 +10,6 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
  */
 public class VoiceCommandPrintChannelConfig extends AbstractConfig<Channel, Guild> {
     public VoiceCommandPrintChannelConfig() {
-        super("voice_text_channel", "", ConfigCategory.LOGGING, BotChannelConfig::get, "The channel in which commands from voice channels are printed if they are to large to say");
+        super("voice_text_channel", "Voice Text Channel", ConfigCategory.LOGGING, BotChannelConfig::get, "The channel in which commands from voice channels are printed if they are to large to say");
     }
 }

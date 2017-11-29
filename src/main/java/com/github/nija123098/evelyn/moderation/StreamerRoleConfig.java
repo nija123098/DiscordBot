@@ -12,7 +12,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.Discord
  */
 public class StreamerRoleConfig extends AbstractConfig<Role, Guild> {
     public StreamerRoleConfig() {
-        super("streamer_role", "", ConfigCategory.GUILD_PERSONALIZATION, (Role) null, "The role always assigned to streamers, when they open a stream");
+        super("streamer_role", "Auto Streamer Role", ConfigCategory.GUILD_PERSONALIZATION, (Role) null, "The role always assigned to streamers, when they open a stream");
     }
     @EventListener
     public void handle(DiscordPresenceUpdate update){

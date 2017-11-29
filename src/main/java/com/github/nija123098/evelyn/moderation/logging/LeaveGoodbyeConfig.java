@@ -15,7 +15,7 @@ import java.util.Collections;
 
 public class LeaveGoodbyeConfig extends AbstractConfig<Channel, Guild> {
     public LeaveGoodbyeConfig() {
-        super("leave_goodbye", "", ConfigCategory.LOGGING, (Channel) null, "If the bot should wish farewell to a user when they leave");
+        super("leave_goodbye", "Goodbye Message", ConfigCategory.LOGGING, (Channel) null, "If the bot should wish farewell to a user when they leave");
     }
     @EventListener
     public void handle(DiscordUserLeave leave){

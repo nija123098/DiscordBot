@@ -42,7 +42,7 @@ public class ConfigCommand extends AbstractCommand {
                     }
                 } else {
                     if (!category.getBotRole().name().contains("ADMIN")) {
-                        maker.getNewFieldPart().withInline(false).withBoth("\u200b", "`" + category.name() + "`");
+                        maker.getNewFieldPart().withInline(false).withBoth("\u200b", FormatHelper.embedLink(category.name(), ""));
                     }
                 }
                 if (category.getConfigs().stream().filter(AbstractConfig::isNormalViewing).filter(abstractConfig -> abstractConfig.getConfigLevel() == finalConfigurable.getConfigLevel() || abstractConfig.getConfigLevel() == ConfigLevel.ALL).filter(abstractConfig -> abstractConfig.getBotRole().hasRequiredRole(user, guild)).peek(config -> maker.getNewFieldPart().withBoth(config.getName(), ConfigHandler.getExteriorSetting(config.getName(), finalConfigurable))).count() > 0){

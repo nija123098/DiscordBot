@@ -15,7 +15,7 @@ import com.github.nija123098.evelyn.exception.ArgumentException;
  */
 public class AutoAssignRoleConfig extends AbstractConfig<Role, Guild> {
     public AutoAssignRoleConfig() {
-        super("role_on_join", "", ConfigCategory.MODERATION, (Role) null, "The role to assign a new user on join");
+        super("role_on_join", "Role On Join", ConfigCategory.MODERATION, (Role) null, "The role to assign a new user on join");
     }
     @EventListener
     public void handle(DiscordUserJoin event){

@@ -11,7 +11,7 @@ import com.github.nija123098.evelyn.perms.BotRole;
  */
 public class VolumeConfig extends AbstractConfig<Integer, Guild> {
     public VolumeConfig() {
-        super("music_volume", "", BotRole.USER, ConfigCategory.MUSIC, 30, "The volume the bot speaks and plays music at.");
+        super("music_volume", "Music Volume", BotRole.USER, ConfigCategory.MUSIC, 30, "The volume the bot speaks and plays music at.");
     }
     @Override
     protected Integer validateInput(Guild configurable, Integer val) {

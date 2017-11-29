@@ -19,7 +19,7 @@ import java.awt.*;
  */
 public class ConfigSetCommand extends AbstractCommand {
     public ConfigSetCommand() {
-        super(ConfigCommand.class, "set", null, null, null, "Sets");
+        super(ConfigCommand.class, "set", "set", null, null, "Sets");
     }
     @Command
     @ConfigurableTypeAddLocation("The array in the first line of the else statement must have a additional index, ordered by ordinal in ConfigLevel")

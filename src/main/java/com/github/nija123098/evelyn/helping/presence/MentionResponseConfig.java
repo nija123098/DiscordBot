@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  */
 public class MentionResponseConfig extends AbstractConfig<Boolean, Guild> {
     public MentionResponseConfig() {
-        super("afk_mention_response", "", ConfigCategory.GUILD_PERSONALIZATION, false, "The bot responds mentioning the stasis of a user if they are marked NDN, AWAY, OFFLINE, or self marked AFK or AWAY");
+        super("afk_mention_response", "Mention User Status", ConfigCategory.GUILD_PERSONALIZATION, false, "The bot responds mentioning the stasis of a user if they are marked NDN, AWAY, OFFLINE, or self marked AFK or AWAY");
     }
     @EventListener
     public void handle(DiscordMessageReceived event){

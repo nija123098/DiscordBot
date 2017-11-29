@@ -9,6 +9,6 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
  */
 public class MessageFavorFactorConfig extends AbstractConfig<Float, Guild> {
     public MessageFavorFactorConfig() {
-        super("message_favor_factor", "", ConfigCategory.FAVOR, 1F, "The factor by which favor is bestowed on a guild user for a message");
+        super("message_favor_factor", "Message Favor Factor", ConfigCategory.FAVOR, 1F, "The factor by which favor is bestowed on a guild user for a message");
     }
 }

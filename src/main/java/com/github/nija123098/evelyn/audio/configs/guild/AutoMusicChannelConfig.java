@@ -15,7 +15,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.Discord
  */
 public class AutoMusicChannelConfig extends AbstractConfig<VoiceChannel, Guild> {
     public AutoMusicChannelConfig() {
-        super("auto_channel", "", ConfigCategory.MUSIC, (VoiceChannel) null, "Sets a channel where music starts playing on join");
+        super("auto_channel", "Auto Join Channel", ConfigCategory.MUSIC, (VoiceChannel) null, "Sets a channel where music starts playing on join");
     }
     @EventListener
     public void listen(DiscordVoiceJoin event){

@@ -9,7 +9,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
  */
 public class GuildPrefixConfig extends AbstractConfig<String, Guild> {
     public GuildPrefixConfig() {
-        super("guild_prefix", "", ConfigCategory.GUILD_PERSONALIZATION, "!", "The prefix for the guild");
+        super("guild_prefix", "Bot Prefix", ConfigCategory.GUILD_PERSONALIZATION, "!", "The prefix for the guild");
     }
 
     @Override

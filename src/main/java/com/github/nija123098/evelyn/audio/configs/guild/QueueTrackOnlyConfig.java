@@ -9,6 +9,6 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
  */
 public class QueueTrackOnlyConfig extends AbstractConfig<Boolean, Guild> {
     public QueueTrackOnlyConfig() {
-        super("queue_only", "", ConfigCategory.MUSIC, false, "If no playlist should play after the queue is empty");
+        super("queue_only", "Queue Only", ConfigCategory.MUSIC, false, "If no playlist should play after the queue is empty");
     }
 }

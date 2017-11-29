@@ -9,6 +9,6 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
  */
 public class GameTimeFavorFactorConfig extends AbstractConfig<Float, Guild> {
     public GameTimeFavorFactorConfig() {
-        super("linked_game_favor_factor", "", ConfigCategory.FAVOR, 2f, "The factor by which favor is bestowed on a guild user for 5 minutes of linked game time");
+        super("linked_game_favor_factor", "Game Favor Factor", ConfigCategory.FAVOR, 2f, "The factor by which favor is bestowed on a guild user for 5 minutes of linked game time");
     }
 }

@@ -10,6 +10,6 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
  */
 public class StarBoardLocationConfig extends AbstractConfig<Channel, Guild> {
     public StarBoardLocationConfig() {
-        super("star_board", "", ConfigCategory.LOGGING, (Channel) null, "The location of the starboard");
+        super("star_board", "Star Board", ConfigCategory.LOGGING, (Channel) null, "The location of the starboard");
     }
 }

@@ -13,7 +13,7 @@ import java.awt.*;
 
 public class JoinLeaveLogConfig extends AbstractConfig<Channel, Guild> {
     public JoinLeaveLogConfig() {
-        super("join_leave_log", "", ConfigCategory.LOGGING, (Channel) null, "The location to log users joining and leaving a server");
+        super("join_leave_log", "Join Leave Log", ConfigCategory.LOGGING, (Channel) null, "The location to log users joining and leaving a server");
     }
     @EventListener
     public void handle(DiscordUserJoin join){

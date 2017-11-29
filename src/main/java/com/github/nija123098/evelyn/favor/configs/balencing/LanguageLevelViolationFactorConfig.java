@@ -9,6 +9,6 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
  */
 public class LanguageLevelViolationFactorConfig extends AbstractConfig<Float, Guild> {
     public LanguageLevelViolationFactorConfig() {
-        super("language_favor_factor", "", ConfigCategory.FAVOR, 50F, "The factor by which favor is taken from a guild user for a language violation");
+        super("language_favor_factor", "Language Favor Factor", ConfigCategory.FAVOR, 50F, "The factor by which favor is taken from a guild user for a language violation");
     }
 }

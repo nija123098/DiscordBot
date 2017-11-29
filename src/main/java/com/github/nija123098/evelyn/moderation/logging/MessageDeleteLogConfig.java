@@ -13,7 +13,7 @@ import java.awt.*;
 
 public class MessageDeleteLogConfig extends AbstractConfig<Channel, Guild> {
     public MessageDeleteLogConfig() {
-        super("message_delete_log", "", ConfigCategory.LOGGING, (Channel) null, "The location logs should be made for messages that are deleted");
+        super("message_delete_log", "Massage Delete Log", ConfigCategory.LOGGING, (Channel) null, "The location logs should be made for messages that are deleted");
     }
     @EventListener
     public void handle(DiscordMessageDelete delete){
