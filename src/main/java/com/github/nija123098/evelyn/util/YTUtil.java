@@ -97,7 +97,7 @@ public class YTUtil {
         YouTube.PlaylistItems.List playlist = YTUtil.errorWrap(() -> YTUtil.YOUTUBE.playlistItems().list("id,contentDetails,snippet"));
         playlist.setFields("items(contentDetails/videoId,snippet/title,snippet/publishedAt),nextPageToken,pageInfo");
         PLAYLIST = playlist;
-        Collections.addAll(KEYS, ConfigProvider.authKeys.google_api_token().split(" "));
+        Collections.addAll(KEYS, ConfigProvider.AUTH_KEYS.google_api_token().split(" "));
     }
     public static String getKey(){
         return KEYS.get(KEY_INDEX.incrementAndGet() % KEYS.size());

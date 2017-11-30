@@ -1,8 +1,8 @@
 package com.github.nija123098.evelyn.botconfiguration.configinterfaces.urls;
 
 /**
- * @Author: Celestialdeath99
- * Date: 11/28/2017
+ * @author Celestialdeath99
+ * @since 1.0.0
  */
 
 public interface URLs {
@@ -12,5 +12,5 @@ public interface URLs {
     String currencytree_gif();
     String bank_gif();
     String announce_thumb();
-    String patreon_url();
+    String donate_url();
 }

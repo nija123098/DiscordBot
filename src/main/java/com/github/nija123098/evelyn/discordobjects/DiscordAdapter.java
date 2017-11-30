@@ -81,12 +81,12 @@ public class DiscordAdapter {
         EVENT_MAP = new HashMap<>(classes.size() + 2, 1);
         classes.stream().filter(clazz -> !clazz.equals(DiscordMessageReceived.class)).filter(clazz -> !clazz.equals(DiscordUserLeave.class)).filter(clazz -> !clazz.isAssignableFrom(ReactionEvent.class)).map(clazz -> clazz.getConstructors()[0]).forEach(constructor -> EVENT_MAP.put((Class<? extends Event>) constructor.getParameterTypes()[0], (Constructor<? extends BotEvent>) constructor));
         ClientBuilder builder = new ClientBuilder();
-        builder.withToken(ConfigProvider.botSettings.bot_token());
+        builder.withToken(ConfigProvider.BOT_SETTINGS.bot_token());
         builder.withMaximumDispatchThreads(2);
         builder.registerListener((IListener<ShardReadyEvent>) event -> event.getShard().idle("with the login screen!"));
-        int total = Requests.GENERAL_REQUESTS.GET.makeRequest(DiscordEndpoints.GATEWAY + "/bot", GatewayBotResponse.class, new BasicNameValuePair("Authorization", "Bot " + ConfigProvider.botSettings.bot_token()), new BasicNameValuePair("Content-Type", "application/json")).shards;
+        int total = Requests.GENERAL_REQUESTS.GET.makeRequest(DiscordEndpoints.GATEWAY + "/bot", GatewayBotResponse.class, new BasicNameValuePair("Authorization", "Bot " + ConfigProvider.BOT_SETTINGS.bot_token()), new BasicNameValuePair("Content-Type", "application/json")).shards;
         List<Integer> list = new ArrayList<>(total);
-        for (int i = 0; i < total; i++) if (i % ConfigProvider.botSettings.number_of_shards() == ConfigProvider.botSettings.evelyn_shard_number()) list.add(i);
+        for (int i = 0; i < total; i++) if (i % ConfigProvider.BOT_SETTINGS.number_of_shards() == ConfigProvider.BOT_SETTINGS.evelyn_shard_number()) list.add(i);
         DiscordClient.set(list.stream().map(integer -> builder.setShard(integer, total)).map(ClientBuilder::login).collect(Collectors.toList()));
         int i = 20 + 25 * DiscordClient.getShardCount();
         for (; i > -1; --i) {
@@ -107,7 +107,7 @@ public class DiscordAdapter {
             EventDistributor.register(ReactionBehavior.class);
             EventDistributor.register(MessageMonitor.class);
         });
-        if (!ConfigProvider.botSettings.ghost_mode_enabled()) ScheduleService.scheduleRepeat(PLAY_TEXT_SPEED + 10_000, PLAY_TEXT_SPEED, () -> {
+        if (!ConfigProvider.BOT_SETTINGS.ghost_mode_enabled()) ScheduleService.scheduleRepeat(PLAY_TEXT_SPEED + 10_000, PLAY_TEXT_SPEED, () -> {
             Template template = TemplateHandler.getTemplate(KeyPhrase.PLAY_TEXT, null, PREVIOUS_TEXTS);
             if (template == null){
                 TemplateHandler.addTemplate(KeyPhrase.PLAY_TEXT, null, "with nitroglycerine");
@@ -128,7 +128,7 @@ public class DiscordAdapter {
                 }
             }else count.set(0);
         });
-        Path path = Paths.get(ConfigProvider.resourceFiles.time_stats());
+        Path path = Paths.get(ConfigProvider.RESOURCE_FILES.time_stats());
         File file = path.toFile();
         if (!file.exists()) {
             try{file.createNewFile();

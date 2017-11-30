@@ -37,7 +37,7 @@ public class CurrencyTreeCommand extends AbstractCommand {
         //configure message maker
         maker.mustEmbed();
         maker.withAutoSend(false);
-        maker.withImage(ConfigProvider.urls.currencytree_gif());
+        maker.withImage(ConfigProvider.URLS.currencytree_gif());
 
         //check for valid amount
         if (amount < 0) {

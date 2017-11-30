@@ -23,7 +23,7 @@ public class TwitchTrack extends Track {
     private static final TwitchStreamAudioSourceManager TWITCH_AUDIO_SOURCE_MANAGER = new TwitchStreamAudioSourceManager();
     private static final Twitch TWITCH = new Twitch();
     static {
-        TWITCH.setClientId(ConfigProvider.authKeys.twitch_id());
+        TWITCH.setClientId(ConfigProvider.AUTH_KEYS.twitch_id());
         Track.registerTrackType(TwitchTrack.class, TwitchTrack::new, TwitchTrack::new);
     }
     TwitchTrack(String id) {

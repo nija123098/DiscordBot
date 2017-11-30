@@ -24,7 +24,7 @@ public enum Badge {
     private Function<User, Integer> levelFunction;
     private List<BufferedImage> images = new ArrayList<>();
     Badge(int max){
-        try{BufferedImage badge = ImageIO.read(new File(ConfigProvider.folderSettings.badge_folder() + this.name().toLowerCase() + ".png"));
+        try{BufferedImage badge = ImageIO.read(new File(ConfigProvider.FOLDER_SETTINGS.badge_folder() + this.name().toLowerCase() + ".png"));
             Font font = new Font("Times New Roman", Font.PLAIN, badge.getHeight() / 3 * 2);
             BufferedImage image;
             Graphics2D graphics;

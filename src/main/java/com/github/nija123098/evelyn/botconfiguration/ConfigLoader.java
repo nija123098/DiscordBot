@@ -17,8 +17,8 @@ import java.util.concurrent.TimeUnit;
 import static com.github.nija123098.evelyn.util.PlatformDetector.ConvertPath;
 
 /**
- * @Author: Celestialdeath99
- * Made on 11/28/2017
+ * @author Celestialdeath99
+ * @since 1.0.0
  */
 
 public class ConfigLoader {

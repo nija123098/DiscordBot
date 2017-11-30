@@ -27,7 +27,7 @@ public class AnnounceCommand extends AbstractCommand {
 
         //configure maker
         maker.withAuthorIcon(DiscordClient.getOurUser().getAvatarURL()).getAuthorName().clear().appendRaw("Evelyn Announcement");
-        maker.withThumb(ConfigProvider.urls.announce_thumb());
+        maker.withThumb(ConfigProvider.URLS.announce_thumb());
         maker.withColor(new Color(175, 30,5));
         maker.withAutoSend(false).mustEmbed();
 
@@ -38,9 +38,9 @@ public class AnnounceCommand extends AbstractCommand {
         if (text.contains(";")){
             String[] textWithSplit = text.split(";",2);
             maker.forceCompile().getHeader().clear().appendRaw("\u200B");
-            maker.forceCompile().getNewFieldPart().withBoth(textWithSplit[0],textWithSplit[1] + "\n\n- " + user.getName()).getValue().appendRaw("\n\nClick " + FormatHelper.embedLink("here", ConfigProvider.urls.discord_invite_url()) + " to join the support server.");
+            maker.forceCompile().getNewFieldPart().withBoth(textWithSplit[0],textWithSplit[1] + "\n\n- " + user.getName()).getValue().appendRaw("\n\nClick " + FormatHelper.embedLink("here", ConfigProvider.URLS.discord_invite_url()) + " to join the support server.");
         }else {
-            maker.forceCompile().getFooter().clear().appendRaw("Click " + FormatHelper.embedLink("here", ConfigProvider.urls.discord_invite_url()) + " to join the support server.");
+            maker.forceCompile().getFooter().clear().appendRaw("Click " + FormatHelper.embedLink("here", ConfigProvider.URLS.discord_invite_url()) + " to join the support server.");
             maker.forceCompile().getHeader().clear().appendRaw("\u200B\n" + text + "\n\n- " + user.getName());
         }
 

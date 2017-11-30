@@ -26,11 +26,11 @@ public class Database {
     private static final Connection CONNECTION;
     private static final QueryRunner RUNNER;
     static {
-        String username = ConfigProvider.databaseSettings.username();
-        String password = ConfigProvider.databaseSettings.password();
-        String serverIP = ConfigProvider.databaseSettings.ip_address();
-        Integer serverPort = ConfigProvider.databaseSettings.port();
-        String dbName = ConfigProvider.databaseSettings.db_name();
+        String username = ConfigProvider.DATABASE_SETTINGS.username();
+        String password = ConfigProvider.DATABASE_SETTINGS.password();
+        String serverIP = ConfigProvider.DATABASE_SETTINGS.ip_address();
+        Integer serverPort = ConfigProvider.DATABASE_SETTINGS.port();
+        String dbName = ConfigProvider.DATABASE_SETTINGS.db_name();
         Connection c = null;
         try {
             MysqlConnectionPoolDataSource dataSource = new MysqlConnectionPoolDataSource();

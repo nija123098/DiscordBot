@@ -16,7 +16,7 @@ import java.util.function.Consumer;
  * Made by nija123098 on 3/28/2017.
  */
 public class MusicDownloadService extends AbstractService {
-    private static final ThreadPoolExecutor POOL_EXECUTOR = new ThreadPoolExecutor(1, ConfigProvider.audioSettings.music_download_threads(), 10, TimeUnit.SECONDS, new ArrayBlockingQueue<>(10), r -> {
+    private static final ThreadPoolExecutor POOL_EXECUTOR = new ThreadPoolExecutor(1, ConfigProvider.AUDIO_SETTINGS.music_download_threads(), 10, TimeUnit.SECONDS, new ArrayBlockingQueue<>(10), r -> {
         Thread t = new Thread(r);
         t.setDaemon(true);
         return t;

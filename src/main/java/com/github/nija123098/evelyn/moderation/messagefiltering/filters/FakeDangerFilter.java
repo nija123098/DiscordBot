@@ -29,7 +29,7 @@ public class FakeDangerFilter implements MessageFilter {
     static {
         Map<String, Double> map = new HashMap<>();
         try {
-            Path path = Paths.get(ConfigProvider.resourceFiles.fake_danger());
+            Path path = Paths.get(ConfigProvider.RESOURCE_FILES.fake_danger());
             if (path.toFile().exists()){
                 Files.readAllLines(path).forEach(s -> {
                     if (s.isEmpty()) return;

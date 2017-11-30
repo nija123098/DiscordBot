@@ -19,7 +19,7 @@ public class InviteCommand extends AbstractCommand {
     @Command
     public void command(MessageMaker maker){
         maker.getTitle().append("I am honored you'd want to invite me! " + GeneralEmotes.BLOBAWW);
-        maker.append("You can add me to your guild/server with this " + FormatHelper.embedLink("link", ConfigProvider.urls.bot_invite_url()) +
+        maker.append("You can add me to your guild/server with this " + FormatHelper.embedLink("link", ConfigProvider.URLS.bot_invite_url()) +
                 ".\nI am serving " + FormatHelper.embedLink(String.valueOf(DiscordClient.getGuilds().size()),"") + " servers and counting!")
                 .withThumb(DiscordClient.getOurUser().getAvatarURL());
     }

@@ -100,7 +100,7 @@ public class DiscordClient {
     }
 
     public static Guild getSupportServer(){
-        return getGuildByID(ConfigProvider.botSettings.support_server_id());
+        return getGuildByID(ConfigProvider.BOT_SETTINGS.support_server_id());
     }
 
     public static List<Channel> getChannels(boolean includePrivate) {

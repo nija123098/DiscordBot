@@ -1,10 +1,9 @@
 package com.github.nija123098.evelyn.botconfiguration.configinterfaces.botconfig;
 
 /**
- * @Author: Celestialdeath99
- * Made on 11/28/2017
+ * @author Celestialdeath99
+ * @since 1.0.0
  */
-
 
 public interface ResourceFiles {
     String emoticons();

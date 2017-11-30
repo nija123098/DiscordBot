@@ -101,7 +101,7 @@ public class GuildAudioManager extends AudioEventAdapter{
      */
     public static GuildAudioManager getManager(VoiceChannel channel, boolean make){
         if (channel == null) return null;// this might not happen anymore
-        if (ConfigProvider.botSettings.ghost_mode_enabled()) throw new GhostException();
+        if (ConfigProvider.BOT_SETTINGS.ghost_mode_enabled()) throw new GhostException();
         GuildAudioManager current = getManager(channel.getGuild());
         if (current != null) {
             if (!current.voiceChannel().isConnected()) MAP.replace(channel.getID(), new GuildAudioManager(channel));

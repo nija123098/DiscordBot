@@ -40,7 +40,7 @@ public class GuideCommand extends AbstractCommand {
     public String reader() {
         try {
             StringBuilder texty = new StringBuilder();
-            List<String> text = Files.readAllLines(Paths.get(ConfigProvider.resourceFiles.guide()));
+            List<String> text = Files.readAllLines(Paths.get(ConfigProvider.RESOURCE_FILES.guide()));
             text.forEach(s -> {
                 if (s.isEmpty()) texty.append("|");
                 else texty.append(s + "\n");

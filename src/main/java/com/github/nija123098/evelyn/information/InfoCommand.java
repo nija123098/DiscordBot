@@ -36,6 +36,6 @@ public class InfoCommand extends AbstractCommand {
                 "For help about a command type " + FormatHelper.embedLink(prefix + "help <command>\n","") +
                 "An example: " + FormatHelper.embedLink("@Evelyn help ping","") + " to see what you can do with the ping command.\n" +
                 "\n" +
-                "If you need assistance, want to share your thoughts or want to contribute feel free to join my discord " + FormatHelper.embedLink("here", ConfigProvider.urls.discord_invite_url()) + ".");
+                "If you need assistance, want to share your thoughts or want to contribute feel free to join my discord " + FormatHelper.embedLink("here", ConfigProvider.URLS.discord_invite_url()) + ".");
     }
 }

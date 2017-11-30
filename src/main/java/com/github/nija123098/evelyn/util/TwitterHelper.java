@@ -15,7 +15,7 @@ public class TwitterHelper {
         ConfigurationBuilder builder = new ConfigurationBuilder();
         builder.setApplicationOnlyAuthEnabled(true);
         APPLICATION = new TwitterFactory(builder.build()).getInstance();
-        APPLICATION.setOAuthConsumer(ConfigProvider.authKeys.twitter_key(), ConfigProvider.authKeys.twitter_secret());
+        APPLICATION.setOAuthConsumer(ConfigProvider.AUTH_KEYS.twitter_key(), ConfigProvider.AUTH_KEYS.twitter_secret());
         try{APPLICATION.getOAuth2Token();
         } catch (TwitterException e) {Log.log("Could not load Twitter", e);}
     }

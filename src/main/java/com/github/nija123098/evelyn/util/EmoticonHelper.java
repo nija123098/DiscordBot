@@ -21,7 +21,7 @@ public class EmoticonHelper {
     private static final Map<String, Set<String>> MAP = new HashMap<>();
     static {
         try{
-            Files.readAllLines(Paths.get(ConfigProvider.resourceFiles.emoticons())).forEach(s -> {
+            Files.readAllLines(Paths.get(ConfigProvider.RESOURCE_FILES.emoticons())).forEach(s -> {
                 String[] strings = s.split(" ");
                 MAP.put(strings[0], new HashSet<>(Arrays.asList(Arrays.copyOfRange(strings, 1, strings.length))));
                 for (int i = 1; i < strings.length; i++) EMOTICON_MAP.put(strings[i], strings[0]);

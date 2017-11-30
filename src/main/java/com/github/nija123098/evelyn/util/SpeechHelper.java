@@ -56,7 +56,7 @@ public class SpeechHelper {
         if (first == null) return second;
         File to = FileHelper.getTempFile("speech", "mp3");
         List<String> arguments = new ArrayList<>();
-        arguments.add(ConfigProvider.librariesFiles.ffm_peg());
+        arguments.add(ConfigProvider.LIBRARIES_FILES.ffm_peg());
         arguments.add("-i");
         arguments.add("\"concat:" + first.getPath() + "|" + second.getPath() + "\"");
         arguments.add("-acodec");

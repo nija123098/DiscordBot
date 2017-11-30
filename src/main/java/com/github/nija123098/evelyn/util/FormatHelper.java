@@ -54,7 +54,7 @@ public class FormatHelper {
         return l;
     }
     public static String embedLink(String text, String link){
-        if (link.isEmpty()) return "[" + text + "](" + ConfigProvider.urls.rickroll_vid() + ")";
+        if (link.isEmpty()) return "[" + text + "](" + ConfigProvider.URLS.rickroll_vid() + ")";
         return "[" + text + "](" + link + ")";
     }
     /**

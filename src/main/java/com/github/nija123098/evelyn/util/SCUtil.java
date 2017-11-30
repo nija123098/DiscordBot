@@ -43,7 +43,7 @@ public class SCUtil {
     }
     public static List<Track> getTracksFromList(String code){
         List<String> commands = new ArrayList<>();
-        commands.add(ConfigProvider.librariesFiles.youtube_dl());
+        commands.add(ConfigProvider.LIBRARIES_FILES.youtube_dl());
         commands.add("--flat-playlist");
         commands.add("--dump-json");
         commands.add("https://soundcloud.com/" + code);

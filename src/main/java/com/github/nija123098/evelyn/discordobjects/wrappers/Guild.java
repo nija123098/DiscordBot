@@ -214,22 +214,22 @@ public class Guild implements Configurable {
     }
 
     public void banUser(User user, int delete, String reason) {
-        if (ConfigProvider.botSettings.ghost_mode_enabled()) return;
+        if (ConfigProvider.BOT_SETTINGS.ghost_mode_enabled()) return;
         ErrorWrapper.wrap(() -> guild().banUser(user.user(), reason, delete));
     }
 
     public void pardonUser(String s) {
-        if (ConfigProvider.botSettings.ghost_mode_enabled()) return;
+        if (ConfigProvider.BOT_SETTINGS.ghost_mode_enabled()) return;
         ErrorWrapper.wrap(() -> guild().pardonUser(Long.parseLong(s)));
     }
 
     public void kickUser(User user, String reason) {
-        if (ConfigProvider.botSettings.ghost_mode_enabled()) return;
+        if (ConfigProvider.BOT_SETTINGS.ghost_mode_enabled()) return;
         ErrorWrapper.wrap(() -> guild().kickUser(user.user(), reason));
     }
 
     public void editUserRoles(User user, Role...roles) {
-        if (ConfigProvider.botSettings.ghost_mode_enabled()) return;
+        if (ConfigProvider.BOT_SETTINGS.ghost_mode_enabled()) return;
         List<IRole> iRoles = new ArrayList<>(roles.length);
         for (Role role : roles) {
             iRoles.add(role.role());
@@ -238,52 +238,52 @@ public class Guild implements Configurable {
     }
 
     public void setDeafenUser(User user, boolean b) {
-        if (ConfigProvider.botSettings.ghost_mode_enabled()) return;
+        if (ConfigProvider.BOT_SETTINGS.ghost_mode_enabled()) return;
         ErrorWrapper.wrap(() -> guild().setDeafenUser(user.user(), b));
     }
 
     public void setMuteUser(User user, boolean b) {
-        if (ConfigProvider.botSettings.ghost_mode_enabled()) return;
+        if (ConfigProvider.BOT_SETTINGS.ghost_mode_enabled()) return;
         ErrorWrapper.wrap(() -> guild().setMuteUser(user.user(), b));
     }
 
     public void setUserNickname(User user, String s) {
-        if (ConfigProvider.botSettings.ghost_mode_enabled()) return;
+        if (ConfigProvider.BOT_SETTINGS.ghost_mode_enabled()) return;
         ErrorWrapper.wrap(() -> guild().setUserNickname(user.user(), s));
     }
 
     public void changeName(String s) {
-        if (ConfigProvider.botSettings.ghost_mode_enabled()) return;
+        if (ConfigProvider.BOT_SETTINGS.ghost_mode_enabled()) return;
         ErrorWrapper.wrap(() -> guild().changeName(s));
     }
 
     public void changeRegion(Region region) {
-        if (ConfigProvider.botSettings.ghost_mode_enabled()) return;
+        if (ConfigProvider.BOT_SETTINGS.ghost_mode_enabled()) return;
         ErrorWrapper.wrap(() -> guild().changeRegion(region.region()));
     }
 
     public void changeAFKChannel(VoiceChannel voiceChannel) {
-        if (ConfigProvider.botSettings.ghost_mode_enabled()) return;
+        if (ConfigProvider.BOT_SETTINGS.ghost_mode_enabled()) return;
         ErrorWrapper.wrap(() -> guild().changeAFKChannel(voiceChannel.channel()));
     }
 
     public void changeAFKTimeout(int i) {
-        if (ConfigProvider.botSettings.ghost_mode_enabled()) return;
+        if (ConfigProvider.BOT_SETTINGS.ghost_mode_enabled()) return;
         ErrorWrapper.wrap(() -> guild().changeAFKTimeout(i));
     }
 
     public void leave() {
-        if (ConfigProvider.botSettings.ghost_mode_enabled()) return;
+        if (ConfigProvider.BOT_SETTINGS.ghost_mode_enabled()) return;
         ErrorWrapper.wrap(() -> guild().leave());
     }
 
     public Channel createChannel(String s) {
-        if (ConfigProvider.botSettings.ghost_mode_enabled()) throw new GhostException();
+        if (ConfigProvider.BOT_SETTINGS.ghost_mode_enabled()) throw new GhostException();
         return ErrorWrapper.wrap((ErrorWrapper.Request<Channel>) () -> Channel.getChannel(guild().createChannel(s)));
     }
 
     public VoiceChannel createVoiceChannel(String s) {
-        if (ConfigProvider.botSettings.ghost_mode_enabled()) throw new GhostException();
+        if (ConfigProvider.BOT_SETTINGS.ghost_mode_enabled()) throw new GhostException();
         return ErrorWrapper.wrap((ErrorWrapper.Request<VoiceChannel>) () -> VoiceChannel.getVoiceChannel(guild().createVoiceChannel(s)));
     }
 
@@ -300,7 +300,7 @@ public class Guild implements Configurable {
     }
 
     public void reorderRoles(Role...roles) {
-        if (ConfigProvider.botSettings.ghost_mode_enabled()) return;
+        if (ConfigProvider.BOT_SETTINGS.ghost_mode_enabled()) return;
         List<IRole> iRoles = new ArrayList<>(roles.length);
         for (Role role : roles) {
             iRoles.add(role.role());
