@@ -1,6 +1,6 @@
 package com.github.nija123098.evelyn.perms;
 
-import com.github.nija123098.evelyn.botConfiguration.ConfigProvider;
+import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Role;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventDistributor;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;

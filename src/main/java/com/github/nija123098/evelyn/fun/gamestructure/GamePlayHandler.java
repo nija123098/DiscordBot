@@ -1,6 +1,6 @@
 package com.github.nija123098.evelyn.fun.gamestructure;
 
-import com.github.nija123098.evelyn.botConfiguration.ConfigProvider;
+import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.config.TypeChanger;
 import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
 import com.github.nija123098.evelyn.fun.gamestructure.neuralnet.AbstractNeuralNetGame;

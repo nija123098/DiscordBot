@@ -1,6 +1,6 @@
 package com.github.nija123098.evelyn.audio;
 
-import com.github.nija123098.evelyn.botConfiguration.ConfigProvider;
+import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 import com.mb3364.twitch.api.Twitch;
 import com.mb3364.twitch.api.handlers.UserResponseHandler;

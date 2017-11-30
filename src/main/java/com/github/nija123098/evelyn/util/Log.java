@@ -1,6 +1,6 @@
 package com.github.nija123098.evelyn.util;
 
-import com.github.nija123098.evelyn.botConfiguration.ConfigProvider;
+import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import sx.blah.discord.Discord4J;
 
 import java.io.FileOutputStream;

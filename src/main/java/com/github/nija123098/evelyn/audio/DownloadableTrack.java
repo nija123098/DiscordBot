@@ -3,7 +3,7 @@ package com.github.nija123098.evelyn.audio;
 import com.github.nija123098.evelyn.audio.configs.track.PlayCountConfig;
 import com.github.nija123098.evelyn.audio.configs.track.TrackTimeExpireConfig;
 import com.github.nija123098.evelyn.audio.configs.track.TrackTypeConfig;
-import com.github.nija123098.evelyn.botConfiguration.ConfigProvider;
+import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 import com.github.nija123098.evelyn.service.services.MusicDownloadService;

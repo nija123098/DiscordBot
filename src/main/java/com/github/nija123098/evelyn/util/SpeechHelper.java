@@ -1,7 +1,7 @@
 package com.github.nija123098.evelyn.util;
 
 import com.darkprograms.speech.synthesiser.Synthesiser;
-import com.github.nija123098.evelyn.botConfiguration.ConfigProvider;
+import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.exception.DevelopmentException;
 import org.apache.commons.io.IOUtils;
 

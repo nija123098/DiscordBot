@@ -2,7 +2,7 @@ package com.github.nija123098.evelyn.util;
 
 import com.github.nija123098.evelyn.audio.SoundCloudTrack;
 import com.github.nija123098.evelyn.audio.Track;
-import com.github.nija123098.evelyn.botConfiguration.ConfigProvider;
+import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 
 import java.io.BufferedReader;
 import java.io.IOException;

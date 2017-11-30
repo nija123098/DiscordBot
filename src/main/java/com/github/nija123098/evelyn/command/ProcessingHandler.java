@@ -1,6 +1,6 @@
 package com.github.nija123098.evelyn.command;
 
-import com.github.nija123098.evelyn.botConfiguration.ConfigProvider;
+import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 
 import java.util.Map;

@@ -52,6 +52,7 @@ public class AbstractConfig<V, T extends Configurable> {
      * The constructor to make a config instance.
      *
      * @param tableName the tableName of the config, spaces are not allowed.
+     * @param name the display name of the config, required
      * @param botRole the minimum role allowed to change the value.
      * @param category the catagory to that the config is in.
      * @param defaul the function to get the default value for a given config.

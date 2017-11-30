@@ -2,7 +2,7 @@ package com.github.nija123098.evelyn.util;
 
 import com.github.nija123098.evelyn.audio.Track;
 import com.github.nija123098.evelyn.audio.YoutubeTrack;
-import com.github.nija123098.evelyn.botConfiguration.ConfigProvider;
+import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.exception.ArgumentException;
 import com.github.nija123098.evelyn.exception.BotException;
 import com.github.nija123098.evelyn.exception.DevelopmentException;
@@ -158,7 +158,7 @@ public class YTUtil {
     static <E> E errorWrap(GoogleResponseSupplier<E> supplier) {
         try{return supplier.get();
         } catch (IOException e) {
-            if (e.getMessage().contains("quotaExceeded") || e.getMessage().contains("keyInvalid")) throw new BotException("Please use URLs to play music", e);
+            if (e.getMessage().contains("quotaExceeded") || e.getMessage().contains("keyInvalid")) throw new BotException("Please use urls to play music", e);
             throw new YoutubeSearchException(e);
         }
     }

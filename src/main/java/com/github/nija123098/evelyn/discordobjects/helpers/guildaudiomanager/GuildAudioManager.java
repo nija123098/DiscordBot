@@ -7,7 +7,7 @@ import com.github.nija123098.evelyn.audio.configs.GreetingsVoiceConfig;
 import com.github.nija123098.evelyn.audio.configs.guild.QueueTrackOnlyConfig;
 import com.github.nija123098.evelyn.audio.configs.guild.SkipPercentConfig;
 import com.github.nija123098.evelyn.audio.configs.track.PlayCountConfig;
-import com.github.nija123098.evelyn.botConfiguration.ConfigProvider;
+import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.config.AbstractConfig;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.configs.guild.GuildActivePlaylistConfig;

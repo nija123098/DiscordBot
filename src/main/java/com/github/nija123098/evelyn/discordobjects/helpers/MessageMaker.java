@@ -1,6 +1,6 @@
 package com.github.nija123098.evelyn.discordobjects.helpers;
 
-import com.github.nija123098.evelyn.botConfiguration.ConfigProvider;
+import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.command.ProcessingHandler;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.configs.guild.GuildLanguageConfig;
@@ -724,7 +724,11 @@ public class MessageMaker {
             if (this.embed == null) ErrorWrapper.wrap(() -> this.message.edit(this.builder.getContent()));
             else ErrorWrapper.wrap(() -> this.message.edit(this.embed.build()));
         }
-        this.reactionBehaviors.forEach((s, behavior) -> ReactionBehavior.registerListener(this.ourMessage, s, behavior));
+
+        for (Map.Entry<String, ReactionBehavior> behavior : this.reactionBehaviors.entrySet()) {
+            ReactionBehavior.registerListener(this.ourMessage, behavior.getKey(), behavior.getValue());
+        }
+
         ProcessingHandler.endProcess(this.channel);
     }
 

@@ -1,6 +1,6 @@
 package com.github.nija123098.evelyn.moderation.messagefiltering.filters;
 
-import com.github.nija123098.evelyn.botConfiguration.ConfigProvider;
+import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordMessageReceived;
 import com.github.nija123098.evelyn.moderation.messagefiltering.MessageFilter;
 import com.github.nija123098.evelyn.moderation.messagefiltering.MessageMonitoringLevel;

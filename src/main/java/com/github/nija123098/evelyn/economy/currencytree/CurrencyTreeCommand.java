@@ -1,6 +1,6 @@
 package com.github.nija123098.evelyn.economy.currencytree;
 
-import com.github.nija123098.evelyn.botConfiguration.ConfigProvider;
+import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Argument;
@@ -28,7 +28,7 @@ import java.util.Objects;
  */
 public class CurrencyTreeCommand extends AbstractCommand {
     public CurrencyTreeCommand() {
-        super("currencytree", BotRole.BOT_ADMIN, ModuleLevel.ECONOMY, "ct", null, null);
+        super("currencytree", BotRole.BOT_ADMIN, ModuleLevel.ECONOMY, "moneytree, mt, ct", null, null);
     }
 
     @Command
