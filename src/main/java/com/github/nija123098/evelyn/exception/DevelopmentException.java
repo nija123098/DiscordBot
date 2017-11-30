@@ -1,5 +1,6 @@
 package com.github.nija123098.evelyn.exception;
 
+import com.github.nija123098.evelyn.botConfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.util.FormatHelper;
@@ -33,6 +34,6 @@ public class DevelopmentException extends BotException {
 
     @Override
     public MessageMaker makeMessage(Channel channel) {
-        return super.makeMessage(channel).getFooter().append("Click " + FormatHelper.embedLink("here", "https://discord.gg/UW5X5BU") + " to notify the developers.").getMaker().getTitle().clear().appendRaw("Development Error").getMaker();
+        return super.makeMessage(channel).getFooter().append("Click " + FormatHelper.embedLink("here", ConfigProvider.urls.discord_invite_url()) + " to notify the developers.").getMaker().getTitle().clear().appendRaw("Development Error").getMaker();
     }
 }
