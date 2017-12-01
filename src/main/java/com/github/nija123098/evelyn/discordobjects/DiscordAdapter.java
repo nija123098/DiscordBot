@@ -150,7 +150,7 @@ public class DiscordAdapter {
      * Forces the initialization of this class.
      */
     public static void initialize(){
-        Log.log("Discord adapter initialized");
+        Log.log("Discord adapter initialized. (Converting Discord to 240v.)");
     }
     @EventSubscriber
     public static void handle(ShardReadyEvent event){

@@ -94,6 +94,6 @@ public class ServiceHandler {
      * Forces the initialization of this class.
      */
     public static void initialize(){
-        Log.log("Service Handler initialized");
+        Log.log("Service Handler initialized. (The tertiary sector or service sector is the third of the four economic sectors of the four-sector theory.)");
     }
 }

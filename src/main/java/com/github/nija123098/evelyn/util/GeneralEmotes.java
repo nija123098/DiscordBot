@@ -6,10 +6,6 @@ package com.github.nija123098.evelyn.util;
 
 public class GeneralEmotes {
 
-    GeneralEmotes(String emote){
-        String emote1 = emote;
-    }
-
     //empty emote
     public final static String EMPTY = EmoticonHelper.getEmoji("EMPTY").toString();
 

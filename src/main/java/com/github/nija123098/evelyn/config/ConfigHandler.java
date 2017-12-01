@@ -79,7 +79,7 @@ public class ConfigHandler {
      * Forces the initialization of this class.
      */
     public static void initialize(){
-        Log.log("Config Handler initialized");
+        Log.log("Config Handler initialized. (Handling your configs ( ͡° ͜ʖ ͡°))");
     }
 
     /**

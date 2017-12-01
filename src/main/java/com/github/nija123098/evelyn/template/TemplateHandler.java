@@ -31,7 +31,7 @@ public class TemplateHandler {
      * Forces the initialization of this class.
      */
     public static void initialize(){
-        Log.log("Template Handler initialize");
+        Log.log("Template Handler initialized. (Jetfuel can't melt these steel beams.)");
     }
 
     /**

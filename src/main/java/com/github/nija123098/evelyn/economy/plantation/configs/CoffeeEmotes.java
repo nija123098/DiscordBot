@@ -8,12 +8,6 @@ import com.github.nija123098.evelyn.util.EmoticonHelper;
 
 public class CoffeeEmotes {
 
-    //constructor block
-    private final String emote;
-    CoffeeEmotes(String emote){
-        this.emote = emote;
-    }
-
     //coffee emote
     public final static String COFFEE = EmoticonHelper.getEmoji("Coffee").toString();
 
