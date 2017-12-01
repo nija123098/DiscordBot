@@ -30,7 +30,7 @@ public class TLDRCommand extends AbstractCommand {
     public TLDRCommand() {
         super("tldr", ModuleLevel.FUN, "tl;dr", null, "Shows a tldr from https://twitter.com/tldrwikipedia");
         //if twitter token not found, do nothing
-        if (Objects.equal(ConfigProvider.AUTH_KEYS.twitter_secret(),"na")){Log.log("Could not load TLDR command. Token not found."); return;}
+        if (Objects.equal(ConfigProvider.AUTH_KEYS.twitter_secret(),"na")){Log.log(LogColor.red("Could not load TLDR command. Token not found.")); return;}
         List<Status> statuses = new ArrayList<>();
         int page = 0;
         while (true){

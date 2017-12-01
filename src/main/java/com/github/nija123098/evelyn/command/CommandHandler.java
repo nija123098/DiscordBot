@@ -105,7 +105,7 @@ public class CommandHandler {
      * Forces the initialization of this class.
      */
     public static void initialize(){
-        Log.log("Command Handler initialized. (Implementing communism.)");
+        Log.log(LogColor.blue("Command Handler initialized.") + LogColor.yellow(" Implementing communism."));
     }
 
     /**

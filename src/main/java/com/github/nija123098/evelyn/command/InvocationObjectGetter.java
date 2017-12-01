@@ -488,7 +488,7 @@ public class InvocationObjectGetter {
      * Forces the initialization of this class.
      */
     public static void initialize(){
-        Log.log("Invocation Object Getter initialized. (Invoking dangerous rituals.)");
+        Log.log(LogColor.blue("Invocation Object Getter initialized.") + LogColor.yellow(" Invoking dangerous rituals."));
     }
 
     /**

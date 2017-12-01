@@ -22,10 +22,7 @@ import com.github.nija123098.evelyn.service.services.ScheduleService;
 import com.github.nija123098.evelyn.template.KeyPhrase;
 import com.github.nija123098.evelyn.template.Template;
 import com.github.nija123098.evelyn.template.TemplateHandler;
-import com.github.nija123098.evelyn.util.Care;
-import com.github.nija123098.evelyn.util.EmoticonHelper;
-import com.github.nija123098.evelyn.util.Log;
-import com.github.nija123098.evelyn.util.ThreadProvider;
+import com.github.nija123098.evelyn.util.*;
 import org.apache.http.message.BasicNameValuePair;
 import org.reflections.Reflections;
 import sx.blah.discord.api.ClientBuilder;
@@ -150,7 +147,7 @@ public class DiscordAdapter {
      * Forces the initialization of this class.
      */
     public static void initialize(){
-        Log.log("Discord adapter initialized. (Converting Discord to 240v.)");
+        Log.log(LogColor.blue("Discord adapter initialized.") + LogColor.yellow(" Converting Discord to 240v."));
     }
     @EventSubscriber
     public static void handle(ShardReadyEvent event){

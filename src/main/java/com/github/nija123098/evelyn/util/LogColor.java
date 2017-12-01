@@ -39,36 +39,4 @@ public class LogColor {
         return "\u001B[37m" + message + "\u001B[0m";
     }
 
-    public static String brightBlack(String message) {
-        return "\u001B[1;30m" + message +  "\u001B[0m";
-    }
-
-    public static String brightRed(String message) {
-        return "\u001B[1;31m" + message + "\u001B[0m";
-    }
-
-    public static String brightGreen(String message) {
-        return "\u001B[1;32m" + message + "\u001B[0m";
-    }
-
-    public static String brightYellow(String message) {
-        return "\u001B[1;33m" + message + "\u001B[0m";
-    }
-
-    public static String brightBlue(String message) {
-        return "\u001B[1;34m" + message + "\u001B[0m";
-    }
-
-    public static String brightMagenta(String message) {
-        return "\u001B[1;35m" + message + "\u001B[0m";
-    }
-
-    public static String brightCyan(String message) {
-        return "\u001B[1;36m" + message + "\u001B[0m";
-    }
-
-    public static String brightWhite(String message) {
-        return "\u001B[1;37m" + message + "\u001B[0m";
-    }
-
 }

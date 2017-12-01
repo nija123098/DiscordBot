@@ -9,6 +9,7 @@ import com.github.nija123098.evelyn.exception.DevelopmentException;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
 import com.github.nija123098.evelyn.util.FormatHelper;
 import com.github.nija123098.evelyn.util.Log;
+import com.github.nija123098.evelyn.util.LogColor;
 import com.google.api.client.repackaged.com.google.common.base.Joiner;
 import net.rithms.riot.api.ApiConfig;
 import net.rithms.riot.api.RiotApi;
@@ -40,7 +41,7 @@ public class LOLChampCommand extends AbstractCommand {
         } catch (RiotApiException e) {
             //don't print stack trace if token not found
             if (Objects.equals(ConfigProvider.AUTH_KEYS.riot_games_token(),"na")){
-                Log.log("Could not load LOLChamp command. Token not found.");
+                Log.log(LogColor.red("Could not load LOLChamp command. Token not found."));
             }else{
                 throw new DevelopmentException(e);
             }

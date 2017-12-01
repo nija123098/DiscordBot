@@ -9,10 +9,10 @@ import java.time.temporal.ChronoUnit;
  * @since 1.0.0
  */
 
-public class botClock {
+public class BotClock {
 
     public static void initialize() {
-        Log.log("Bot Clock initialized. (I don't have time to tell you why I don't have time to initialize.)");
+        Log.log(LogColor.blue("Bot Clock initialized.") + LogColor.yellow(" I don't have time to tell you why I don't have time to initialize."));
     }
 
     private static Clock clock = null;

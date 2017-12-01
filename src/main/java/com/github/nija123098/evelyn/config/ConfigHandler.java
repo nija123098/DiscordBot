@@ -7,6 +7,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.*;
 import com.github.nija123098.evelyn.exception.DevelopmentException;
 import com.github.nija123098.evelyn.launcher.Reference;
 import com.github.nija123098.evelyn.util.Log;
+import com.github.nija123098.evelyn.util.LogColor;
 import org.reflections.Reflections;
 
 import java.lang.reflect.Modifier;
@@ -79,7 +80,7 @@ public class ConfigHandler {
      * Forces the initialization of this class.
      */
     public static void initialize(){
-        Log.log("Config Handler initialized. (Handling your configs ( ͡° ͜ʖ ͡°))");
+        Log.log(LogColor.blue("Config Handler initialized.") + LogColor.yellow(" Handling your configs ( ͡° ͜ʖ ͡°)"));
     }
 
     /**

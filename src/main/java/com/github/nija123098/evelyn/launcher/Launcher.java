@@ -11,10 +11,7 @@ import com.github.nija123098.evelyn.service.ServiceHandler;
 import com.github.nija123098.evelyn.service.services.MemoryManagementService;
 import com.github.nija123098.evelyn.service.services.ScheduleService;
 import com.github.nija123098.evelyn.template.TemplateHandler;
-import com.github.nija123098.evelyn.util.Care;
-import com.github.nija123098.evelyn.util.Log;
-import com.github.nija123098.evelyn.util.ThreadProvider;
-import com.github.nija123098.evelyn.util.botClock;
+import com.github.nija123098.evelyn.util.*;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -167,12 +164,12 @@ public class Launcher {
         ServiceHandler.initialize();// this order
         CommandHandler.initialize();// could break
         DiscordAdapter.initialize();// EVERYTHING
-        botClock.initialize(); //global botclock
+        BotClock.initialize(); //global botclock
         IS_STARTING_UP.set(true);
         STARTUPS.forEach(Runnable::run);
         ASYNC_STARTUPS.forEach(ThreadProvider::sub);
         IS_READY.set(true);
         DiscordClient.online("with users!");
-        Log.log("Bot finished initializing. (Burn the heretic. Kill the Mee6. Purge the unclean.)");
+        Log.log(LogColor.blue("Bot finished initializing.") + LogColor.yellow(" Burn the heretic. Kill the Mee6. Purge the unclean."));
     }
 }
