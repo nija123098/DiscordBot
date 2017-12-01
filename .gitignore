@@ -10,11 +10,9 @@ src/main/java/META-INF/MANIFEST.MF
 *.txt
 *.cfg
 *.png
-*.sh
 audio/
 badges/
 configs/
-executables/
 neural_net/
 required/
 temp/
