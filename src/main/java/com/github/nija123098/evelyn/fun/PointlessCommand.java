@@ -26,12 +26,14 @@ public class PointlessCommand extends AbstractCommand {
         maker.appendRaw(EmoticonHelper.getEmoji("EMPTY").toString());
         maker.withReactionBehavior("red_circle", (add, reaction, user1) -> {
             int currency = ConfigHandler.getSetting(CurrentCurrencyConfig.class, user);
-            currencyLost = currencyLost + 1;
-            if (currencyLost >= 10) {
-                currencyLost = 0;
-                new MessageMaker(user).mustEmbed().appendRaw(FormatHelper.embedLink("you may need help", "http://www.smartrecovery.org/addiction/gambling_addiction.html")).withDM().send();
+            if (currency > 0) {
+                currencyLost = currencyLost + 1;
+                if (currencyLost >= 10) {
+                    currencyLost = 0;
+                    new MessageMaker(user).mustEmbed().appendRaw(FormatHelper.embedLink("you may need help", "http://www.smartrecovery.org/addiction/gambling_addiction.html")).withDM().send();
+                }
+                ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, (currency - 1));
             }
-            ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, (currency - 1));
         });
     }
 }

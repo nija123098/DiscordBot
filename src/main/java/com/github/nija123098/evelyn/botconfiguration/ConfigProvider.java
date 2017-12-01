@@ -21,5 +21,5 @@ public class ConfigProvider {
     public static final LibrariesFiles LIBRARIES_FILES = ConfigLoader.configurationProvider().bind("LibrariesFiles", LibrariesFiles.class);
 
     //Settings from urls.yaml
-    public static final URLs URLS = ConfigLoader.configurationProvider().bind("urls", URLs.class);
+    public static final URLs URLS = ConfigLoader.configurationProvider().bind("URLs", URLs.class);
 }
