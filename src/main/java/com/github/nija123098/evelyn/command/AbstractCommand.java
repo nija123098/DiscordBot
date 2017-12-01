@@ -476,7 +476,7 @@ public class AbstractCommand {
             if (this.okOnSuccess) message.addReactionByName("ok_hand");
             if (!message.getChannel().isPrivate()) {
                 Channel chan = ConfigHandler.getSetting(BotLogConfig.class, message.getGuild());
-                if (chan == null) return;
+                if (chan == null || !chan.canPost()) return;
                 new MessageMaker(chan).withAuthorIcon(user.getAvatarURL()).getAuthorName().appendRaw(message.getAuthor().getDisplayName(message.getGuild()) + (message.getAuthor().getNickname(message.getGuild()) == null ? "" : " AKA " + message.getAuthor().getNameAndDiscrim())).getMaker().append(message.getChannel().mention() + " - used command ***" + this.name + "***").appendRaw("\n" + message.getMentionCleanedContent()).send();
             }
         }

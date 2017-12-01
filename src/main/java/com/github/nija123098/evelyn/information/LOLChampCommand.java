@@ -40,7 +40,7 @@ public class LOLChampCommand extends AbstractCommand {
         } catch (RiotApiException e) {
             //don't print stack trace if token not found
             if (Objects.equals(ConfigProvider.AUTH_KEYS.riot_games_token(),"na")){
-                Log.log("Could not load Riot Api. Token not found.");
+                Log.log("Could not load LOLChamp command. Token not found.");
             }else{
                 throw new DevelopmentException(e);
             }
