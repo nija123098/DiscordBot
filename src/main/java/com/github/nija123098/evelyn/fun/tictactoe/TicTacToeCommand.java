@@ -10,6 +10,10 @@ import com.github.nija123098.evelyn.exception.ArgumentException;
 import com.github.nija123098.evelyn.exception.ContextException;
 import com.github.nija123098.evelyn.fun.gamestructure.AbstractGame;
 
+/**
+ * @author nija123098
+ * @since 1.0.0
+ */
 public class TicTacToeCommand extends AbstractCommand {
     public TicTacToeCommand() {
         super("tictactoe", ModuleLevel.FUN, "ttt, tic tac toe", null, "Plays a game of tic tac toe");

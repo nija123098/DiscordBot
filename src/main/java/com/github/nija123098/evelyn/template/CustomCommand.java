@@ -1,7 +1,8 @@
 package com.github.nija123098.evelyn.template;
 
 /**
- * Made by nija123098 on 8/13/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class CustomCommand {
     private Template template;

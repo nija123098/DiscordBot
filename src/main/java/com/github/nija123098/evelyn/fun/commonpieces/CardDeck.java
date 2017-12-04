@@ -9,7 +9,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Made by nija123098 on 5/25/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class CardDeck {
     private final List<Card> inPile = new ArrayList<>(52);

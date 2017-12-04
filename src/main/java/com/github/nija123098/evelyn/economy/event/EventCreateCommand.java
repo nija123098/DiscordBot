@@ -16,9 +16,9 @@ import com.github.nija123098.evelyn.economy.event.configs.EventStartConfig;
 import java.time.Instant;
 
 /**
- * Written by Soarnir 18/11/17
+ * @author Soarnir
+ * @since 1.0.0
  */
-
 public class EventCreateCommand extends AbstractCommand {
     public EventCreateCommand() {
         super("create event", ModuleLevel.BOT_ADMINISTRATIVE, null, null, "create events");

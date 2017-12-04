@@ -7,6 +7,10 @@ import com.github.nija123098.evelyn.config.ConfigCategory;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * @author nija123098
+ * @since 1.0.0
+ */
 public class TrackAssociationConfig extends AbstractConfig<Map<Track, Integer>, Track> {
     private static TrackAssociationConfig config;
     public TrackAssociationConfig() {

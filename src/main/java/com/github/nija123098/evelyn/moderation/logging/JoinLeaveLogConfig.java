@@ -11,6 +11,10 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.Discord
 
 import java.awt.*;
 
+/**
+ * @author nija123098
+ * @since 1.0.0
+ */
 public class JoinLeaveLogConfig extends AbstractConfig<Channel, Guild> {
     public JoinLeaveLogConfig() {
         super("join_leave_log", "Join Leave Log", ConfigCategory.LOGGING, (Channel) null, "The location to log users joining and leaving a server");

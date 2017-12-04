@@ -21,6 +21,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * @author nija123098
+ * @since 1.0.0
+ */
 public class StoriesCommand extends AbstractCommand {
     private static final List<String> STORY_TITLES = new ArrayList<>();
     private static final List<String> REDUCED_LIST = new ArrayList<>();

@@ -9,7 +9,8 @@ import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 
 /**
- * Made by nija123098 on 5/22/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class RoleAdminCommand extends AbstractCommand {
     public RoleAdminCommand() {

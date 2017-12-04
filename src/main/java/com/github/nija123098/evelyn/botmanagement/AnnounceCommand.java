@@ -19,6 +19,10 @@ import java.util.ConcurrentModificationException;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * @author nija123098
+ * @since 1.0.0
+ */
 public class AnnounceCommand extends AbstractCommand {
     public AnnounceCommand() {
         super("announce", ModuleLevel.BOT_ADMINISTRATIVE, null, null, null);

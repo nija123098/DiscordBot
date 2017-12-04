@@ -11,9 +11,9 @@ import com.github.nija123098.evelyn.util.EmoticonHelper;
 import com.github.nija123098.evelyn.util.FormatHelper;
 
 /**
- * Written by Soarnir 23/11/17
+ * @author Soarnir
+ * @since 1.0.0
  */
-
 public class PointlessCommand extends AbstractCommand {
     public PointlessCommand() {
         super("pointless", ModuleLevel.FUN, null, null, "lel");

@@ -15,7 +15,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Made by nija123098 on 8/9/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class FunctionCommand extends AbstractCommand {
     private static final Set<Class<?>> APPROVED_RETURNS = new HashSet<>(Arrays.asList(Number.class, String.class));

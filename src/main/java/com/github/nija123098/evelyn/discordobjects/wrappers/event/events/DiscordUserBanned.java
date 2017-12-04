@@ -6,7 +6,8 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.BotEvent;
 import sx.blah.discord.handle.impl.events.guild.member.UserBanEvent;
 
 /**
- * Made by nija123098 on 8/7/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class DiscordUserBanned implements BotEvent {
     private UserBanEvent event;

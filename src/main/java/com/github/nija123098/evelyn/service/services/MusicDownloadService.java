@@ -13,7 +13,8 @@ import java.util.concurrent.*;
 import java.util.function.Consumer;
 
 /**
- * Made by nija123098 on 3/28/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class MusicDownloadService extends AbstractService {
     private static final ThreadPoolExecutor POOL_EXECUTOR = new ThreadPoolExecutor(1, ConfigProvider.AUDIO_SETTINGS.music_download_threads(), 10, TimeUnit.SECONDS, new ArrayBlockingQueue<>(10), r -> {

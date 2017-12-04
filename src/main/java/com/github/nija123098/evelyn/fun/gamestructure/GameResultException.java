@@ -14,6 +14,9 @@ import java.util.concurrent.atomic.AtomicReference;
  *
  * An exception is used to ensure no further processing
  * is done on the game since such might change the outcome.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public class GameResultException extends BotException {
     private Team winner;

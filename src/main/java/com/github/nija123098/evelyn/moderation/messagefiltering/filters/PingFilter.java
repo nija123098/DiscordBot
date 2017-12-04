@@ -10,7 +10,8 @@ import com.github.nija123098.evelyn.service.services.MemoryManagementService;
 import java.util.List;
 
 /**
- * Made by nija123098 on 7/19/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class PingFilter implements MessageFilter {
     private static final List<GuildUser> PINGERS = new MemoryManagementService.ManagedList<>(120_000);

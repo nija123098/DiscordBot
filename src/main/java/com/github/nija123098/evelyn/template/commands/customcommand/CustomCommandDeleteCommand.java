@@ -10,7 +10,8 @@ import com.github.nija123098.evelyn.template.CustomCommandConfig;
 import com.github.nija123098.evelyn.template.CustomCommandHandler;
 
 /**
- * Made by nija123098 on 8/11/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class CustomCommandDeleteCommand extends AbstractCommand {
     public CustomCommandDeleteCommand() {

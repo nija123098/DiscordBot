@@ -22,7 +22,8 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
- * Made by nija123098 on 7/19/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class MessageMonitor {
     private static final Map<MessageMonitoringLevel, MessageFilter> FILTER_MAP = new HashMap<>();

@@ -13,7 +13,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * Made by nija123098 on 6/21/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class MentionResponseConfig extends AbstractConfig<Boolean, Guild> {
     public MentionResponseConfig() {

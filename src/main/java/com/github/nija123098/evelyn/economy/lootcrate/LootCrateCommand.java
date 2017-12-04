@@ -14,9 +14,9 @@ import java.util.ConcurrentModificationException;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Written by Dxeo 21/11/2017
+ * @author Dxeo
+ * @since 1.0.0
  */
-
 public class LootCrateCommand extends AbstractCommand {
 
     //constructor

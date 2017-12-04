@@ -9,7 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Made by nija123098 on 5/1/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class CurrencyHistoryConfig extends AbstractConfig<List<CurrencyTransfer>, Configurable> {
     public CurrencyHistoryConfig() {

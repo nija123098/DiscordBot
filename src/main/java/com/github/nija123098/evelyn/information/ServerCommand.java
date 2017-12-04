@@ -17,7 +17,8 @@ import sx.blah.discord.handle.obj.VerificationLevel;
 import java.util.List;
 
 /**
- * Made by nija123098 on 5/21/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class ServerCommand extends AbstractCommand {
     public ServerCommand() {

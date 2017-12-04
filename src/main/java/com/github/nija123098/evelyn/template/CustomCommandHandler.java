@@ -13,7 +13,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Made by nija123098 on 8/11/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class CustomCommandHandler {
     private static final Map<Guild, Map<String, Template>> NAME_MAP = new ConcurrentHashMap<>();

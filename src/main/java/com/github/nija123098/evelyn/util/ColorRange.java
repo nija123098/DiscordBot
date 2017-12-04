@@ -7,6 +7,7 @@ import java.util.List;
 
 /**
  * @author nija123098
+ * @since 1.0.0
  */
 public class ColorRange {
     private final Color[] colors;

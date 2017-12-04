@@ -14,6 +14,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * @author nija123098
+ * @since 1.0.0
+ */
 public class TicTacToe extends AbstractNeuralNetGame {
     private final int size;
     private Boolean[][] grid;

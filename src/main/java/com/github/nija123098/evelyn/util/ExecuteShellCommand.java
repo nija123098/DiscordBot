@@ -7,8 +7,8 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * @author Celestialdeath99
+ * @since 1.0.0
  */
-
 public class ExecuteShellCommand {
     static String output;
 

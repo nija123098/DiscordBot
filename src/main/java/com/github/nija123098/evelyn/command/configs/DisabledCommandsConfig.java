@@ -8,7 +8,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Made by nija123098 on 6/6/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class DisabledCommandsConfig extends AbstractConfig<Set<String>, GlobalConfigurable> {
     public DisabledCommandsConfig() {

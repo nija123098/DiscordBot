@@ -1,9 +1,9 @@
 package com.github.nija123098.evelyn.util;
 
 /**
- * Written by Soarnir 27/11/17
+ * @author Soarnir
+ * @since 1.0.0
  */
-
 public class GeneralEmotes {
 
     //empty emote

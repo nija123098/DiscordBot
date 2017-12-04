@@ -15,6 +15,10 @@ import com.github.nija123098.evelyn.moderation.logging.BotChannelConfig;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * @author nija123098
+ * @since 1.0.0
+ */
 public class GuildIsNewConfig extends AbstractConfig<Boolean, Guild> {
     private static final Set<Guild> GUILDS = new HashSet<>();
     public GuildIsNewConfig() {

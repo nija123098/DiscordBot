@@ -19,7 +19,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Made by nija123098 on 5/25/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class RollCommand extends AbstractCommand {
     public RollCommand() {

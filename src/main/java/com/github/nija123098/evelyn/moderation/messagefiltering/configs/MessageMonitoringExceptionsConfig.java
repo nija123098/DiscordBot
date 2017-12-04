@@ -9,7 +9,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Made by nija123098 on 7/19/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class MessageMonitoringExceptionsConfig extends AbstractConfig<Set<MessageMonitoringLevel>, Channel> {
     public MessageMonitoringExceptionsConfig() {

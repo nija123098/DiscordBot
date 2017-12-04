@@ -20,6 +20,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * @author nija123098
+ * @since 1.0.0
+ */
 public class GamePlayHandler {
     private static final double ALTER_PERCENT = .005D;
     private static final Map<String, NeuralNet> LOADED_NEURAL_NETS = new HashMap<>();

@@ -13,9 +13,9 @@ import java.nio.file.Paths;
 import java.util.List;
 
 /**
- * Written by Soarnir 12/9/17
+ * @author Soarnir
+ * @since 1.0.0
  */
-
 public class GuideCommand extends AbstractCommand {
     public GuideCommand() {
         super("guide", ModuleLevel.INFO, null, null, "A quickstart guide to Evelyn");

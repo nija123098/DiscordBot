@@ -4,7 +4,6 @@ package com.github.nija123098.evelyn.util;
  * @author Soarnir
  * @since 1.0.0
  */
-
 public class LogColor {
 
     public static String black(String message) {

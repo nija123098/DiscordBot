@@ -7,6 +7,10 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
 import com.github.nija123098.evelyn.favor.FavorChangeEvent;
 import com.github.nija123098.evelyn.service.services.ScheduleService;
 
+/**
+ * @author nija123098
+ * @since 1.0.0
+ */
 public class VoiceTimeConfig extends AbstractConfig<Integer, GuildUser> {
     public VoiceTimeConfig() {
         super("voice_time", "", ConfigCategory.STAT_TRACKING, 0, "The time a user has spent in voice channel in 5min increments");

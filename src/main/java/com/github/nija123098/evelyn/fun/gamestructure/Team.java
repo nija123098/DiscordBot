@@ -14,6 +14,9 @@ import java.util.stream.Collectors;
 /**
  * A type for organizing a single user or members with a role's
  * actions in order to play a instance of {@link AbstractGame}.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public class Team {
     private final Float voteRequirement;

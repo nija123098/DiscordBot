@@ -7,6 +7,9 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * A simple utility for buffering IO calls in order to
  * not be rate limited or break things.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public class CallBuffer {
     private final AtomicLong time = new AtomicLong(System.currentTimeMillis());

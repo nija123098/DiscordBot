@@ -15,10 +15,9 @@ import java.awt.*;
 import java.io.IOException;
 
 /**
- * @Author Celestialdeath99
- * Updated on 11/28/2017
+ * @author Celestialdeath99
+ * @since 1.0.0
  */
-
 public class UpdateBotCommand extends AbstractCommand {
     public UpdateBotCommand() {
         super("updatebot", ModuleLevel.DEVELOPMENT, "update", null, "Updates bot to latest git version.");

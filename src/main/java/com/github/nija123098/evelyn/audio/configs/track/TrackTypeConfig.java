@@ -6,8 +6,10 @@ import com.github.nija123098.evelyn.config.AbstractConfig;
 import com.github.nija123098.evelyn.config.ConfigCategory;
 
 /**
- * Made by nija123098 on 7/10/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
+
 public class TrackTypeConfig extends AbstractConfig<String, Track> {
     public TrackTypeConfig() {
         super("track_type", "", ConfigCategory.STAT_TRACKING, track -> track instanceof DownloadableTrack ? ((DownloadableTrack) track).getPreferredType() : null, "The track file type");

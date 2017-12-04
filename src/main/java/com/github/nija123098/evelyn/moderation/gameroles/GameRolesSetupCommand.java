@@ -13,6 +13,10 @@ import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * @author nija123098
+ * @since 1.0.0
+ */
 public class GameRolesSetupCommand extends AbstractCommand {
     private static final Set<String> VERIFIED_GAMES = new HashSet<>();
     static {

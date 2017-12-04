@@ -14,6 +14,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * @author nija123098
+ * @since 1.0.0
+ */
 public class GameRoleConfig extends AbstractConfig<Boolean, Role> {
     private static final Map<User, Role> PREVIOUS = new ConcurrentHashMap<>();
     public GameRoleConfig() {

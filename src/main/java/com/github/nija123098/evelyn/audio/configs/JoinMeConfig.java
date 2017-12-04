@@ -9,6 +9,10 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordVoiceJoin;
 
+/**
+ * @author nija123098
+ * @since 1.0.0
+ */
 public class JoinMeConfig extends AbstractConfig<Boolean, User> {
     private static JoinMeConfig config;
     public JoinMeConfig() {

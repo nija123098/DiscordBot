@@ -8,16 +8,20 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.perms.BotRole;
 
+import static com.github.nija123098.evelyn.perms.BotRole.setRole;
+
 /**
- * Made by nija123098 on 4/27/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class BotRoleSetCommand extends AbstractCommand {
     public BotRoleSetCommand() {
         super(BotRoleCommand.class, "set", null, null, null, "Adds or removes bot roles from a user");
     }
+
     @Command
-    public void command(User setter, @Argument User user, @Argument Boolean add, @Argument BotRole role, Guild guild, MessageMaker maker){
-        BotRole.setRole(role, add, user, setter, guild);
+    public void command(User setter, @Argument User user, @Argument Boolean add, @Argument BotRole role, Guild guild, MessageMaker maker) {
+        setRole(role, add, user, setter, guild);
         BotRoleCommand.command(user, guild, maker);
     }
 }

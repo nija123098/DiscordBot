@@ -5,9 +5,9 @@ import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 
 /**
- * Written by Dxeo 21/11/2017
+ * @author Dxeo
+ * @since 1.0.0
  */
-
 public class LootCrateConfig extends AbstractConfig<Integer, User> {
 
     public LootCrateConfig() {

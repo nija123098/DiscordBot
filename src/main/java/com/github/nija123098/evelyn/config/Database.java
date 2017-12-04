@@ -18,8 +18,7 @@ import java.sql.SQLException;
  *
  * @author Soarnir
  * @author nija123098
- *
- * Modified by Celestialdeath99 on 11/5/2017
+ * @since 1.0.0
  */
 public class Database {
     private static final CallBuffer CALL_BUFFER = new CallBuffer(250);

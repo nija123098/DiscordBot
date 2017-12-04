@@ -9,6 +9,9 @@ import java.util.Set;
 /**
  * An enum for representing the category of a
  * config which defines defaults for the config.
+ *
+ * @author nija123098
+ * @since 1.0.0
  */
 public enum ConfigCategory {
     GAME_TEMPORARY_CHANNELS(ModuleLevel.ADMINISTRATIVE),

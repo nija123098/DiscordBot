@@ -8,7 +8,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Made by nija123098 on 6/14/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class ChatBot {
     private static final Map<Channel, ChatBot> BOTS = new HashMap<>();

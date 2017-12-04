@@ -19,9 +19,9 @@ import java.util.ConcurrentModificationException;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Written by Soarnir 20/11/17
+ * @author Soarnir
+ * @since 1.0.0
  */
-
 public class FishCommand extends AbstractCommand {
 
     //constructor

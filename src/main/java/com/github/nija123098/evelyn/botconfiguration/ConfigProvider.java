@@ -7,7 +7,6 @@ import com.github.nija123098.evelyn.botconfiguration.configinterfaces.urls.URLs;
  * @author Celestialdeath99
  * @since 1.0.0
  */
-
 public class ConfigProvider {
 
     //Settings from botconfig.yaml

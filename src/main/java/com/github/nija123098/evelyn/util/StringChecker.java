@@ -5,7 +5,8 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
- * Made by nija123098 on 8/10/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class StringChecker {
     private static final Map<String, List<StringChecker>> CASHE = new HashMap<>();

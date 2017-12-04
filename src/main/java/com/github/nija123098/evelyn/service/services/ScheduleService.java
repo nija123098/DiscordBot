@@ -12,7 +12,8 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Made by nija123098 on 4/14/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class ScheduleService extends AbstractService {
     private static final Map<Long, Set<ScheduledTask>> SERVICE_MAP = new HashMap<>();

@@ -6,9 +6,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Written by Soarnir 13/11/17
+ * @author Soarnir
+ * @since 1.0.0
  */
-
 public class TableBuilder {
 
     List<String[]> rows = new LinkedList<>();

@@ -10,7 +10,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Made by nija123098 on 5/13/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class OldUserNameConfig extends AbstractConfig<Set<String>, User> {
     public OldUserNameConfig() {

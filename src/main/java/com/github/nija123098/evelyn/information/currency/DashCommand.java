@@ -19,6 +19,10 @@ import java.awt.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
+/**
+ * @author nija123098
+ * @since 1.0.0
+ */
 public class DashCommand extends AbstractCommand {
     private static final Color COLOR = new Color(0x0074B6);
     private static final JsonParser JSON_PARSER = new JsonParser();

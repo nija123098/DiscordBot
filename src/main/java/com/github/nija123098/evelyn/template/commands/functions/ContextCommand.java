@@ -15,7 +15,8 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
- * Made by nija123098 on 8/10/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class ContextCommand extends AbstractCommand {
     private static final Map<String, Function<ContextPack, Object>> SUPPLIER_MAP = new HashMap<>();

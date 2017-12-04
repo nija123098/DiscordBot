@@ -6,9 +6,9 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import java.awt.*;
 
 /**
- * Written by Soarnir 21/11/17
+ * @author Soarnir
+ * @since 1.0.0
  */
-
 public class InsufficientException extends BotException {
 
     public InsufficientException(String message) {

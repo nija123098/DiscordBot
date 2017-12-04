@@ -1,8 +1,6 @@
 package com.github.nija123098.evelyn.helping;
 
 import com.github.nija123098.evelyn.command.AbstractCommand;
-import com.github.nija123098.evelyn.command.ContextType;
-import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.command.annotations.Context;
@@ -15,23 +13,30 @@ import com.github.nija123098.evelyn.exception.ContextException;
 
 import java.awt.*;
 import java.util.Objects;
-import java.util.stream.Stream;
+
+import static com.github.nija123098.evelyn.command.ContextType.NONE;
+import static com.github.nija123098.evelyn.command.ModuleLevel.HELPER;
+import static java.lang.Integer.toHexString;
+import static java.util.stream.Stream.of;
 
 /**
- * Made by nija123098 on 6/8/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class ColorCommand extends AbstractCommand {
     public ColorCommand() {
-        super("color", ModuleLevel.HELPER, "colour", null, "Displays information on a colour");
+        super("color", HELPER, "colour", null, "Displays information on a colour");
     }
+
     @Command
-    public void command(MessageMaker maker, @Argument(optional = true, replacement = ContextType.NONE) Color color, @Argument(optional = true, replacement = ContextType.NONE) Role role, @Argument(optional = true, replacement = ContextType.NONE) User user, @Context(softFail = true) Guild guild) {
-        if (Stream.of(color, role, user).filter(Objects::nonNull).count() != 1) throw new ArgumentException("Please provide either a hex, float, or integer representation, a role, a user, or a color name");
+    public void command(MessageMaker maker, @Argument(optional = true, replacement = NONE) Color color, @Argument(optional = true, replacement = NONE) Role role, @Argument(optional = true, replacement = NONE) User user, @Context(softFail = true) Guild guild) {
+        if (of(color, role, user).filter(Objects::nonNull).count() != 1)
+            throw new ArgumentException("Please provide either a hex, float, or integer representation, a role, a user, or a color name");
         if (user != null && guild == null) throw new ContextException("To check a user's color you must be in a guild");
         if (user != null) role = user.getRolesForGuild(guild).get(0);
         if (role != null) color = role.getColor();
         maker.withColor(color);
-        maker.getNewFieldPart().withBoth("Hex", "#" + Integer.toHexString(color.getRGB()).toUpperCase());
+        maker.getNewFieldPart().withBoth("Hex", "#" + toHexString(color.getRGB()).toUpperCase());
         maker.getNewFieldPart().withBoth("RGB - Integer", color.getRed() + " " + color.getGreen() + " " + color.getBlue());
         float[] floats = color.getRGBComponents(null);
         maker.getNewFieldPart().withBoth("RGB - Float", floats[0] + " " + floats[1] + " " + floats[2]);

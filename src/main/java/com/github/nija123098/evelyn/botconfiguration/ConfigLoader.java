@@ -20,7 +20,6 @@ import static com.github.nija123098.evelyn.util.PlatformDetector.ConvertPath;
  * @author Celestialdeath99
  * @since 1.0.0
  */
-
 public class ConfigLoader {
 
     public static ConfigurationProvider configurationProvider() {

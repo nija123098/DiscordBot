@@ -10,6 +10,10 @@ import com.github.nija123098.evelyn.util.FormatHelper;
 
 import java.lang.reflect.InvocationTargetException;
 
+/**
+ * @author nija123098
+ * @since 1.0.0
+ */
 public class GameStartCommand extends AbstractCommand {
     public GameStartCommand() {
         super(GameCommand.class, "start", null, null, null, "Starts a game of the specified type");

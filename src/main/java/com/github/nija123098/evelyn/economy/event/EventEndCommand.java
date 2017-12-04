@@ -9,9 +9,9 @@ import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.economy.event.configs.EventActiveConfig;
 
 /**
- * Written by Soarnir 18/11/17
+ * @author Soarnir
+ * @since 1.0.0
  */
-
 public class EventEndCommand extends AbstractCommand {
     public EventEndCommand() {
         super("end event", ModuleLevel.BOT_ADMINISTRATIVE, null, null, "end the current event");

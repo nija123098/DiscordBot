@@ -14,7 +14,8 @@ import com.github.nija123098.evelyn.economy.configs.CurrentCurrencyConfig;
 import com.github.nija123098.evelyn.exception.ArgumentException;
 
 /**
- * Made by nija123098 on 7/5/2017.
+ * @author Soarnir
+ * @since 1.0.0
  */
 public class BankSendCommand extends AbstractCommand {
     public BankSendCommand() {

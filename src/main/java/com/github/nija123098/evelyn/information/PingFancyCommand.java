@@ -7,6 +7,7 @@ import com.github.nija123098.evelyn.util.Care;
 
 /**
  * @author Soarnir
+ * @since 1.0.0
  */
 public class PingFancyCommand extends AbstractCommand {
     private static final String[] pingMessages = new String[]{

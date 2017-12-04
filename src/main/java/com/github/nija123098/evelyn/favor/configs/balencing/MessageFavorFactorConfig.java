@@ -5,7 +5,8 @@ import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 
 /**
- * Made by nija123098 on 4/27/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class MessageFavorFactorConfig extends AbstractConfig<Float, Guild> {
     public MessageFavorFactorConfig() {

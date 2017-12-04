@@ -5,6 +5,10 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.BotEvent;
 import com.github.nija123098.evelyn.exception.InvalidEventException;
 import sx.blah.discord.handle.impl.events.user.UserUpdateEvent;
 
+/**
+ * @author nija123098
+ * @since 1.0.0
+ */
 public class DiscordUserNameChangeEvent implements BotEvent {
     private final String newName;
     private final String oldName;

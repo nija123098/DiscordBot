@@ -6,28 +6,33 @@ import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.fun.BlackJackCommand;
 
+import static com.github.nija123098.evelyn.fun.blackjack.BlackJackGame.getGame;
+import static com.github.nija123098.evelyn.fun.blackjack.BlackJackGame.setGame;
+
 /**
- * Made by nija123098 on 5/28/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class BlackJackHitCommand extends AbstractCommand {
     public BlackJackHitCommand() {
         super(BlackJackCommand.class, "hit", "hit", null, null, "Hits and starts the game");
     }
+
     @Command
-    public void command(MessageMaker maker, User user){
-        BlackJackGame game = BlackJackGame.getGame(user);
+    public void command(MessageMaker maker, User user) {
+        BlackJackGame game = getGame(user);
         if (game == null) {
             game = new BlackJackGame(user);
-            BlackJackGame.setGame(user, game);
+            setGame(user, game);
             maker.append(game.toString());
-        }else{
+        } else {
             int value = game.playerHit();
             if (value > 21) {
                 maker.append("__You busted__\n");
-                BlackJackGame.setGame(user, null);
-            }else if (game.playerBlackJack()) {
+                setGame(user, null);
+            } else if (game.playerBlackJack()) {
                 maker.append("Black Jack\n");
-                BlackJackGame.setGame(user, null);
+                setGame(user, null);
             }
             maker.appendRaw(game.toString());
         }

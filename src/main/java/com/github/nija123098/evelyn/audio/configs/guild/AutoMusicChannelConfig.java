@@ -11,7 +11,8 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordVoiceJoin;
 
 /**
- * Made by nija123098 on 6/6/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class AutoMusicChannelConfig extends AbstractConfig<VoiceChannel, Guild> {
     public AutoMusicChannelConfig() {

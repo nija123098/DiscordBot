@@ -8,7 +8,6 @@ import java.time.temporal.ChronoUnit;
  * @author Soarnir
  * @since 1.0.0
  */
-
 public class BotClock {
 
     public static void initialize() {

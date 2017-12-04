@@ -9,7 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Made by nija123098 on 4/19/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class GlobalTemplateConfig extends AbstractConfig<Map<KeyPhrase, List<Template>>, GlobalConfigurable> {
     public GlobalTemplateConfig() {

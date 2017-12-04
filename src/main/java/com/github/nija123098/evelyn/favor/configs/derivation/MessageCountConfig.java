@@ -9,7 +9,8 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.Discord
 import com.github.nija123098.evelyn.favor.FavorChangeEvent;
 
 /**
- * Made by nija123098 on 8/10/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class MessageCountConfig extends AbstractConfig<Integer, GuildUser> {
     public MessageCountConfig() {

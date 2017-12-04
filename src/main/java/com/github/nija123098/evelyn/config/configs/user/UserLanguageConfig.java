@@ -1,26 +1,30 @@
 package com.github.nija123098.evelyn.config.configs.user;
 
 import com.github.nija123098.evelyn.config.AbstractConfig;
-import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.exception.ArgumentException;
-import com.github.nija123098.evelyn.util.LangString;
+
+import static com.github.nija123098.evelyn.config.ConfigCategory.PERSONAL_PERSONALIZATION;
+import static com.github.nija123098.evelyn.util.LangString.*;
 
 /**
- * Made by nija123098 on 3/18/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class UserLanguageConfig extends AbstractConfig<String, User> {
     public UserLanguageConfig() {
-        super("user_language", "", ConfigCategory.PERSONAL_PERSONALIZATION, (String) null, "The language the bot uses to communicate with the user");
+        super("user_language", "", PERSONAL_PERSONALIZATION, (String) null, "The language the bot uses to communicate with the user");
     }
+
     @Override
     protected String validateInput(User configurable, String v) {
-        if (LangString.isLangName(v)) v = LangString.getLangCode(v);
-        if (!LangString.isLangCode(v)) throw new ArgumentException("Please input a valid language code or name");
+        if (isLangName(v)) v = getLangCode(v);
+        if (!isLangCode(v)) throw new ArgumentException("Please input a valid language code or name");
         return v;
     }
+
     @Override
     public String wrapTypeOut(String s, User configurable) {
-        return LangString.getLangName(s);
+        return getLangName(s);
     }
 }

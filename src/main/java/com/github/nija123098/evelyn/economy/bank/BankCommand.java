@@ -27,7 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Made by nija123098 on 5/1/2017.
+ * @author Soarnir
+ * @since 1.0.0
  */
 public class BankCommand extends AbstractCommand {
     public BankCommand() {

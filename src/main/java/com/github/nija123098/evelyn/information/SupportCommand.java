@@ -10,7 +10,8 @@ import com.github.nija123098.evelyn.util.EmoticonHelper;
 import com.github.nija123098.evelyn.util.FormatHelper;
 
 /**
- * Made by nija123098 on 5/30/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class SupportCommand extends AbstractCommand {
     public SupportCommand() {

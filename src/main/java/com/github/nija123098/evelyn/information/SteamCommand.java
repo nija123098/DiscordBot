@@ -21,7 +21,8 @@ import com.github.nija123098.evelyn.util.StringHelper;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * Made by nija123098 on 6/6/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class SteamCommand extends AbstractCommand {
     private static final SteamApi STEAM_API = new SteamApi();

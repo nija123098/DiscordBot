@@ -16,6 +16,10 @@ import com.github.nija123098.evelyn.util.FormatHelper;
 
 import java.util.Set;
 
+/**
+ * @author nija123098
+ * @since 1.0.0
+ */
 public class PlaylistMakeCommand extends AbstractCommand {
     public PlaylistMakeCommand() {
         super(PlaylistCommand.class, "make", "create", null, null, "Makes a playlist");

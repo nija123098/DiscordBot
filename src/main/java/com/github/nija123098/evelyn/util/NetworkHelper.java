@@ -8,7 +8,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Made by nija123098 on 6/7/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class NetworkHelper {
     private static final UrlValidator VALIDATOR = new UrlValidator(new String[]{"http", "https"});

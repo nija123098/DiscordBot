@@ -20,7 +20,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * Made by nija123098 on 5/5/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class GetRoleCommand extends AbstractCommand {
     public GetRoleCommand() {

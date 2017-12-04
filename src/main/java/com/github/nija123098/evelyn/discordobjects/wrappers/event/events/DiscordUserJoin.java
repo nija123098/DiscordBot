@@ -8,7 +8,8 @@ import sx.blah.discord.handle.impl.events.guild.member.UserJoinEvent;
 import java.time.ZoneOffset;
 
 /**
- * Made by nija123098 on 3/31/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class DiscordUserJoin implements BotEvent {
     private UserJoinEvent event;

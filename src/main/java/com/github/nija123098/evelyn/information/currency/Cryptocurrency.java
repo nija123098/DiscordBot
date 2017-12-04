@@ -13,6 +13,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
+/**
+ * @author nija123098
+ * @since 1.0.0
+ */
 public class Cryptocurrency {
     private static final JsonParser JSON_PARSER = new JsonParser();
     private static final Map<String, Cryptocurrency> CRYPTOCURRENCY_MAP = new HashMap<>();

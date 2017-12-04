@@ -11,6 +11,10 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.Discord
 
 import java.awt.*;
 
+/**
+ * @author nija123098
+ * @since 1.0.0
+ */
 public class MessageDeleteLogConfig extends AbstractConfig<Channel, Guild> {
     public MessageDeleteLogConfig() {
         super("message_delete_log", "Massage Delete Log", ConfigCategory.LOGGING, (Channel) null, "The location logs should be made for messages that are deleted");

@@ -13,6 +13,10 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 
+/**
+ * @author nija123098
+ * @since 1.0.0
+ */
 public class ConfigNullCommand extends AbstractCommand {
     public ConfigNullCommand() {
         super(ConfigCommand.class, "setnull", null, null, null, "Sets the config value to null");

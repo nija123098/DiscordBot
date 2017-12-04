@@ -10,19 +10,24 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.moderation.modaction.support.AbstractModAction;
 
+import static com.github.nija123098.evelyn.moderation.modaction.support.AbstractModAction.ModActionLevel.KICK;
+
 /**
- * Made by nija123098 on 5/13/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class KickModActionCommand extends AbstractCommand {
     public KickModActionCommand() {
         super(ModActionCommand.class, "kick", "kick", null, "k", "Kicks a user");
     }
+
     @Command
-    public void command(Guild guild, User user, @Argument(info = "The user to be kicked") User target, @Argument(optional = true, info = "The reason") String reason){
+    public void command(Guild guild, User user, @Argument(info = "The user to be kicked") User target, @Argument(optional = true, info = "The reason") String reason) {
         guild.kickUser(target, reason);
-        new AbstractModAction(guild, AbstractModAction.ModActionLevel.KICK, target, user, reason);
-        new MessageMaker(target).append("You were kicked from " + guild.getName() + (reason == null || reason.isEmpty() ? "" :  " for " + reason)).send();
+        new AbstractModAction(guild, KICK, target, user, reason);
+        new MessageMaker(target).append("You were kicked from " + guild.getName() + (reason == null || reason.isEmpty() ? "" : " for " + reason)).send();
     }
+
     @Override
     public boolean hasPermission(User user, Channel channel) {
         return !channel.isPrivate() && user.getPermissionsForGuild(channel.getGuild()).contains(DiscordPermission.KICK);

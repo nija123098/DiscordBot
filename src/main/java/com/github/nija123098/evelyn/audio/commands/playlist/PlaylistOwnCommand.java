@@ -15,6 +15,10 @@ import com.github.nija123098.evelyn.util.FormatHelper;
 
 import java.util.ArrayList;
 
+/**
+ * @author nija123098
+ * @since 1.0.0
+ */
 public class PlaylistOwnCommand extends AbstractCommand {
     public PlaylistOwnCommand() {
         super(PlaylistCommand.class, "own", null, null, null, "Lists the playlists a user or guild owns");

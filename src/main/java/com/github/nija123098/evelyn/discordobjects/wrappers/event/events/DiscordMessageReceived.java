@@ -8,7 +8,8 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.BotEvent;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
 
 /**
- * Made by nija123098 on 3/27/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class DiscordMessageReceived implements BotEvent {
     private boolean command;

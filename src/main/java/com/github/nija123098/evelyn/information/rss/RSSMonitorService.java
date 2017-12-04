@@ -19,7 +19,8 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Made by nija123098 on 6/18/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class RSSMonitorService extends AbstractService {
     private static final Map<String, Date> LAST_UPDATED = new ConcurrentHashMap<>();

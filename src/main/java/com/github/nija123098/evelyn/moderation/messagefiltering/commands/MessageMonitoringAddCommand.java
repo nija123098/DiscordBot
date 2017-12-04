@@ -14,6 +14,10 @@ import com.github.nija123098.evelyn.moderation.messagefiltering.configs.MessageM
 import com.github.nija123098.evelyn.moderation.messagefiltering.configs.MessageMonitoringConfig;
 import com.github.nija123098.evelyn.moderation.messagefiltering.configs.MessageMonitoringExceptionsConfig;
 
+/**
+ * @author nija123098
+ * @since 1.0.0
+ */
 public class MessageMonitoringAddCommand extends AbstractCommand {
     public MessageMonitoringAddCommand() {
         super(MessageMonitoringCommand.class, "add", null, null, null, "Adds a filtering level");

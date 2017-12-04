@@ -8,7 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Made by nija123098 on 8/11/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class CustomCommandConfig extends AbstractConfig<List<CustomCommand>, Guild> {
     public CustomCommandConfig() {

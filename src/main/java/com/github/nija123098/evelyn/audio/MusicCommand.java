@@ -15,7 +15,8 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.moderation.logging.MusicChannelConfig;
 
 /**
- * Made by nija123098 on 6/6/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class MusicCommand extends AbstractCommand {
     public MusicCommand() {

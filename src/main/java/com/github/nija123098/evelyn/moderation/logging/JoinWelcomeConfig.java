@@ -17,6 +17,10 @@ import com.github.nija123098.evelyn.template.TemplateHandler;
 
 import java.util.Collections;
 
+/**
+ * @author nija123098
+ * @since 1.0.0
+ */
 public class JoinWelcomeConfig extends AbstractConfig<Channel, Guild>{
     public JoinWelcomeConfig() {
         super("join_welcome", "Welcome Message", ConfigCategory.LOGGING, (Channel) null, "If the bot should welcome a user when they join");

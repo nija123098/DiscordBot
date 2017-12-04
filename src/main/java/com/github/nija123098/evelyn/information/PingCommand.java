@@ -8,7 +8,8 @@ import com.github.nija123098.evelyn.util.EmoticonHelper;
 import com.github.nija123098.evelyn.util.Log;
 
 /**
- * Made by nija123098 on 3/30/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class PingCommand extends AbstractCommand {
     public PingCommand() {

@@ -18,6 +18,10 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * @author nija123098
+ * @since 1.0.0
+ */
 public enum Badge {
     USER(user -> true);
     private static final int SPACING = 3;

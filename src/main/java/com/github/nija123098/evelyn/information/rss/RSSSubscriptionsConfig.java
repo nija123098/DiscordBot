@@ -8,7 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Made by nija123098 on 6/19/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class RSSSubscriptionsConfig extends AbstractConfig<List<String>, Channel> {
     public RSSSubscriptionsConfig() {

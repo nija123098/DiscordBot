@@ -22,9 +22,9 @@ import com.github.nija123098.evelyn.fun.slot.SlotJackpotConfig;
 import java.util.Objects;
 
 /**
- * Written by Dxeo 26/11/2017
+ * @author Dxeo
+ * @since 1.0.0
  */
-
 public class CurrencyTreeSetCommand extends AbstractCommand {
     public CurrencyTreeSetCommand() {
         super(CurrencyTreeCommand.class,"set", null, null, null, null);

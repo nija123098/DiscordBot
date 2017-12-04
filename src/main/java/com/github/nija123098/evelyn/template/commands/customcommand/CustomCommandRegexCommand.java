@@ -9,11 +9,12 @@ import com.github.nija123098.evelyn.template.CustomCommand;
 import com.github.nija123098.evelyn.template.CustomCommandConfig;
 
 /**
- * Made by nija123098 on 8/13/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class CustomCommandRegexCommand extends AbstractCommand {
     public CustomCommandRegexCommand() {
-        super(CustomCommandCommand.class, "ragex", null, null, null, "Adds a regex search to activate a command on text without a prefix");
+        super(CustomCommandCommand.class, "regex", null, null, null, "Adds a regex search to activate a command on text without a prefix");
     }
     @Command
     public void command(Guild guild, String s){

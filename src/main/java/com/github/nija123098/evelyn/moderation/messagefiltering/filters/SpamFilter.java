@@ -11,7 +11,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Made by nija123098 on 8/4/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class SpamFilter extends AbstractService implements MessageFilter {
     private static final Map<User, Integer> MAP = new ConcurrentHashMap<>();

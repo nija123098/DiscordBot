@@ -14,6 +14,10 @@ import com.github.nija123098.evelyn.util.FormatHelper;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * @author nija123098
+ * @since 1.0.0
+ */
 public class PlayTimeFavorConfig extends AbstractConfig<Integer, GuildUser> {
     private Map<User, Long> map = new ConcurrentHashMap<>();
     public PlayTimeFavorConfig() {

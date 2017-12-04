@@ -16,6 +16,10 @@ import com.github.nija123098.evelyn.util.EmoticonHelper;
 
 import java.util.Set;
 
+/**
+ * @author nija123098
+ * @since 1.0.0
+ */
 public class MessageMonitoringCommand extends AbstractCommand {
     public MessageMonitoringCommand() {
         super("messagemonitoring", ModuleLevel.ADMINISTRATIVE, "message monitoring", null, "Displays a list of monitoring in effect currently");

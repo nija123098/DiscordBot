@@ -2,48 +2,57 @@ package com.github.nija123098.evelyn.util;
 
 import com.github.nija123098.evelyn.audio.SoundCloudTrack;
 import com.github.nija123098.evelyn.audio.Track;
-import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.regex.Pattern;
+
+import static com.github.nija123098.evelyn.botconfiguration.ConfigProvider.LIBRARIES_FILES;
+import static com.github.nija123098.evelyn.util.Log.log;
+import static com.github.nija123098.evelyn.util.NetworkHelper.isValid;
+import static com.github.nija123098.evelyn.util.NetworkHelper.stripProtocol;
+import static java.util.Collections.singletonList;
+import static java.util.regex.Pattern.quote;
 
 /**
- * Made by nija123098 on 6/7/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class SCUtil {
-    public static String extractCode(String s){
-        s = NetworkHelper.stripProtocol(s);
-        if (s.startsWith("soundcloud.com/")){
-            s = s.substring(15).split(Pattern.quote("?"))[0];
+    public static String extractCode(String s) {
+        s = stripProtocol(s);
+        if (s.startsWith("soundcloud.com/")) {
+            s = s.substring(15).split(quote("?"))[0];
         }
-        return !s.isEmpty() && s.contains("/") && NetworkHelper.isValid("https://soundcloud.com/" + s) ? s : null;
+        return !s.isEmpty() && s.contains("/") && isValid("https://soundcloud.com/" + s) ? s : null;
     }
-    public static Track extractVideoCode(String code){
+
+    public static Track extractVideoCode(String code) {
         code = extractCode(code);
         if (code != null && code.contains("/sets/")) return null;
         return new SoundCloudTrack(code);
     }
-    public static List<Track> extractPlaylistCode(String code){
+
+    public static List<Track> extractPlaylistCode(String code) {
         code = extractCode(code);
         if (code != null && !code.contains("/sets/")) return null;
         return getTracksFromList(code);
     }
-    public static List<Track> extractTracks(String s){
+
+    public static List<Track> extractTracks(String s) {
         int ind = s.indexOf('&');
         if (ind != -1) s = s.substring(0, ind);
         s = extractCode(s);
         if (s == null) return null;
-        return s.contains("/sets/") ? getTracksFromList(s) : Collections.singletonList(new SoundCloudTrack(s));
+        return s.contains("/sets/") ? getTracksFromList(s) : singletonList(new SoundCloudTrack(s));
     }
-    public static List<Track> getTracksFromList(String code){
+
+    public static List<Track> getTracksFromList(String code) {
         List<String> commands = new ArrayList<>();
-        commands.add(ConfigProvider.LIBRARIES_FILES.youtube_dl());
+        commands.add(LIBRARIES_FILES.youtube_dl());
         commands.add("--flat-playlist");
         commands.add("--dump-json");
         commands.add("https://soundcloud.com/" + code);
@@ -60,7 +69,7 @@ public class SCUtil {
                 tracks.add(new SoundCloudTrack(line.substring(0, line.indexOf("\""))));
             }
         } catch (IOException e) {
-            Log.log("IOException loading tracks from Soundcloud", e);
+            log("IOException loading tracks from Soundcloud", e);
             tracks = null;
         } finally {
             if (process != null) process.destroyForcibly();

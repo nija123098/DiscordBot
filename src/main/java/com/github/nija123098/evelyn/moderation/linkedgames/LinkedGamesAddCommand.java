@@ -8,6 +8,10 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.exception.ArgumentException;
 import com.github.nija123098.evelyn.util.FormatHelper;
 
+/**
+ * @author nija123098
+ * @since 1.0.0
+ */
 public class LinkedGamesAddCommand extends AbstractCommand {
     public LinkedGamesAddCommand() {
         super(LinkedGamesCommand.class, "add", null, null, null, "Adds a game to the linked games list");

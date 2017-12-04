@@ -13,6 +13,10 @@ import com.github.nija123098.evelyn.template.TemplateHandler;
 
 import java.util.Collections;
 
+/**
+ * @author nija123098
+ * @since 1.0.0
+ */
 public class LeaveGoodbyeConfig extends AbstractConfig<Channel, Guild> {
     public LeaveGoodbyeConfig() {
         super("leave_goodbye", "Goodbye Message", ConfigCategory.LOGGING, (Channel) null, "If the bot should wish farewell to a user when they leave");

@@ -9,9 +9,9 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 
 /**
- * Written by Soarnir 12/10/17
+ * @author Soarnir
+ * @since 1.0.0
  */
-
 public class UserListCommand extends AbstractCommand {
     public UserListCommand() {
         super(UserCommand.class, "list", null, null, null, "Shows the user list for the guild, sorted by join count");

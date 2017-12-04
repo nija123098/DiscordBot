@@ -7,7 +7,8 @@ import com.github.nija123098.evelyn.moderation.messagefiltering.MessageMonitorin
 import com.github.nija123098.evelyn.util.FormatHelper;
 
 /**
- * Made by nija123098 on 7/19/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class CapsFilter implements MessageFilter {
     private static final float ALLOWED = .40F;

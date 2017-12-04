@@ -5,7 +5,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import static com.github.nija123098.evelyn.perms.BotRole.*;
 
 /**
- * Made by nija123098 on 4/27/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 class WorkAroundReferences {
     static final AtomicReference<BotRole> B_A = new AtomicReference<>();

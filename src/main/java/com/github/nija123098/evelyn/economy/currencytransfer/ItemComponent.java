@@ -3,7 +3,8 @@ package com.github.nija123098.evelyn.economy.currencytransfer;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
 
 /**
- * Made by nija123098 on 5/16/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public enum ItemComponent {
     GAME_DIE,

@@ -13,7 +13,8 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
- * Made by nija123098 on 6/4/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class RedditLink {
     private static final Map<String, LinkOrigin> LINK_ORIGINS;

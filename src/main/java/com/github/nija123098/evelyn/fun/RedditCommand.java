@@ -15,7 +15,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Made by nija123098 on 6/2/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class RedditCommand extends AbstractCommand {
     static {

@@ -9,7 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Made by nija123098 on 5/17/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class TodoListConfig extends AbstractConfig<List<TodoItem>, User> {
     public TodoListConfig() {

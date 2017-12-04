@@ -1,14 +1,9 @@
 package com.github.nija123098.evelyn.fun;
 
 import com.github.nija123098.evelyn.command.AbstractCommand;
-import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
-import com.github.nija123098.evelyn.util.EmoticonHelper;
-import com.github.nija123098.evelyn.util.FormatHelper;
-import com.github.nija123098.evelyn.util.Log;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -18,31 +13,38 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.github.nija123098.evelyn.command.ModuleLevel.FUN;
+import static com.github.nija123098.evelyn.util.EmoticonHelper.getChars;
+import static com.github.nija123098.evelyn.util.FormatHelper.embedLink;
+import static com.github.nija123098.evelyn.util.Log.log;
+import static java.net.URLEncoder.encode;
+import static org.apache.commons.lang3.StringEscapeUtils.unescapeHtml4;
+
 /**
- * Made by nija123098 on 6/5/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class UDCommand extends AbstractCommand {
     private static final String BASE_LINK = "https://www.urbandictionary.com/add.php?word=";
 
     public UDCommand() {
-        super("ud", ModuleLevel.FUN, "urbandictionary", null, "Searches Urban Dictionary");
+        super("ud", FUN, "urbandictionary", null, "Searches Urban Dictionary");
     }
 
     @Command
     public void command(MessageMaker maker, @Argument(info = "search urban dictionary") String arg) {
         try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(new URL("http://api.urbandictionary.com/v0/define?term=" + URLEncoder.encode(arg, "UTF-8")).openConnection().getInputStream()));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(new URL("http://api.urbandictionary.com/v0/define?term=" + encode(arg, "UTF-8")).openConnection().getInputStream()));
             JSONParser jsonParser = new JSONParser();
             JSONObject jsonObject = (JSONObject) jsonParser.parse(reader);
             reader.close();
             JSONArray listObject = (JSONArray) jsonObject.get("list");
-            String link = BASE_LINK + URLEncoder.encode(arg, "UTF-8");
+            String link = BASE_LINK + encode(arg, "UTF-8");
             if (listObject.isEmpty()) {
                 maker.getTitle().append("There is no definition for that term!");
-                maker.append(FormatHelper.embedLink("You could go define it!", link));
+                maker.append(embedLink("You could go define it!", link));
                 return;
             }
             AtomicInteger integer = new AtomicInteger();
@@ -56,7 +58,7 @@ public class UDCommand extends AbstractCommand {
                 getMessage(maker, link, listObject, integer.incrementAndGet());
             });
         } catch (IOException | ParseException e) {
-            Log.log("Exception loading UD content", e);
+            log("Exception loading UD content", e);
         }
     }
 
@@ -64,10 +66,10 @@ public class UDCommand extends AbstractCommand {
         maker.clearFieldParts().getHeader().clear();
         JSONObject firstResult = (JSONObject) listObject.get(definition);
         maker.withUrl(link).getTitle().appendRaw(firstResult.get("word").toString());
-        maker.append(StringEscapeUtils.unescapeHtml4(firstResult.get("definition").toString()));
+        maker.append(unescapeHtml4(firstResult.get("definition").toString()));
         if (!firstResult.get("example").toString().isEmpty())
             maker.getNewFieldPart().getTitle().append("Example").getFieldPart().getValue().append("\n\n*" + firstResult.get("example") + "*\n");
-        maker.getNewFieldPart().getTitle().append("Rating").getFieldPart().getValue().append(EmoticonHelper.getChars("+1", false) + firstResult.get("thumbs_up") + "  " + EmoticonHelper.getChars("-1", false) + firstResult.get("thumbs_down"));
+        maker.getNewFieldPart().getTitle().append("Rating").getFieldPart().getValue().append(getChars("+1", false) + firstResult.get("thumbs_up") + "  " + getChars("-1", false) + firstResult.get("thumbs_down"));
         maker.getNote().appendRaw("By " + firstResult.get("author").toString());
         maker.forceCompile().send();
     }

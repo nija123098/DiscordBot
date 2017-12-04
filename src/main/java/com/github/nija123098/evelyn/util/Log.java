@@ -13,7 +13,8 @@ import java.nio.file.StandardOpenOption;
 import java.util.Collections;
 
 /**
- * Made by nija123098 on 2/22/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class Log {
     private static final Path LOG_PATH;

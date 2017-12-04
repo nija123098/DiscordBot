@@ -7,7 +7,8 @@ import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 
 /**
- * Made by nija123098 on 5/17/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class TodoRemoveCommand extends AbstractCommand {
     public TodoRemoveCommand() {

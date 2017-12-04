@@ -17,7 +17,8 @@ import java.io.IOException;
 import java.net.URL;
 
 /**
- * Made by nija123098 on 6/19/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class RSSSubscribeCommand extends AbstractCommand {
     public RSSSubscribeCommand() {

@@ -13,6 +13,7 @@ import com.github.nija123098.evelyn.exception.ContextException;
 
 /**
  * @author nija123098
+ * @since 1.0.0
  */
 public class SetDescriptionCommand extends AbstractCommand {
     public SetDescriptionCommand() {

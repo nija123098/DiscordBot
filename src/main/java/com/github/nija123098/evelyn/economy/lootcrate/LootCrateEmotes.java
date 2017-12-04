@@ -3,9 +3,9 @@ package com.github.nija123098.evelyn.economy.lootcrate;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
 
 /**
- * Written by Dxeo 26/11/2017
+ * @author Dxeo
+ * @since 1.0.0
  */
-
 public class LootCrateEmotes {
 
     //constructor block

@@ -8,7 +8,8 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.BotEvent;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageSendEvent;
 
 /**
- * Made by nija123098 on 6/4/2017.
+ * @author Dxeo
+ * @since 1.0.0
  */
 public class DiscordMessageSend implements BotEvent {
     private MessageSendEvent event;

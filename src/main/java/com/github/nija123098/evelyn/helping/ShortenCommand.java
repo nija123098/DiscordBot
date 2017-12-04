@@ -11,9 +11,9 @@ import com.github.nija123098.evelyn.util.NetworkHelper;
 import net.swisstech.bitly.BitlyClient;
 
 /**
- * Written by Soarnir 10/9/17
+ * @author Soarnir
+ * @since 1.0.0
  */
-
 public class ShortenCommand extends AbstractCommand {
     private BitlyClient client = new BitlyClient(ConfigProvider.AUTH_KEYS.bitly_token());
     public ShortenCommand(){

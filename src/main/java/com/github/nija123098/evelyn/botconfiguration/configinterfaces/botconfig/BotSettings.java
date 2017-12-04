@@ -4,7 +4,6 @@ package com.github.nija123098.evelyn.botconfiguration.configinterfaces.botconfig
  * @author Celestialdeath99
  * @since 1.0.0
  */
-
 public interface BotSettings {
     String bot_token();
     Boolean test_mode_enabled();

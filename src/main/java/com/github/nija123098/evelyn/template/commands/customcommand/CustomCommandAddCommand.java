@@ -14,7 +14,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * Made by nija123098 on 8/11/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class CustomCommandAddCommand extends AbstractCommand {
     private static final Map<String, Class<?>> APPROVED_ARGUMENT_TYPES;

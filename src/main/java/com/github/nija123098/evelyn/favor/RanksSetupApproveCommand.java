@@ -5,6 +5,10 @@ import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 
+/**
+ * @author nija123098
+ * @since 1.0.0
+ */
 public class RanksSetupApproveCommand extends AbstractCommand {
     public RanksSetupApproveCommand() {
         super(RanksSetupCommand.class, "approve", null, null, null, "Cancels the setupranks command");

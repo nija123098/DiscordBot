@@ -14,6 +14,10 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 
+/**
+ * @author nija123098
+ * @since 1.0.0
+ */
 public class ConfigResetCommand extends AbstractCommand {
     public ConfigResetCommand() {
         super(ConfigCommand.class, "reset", "reset", null, null, "Resets a config to the default value");

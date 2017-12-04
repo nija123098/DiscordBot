@@ -1,7 +1,8 @@
 package com.github.nija123098.evelyn.launcher;
 
 /**
- * Made by nija123098 on 4/27/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class Reference {
     public static final String BASE_PACKAGE = "com.github.nija123098.evelyn";

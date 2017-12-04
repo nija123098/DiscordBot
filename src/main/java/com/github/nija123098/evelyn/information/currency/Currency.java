@@ -11,6 +11,10 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+/**
+ * @author nija123098
+ * @since 1.0.0
+ */
 public enum Currency {
     ETH("Ethereum"),
     LTC("Litecoin"),

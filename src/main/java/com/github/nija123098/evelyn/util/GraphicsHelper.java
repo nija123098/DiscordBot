@@ -15,7 +15,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Made by nija123098 on 8/6/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class GraphicsHelper {
     public static void drawString(String text, int x, int y, Font font, Color color, Graphics2D graphics, boolean center){

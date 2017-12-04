@@ -2,7 +2,6 @@ package com.github.nija123098.evelyn.util;
 
 import com.github.nija123098.evelyn.audio.Track;
 import com.github.nija123098.evelyn.audio.YoutubeTrack;
-import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.exception.ArgumentException;
 import com.github.nija123098.evelyn.exception.BotException;
 import com.github.nija123098.evelyn.exception.DevelopmentException;
@@ -19,15 +18,25 @@ import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
+
+import static com.github.nija123098.evelyn.botconfiguration.ConfigProvider.AUTH_KEYS;
+import static com.github.nija123098.evelyn.util.FormatHelper.filtering;
+import static com.github.nija123098.evelyn.util.Log.log;
+import static com.github.nija123098.evelyn.util.NetworkHelper.isValid;
+import static com.github.nija123098.evelyn.util.NetworkHelper.stripProtocol;
+import static com.github.nija123098.evelyn.util.StringHelper.readAll;
+import static com.google.api.services.youtube.YouTube.Builder;
+import static java.lang.Character.isLetterOrDigit;
+import static java.util.Collections.addAll;
+import static java.util.stream.Collectors.toList;
 
 /**
- * Made by nija123098 on 6/6/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class YTUtil {
     private static final YouTube YOUTUBE;
@@ -39,30 +48,34 @@ public class YTUtil {
     private static final Map<String, Boolean> VALID_CODES = new ConcurrentHashMap<>();
     private static final List<String> KEYS = new ArrayList<>();
     private static final AtomicInteger KEY_INDEX = new AtomicInteger(-1);
-    private static boolean isYoutubeVideoCode(String s){
+
+    private static boolean isYoutubeVideoCode(String s) {
         return VALID_CODES.computeIfAbsent(s, s1 -> {
             if (s.length() != 11) return false;
-            for (char c : s.toCharArray()) if (!(Character.isLetterOrDigit(c) || c == '-' || c == '_')) return false;
+            for (char c : s.toCharArray()) if (!(isLetterOrDigit(c) || c == '-' || c == '_')) return false;
             return getTrackName(s) != null;
         });
     }
-    private static String getTrackName(String code){
+
+    private static String getTrackName(String code) {
         try {
-            String content = StringHelper.readAll("https://www.youtube.com/oembed?url=http%3A//youtube.com/watch%3Fv%3D" + code);
-            return content.equals("Unauthorized") ? YTUtil.getVideoName(code) : ((JSONObject) new JSONParser().parse(content)).get("title").toString();
+            String content = readAll("https://www.youtube.com/oembed?url=http%3A//youtube.com/watch%3Fv%3D" + code);
+            return content.equals("Unauthorized") ? getVideoName(code) : ((JSONObject) new JSONParser().parse(content)).get("title").toString();
         } catch (IOException | ParseException | UnirestException e) {
             return null;
         }
     }
-    public static String extractVideoCode(String s){
+
+    public static String extractVideoCode(String s) {
         int ind = s.indexOf('&');
         if (ind != -1) {
-            if (s.startsWith("&list=", 43)) throw new ArgumentException("When you give me a link to a song and playlist I don't know what to play!");
+            if (s.startsWith("&list=", 43))
+                throw new ArgumentException("When you give me a link to a song and playlist I don't know what to play!");
             s = s.substring(0, ind);
         }
         if (s.length() == 11 && isYoutubeVideoCode(s)) return s;
-        s = NetworkHelper.stripProtocol(s);
-        if (FormatHelper.filtering(s, Character::isLetter).contains("youtube")){
+        s = stripProtocol(s);
+        if (filtering(s, Character::isLetter).contains("youtube")) {
             String cut;
             for (int i = 7; i < s.length() - 10; i++) {//7 for youtube, 10 for the code
                 cut = s.substring(i, i + 11);
@@ -71,14 +84,17 @@ public class YTUtil {
         }
         return null;
     }
-    private static boolean isYoutubePlaylistCode(String s){
-        for (int i = 0; i < 34; i++) if (!Character.isLetterOrDigit(s.charAt(i)) || s.charAt(i) == '-' || s.charAt(i) == '_') return false;
-        return NetworkHelper.isValid(BASE_PLAYLIST_URL + s);
+
+    private static boolean isYoutubePlaylistCode(String s) {
+        for (int i = 0; i < 34; i++)
+            if (!isLetterOrDigit(s.charAt(i)) || s.charAt(i) == '-' || s.charAt(i) == '_') return false;
+        return isValid(BASE_PLAYLIST_URL + s);
     }
-    public static String extractPlaylistCode(String s){
+
+    public static String extractPlaylistCode(String s) {
         int ind = s.indexOf('&');
         if (ind != -1) s = s.substring(0, ind);
-        s = NetworkHelper.stripProtocol(s);
+        s = stripProtocol(s);
         if (s.startsWith("www.youtube.com/playlist?list=")) {
             s = s.substring(30);
         }
@@ -87,32 +103,35 @@ public class YTUtil {
     }
 
     static {
-        YOUTUBE = new YouTube.Builder(new NetHttpTransport(), new JacksonFactory(), (HttpRequest request) -> {}).setApplicationName("Evelyn").build();
-        YouTube.Search.List list = YTUtil.errorWrap(() -> YTUtil.YOUTUBE.search().list("id,snippet"));
+        YOUTUBE = new Builder(new NetHttpTransport(), new JacksonFactory(), (HttpRequest request) -> {
+        }).setApplicationName("Evelyn").build();
+        YouTube.Search.List list = errorWrap(() -> YOUTUBE.search().list("id,snippet"));
         list.setOrder("relevance");
         list.setVideoCategoryId("10");
         list.setType("video");
         list.setFields("items(id/kind,id/videoId,snippet/title)");
         SINGLE = list;
-        YouTube.PlaylistItems.List playlist = YTUtil.errorWrap(() -> YTUtil.YOUTUBE.playlistItems().list("id,contentDetails,snippet"));
+        YouTube.PlaylistItems.List playlist = errorWrap(() -> YOUTUBE.playlistItems().list("id,contentDetails,snippet"));
         playlist.setFields("items(contentDetails/videoId,snippet/title,snippet/publishedAt),nextPageToken,pageInfo");
         PLAYLIST = playlist;
-        Collections.addAll(KEYS, ConfigProvider.AUTH_KEYS.google_api_token().split(" "));
+        addAll(KEYS, AUTH_KEYS.google_api_token().split(" "));
     }
-    public static String getKey(){
+
+    public static String getKey() {
         return KEYS.get(KEY_INDEX.incrementAndGet() % KEYS.size());
     }
-    public static List<Track> getTracksFromPlaylist(String code){
+
+    public static List<Track> getTracksFromPlaylist(String code) {
         return new ArrayList<>(getPlaylist(code));
     }
 
-    public static YoutubeTrack getTrack(String search){
+    public static YoutubeTrack getTrack(String search) {
         List<YoutubeTrack> tracks = getTrack(search, 1);
         return tracks.isEmpty() ? null : tracks.get(0);
     }
 
-    public static List<YoutubeTrack> getTrack(String search, int count){
-        String reduction = FormatHelper.filtering(search, Character::isLetterOrDigit).toLowerCase();
+    public static List<YoutubeTrack> getTrack(String search, int count) {
+        String reduction = filtering(search, Character::isLetterOrDigit).toLowerCase();
         if (!(CACHE.containsKey(reduction) && count <= CACHE.get(reduction).size())) {
             List<YoutubeTrack> tracks = new ArrayList<>(count);
             YouTube.Search.List list = (YouTube.Search.List) SINGLE.clone();
@@ -130,7 +149,7 @@ public class YTUtil {
         return CACHE.get(reduction);
     }
 
-    public static List<YoutubeTrack> getPlaylist(String code){
+    public static List<YoutubeTrack> getPlaylist(String code) {
         YouTube.PlaylistItems.List list = (YouTube.PlaylistItems.List) PLAYLIST.clone();
         list.setKey(getKey());
         List<YoutubeTrack> tracks = new ArrayList<>();
@@ -138,27 +157,32 @@ public class YTUtil {
         do {
             list.setPageToken(nextToken);
             list.setPlaylistId(code);
-            try{PlaylistItemListResponse playlistItemResult = list.execute();
-                tracks.addAll(playlistItemResult.getItems().stream().map(playlistItem -> new YoutubeTrack(playlistItem.getContentDetails().getVideoId())).collect(Collectors.toList()));
+            try {
+                PlaylistItemListResponse playlistItemResult = list.execute();
+                tracks.addAll(playlistItemResult.getItems().stream().map(playlistItem -> new YoutubeTrack(playlistItem.getContentDetails().getVideoId())).collect(toList()));
                 nextToken = playlistItemResult.getNextPageToken();
-            } catch (IOException e) {throw new DevelopmentException("IO issue getting playlist contents", e);}
+            } catch (IOException e) {
+                throw new DevelopmentException("IO issue getting playlist contents", e);
+            }
         } while (nextToken != null);
         return tracks;
     }
 
-    public static String getVideoName(String code){
+    public static String getVideoName(String code) {
         try {
             return YOUTUBE.videos().list("snippet").setKey(getKey()).set("hl", "en").setId(code).execute().getItems().get(0).getSnippet().getTitle();
         } catch (Exception e) {
-            Log.log("Exception while getting video name from Youtube: " + code, e);
+            log("Exception while getting video name from Youtube: " + code, e);
         }
         return null;
     }
 
     static <E> E errorWrap(GoogleResponseSupplier<E> supplier) {
-        try{return supplier.get();
+        try {
+            return supplier.get();
         } catch (IOException e) {
-            if (e.getMessage().contains("quotaExceeded") || e.getMessage().contains("keyInvalid")) throw new BotException("Please use urls to play music", e);
+            if (e.getMessage().contains("quotaExceeded") || e.getMessage().contains("keyInvalid"))
+                throw new BotException("Please use urls to play music", e);
             throw new YoutubeSearchException(e);
         }
     }

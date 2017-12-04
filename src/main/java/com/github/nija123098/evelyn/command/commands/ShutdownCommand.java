@@ -17,7 +17,8 @@ import com.github.nija123098.evelyn.template.TemplateHandler;
 import java.util.Collections;
 
 /**
- * Made by nija123098 on 5/11/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class ShutdownCommand extends AbstractCommand {
     public ShutdownCommand() {

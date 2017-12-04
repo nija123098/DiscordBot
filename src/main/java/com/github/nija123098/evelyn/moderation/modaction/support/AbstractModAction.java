@@ -15,7 +15,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Made by nija123098 on 5/11/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class AbstractModAction {
     private static final Map<Guild, Integer> OLDEST_CASE_MAP = new ConcurrentHashMap<>();

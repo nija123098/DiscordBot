@@ -16,6 +16,10 @@ import java.lang.reflect.Method;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+/**
+ * @author nija123098
+ * @since 1.0.0
+ */
 public class PlayTextOverrideCommand extends AbstractCommand {
     public PlayTextOverrideCommand() {
         super("playtext", ModuleLevel.BOT_ADMINISTRATIVE, null, null, "Overrides the playtext of the bot");

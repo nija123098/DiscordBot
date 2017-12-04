@@ -8,7 +8,8 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.Discord
 import com.github.nija123098.evelyn.launcher.Launcher;
 
 /**
- * Made by nija123098 on 5/15/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class ContributorMonitor {
     private static final Role CONTRIB_SIGN_ROLE = Role.getRole(ConfigProvider.BOT_SETTINGS.contributor_sign_role());

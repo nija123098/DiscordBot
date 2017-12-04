@@ -30,6 +30,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * @author nija123098
+ * @since 1.0.0
+ */
 public class RanksSetupCommand extends AbstractCommand {
     static final Map<Guild, Runnable> TASK_MAP = new HashMap<>();
     public RanksSetupCommand() {

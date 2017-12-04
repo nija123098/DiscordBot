@@ -8,6 +8,10 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.fun.gamestructure.GameStartCommand;
 import com.github.nija123098.evelyn.fun.gamestructure.Team;
 
+/**
+ * @author nija123098
+ * @since 1.0.0
+ */
 public class TicTacToeStartCommand extends AbstractCommand {
     public TicTacToeStartCommand() {
         super(TicTacToeCommand.class, "start", null, null, null, "Starts a game of ttt");

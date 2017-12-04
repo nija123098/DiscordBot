@@ -25,6 +25,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * @author nija123098
+ * @since 1.0.0
+ */
 public class LOLChampCommand extends AbstractCommand {
     private final RiotApi api;
     private final Map<String, Champion> dataChampionList = new HashMap<>();

@@ -12,8 +12,8 @@ import java.net.URL;
 
 /**
  * @author Celestialdeath99
+ * @since 1.0.0
  */
-
 public class ServerIPCommand extends AbstractCommand{
     public ServerIPCommand() {
         super("serverip", ModuleLevel.DEVELOPMENT, "ip", null, "Gets the current server ip address");

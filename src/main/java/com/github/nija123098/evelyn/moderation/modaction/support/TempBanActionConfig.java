@@ -9,7 +9,8 @@ import com.github.nija123098.evelyn.moderation.modaction.TempBanModActionCommand
 import com.github.nija123098.evelyn.service.services.ScheduleService;
 
 /**
- * Made by nija123098 on 5/11/2017.
+ * @author nija123098
+ * @since 1.0.0
  */
 public class TempBanActionConfig extends AbstractConfig<Long, GuildUser> {
     public TempBanActionConfig() {

@@ -4,6 +4,10 @@
 
 package com.github.nija123098.evelyn.util;
 
+/**
+ * @author Celestialdeath99
+ * @since 1.0.0
+ */
 public class PlatformDetector {
 
     private static String OS = System.getProperty("os.name").toLowerCase();

@@ -11,6 +11,10 @@ import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 
 import java.util.Arrays;
 
+/**
+ * @author nija123098
+ * @since 1.0.0
+ */
 public class PlaylistPlayTypeCommand extends AbstractCommand {
     public PlaylistPlayTypeCommand() {
         super(PlaylistCommand.class, "playtype", null, null, null, "Shows or sets the play type of a playlist");
