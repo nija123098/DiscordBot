@@ -2,6 +2,7 @@ package com.github.nija123098.evelyn.discordobjects.wrappers;
 
 import sx.blah.discord.handle.obj.Permissions;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
 
@@ -44,6 +45,15 @@ public enum DiscordPermission {
     MANAGE_EMOJIS,;
     public boolean hasPermission(User user, Guild guild){
         return user.getPermissionsForGuild(guild).contains(this);
+    }
+    public static boolean hasPermissions(User user, Guild guild, DiscordPermission...permissions){
+        return user.getPermissionsForGuild(guild).containsAll(Arrays.asList(permissions));
+    }
+    public boolean hasChannelPermission(User user, Channel channel){
+        return channel.getModifiedPermissions(user).contains(this);
+    }
+    public static boolean hasChannelPermissions(User user, Channel channel, DiscordPermission...permissions){
+        return channel.getModifiedPermissions(user).containsAll(Arrays.asList(permissions));
     }
     public static DiscordPermission getDiscordPermissions(Permissions permissions){
         return values()[permissions.ordinal()];

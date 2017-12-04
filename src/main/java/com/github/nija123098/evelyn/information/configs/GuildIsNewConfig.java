@@ -5,18 +5,20 @@ import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
-import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordGuildJoin;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordGuildLeave;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordMessageSend;
-import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.moderation.logging.BotChannelConfig;
 
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * @author nija123098
+ * @since 1.0.0
+ */
 public class GuildIsNewConfig extends AbstractConfig<Boolean, Guild> {
     private static final Set<Guild> GUILDS = new HashSet<>();
     public GuildIsNewConfig() {
@@ -42,6 +44,8 @@ public class GuildIsNewConfig extends AbstractConfig<Boolean, Guild> {
         this.setValue(guild, false);
         Channel channel = ConfigHandler.getSetting(BotChannelConfig.class, guild);
         MessageMaker maker = new MessageMaker(channel == null ? guild.getGeneralChannel() != null ? guild.getGeneralChannel() : guild.getChannels().get(0) : channel);
-        maker.append("Thank you for adding me to this server!\nI always respond to being mentioned!  To add a prefix do @Evelyn prefix myPrefix.\nI also come with a `@Evelyn guide`\nFeel free to complain to my developers before you send me away, they are so desperate it's a joke.").send();
+        if (channel == null){
+            maker.append("Thank you for adding me to this server!\nI always respond to being mentioned!  To change the default `!` prefix do @Evelyn prefix `new prefix`.\nI also come with a `@Evelyn guide`").mustEmbed().send();
+        }
     }
 }

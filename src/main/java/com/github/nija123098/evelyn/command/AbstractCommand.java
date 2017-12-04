@@ -56,7 +56,7 @@ public class AbstractCommand {
     private Set<ContextRequirement> contextRequirements;
     private Set<AbstractCommand> subCommands;
     private boolean prefixRequired = true;
-    protected boolean okOnSuccess = true;
+    protected boolean okOnSuccess = false;
 
     /**
      * The high constructor for a command which all other constructors call.
@@ -336,7 +336,7 @@ public class AbstractCommand {
      * @return a string representing the sub-command's and this command's help text and usage.
      */
     protected String getLocalUsages(){
-        StringBuilder builder = new StringBuilder("# ").append(this.name).append(" ");
+        StringBuilder builder = new StringBuilder("#  ").append(this.name).append(" ");
         Stream.of(this.parameters).filter(parameter -> parameter.isAnnotationPresent(Argument.class)).forEach(parameter -> {
             boolean optional = parameter.getAnnotation(Argument.class).optional();
             String info = parameter.getAnnotation(Argument.class).info();
@@ -476,7 +476,7 @@ public class AbstractCommand {
             if (this.okOnSuccess) message.addReactionByName("ok_hand");
             if (!message.getChannel().isPrivate()) {
                 Channel chan = ConfigHandler.getSetting(BotLogConfig.class, message.getGuild());
-                if (chan == null) return;
+                if (chan == null || !chan.canPost()) return;
                 new MessageMaker(chan).withAuthorIcon(user.getAvatarURL()).getAuthorName().appendRaw(message.getAuthor().getDisplayName(message.getGuild()) + (message.getAuthor().getNickname(message.getGuild()) == null ? "" : " AKA " + message.getAuthor().getNameAndDiscrim())).getMaker().append(message.getChannel().mention() + " - used command ***" + this.name + "***").appendRaw("\n" + message.getMentionCleanedContent()).send();
             }
         }
