@@ -9,6 +9,7 @@ modules/
 src/main/java/META-INF/MANIFEST.MF
 *.txt
 *.cfg
+*.log
 *.png
 *.sh
 audio/

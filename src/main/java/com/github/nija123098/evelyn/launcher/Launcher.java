@@ -11,7 +11,10 @@ import com.github.nija123098.evelyn.service.ServiceHandler;
 import com.github.nija123098.evelyn.service.services.MemoryManagementService;
 import com.github.nija123098.evelyn.service.services.ScheduleService;
 import com.github.nija123098.evelyn.template.TemplateHandler;
-import com.github.nija123098.evelyn.util.*;
+import com.github.nija123098.evelyn.util.Care;
+import com.github.nija123098.evelyn.util.Log;
+import com.github.nija123098.evelyn.util.LogColor;
+import com.github.nija123098.evelyn.util.ThreadProvider;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -164,7 +167,6 @@ public class Launcher {
         ServiceHandler.initialize();// this order
         CommandHandler.initialize();// could break
         DiscordAdapter.initialize();// EVERYTHING
-        BotClock.initialize(); //global botclock
         IS_STARTING_UP.set(true);
         STARTUPS.forEach(Runnable::run);
         ASYNC_STARTUPS.forEach(ThreadProvider::sub);
