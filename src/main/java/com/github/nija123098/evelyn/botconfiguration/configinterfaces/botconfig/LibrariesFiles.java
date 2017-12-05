@@ -5,6 +5,6 @@ package com.github.nija123098.evelyn.botconfiguration.configinterfaces.botconfig
  * @since 1.0.0
  */
 public interface LibrariesFiles {
-    String ffm_peg();
-    String youtube_dl();
+    String ffmPeg();
+    String youtubeDl();
 }

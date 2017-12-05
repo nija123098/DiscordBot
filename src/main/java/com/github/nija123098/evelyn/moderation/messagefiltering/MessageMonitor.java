@@ -38,7 +38,7 @@ public class MessageMonitor {
             }
         });
         try {
-            Path path = Paths.get(ConfigProvider.RESOURCE_FILES.language_filtering());
+            Path path = Paths.get(ConfigProvider.RESOURCE_FILES.languageFiltering());
             if (Files.exists(path)) {
                 Files.readAllLines(path).forEach(s -> {
                     MessageMonitoringLevel type = MessageMonitoringLevel.valueOf(s.split(" ")[0].toUpperCase());
@@ -58,7 +58,7 @@ public class MessageMonitor {
         }
     }
     public static boolean monitor(DiscordMessageReceived received){
-        if (received.getChannel().isPrivate() || received.getGuild().getUserSize() < ConfigProvider.BOT_SETTINGS.message_filtering_server_size() || received.getChannel().isNSFW() || received.getMessage().getContent() == null || received.getMessage().getContent().isEmpty()) return false;
+        if (received.getChannel().isPrivate() || received.getGuild().getUserSize() < ConfigProvider.BOT_SETTINGS.messageFilteringServerSize() || received.getChannel().isNSFW() || received.getMessage().getContent() == null || received.getMessage().getContent().isEmpty()) return false;
         try{CHANNEL_MAP.computeIfAbsent(received.getChannel(), MessageMonitor::calculate).forEach(filter -> filter.checkFilter(received));
         } catch (MessageMonitoringException exception){
             new MessageMaker(received.getMessage()).withDM().append("Your message on ").appendRaw(received.getGuild().getName()).append(" in ").appendRaw(received.getChannel().mention()).append(" has been deleted.  Reason: " + exception.getMessage()).send();

@@ -27,7 +27,7 @@ public class GifCommand extends AbstractCommand {
             if (args.length > 0) {
                 tags = "&tag=" + on("+").join(args);
             }
-            HttpResponse<JsonNode> response = get("http://api.giphy.com/v1/gifs/random?api_key=" + AUTH_KEYS.giphy_token() + tags).asJson();
+            HttpResponse<JsonNode> response = get("http://api.giphy.com/v1/gifs/random?api_key=" + AUTH_KEYS.giphyToken() + tags).asJson();
             maker.appendRaw(response.getBody().getObject().getJSONObject("data").getString("url"));
         } catch (Exception ignored) {
         }

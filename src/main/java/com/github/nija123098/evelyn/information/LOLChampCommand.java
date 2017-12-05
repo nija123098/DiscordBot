@@ -40,11 +40,11 @@ public class LOLChampCommand extends AbstractCommand {
     }
     public LOLChampCommand() {
         super("lolchamp", ModuleLevel.INFO, null, null, "check out a league of legends champion");
-        this.api = ConfigProvider.AUTH_KEYS.riot_games_token() != null ? new RiotApi(new ApiConfig().setKey(ConfigProvider.AUTH_KEYS.riot_games_token())) : null;
+        this.api = ConfigProvider.AUTH_KEYS.riotGamesToken() != null ? new RiotApi(new ApiConfig().setKey(ConfigProvider.AUTH_KEYS.riotGamesToken())) : null;
         try{baseUrl = String.format("http://ddragon.leagueoflegends.com/cdn/%s/img/", api.getDataVersions(Platform.EUW).get(0));
         } catch (RiotApiException e) {
             //don't print stack trace if token not found
-            if (Objects.equals(ConfigProvider.AUTH_KEYS.riot_games_token(),"na")){
+            if (Objects.equals(ConfigProvider.AUTH_KEYS.riotGamesToken(),"na")){
                 Log.log(LogColor.red("Could not load LOLChamp command. Token not found."));
             }else{
                 throw new DevelopmentException(e);

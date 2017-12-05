@@ -194,7 +194,7 @@ public class LangString {
     private static final Map<String, String> LANG_MAP = new HashMap<>();
     private static Map<String, String> REVERSE_MAP;
     static {
-        try{Files.readAllLines(Paths.get(ConfigProvider.RESOURCE_FILES.supported_langs())).forEach(s -> {
+        try{Files.readAllLines(Paths.get(ConfigProvider.RESOURCE_FILES.supportedLangs())).forEach(s -> {
             String[] strings = s.toLowerCase().split(" ");
             LANG_MAP.put(strings[0], strings[1]);
         });

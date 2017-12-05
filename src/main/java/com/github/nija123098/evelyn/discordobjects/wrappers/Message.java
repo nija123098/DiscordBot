@@ -124,7 +124,7 @@ public class Message {// should not be kept stored, too many are made
     }
 
     public void delete() {
-        if (ConfigProvider.BOT_SETTINGS.ghost_mode_enabled()) return;
+        if (ConfigProvider.BOT_SETTINGS.ghostModeEnabled()) return;
         ErrorWrapper.wrap(() -> message().delete());
     }
 
@@ -157,7 +157,7 @@ public class Message {// should not be kept stored, too many are made
     }
 
     public Reaction addReaction(String s) {
-        if (ConfigProvider.BOT_SETTINGS.ghost_mode_enabled()) throw new GhostException();
+        if (ConfigProvider.BOT_SETTINGS.ghostModeEnabled()) throw new GhostException();
         ErrorWrapper.wrap(() -> this.message().addReaction(ReactionEmoji.of(s)));
         return getReaction(s);
     }

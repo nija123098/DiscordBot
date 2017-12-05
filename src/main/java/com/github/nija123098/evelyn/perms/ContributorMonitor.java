@@ -12,8 +12,8 @@ import com.github.nija123098.evelyn.launcher.Launcher;
  * @since 1.0.0
  */
 public class ContributorMonitor {
-    private static final Role CONTRIB_SIGN_ROLE = Role.getRole(ConfigProvider.BOT_SETTINGS.contributor_sign_role());
-    private static final Role SUPPORT_SIGN_ROLE = Role.getRole(ConfigProvider.BOT_SETTINGS.supporter_sign_role());
+    private static final Role CONTRIB_SIGN_ROLE = Role.getRole(ConfigProvider.BOT_SETTINGS.contributorSignRole());
+    private static final Role SUPPORT_SIGN_ROLE = Role.getRole(ConfigProvider.BOT_SETTINGS.supporterSignRole());
     public static void init(){
         if (CONTRIB_SIGN_ROLE == null) return;// is not the instance serving Evelyn's Space
         System.out.println(CONTRIB_SIGN_ROLE.getName());

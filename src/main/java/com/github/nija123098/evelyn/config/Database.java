@@ -27,9 +27,9 @@ public class Database {
     static {
         String username = ConfigProvider.DATABASE_SETTINGS.username();
         String password = ConfigProvider.DATABASE_SETTINGS.password();
-        String serverIP = ConfigProvider.DATABASE_SETTINGS.ip_address();
+        String serverIP = ConfigProvider.DATABASE_SETTINGS.ipAddress();
         Integer serverPort = ConfigProvider.DATABASE_SETTINGS.port();
-        String dbName = ConfigProvider.DATABASE_SETTINGS.db_name();
+        String dbName = ConfigProvider.DATABASE_SETTINGS.dbName();
         Connection c = null;
         try {
             MysqlConnectionPoolDataSource dataSource = new MysqlConnectionPoolDataSource();
