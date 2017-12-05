@@ -17,7 +17,7 @@ import java.util.Collections;
  * @since 1.0.0
  */
 public class Log {
-    private static final Path LOG_PATH;
+    public static final Path LOG_PATH;
     static {
         String name = "Evelyn-Log-" + System.currentTimeMillis();
         LOG_PATH = Paths.get(ConfigProvider.FOLDER_SETTINGS.logs_folder(), name + ".log");
