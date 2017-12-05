@@ -27,11 +27,11 @@ public class Log {
     }
     public static void log(String message, Throwable...t){
         try {
-            Files.write(LOG_PATH, Collections.singletonList(message), StandardOpenOption.APPEND);
+            Files.write(LOG_PATH, Collections.singletonList("[" + BotClock.getYMDHMS() + "] " + message), StandardOpenOption.APPEND);
             if (t.length > 0) {
-                Discord4J.LOGGER.error(message, t[0]);
+                Discord4J.LOGGER.error("[" + BotClock.getYMDHMS() + "] " + message, t[0]);
                 t[0].printStackTrace(new PrintStream(new FileOutputStream(LOG_PATH.toFile(), true)));
-            } else Discord4J.LOGGER.info(message);
+            } else Discord4J.LOGGER.info("[" + BotClock.getYMDHMS() + "] " + message);
         } catch (IOException e) {
             e.printStackTrace();
         }

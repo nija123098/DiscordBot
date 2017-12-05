@@ -10,15 +10,15 @@ import com.github.nija123098.evelyn.util.Log;
  * @author Dxeo
  * @since 1.0.0
  */
-public class GetLog extends AbstractCommand {
+public class GetLogCommand extends AbstractCommand {
 
     //constructor
-    public GetLog() {
+    public GetLogCommand() {
         super("getlog", ModuleLevel.DEVELOPMENT, "gl", null, null);
     }
 
     @Command
-    public void getlog(MessageMaker maker) {
+    public void getlogcommand(MessageMaker maker) {
 
         maker.withFile(Log.LOG_PATH.toFile());
 
