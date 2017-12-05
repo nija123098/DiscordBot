@@ -6,11 +6,11 @@ package com.github.nija123098.evelyn.botconfiguration.configinterfaces.botconfig
  */
 public interface ResourceFiles {
     String emoticons();
-    String fakeDanger();
-    String finalMap();
+    String fake_danger();
+    String final_map();
     String guide();
-    String languageFiltering();
-    String supportedLangs();
-    String timeStats();
-    String verifiedGames();
+    String language_filtering();
+    String supported_langs();
+    String time_stats();
+    String verified_games();
 }

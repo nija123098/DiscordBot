@@ -686,7 +686,7 @@ public class MessageMaker {
      * @param page the page to sent.
      */
     private void send(int page){
-        if (ConfigProvider.BOT_SETTINGS.ghostModeEnabled()) return;
+        if (ConfigProvider.BOT_SETTINGS.ghost_mode_enabled()) return;
         if (!this.maySend) {
             if (this.origin != null) ErrorWrapper.wrap(() -> null);
             return;

@@ -54,7 +54,7 @@ public class SpeechParser implements IAudioReceiver {
     private static final InitBuffer<StreamSpeechRecognizer> SPEECH_RECOGNIZER_BUFFER;
     private static final Map<Guild, Map<User, SpeechParser>> PARSER_MAP;
     static {
-        if (ConfigProvider.BOT_SETTINGS.voiceCommandsEnabled()){
+        if (ConfigProvider.BOT_SETTINGS.voice_commands_enabled()){
             PARSER_MAP = new ConcurrentHashMap<>();
             Configuration configuration = new Configuration();
             configuration.setAcousticModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us");
@@ -157,7 +157,7 @@ public class SpeechParser implements IAudioReceiver {
         File ret = new File(file.getPath().replace(".pcm", ".wav"));
         if (ret.exists()) ret.delete();
         List<String> command = new ArrayList<>();
-        command.add(ConfigProvider.LIBRARIES_FILES.ffmPeg());
+        command.add(ConfigProvider.LIBRARIES_FILES.ffm_peg());
         command.add("-f");// depth
         command.add("s16be");
         command.add("-ar");

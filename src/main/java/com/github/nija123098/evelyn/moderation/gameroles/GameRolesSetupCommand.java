@@ -20,7 +20,7 @@ import java.util.Set;
 public class GameRolesSetupCommand extends AbstractCommand {
     private static final Set<String> VERIFIED_GAMES = new HashSet<>();
     static {
-        try{VERIFIED_GAMES.addAll(Files.readAllLines(Paths.get(ConfigProvider.RESOURCE_FILES.verifiedGames())));
+        try{VERIFIED_GAMES.addAll(Files.readAllLines(Paths.get(ConfigProvider.RESOURCE_FILES.verified_games())));
         } catch (IOException e) {
             Log.log("Could not load verified games", e);
         }

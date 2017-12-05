@@ -36,14 +36,14 @@ import java.util.stream.Stream;
  * @since 1.0.0
  */
 public abstract class DownloadableTrack extends Track {
-    private static final List<String> TYPES = Stream.of(ConfigProvider.AUDIO_SETTINGS.audioFileTypes().split(",")).map(String::trim).collect(Collectors.toList());
+    private static final List<String> TYPES = Stream.of(ConfigProvider.AUDIO_SETTINGS.audio_file_types().split(",")).map(String::trim).collect(Collectors.toList());
     private static final LocalAudioSourceManager LOCAL_SOURCE_MANAGER = new LocalAudioSourceManager();
     public static AudioTrack makeAudioTrack(File file){
         if (file == null) return null;
         return (AudioTrack) LOCAL_SOURCE_MANAGER.loadItem(GuildAudioManager.PLAYER_MANAGER, new AudioReference(file.getAbsolutePath(), null));
     }
     public static List<Track> getDownloadedTracks(){
-        File[] downloadedMusic = new File(ConfigProvider.FOLDER_SETTINGS.audioFolder()).listFiles();
+        File[] downloadedMusic = new File(ConfigProvider.FOLDER_SETTINGS.audio_folder()).listFiles();
         if (downloadedMusic == null) return Collections.emptyList();// happens when no music is downloaded
         return Stream.of(downloadedMusic).filter(File::isFile).filter(file -> TYPES.contains(file.getName().split(Pattern.quote("."))[1])).map(File::getName).map(s -> getTrack(s.substring(0, s.indexOf('.')))).filter(track -> MusicDownloadService.isDownloaded(((DownloadableTrack) track))).collect(Collectors.toList());
     }
@@ -58,7 +58,7 @@ public abstract class DownloadableTrack extends Track {
     public AudioTrack getAudioTrack(GuildAudioManager manager){
         if (this.isDownloaded()) return makeAudioTrack(file());
         int playTimes = ConfigHandler.getSetting(PlayCountConfig.class, this);
-        if (playTimes >= ConfigProvider.AUDIO_SETTINGS.requiredPlaysToDownload() && ConfigProvider.AUDIO_SETTINGS.requiredPlaysToDownload() != -1) MusicDownloadService.queueDownload(playTimes == 0 ? 0 : (int) Math.log(playTimes), this, manager == null ? null : downloadableTrack -> manager.swap(this));
+        if (playTimes >= ConfigProvider.AUDIO_SETTINGS.required_plays_to_download() && ConfigProvider.AUDIO_SETTINGS.required_plays_to_download() != -1) MusicDownloadService.queueDownload(playTimes == 0 ? 0 : (int) Math.log(playTimes), this, manager == null ? null : downloadableTrack -> manager.swap(this));
         BlockingQueue<AudioTrack> queue = new LinkedBlockingQueue<>(1);
         GuildAudioManager.PLAYER_MANAGER.loadItem(this.getSource(), new AudioLoadResultHandler() {
             @Override
@@ -78,7 +78,7 @@ public abstract class DownloadableTrack extends Track {
     @Override
     public void manage(){
         super.manage();
-        if (MusicDownloadService.isDownloaded(this) && ConfigHandler.getSetting(TrackTimeExpireConfig.class, this) + ConfigProvider.AUDIO_SETTINGS.trackExpirationTime() < System.currentTimeMillis()){
+        if (MusicDownloadService.isDownloaded(this) && ConfigHandler.getSetting(TrackTimeExpireConfig.class, this) + ConfigProvider.AUDIO_SETTINGS.track_expiration_time() < System.currentTimeMillis()){
             this.file().delete();
             ConfigHandler.setSetting(TrackTypeConfig.class, this, null);
         }
@@ -86,7 +86,7 @@ public abstract class DownloadableTrack extends Track {
     public boolean download() {
         return this.isDownloaded() || this.actualDownload();
     }
-    private static final File AUDIO_CONTAINER = new File(ConfigProvider.FOLDER_SETTINGS.audioFolder());
+    private static final File AUDIO_CONTAINER = new File(ConfigProvider.FOLDER_SETTINGS.audio_folder());
     boolean actualDownload(){
         if (YTDLHelper.download(this.getSource(), this.getID(), this.getPreferredType())){
             ConfigHandler.setSetting(TrackTypeConfig.class, this, Stream.of(AUDIO_CONTAINER.listFiles()).filter(Objects::nonNull).filter(File::isFile).filter(file -> file.getName().startsWith(this.getID())).filter(file -> TYPES.contains(file.getName().split(Pattern.quote("."))[1])).findAny().get().getName().split(Pattern.quote("."))[1]);
@@ -96,10 +96,10 @@ public abstract class DownloadableTrack extends Track {
     }
     public File file(){// used when playing, and deleting, but at deletion it does not matter
         ConfigHandler.setSetting(TrackTimeExpireConfig.class, this, System.currentTimeMillis());
-        return new File(ConfigProvider.FOLDER_SETTINGS.audioFolder() + this.getID() + "." + ConfigHandler.getSetting(TrackTypeConfig.class, this));
+        return new File(ConfigProvider.FOLDER_SETTINGS.audio_folder() + this.getID() + "." + ConfigHandler.getSetting(TrackTypeConfig.class, this));
     }
     public String getPreferredType(){
-        return ConfigProvider.AUDIO_SETTINGS.audioFormat();
+        return ConfigProvider.AUDIO_SETTINGS.audio_format();
     }
     @Override
     public Long getLength() {

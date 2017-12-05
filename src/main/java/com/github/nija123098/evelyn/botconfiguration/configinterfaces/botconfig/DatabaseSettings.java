@@ -5,9 +5,9 @@ package com.github.nija123098.evelyn.botconfiguration.configinterfaces.botconfig
  * @since 1.0.0
  */
 public interface DatabaseSettings {
-    String ipAddress();
+    String ip_address();
     Integer port();
     String username();
     String password();
-    String dbName();
+    String db_name();
 }

@@ -19,7 +19,7 @@ public class TwitterHelper {
         ConfigurationBuilder builder = new ConfigurationBuilder();
         builder.setApplicationOnlyAuthEnabled(true);
         APPLICATION = new TwitterFactory(builder.build()).getInstance();
-        APPLICATION.setOAuthConsumer(AUTH_KEYS.twitterKey(), AUTH_KEYS.twitterSecret());
+        APPLICATION.setOAuthConsumer(AUTH_KEYS.twitter_key(), AUTH_KEYS.twitter_secret());
         try {
             APPLICATION.getOAuth2Token();
         } catch (TwitterException e) {

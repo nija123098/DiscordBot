@@ -20,10 +20,10 @@ import static java.util.concurrent.TimeUnit.MINUTES;
 public class YTDLHelper {
     public static boolean download(String url, String id, String format) {
         if (!isValid(url)) return false;
-        String location = FOLDER_SETTINGS.audioFolder() + id;
+        String location = FOLDER_SETTINGS.audio_folder() + id;
         List<String> commands = new ArrayList<>();
         ProcessBuilder builder = new ProcessBuilder();
-        commands.add(LIBRARIES_FILES.youtubeDl());
+        commands.add(LIBRARIES_FILES.youtube_dl());
         commands.add("--no-check-certificate");
         commands.add("--extract-audio");//-x
         commands.add("--audio-format");
@@ -34,7 +34,7 @@ public class YTDLHelper {
         commands.add("--max-filesize");
         commands.add("1G");
         commands.add("--exec");
-        commands.add("mv {} " + FOLDER_SETTINGS.audioFolder());//-hide_banner -i input.m4a -c:a copy
+        commands.add("mv {} " + FOLDER_SETTINGS.audio_folder());//-hide_banner -i input.m4a -c:a copy
         commands.add("--output");
         commands.add(location + ".%(ext)s");
         commands.add(url);

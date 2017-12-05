@@ -114,7 +114,7 @@ public class YTUtil {
         YouTube.PlaylistItems.List playlist = errorWrap(() -> YOUTUBE.playlistItems().list("id,contentDetails,snippet"));
         playlist.setFields("items(contentDetails/videoId,snippet/title,snippet/publishedAt),nextPageToken,pageInfo");
         PLAYLIST = playlist;
-        addAll(KEYS, AUTH_KEYS.googleApiToken().split(" "));
+        addAll(KEYS, AUTH_KEYS.google_api_token().split(" "));
     }
 
     public static String getKey() {

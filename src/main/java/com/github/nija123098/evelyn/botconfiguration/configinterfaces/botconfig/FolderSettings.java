@@ -5,9 +5,9 @@ package com.github.nija123098.evelyn.botconfiguration.configinterfaces.botconfig
  * @since 1.0.0
  */
 public interface FolderSettings {
-    String audioFolder();
-    String badgeFolder();
-    String logsFolder();
-    String neuralNetFolder();
-    String tempFolder();
+    String audio_folder();
+    String badge_folder();
+    String logs_folder();
+    String neural_net_folder();
+    String temp_folder();
 }

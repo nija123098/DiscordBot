@@ -15,7 +15,7 @@ import net.swisstech.bitly.BitlyClient;
  * @since 1.0.0
  */
 public class ShortenCommand extends AbstractCommand {
-    private BitlyClient client = new BitlyClient(ConfigProvider.AUTH_KEYS.bitlyToken());
+    private BitlyClient client = new BitlyClient(ConfigProvider.AUTH_KEYS.bitly_token());
     public ShortenCommand(){
         super("shorten", ModuleLevel.HELPER, "shrt", "scissors", "shorten links with Bit.ly");
     }
