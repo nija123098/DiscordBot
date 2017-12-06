@@ -10,10 +10,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.economy.configs.CurrencySymbolConfig;
 import com.github.nija123098.evelyn.economy.plantation.configs.*;
-import com.github.nija123098.evelyn.util.EmoticonHelper;
-import com.github.nija123098.evelyn.util.FormatHelper;
-import com.github.nija123098.evelyn.util.GeneralEmotes;
-import com.github.nija123098.evelyn.util.TableBuilder;
+import com.github.nija123098.evelyn.util.*;
 
 import java.awt.*;
 import java.time.Clock;
@@ -144,7 +141,7 @@ public class PlantationCommand extends AbstractCommand {
                 maker.getHeader().clear();
                 maker.clearFieldParts();
                 maker.getFooter().clear();
-                maker.appendRaw("test");
+                // method code goes here
                 maker.getNewFieldPart().withInline(true).withBoth("Current Inventory:",
                         (((hasHarvestUpgrade) ? (CoffeeEmotes.BEANS + " `" + ConfigHandler.getSetting(CurrentBeansConfig.class, user) + "`\n") : "") +
                                 ((hasRoastUpgrade) ? (CoffeeEmotes.ROASTBEANS + " `" + ConfigHandler.getSetting(CurrentRoastedBeansConfig.class, user) + "`\n") : "") +
@@ -170,8 +167,10 @@ public class PlantationCommand extends AbstractCommand {
                 /**
                  * Time be a fickle thing
                  */
-                Instant then = Instant.parse(ConfigHandler.getSetting(LastHarvestUseConfig.class, user)), thenDays = then.truncatedTo(ChronoUnit.DAYS), thenDaysCount = then.truncatedTo(ChronoUnit.DAYS);
-                Instant now = Clock.systemUTC().instant(), nowDays = now.truncatedTo(ChronoUnit.DAYS), nowDaysCount = now.truncatedTo(ChronoUnit.DAYS);
+                Instant then = Instant.parse(ConfigHandler.getSetting(LastCoffeeHarvestConfig.class, user));
+                Instant thenDays = then.truncatedTo(ChronoUnit.DAYS);
+                Instant now = BotClock.getClock().instant();
+                Instant nowDays = now.truncatedTo(ChronoUnit.DAYS);
                 Instant utcMidnight = Instant.parse((ZonedDateTime.now(ZoneId.of("Z")).plusDays(1)).toString());
                 int timeUntil = Math.abs(Integer.valueOf(String.valueOf(now.until(utcMidnight.atZone(ZoneId.of("Z")).truncatedTo(ChronoUnit.DAYS), ChronoUnit.MINUTES))));
                 int hours = 0, minutes;
@@ -181,12 +180,17 @@ public class PlantationCommand extends AbstractCommand {
                 }
                 minutes = timeUntil;
 
-                int beanClaim = (100 * ConfigHandler.getSetting(CurrentHarvestUpgradesConfig.class, user));
+				int beanClaim = (100 * ConfigHandler.getSetting(CurrentHarvestUpgradesConfig.class, user));
+				int beanCheck = 0;
+				int beanTemp = (100 * ConfigHandler.getSetting(CurrentHarvestUpgradesConfig.class, user));
+				while (beanTemp >= 10) {
+
+				}
                 int currentBeans = ConfigHandler.getSetting(CurrentBeansConfig.class, user);
                 if (nowDays.compareTo(thenDays) == 1) {
                     ConfigHandler.setSetting(CurrentBeansConfig.class, user, (currentBeans + beanClaim));
                     maker.appendRaw("You collected " + CoffeeEmotes.BEANS + " " + beanClaim + " from your plantation");
-                    ConfigHandler.setSetting(LastHarvestUseConfig.class, user, now.toString());
+                    ConfigHandler.setSetting(LastCoffeeHarvestConfig.class, user, now.toString());
                 } else {
                     maker.appendRaw("You'll need to wait: " + hours + "h and " + minutes + "m to harvest from your plantation");
                 }
