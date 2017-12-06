@@ -12,7 +12,4 @@ public class CurrentBeansConfig extends AbstractConfig<Integer, User> {
     public CurrentBeansConfig () {
         super("current_beans", "", ConfigCategory.STAT_TRACKING, 0, "how many beans a user has");
     }
-    public boolean checkDefault(){
-        return false;
-    }
 }

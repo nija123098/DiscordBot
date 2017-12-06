@@ -10,6 +10,6 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.User;
  */
 public class CurrentGroundsConfig extends AbstractConfig<Integer, User> {
     public CurrentGroundsConfig () {
-        super("current_grounds", "", ConfigCategory.STAT_TRACKING, 0, "how many grounds a user has");
+        super("current_grounds", "", ConfigCategory.STAT_TRACKING, 0, "how many coffee grounds a user has");
     }
 }

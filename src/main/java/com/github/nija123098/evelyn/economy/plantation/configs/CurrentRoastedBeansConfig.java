@@ -12,7 +12,4 @@ public class CurrentRoastedBeansConfig extends AbstractConfig<Integer, User> {
     public CurrentRoastedBeansConfig () {
         super("current_roasted_beans", "", ConfigCategory.STAT_TRACKING, 0, "how many roasted beans a user has");
     }
-    public boolean checkDefault(){
-        return false;
-    }
 }

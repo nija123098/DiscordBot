@@ -17,7 +17,7 @@ public class CoffeeEmotes {
     //roasted beans emote
     public final static String ROASTBEANS = EmoticonHelper.getEmoji("roastbean").toString();
 
-    //grounds emote
+    //coffee grounds emote
     public final static String GROUNDS = EmoticonHelper.getEmoji("coffeegrounds").toString();
 
     //grinder emote
