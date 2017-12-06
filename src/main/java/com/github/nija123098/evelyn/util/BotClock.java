@@ -43,4 +43,19 @@ public class BotClock {
         String[] dnt = Instant.now(clock).truncatedTo(ChronoUnit.SECONDS).toString().split("T", 2);
         return dnt[0] + " " + dnt[1].replace("Z", "");
     }
+
+    public static String getHMS(Clock then) {
+        String[] time = Instant.now(then).truncatedTo(ChronoUnit.SECONDS).toString().split("T", 2);
+        return time[1].replace("Z", "");
+    }
+
+    public static String getYMD(Clock then) {
+        String[] date = Instant.now(then).truncatedTo(ChronoUnit.DAYS).toString().split("T", 2);
+        return date[0];
+    }
+
+    public static String getYMDHMS(Clock then) {
+        String[] dnt = Instant.now(then).truncatedTo(ChronoUnit.SECONDS).toString().split("T", 2);
+        return dnt[0] + " " + dnt[1].replace("Z", "");
+    }
 }

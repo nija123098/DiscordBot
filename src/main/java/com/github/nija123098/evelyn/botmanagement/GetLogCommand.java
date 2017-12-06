@@ -20,7 +20,7 @@ public class GetLogCommand extends AbstractCommand {
     @Command
     public void getlogcommand(MessageMaker maker) {
 
-        maker.withFile(Log.LOG_PATH.toFile());
+        maker.withDM().withFile(Log.LOG_PATH.toFile());
 
     }
 }
