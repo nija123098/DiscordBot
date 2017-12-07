@@ -43,7 +43,7 @@ public class MapCommand extends AbstractCommand {
         try {
             Map<Region, Integer> map = new HashMap<>();
             getGuilds().forEach(guild -> map.compute(guild.getRegion(), (region, integer) -> integer == null ? 1 : integer + 1));
-            BufferedImage image = read(get(RESOURCE_FILES.final_map()).toFile());
+            BufferedImage image = read(get(RESOURCE_FILES.finalMap()).toFile());
             Map<ColorAria, List<Pair<Integer, Integer>>> setMap = new HashMap<>();
             for (int i = 0; i < image.getWidth(); i++)
                 for (int j = 0; j < image.getHeight(); j++)

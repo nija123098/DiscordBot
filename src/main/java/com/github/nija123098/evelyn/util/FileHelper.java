@@ -26,7 +26,7 @@ public class FileHelper {
     }
     public static File getTempFile(String cat, String end, String snowflake, IOConsumer once){
         File file;
-        try{file = Paths.get(ConfigProvider.FOLDER_SETTINGS.temp_folder(), cat, snowflake + "." + end).toFile();
+        try{file = Paths.get(ConfigProvider.FOLDER_SETTINGS.tempFolder(), cat, snowflake + "." + end).toFile();
         }catch(Exception e){throw new DevelopmentException("Issue with making new file", e);}
         file.deleteOnExit();
         if (!file.exists()) {

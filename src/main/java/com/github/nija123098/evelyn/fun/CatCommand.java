@@ -24,8 +24,8 @@ public class CatCommand extends AbstractCommand {
 
     static {
         String builder = "http://thecatapi.com/api/images/get?type=gif&format=html";
-        if (AUTH_KEYS.cat_api_token() != null)
-            builder += "&api_key=" + AUTH_KEYS.cat_api_token();
+        if (AUTH_KEYS.catApiToken() != null)
+            builder += "&api_key=" + AUTH_KEYS.catApiToken();
         URL = builder;
     }
 

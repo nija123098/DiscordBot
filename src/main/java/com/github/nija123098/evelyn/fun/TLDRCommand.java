@@ -41,7 +41,7 @@ public class TLDRCommand extends AbstractCommand {
     public TLDRCommand() {
         super("tldr", FUN, "tl;dr", null, "Shows a tldr from https://twitter.com/tldrwikipedia");
         //if twitter token not found, do nothing
-        if (equal(AUTH_KEYS.twitter_secret(), "na")) {
+        if (equal(AUTH_KEYS.twitterSecret(), "na")) {
             log(red("Could not load TLDR command. Token not found."));
             return;
         }
@@ -92,7 +92,7 @@ public class TLDRCommand extends AbstractCommand {
             maker.getTitle().appendRaw(pair.getKey());
             maker.withImage(pair.getValue());
         } catch (NullPointerException e) {
-            if (equal(AUTH_KEYS.twitter_secret(), "na")) {
+            if (equal(AUTH_KEYS.twitterSecret(), "na")) {
                 maker.mustEmbed().withColor(new Color(255, 0, 0));
                 maker.getHeader().clear().append("Sorry, we are in the process of updating our API key!");
             } else {

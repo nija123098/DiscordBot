@@ -20,7 +20,7 @@ public class Log {
     public static final Path LOG_PATH;
     static {
         String name = "Evelyn-Log-" + System.currentTimeMillis();
-        LOG_PATH = Paths.get(ConfigProvider.FOLDER_SETTINGS.logs_folder(), name + ".log");
+        LOG_PATH = Paths.get(ConfigProvider.FOLDER_SETTINGS.logsFolder(), name + ".log");
         LOG_PATH.toFile().getParentFile().mkdirs();
         try{Files.write(LOG_PATH, Collections.singletonList("Made log " + name), StandardOpenOption.CREATE);
         } catch (IOException e) {throw new RuntimeException(e);}

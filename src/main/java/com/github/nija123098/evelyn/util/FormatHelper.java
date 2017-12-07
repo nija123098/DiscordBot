@@ -72,7 +72,7 @@ public class FormatHelper {
     }
 
     public static String embedLink(String text, String link) {
-        if (link.isEmpty()) return "[" + text + "](" + URLS.rickroll_vid() + ")";
+        if (link.isEmpty()) return "[" + text + "](" + URLS.rickrollVid() + ")";
         return "[" + text + "](" + link + ")";
     }
 

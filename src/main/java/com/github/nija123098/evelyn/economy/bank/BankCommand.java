@@ -113,7 +113,7 @@ public class BankCommand extends AbstractCommand {
                     manager.skipTrack();
                     thing.forEach(manager::queueTrack);
                 }
-                maker.withImage(ConfigProvider.URLS.bank_gif());
+                maker.withImage(ConfigProvider.URLS.bankGif());
                 return;
             }
             maker.appendRaw(ClaimBuilder((hours + "h " + minutes + "m"), symbol, bonus, streak, user, guild, false)).mustEmbed();
