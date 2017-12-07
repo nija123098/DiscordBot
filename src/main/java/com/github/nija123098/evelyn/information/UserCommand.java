@@ -9,12 +9,14 @@ import com.github.nija123098.evelyn.command.configs.CommandsUsedCountConfig;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.GuildUser;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
+import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordPermission;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.economy.configs.CurrencySymbolConfig;
 import com.github.nija123098.evelyn.economy.configs.CurrentCurrencyConfig;
 import com.github.nija123098.evelyn.moderation.GuildUserJoinTimeConfig;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
+import com.github.nija123098.evelyn.util.FormatHelper;
 import com.github.nija123098.evelyn.util.Time;
 
 /**
@@ -26,20 +28,25 @@ public class UserCommand extends AbstractCommand {
         super("user", ModuleLevel.INFO, "whois, profile", null, "Shows information about the user");
     }
     @Command
-    public void command(@Argument(optional = true) User user, @Context(softFail = true) Guild guild, MessageMaker maker){
-        maker.appendAlternate(false, "Querying for **", (guild == null ? user.getName() : user.getDisplayName(guild)) + "**\n\n").withThumb(user.getAvatarURL()).withColor(user);
-        addAtrib(maker, "bust_in_silhouette", "User", user.getNameAndDiscrim());
-        addAtrib(maker, "keyboard", "Commands used", ConfigHandler.getSetting(CommandsUsedCountConfig.class, user));
-        addAtrib(maker, (guild == null ? "cookie" : EmoticonHelper.getName(ConfigHandler.getSetting(CurrencySymbolConfig.class, guild))), "Currency", ConfigHandler.getSetting(CurrentCurrencyConfig.class, user));
-        if (guild != null) {
-            GuildUser guildUser = GuildUser.getGuildUser(guild, user);
-            addAtrib(maker, "hash", "User Number", guildUser.getJoinPosition() + 1);
-            addAtrib(maker, "date", "Joined server", Time.getAbbreviated(System.currentTimeMillis() - GuildUserJoinTimeConfig.get(guildUser)) + " ago");
-        }
-        addAtrib(maker, "calendar_spiral", "Joined Discord", Time.getAbbreviated(System.currentTimeMillis() - user.getJoinDate()) + " ago");
-        maker.getNote().append("ID: " + user.getID());
-    }
-    private static void addAtrib(MessageMaker maker, String icon, String info, Object o){
-        maker.appendAlternate(true, EmoticonHelper.getChars(icon, false), "  " + info, ": " + String.valueOf(o) + "\n");
+    public void command(@Argument(optional = true) User user, @Context(softFail = true) Guild guild, MessageMaker maker, User invoker){
+        maker.withThumb(user.getAvatarURL()).withColor(user);
+        maker.getTitle().appendRaw(user.getName());
+        maker.withColor(user.getAvatarURL());
+        maker.getNewFieldPart().withInline(false).withBoth("\u200b", user.getPermissionsForGuild(guild).contains(DiscordPermission.ADMINISTRATOR) ? ("\n" + EmoticonHelper.getChars("oncoming_police_car", false) + " Administrator\n") : "\n\u200b");
+		if (guild != null) {
+			GuildUser guildUser = GuildUser.getGuildUser(guild, user);
+			maker.getNewFieldPart().withInline(true).withBoth(EmoticonHelper.getChars("hash", false) + " User number", " " + (guildUser.getJoinPosition() + 1));
+		}
+		maker.getNewFieldPart().withInline(true).withBoth(EmoticonHelper.getChars("id", false) + " User ID", " " + user.getID());
+		maker.getNewFieldPart().withInline(true).withBoth(EmoticonHelper.getChars("keyboard", false) + " Commands used", " " + ConfigHandler.getSetting(CommandsUsedCountConfig.class, user));
+		maker.getNewFieldPart().withInline(true).withBoth((guild == null ? EmoticonHelper.getChars("cookie", false) : (ConfigHandler.getSetting(CurrencySymbolConfig.class, guild))) + " Currency", " " + ConfigHandler.getSetting(CurrentCurrencyConfig.class, user));
+		if (guild != null) {
+			GuildUser guildUser = GuildUser.getGuildUser(guild, user);
+			maker.getNewFieldPart().withInline(true).withBoth(EmoticonHelper.getChars( "date", false) +  " Joined server", " " + Time.getAbbreviated(System.currentTimeMillis() - GuildUserJoinTimeConfig.get(guildUser)) + " ago");
+		}
+		maker.getNewFieldPart().withInline(true).withBoth(EmoticonHelper.getChars( "calendar_spiral", false) + " Joined discord", " " + Time.getAbbreviated(System.currentTimeMillis() - user.getJoinDate()) + " ago");
+		if (invoker.getPermissionsForGuild(guild).contains(DiscordPermission.ADMINISTRATOR) || invoker.getPermissionsForGuild(guild).contains(DiscordPermission.MANAGE_ROLES) || invoker.getPermissionsForGuild(guild).contains(DiscordPermission.MANAGE_SERVER)) {
+			maker.getNewFieldPart().withInline(false).withBoth("Key permissions", FormatHelper.makeSimpleUserPermissionsTable(user, guild));
+		}
     }
 }
