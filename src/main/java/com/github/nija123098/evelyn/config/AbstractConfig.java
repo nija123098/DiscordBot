@@ -10,6 +10,7 @@ import com.github.nija123098.evelyn.perms.BotRole;
 import com.github.nija123098.evelyn.service.services.ScheduleService;
 import com.github.nija123098.evelyn.util.Care;
 import com.github.nija123098.evelyn.util.Log;
+import com.thoughtworks.xstream.io.StreamException;
 
 import java.lang.reflect.Type;
 import java.sql.ResultSet;
@@ -87,7 +88,7 @@ public class AbstractConfig<V, T extends Configurable> {
                     String tName = rs.getString("TABLE_NAME");
                     if (tName != null && tName.equals(this.getNameForType(level))) return;
                 }// make
-                Database.query("CREATE TABLE `" + this.getNameForType(level) + "` (id TINYTEXT, value TEXT, millis BIGINT)");
+                Database.query("CREATE TABLE `" + this.getNameForType(level) + "` (id TINYTEXT, value " + this.getSQLTableType() + ", millis BIGINT)");
             } catch (SQLException e) {
                 throw new DevelopmentException("Could not ensure table existence", e);
             }
@@ -256,11 +257,7 @@ public class AbstractConfig<V, T extends Configurable> {
     public V setValue(T configurable, V value, boolean overrideCache){
         if (!(value == null || this.valueType.isInstance(value))) throw new ArgumentException("Attempted passing incorrect type of argument");
         value = validateInput(configurable, value);
-        if (overrideCache) {
-            saveValue(configurable, value);
-            return value;
-        }
-        if (this.cache == null || value == null) saveValue(configurable, value);
+        if (overrideCache || this.cache == null || value == null) return saveValue(configurable, value);
         else {
             this.cache.put(configurable, value);
             this.change.add(configurable);
@@ -276,10 +273,10 @@ public class AbstractConfig<V, T extends Configurable> {
      * @return the value saved to the database.
      */
     private V saveValue(T configurable, V value){
-        reset(configurable);
-        if (!Objects.equals(value, this.getDefault(configurable))) {
-            Database.insert("INSERT INTO " + this.getNameForType(configurable.getConfigLevel()) + " (`id`, `value`, `millis`) VALUES ('" + configurable.getID() + "','" + TypeChanger.toString(this.valueType, value) + "','" + System.currentTimeMillis() + "');");
-        }
+        V current = this.getValue(configurable), defaul = this.getDefault(configurable);
+        if (Objects.equals(value, defaul)) reset(configurable);
+        else if (Objects.equals(current, defaul)) Database.insert("INSERT INTO " + this.getNameForType(configurable.getConfigLevel()) + " (`id`, `value`, `millis`) VALUES ('" + configurable.getID() + "','" + this.getSQLRepresentation(value) + "','" + System.currentTimeMillis() + "');");
+        else Database.insert("UPDATE " + this.getNameForType(configurable.getConfigLevel()) + " SET millis = " + System.currentTimeMillis() + ", value = " + Database.quote(this.getSQLRepresentation(value)) + " WHERE id = " + Database.quote(configurable.getID()) + ";");
         return value;
     }
 
@@ -320,14 +317,18 @@ public class AbstractConfig<V, T extends Configurable> {
      * @return the config's value for the given {@link Configurable}.
      */
     private V grabValue(T configurable){
-        return Database.select("SELECT * FROM " + this.getNameForType(configurable.getConfigLevel()) + " WHERE id = " + Database.quote(configurable.getID()), set -> {
-            try{set.next();
-                return TypeChanger.toObject(this.valueType, set.getString(2));
-            } catch (SQLException e) {
-                if (!e.getMessage().equals("Current position is after the last row")) Log.log("Error while getting value", e);
-                return this.getDefault(configurable);
-            }
-        });
+        try {
+            return Database.select("SELECT * FROM " + this.getNameForType(configurable.getConfigLevel()) + " WHERE id = " + Database.quote(configurable.getID()), set -> {
+                try{set.next();
+                    return TypeChanger.toObject(this.valueType, set.getString(2));
+                } catch (SQLException e) {
+                    if (!e.getMessage().equals("Current position is after the last row")) Log.log("Error while getting value", e);
+                    return this.getDefault(configurable);
+                }
+            });
+        } catch (StreamException e){
+            throw new DevelopmentException("Could not load config due to stream exception from " + this.getNameForType(configurable.getConfigLevel()) + " while loading " + configurable.getID() + "'s value", e);
+        }
     }
 
     /**
@@ -440,5 +441,20 @@ public class AbstractConfig<V, T extends Configurable> {
             }
             return map;// used for foreach, needn't be optimized
         });
+    }
+
+    private String getSQLRepresentation(V value){
+        if (this.valueType.equals(Boolean.class)) return (Boolean) value ? "1" : "0";
+        return TypeChanger.toString(this.valueType, value);
+    }
+
+    private String getSQLTableType(){
+        if (this.valueType.equals(Long.class)) return "LONG";
+        if (this.valueType.equals(Boolean.class)) return "BOOLEAN";
+        if (this.valueType.equals(Float.class)) return "FLOAT";
+        if (this.valueType.equals(Integer.class)) return "INTEGER";
+        if (this.valueType.isEnum()) return "TINYTEXT";
+        if (Configurable.class.isAssignableFrom(this.valueType)) return ConfigLevel.getLevel((Class<? extends Configurable>) this.valueType).isLongID() ? "LONG" : "TINYTEXT";
+        return "TEXT";
     }
 }

@@ -21,31 +21,32 @@ import java.util.stream.Stream;
 @ConfigurableTypeAddLocation("A enum representation must be added")
 public enum ConfigLevel {
     /** The enum representation for audio tracks */
-    TRACK(Track.class, false),
+    TRACK(Track.class, false, false),
     /** The enum representation for any playlist type */
-    PLAYLIST(Playlist.class, false),
+    PLAYLIST(Playlist.class, false, false),
     /** The enum representation for a user's config */
-    USER(User.class, false),
+    USER(User.class, false, true),
     /** The enum representation for a channel's config */
-    CHANNEL(Channel.class, true),
+    CHANNEL(Channel.class, true, true),
     /** The enum representation for a category's config */
-    CATEGORY(Category.class, true),
+    CATEGORY(Category.class, true, true),
     /** The enum representation for a user's config within a guild */
-    GUILD_USER(GuildUser.class, true),
+    GUILD_USER(GuildUser.class, true, false),
     /** The enum representation for a role within a guild */
-    ROLE(Role.class, true),
+    ROLE(Role.class, true, true),
     /** The enum representation for a guild's config */
-    GUILD(Guild.class, true),
+    GUILD(Guild.class, true, true),
     /** The enum representation for global config */
-    GLOBAL(GlobalConfigurable.class, false),
+    GLOBAL(GlobalConfigurable.class, false, false),
     /** The enum representation for a config that applies to all configurable types */
-    ALL(Configurable.class, false),;
+    ALL(Configurable.class, false, false),;
     private final Class<? extends Configurable> clazz;
     private final Set<ConfigLevel> assignables = new HashSet<>();
-    private final boolean mayCache;
-    ConfigLevel(Class<? extends Configurable> clazz, boolean mayCache) {
+    private final boolean mayCache, longID;
+    ConfigLevel(Class<? extends Configurable> clazz, boolean mayCache, boolean longID) {
         this.clazz = clazz;
         this.mayCache = mayCache;
+        this.longID = longID;
     }
     public Class<? extends Configurable> getType(){
         return this.clazz;
@@ -55,6 +56,9 @@ public enum ConfigLevel {
     }
     public boolean mayCache(){
         return this.mayCache;
+    }
+    public boolean isLongID(){
+        return this.longID;
     }
     public boolean isAssignableFrom(ConfigLevel level){
         return this == ALL || this == level;
