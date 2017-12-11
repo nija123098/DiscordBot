@@ -320,9 +320,14 @@ public class AbstractConfig<V, T extends Configurable> {
         try {
             return Database.select("SELECT * FROM " + this.getNameForType(configurable.getConfigLevel()) + " WHERE id = " + Database.quote(configurable.getID()), set -> {
                 try{set.next();
+                    if (Configurable.class.isAssignableFrom(this.valueType)) return (V) ConfigHandler.getConfigurable(this.configLevel.getType(), this.configLevel.isLongID() ? String.valueOf(Integer.parseInt(set.getString(2), 2)) : set.getString(2));
+                    if (this.valueType.equals(Long.class)) return (V) Long.valueOf(set.getLong(2));
+                    if (this.valueType.equals(Boolean.class)) return (V) Boolean.valueOf(set.getBoolean(2));
+                    if (this.valueType.equals(Float.class)) return (V) Float.valueOf(set.getFloat(2));
+                    if (this.valueType.equals(Integer.class)) return (V) Integer.valueOf(set.getInt(2));
                     return TypeChanger.toObject(this.valueType, set.getString(2));
                 } catch (SQLException e) {
-                    if (!e.getMessage().equals("Current position is after the last row")) Log.log("Error while getting value", e);
+                    if (!e.getMessage().equals("Current position is after the last row")) Log.log("Exception while getting value", e);
                     return this.getDefault(configurable);
                 }
             });
@@ -449,12 +454,12 @@ public class AbstractConfig<V, T extends Configurable> {
     }
 
     private String getSQLTableType(){
-        if (this.valueType.equals(Long.class)) return "LONG";
+        if (this.valueType.equals(Long.class)) return "BIGINT";
         if (this.valueType.equals(Boolean.class)) return "BOOLEAN";
         if (this.valueType.equals(Float.class)) return "FLOAT";
         if (this.valueType.equals(Integer.class)) return "INTEGER";
         if (this.valueType.isEnum()) return "TINYTEXT";
-        if (Configurable.class.isAssignableFrom(this.valueType)) return ConfigLevel.getLevel((Class<? extends Configurable>) this.valueType).isLongID() ? "LONG" : "TINYTEXT";
+        if (Configurable.class.isAssignableFrom(this.valueType)) return ConfigLevel.getLevel((Class<? extends Configurable>) this.valueType).isLongID() ? "BIGINT" : "TINYTEXT";
         return "TEXT";
     }
 }
