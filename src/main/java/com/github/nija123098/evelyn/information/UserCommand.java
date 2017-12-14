@@ -8,6 +8,7 @@ import com.github.nija123098.evelyn.command.annotations.Context;
 import com.github.nija123098.evelyn.command.configs.CommandsUsedCountConfig;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.GuildUser;
+import com.github.nija123098.evelyn.config.configs.guild.GuildPrefixConfig;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordPermission;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
@@ -46,7 +47,8 @@ public class UserCommand extends AbstractCommand {
 		}
 		maker.getNewFieldPart().withInline(true).withBoth(EmoticonHelper.getChars( "calendar_spiral", false) + " Joined discord", " " + Time.getAbbreviated(System.currentTimeMillis() - user.getJoinDate()) + " ago");
 		if (invoker.getPermissionsForGuild(guild).contains(DiscordPermission.ADMINISTRATOR) || invoker.getPermissionsForGuild(guild).contains(DiscordPermission.MANAGE_ROLES) || invoker.getPermissionsForGuild(guild).contains(DiscordPermission.MANAGE_SERVER)) {
-			maker.getNewFieldPart().withInline(false).withBoth("Key permissions", FormatHelper.makeSimpleUserPermissionsTable(user, guild));
+			maker.getNewFieldPart().withInline(false).withBoth("Key permissions", FormatHelper.makeUserPermissionsTable(user, guild, true));
+			maker.getNote().appendRaw("use `" + ConfigHandler.getSetting(GuildPrefixConfig.class, guild) + "user permissions` to see a detailed view of user permissions");
 		}
     }
 }

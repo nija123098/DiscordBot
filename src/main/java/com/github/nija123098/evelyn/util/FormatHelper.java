@@ -193,9 +193,10 @@ public class FormatHelper {
 	 *
 	 * @param user        User
 	 * @param guild 	  Guild
+	 * @param simple	  simple
 	 * @return formatted table
 	 */
-	public static String makeUserPermissionsTable(User user, Guild guild) {
+	public static String makeUserPermissionsTable(User user, Guild guild, boolean simple) {
 		List<String> permissions = new ArrayList();
 		user.getPermissionsForGuild(guild).forEach(permission -> {
 			if (permission.name().contains("MANAGE")) {
@@ -204,7 +205,7 @@ public class FormatHelper {
 				permissions.add('"' + permission.name().toLowerCase() + '"');
 			} else if (permission.name().contains("ADMINISTRATOR")){
 				permissions.add(" Administrator ");
-			} else {
+			} else if (!simple) {
 				permissions.add(" " + permission.name().toLowerCase() + " ");
 			}
 		});
@@ -220,41 +221,6 @@ public class FormatHelper {
 			}
 		}
 		if (counter % 2 != 0) {
-			ret.append("\n");
-		}
-		return ret + "```\n";
-	}
-
-	/**
-	 * Makes a simpler table of user permissions
-	 *
-	 * @param user        User
-	 * @param guild 	  Guild
-	 * @return formatted table
-	 */
-	public static String makeSimpleUserPermissionsTable(User user, Guild guild) {
-		List<String> permissions = new ArrayList();
-		user.getPermissionsForGuild(guild).forEach(permission -> {
-			if (permission.name().contains("MANAGE")) {
-				permissions.add("'" + permission.name().toLowerCase() + "'");
-			} else if (permission.name().contains("KICK") || permission.name().contains("BAN") || permission.name().contains("MOVE") || permission.name().contains("DEAFEN") || permission.name().contains("MUTE") || permission.name().contains("LOG")) {
-				permissions.add('"' + permission.name().toLowerCase() + '"');
-			} else if (permission.name().contains("ADMINISTRATOR")){
-				permissions.add(" Administrator ");
-			}
-		});
-		Collections.sort(permissions);
-
-		StringBuilder ret = new StringBuilder("```ml\n");
-		int counter = 0;
-		for (String item : permissions) {
-			counter++;
-			ret.append(format("%-" + 23 + "s", item));
-			if (counter % 1 == 0) {
-				ret.append("\n");
-			}
-		}
-		if (counter % 1 != 0) {
 			ret.append("\n");
 		}
 		return ret + "```\n";
