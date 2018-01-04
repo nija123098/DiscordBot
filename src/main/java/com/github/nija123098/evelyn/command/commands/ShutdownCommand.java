@@ -1,5 +1,6 @@
 package com.github.nija123098.evelyn.command.commands;
 
+import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ContextPack;
 import com.github.nija123098.evelyn.command.ContextType;
@@ -30,6 +31,6 @@ public class ShutdownCommand extends AbstractCommand {
         if (remaining.contains("now")) System.exit(val == null ? -1 : val);
         Template template = TemplateHandler.getTemplate(KeyPhrase.REBOOT_NOTIFICATION, null, Collections.emptyList());
         SubscriptionLevel.BOT_STATUS.send(new MessageMaker((Channel) null).append(template == null ? "I'm going to go reboot" : template.interpret(pack)));
-        Launcher.shutdown(remaining.contains("c") ? null : val == null ? 0 : val, remaining.contains("q") ? 5_000 : 30_000, !remaining.contains("s"));
+        Launcher.shutdown(remaining.contains("c") ? null : val == null ? 0 : val, remaining.contains("q") || ConfigProvider.BOT_SETTINGS.testModeEnabled() ? 5_000 : 30_000, !remaining.contains("s"));
     }
 }

@@ -2,7 +2,7 @@ package com.github.nija123098.evelyn.discordobjects.wrappers;
 
 import com.github.nija123098.evelyn.config.ConfigLevel;
 import com.github.nija123098.evelyn.config.Configurable;
-import com.github.nija123098.evelyn.discordobjects.ErrorWrapper;
+import com.github.nija123098.evelyn.discordobjects.ExceptionWrapper;
 import com.github.nija123098.evelyn.exception.ConfigurableConvertException;
 import com.github.nija123098.evelyn.perms.BotRole;
 import com.github.nija123098.evelyn.util.FormatHelper;
@@ -131,31 +131,31 @@ public class Role implements Configurable {
     }
 
     public void edit(Color color, boolean hoist, String name, EnumSet<DiscordPermission> permissions, boolean isMentionable) {
-        ErrorWrapper.wrap(() -> role().edit(color, hoist, name, DiscordPermission.getPermissions(permissions), isMentionable));
+        ExceptionWrapper.wrap(() -> role().edit(color, hoist, name, DiscordPermission.getPermissions(permissions), isMentionable));
     }
 
     public void changeColor(Color color) {
-        ErrorWrapper.wrap(() -> role().changeColor(color));
+        ExceptionWrapper.wrap(() -> role().changeColor(color));
     }
 
     public void changeHoist(boolean hoist) {
-        ErrorWrapper.wrap(() -> role().changeHoist(hoist));
+        ExceptionWrapper.wrap(() -> role().changeHoist(hoist));
     }
 
     public void changeName(String name) {
-        ErrorWrapper.wrap(() -> role().changeName(name));
+        ExceptionWrapper.wrap(() -> role().changeName(name));
     }
 
     public void changePermissions(EnumSet<DiscordPermission> permissions) {
-        ErrorWrapper.wrap(() -> role().changePermissions(DiscordPermission.getPermissions(permissions)));
+        ExceptionWrapper.wrap(() -> role().changePermissions(DiscordPermission.getPermissions(permissions)));
     }
 
     public void changeMentionable(boolean isMentionable) {
-        ErrorWrapper.wrap(() -> role().changeMentionable(isMentionable));
+        ExceptionWrapper.wrap(() -> role().changeMentionable(isMentionable));
     }
 
     public void delete() {
-        ErrorWrapper.wrap(() -> role().delete());
+        ExceptionWrapper.wrap(() -> role().delete());
     }
 
     public boolean isEveryoneRole() {

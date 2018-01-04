@@ -2,7 +2,7 @@ package com.github.nija123098.evelyn.discordobjects.wrappers;
 
 import com.github.nija123098.evelyn.config.ConfigLevel;
 import com.github.nija123098.evelyn.config.Configurable;
-import com.github.nija123098.evelyn.discordobjects.ErrorWrapper;
+import com.github.nija123098.evelyn.discordobjects.ExceptionWrapper;
 import com.github.nija123098.evelyn.perms.BotRole;
 import com.github.nija123098.evelyn.service.services.MemoryManagementService;
 import sx.blah.discord.handle.obj.ICategory;
@@ -79,7 +79,7 @@ public class Category implements Configurable {
     }
 
     public void delete() {
-        ErrorWrapper.wrap(() -> category().delete());
+        ExceptionWrapper.wrap(() -> category().delete());
     }
 
     public boolean isDeleted() {
@@ -103,7 +103,7 @@ public class Category implements Configurable {
     }
 
     public void changePosition(int i) {
-        ErrorWrapper.wrap(() -> category().changePosition(i));
+        ExceptionWrapper.wrap(() -> category().changePosition(i));
     }
 
     @Override
@@ -112,7 +112,7 @@ public class Category implements Configurable {
     }
 
     public void setName(String s) {
-        ErrorWrapper.wrap(() -> category().changeName(s));
+        ExceptionWrapper.wrap(() -> category().changeName(s));
     }
 
     public boolean isNSFW() {
@@ -120,7 +120,7 @@ public class Category implements Configurable {
     }
 
     public void setNSFW(boolean b) {
-        ErrorWrapper.wrap(() -> category().changeNSFW(b));
+        ExceptionWrapper.wrap(() -> category().changeNSFW(b));
     }
 
     public EnumSet<DiscordPermission> getModifiedPermissions(User user) {
@@ -140,19 +140,19 @@ public class Category implements Configurable {
     }
 
     public void removePermissionsOverride(User user) {
-        ErrorWrapper.wrap(() -> category().removePermissionsOverride(user.user()));
+        ExceptionWrapper.wrap(() -> category().removePermissionsOverride(user.user()));
     }
 
     public void removePermissionsOverride(Role role) {
-        ErrorWrapper.wrap(() -> category().removePermissionsOverride(role.role()));
+        ExceptionWrapper.wrap(() -> category().removePermissionsOverride(role.role()));
     }
 
     public void overrideRolePermissions(Role role, EnumSet<DiscordPermission> toAdd, EnumSet<DiscordPermission> toRemove) {
-        ErrorWrapper.wrap(() -> category().overrideRolePermissions(role.role(), DiscordPermission.getPermissions(toAdd), DiscordPermission.getPermissions(toRemove)));
+        ExceptionWrapper.wrap(() -> category().overrideRolePermissions(role.role(), DiscordPermission.getPermissions(toAdd), DiscordPermission.getPermissions(toRemove)));
     }
 
     public void overrideUserPermissions(User user, EnumSet<DiscordPermission> toAdd, EnumSet<DiscordPermission> toRemove) {
-        ErrorWrapper.wrap(() -> category().overrideUserPermissions(user.user(), DiscordPermission.getPermissions(toAdd), DiscordPermission.getPermissions(toRemove)));
+        ExceptionWrapper.wrap(() -> category().overrideUserPermissions(user.user(), DiscordPermission.getPermissions(toAdd), DiscordPermission.getPermissions(toRemove)));
     }
 
     public Shard getShard() {

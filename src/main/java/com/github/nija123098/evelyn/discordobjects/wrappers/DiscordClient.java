@@ -1,7 +1,7 @@
 package com.github.nija123098.evelyn.discordobjects.wrappers;
 
 import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
-import com.github.nija123098.evelyn.discordobjects.ErrorWrapper;
+import com.github.nija123098.evelyn.discordobjects.ExceptionWrapper;
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.handle.obj.IUser;
 
@@ -42,47 +42,47 @@ public class DiscordClient {
     }
 
     public static void login() {
-        clients.forEach(client -> ErrorWrapper.wrap(client::login));
+        clients.forEach(client -> ExceptionWrapper.wrap(client::login));
     }
 
     public static void logout() {
-        clients.forEach(client -> ErrorWrapper.wrap(client::logout));
+        clients.forEach(client -> ExceptionWrapper.wrap(client::logout));
     }
 
     public static void changeUsername(String username) {
-        clients.forEach(client -> ErrorWrapper.wrap(() -> client.changeUsername(username)));
+        clients.forEach(client -> ExceptionWrapper.wrap(() -> client.changeUsername(username)));
     }
 
     public static void changePlayingText(String playingText) {
-        clients.forEach(client -> ErrorWrapper.wrap(() -> client.changePlayingText(playingText)));
+        clients.forEach(client -> ExceptionWrapper.wrap(() -> client.changePlayingText(playingText)));
     }
 
     public static void online(String playingText) {
-        clients.forEach(client -> ErrorWrapper.wrap(() -> client.online(playingText)));
+        clients.forEach(client -> ExceptionWrapper.wrap(() -> client.online(playingText)));
     }
 
     public static void online() {
-        clients.forEach(client -> ErrorWrapper.wrap(client::online));
+        clients.forEach(client -> ExceptionWrapper.wrap(client::online));
     }
 
     public static void idle(String playingText) {
-        clients.forEach(client -> ErrorWrapper.wrap(() -> client.idle(playingText)));
+        clients.forEach(client -> ExceptionWrapper.wrap(() -> client.idle(playingText)));
     }
 
     public static void idle() {
-        clients.forEach(client -> ErrorWrapper.wrap(client::idle));
+        clients.forEach(client -> ExceptionWrapper.wrap(client::idle));
     }
 
     public static void streaming(String playingText, String streamingUrl) {
-        clients.forEach(client -> ErrorWrapper.wrap(() -> client.streaming(playingText, streamingUrl)));
+        clients.forEach(client -> ExceptionWrapper.wrap(() -> client.streaming(playingText, streamingUrl)));
     }
 
     public static void dnd() {
-        clients.forEach(client -> ErrorWrapper.wrap(client::dnd));
+        clients.forEach(client -> ExceptionWrapper.wrap(client::dnd));
     }
 
     public static void dnd(String playingText) {
-        clients.forEach(client -> ErrorWrapper.wrap(() -> client.dnd(playingText)));
+        clients.forEach(client -> ExceptionWrapper.wrap(() -> client.dnd(playingText)));
     }
 
     public static boolean isReady() {
@@ -142,7 +142,7 @@ public class DiscordClient {
     }
 
     public static List<Region> getRegions() {
-        return getAll(client -> ErrorWrapper.wrap((ErrorWrapper.Request<List<Region>>) () -> Region.getRegions(client.getRegions())));
+        return getAll(client -> ExceptionWrapper.wrap((ExceptionWrapper.Request<List<Region>>) () -> Region.getRegions(client.getRegions())));
     }
 
     public static List<VoiceChannel> getConnectedVoiceChannels() {
@@ -150,24 +150,24 @@ public class DiscordClient {
     }
 
     public static String getApplicationDescription() {
-        return ErrorWrapper.wrap((ErrorWrapper.Request<String>) () -> clients.get(0).getApplicationDescription());
+        return ExceptionWrapper.wrap((ExceptionWrapper.Request<String>) () -> clients.get(0).getApplicationDescription());
     }
 
     public static String getApplicationIconURL() {
-        return ErrorWrapper.wrap((ErrorWrapper.Request<String>) () -> clients.get(0).getApplicationIconURL());
+        return ExceptionWrapper.wrap((ExceptionWrapper.Request<String>) () -> clients.get(0).getApplicationIconURL());
     }
 
     public static String getApplicationClientID() {
-        return ErrorWrapper.wrap((ErrorWrapper.Request<String>) () -> clients.get(0).getApplicationClientID());
+        return ExceptionWrapper.wrap((ExceptionWrapper.Request<String>) () -> clients.get(0).getApplicationClientID());
     }
 
     public static String getApplicationName() {
-        return ErrorWrapper.wrap((ErrorWrapper.Request<String>) () -> clients.get(0).getApplicationName());
+        return ExceptionWrapper.wrap((ExceptionWrapper.Request<String>) () -> clients.get(0).getApplicationName());
     }
 
     private static User owner;
     public static User getApplicationOwner() {
-        return owner == null ? (owner = ErrorWrapper.wrap((ErrorWrapper.Request<User>) () -> User.getUser(clients.get(0).getApplicationOwner()))) : owner;
+        return owner == null ? (owner = ExceptionWrapper.wrap((ExceptionWrapper.Request<User>) () -> User.getUser(clients.get(0).getApplicationOwner()))) : owner;
     }
 
     public static <E> E getAny(Function<IDiscordClient, E> function){

@@ -2,6 +2,7 @@ package com.github.nija123098.evelyn.discordobjects;
 
 import com.github.nija123098.evelyn.audio.SpeechParser;
 import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
+import com.github.nija123098.evelyn.util.Log;
 import com.github.nija123098.evelyn.chatbot.ChatBot;
 import com.github.nija123098.evelyn.command.CommandHandler;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
@@ -199,7 +200,7 @@ public class DiscordAdapter {
     public static void handle(MentionEvent event){
         if (event.getMessage().mentionsEveryone() || event.getMessage().mentionsHere() || !event.getChannel().getModifiedPermissions(DiscordClient.getOurUser().user()).contains(Permissions.ADD_REACTIONS)) return;
         ScheduleService.schedule(1500, () -> {
-            if (MENTIONED_MESSAGES.contains(event.getMessage())) ErrorWrapper.wrap(() -> event.getMessage().addReaction(ReactionEmoji.of(EmoticonHelper.getChars("eyes", false))));
+            if (MENTIONED_MESSAGES.contains(event.getMessage())) ExceptionWrapper.wrap(() -> event.getMessage().addReaction(ReactionEmoji.of(EmoticonHelper.getChars("eyes", false))));
         });
     }
 

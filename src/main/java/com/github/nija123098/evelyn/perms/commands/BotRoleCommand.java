@@ -13,8 +13,8 @@ import java.util.Set;
 import static com.github.nija123098.evelyn.command.ModuleLevel.BOT_ADMINISTRATIVE;
 import static com.github.nija123098.evelyn.perms.BotRole.getSet;
 import static com.github.nija123098.evelyn.util.FormatHelper.makePleural;
-import static com.github.nija123098.evelyn.util.GeneralEmotes.GREENTICK;
-import static com.github.nija123098.evelyn.util.GeneralEmotes.REDTICK;
+import static com.github.nija123098.evelyn.util.GeneralEmotes.GREEN_TICK;
+import static com.github.nija123098.evelyn.util.GeneralEmotes.RED_TICK;
 import static java.util.stream.Stream.of;
 
 /**
@@ -32,6 +32,6 @@ public class BotRoleCommand extends AbstractCommand {
         maker.withAuthorIcon(user.getAvatarURL());
         Set<BotRole> botRoles = getSet(user, guild);
         maker.getHeader().clear().appendRaw("\u200B\n");
-        of(BotRole.values()).forEach(role -> maker.getNewFieldPart().getTitle().appendRaw(role.name()).getFieldPart().getValue().appendRaw(botRoles.contains(role) ? GREENTICK : REDTICK));
+        of(BotRole.values()).forEach(role -> maker.getNewFieldPart().getTitle().appendRaw(role.name()).getFieldPart().getValue().appendRaw(botRoles.contains(role) ? GREEN_TICK : RED_TICK));
     }
 }

@@ -16,4 +16,5 @@ public interface BotSettings {
     Boolean voiceCommandsEnabled();
     String contributorSignRole();
     String supporterSignRole();
+    String loggingChannel();
 }

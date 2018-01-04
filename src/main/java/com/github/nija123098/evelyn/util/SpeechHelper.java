@@ -2,6 +2,7 @@ package com.github.nija123098.evelyn.util;
 
 import com.darkprograms.speech.synthesiser.Synthesiser;
 import com.github.nija123098.evelyn.exception.DevelopmentException;
+import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -14,8 +15,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static com.github.nija123098.evelyn.botconfiguration.ConfigProvider.LIBRARIES_FILES;
 import static com.github.nija123098.evelyn.util.FileHelper.getTempFile;
-import static java.lang.System.err;
-import static java.lang.System.out;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.regex.Pattern.quote;
 import static org.apache.commons.io.IOUtils.copy;
@@ -72,8 +71,8 @@ public class SpeechHelper {
         arguments.add(to.getPath());
         try {
             Process process = new ProcessBuilder(arguments).start();
-            new StreamGobler(process.getInputStream(), out).start();
-            new StreamGobler(process.getErrorStream(), err).start();
+            IOUtils.copy(process.getInputStream(), System.out);
+            IOUtils.copy(process.getErrorStream(), System.err);
             process.waitFor(10, SECONDS);
             return to;
         } catch (IOException | InterruptedException e) {

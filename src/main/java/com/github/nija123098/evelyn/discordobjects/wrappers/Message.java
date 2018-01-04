@@ -1,7 +1,7 @@
 package com.github.nija123098.evelyn.discordobjects.wrappers;
 
 import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
-import com.github.nija123098.evelyn.discordobjects.ErrorWrapper;
+import com.github.nija123098.evelyn.discordobjects.ExceptionWrapper;
 import com.github.nija123098.evelyn.exception.GhostException;
 import com.github.nija123098.evelyn.exception.PermissionsException;
 import com.github.nija123098.evelyn.service.services.MemoryManagementService;
@@ -112,7 +112,7 @@ public class Message {// should not be kept stored, too many are made
     }
 
     public IMessage edit(String s) {
-        return ErrorWrapper.wrap((ErrorWrapper.Request<IMessage>)() -> message().edit(s));
+        return ExceptionWrapper.wrap((ExceptionWrapper.Request<IMessage>)() -> message().edit(s));
     }
 
     public boolean mentionsEveryone() {
@@ -125,7 +125,7 @@ public class Message {// should not be kept stored, too many are made
 
     public void delete() {
         if (ConfigProvider.BOT_SETTINGS.ghostModeEnabled()) return;
-        ErrorWrapper.wrap(() -> message().delete());
+        ExceptionWrapper.wrap(() -> message().delete());
     }
 
     public Optional<LocalDateTime> getEditedTimestamp() {
@@ -158,7 +158,7 @@ public class Message {// should not be kept stored, too many are made
 
     public Reaction addReaction(String s) {
         if (ConfigProvider.BOT_SETTINGS.ghostModeEnabled()) throw new GhostException();
-        ErrorWrapper.wrap(() -> this.message().addReaction(ReactionEmoji.of(s)));
+        ExceptionWrapper.wrap(() -> this.message().addReaction(ReactionEmoji.of(s)));
         return getReaction(s);
     }
 
@@ -168,14 +168,14 @@ public class Message {// should not be kept stored, too many are made
 
     private Reaction addReaction(ReactionEmoji reactionEmoji){
         try {
-            ErrorWrapper.wrap(() -> this.message().addReaction(reactionEmoji));
+            ExceptionWrapper.wrap(() -> this.message().addReaction(reactionEmoji));
         } catch (PermissionsException ignored){}// scilent falior here is acceptable
         return Reaction.getReaction(this.message().getReactionByEmoji(reactionEmoji));
     }
 
     public void removeReaction(Reaction reaction) {
         if (reaction == null) return;
-        ErrorWrapper.wrap(() -> this.message().removeReaction(DiscordClient.getOurUser().user(), reaction.reaction()));
+        ExceptionWrapper.wrap(() -> this.message().removeReaction(DiscordClient.getOurUser().user(), reaction.reaction()));
     }
 
     public void removeReaction(String s) {

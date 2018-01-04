@@ -1,5 +1,7 @@
 package com.github.nija123098.evelyn.util;
 
+import org.apache.commons.io.IOUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -9,8 +11,6 @@ import static com.github.nija123098.evelyn.botconfiguration.ConfigProvider.FOLDE
 import static com.github.nija123098.evelyn.botconfiguration.ConfigProvider.LIBRARIES_FILES;
 import static com.github.nija123098.evelyn.util.Log.log;
 import static com.github.nija123098.evelyn.util.NetworkHelper.isValid;
-import static java.lang.System.err;
-import static java.lang.System.out;
 import static java.util.concurrent.TimeUnit.MINUTES;
 
 /**
@@ -45,8 +45,8 @@ public class YTDLHelper {
             File file = new File(location + "." + format);
             file.getParentFile().mkdirs();
             Process process = builder.start();
-            new StreamGobler(process.getInputStream(), out).start();
-            new StreamGobler(process.getErrorStream(), err).start();
+            IOUtils.copy(process.getInputStream(), System.out);
+            IOUtils.copy(process.getErrorStream(), System.err);
             if (!process.waitFor(2, MINUTES)) {
                 if (file.exists()) file.delete();
                 ret = false;

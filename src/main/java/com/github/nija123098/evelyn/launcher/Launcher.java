@@ -16,7 +16,6 @@ import com.github.nija123098.evelyn.util.Log;
 import com.github.nija123098.evelyn.util.LogColor;
 import com.github.nija123098.evelyn.util.ThreadProvider;
 
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -160,7 +159,7 @@ public class Launcher {
      *
      * @param args the program arguments.
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         TemplateHandler.initialize();
         InvocationObjectGetter.initialize();
         ConfigHandler.initialize();//  changing

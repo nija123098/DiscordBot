@@ -1,11 +1,12 @@
 package com.github.nija123098.evelyn.discordobjects.helpers;
 
 import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
+import com.github.nija123098.evelyn.util.Log;
 import com.github.nija123098.evelyn.command.ProcessingHandler;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.configs.guild.GuildLanguageConfig;
 import com.github.nija123098.evelyn.config.configs.user.UserLanguageConfig;
-import com.github.nija123098.evelyn.discordobjects.ErrorWrapper;
+import com.github.nija123098.evelyn.discordobjects.ExceptionWrapper;
 import com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 import com.github.nija123098.evelyn.discordobjects.wrappers.*;
 import com.github.nija123098.evelyn.exception.DevelopmentException;
@@ -688,7 +689,7 @@ public class MessageMaker {
     private void send(int page){
         if (ConfigProvider.BOT_SETTINGS.ghostModeEnabled()) return;
         if (!this.maySend) {
-            if (this.origin != null) ErrorWrapper.wrap(() -> null);
+            if (this.origin != null) ExceptionWrapper.wrap(() -> null);
             return;
         }
         if (!this.channel.getModifiedPermissions(DiscordClient.getOurUser()).contains(DiscordPermission.SEND_MESSAGES)) return;// only will effect emoticon commands, normal commands are already checked
@@ -699,7 +700,7 @@ public class MessageMaker {
                 throw new DevelopmentException("File not made by time of sending", e);
             }
         }
-        if (this.origin != null && this.okHand) ErrorWrapper.wrap(() -> null);
+        if (this.origin != null && this.okHand) ExceptionWrapper.wrap(() -> null);
         this.compile();
         if (this.embed != null){
             if (page < 0 || page >= this.fieldIndices.length) throw new DevelopmentException("Attempted to get a page that doesn't exit");
@@ -716,13 +717,13 @@ public class MessageMaker {
                 return;
             }
             this.builder.withChannel(this.channel.channel());
-            this.message = ErrorWrapper.wrap((ErrorWrapper.Request<IMessage>) () -> this.builder.send());
+            this.message = ExceptionWrapper.wrap((ExceptionWrapper.Request<IMessage>) () -> this.builder.send());
             this.ourMessage = Message.getMessage(this.message);
-            this.reactions.forEach(s -> ErrorWrapper.wrap(() -> this.message.addReaction(ReactionEmoji.of(s))));
-            if (this.deleteDelay != null) ScheduleService.schedule(this.deleteDelay, () -> ErrorWrapper.wrap(this.message::delete));
+            this.reactions.forEach(s -> ExceptionWrapper.wrap(() -> this.message.addReaction(ReactionEmoji.of(s))));
+            if (this.deleteDelay != null) ScheduleService.schedule(this.deleteDelay, () -> ExceptionWrapper.wrap(this.message::delete));
         } else {
-            if (this.embed == null) ErrorWrapper.wrap(() -> this.message.edit(this.builder.getContent()));
-            else ErrorWrapper.wrap(() -> this.message.edit(this.embed.build()));
+            if (this.embed == null) ExceptionWrapper.wrap(() -> this.message.edit(this.builder.getContent()));
+            else ExceptionWrapper.wrap(() -> this.message.edit(this.embed.build()));
         }
 
         for (Map.Entry<String, ReactionBehavior> behavior : this.reactionBehaviors.entrySet()) {

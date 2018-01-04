@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * @see PermissionsException
  * @see DException
  */
-public class ErrorWrapper {
+public class ExceptionWrapper {
     public static <E> E wrap(Request<E> request) {
         return innerWrap(request);
     }

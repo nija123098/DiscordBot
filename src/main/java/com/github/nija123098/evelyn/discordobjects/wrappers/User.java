@@ -2,7 +2,7 @@ package com.github.nija123098.evelyn.discordobjects.wrappers;
 
 import com.github.nija123098.evelyn.config.ConfigLevel;
 import com.github.nija123098.evelyn.config.Configurable;
-import com.github.nija123098.evelyn.discordobjects.ErrorWrapper;
+import com.github.nija123098.evelyn.discordobjects.ExceptionWrapper;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventDistributor;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordUserJoin;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordUserLeave;
@@ -173,11 +173,11 @@ public class User implements Configurable {
     }
 
     public void moveToVoiceChannel(VoiceChannel newChannel) {
-        ErrorWrapper.wrap(() -> user().moveToVoiceChannel(newChannel.channel()));
+        ExceptionWrapper.wrap(() -> user().moveToVoiceChannel(newChannel.channel()));
     }
 
     public DirectChannel getOrCreatePMChannel() {
-        return ErrorWrapper.wrap((ErrorWrapper.Request<DirectChannel>) () -> DirectChannel.getDirectChannel(user().getOrCreatePMChannel()));
+        return ExceptionWrapper.wrap((ExceptionWrapper.Request<DirectChannel>) () -> DirectChannel.getDirectChannel(user().getOrCreatePMChannel()));
     }
 
     public boolean isDeaf(Guild guild) {
@@ -190,11 +190,11 @@ public class User implements Configurable {
 
     public void addRole(Role role) {
         if (role.getUsers().contains(this)) return;
-        ErrorWrapper.wrap(() -> user().addRole(role.role()));
+        ExceptionWrapper.wrap(() -> user().addRole(role.role()));
     }
 
     public void removeRole(Role role) {
         if (!role.getUsers().contains(this)) return;
-        ErrorWrapper.wrap(() -> user().removeRole(role.role()));
+        ExceptionWrapper.wrap(() -> user().removeRole(role.role()));
     }
 }

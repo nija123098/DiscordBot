@@ -3,7 +3,7 @@ package com.github.nija123098.evelyn.discordobjects.wrappers;
 import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.config.ConfigLevel;
 import com.github.nija123098.evelyn.config.Configurable;
-import com.github.nija123098.evelyn.discordobjects.ErrorWrapper;
+import com.github.nija123098.evelyn.discordobjects.ExceptionWrapper;
 import com.github.nija123098.evelyn.exception.ConfigurableConvertException;
 import com.github.nija123098.evelyn.exception.GhostException;
 import com.github.nija123098.evelyn.perms.BotRole;
@@ -206,26 +206,26 @@ public class Guild implements Configurable {
     }
 
     public Role createRole() {
-        return ErrorWrapper.wrap((ErrorWrapper.Request<Role>) () -> Role.getRole(guild().createRole()));
+        return ExceptionWrapper.wrap((ExceptionWrapper.Request<Role>) () -> Role.getRole(guild().createRole()));
     }
 
     public List<User> getBannedUsers() {
-        return ErrorWrapper.wrap((ErrorWrapper.Request<List<User>>) () -> User.getUsers(guild().getBannedUsers()));
+        return ExceptionWrapper.wrap((ExceptionWrapper.Request<List<User>>) () -> User.getUsers(guild().getBannedUsers()));
     }
 
     public void banUser(User user, int delete, String reason) {
         if (ConfigProvider.BOT_SETTINGS.ghostModeEnabled()) return;
-        ErrorWrapper.wrap(() -> guild().banUser(user.user(), reason, delete));
+        ExceptionWrapper.wrap(() -> guild().banUser(user.user(), reason, delete));
     }
 
     public void pardonUser(String s) {
         if (ConfigProvider.BOT_SETTINGS.ghostModeEnabled()) return;
-        ErrorWrapper.wrap(() -> guild().pardonUser(Long.parseLong(s)));
+        ExceptionWrapper.wrap(() -> guild().pardonUser(Long.parseLong(s)));
     }
 
     public void kickUser(User user, String reason) {
         if (ConfigProvider.BOT_SETTINGS.ghostModeEnabled()) return;
-        ErrorWrapper.wrap(() -> guild().kickUser(user.user(), reason));
+        ExceptionWrapper.wrap(() -> guild().kickUser(user.user(), reason));
     }
 
     public void editUserRoles(User user, Role...roles) {
@@ -234,57 +234,57 @@ public class Guild implements Configurable {
         for (Role role : roles) {
             iRoles.add(role.role());
         }
-        ErrorWrapper.wrap(() -> guild().editUserRoles(user.user(), Role.getRoles(iRoles).toArray(new IRole[roles.length])));
+        ExceptionWrapper.wrap(() -> guild().editUserRoles(user.user(), Role.getRoles(iRoles).toArray(new IRole[roles.length])));
     }
 
     public void setDeafenUser(User user, boolean b) {
         if (ConfigProvider.BOT_SETTINGS.ghostModeEnabled()) return;
-        ErrorWrapper.wrap(() -> guild().setDeafenUser(user.user(), b));
+        ExceptionWrapper.wrap(() -> guild().setDeafenUser(user.user(), b));
     }
 
     public void setMuteUser(User user, boolean b) {
         if (ConfigProvider.BOT_SETTINGS.ghostModeEnabled()) return;
-        ErrorWrapper.wrap(() -> guild().setMuteUser(user.user(), b));
+        ExceptionWrapper.wrap(() -> guild().setMuteUser(user.user(), b));
     }
 
     public void setUserNickname(User user, String s) {
         if (ConfigProvider.BOT_SETTINGS.ghostModeEnabled()) return;
-        ErrorWrapper.wrap(() -> guild().setUserNickname(user.user(), s));
+        ExceptionWrapper.wrap(() -> guild().setUserNickname(user.user(), s));
     }
 
     public void changeName(String s) {
         if (ConfigProvider.BOT_SETTINGS.ghostModeEnabled()) return;
-        ErrorWrapper.wrap(() -> guild().changeName(s));
+        ExceptionWrapper.wrap(() -> guild().changeName(s));
     }
 
     public void changeRegion(Region region) {
         if (ConfigProvider.BOT_SETTINGS.ghostModeEnabled()) return;
-        ErrorWrapper.wrap(() -> guild().changeRegion(region.region()));
+        ExceptionWrapper.wrap(() -> guild().changeRegion(region.region()));
     }
 
     public void changeAFKChannel(VoiceChannel voiceChannel) {
         if (ConfigProvider.BOT_SETTINGS.ghostModeEnabled()) return;
-        ErrorWrapper.wrap(() -> guild().changeAFKChannel(voiceChannel.channel()));
+        ExceptionWrapper.wrap(() -> guild().changeAFKChannel(voiceChannel.channel()));
     }
 
     public void changeAFKTimeout(int i) {
         if (ConfigProvider.BOT_SETTINGS.ghostModeEnabled()) return;
-        ErrorWrapper.wrap(() -> guild().changeAFKTimeout(i));
+        ExceptionWrapper.wrap(() -> guild().changeAFKTimeout(i));
     }
 
     public void leave() {
         if (ConfigProvider.BOT_SETTINGS.ghostModeEnabled()) return;
-        ErrorWrapper.wrap(() -> guild().leave());
+        ExceptionWrapper.wrap(() -> guild().leave());
     }
 
     public Channel createChannel(String s) {
         if (ConfigProvider.BOT_SETTINGS.ghostModeEnabled()) throw new GhostException();
-        return ErrorWrapper.wrap((ErrorWrapper.Request<Channel>) () -> Channel.getChannel(guild().createChannel(s)));
+        return ExceptionWrapper.wrap((ExceptionWrapper.Request<Channel>) () -> Channel.getChannel(guild().createChannel(s)));
     }
 
     public VoiceChannel createVoiceChannel(String s) {
         if (ConfigProvider.BOT_SETTINGS.ghostModeEnabled()) throw new GhostException();
-        return ErrorWrapper.wrap((ErrorWrapper.Request<VoiceChannel>) () -> VoiceChannel.getVoiceChannel(guild().createVoiceChannel(s)));
+        return ExceptionWrapper.wrap((ExceptionWrapper.Request<VoiceChannel>) () -> VoiceChannel.getVoiceChannel(guild().createVoiceChannel(s)));
     }
 
     public Region getRegion() {
@@ -292,7 +292,7 @@ public class Guild implements Configurable {
     }
 
     public Role getEveryoneRole() {
-        return ErrorWrapper.wrap((ErrorWrapper.Request<Role>) () -> Role.getRole(guild().getEveryoneRole()));
+        return ExceptionWrapper.wrap((ExceptionWrapper.Request<Role>) () -> Role.getRole(guild().getEveryoneRole()));
     }
 
     public Channel getGeneralChannel() {
@@ -305,15 +305,15 @@ public class Guild implements Configurable {
         for (Role role : roles) {
             iRoles.add(role.role());
         }
-        ErrorWrapper.wrap(() -> guild().reorderRoles(iRoles.toArray(new IRole[roles.length])));
+        ExceptionWrapper.wrap(() -> guild().reorderRoles(iRoles.toArray(new IRole[roles.length])));
     }
 
     public int getUsersToBePruned(int i) {
-        return ErrorWrapper.wrap((ErrorWrapper.Request<Integer>) () -> guild().getUsersToBePruned(i));
+        return ExceptionWrapper.wrap((ExceptionWrapper.Request<Integer>) () -> guild().getUsersToBePruned(i));
     }
 
     public int pruneUsers(int i) {
-        return ErrorWrapper.wrap((ErrorWrapper.Request<Integer>) () -> guild().pruneUsers(i));
+        return ExceptionWrapper.wrap((ExceptionWrapper.Request<Integer>) () -> guild().pruneUsers(i));
     }
 
     public boolean isDeleted() {

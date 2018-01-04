@@ -3,7 +3,7 @@ package com.github.nija123098.evelyn.discordobjects.wrappers;
 import com.github.nija123098.evelyn.config.ConfigLevel;
 import com.github.nija123098.evelyn.config.Configurable;
 import com.github.nija123098.evelyn.config.GlobalConfigurable;
-import com.github.nija123098.evelyn.discordobjects.ErrorWrapper;
+import com.github.nija123098.evelyn.discordobjects.ExceptionWrapper;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventDistributor;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordMessageReceived;
@@ -119,11 +119,11 @@ public class Channel implements Configurable {
     }
 
     public List<Message> bulkDelete() {
-        return ErrorWrapper.wrap((ErrorWrapper.Request<List<Message>>) () -> Message.getMessages(channel().bulkDelete()));
+        return ExceptionWrapper.wrap((ExceptionWrapper.Request<List<Message>>) () -> Message.getMessages(channel().bulkDelete()));
     }
 
     public List<Message> bulkDelete(List<Message> list) {
-        return ErrorWrapper.wrap((ErrorWrapper.Request<List<Message>>) () -> Message.getMessages(channel().bulkDelete(Message.getIMessages(list))));
+        return ExceptionWrapper.wrap((ExceptionWrapper.Request<List<Message>>) () -> Message.getMessages(channel().bulkDelete(Message.getIMessages(list))));
     }
 
     public Message getMessageByID(String s) {
@@ -156,27 +156,27 @@ public class Channel implements Configurable {
     }
 
     public void setTypingStatus(boolean b) {
-        ErrorWrapper.wrap(() -> channel().setTypingStatus(b));
+        ExceptionWrapper.wrap(() -> channel().setTypingStatus(b));
     }
 
     public boolean getTypingStatus() {
-        return ErrorWrapper.wrap((ErrorWrapper.Request<Boolean>) () -> channel().getTypingStatus());
+        return ExceptionWrapper.wrap((ExceptionWrapper.Request<Boolean>) () -> channel().getTypingStatus());
     }
 
     public void edit(String s, int i, String s1) {
-        ErrorWrapper.wrap(() -> channel().edit(s, i, s1));
+        ExceptionWrapper.wrap(() -> channel().edit(s, i, s1));
     }
 
     public void changeName(String s) {
-        ErrorWrapper.wrap(() -> channel().changeName(s));
+        ExceptionWrapper.wrap(() -> channel().changeName(s));
     }
 
     public void changePosition(int i) {
-        ErrorWrapper.wrap(() -> channel().changePosition(i));
+        ExceptionWrapper.wrap(() -> channel().changePosition(i));
     }
 
     public void changeTopic(String s) {
-        ErrorWrapper.wrap(() -> channel().changeTopic(s));
+        ExceptionWrapper.wrap(() -> channel().changeTopic(s));
     }
 
     public int getPosition() {
@@ -184,7 +184,7 @@ public class Channel implements Configurable {
     }
 
     public void delete() {
-        ErrorWrapper.wrap(() -> channel().delete());
+        ExceptionWrapper.wrap(() -> channel().delete());
     }
 
     public Map<User, PermOverride> getUserOverrides() {
@@ -204,19 +204,19 @@ public class Channel implements Configurable {
     }
 
     public void removePermissionsOverride(User user) {
-        ErrorWrapper.wrap(() -> channel().removePermissionsOverride(user.user()));
+        ExceptionWrapper.wrap(() -> channel().removePermissionsOverride(user.user()));
     }
 
     public void removePermissionsOverride(Role role) {
-        ErrorWrapper.wrap(() -> channel().removePermissionsOverride(role.role()));
+        ExceptionWrapper.wrap(() -> channel().removePermissionsOverride(role.role()));
     }
 
     public void overrideRolePermissions(Role role, EnumSet<DiscordPermission> enumSet, EnumSet<DiscordPermission> enumSet1) {
-        ErrorWrapper.wrap(() -> channel().overrideRolePermissions(role.role(), DiscordPermission.getPermissions(enumSet), DiscordPermission.getPermissions(enumSet1)));
+        ExceptionWrapper.wrap(() -> channel().overrideRolePermissions(role.role(), DiscordPermission.getPermissions(enumSet), DiscordPermission.getPermissions(enumSet1)));
     }
 
     public void overrideUserPermissions(User user, EnumSet<DiscordPermission> enumSet, EnumSet<DiscordPermission> enumSet1) {
-        ErrorWrapper.wrap(() -> channel().overrideUserPermissions(user.user(), DiscordPermission.getPermissions(enumSet), DiscordPermission.getPermissions(enumSet1)));
+        ExceptionWrapper.wrap(() -> channel().overrideUserPermissions(user.user(), DiscordPermission.getPermissions(enumSet), DiscordPermission.getPermissions(enumSet1)));
     }
 
     public List<User> getUsersHere() {
@@ -224,7 +224,7 @@ public class Channel implements Configurable {
     }
 
     public List<Message> getPinnedMessages() {
-        return ErrorWrapper.wrap((ErrorWrapper.Request<List<Message>>) () -> Message.getMessages(channel().getPinnedMessages()));
+        return ExceptionWrapper.wrap((ExceptionWrapper.Request<List<Message>>) () -> Message.getMessages(channel().getPinnedMessages()));
     }
 
     public List<Message> getMessages(){
@@ -258,11 +258,11 @@ public class Channel implements Configurable {
     }
 
     public void pin(Message message) {
-        ErrorWrapper.wrap(() -> channel().pin(message.message()));
+        ExceptionWrapper.wrap(() -> channel().pin(message.message()));
     }
 
     public void unpin(Message message) {
-        ErrorWrapper.wrap(() -> channel().unpin(message.message()));
+        ExceptionWrapper.wrap(() -> channel().unpin(message.message()));
     }
 
     public boolean isDeleted() {

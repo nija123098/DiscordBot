@@ -1,6 +1,6 @@
 package com.github.nija123098.evelyn.discordobjects.wrappers;
 
-import com.github.nija123098.evelyn.discordobjects.ErrorWrapper;
+import com.github.nija123098.evelyn.discordobjects.ExceptionWrapper;
 import sx.blah.discord.api.IShard;
 
 import java.util.ArrayList;
@@ -76,23 +76,23 @@ public class Shard {
     }
 
     public void online(String playingText) {
-        ErrorWrapper.wrap(() -> shard().online(playingText));
+        ExceptionWrapper.wrap(() -> shard().online(playingText));
     }
 
     public void online() {
-        ErrorWrapper.wrap(() -> shard().online());
+        ExceptionWrapper.wrap(() -> shard().online());
     }
 
     public void idle(String playingText) {
-        ErrorWrapper.wrap(() -> shard().idle(playingText));
+        ExceptionWrapper.wrap(() -> shard().idle(playingText));
     }
 
     public void idle() {
-        ErrorWrapper.wrap(() -> shard().idle());
+        ExceptionWrapper.wrap(() -> shard().idle());
     }
 
     public void streaming(String playingText, String streamingUrl) {
-        ErrorWrapper.wrap(() -> shard().streaming(playingText, streamingUrl));
+        ExceptionWrapper.wrap(() -> shard().streaming(playingText, streamingUrl));
     }
 
     public List<Channel> getChannels(boolean includePrivate) {

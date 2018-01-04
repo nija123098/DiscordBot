@@ -5,6 +5,9 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.exception.ArgumentException;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * A helper class that all objects that can
  * have configuration values may implement.
@@ -77,9 +80,14 @@ public interface Configurable {
     }
 
     /**
+     * A set of registered objects that are queued to be labeled as existing to prevent registration duplication.
+     */
+    Set<Configurable> REGISTERED = new HashSet<>();
+
+    /**
      * Registers this instance as having existed at one point.
      */
     default void registerExistence(){
-        Database.bufferCall(() -> ConfigHandler.setSetting(ConfigurableExistsConfig.class, this, true));
+        if (REGISTERED.add(this)) Database.bufferCall(() -> ConfigHandler.setSetting(ConfigurableExistsConfig.class, this, true));
     }
 }

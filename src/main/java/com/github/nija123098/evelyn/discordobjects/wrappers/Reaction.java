@@ -1,6 +1,6 @@
 package com.github.nija123098.evelyn.discordobjects.wrappers;
 
-import com.github.nija123098.evelyn.discordobjects.ErrorWrapper;
+import com.github.nija123098.evelyn.discordobjects.ExceptionWrapper;
 import com.github.nija123098.evelyn.service.services.MemoryManagementService;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
 import sx.blah.discord.handle.obj.IReaction;
@@ -58,7 +58,7 @@ public class Reaction {// should not be saved
     }
 
     public List<User> getUsers() {
-        return User.getUsers(ErrorWrapper.wrap((ErrorWrapper.Request<List<IUser>>) () -> reaction().getUsers()));
+        return User.getUsers(ExceptionWrapper.wrap((ExceptionWrapper.Request<List<IUser>>) () -> reaction().getUsers()));
     }
 
     public Shard getShard() {

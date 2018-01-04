@@ -1,6 +1,6 @@
 package com.github.nija123098.evelyn.discordobjects.wrappers;
 
-import com.github.nija123098.evelyn.discordobjects.ErrorWrapper;
+import com.github.nija123098.evelyn.discordobjects.ExceptionWrapper;
 import com.github.nija123098.evelyn.util.GetterUtil;
 import sx.blah.discord.handle.obj.IVoiceChannel;
 
@@ -41,19 +41,19 @@ public class VoiceChannel extends Channel {
     }
 
     public void edit(String name, int position, int bitrate, int userLimit) {
-        ErrorWrapper.wrap(() -> channel().edit(name, position, bitrate, userLimit));
+        ExceptionWrapper.wrap(() -> channel().edit(name, position, bitrate, userLimit));
     }
 
     public void changeBitrate(int bitrate) {
-        ErrorWrapper.wrap(() -> channel().changeBitrate(bitrate));
+        ExceptionWrapper.wrap(() -> channel().changeBitrate(bitrate));
     }
 
     public void changeUserLimit(int limit) {
-        ErrorWrapper.wrap(() -> channel().changeUserLimit(limit));
+        ExceptionWrapper.wrap(() -> channel().changeUserLimit(limit));
     }
 
     public void join() {
-        ErrorWrapper.wrap(() -> channel().join());
+        ExceptionWrapper.wrap(() -> channel().join());
     }
 
     public void leave() {

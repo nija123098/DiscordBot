@@ -6,16 +6,16 @@ package com.github.nija123098.evelyn.util;
  */
 public class GeneralEmotes {
 
-    //empty emote
-    public final static String EMPTY = EmoticonHelper.getEmoji("EMPTY").toString();
+    // empty emote
+    public final static String EMPTY = EmoticonHelper.getEmoji("empty").toString();
 
-    //green tick emote
-    public final static String GREENTICK = EmoticonHelper.getEmoji("GreenTick").toString();
+    // green tick emote
+    public final static String GREEN_TICK = EmoticonHelper.getEmoji("green_tick").toString();
 
-    //red tick emote
-    public final static String REDTICK = EmoticonHelper.getEmoji("RedTick").toString();
+    // red tick emote
+    public final static String RED_TICK = EmoticonHelper.getEmoji("red_tick").toString();
 
-    //blob aww emote
-    public final static String BLOBAWW = EmoticonHelper.getEmoji("blobaww").toString();
+    // blob aww emote
+    public final static String BLOB_AWW = EmoticonHelper.getEmoji("blob_aww").toString();
 
 }

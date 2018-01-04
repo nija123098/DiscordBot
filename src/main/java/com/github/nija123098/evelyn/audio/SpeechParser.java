@@ -1,6 +1,7 @@
 package com.github.nija123098.evelyn.audio;
 
 import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
+import com.github.nija123098.evelyn.util.Log;
 import com.github.nija123098.evelyn.chatbot.ChatBot;
 import com.github.nija123098.evelyn.command.CommandHandler;
 import com.github.nija123098.evelyn.discordobjects.DiscordAdapter;
@@ -19,6 +20,7 @@ import com.github.nija123098.evelyn.util.*;
 import edu.cmu.sphinx.api.Configuration;
 import edu.cmu.sphinx.api.SpeechResult;
 import edu.cmu.sphinx.api.StreamSpeechRecognizer;
+import org.apache.commons.io.IOUtils;
 import sx.blah.discord.handle.audio.IAudioReceiver;
 import sx.blah.discord.handle.obj.IUser;
 
@@ -174,8 +176,8 @@ public class SpeechParser implements IAudioReceiver {
         Process process = null;
         try {
             process = new ProcessBuilder(command).start();
-            new StreamGobler(process.getInputStream(), System.out).start();
-            new StreamGobler(process.getErrorStream(), System.err).start();
+            IOUtils.copy(process.getInputStream(), System.out);
+            IOUtils.copy(process.getErrorStream(), System.err);
             process.waitFor(10, TimeUnit.SECONDS);
         } catch (IOException | InterruptedException e) {
             Log.log("Exception converting file to compatible stats", e);

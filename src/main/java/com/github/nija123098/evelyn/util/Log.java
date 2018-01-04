@@ -3,14 +3,14 @@ package com.github.nija123098.evelyn.util;
 import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import sx.blah.discord.Discord4J;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.util.Collections;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Objects;
 
 /**
  * @author nija123098
@@ -19,21 +19,27 @@ import java.util.Collections;
 public class Log {
     public static final Path LOG_PATH;
     static {
-        String name = "Evelyn-Log-" + System.currentTimeMillis();
-        LOG_PATH = Paths.get(ConfigProvider.FOLDER_SETTINGS.logsFolder(), name + ".log");
-        LOG_PATH.toFile().getParentFile().mkdirs();
-        try{Files.write(LOG_PATH, Collections.singletonList("Made log " + name), StandardOpenOption.CREATE);
-        } catch (IOException e) {throw new RuntimeException(e);}
-    }
-    public static void log(String message, Throwable...t){
+        Path logPath = null;
         try {
-            Files.write(LOG_PATH, Collections.singletonList("[" + BotClock.getYMDHMS() + "] " + message), StandardOpenOption.APPEND);
-            if (t.length > 0) {
-                Discord4J.LOGGER.error("[" + BotClock.getYMDHMS() + "] " + message, t[0]);
-                t[0].printStackTrace(new PrintStream(new FileOutputStream(LOG_PATH.toFile(), true)));
-            } else Discord4J.LOGGER.info("[" + BotClock.getYMDHMS() + "] " + message);
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS");
+            long time = Files.walk(Paths.get(ConfigProvider.FOLDER_SETTINGS.logsFolder())).map(path -> path.toFile().getName()).map(s -> {
+                try {
+                    return dateFormat.parse(s).getTime();
+                } catch (ParseException e) {
+                    return null;
+                }
+            }).filter(Objects::nonNull).reduce((f, s) -> f > s ? f : s).orElse(0L);
+            if (time == 0) throw new IOException("Could not reduce log times");
+            logPath = Paths.get(ConfigProvider.FOLDER_SETTINGS.logsFolder(), dateFormat.format(new Date(time)) + ".log");
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.log("Exception getting log file", e);
         }
+        LOG_PATH = logPath;
+    }
+    public static void log(String message){
+        Discord4J.LOGGER.info(message);
+    }
+    public static void log(String message, Throwable t){
+        Discord4J.LOGGER.error(message, t);
     }
 }
