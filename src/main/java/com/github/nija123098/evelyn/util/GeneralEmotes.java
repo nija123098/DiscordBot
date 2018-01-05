@@ -18,4 +18,6 @@ public class GeneralEmotes {
     // blob aww emote
     public final static String BLOB_AWW = EmoticonHelper.getEmoji("blob_aww").toString();
 
+    //nuke gif emote
+    public final static String NUKEGIF = "<a:nuke:393725962203693064>";
 }

@@ -188,103 +188,103 @@ public class FormatHelper {
         return ret + "```\n";
     }
 
-	/**
-	 * Makes a formatted table of user permissions
-	 *
-	 * @param user        User
-	 * @param guild 	  Guild
-	 * @param simple	  simple
-	 * @return formatted table
-	 */
-	public static String makeUserPermissionsTable(User user, Guild guild, boolean simple) {
-		List<String> permissions = new ArrayList();
-		user.getPermissionsForGuild(guild).forEach(permission -> {
-			if (permission.name().contains("MANAGE")) {
-				permissions.add("'" + permission.name().toLowerCase() + "'");
-			} else if (permission.name().contains("KICK") || permission.name().contains("BAN") || permission.name().contains("MOVE") || permission.name().contains("DEAFEN") || permission.name().contains("MUTE") || permission.name().contains("LOG")) {
-				permissions.add('"' + permission.name().toLowerCase() + '"');
-			} else if (permission.name().contains("ADMINISTRATOR")){
-				permissions.add(" Administrator ");
-			} else if (!simple) {
-				permissions.add(" " + permission.name().toLowerCase() + " ");
-			}
-		});
-		Collections.sort(permissions);
+    /**
+     * Makes a formatted table of user permissions
+     *
+     * @param user        User
+     * @param guild      Guild
+     * @param simple     simple
+     * @return formatted table
+     */
+    public static String makeUserPermissionsTable(User user, Guild guild, boolean simple) {
+        List<String> permissions = new ArrayList();
+        user.getPermissionsForGuild(guild).forEach(permission -> {
+            if (permission.name().contains("MANAGE")) {
+                permissions.add("'" + permission.name().toLowerCase() + "'");
+            } else if (permission.name().contains("KICK") || permission.name().contains("BAN") || permission.name().contains("MOVE") || permission.name().contains("DEAFEN") || permission.name().contains("MUTE") || permission.name().contains("LOG")) {
+                permissions.add('"' + permission.name().toLowerCase() + '"');
+            } else if (permission.name().contains("ADMINISTRATOR")){
+                permissions.add(" Administrator ");
+            } else if (!simple) {
+                permissions.add(" " + permission.name().toLowerCase() + " ");
+            }
+        });
+        Collections.sort(permissions);
 
-		StringBuilder ret = new StringBuilder("```ml\n");
-		int counter = 0;
-		for (String item : permissions) {
-			counter++;
-			ret.append(format("%-" + 23 + "s", item));
-			if (counter % 2 == 0) {
-				ret.append("\n");
-			}
-		}
-		if (counter % 2 != 0) {
-			ret.append("\n");
-		}
-		return ret + "```\n";
-	}
+        StringBuilder ret = new StringBuilder("```ml\n");
+        int counter = 0;
+        for (String item : permissions) {
+            counter++;
+            ret.append(format("%-" + 23 + "s", item));
+            if (counter % 2 == 0) {
+                ret.append("\n");
+            }
+        }
+        if (counter % 2 != 0) {
+            ret.append("\n");
+        }
+        return ret + "```\n";
+    }
 
-	/**
-	 * Makes a formatted table of role permissions
-	 *
-	 * @param role        Role
-	 * @return formatted table
-	 */
-	public static String makeRolePermissionsTable(Role role) {
-		List<String> permissions = new ArrayList();
-		role.getPermissions().forEach(permission -> {
-			if (permission.name().contains("MANAGE") || permission.name().contains("LOG")) {
-				permissions.add("'" + permission.name().toLowerCase() + "'");
-			} else if (permission.name().contains("KICK") || permission.name().contains("BAN") || permission.name().contains("MOVE") || permission.name().contains("DEAFEN") || permission.name().contains("MUTE")) {
-				permissions.add('"' + permission.name().toLowerCase() + '"');
-			} else if (permission.name().contains("ADMINISTRATOR")){
-				permissions.add(" Administrator ");
-			} else {
-				permissions.add(" " + permission.name().toLowerCase() + " ");
-			}
-		});
-		Collections.sort(permissions);
+    /**
+     * Makes a formatted table of role permissions
+     *
+     * @param role        Role
+     * @return formatted table
+     */
+    public static String makeRolePermissionsTable(Role role) {
+        List<String> permissions = new ArrayList();
+        role.getPermissions().forEach(permission -> {
+            if (permission.name().contains("MANAGE") || permission.name().contains("LOG")) {
+                permissions.add("'" + permission.name().toLowerCase() + "'");
+            } else if (permission.name().contains("KICK") || permission.name().contains("BAN") || permission.name().contains("MOVE") || permission.name().contains("DEAFEN") || permission.name().contains("MUTE")) {
+                permissions.add('"' + permission.name().toLowerCase() + '"');
+            } else if (permission.name().contains("ADMINISTRATOR")){
+                permissions.add(" Administrator ");
+            } else {
+                permissions.add(" " + permission.name().toLowerCase() + " ");
+            }
+        });
+        Collections.sort(permissions);
 
-		StringBuilder ret = new StringBuilder("```ml\n");
-		int counter = 0;
-		for (String item : permissions) {
-			counter++;
-			ret.append(format("%-" + 23 + "s", item));
-			if (counter % 2 == 0) {
-				ret.append("\n");
-			}
-		}
-		if (counter % 2 != 0) {
-			ret.append("\n");
-		}
-		return ret + "```\n";
-	}
+        StringBuilder ret = new StringBuilder("```ml\n");
+        int counter = 0;
+        for (String item : permissions) {
+            counter++;
+            ret.append(format("%-" + 23 + "s", item));
+            if (counter % 2 == 0) {
+                ret.append("\n");
+            }
+        }
+        if (counter % 2 != 0) {
+            ret.append("\n");
+        }
+        return ret + "```\n";
+    }
 
-	/**
-	 * Makes a controllers-like display of list of items
-	 *
-	 * @param items        items in the controllers
-	 * @param columnLength length of a column(filled up with whitespace)
-	 * @param columns      amount of columns
-	 * @return formatted controllers
-	 */
-	public static String makeUserTable(List<User> items, int columnLength, int columns) {
-		StringBuilder ret = new StringBuilder("```\n");
-		int counter = 0;
-		for (User item : items) {
-			counter++;
-			ret.append(format("%-" + columnLength + "s", item.getName()));
-			if (counter % columns == 0) {
-				ret.append("\n");
-			}
-		}
-		if (counter % columns != 0) {
-			ret.append("\n");
-		}
-		return ret + "```\n";
-	}
+    /**
+     * Makes a controllers-like display of list of items
+     *
+     * @param items        items in the controllers
+     * @param columnLength length of a column(filled up with whitespace)
+     * @param columns      amount of columns
+     * @return formatted controllers
+     */
+    public static String makeUserTable(List<User> items, int columnLength, int columns) {
+        StringBuilder ret = new StringBuilder("```\n");
+        int counter = 0;
+        for (User item : items) {
+            counter++;
+            ret.append(format("%-" + columnLength + "s", item.getName()));
+            if (counter % columns == 0) {
+                ret.append("\n");
+            }
+        }
+        if (counter % columns != 0) {
+            ret.append("\n");
+        }
+        return ret + "```\n";
+    }
 
 
     /**
@@ -420,5 +420,9 @@ public class FormatHelper {
             builder.append(bigInteger.charAt(i));
         }
         return builder.toString();
+    }
+
+    public static String limitLength(String s,int length){
+        return s.length() > length ? s.substring(0, length) : s;
     }
 }
