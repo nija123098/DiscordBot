@@ -244,7 +244,7 @@ public class ConfigHandler {
      * @return the value of the config for the configurable.
      */
     public static <I, T extends Configurable> I getSetting(Class<? extends AbstractConfig<I, T>> clazz, T configurable){
-        return getConfig(clazz).getValue(configurable);
+        return getConfig(clazz).getValue(configurable, false);
     }
 
     /**
@@ -270,7 +270,7 @@ public class ConfigHandler {
     public static Object getSetting(String configName, Configurable configurable){
         AbstractConfig config = getConfig(configName);
         if (config != null){
-            return config.getValue(configurable);
+            return config.getValue(configurable, false);
         } else {
             return null;
         }

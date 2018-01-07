@@ -273,7 +273,7 @@ public class AbstractConfig<V, T extends Configurable> {
      * @return the value saved to the database.
      */
     private V saveValue(T configurable, V value){
-        V current = this.getValue(configurable), defaul = this.getDefault(configurable);
+        V current = this.getValue(configurable, false), defaul = this.getDefault(configurable);
         if (Objects.equals(value, defaul)) reset(configurable);
         else if (Objects.equals(current, defaul)) Database.insert("INSERT INTO " + this.getNameForType(configurable.getConfigLevel()) + " (`id`, `value`, `millis`) VALUES ('" + configurable.getID() + "','" + this.getSQLRepresentation(value) + "','" + System.currentTimeMillis() + "');");
         else Database.insert("UPDATE " + this.getNameForType(configurable.getConfigLevel()) + " SET millis = " + System.currentTimeMillis() + ", value = " + Database.quote(this.getSQLRepresentation(value)) + " WHERE id = " + Database.quote(configurable.getID()) + ";");
@@ -299,14 +299,14 @@ public class AbstractConfig<V, T extends Configurable> {
      * @param configurable the configurable that the setting is being gotten for.
      * @return the config's value for the given {@link Configurable}.
      */
-    public V getValue(T configurable){// slq here as well
+    public V getValue(T configurable, boolean overrideCache){// slq here as well
         V value;
-        if (this.cache == null) value = grabValue(configurable);
+        if (this.cache == null || overrideCache) value = grabValue(configurable);
         else{
             value = this.cache.get(configurable);
             if (value == null) value = grabValue(configurable);
         }
-        if (this.cache != null && value != null) return this.cache.computeIfAbsent(configurable, this::grabValue);
+        if (this.cache != null && value != null && !overrideCache) return this.cache.computeIfAbsent(configurable, this::grabValue);
         return value;
     }
 
@@ -343,7 +343,7 @@ public class AbstractConfig<V, T extends Configurable> {
      * @param function the function the config gives the old value to and gets a new value from.
      */
     public V changeSetting(T configurable, Function<V, V> function) {
-        return this.setValue(configurable, function.apply(this.getValue(configurable)), false);
+        return this.setValue(configurable, function.apply(this.getValue(configurable, false)), false);
     }
 
     /**
@@ -354,7 +354,7 @@ public class AbstractConfig<V, T extends Configurable> {
      * @return the value saved to the database.
      */
     public V alterSetting(T configurable, Consumer<V> consumer) {
-        V val = ObjectCloner.clone(this.getValue(configurable));
+        V val = ObjectCloner.clone(this.getValue(configurable, false));
         consumer.accept(val);
         return this.setValue(configurable, val, false);
     }
@@ -367,7 +367,7 @@ public class AbstractConfig<V, T extends Configurable> {
      * @return the value set for the given configurable.
      */
     public V setIfDefault(T configurable, Function<V, V> function) {
-        V value = getValue(configurable);
+        V value = getValue(configurable, false);
         if (Objects.equals(value, this.getDefault(configurable))) value = this.setValue(configurable, function.apply(value), false);
         return value;
     }
@@ -381,7 +381,7 @@ public class AbstractConfig<V, T extends Configurable> {
      * @return the value set or kept from the.
      */
     public V setIfOld(T configurable, long age, Function<V, V> function) {
-        V val = this.getValue(configurable);
+        V val = this.getValue(configurable, false);
         if (System.currentTimeMillis() - getAge(configurable) >= age) val = function.apply(val);
         return val;
     }
@@ -394,7 +394,7 @@ public class AbstractConfig<V, T extends Configurable> {
      * of the config value for the given configurable.
      */
     public String getExteriorValue(T configurable) {
-        String result = wrapTypeOut(getValue(configurable), configurable);
+        String result = wrapTypeOut(getValue(configurable, false), configurable);
         if (result.equals("null")) result = getValueType().getSimpleName() + " not set";
         return result;
     }

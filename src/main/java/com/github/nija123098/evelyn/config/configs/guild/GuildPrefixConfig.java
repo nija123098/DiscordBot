@@ -18,4 +18,9 @@ public class GuildPrefixConfig extends AbstractConfig<String, Guild> {
     public String setValue(Guild configurable, String value, boolean overrideCache) {
         return super.setValue(configurable, value, true);
     }
+
+    @Override
+    public String getValue(Guild configurable, boolean overrideCache) {
+        return super.getValue(configurable, true);
+    }
 }

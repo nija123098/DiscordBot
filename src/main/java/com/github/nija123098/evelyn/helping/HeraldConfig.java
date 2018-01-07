@@ -51,6 +51,6 @@ public class HeraldConfig extends AbstractConfig<Boolean, Guild> {
 
     private GuildAudioManager getManager(VoiceChannel channel) {
         GuildAudioManager manager = GuildAudioManager.getManager(channel, false);
-        return manager != null && getValue(channel.getGuild()) ? manager : null;
+        return manager != null && getValue(channel.getGuild(), false) ? manager : null;
     }
 }

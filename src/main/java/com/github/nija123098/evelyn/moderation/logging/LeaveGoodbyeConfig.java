@@ -23,7 +23,7 @@ public class LeaveGoodbyeConfig extends AbstractConfig<Channel, Guild> {
     }
     @EventListener
     public void handle(DiscordUserLeave leave){
-        Channel channel = this.getValue(leave.getGuild());
+        Channel channel = this.getValue(leave.getGuild(), false);
         if (channel == null) return;
         Template template = TemplateHandler.getTemplate(KeyPhrase.USER_LEAVE, leave.getGuild(), Collections.emptyList());
         if (template == null) return;

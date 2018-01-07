@@ -30,7 +30,7 @@ public class DeletePinNotificationConfig extends AbstractConfig<Boolean, Guild> 
 
     // @EventListener
     public static synchronized void handle(DiscordMessageReceived event) {
-        if (!event.getMessage().getContent().isEmpty() || !config.getValue(event.getGuild()) || !MANAGE_MESSAGES.hasPermission(event.getAuthor(), event.getGuild()) || !MANAGE_MESSAGES.hasPermission(getOurUser(), event.getGuild()))
+        if (!event.getMessage().getContent().isEmpty() || !config.getValue(event.getGuild(), false) || !MANAGE_MESSAGES.hasPermission(event.getAuthor(), event.getGuild()) || !MANAGE_MESSAGES.hasPermission(getOurUser(), event.getGuild()))
             return;
         for (DiscordMessagePin message : PIN_ENTRIES) {
             if (event.getAuthor().equals(message.getAuthor())) {
@@ -44,7 +44,7 @@ public class DeletePinNotificationConfig extends AbstractConfig<Boolean, Guild> 
 
     @EventListener
     public synchronized void handle(DiscordMessagePin event) {
-        if (!this.getValue(event.getGuild()) || !MANAGE_MESSAGES.hasPermission(event.getAuthor(), event.getGuild()) || !MANAGE_MESSAGES.hasPermission(getOurUser(), event.getGuild()))
+        if (!this.getValue(event.getGuild(), false) || !MANAGE_MESSAGES.hasPermission(event.getAuthor(), event.getGuild()) || !MANAGE_MESSAGES.hasPermission(getOurUser(), event.getGuild()))
             return;
         Channel channel = event.getChannel();
         for (DiscordMessageReceived send : MESSAGE_ENTRIES) {

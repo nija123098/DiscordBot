@@ -27,7 +27,7 @@ public class JoinWelcomeConfig extends AbstractConfig<Channel, Guild>{
     }
     @EventListener
     public void handle(DiscordUserJoin leave){
-        Channel channel = this.getValue(leave.getGuild());
+        Channel channel = this.getValue(leave.getGuild(), false);
         if (channel == null) return;
         Template template = TemplateHandler.getTemplate(KeyPhrase.USER_JOIN, leave.getGuild(), Collections.emptyList());
         if (template == null) return;

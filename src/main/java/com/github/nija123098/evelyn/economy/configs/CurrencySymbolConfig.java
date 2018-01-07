@@ -23,7 +23,7 @@ public class CurrencySymbolConfig extends AbstractConfig<String, Guild> {
     }
 
     @Override
-    public String getValue(Guild configurable) {
-        return EmoticonHelper.getChars(super.getValue(configurable), false);
+    public String getValue(Guild configurable, boolean overrideCache) {
+        return EmoticonHelper.getChars(super.getValue(configurable, false), false);
     }
 }
