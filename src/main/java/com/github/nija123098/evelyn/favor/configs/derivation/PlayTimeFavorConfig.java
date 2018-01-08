@@ -9,6 +9,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordPresenceUpdate;
 import com.github.nija123098.evelyn.moderation.linkedgames.GuildLinkedGamesConfig;
+import com.github.nija123098.evelyn.perms.BotRole;
 import com.github.nija123098.evelyn.util.FormatHelper;
 
 import java.util.Map;
@@ -17,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PlayTimeFavorConfig extends AbstractConfig<Integer, GuildUser> {
     private Map<User, Long> map = new ConcurrentHashMap<>();
     public PlayTimeFavorConfig() {
-        super("current_money", "play_time", ConfigCategory.STAT_TRACKING, 0, "The time a user has spent in a game which is approved for favor game in 5 min increments");
+        super("play_time", ConfigCategory.STAT_TRACKING, 0, "The time a user has spent in a game which is approved for favor game in 5 min increments");
     }
     @EventListener
     public void handle(DiscordPresenceUpdate update){

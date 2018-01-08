@@ -7,7 +7,7 @@ import com.github.nija123098.evelyn.util.FormatHelper;
 
 public class FavorRankEquationConfig extends AbstractConfig<String, Guild> {
     public FavorRankEquationConfig() {
-        super("current_money", "favor_rank_equation", ConfigCategory.FAVOR, (String) null, "The equation to decided what rank a user is where `x` is favor and y is the rank the receive");
+        super("favor_rank_equation", ConfigCategory.FAVOR, (String) null, "The equation to decided what rank a user is where `x` is favor and y is the rank the receive");
     }
     @Override
     protected String validateInput(Guild configurable, String s) {

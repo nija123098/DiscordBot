@@ -4,6 +4,7 @@ import com.github.nija123098.evelyn.config.AbstractConfig;
 import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.GlobalConfigurable;
+import com.github.nija123098.evelyn.perms.BotRole;
 
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -12,7 +13,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class RSSLastCheckConfig extends AbstractConfig<Long, GlobalConfigurable> {
     public RSSLastCheckConfig() {
-        super("current_money", "rss_last_check", ConfigCategory.STAT_TRACKING, 0L, "The last rss check in millis");
+        super("rss_last_check", ConfigCategory.STAT_TRACKING, 0L, "The last rss check in millis");
     }
     public static long getAndUpdate(){
         AtomicLong val = new AtomicLong();

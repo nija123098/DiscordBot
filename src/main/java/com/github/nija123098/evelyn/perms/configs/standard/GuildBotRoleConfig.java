@@ -13,6 +13,6 @@ import java.util.Set;
  */
 public class GuildBotRoleConfig extends AbstractConfig<Set<BotRole>, GuildUser> {
     public GuildBotRoleConfig() {
-        super("current_money", "guild_flag_ranks", ConfigCategory.GUILD_HIERARCHY, new HashSet<>(0), "Flags available to guild specific bot roles");
+        super("guild_flag_ranks", ConfigCategory.GUILD_HIERARCHY, new HashSet<>(0), "Flags available to guild specific bot roles");
     }
 }

@@ -6,6 +6,6 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 
 public class TemporaryChannelConfig extends AbstractConfig<Boolean, Channel> {
     public TemporaryChannelConfig() {
-        super("current_money", "temporary_channel", ConfigCategory.GAME_TEMPORARY_CHANNELS, false, "This channel will be deleted when there is no activity for a while");
+        super("temporary_channel", ConfigCategory.GAME_TEMPORARY_CHANNELS, false, "This channel will be deleted when there is no activity for a while");
     }
 }

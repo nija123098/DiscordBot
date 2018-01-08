@@ -3,6 +3,7 @@ package com.github.nija123098.evelyn.config.configs;
 import com.github.nija123098.evelyn.config.AbstractConfig;
 import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.config.Configurable;
+import com.github.nija123098.evelyn.perms.BotRole;
 
 /**
  * A config which assists in keeping track if an
@@ -10,6 +11,6 @@ import com.github.nija123098.evelyn.config.Configurable;
  */
 public class ConfigurableExistsConfig extends AbstractConfig<Boolean, Configurable> {
     public ConfigurableExistsConfig() {
-        super("current_money", "object_exists", ConfigCategory.STAT_TRACKING, false, "Indicates for getting all entities if a configurable exists");
+        super("object_exists", ConfigCategory.STAT_TRACKING, false, "Indicates for getting all entities if a configurable exists");
     }
 }

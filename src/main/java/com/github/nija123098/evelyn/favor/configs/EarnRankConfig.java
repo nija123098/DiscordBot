@@ -22,7 +22,7 @@ public class EarnRankConfig extends AbstractConfig<Float, Role> {
     private static final CallBuffer CALL_BUFFER = new CallBuffer(500);
     private static final Set<GuildUser> USERS = new MemoryManagementService.ManagedSet<>(300_000);// 5 min
     public EarnRankConfig() {
-        super("current_money", "favor_requirement", ConfigCategory.FAVOR, (Float) null, "A map of roles earned by users due to their favor in a guild");
+        super("favor_requirement", ConfigCategory.FAVOR, (Float) null, "A map of roles earned by users due to their favor in a guild");
     }
     @EventListener
     public void handle(FavorChangeEvent event){// change to config change event

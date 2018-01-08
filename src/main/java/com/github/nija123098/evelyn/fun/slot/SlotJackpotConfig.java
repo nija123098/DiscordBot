@@ -4,6 +4,7 @@ import com.github.nija123098.evelyn.config.AbstractConfig;
 import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.GlobalConfigurable;
+import com.github.nija123098.evelyn.perms.BotRole;
 
 /**
  * Made by nija123098 on 5/18/2017.
@@ -11,7 +12,7 @@ import com.github.nija123098.evelyn.config.GlobalConfigurable;
 public class SlotJackpotConfig extends AbstractConfig<Integer, GlobalConfigurable> {
     private static int SEED = 100;
     public SlotJackpotConfig() {
-        super("current_money", "slot_jackpot", ConfigCategory.STAT_TRACKING, SEED, "The amount the Jackpot begins and is reset to");
+        super("slot_jackpot", ConfigCategory.STAT_TRACKING, SEED, "The amount the Jackpot begins and is reset to");
     }
     public static float getAndResetPot(){
         float val = ConfigHandler.getSetting(SlotJackpotConfig.class, GlobalConfigurable.GLOBAL);

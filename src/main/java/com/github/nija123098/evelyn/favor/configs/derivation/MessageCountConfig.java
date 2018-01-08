@@ -7,13 +7,14 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordMessageDelete;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordMessageReceived;
 import com.github.nija123098.evelyn.favor.FavorChangeEvent;
+import com.github.nija123098.evelyn.perms.BotRole;
 
 /**
  * Made by nija123098 on 8/10/2017.
  */
 public class MessageCountConfig extends AbstractConfig<Integer, GuildUser> {
     public MessageCountConfig() {
-        super("current_money", "message_count", ConfigCategory.STAT_TRACKING, 0, "The number of messages a user has made");
+        super("message_count", ConfigCategory.STAT_TRACKING, 0, "The number of messages a user has made");
     }
     @EventListener
     public void handle(DiscordMessageReceived event){

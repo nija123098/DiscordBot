@@ -7,6 +7,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordMessageReceived;
 import com.github.nija123098.evelyn.launcher.Launcher;
+import com.github.nija123098.evelyn.perms.BotRole;
 
 /**
  * Made by nija123098 on 6/13/2017.
@@ -14,7 +15,7 @@ import com.github.nija123098.evelyn.launcher.Launcher;
 public class GuildSpecialPermsConfig extends AbstractConfig<SpecialPermsContainer, Guild> {
     private static String RESET_ENDING;
     public GuildSpecialPermsConfig() {
-        super("current_money", "guild_special_perms", ConfigCategory.MODERATION, (SpecialPermsContainer) null, "Changes the permissions on Evelyn commands");
+        super("guild_special_perms", ConfigCategory.MODERATION, (SpecialPermsContainer) null, "Changes the permissions on Evelyn commands");
         Launcher.registerStartup(() -> RESET_ENDING = DiscordClient.getOurUser().getID() + "> reset yesimsure");
     }
     @EventListener

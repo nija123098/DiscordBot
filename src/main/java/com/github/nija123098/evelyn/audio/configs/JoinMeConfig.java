@@ -8,11 +8,12 @@ import com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager.Gui
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordVoiceJoin;
+import com.github.nija123098.evelyn.perms.BotRole;
 
 public class JoinMeConfig extends AbstractConfig<Boolean, User> {
     private static JoinMeConfig config;
     public JoinMeConfig() {
-        super("current_money", "join_me", ConfigCategory.GUILD_PERSONALIZATION, false, "Makes the bot join you if it is available");
+        super("join_me", ConfigCategory.GUILD_PERSONALIZATION, false, "Makes the bot join you if it is available");
         config = this;
     }
     @EventListener

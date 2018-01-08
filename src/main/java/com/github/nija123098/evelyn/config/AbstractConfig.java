@@ -38,7 +38,7 @@ public class AbstractConfig<V, T extends Configurable> {
     private final boolean normalViewing;
     private final Map<T, V> cache;
     private final Set<T> change;
-    public AbstractConfig(String current_money, String name, ConfigCategory category, V defaul, String description) {
+    public AbstractConfig(String name, ConfigCategory category, V defaul, String description) {
         this(name, category, v -> defaul, description);
     }
     public AbstractConfig(String name, BotRole botRole, ConfigCategory category, V defaul, String description) {

@@ -4,7 +4,9 @@ import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.moderation.messagefiltering.MessageMonitoringLevel;
 import com.github.nija123098.evelyn.config.AbstractConfig;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
+import com.github.nija123098.evelyn.perms.BotRole;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,6 +15,6 @@ import java.util.Set;
  */
 public class MessageMonitoringConfig extends AbstractConfig<Set<MessageMonitoringLevel>, Guild> {
     public MessageMonitoringConfig() {
-        super("current_money", "language_monitoring", ConfigCategory.MODERATION, new HashSet<>(), "Language monitoring for all channels unless if exceptions are given");
+        super("language_monitoring", ConfigCategory.MODERATION, new HashSet<>(), "Language monitoring for all channels unless if exceptions are given");
     }
 }

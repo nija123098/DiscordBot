@@ -9,13 +9,15 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Role;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordUserJoin;
 import com.github.nija123098.evelyn.exeption.ArgumentException;
+import com.github.nija123098.evelyn.perms.BotRole;
+import com.github.nija123098.evelyn.util.Log;
 
 /**
  * Made by nija123098 on 6/19/2017.
  */
 public class AutoAssignRoleConfig extends AbstractConfig<Role, Guild> {
     public AutoAssignRoleConfig() {
-        super("current_money", "role_on_join", ConfigCategory.MODERATION, (Role) null, "The role to assign a new user on join");
+        super("role_on_join", ConfigCategory.MODERATION, (Role) null, "The role to assign a new user on join");
     }
     @EventListener
     public void handle(DiscordUserJoin event){
