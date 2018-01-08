@@ -12,7 +12,7 @@ import com.github.nija123098.evelyn.favor.FavorChangeEvent;
  */
 public class ReactionCountConfig extends AbstractConfig<Integer, GuildUser> {
     public ReactionCountConfig() {
-        super("reaction_count", ConfigCategory.STAT_TRACKING, 0, "The number of reactions a user has made");
+        super("current_money", "reaction_count", ConfigCategory.STAT_TRACKING, 0, "The number of reactions a user has made");
     }
     @EventListener
     public void handle(DiscordReactionEvent event){

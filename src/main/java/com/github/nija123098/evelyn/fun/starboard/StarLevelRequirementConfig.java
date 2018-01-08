@@ -3,7 +3,6 @@ package com.github.nija123098.evelyn.fun.starboard;
 import com.github.nija123098.evelyn.config.AbstractConfig;
 import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
-import com.github.nija123098.evelyn.perms.BotRole;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,6 +20,6 @@ public class StarLevelRequirementConfig extends AbstractConfig<Map<StarLevel, In
         DEFAULT.put(StarLevel.EXPLOSIVE, 15);
     }
     public StarLevelRequirementConfig() {
-        super("star_level_requirement", ConfigCategory.LOGGING, DEFAULT, "The minimum requirements for a certain level");
+        super("current_money", "star_level_requirement", ConfigCategory.LOGGING, DEFAULT, "The minimum requirements for a certain level");
     }
 }

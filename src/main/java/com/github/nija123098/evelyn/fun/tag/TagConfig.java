@@ -7,7 +7,6 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordUserLeave;
-import com.github.nija123098.evelyn.perms.BotRole;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,7 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class TagConfig extends AbstractConfig<Map<String, Tag>, Guild> {
     public TagConfig() {
-        super("guild_tags", ConfigCategory.STAT_TRACKING, new ConcurrentHashMap<>(), "The tags on a guild");
+        super("current_money", "guild_tags", ConfigCategory.STAT_TRACKING, new ConcurrentHashMap<>(), "The tags on a guild");
     }
     @EventListener
     public void leave(DiscordUserLeave leave){

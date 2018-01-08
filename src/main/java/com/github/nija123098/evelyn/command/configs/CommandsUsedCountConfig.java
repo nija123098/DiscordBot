@@ -10,7 +10,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.User;
  */
 public class CommandsUsedCountConfig extends AbstractConfig<Integer, User> {
     public CommandsUsedCountConfig() {
-        super("commands_used_count", ConfigCategory.STAT_TRACKING, 0, "The number of commands used");
+        super("current_money", "commands_used_count", ConfigCategory.STAT_TRACKING, 0, "The number of commands used");
     }
     public static void increment(User user){
         ConfigHandler.changeSetting(CommandsUsedCountConfig.class, user, integer -> ++integer);

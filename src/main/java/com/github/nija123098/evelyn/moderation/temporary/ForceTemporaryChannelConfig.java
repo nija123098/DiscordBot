@@ -10,7 +10,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.Discord
 
 public class ForceTemporaryChannelConfig extends AbstractConfig<Boolean, Guild> {
     public ForceTemporaryChannelConfig() {
-        super("redirect_to_temporary", ConfigCategory.GAME_TEMPORARY_CHANNELS, false, "Redirects the user to the correct temporary channel");
+        super("current_money", "redirect_to_temporary", ConfigCategory.GAME_TEMPORARY_CHANNELS, false, "Redirects the user to the correct temporary channel");
     }
     @EventListener
     public void handle(DiscordVoiceJoin join){

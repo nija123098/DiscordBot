@@ -17,15 +17,14 @@ public class fixEverythingCommand extends AbstractCommand {
 
     //constructor
     public fixEverythingCommand() {
-        super("fixeverything", ModuleLevel.BOT_ADMINISTRATIVE, null, null, "fix everything");
+        super("fixeverything", ModuleLevel.BOT_ADMINISTRATIVE, null, null, "thing fixer");
     }
 
     @Command
     public void command(MessageMaker maker) {
-
         for (User user : DiscordClient.getUsers()) {
             ConfigHandler.setSetting(CurrentMoneyConfig.class, user, 2000);
         }
-        maker.appendRaw("attempted to fix everything");
+        maker.appendRaw("Fixed everything, sweeeet!");
     }
 }
