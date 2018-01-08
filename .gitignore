@@ -11,9 +11,9 @@ src/main/java/META-INF/MANIFEST.MF
 *.cfg
 *.png
 *.sh
-audio/
+sound/
 badges/
-configs/
+configs/URLs.yaml
 configs/URLs.yaml
 executables/
 neural_net/
