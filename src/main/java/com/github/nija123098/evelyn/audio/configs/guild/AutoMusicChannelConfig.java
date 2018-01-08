@@ -5,19 +5,17 @@ import com.github.nija123098.evelyn.config.AbstractConfig;
 import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
-import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.VoiceChannel;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordVoiceJoin;
-import com.github.nija123098.evelyn.perms.BotRole;
 
 /**
  * Made by nija123098 on 6/6/2017.
  */
 public class AutoMusicChannelConfig extends AbstractConfig<VoiceChannel, Guild> {
     public AutoMusicChannelConfig() {
-        super("auto_channel", ConfigCategory.MUSIC, (VoiceChannel) null, "Sets a channel where music starts playing on join");
+        super("current_money", "auto_channel", ConfigCategory.MUSIC, (VoiceChannel) null, "Sets a channel where music starts playing on join");
     }
     @EventListener
     public void listen(DiscordVoiceJoin event){

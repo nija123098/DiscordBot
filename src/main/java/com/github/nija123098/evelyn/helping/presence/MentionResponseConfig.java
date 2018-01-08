@@ -7,7 +7,6 @@ import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.*;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordMessageReceived;
-import com.github.nija123098.evelyn.perms.BotRole;
 import com.google.api.client.repackaged.com.google.common.base.Joiner;
 
 import java.util.Set;
@@ -18,7 +17,7 @@ import java.util.stream.Collectors;
  */
 public class MentionResponseConfig extends AbstractConfig<Boolean, Guild> {
     public MentionResponseConfig() {
-        super("afk_mention_response", ConfigCategory.GUILD_PERSONALIZATION, false, "The bot responds mentioning the stasis of a user if they are marked NDN, AWAY, OFFLINE, or self marked AFK or AWAY");
+        super("current_money", "afk_mention_response", ConfigCategory.GUILD_PERSONALIZATION, false, "The bot responds mentioning the stasis of a user if they are marked NDN, AWAY, OFFLINE, or self marked AFK or AWAY");
     }
     @EventListener
     public void handle(DiscordMessageReceived event){

@@ -9,6 +9,6 @@ import java.util.Set;
 
 public class GuildPlaylistsConfig extends AbstractConfig<Set<String>, Guild> {
     public GuildPlaylistsConfig() {
-        super("guild_playlists", ConfigCategory.STAT_TRACKING, new HashSet<>(0), "The playlists a guild has");
+        super("current_money", "guild_playlists", ConfigCategory.STAT_TRACKING, new HashSet<>(0), "The playlists a guild has");
     }
 }

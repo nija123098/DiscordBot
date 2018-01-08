@@ -22,7 +22,7 @@ import java.util.Set;
 public class GuildIsNewConfig extends AbstractConfig<Boolean, Guild> {
     private static final Set<Guild> GUILDS = new HashSet<>();
     public GuildIsNewConfig() {
-        super("guild_is_new", ConfigCategory.STAT_TRACKING, true, "If the guild had been served previously");
+        super("current_money", "guild_is_new", ConfigCategory.STAT_TRACKING, true, "If the guild had been served previously");
     }
     @EventListener
     public void handle(DiscordMessageSend send){
