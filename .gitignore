@@ -14,7 +14,7 @@ src/main/java/META-INF/MANIFEST.MF
 sound/
 badges/
 configs/URLs.yaml
-configs/URLs.yaml
+configs/BotConfig.yaml
 executables/
 neural_net/
 required/
