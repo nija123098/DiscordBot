@@ -1,6 +1,7 @@
 package com.github.nija123098.evelyn.moderation.messagefiltering.commands;
 
 import com.github.nija123098.evelyn.command.AbstractCommand;
+import com.github.nija123098.evelyn.command.CommandHandler;
 import com.github.nija123098.evelyn.command.ContextType;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Argument;
@@ -14,12 +15,9 @@ import com.github.nija123098.evelyn.moderation.messagefiltering.MessageMonitorin
 import com.github.nija123098.evelyn.moderation.messagefiltering.configs.MessageMonitoringConfig;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
 
+import java.util.EnumSet;
 import java.util.Set;
 
-/**
- * @author nija123098
- * @since 1.0.0
- */
 public class MessageMonitoringCommand extends AbstractCommand {
     public MessageMonitoringCommand() {
         super("messagemonitoring", ModuleLevel.ADMINISTRATIVE, "message monitoring", null, "Displays a list of monitoring in effect currently");

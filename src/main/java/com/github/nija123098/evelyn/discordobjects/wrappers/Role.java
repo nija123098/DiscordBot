@@ -3,7 +3,7 @@ package com.github.nija123098.evelyn.discordobjects.wrappers;
 import com.github.nija123098.evelyn.config.ConfigLevel;
 import com.github.nija123098.evelyn.config.Configurable;
 import com.github.nija123098.evelyn.discordobjects.ErrorWrapper;
-import com.github.nija123098.evelyn.exception.ConfigurableConvertException;
+import com.github.nija123098.evelyn.exeption.ConfigurableConvertException;
 import com.github.nija123098.evelyn.perms.BotRole;
 import com.github.nija123098.evelyn.util.FormatHelper;
 import sx.blah.discord.handle.obj.IRole;

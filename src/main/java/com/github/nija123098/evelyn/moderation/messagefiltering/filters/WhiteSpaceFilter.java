@@ -1,15 +1,14 @@
 package com.github.nija123098.evelyn.moderation.messagefiltering.filters;
 
-import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordMessageReceived;
 import com.github.nija123098.evelyn.moderation.messagefiltering.MessageFilter;
 import com.github.nija123098.evelyn.moderation.messagefiltering.MessageMonitoringException;
 import com.github.nija123098.evelyn.moderation.messagefiltering.MessageMonitoringLevel;
+import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordMessageReceived;
 
 import java.util.stream.Stream;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 7/19/2017.
  */
 public class WhiteSpaceFilter implements MessageFilter {
     private static final float ALLOWED = .25F;

@@ -7,7 +7,7 @@ import com.github.nija123098.evelyn.discordobjects.ErrorWrapper;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventDistributor;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordMessageReceived;
-import com.github.nija123098.evelyn.exception.ConfigurableConvertException;
+import com.github.nija123098.evelyn.exeption.ConfigurableConvertException;
 import com.github.nija123098.evelyn.perms.BotRole;
 import com.github.nija123098.evelyn.service.services.MemoryManagementService;
 import com.github.nija123098.evelyn.service.services.ScheduleService;

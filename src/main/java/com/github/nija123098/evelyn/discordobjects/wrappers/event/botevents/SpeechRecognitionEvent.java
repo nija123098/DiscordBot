@@ -5,8 +5,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.BotEvent;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 6/27/2017.
  */
 public class SpeechRecognitionEvent implements BotEvent {
     private String string;

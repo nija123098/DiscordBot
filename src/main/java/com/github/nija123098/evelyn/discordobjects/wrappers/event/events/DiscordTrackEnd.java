@@ -5,8 +5,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.BotEvent;
 import sx.blah.discord.util.audio.events.TrackFinishEvent;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 3/28/2017.
  */
 public class DiscordTrackEnd implements BotEvent {
     private TrackFinishEvent event;

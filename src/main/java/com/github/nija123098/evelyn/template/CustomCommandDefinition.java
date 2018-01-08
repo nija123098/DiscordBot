@@ -1,9 +1,9 @@
 package com.github.nija123098.evelyn.template;
 
 import com.github.nija123098.evelyn.command.ContextRequirement;
-import com.github.nija123098.evelyn.exception.ArgumentException;
-import com.github.nija123098.evelyn.exception.ContextException;
-import com.github.nija123098.evelyn.exception.DevelopmentException;
+import com.github.nija123098.evelyn.exeption.ArgumentException;
+import com.github.nija123098.evelyn.exeption.ContextException;
+import com.github.nija123098.evelyn.exeption.DevelopmentException;
 import com.github.nija123098.evelyn.util.EnumHelper;
 
 import java.util.Set;

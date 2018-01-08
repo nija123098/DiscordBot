@@ -1,11 +1,13 @@
 package com.github.nija123098.evelyn.discordobjects.wrappers;
 
+import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.ConfigLevel;
 import com.github.nija123098.evelyn.config.Configurable;
 import com.github.nija123098.evelyn.discordobjects.ErrorWrapper;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventDistributor;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordUserJoin;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordUserLeave;
+import com.github.nija123098.evelyn.economy.configs.LastCookieUseConfig;
 import com.github.nija123098.evelyn.perms.BotRole;
 import com.github.nija123098.evelyn.service.services.MemoryManagementService;
 import com.github.nija123098.evelyn.util.FormatHelper;
@@ -92,9 +94,9 @@ public class User implements Configurable {
 
     @Override
     public void manage() {// this should probably be more dependent on constants
-        /*if (ConfigHandler.getSetting(LastCurrencyUseConfig.class, this) > System.currentTimeMillis() - 86_400_000){
-            ConfigHandler.setSetting(LastCurrencyUseConfig.class, this, 0L);
-        }*/
+        if (ConfigHandler.getSetting(LastCookieUseConfig.class, this) > System.currentTimeMillis() - 86_400_000){
+            ConfigHandler.setSetting(LastCookieUseConfig.class, this, 0L);
+        }
     }
 
     static {

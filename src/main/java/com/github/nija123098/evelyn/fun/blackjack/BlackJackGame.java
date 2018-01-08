@@ -8,8 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 5/25/2017.
  */
 public class BlackJackGame {
     private static final Map<Configurable, BlackJackGame> GAME_MAP = new HashMap<>();

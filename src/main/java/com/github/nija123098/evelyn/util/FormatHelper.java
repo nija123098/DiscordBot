@@ -1,76 +1,60 @@
 package com.github.nija123098.evelyn.util;
 
-import com.github.nija123098.evelyn.exception.DevelopmentException;
+import com.github.nija123098.evelyn.exeption.DevelopmentException;
 import com.google.common.base.Strings;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
-
-import static com.github.nija123098.evelyn.botconfiguration.ConfigProvider.URLS;
-import static com.github.nija123098.evelyn.util.EmoticonHelper.getChars;
-import static java.lang.Math.max;
-import static java.lang.String.format;
-import static java.lang.String.valueOf;
-import static java.util.Arrays.fill;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
+import java.util.stream.Collectors;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 3/18/2017.
  */
 public class FormatHelper {
     public static String repeat(char c, int i) {
         char[] chars = new char[i];
-        fill(chars, c);
+        Arrays.fill(chars, c);
         return new String(chars);
     }
-
-    public static String reduceRepeats(String s, char c) {// use index of to optimize
+    public static String reduceRepeats(String s, char c){// use index of to optimize
         final StringBuilder builder = new StringBuilder();
         boolean repeat = false;
         for (int i = 0; i < s.length(); i++) {
-            if (s.charAt(i) == c) {
-                if (!repeat) {
+            if (s.charAt(i) == c){
+                if (!repeat){
                     builder.append(c);
                 }
                 repeat = true;
-            } else {
+            }else{
                 repeat = false;
                 builder.append(s.charAt(i));
             }
         }
         return builder.toString();
     }
-
-    public static String removeChars(String s, char toRemove) {
+    public static String removeChars(String s, char toRemove){
         return filtering(s, c -> c != toRemove);
     }
-
-    public static String trimFront(String s) {
+    public static String trimFront(String s){
         for (int i = 0; i < s.length(); i++) if (s.charAt(i) != ' ') return s.substring(i);
         return "";
     }
-
-    public static String makePleural(String s) {
+    public static String makePleural(String s){
         return s + "'" + (s.endsWith("s") ? s + "" : "s");
     }
-
-    public static int lengthOf(String[] args, int count) {
+    public static int lengthOf(String[] args, int count){
         int l = 0;
         for (int i = 0; i < count; i++) {
             l += args[i].length();
         }
         return l;
     }
-
-    public static String embedLink(String text, String link) {
-        if (link.isEmpty()) return "[" + text + "](" + URLS.rickroll_vid() + ")";
+    public static String embedLink(String text, String link){
         return "[" + text + "](" + link + ")";
     }
-
     /**
      * @param headers array containing the headers
      * @param table   array[n size] of array's[header size], containing the rows of the controllers
@@ -81,12 +65,12 @@ public class FormatHelper {
         StringBuilder sb = new StringBuilder();
         int padding = 1;
         int[] widths = new int[headers.size()];
-        fill(widths, 0);
+        Arrays.fill(widths, 0);
         for (int i = 0; i < headers.size(); i++) {
             if (headers.get(i).length() > widths[i]) {
                 widths[i] = headers.get(i).length();
                 if (footer != null) {
-                    widths[i] = max(widths[i], footer.get(i).length());
+                    widths[i] = Math.max(widths[i], footer.get(i).length());
                 }
             }
         }
@@ -105,14 +89,14 @@ public class FormatHelper {
         }
         formatLine += "\n";
         sb.append(appendSeparatorLine("+", "+", "+", padding, widths));
-        sb.append(format(formatLine, headers.toArray()));
+        sb.append(String.format(formatLine, headers.toArray()));
         sb.append(appendSeparatorLine("+", "+", "+", padding, widths));
         for (List<String> row : table) {
-            sb.append(format(formatLine, row.toArray()));
+            sb.append(String.format(formatLine, row.toArray()));
         }
         if (footer != null) {
             sb.append(appendSeparatorLine("+", "+", "+", padding, widths));
-            sb.append(format(formatLine, footer.toArray()));
+            sb.append(String.format(formatLine, footer.toArray()));
         }
         sb.append(appendSeparatorLine("+", "+", "+", padding, widths));
         sb.append("```");
@@ -152,14 +136,6 @@ public class FormatHelper {
     }
 
     /**
-     * @param items items in the controllers
-     * @return formatted controllers
-     */
-    public static String makeTable(List<String> items, boolean codeBlock) {
-        return makeTable(items, 20, 3, codeBlock);
-    }
-
-    /**
      * Makes a controllers-like display of list of items
      *
      * @param items        items in the controllers
@@ -168,50 +144,22 @@ public class FormatHelper {
      * @return formatted controllers
      */
     public static String makeTable(List<String> items, int columnLength, int columns) {
-        StringBuilder ret = new StringBuilder("```\n");
+        String ret = "```\n";
         int counter = 0;
         for (String item : items) {
             counter++;
-            ret.append(format("%-" + columnLength + "s", item));
+            ret += String.format("%-" + columnLength + "s", item);
             if (counter % columns == 0) {
-                ret.append("\n");
+                ret += "\n";
             }
         }
         if (counter % columns != 0) {
-            ret.append("\n");
+            ret += "\n";
         }
         return ret + "```\n";
     }
 
-    /**
-     * Makes a controllers-like display of list of items
-     *
-     * @param items        items in the controllers
-     * @param columnLength length of a column(filled up with whitespace)
-     * @param columns      amount of columns
-     * @param codeBlock    whether to make it a code block
-     * @return formatted controllers
-     */
-    public static String makeTable(List<String> items, int columnLength, int columns, boolean codeBlock) {
-        StringBuilder ret = new StringBuilder();
-        if (codeBlock) ret.insert(0, "```");
-        int counter = 0;
-        for (String item : items) {
-            counter++;
-            ret.append(format(("%-" + columnLength + "s"), item));
-            if (counter % columns == 0) {
-                ret.append("\n");
-            }
-        }
-        if (counter % columns != 0) {
-            ret.append("\n");
-        }
-        if (codeBlock) return ret + "```";
-        return ret.toString();
-    }
-
-    private static final String DASH = getChars("wavy_dash", true);
-
+    private static final String DASH = EmoticonHelper.getChars("wavy_dash", true);
     public static String makeStackedBar(int max, int bar, String barChar) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < bar; i++) {
@@ -222,8 +170,7 @@ public class FormatHelper {
         }
         return sb.toString();
     }
-
-    public static String getList(List<String> strings) {
+    public static String getList(List<String> strings){
         switch (strings.size()) {
             case 0:
                 throw new DevelopmentException("List provided is empty");
@@ -239,8 +186,7 @@ public class FormatHelper {
                 return builder + "and " + strings.get(strings.size() - 1);
         }
     }
-
-    public static String cleanOfXML(String s) {
+    public static String cleanOfXML(String s){
         StringBuilder builder = new StringBuilder();
         AtomicBoolean in = new AtomicBoolean();
         new StringIterator(s).forEachRemaining(character -> {
@@ -256,20 +202,17 @@ public class FormatHelper {
         });
         return builder.toString();
     }
-
-    public static List<String> cleanOfXML(List<String> strings) {
-        return strings.stream().map(FormatHelper::cleanOfXML).collect(toList());
+    public static List<String> cleanOfXML(List<String> strings){
+        return strings.stream().map(FormatHelper::cleanOfXML).collect(Collectors.toList());
     }
-
-    public static String filtering(String s, Function<Character, Boolean> filter) {
+    public static String filtering(String s, Function<Character, Boolean> filter){
         StringBuilder builder = new StringBuilder();
         new StringIterator(s).forEachRemaining(character -> {
             if (filter.apply(character)) builder.append(character);
         });
         return builder.toString();
     }
-
-    public static String reformat(String s, Function<Character, Character> function) {
+    public static String reformat(String s, Function<Character, Character> function){
         StringBuilder builder = new StringBuilder(s.length());
         for (int i = 0; i < s.length(); i++) {
             Character character = function.apply(s.charAt(i));
@@ -277,17 +220,14 @@ public class FormatHelper {
         }
         return builder.toString();
     }
-
-    public static String reduce(String s) {
+    public static String reduce(String s){
         return filtering(s, Character::isLetter);
     }
-
-    public static Set<String> reduce(Set<String> strings) {
-        return strings.stream().map(FormatHelper::reduce).collect(toSet());
+    public static Set<String> reduce(Set<String> strings){
+        return strings.stream().map(FormatHelper::reduce).collect(Collectors.toSet());
     }
-
-    public static String addComas(double l) {
-        String str = valueOf(l);
+    public static String addComas(double l){
+        String str = String.valueOf(l);
         if (str.endsWith(".0")) str = str.substring(0, str.length() - 2);
         int eIndex = str.indexOf("E");
         if (eIndex != -1) return str.substring(0, 4) + str.substring(eIndex);
@@ -298,14 +238,13 @@ public class FormatHelper {
             builder.append(str.charAt(bound - i - 1));
             if (i % 3 == bound % 3 && i != 0) builder.append(",");
         }
-        if (bound != str.length()) {
+        if (bound != str.length()){
             for (int i = bound; i < str.length(); i++) {
                 builder.append(str.charAt(i));
             }
         }
         return builder.toString();
     }
-
     public static String addComas(String bigInteger) {
         if (bigInteger.length() < 5) return bigInteger;
         int decimal = bigInteger.indexOf(".");

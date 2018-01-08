@@ -5,10 +5,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
-/**
- * @author nija123098
- * @since 1.0.0
- */
 public class GetterUtil {
     public static <E, F> E getAny(Collection<F> fs, Function<F, E> function){
         E e;

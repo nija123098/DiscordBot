@@ -1,8 +1,7 @@
 package com.github.nija123098.evelyn.command;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 4/17/2017.
  */
 public enum ContextType {
     INVOKER,

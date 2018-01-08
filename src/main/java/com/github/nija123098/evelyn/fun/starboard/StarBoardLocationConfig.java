@@ -1,17 +1,17 @@
 package com.github.nija123098.evelyn.fun.starboard;
 
 import com.github.nija123098.evelyn.config.AbstractConfig;
+import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
-
-import static com.github.nija123098.evelyn.config.ConfigCategory.LOGGING;
+import com.github.nija123098.evelyn.perms.BotRole;
+import com.github.nija123098.evelyn.util.FormatHelper;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 5/31/2017.
  */
 public class StarBoardLocationConfig extends AbstractConfig<Channel, Guild> {
     public StarBoardLocationConfig() {
-        super("star_board", "Star Board", LOGGING, (Channel) null, "The location of the starboard");
+        super("star_board", ConfigCategory.LOGGING, (Channel) null, "The location of the starboard");
     }
 }

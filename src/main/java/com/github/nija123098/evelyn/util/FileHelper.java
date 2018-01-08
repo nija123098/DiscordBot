@@ -1,7 +1,7 @@
 package com.github.nija123098.evelyn.util;
 
-import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
-import com.github.nija123098.evelyn.exception.DevelopmentException;
+import com.github.nija123098.evelyn.BotConfig.ReadConfig;
+import com.github.nija123098.evelyn.exeption.DevelopmentException;
 import org.eclipse.jetty.util.ConcurrentHashSet;
 
 import java.io.File;
@@ -12,8 +12,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 6/6/2017.
  */
 public class FileHelper {
     private static final Set<File> FILES = new ConcurrentHashSet<>();
@@ -26,7 +25,7 @@ public class FileHelper {
     }
     public static File getTempFile(String cat, String end, String snowflake, IOConsumer once){
         File file;
-        try{file = Paths.get(ConfigProvider.FOLDER_SETTINGS.temp_folder(), cat, snowflake + "." + end).toFile();
+        try{file = Paths.get(ReadConfig.TEMP_PATH, cat, snowflake + "." + end).toFile();
         }catch(Exception e){throw new DevelopmentException("Issue with making new file", e);}
         file.deleteOnExit();
         if (!file.exists()) {

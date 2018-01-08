@@ -8,8 +8,7 @@ import com.github.nija123098.evelyn.util.EmoticonHelper;
 import com.github.nija123098.evelyn.util.Log;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 3/30/2017.
  */
 public class PingCommand extends AbstractCommand {
     public PingCommand() {
@@ -18,7 +17,6 @@ public class PingCommand extends AbstractCommand {
     @Command
     public void command(MessageMaker helper){
         long time = System.currentTimeMillis();
-        helper.mustEmbed();
         helper.appendRaw(EmoticonHelper.getChars("outbox_tray", false) + " ").append("Checking ping").send();
         time = System.currentTimeMillis() - time;
         Log.log("Ping is " + time);

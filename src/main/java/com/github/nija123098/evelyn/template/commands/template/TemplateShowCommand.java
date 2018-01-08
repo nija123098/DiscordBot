@@ -15,8 +15,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 8/9/2017.
  */
 public class TemplateShowCommand extends AbstractCommand {
     public TemplateShowCommand() {

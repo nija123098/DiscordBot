@@ -1,6 +1,6 @@
 package com.github.nija123098.evelyn.fun.profile;
 
-import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
+import com.github.nija123098.evelyn.BotConfig.ReadConfig;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.util.FormatHelper;
 import com.github.nija123098.evelyn.util.Log;
@@ -18,17 +18,13 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-/**
- * @author nija123098
- * @since 1.0.0
- */
 public enum Badge {
     USER(user -> true);
     private static final int SPACING = 3;
     private Function<User, Integer> levelFunction;
     private List<BufferedImage> images = new ArrayList<>();
     Badge(int max){
-        try{BufferedImage badge = ImageIO.read(new File(ConfigProvider.FOLDER_SETTINGS.badge_folder() + this.name().toLowerCase() + ".png"));
+        try{BufferedImage badge = ImageIO.read(new File(ReadConfig.BADGE_PATH + this.name().toLowerCase() + ".png"));
             Font font = new Font("Times New Roman", Font.PLAIN, badge.getHeight() / 3 * 2);
             BufferedImage image;
             Graphics2D graphics;

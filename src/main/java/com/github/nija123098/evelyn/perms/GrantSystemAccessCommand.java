@@ -7,10 +7,6 @@ import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.launcher.Launcher;
 
-/**
- * @author nija123098
- * @since 1.0.0
- */
 public class GrantSystemAccessCommand extends AbstractCommand {
     public GrantSystemAccessCommand() {
         super("grant system access", BotRole.BOT_OWNER, ModuleLevel.BOT_ADMINISTRATIVE, null, null, "Grants the user system access");

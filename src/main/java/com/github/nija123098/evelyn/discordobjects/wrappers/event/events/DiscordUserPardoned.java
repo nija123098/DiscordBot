@@ -6,8 +6,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.BotEvent;
 import sx.blah.discord.handle.impl.events.guild.member.UserPardonEvent;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 8/7/2017.
  */
 public class DiscordUserPardoned implements BotEvent {
     private UserPardonEvent event;

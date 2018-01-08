@@ -1,6 +1,6 @@
 package com.github.nija123098.evelyn.information;
 
-import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
+import com.github.nija123098.evelyn.BotConfig.ReadConfig;
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Command;
@@ -13,9 +13,9 @@ import java.nio.file.Paths;
 import java.util.List;
 
 /**
- * @author Soarnir
- * @since 1.0.0
+ * Written by Soarnir 12/9/17
  */
+
 public class GuideCommand extends AbstractCommand {
     public GuideCommand() {
         super("guide", ModuleLevel.INFO, null, null, "A quickstart guide to Evelyn");
@@ -40,7 +40,7 @@ public class GuideCommand extends AbstractCommand {
     public String reader() {
         try {
             StringBuilder texty = new StringBuilder();
-            List<String> text = Files.readAllLines(Paths.get(ConfigProvider.RESOURCE_FILES.guide()));
+            List<String> text = Files.readAllLines(Paths.get(ReadConfig.GUIDE_NAME));
             text.forEach(s -> {
                 if (s.isEmpty()) texty.append("|");
                 else texty.append(s + "\n");

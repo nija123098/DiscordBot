@@ -6,9 +6,6 @@ import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Simplifies templates for non-programmer users.
- *
- * @author nija123098
- * @since 1.0.0
  */
 public class TemplatePrepossessing {
     private static final Map<String, String> REPLACEMENT_MAP = new HashMap<>();

@@ -7,8 +7,7 @@ import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 5/24/2017.
  */
 public class SubscribeInfoCommand extends AbstractCommand {
     public SubscribeInfoCommand() {

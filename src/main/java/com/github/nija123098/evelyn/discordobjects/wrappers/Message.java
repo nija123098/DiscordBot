@@ -1,9 +1,9 @@
 package com.github.nija123098.evelyn.discordobjects.wrappers;
 
-import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
+import com.github.nija123098.evelyn.BotConfig.ReadConfig;
 import com.github.nija123098.evelyn.discordobjects.ErrorWrapper;
-import com.github.nija123098.evelyn.exception.GhostException;
-import com.github.nija123098.evelyn.exception.PermissionsException;
+import com.github.nija123098.evelyn.exeption.GhostException;
+import com.github.nija123098.evelyn.exeption.PermissionsException;
 import com.github.nija123098.evelyn.service.services.MemoryManagementService;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
 import com.github.nija123098.evelyn.util.Time;
@@ -11,10 +11,7 @@ import sx.blah.discord.handle.impl.obj.ReactionEmoji;
 import sx.blah.discord.handle.obj.IMessage;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -124,7 +121,7 @@ public class Message {// should not be kept stored, too many are made
     }
 
     public void delete() {
-        if (ConfigProvider.BOT_SETTINGS.ghost_mode_enabled()) return;
+        if (ReadConfig.GHOST_MODE) return;
         ErrorWrapper.wrap(() -> message().delete());
     }
 
@@ -157,7 +154,7 @@ public class Message {// should not be kept stored, too many are made
     }
 
     public Reaction addReaction(String s) {
-        if (ConfigProvider.BOT_SETTINGS.ghost_mode_enabled()) throw new GhostException();
+        if (ReadConfig.GHOST_MODE) throw new GhostException();
         ErrorWrapper.wrap(() -> this.message().addReaction(ReactionEmoji.of(s)));
         return getReaction(s);
     }

@@ -1,5 +1,6 @@
 package com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager;
 
+import com.github.nija123098.evelyn.BotConfig.ReadConfig;
 import com.github.nija123098.evelyn.audio.SpeechTrack;
 import com.github.nija123098.evelyn.audio.Track;
 import com.github.nija123098.evelyn.audio.commands.current.CurrentCommand;
@@ -7,19 +8,18 @@ import com.github.nija123098.evelyn.audio.configs.GreetingsVoiceConfig;
 import com.github.nija123098.evelyn.audio.configs.guild.QueueTrackOnlyConfig;
 import com.github.nija123098.evelyn.audio.configs.guild.SkipPercentConfig;
 import com.github.nija123098.evelyn.audio.configs.track.PlayCountConfig;
-import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
+import com.github.nija123098.evelyn.discordobjects.wrappers.*;
+import com.github.nija123098.evelyn.moderation.logging.MusicChannelConfig;
 import com.github.nija123098.evelyn.config.AbstractConfig;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.configs.guild.GuildActivePlaylistConfig;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
-import com.github.nija123098.evelyn.discordobjects.wrappers.*;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventDistributor;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordVoiceLeave;
-import com.github.nija123098.evelyn.exception.ArgumentException;
-import com.github.nija123098.evelyn.exception.GhostException;
+import com.github.nija123098.evelyn.exeption.ArgumentException;
+import com.github.nija123098.evelyn.exeption.GhostException;
 import com.github.nija123098.evelyn.launcher.Launcher;
-import com.github.nija123098.evelyn.moderation.logging.MusicChannelConfig;
 import com.github.nija123098.evelyn.service.services.ScheduleService;
 import com.github.nija123098.evelyn.util.Care;
 import com.github.nija123098.evelyn.util.LangString;
@@ -81,7 +81,7 @@ public class GuildAudioManager extends AudioEventAdapter{
         LangString bye = new LangString(true, "I have to go restart, I will be back soon.");
         Launcher.registerShutdown(() -> {
             MAP.forEach((s, guildAudioManager) -> {
-                config.setValue(guildAudioManager.channel, guildAudioManager.queue, false);
+                config.setValue(guildAudioManager.channel, guildAudioManager.queue);
                 guildAudioManager.interrupt(bye);
             });
             Care.lessSleep(5_000);
@@ -101,7 +101,7 @@ public class GuildAudioManager extends AudioEventAdapter{
      */
     public static GuildAudioManager getManager(VoiceChannel channel, boolean make){
         if (channel == null) return null;// this might not happen anymore
-        if (ConfigProvider.BOT_SETTINGS.ghost_mode_enabled()) throw new GhostException();
+        if (ReadConfig.GHOST_MODE) throw new GhostException();
         GuildAudioManager current = getManager(channel.getGuild());
         if (current != null) {
             if (!current.voiceChannel().isConnected()) MAP.replace(channel.getID(), new GuildAudioManager(channel));

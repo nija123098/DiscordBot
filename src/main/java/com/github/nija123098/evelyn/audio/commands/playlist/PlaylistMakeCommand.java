@@ -11,15 +11,11 @@ import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.Configurable;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
-import com.github.nija123098.evelyn.exception.ArgumentException;
+import com.github.nija123098.evelyn.exeption.ArgumentException;
 import com.github.nija123098.evelyn.util.FormatHelper;
 
 import java.util.Set;
 
-/**
- * @author nija123098
- * @since 1.0.0
- */
 public class PlaylistMakeCommand extends AbstractCommand {
     public PlaylistMakeCommand() {
         super(PlaylistCommand.class, "make", "create", null, null, "Makes a playlist");

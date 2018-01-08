@@ -1,6 +1,8 @@
 package com.github.nija123098.evelyn.favor.configs;
 
 import com.github.nija123098.evelyn.config.AbstractConfig;
+import com.github.nija123098.evelyn.config.ConfigCategory;
+import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.GuildUser;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Role;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
@@ -11,31 +13,25 @@ import com.google.common.util.concurrent.AtomicDouble;
 
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
-
-import static com.github.nija123098.evelyn.config.ConfigCategory.FAVOR;
-import static com.github.nija123098.evelyn.config.ConfigHandler.getSetting;
-import static java.util.stream.Collectors.toSet;
+import java.util.stream.Collectors;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 5/6/2017.
  */
 public class EarnRankConfig extends AbstractConfig<Float, Role> {
     private static final CallBuffer CALL_BUFFER = new CallBuffer(500);
     private static final Set<GuildUser> USERS = new MemoryManagementService.ManagedSet<>(300_000);// 5 min
-
     public EarnRankConfig() {
-        super("favor_requirement", "", FAVOR, (Float) null, "A map of roles earned by users due to their favor in a guild");
+        super("favor_requirement", ConfigCategory.FAVOR, (Float) null, "A map of roles earned by users due to their favor in a guild");
     }
-
     @EventListener
-    public void handle(FavorChangeEvent event) {// change to config change event
+    public void handle(FavorChangeEvent event){// change to config change event
         if (!event.getConfigurable().getClass().equals(GuildUser.class)) return;
         GuildUser user = (GuildUser) event.getConfigurable();
         if (user.getUser().isBot()) return;
         if (!USERS.add(user)) return;
-        Set<Role> roles = user.getGuild().getRoles().stream().filter(role -> this.getValue(role) != null).collect(toSet());
-        Set<Role> independents = roles.stream().filter(role -> getSetting(StackFavorRankConfig.class, role)).collect(toSet());
+        Set<Role> roles = user.getGuild().getRoles().stream().filter(role -> this.getValue(role) != null).collect(Collectors.toSet());
+        Set<Role> independents = roles.stream().filter(role -> ConfigHandler.getSetting(StackFavorRankConfig.class, role)).collect(Collectors.toSet());
         independents.forEach(role -> {
             if (this.getValue(role) > event.getNewValue()) user.getUser().removeRole(role);
             else user.getUser().addRole(role);

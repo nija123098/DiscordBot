@@ -4,8 +4,8 @@ import com.github.nija123098.evelyn.command.InvocationObjectGetter;
 import com.github.nija123098.evelyn.command.annotations.LaymanName;
 import com.github.nija123098.evelyn.discordobjects.wrappers.*;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventDistributor;
-import com.github.nija123098.evelyn.exception.ArgumentException;
-import com.github.nija123098.evelyn.exception.DevelopmentException;
+import com.github.nija123098.evelyn.exeption.ArgumentException;
+import com.github.nija123098.evelyn.exeption.DevelopmentException;
 import com.github.nija123098.evelyn.perms.BotRole;
 import com.github.nija123098.evelyn.service.services.ScheduleService;
 import com.github.nija123098.evelyn.util.Care;
@@ -30,7 +30,7 @@ import java.util.function.Function;
 @LaymanName(value = "Configuration name", help = "The config name")
 public class AbstractConfig<V, T extends Configurable> {
     private final Function<T, V> defaul;
-    private final String tableName, name, description;
+    private final String name, description;
     private final BotRole botRole;
     private final ConfigLevel configLevel;
     private final ConfigCategory category;
@@ -38,28 +38,26 @@ public class AbstractConfig<V, T extends Configurable> {
     private final boolean normalViewing;
     private final Map<T, V> cache;
     private final Set<T> change;
-    public AbstractConfig(String tableName, String name, ConfigCategory category, V defaul, String description) {
-        this(tableName, name, category, v -> defaul, description);
+    public AbstractConfig(String name, ConfigCategory category, V defaul, String description) {
+        this(name, category, v -> defaul, description);
     }
-    public AbstractConfig(String tableName, String name, BotRole botRole, ConfigCategory category, V defaul, String description) {
-        this(tableName, name, botRole, category, v -> defaul, description);
+    public AbstractConfig(String name, BotRole botRole, ConfigCategory category, V defaul, String description) {
+        this(name, botRole, category, v -> defaul, description);
     }
-    public AbstractConfig(String tableName, String name, ConfigCategory category, Function<T, V> defaul, String description) {
-        this(tableName, name, category.getBotRole(), category, defaul, description);
+    public AbstractConfig(String name, ConfigCategory category, Function<T, V> defaul, String description) {
+        this(name, category.getBotRole(), category, defaul, description);
     }
 
     /**
      * The constructor to make a config instance.
      *
-     * @param tableName the tableName of the config, spaces are not allowed.
-     * @param name the display name of the config, required
+     * @param name the name of the config, spaces are not allowed.
      * @param botRole the minimum role allowed to change the value.
      * @param category the catagory to that the config is in.
      * @param defaul the function to get the default value for a given config.
      * @param description a description of the config.
      */
-    public AbstractConfig(String tableName, String name, BotRole botRole, ConfigCategory category, Function<T, V> defaul, String description) {
-        this.tableName = tableName;
+    public AbstractConfig(String name, BotRole botRole, ConfigCategory category, Function<T, V> defaul, String description) {
         this.name = name;
         this.botRole = botRole;
         this.defaul = defaul;
@@ -112,15 +110,6 @@ public class AbstractConfig<V, T extends Configurable> {
      * @return the name of the config.
      */
     public String getName() {
-        return this.tableName;
-    }
-
-    /**
-     * A standard getter.
-     *
-     * @return the display name of the config
-     */
-    public String getDisplayName() {
         return this.name;
     }
 
@@ -167,7 +156,7 @@ public class AbstractConfig<V, T extends Configurable> {
      * @return the table name for this config and a config level.
      */
     private String getNameForType(ConfigLevel level){
-        return this.tableName + "_" + level.name().toLowerCase();
+        return this.name + "_" + level.name().toLowerCase();
     }
 
     /**
@@ -253,13 +242,9 @@ public class AbstractConfig<V, T extends Configurable> {
      * @param value the value to set the config to for the given configurable.
      * @return the value set to the config.
      */
-    public V setValue(T configurable, V value, boolean overrideCache){
+    public V setValue(T configurable, V value){
         if (!(value == null || this.valueType.isInstance(value))) throw new ArgumentException("Attempted passing incorrect type of argument");
         value = validateInput(configurable, value);
-        if (overrideCache) {
-            saveValue(configurable, value);
-            return value;
-        }
         if (this.cache == null || value == null) saveValue(configurable, value);
         else {
             this.cache.put(configurable, value);
@@ -337,7 +322,7 @@ public class AbstractConfig<V, T extends Configurable> {
      * @param function the function the config gives the old value to and gets a new value from.
      */
     public V changeSetting(T configurable, Function<V, V> function) {
-        return this.setValue(configurable, function.apply(this.getValue(configurable)), false);
+        return this.setValue(configurable, function.apply(this.getValue(configurable)));
     }
 
     /**
@@ -350,7 +335,7 @@ public class AbstractConfig<V, T extends Configurable> {
     public V alterSetting(T configurable, Consumer<V> consumer) {
         V val = ObjectCloner.clone(this.getValue(configurable));
         consumer.accept(val);
-        return this.setValue(configurable, val, false);
+        return this.setValue(configurable, val);
     }
 
     /**
@@ -362,7 +347,7 @@ public class AbstractConfig<V, T extends Configurable> {
      */
     public V setIfDefault(T configurable, Function<V, V> function) {
         V value = getValue(configurable);
-        if (Objects.equals(value, this.getDefault(configurable))) value = this.setValue(configurable, function.apply(value), false);
+        if (Objects.equals(value, this.getDefault(configurable))) value = this.setValue(configurable, function.apply(value));
         return value;
     }
 
@@ -389,7 +374,7 @@ public class AbstractConfig<V, T extends Configurable> {
      */
     public String getExteriorValue(T configurable) {
         String result = wrapTypeOut(getValue(configurable), configurable);
-        if (result.equals("null")) result = getValueType().getSimpleName() + " not set";
+        if (result.equals("null")) result = "not set";
         return result;
     }
 
@@ -406,7 +391,7 @@ public class AbstractConfig<V, T extends Configurable> {
     public void setExteriorValue(T configurable, User user, Channel channel, Guild guild, Message message, String value) {
         if (!this.isNormalViewing()) throw new ArgumentException("Slow down there malicious user, we have that covered!");
         if (value.length() == 7 && value.toLowerCase().equals("not set")) value = "null";
-        setValue(configurable, InvocationObjectGetter.convert(this.getValueType(), user, null, channel, guild, message, null, value).getKey(), true);
+        setValue(configurable, InvocationObjectGetter.convert(this.getValueType(), user, null, channel, guild, message, null, value).getKey());
     }
 
     /**

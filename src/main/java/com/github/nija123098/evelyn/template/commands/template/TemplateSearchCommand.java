@@ -12,8 +12,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 8/8/2017.
  */
 public class TemplateSearchCommand extends AbstractCommand {
     public TemplateSearchCommand() {
@@ -27,7 +26,7 @@ public class TemplateSearchCommand extends AbstractCommand {
             TemplateListCommand.command(maker);
         } else if (results.size() == 1) maker.append("You are looking for ").appendRaw(results.get(0));
         else {
-            maker.append("You may be looking for one of these, all options are listed at `@Evelyn template list`");
+            maker.append("You may be looking for one of these, all options are listed at `@Emily template list`");
             results.forEach(s1 -> maker.getNewFieldPart().withBoth(s1, ""));
         }
     }

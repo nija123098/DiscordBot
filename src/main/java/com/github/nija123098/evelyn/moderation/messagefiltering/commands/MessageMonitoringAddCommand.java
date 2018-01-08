@@ -1,6 +1,7 @@
 package com.github.nija123098.evelyn.moderation.messagefiltering.commands;
 
 import com.github.nija123098.evelyn.command.AbstractCommand;
+import com.github.nija123098.evelyn.command.CommandHandler;
 import com.github.nija123098.evelyn.command.ContextType;
 import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
@@ -14,10 +15,6 @@ import com.github.nija123098.evelyn.moderation.messagefiltering.configs.MessageM
 import com.github.nija123098.evelyn.moderation.messagefiltering.configs.MessageMonitoringConfig;
 import com.github.nija123098.evelyn.moderation.messagefiltering.configs.MessageMonitoringExceptionsConfig;
 
-/**
- * @author nija123098
- * @since 1.0.0
- */
 public class MessageMonitoringAddCommand extends AbstractCommand {
     public MessageMonitoringAddCommand() {
         super(MessageMonitoringCommand.class, "add", null, null, null, "Adds a filtering level");

@@ -4,10 +4,9 @@ import com.github.nija123098.evelyn.audio.Playlist;
 import com.github.nija123098.evelyn.audio.Track;
 import com.github.nija123098.evelyn.config.configs.ConfigurableExistsConfig;
 import com.github.nija123098.evelyn.discordobjects.wrappers.*;
-import com.github.nija123098.evelyn.exception.DevelopmentException;
+import com.github.nija123098.evelyn.exeption.DevelopmentException;
 import com.github.nija123098.evelyn.launcher.Reference;
 import com.github.nija123098.evelyn.util.Log;
-import com.github.nija123098.evelyn.util.LogColor;
 import org.reflections.Reflections;
 
 import java.lang.reflect.Modifier;
@@ -80,7 +79,7 @@ public class ConfigHandler {
      * Forces the initialization of this class.
      */
     public static void initialize(){
-        Log.log(LogColor.blue("Config Handler initialized.") + LogColor.yellow(" Handling your configs ( ͡° ͜ʖ ͡°)"));
+        Log.log("Config Handler initialized");
     }
 
     /**
@@ -158,7 +157,7 @@ public class ConfigHandler {
      * @param value the value the config is being set at.
      */
     public static <V, T extends Configurable> V setSetting(Class<? extends AbstractConfig<V, T>> clazz, T configurable, V value){
-        return getConfig(clazz).setValue(configurable, value, false);
+        return getConfig(clazz).setValue(configurable, value);
     }
 
     /**
@@ -173,7 +172,7 @@ public class ConfigHandler {
         AbstractConfig config = getConfig(configName);
         if (config != null){
             try {
-                config.setValue(configurable, value, false);
+                config.setValue(configurable, value);
                 return true;
             } catch (ClassCastException e){
                 throw new RuntimeException("Attempted generic value config assignment with the wrong type on config \"" + config.getName() + "\" with value type: " + value.getClass().getName(), e);

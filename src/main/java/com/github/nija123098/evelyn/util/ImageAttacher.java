@@ -1,5 +1,9 @@
 package com.github.nija123098.evelyn.util;
 
+import com.github.nija123098.evelyn.BotConfig.ReadConfig;
+import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
+import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
+import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventDistributor;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordMessageSend;
 import sx.blah.discord.api.IDiscordClient;
@@ -10,43 +14,29 @@ import java.io.FileNotFoundException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.github.nija123098.evelyn.discordobjects.wrappers.Channel.getChannel;
-import static com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient.getClientForShard;
-import static com.github.nija123098.evelyn.discordobjects.wrappers.event.EventDistributor.register;
-import static com.github.nija123098.evelyn.util.Care.lessSleep;
-import static com.github.nija123098.evelyn.util.Log.log;
-
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 6/4/2017.
  */
 public class ImageAttacher {
     private static final Map<String, String> MAP = new ConcurrentHashMap<>();
-    private static final IDiscordClient CLIENT = getClientForShard(getChannel(0L + "").getShard());
-
+    private static final IDiscordClient CLIENT = DiscordClient.getClientForShard(Channel.getChannel(ReadConfig.IMAGE_LOAD_CHANNEL + "").getShard());
     static {
-        register(ImageAttacher.class);
+        EventDistributor.register(ImageAttacher.class);
     }
-
-    public static String getUrl(File file) {
+    public static String getUrl(File file){
         String ret = MAP.get(file.getPath());
         if (ret == null) {
-            try {
-                new MessageBuilder(CLIENT).withChannel(0L).withContent(file.getPath()).withFile(file).send();
-            } catch (FileNotFoundException e) {
-                log("Exception not uploading file for url use", e);
-            }
+            try{new MessageBuilder(CLIENT).withChannel(ReadConfig.IMAGE_LOAD_CHANNEL).withContent(file.getPath()).withFile(file).send();
+            }catch(FileNotFoundException e){Log.log("Exception not uploading file for url use", e);}
         }
-        lessSleep(100);
-        while ((ret = MAP.remove(file.getPath())) == null) {
-            lessSleep(50);
+        Care.lessSleep(100);
+        while ((ret = MAP.remove(file.getPath())) == null){
+            Care.lessSleep(50);
         }
         return ret;
     }
-
     @EventListener
-    public static void handle(DiscordMessageSend event) {
-        if (event.getChannel().channel().getLongID() == 0L)
-            MAP.put(event.getMessage().getContent(), event.getMessage().getAttachments().get(0).getUrl());
+    public static void handle(DiscordMessageSend event){
+        if (event.getChannel().channel().getLongID() == ReadConfig.IMAGE_LOAD_CHANNEL) MAP.put(event.getMessage().getContent(), event.getMessage().getAttachments().get(0).getUrl());
     }
 }

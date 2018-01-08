@@ -7,10 +7,6 @@ import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 
-/**
- * @author nija123098
- * @since 1.0.0
- */
 public class QueueRemoveCommand extends AbstractCommand {
     public QueueRemoveCommand() {
         super(QueueCommand.class, "remove", null, null, null, "Removes a specific track from the queue");

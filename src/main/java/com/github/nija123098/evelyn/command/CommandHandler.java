@@ -12,10 +12,9 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordMessageEditEvent;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordMessageReceived;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordReactionEvent;
-import com.github.nija123098.evelyn.economy.configs.CurrencySymbolConfig;
-import com.github.nija123098.evelyn.exception.BotException;
-import com.github.nija123098.evelyn.exception.DevelopmentException;
-import com.github.nija123098.evelyn.exception.GhostException;
+import com.github.nija123098.evelyn.exeption.BotException;
+import com.github.nija123098.evelyn.exeption.DevelopmentException;
+import com.github.nija123098.evelyn.exeption.GhostException;
 import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.launcher.Reference;
 import com.github.nija123098.evelyn.service.services.MemoryManagementService;
@@ -105,7 +104,7 @@ public class CommandHandler {
      * Forces the initialization of this class.
      */
     public static void initialize(){
-        Log.log(LogColor.blue("Command Handler initialized.") + LogColor.yellow(" Implementing communism."));
+        Log.log("Command Handler initialized");
     }
 
     /**
@@ -217,9 +216,6 @@ public class CommandHandler {
         }else{
             String pref = ConfigHandler.getSetting(GuildPrefixConfig.class, message.getGuild());
             if (string.startsWith(pref)) string = string.substring(pref.length());
-            //Hey! This line is commented as opposed to the rest of the code. Isn't it great?
-            //The next "else if" compares the message to the currency_symbol for the guild, if it matches it runs the bank command
-            else if (Objects.equals(string, ConfigHandler.getSetting(CurrencySymbolConfig.class, message.getGuild()))) string = "bank";
             else{
                 String split = string.split(" ")[0];
                 if ((command = REACTION_COMMAND_MAP.get(split)) != null){

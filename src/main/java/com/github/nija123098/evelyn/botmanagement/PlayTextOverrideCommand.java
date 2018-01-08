@@ -8,18 +8,14 @@ import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.DiscordAdapter;
 import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Presence;
-import com.github.nija123098.evelyn.exception.ArgumentException;
-import com.github.nija123098.evelyn.exception.DevelopmentException;
+import com.github.nija123098.evelyn.exeption.ArgumentException;
+import com.github.nija123098.evelyn.exeption.DevelopmentException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-/**
- * @author nija123098
- * @since 1.0.0
- */
 public class PlayTextOverrideCommand extends AbstractCommand {
     public PlayTextOverrideCommand() {
         super("playtext", ModuleLevel.BOT_ADMINISTRATIVE, null, null, "Overrides the playtext of the bot");

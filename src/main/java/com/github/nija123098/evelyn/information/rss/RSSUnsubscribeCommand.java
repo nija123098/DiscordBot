@@ -7,13 +7,12 @@ import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
-import com.github.nija123098.evelyn.exception.ArgumentException;
+import com.github.nija123098.evelyn.exeption.ArgumentException;
 
 import java.util.List;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 7/7/2017.
  */
 public class RSSUnsubscribeCommand extends AbstractCommand {
     public RSSUnsubscribeCommand() {

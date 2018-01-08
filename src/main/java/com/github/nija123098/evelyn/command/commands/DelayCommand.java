@@ -3,8 +3,8 @@ package com.github.nija123098.evelyn.command.commands;
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.CommandHandler;
 import com.github.nija123098.evelyn.command.ModuleLevel;
-import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
+import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Message;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Reaction;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
@@ -12,8 +12,7 @@ import com.github.nija123098.evelyn.service.services.ScheduleService;
 import com.github.nija123098.evelyn.util.Time;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 4/29/2017.
  */
 public class DelayCommand extends AbstractCommand {
     public DelayCommand() {

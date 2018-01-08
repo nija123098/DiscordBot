@@ -4,8 +4,7 @@ import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.annotations.Command;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 6/4/2017.
  */
 public class MemeTypesLoadCommand extends AbstractCommand {
     public MemeTypesLoadCommand() {

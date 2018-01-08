@@ -9,8 +9,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.util.Time;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 5/17/2017.
  */
 public class TodoAddCommand extends AbstractCommand {
     public TodoAddCommand() {

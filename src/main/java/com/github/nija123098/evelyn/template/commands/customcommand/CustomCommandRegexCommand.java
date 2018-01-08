@@ -4,17 +4,16 @@ import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
-import com.github.nija123098.evelyn.exception.ArgumentException;
+import com.github.nija123098.evelyn.exeption.ArgumentException;
 import com.github.nija123098.evelyn.template.CustomCommand;
 import com.github.nija123098.evelyn.template.CustomCommandConfig;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 8/13/2017.
  */
 public class CustomCommandRegexCommand extends AbstractCommand {
     public CustomCommandRegexCommand() {
-        super(CustomCommandCommand.class, "regex", null, null, null, "Adds a regex search to activate a command on text without a prefix");
+        super(CustomCommandCommand.class, "ragex", null, null, null, "Adds a regex search to activate a command on text without a prefix");
     }
     @Command
     public void command(Guild guild, String s){

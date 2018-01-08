@@ -1,10 +1,10 @@
 package com.github.nija123098.evelyn.fun.gamestructure;
 
-import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
+import com.github.nija123098.evelyn.BotConfig.ReadConfig;
 import com.github.nija123098.evelyn.config.TypeChanger;
 import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
-import com.github.nija123098.evelyn.fun.gamestructure.neuralnet.AbstractNeuralNetGame;
 import com.github.nija123098.evelyn.fun.gamestructure.neuralnet.NeuralNet;
+import com.github.nija123098.evelyn.fun.gamestructure.neuralnet.AbstractNeuralNetGame;
 import com.github.nija123098.evelyn.util.Log;
 import com.github.nija123098.evelyn.util.Rand;
 import com.google.common.base.Joiner;
@@ -20,16 +20,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * @author nija123098
- * @since 1.0.0
- */
 public class GamePlayHandler {
     private static final double ALTER_PERCENT = .005D;
     private static final Map<String, NeuralNet> LOADED_NEURAL_NETS = new HashMap<>();
     private static final Map<AbstractGame, NeuralNet> GAME_NET_MAP = new HashMap<>();
     static {
-        new File(ConfigProvider.FOLDER_SETTINGS.neural_net_folder()).mkdirs();
+        new File(ReadConfig.NEURAL_NET_FOLDER_PATH).mkdirs();
     }
     static void decideGame(AbstractGame game){
         Team team = game.getTeam(DiscordClient.getOurUser());
@@ -74,6 +70,6 @@ public class GamePlayHandler {
         return game.getName() + "-" + Joiner.on("-").join(new Integer[]{game.getInputWidth(), game.getOutputWidth(), game.getHiddenLayerWidth(), game.getHiddenLayerCount()}) + ".txt";
     }
     private static Path getNeuralNetPath(AbstractNeuralNetGame game){
-        return Paths.get(ConfigProvider.FOLDER_SETTINGS.neural_net_folder(), getNeuralNetName(game));
+        return Paths.get(ReadConfig.NEURAL_NET_FOLDER_PATH, getNeuralNetName(game));
     }
 }

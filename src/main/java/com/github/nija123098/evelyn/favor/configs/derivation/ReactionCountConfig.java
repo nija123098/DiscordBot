@@ -8,12 +8,11 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.Discord
 import com.github.nija123098.evelyn.favor.FavorChangeEvent;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 8/10/2017.
  */
 public class ReactionCountConfig extends AbstractConfig<Integer, GuildUser> {
     public ReactionCountConfig() {
-        super("reaction_count", "", ConfigCategory.STAT_TRACKING, 0, "The number of reactions a user has made");
+        super("reaction_count", ConfigCategory.STAT_TRACKING, 0, "The number of reactions a user has made");
     }
     @EventListener
     public void handle(DiscordReactionEvent event){

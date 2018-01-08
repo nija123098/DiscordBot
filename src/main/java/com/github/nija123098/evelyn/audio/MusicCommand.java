@@ -1,8 +1,8 @@
 package com.github.nija123098.evelyn.audio;
 
+import com.github.nija123098.evelyn.audio.configs.guild.SkipPercentConfig;
 import com.github.nija123098.evelyn.audio.configs.guild.AutoMusicChannelConfig;
 import com.github.nija123098.evelyn.audio.configs.guild.QueueTrackOnlyConfig;
-import com.github.nija123098.evelyn.audio.configs.guild.SkipPercentConfig;
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Command;
@@ -15,8 +15,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.moderation.logging.MusicChannelConfig;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 6/6/2017.
  */
 public class MusicCommand extends AbstractCommand {
     public MusicCommand() {

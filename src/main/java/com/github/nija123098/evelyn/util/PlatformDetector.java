@@ -4,10 +4,6 @@
 
 package com.github.nija123098.evelyn.util;
 
-/**
- * @author Celestialdeath99
- * @since 1.0.0
- */
 public class PlatformDetector {
 
     private static String OS = System.getProperty("os.name").toLowerCase();
@@ -22,6 +18,18 @@ public class PlatformDetector {
         return (OS.contains("nix") || OS.contains("nux") || OS.contains("aix"));
     }
 
+    public static String PathEnding() {
+        String ending = null;
+        if (isUnix()) {
+            ending = "/";
+        } else if (isWindows()) {
+            ending = "/";
+        } else if (isMac()) {
+            System.out.println("definitely mac");
+            ending = "/";
+        }
+        return ending;
+    }
 
     public static String ConvertPath(String path) {
         StringBuffer result = new StringBuffer(path.length());

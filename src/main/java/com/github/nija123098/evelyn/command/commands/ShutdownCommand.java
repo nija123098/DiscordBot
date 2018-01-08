@@ -4,8 +4,8 @@ import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ContextPack;
 import com.github.nija123098.evelyn.command.ContextType;
 import com.github.nija123098.evelyn.command.ModuleLevel;
-import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
+import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.information.subsription.SubscriptionLevel;
@@ -17,8 +17,7 @@ import com.github.nija123098.evelyn.template.TemplateHandler;
 import java.util.Collections;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 5/11/2017.
  */
 public class ShutdownCommand extends AbstractCommand {
     public ShutdownCommand() {

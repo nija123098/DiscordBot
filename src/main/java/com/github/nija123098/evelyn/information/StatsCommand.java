@@ -8,7 +8,6 @@ import com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager.Gui
 import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Shard;
-import com.github.nija123098.evelyn.util.EmoticonHelper;
 import com.github.nija123098.evelyn.util.FormatHelper;
 
 import java.util.ArrayList;
@@ -16,8 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 5/30/2017.
  */
 public class StatsCommand extends AbstractCommand {
     public StatsCommand() {
@@ -25,7 +23,6 @@ public class StatsCommand extends AbstractCommand {
     }
     @Command
     public void command(MessageMaker maker, String s){
-        maker.mustEmbed().getTitle().clear().appendRaw(EmoticonHelper.getChars("chart_with_upwards_trend",false) + " Evelyn Stats");
         maker.appendRaw(getTotalTable(s.startsWith("mini")));
     }
     private String getTotalTable(boolean minified) {

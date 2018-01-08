@@ -9,8 +9,7 @@ import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Shard;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 6/7/2017.
  */
 public class ShardCommand extends AbstractCommand {
     public ShardCommand() {
@@ -18,7 +17,6 @@ public class ShardCommand extends AbstractCommand {
     }
     @Command
     public void command(Shard shard, @Argument(optional = true, replacement = ContextType.NONE) Long lon, MessageMaker maker){
-        maker.mustEmbed();
         maker.append("You are on shard " + (lon == null ? shard.getID() : (lon >> 22) % Shard.getCount()));
     }
 }

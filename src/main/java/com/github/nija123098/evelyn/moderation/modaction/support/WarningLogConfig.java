@@ -8,12 +8,8 @@ import com.github.nija123098.evelyn.perms.BotRole;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author nija123098
- * @since 1.0.0
- */
 public class WarningLogConfig extends AbstractConfig<List<String>, GuildUser>{
     public WarningLogConfig() {
-        super("warning_log", "", BotRole.SYSTEM, ConfigCategory.LOGGING, new ArrayList<>(0), "The list of warnings for a server user");
+        super("warning_log", BotRole.SYSTEM, ConfigCategory.LOGGING, new ArrayList<>(0), "The list of warnings for a server user");
     }
 }

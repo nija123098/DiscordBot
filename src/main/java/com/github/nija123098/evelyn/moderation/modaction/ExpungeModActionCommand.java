@@ -1,5 +1,9 @@
 package com.github.nija123098.evelyn.moderation.modaction;
 
+import com.github.nija123098.evelyn.information.configs.OldUserNameConfig;
+import com.github.nija123098.evelyn.moderation.GuildUserJoinTimeConfig;
+import com.github.nija123098.evelyn.moderation.MessageDeleteService;
+import com.github.nija123098.evelyn.moderation.modaction.support.AbstractModAction;
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
@@ -11,10 +15,6 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Message;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.information.configs.OldNicknameConfig;
-import com.github.nija123098.evelyn.information.configs.OldUserNameConfig;
-import com.github.nija123098.evelyn.moderation.GuildUserJoinTimeConfig;
-import com.github.nija123098.evelyn.moderation.MessageDeleteService;
-import com.github.nija123098.evelyn.moderation.modaction.support.AbstractModAction;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -23,8 +23,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 5/13/2017.
  */
 public class ExpungeModActionCommand extends AbstractCommand {
     public ExpungeModActionCommand() {

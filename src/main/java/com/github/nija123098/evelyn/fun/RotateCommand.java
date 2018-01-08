@@ -1,23 +1,23 @@
 package com.github.nija123098.evelyn.fun;
 
 import com.github.nija123098.evelyn.command.AbstractCommand;
+import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
-import com.github.nija123098.evelyn.exception.ArgumentException;
+import com.github.nija123098.evelyn.exeption.ArgumentException;
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 
-import static com.github.nija123098.evelyn.command.ModuleLevel.FUN;
-import static java.util.stream.Stream.of;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Stream;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 5/22/2017.
  */
 public class RotateCommand extends AbstractCommand {
     private static final BidiMap<String, String> CHAR_MAP;
-
     static {
         CHAR_MAP = new DualHashBidiMap<>();
         CHAR_MAP.put("a", "\u0250");
@@ -80,16 +80,14 @@ public class RotateCommand extends AbstractCommand {
         CHAR_MAP.put("\u2234", "\u2235");
         CHAR_MAP.put("\u2045", "\u2046");
     }
-
     public RotateCommand() {
-        super("rotate", FUN, null, null, "Rotate text!");
+        super("rotate", ModuleLevel.FUN, null, null, "Rotate text!");
     }
-
     @Command
-    public void command(MessageMaker maker, @Argument(info = "The text to rotate") String arg) {
+    public void command(MessageMaker maker, @Argument(info = "The text to rotate") String arg){
         if (arg == null || arg.isEmpty()) throw new ArgumentException("Please give text for me to rotate");
         StringBuilder builder = new StringBuilder(arg.length());
-        of(arg.split("")).forEach(s -> {
+        Stream.of(arg.split("")).forEach(s -> {
             String st = CHAR_MAP.get(s);
             if (st == null) st = CHAR_MAP.getKey(s);
             if (st == null) st = s;

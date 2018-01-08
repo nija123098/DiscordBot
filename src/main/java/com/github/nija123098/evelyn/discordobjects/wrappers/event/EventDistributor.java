@@ -1,7 +1,7 @@
 package com.github.nija123098.evelyn.discordobjects.wrappers.event;
 
-import com.github.nija123098.evelyn.exception.DevelopmentException;
-import com.github.nija123098.evelyn.exception.GhostException;
+import com.github.nija123098.evelyn.exeption.DevelopmentException;
+import com.github.nija123098.evelyn.exeption.GhostException;
 import com.github.nija123098.evelyn.util.Log;
 import com.github.nija123098.evelyn.util.ReflectionHelper;
 import com.github.nija123098.evelyn.util.ThreadProvider;

@@ -15,10 +15,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-/**
- * @author nija123098
- * @since 1.0.0
- */
 public class RanksForceUpdateCommand extends AbstractCommand  {
     public RanksForceUpdateCommand() {
         super(RanksCommand.class, "forceupdate", null, null, null, "Forces all ranks on a server to update");

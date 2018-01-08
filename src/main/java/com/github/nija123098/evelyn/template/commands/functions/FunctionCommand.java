@@ -4,8 +4,8 @@ import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
-import com.github.nija123098.evelyn.exception.ArgumentException;
-import com.github.nija123098.evelyn.exception.DevelopmentException;
+import com.github.nija123098.evelyn.exeption.ArgumentException;
+import com.github.nija123098.evelyn.exeption.DevelopmentException;
 import com.github.nija123098.evelyn.util.ReflectionHelper;
 
 import java.lang.reflect.InvocationTargetException;
@@ -15,8 +15,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 8/9/2017.
  */
 public class FunctionCommand extends AbstractCommand {
     private static final Set<Class<?>> APPROVED_RETURNS = new HashSet<>(Arrays.asList(Number.class, String.class));

@@ -4,12 +4,12 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.BotEvent;
 import com.github.nija123098.evelyn.service.services.ScheduleService;
+import com.github.nija123098.evelyn.util.Care;
 import sx.blah.discord.handle.audit.ActionType;
 import sx.blah.discord.handle.impl.events.guild.member.UserLeaveEvent;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 3/31/2017.
  */
 public class DiscordUserLeave implements BotEvent {
     private User responsible;

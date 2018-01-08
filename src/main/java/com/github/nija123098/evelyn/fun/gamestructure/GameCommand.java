@@ -11,10 +11,6 @@ import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author nija123098
- * @since 1.0.0
- */
 public class GameCommand extends AbstractCommand {
     static final Map<String, Class<? extends AbstractGame>> CLASS_MAP = new HashMap<>();
     static {

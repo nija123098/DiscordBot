@@ -1,35 +1,36 @@
+/**
+ * @author Celestialdeath99
+ * Sourced from https://www.mkyong.com/java/how-to-execute-shell-command-from-java/
+ */
+
 package com.github.nija123098.evelyn.util;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.concurrent.TimeUnit;
 
-/**
- * @author Celestialdeath99
- * @since 1.0.0
- */
 public class ExecuteShellCommand {
-    static String output;
 
     public static void commandToExecute(String command) {
-        Process p;
-        String line;
-        try {
-            p = Runtime.getRuntime().exec(command);
-            p.waitFor(1, TimeUnit.MINUTES);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            StringBuilder builder = new StringBuilder();
-            while ((line = reader.readLine()) !=null) {
-                builder.append(line).append("\n");
-            }
-            output = builder.toString();
-        } catch (InterruptedException | IOException e) {
-            e.printStackTrace();
-        }
+        ExecuteShellCommand obj = new ExecuteShellCommand();
+        obj.executeCommand(command);
     }
 
-    public static String getOutput() {
-        return output;
+    private String executeCommand(String command) {
+        StringBuffer output = new StringBuffer();
+        Process p;
+        try {
+            p = Runtime.getRuntime().exec(command);
+            p.waitFor();
+            BufferedReader reader =
+                    new BufferedReader(new InputStreamReader(p.getInputStream()));
+
+            String line;
+            while ((line = reader.readLine())!= null) {
+                output.append(line + "\n");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return output.toString();
     }
 }

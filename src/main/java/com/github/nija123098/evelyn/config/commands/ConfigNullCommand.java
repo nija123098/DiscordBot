@@ -13,10 +13,6 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 
-/**
- * @author nija123098
- * @since 1.0.0
- */
 public class ConfigNullCommand extends AbstractCommand {
     public ConfigNullCommand() {
         super(ConfigCommand.class, "setnull", null, null, null, "Sets the config value to null");
@@ -25,6 +21,6 @@ public class ConfigNullCommand extends AbstractCommand {
     @Command
     public <V, T extends Configurable> void command(@Argument AbstractConfig<V, T> config, @Argument(optional = true) T target, String arg, @Context(softFail = true) Track track, @Context(softFail = true) Playlist playlist, User user, Channel channel, @Context(softFail = true) GuildUser guildUser, @Context(softFail = true) Guild guild) {
         if (target == null) target = (T) (guild == null ? user : guild);
-        config.setValue(target, null, false);
+        config.setValue(target, null);
     }
 }

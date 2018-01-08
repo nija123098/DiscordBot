@@ -6,7 +6,7 @@ import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
-import com.github.nija123098.evelyn.exception.ArgumentException;
+import com.github.nija123098.evelyn.exeption.ArgumentException;
 import com.github.nija123098.evelyn.moderation.logging.ModLogConfig;
 
 import java.awt.*;
@@ -15,8 +15,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 5/11/2017.
  */
 public class AbstractModAction {
     private static final Map<Guild, Integer> OLDEST_CASE_MAP = new ConcurrentHashMap<>();

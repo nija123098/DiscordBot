@@ -9,8 +9,7 @@ import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.handle.obj.IVoiceChannel;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 5/4/2017.
  */
 public class DiscordVoiceJoin implements BotEvent {
     private VoiceChannel channel;

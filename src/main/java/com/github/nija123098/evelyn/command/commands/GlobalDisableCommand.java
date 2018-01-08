@@ -10,8 +10,7 @@ import com.github.nija123098.evelyn.config.GlobalConfigurable;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 6/6/2017.
  */
 public class GlobalDisableCommand extends AbstractCommand {
     public GlobalDisableCommand() {

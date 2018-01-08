@@ -14,10 +14,6 @@ import com.github.nija123098.evelyn.moderation.messagefiltering.configs.MessageM
 import com.github.nija123098.evelyn.moderation.messagefiltering.configs.MessageMonitoringConfig;
 import com.github.nija123098.evelyn.moderation.messagefiltering.configs.MessageMonitoringExceptionsConfig;
 
-/**
- * @author nija123098
- * @since 1.0.0
- */
 public class MessageMonitoringRemoveCommand extends AbstractCommand {
     public MessageMonitoringRemoveCommand() {
         super(MessageMonitoringCommand.class, "remove", null, null, null, "Removes a filtering level");

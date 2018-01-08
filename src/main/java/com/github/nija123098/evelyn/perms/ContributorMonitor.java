@@ -1,6 +1,6 @@
 package com.github.nija123098.evelyn.perms;
 
-import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
+import com.github.nija123098.evelyn.BotConfig.ReadConfig;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Role;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventDistributor;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
@@ -8,14 +8,13 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.Discord
 import com.github.nija123098.evelyn.launcher.Launcher;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 5/15/2017.
  */
 public class ContributorMonitor {
-    private static final Role CONTRIB_SIGN_ROLE = Role.getRole(ConfigProvider.BOT_SETTINGS.contributor_sign_role());
-    private static final Role SUPPORT_SIGN_ROLE = Role.getRole(ConfigProvider.BOT_SETTINGS.supporter_sign_role());
+    private static final Role CONTRIB_SIGN_ROLE = Role.getRole(ReadConfig.CONTRIBUTOR_SIGN_ROLE);
+    private static final Role SUPPORT_SIGN_ROLE = Role.getRole(ReadConfig.SUPPORTER_SIGN_ROLE);
     public static void init(){
-        if (CONTRIB_SIGN_ROLE == null) return;// is not the instance serving Evelyn's Space
+        if (CONTRIB_SIGN_ROLE == null) return;// is not the instance serving Emily's Space
         System.out.println(CONTRIB_SIGN_ROLE.getName());
         System.out.println(CONTRIB_SIGN_ROLE.getGuild().getName());
         EventDistributor.register(ContributorMonitor.class);

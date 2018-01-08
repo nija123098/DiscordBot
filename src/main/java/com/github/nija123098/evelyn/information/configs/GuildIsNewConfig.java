@@ -22,7 +22,7 @@ import java.util.Set;
 public class GuildIsNewConfig extends AbstractConfig<Boolean, Guild> {
     private static final Set<Guild> GUILDS = new HashSet<>();
     public GuildIsNewConfig() {
-        super("guild_is_new", "", ConfigCategory.STAT_TRACKING, true, "If the guild had been served previously");
+        super("guild_is_new", ConfigCategory.STAT_TRACKING, true, "If the guild had been served previously");
     }
     @EventListener
     public void handle(DiscordMessageSend send){
@@ -41,7 +41,7 @@ public class GuildIsNewConfig extends AbstractConfig<Boolean, Guild> {
     private void welcome(Guild guild){
         if (!GUILDS.add(guild)) return;
         if (!this.getValue(guild)) return;
-        this.setValue(guild, false, false);
+        this.setValue(guild, false);
         Channel channel = ConfigHandler.getSetting(BotChannelConfig.class, guild);
         MessageMaker maker = new MessageMaker(channel == null ? guild.getGeneralChannel() != null ? guild.getGeneralChannel() : guild.getChannels().get(0) : channel);
         if (channel == null){

@@ -8,15 +8,14 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.BotEvent;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageSendEvent;
 
 /**
- * @author Dxeo
- * @since 1.0.0
+ * Made by nija123098 on 6/4/2017.
  */
 public class DiscordMessageSend implements BotEvent {
     private MessageSendEvent event;
     public DiscordMessageSend(MessageSendEvent event) {
         this.event = event;
     }
-    public User getUser(){// should always return Evelyn
+    public User getUser(){// should always return Emily
         return User.getUser(this.event.getAuthor());
     }
     public Guild getGuild(){

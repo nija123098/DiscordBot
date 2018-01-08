@@ -7,10 +7,6 @@ import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.util.Time;
 
-/**
- * @author nija123098
- * @since 1.0.0
- */
 public class UptimeCommand extends AbstractCommand {
     private static Long launchTime;
     public UptimeCommand() {
@@ -19,7 +15,6 @@ public class UptimeCommand extends AbstractCommand {
     }
     @Command
     public void command(MessageMaker maker){
-        maker.mustEmbed();
         maker.append("I have been online for " + Time.getAbbreviated(System.currentTimeMillis() - launchTime));
     }
 }

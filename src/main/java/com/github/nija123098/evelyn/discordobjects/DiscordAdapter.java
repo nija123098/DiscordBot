@@ -1,7 +1,11 @@
 package com.github.nija123098.evelyn.discordobjects;
 
+import com.github.nija123098.evelyn.BotConfig.ReadConfig;
 import com.github.nija123098.evelyn.audio.SpeechParser;
-import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
+import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.*;
+import com.github.nija123098.evelyn.exeption.InvalidEventException;
+import com.github.nija123098.evelyn.moderation.DeletePinNotificationConfig;
+import com.github.nija123098.evelyn.moderation.messagefiltering.MessageMonitor;
 import com.github.nija123098.evelyn.chatbot.ChatBot;
 import com.github.nija123098.evelyn.command.CommandHandler;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
@@ -10,19 +14,18 @@ import com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager.Gui
 import com.github.nija123098.evelyn.discordobjects.wrappers.*;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.BotEvent;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventDistributor;
-import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.*;
-import com.github.nija123098.evelyn.exception.InvalidEventException;
 import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.launcher.Reference;
-import com.github.nija123098.evelyn.moderation.DeletePinNotificationConfig;
-import com.github.nija123098.evelyn.moderation.messagefiltering.MessageMonitor;
 import com.github.nija123098.evelyn.perms.ContributorMonitor;
 import com.github.nija123098.evelyn.service.services.MemoryManagementService;
 import com.github.nija123098.evelyn.service.services.ScheduleService;
 import com.github.nija123098.evelyn.template.KeyPhrase;
 import com.github.nija123098.evelyn.template.Template;
 import com.github.nija123098.evelyn.template.TemplateHandler;
-import com.github.nija123098.evelyn.util.*;
+import com.github.nija123098.evelyn.util.Care;
+import com.github.nija123098.evelyn.util.EmoticonHelper;
+import com.github.nija123098.evelyn.util.Log;
+import com.github.nija123098.evelyn.util.ThreadProvider;
 import org.apache.http.message.BasicNameValuePair;
 import org.reflections.Reflections;
 import sx.blah.discord.api.ClientBuilder;
@@ -78,12 +81,12 @@ public class DiscordAdapter {
         EVENT_MAP = new HashMap<>(classes.size() + 2, 1);
         classes.stream().filter(clazz -> !clazz.equals(DiscordMessageReceived.class)).filter(clazz -> !clazz.equals(DiscordUserLeave.class)).filter(clazz -> !clazz.isAssignableFrom(ReactionEvent.class)).map(clazz -> clazz.getConstructors()[0]).forEach(constructor -> EVENT_MAP.put((Class<? extends Event>) constructor.getParameterTypes()[0], (Constructor<? extends BotEvent>) constructor));
         ClientBuilder builder = new ClientBuilder();
-        builder.withToken(ConfigProvider.BOT_SETTINGS.bot_token());
+        builder.withToken(ReadConfig.BOT_TOKEN);
         builder.withMaximumDispatchThreads(2);
         builder.registerListener((IListener<ShardReadyEvent>) event -> event.getShard().idle("with the login screen!"));
-        int total = Requests.GENERAL_REQUESTS.GET.makeRequest(DiscordEndpoints.GATEWAY + "/bot", GatewayBotResponse.class, new BasicNameValuePair("Authorization", "Bot " + ConfigProvider.BOT_SETTINGS.bot_token()), new BasicNameValuePair("Content-Type", "application/json")).shards;
+        int total = Requests.GENERAL_REQUESTS.GET.makeRequest(DiscordEndpoints.GATEWAY + "/bot", GatewayBotResponse.class, new BasicNameValuePair("Authorization", "Bot " + ReadConfig.BOT_TOKEN), new BasicNameValuePair("Content-Type", "application/json")).shards;
         List<Integer> list = new ArrayList<>(total);
-        for (int i = 0; i < total; i++) if (i % ConfigProvider.BOT_SETTINGS.number_of_shards() == ConfigProvider.BOT_SETTINGS.evelyn_shard_number()) list.add(i);
+        for (int i = 0; i < total; i++) if (i % ReadConfig.TOTAL_EVELYNS == ReadConfig.EVELYN_NUMBER) list.add(i);
         DiscordClient.set(list.stream().map(integer -> builder.setShard(integer, total)).map(ClientBuilder::login).collect(Collectors.toList()));
         int i = 20 + 25 * DiscordClient.getShardCount();
         for (; i > -1; --i) {
@@ -104,12 +107,8 @@ public class DiscordAdapter {
             EventDistributor.register(ReactionBehavior.class);
             EventDistributor.register(MessageMonitor.class);
         });
-        if (!ConfigProvider.BOT_SETTINGS.ghost_mode_enabled()) ScheduleService.scheduleRepeat(PLAY_TEXT_SPEED + 10_000, PLAY_TEXT_SPEED, () -> {
+        if (!ReadConfig.GHOST_MODE) ScheduleService.scheduleRepeat(PLAY_TEXT_SPEED + 10_000, PLAY_TEXT_SPEED, () -> {
             Template template = TemplateHandler.getTemplate(KeyPhrase.PLAY_TEXT, null, PREVIOUS_TEXTS);
-            if (template == null){
-                TemplateHandler.addTemplate(KeyPhrase.PLAY_TEXT, null, "with nitroglycerine");
-                Log.log("Template KeyPhrase for " + KeyPhrase.PLAY_TEXT.name() + " has been added: \"with nitroglycerine\"");
-            }
             if (template != null) DiscordClient.getShards().forEach(shard -> shard.online(template.interpret((User) null, shard, null, null, null, null)));
         });
         AtomicInteger count = new AtomicInteger();
@@ -125,7 +124,7 @@ public class DiscordAdapter {
                 }
             }else count.set(0);
         });
-        Path path = Paths.get(ConfigProvider.RESOURCE_FILES.time_stats());
+        Path path = Paths.get(ReadConfig.STATS_OVER_TIME_NAME);
         File file = path.toFile();
         if (!file.exists()) {
             try{file.createNewFile();
@@ -147,7 +146,7 @@ public class DiscordAdapter {
      * Forces the initialization of this class.
      */
     public static void initialize(){
-        Log.log(LogColor.blue("Discord Adapter initialized.") + LogColor.yellow(" Converting Discord to 240v."));
+        Log.log("Discord adapter initialized");
     }
     @EventSubscriber
     public static void handle(ShardReadyEvent event){

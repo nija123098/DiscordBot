@@ -2,9 +2,10 @@ package com.github.nija123098.evelyn.fun.gamestructure;
 
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
-import com.github.nija123098.evelyn.exception.ContextException;
+import com.github.nija123098.evelyn.exeption.ContextException;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 

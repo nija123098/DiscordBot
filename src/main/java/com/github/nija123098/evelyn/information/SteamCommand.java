@@ -11,8 +11,8 @@ import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.configs.user.UserLanguageConfig;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
-import com.github.nija123098.evelyn.exception.ArgumentException;
-import com.github.nija123098.evelyn.exception.DevelopmentException;
+import com.github.nija123098.evelyn.exeption.ArgumentException;
+import com.github.nija123098.evelyn.exeption.DevelopmentException;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
 import com.github.nija123098.evelyn.util.FormatHelper;
 import com.github.nija123098.evelyn.util.LangString;
@@ -21,8 +21,7 @@ import com.github.nija123098.evelyn.util.StringHelper;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 6/6/2017.
  */
 public class SteamCommand extends AbstractCommand {
     private static final SteamApi STEAM_API = new SteamApi();

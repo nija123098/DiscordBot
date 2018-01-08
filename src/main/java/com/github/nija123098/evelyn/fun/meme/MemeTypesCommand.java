@@ -16,8 +16,7 @@ import java.util.ArrayList;
 import java.util.Set;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 6/4/2017.
  */
 public class MemeTypesCommand extends AbstractCommand {
     static final Set<String> MEME_TYPES = new ConcurrentHashSet<>();

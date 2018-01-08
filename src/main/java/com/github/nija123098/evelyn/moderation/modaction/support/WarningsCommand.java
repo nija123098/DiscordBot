@@ -11,10 +11,6 @@ import com.github.nija123098.evelyn.util.EmoticonHelper;
 
 import java.util.List;
 
-/**
- * @author nija123098
- * @since 1.0.0
- */
 public class WarningsCommand extends AbstractCommand {
     public WarningsCommand() {
         super("warnings", ModuleLevel.ADMINISTRATIVE, null, null, "Lists the warnings a user has");

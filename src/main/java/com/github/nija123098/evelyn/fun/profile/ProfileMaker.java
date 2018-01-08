@@ -16,10 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * @author nija123098
- * @since 1.0.0
- */
 public class ProfileMaker {
     private static final int SIDE_OFFSET = 30, WIDTH = 900, HEIGHT = 600, PROFILE_SIZE = 128, BADGE_SPACING = 6;
     private static final Color OPAQUE = new Color(0, 0, 0, 0);

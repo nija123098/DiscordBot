@@ -5,8 +5,8 @@ import com.github.nija123098.evelyn.command.ContextPack;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
-import com.github.nija123098.evelyn.exception.ArgumentException;
-import com.github.nija123098.evelyn.exception.DevelopmentException;
+import com.github.nija123098.evelyn.exeption.ArgumentException;
+import com.github.nija123098.evelyn.exeption.DevelopmentException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -15,8 +15,7 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 8/10/2017.
  */
 public class ContextCommand extends AbstractCommand {
     private static final Map<String, Function<ContextPack, Object>> SUPPLIER_MAP = new HashMap<>();

@@ -6,8 +6,8 @@ import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
-import com.github.nija123098.evelyn.exception.ArgumentException;
-import com.github.nija123098.evelyn.exception.DevelopmentException;
+import com.github.nija123098.evelyn.exeption.ArgumentException;
+import com.github.nija123098.evelyn.exeption.DevelopmentException;
 import com.github.nija123098.evelyn.util.NetworkHelper;
 import com.rometools.rome.io.FeedException;
 import com.rometools.rome.io.SyndFeedInput;
@@ -17,8 +17,7 @@ import java.io.IOException;
 import java.net.URL;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 6/19/2017.
  */
 public class RSSSubscribeCommand extends AbstractCommand {
     public RSSSubscribeCommand() {

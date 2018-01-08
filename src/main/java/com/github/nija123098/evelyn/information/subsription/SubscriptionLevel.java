@@ -6,8 +6,7 @@ import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.information.configs.SubscriptionsConfig;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 5/24/2017.
  */
 @LaymanName("Subscription")
 public enum SubscriptionLevel {

@@ -1,12 +1,16 @@
 package com.github.nija123098.evelyn.util;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 8/10/2017.
  */
 public class StringChecker {
     private static final Map<String, List<StringChecker>> CASHE = new HashMap<>();

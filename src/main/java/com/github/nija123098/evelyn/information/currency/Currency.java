@@ -1,20 +1,20 @@
 package com.github.nija123098.evelyn.information.currency;
 
-import com.github.nija123098.evelyn.exception.DevelopmentException;
+import com.github.nija123098.evelyn.exeption.DevelopmentException;
 import com.github.nija123098.evelyn.service.services.MemoryManagementService;
 import com.github.nija123098.evelyn.util.FormatHelper;
 import com.google.gson.JsonParser;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-/**
- * @author nija123098
- * @since 1.0.0
- */
 public enum Currency {
     ETH("Ethereum"),
     LTC("Litecoin"),

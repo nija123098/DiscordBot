@@ -5,13 +5,12 @@ import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
-import com.github.nija123098.evelyn.exception.ArgumentException;
+import com.github.nija123098.evelyn.exeption.ArgumentException;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
 import sx.blah.discord.handle.impl.obj.ReactionEmoji;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 7/9/2017.
  */
 public class ReactionCommand extends AbstractCommand {
     public ReactionCommand() {
@@ -26,11 +25,11 @@ public class ReactionCommand extends AbstractCommand {
             display = EmoticonHelper.getName(s);
             if (display == null) throw new ArgumentException("Please specify a reaction by name or symbol");
         }else display = emoji.toString().replace("<", "<:");// this is a patch for D4J
-        maker.mustEmbed().appendRaw("Result: " + display);
+        maker.appendRaw(display);
     }
 
     @Override
     protected String getLocalUsages() {
-        return "#  reaction <text> // converts the text to an emoji, or vice versa";
+        return "reaction <text> // converts the text to an emoji, or vice versa";
     }
 }

@@ -11,8 +11,7 @@ import com.github.nija123098.evelyn.template.KeyPhrase;
 import com.github.nija123098.evelyn.template.TemplateHandler;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 8/8/2017.
  */
 public class TemplateRemoveCommand extends AbstractCommand {
     public TemplateRemoveCommand() {

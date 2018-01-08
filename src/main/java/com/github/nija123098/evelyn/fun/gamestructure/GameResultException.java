@@ -2,10 +2,10 @@ package com.github.nija123098.evelyn.fun.gamestructure;
 
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
-import com.github.nija123098.evelyn.exception.BotException;
+import com.github.nija123098.evelyn.exeption.BotException;
 import com.github.nija123098.evelyn.fun.gamestructure.neuralnet.AbstractNeuralNetGame;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -14,9 +14,6 @@ import java.util.concurrent.atomic.AtomicReference;
  *
  * An exception is used to ensure no further processing
  * is done on the game since such might change the outcome.
- *
- * @author nija123098
- * @since 1.0.0
  */
 public class GameResultException extends BotException {
     private Team winner;

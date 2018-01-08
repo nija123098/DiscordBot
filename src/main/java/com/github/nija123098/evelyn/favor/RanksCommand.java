@@ -5,10 +5,6 @@ import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 
-/**
- * @author nija123098
- * @since 1.0.0
- */
 public class RanksCommand extends AbstractCommand {
     public RanksCommand() {
         super("ranks", ModuleLevel.ADMINISTRATIVE, null, null, "Stuff");

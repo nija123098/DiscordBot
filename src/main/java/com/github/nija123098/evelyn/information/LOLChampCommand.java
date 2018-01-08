@@ -1,15 +1,15 @@
 package com.github.nija123098.evelyn.information;
-import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
+
+import com.github.nija123098.evelyn.BotConfig.ReadConfig;
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
-import com.github.nija123098.evelyn.exception.DevelopmentException;
+import com.github.nija123098.evelyn.exeption.DevelopmentException;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
 import com.github.nija123098.evelyn.util.FormatHelper;
 import com.github.nija123098.evelyn.util.Log;
-import com.github.nija123098.evelyn.util.LogColor;
 import com.google.api.client.repackaged.com.google.common.base.Joiner;
 import net.rithms.riot.api.ApiConfig;
 import net.rithms.riot.api.RiotApi;
@@ -20,16 +20,10 @@ import net.rithms.riot.api.endpoints.static_data.dto.ChampionSpell;
 import net.rithms.riot.api.endpoints.static_data.dto.Image;
 import net.rithms.riot.constant.Platform;
 
-import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
-/**
- * @author nija123098
- * @since 1.0.0
- */
-public class LOLChampCommand extends AbstractCommand {
+public class LoLChampCommand extends AbstractCommand {
     private final RiotApi api;
     private final Map<String, Champion> dataChampionList = new HashMap<>();
     private String baseUrl = null;
@@ -38,17 +32,12 @@ public class LOLChampCommand extends AbstractCommand {
     static {
         for (int i = 0; i < skillIndex.length; i++) skillIndex[i] = EmoticonHelper.getChars("regional_indicator_" + skillIndex[i], true);
     }
-    public LOLChampCommand() {
+    public LoLChampCommand() {
         super("lolchamp", ModuleLevel.INFO, null, null, "check out a league of legends champion");
-        this.api = ConfigProvider.AUTH_KEYS.riot_games_token() != null ? new RiotApi(new ApiConfig().setKey(ConfigProvider.AUTH_KEYS.riot_games_token())) : null;
+        this.api = ReadConfig.RIOT_GAMES_TOKEN != null ? new RiotApi(new ApiConfig().setKey(ReadConfig.RIOT_GAMES_TOKEN)) : null;
         try{baseUrl = String.format("http://ddragon.leagueoflegends.com/cdn/%s/img/", api.getDataVersions(Platform.EUW).get(0));
         } catch (RiotApiException e) {
-            //don't print stack trace if token not found
-            if (Objects.equals(ConfigProvider.AUTH_KEYS.riot_games_token(),"na")){
-                Log.log(LogColor.red("Could not load LOLChamp command. Token not found."));
-            }else{
-                throw new DevelopmentException(e);
-            }
+            throw new DevelopmentException(e);
         }
     }
     private String getImage(Image img) {
@@ -107,8 +96,7 @@ public class LOLChampCommand extends AbstractCommand {
             }
             maker.append(description);
         } catch (RiotApiException e) {
-            maker.mustEmbed().withColor(new Color(255, 0, 0));
-            maker.getHeader().clear().append("Sorry, we are in the process of updating our API key!");
+            maker.getHeader().clear().append("Sorry, we are in the process of updating out API key!");
             if (!e.getMessage().contains("403")) Log.log("Exception loading Riot information", e);
         }
     }

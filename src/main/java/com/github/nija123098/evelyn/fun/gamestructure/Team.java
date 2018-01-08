@@ -3,10 +3,15 @@ package com.github.nija123098.evelyn.fun.gamestructure;
 import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Role;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
-import com.github.nija123098.evelyn.exception.ArgumentException;
-import com.github.nija123098.evelyn.exception.ContextException;
+import com.github.nija123098.evelyn.exeption.ArgumentException;
+import com.github.nija123098.evelyn.exeption.ContextException;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -14,9 +19,6 @@ import java.util.stream.Collectors;
 /**
  * A type for organizing a single user or members with a role's
  * actions in order to play a instance of {@link AbstractGame}.
- *
- * @author nija123098
- * @since 1.0.0
  */
 public class Team {
     private final Float voteRequirement;

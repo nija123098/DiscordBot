@@ -1,6 +1,8 @@
 package com.github.nija123098.evelyn.discordobjects.helpers;
 
-import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
+import com.github.nija123098.evelyn.BotConfig.ReadConfig;
+import com.github.nija123098.evelyn.launcher.Launcher;
+import com.github.nija123098.evelyn.moderation.logging.VoiceCommandPrintChannelConfig;
 import com.github.nija123098.evelyn.command.ProcessingHandler;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.configs.guild.GuildLanguageConfig;
@@ -8,9 +10,7 @@ import com.github.nija123098.evelyn.config.configs.user.UserLanguageConfig;
 import com.github.nija123098.evelyn.discordobjects.ErrorWrapper;
 import com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 import com.github.nija123098.evelyn.discordobjects.wrappers.*;
-import com.github.nija123098.evelyn.exception.DevelopmentException;
-import com.github.nija123098.evelyn.launcher.Launcher;
-import com.github.nija123098.evelyn.moderation.logging.VoiceCommandPrintChannelConfig;
+import com.github.nija123098.evelyn.exeption.DevelopmentException;
 import com.github.nija123098.evelyn.service.services.ScheduleService;
 import com.github.nija123098.evelyn.util.*;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
@@ -686,9 +686,9 @@ public class MessageMaker {
      * @param page the page to sent.
      */
     private void send(int page){
-        if (ConfigProvider.BOT_SETTINGS.ghost_mode_enabled()) return;
+        if (ReadConfig.GHOST_MODE) return;
         if (!this.maySend) {
-            if (this.origin != null) ErrorWrapper.wrap(() -> null);
+            if (this.origin != null) ErrorWrapper.wrap(() -> this.origin.addReaction(ReactionEmoji.of(EmoticonHelper.getChars("ok_hand", false))));
             return;
         }
         if (!this.channel.getModifiedPermissions(DiscordClient.getOurUser()).contains(DiscordPermission.SEND_MESSAGES)) return;// only will effect emoticon commands, normal commands are already checked
@@ -699,7 +699,7 @@ public class MessageMaker {
                 throw new DevelopmentException("File not made by time of sending", e);
             }
         }
-        if (this.origin != null && this.okHand) ErrorWrapper.wrap(() -> null);
+        if (this.origin != null && this.okHand) ErrorWrapper.wrap(() -> this.origin.addReaction(ReactionEmoji.of(EmoticonHelper.getChars("ok_hand", false))));
         this.compile();
         if (this.embed != null){
             if (page < 0 || page >= this.fieldIndices.length) throw new DevelopmentException("Attempted to get a page that doesn't exit");
@@ -724,11 +724,7 @@ public class MessageMaker {
             if (this.embed == null) ErrorWrapper.wrap(() -> this.message.edit(this.builder.getContent()));
             else ErrorWrapper.wrap(() -> this.message.edit(this.embed.build()));
         }
-
-        for (Map.Entry<String, ReactionBehavior> behavior : this.reactionBehaviors.entrySet()) {
-            ReactionBehavior.registerListener(this.ourMessage, behavior.getKey(), behavior.getValue());
-        }
-
+        this.reactionBehaviors.forEach((s, behavior) -> ReactionBehavior.registerListener(this.ourMessage, s, behavior));
         ProcessingHandler.endProcess(this.channel);
     }
 
@@ -751,7 +747,7 @@ public class MessageMaker {
      */
     private void compile(){
         if (this.lang != null && !this.forceCompile) return;
-        if (!this.colored) this.withColor(new Color(0, 206, 209));
+        if (!this.colored) this.withRandomColor();
         this.lang = getLang(this.user, this.channel);
         // message
         if (this.couldNormalize()) this.asNormalMessage();
@@ -832,12 +828,12 @@ public class MessageMaker {
             }
             if (this.embed != null){
                 if (this.fieldIndices.length > 1){
-                    this.withReactionBehavior("arrow_left", (add, reaction, user) -> {
+                    this.withReactionBehavior("point_left", (add, reaction, user) -> {
                         if (currentPage.get() == 0) return;
                         this.embed.withFooterText(generateNote(currentPage.decrementAndGet()));
                         this.send(currentPage.get());
                     });
-                    this.withReactionBehavior("arrow_right", (add, reaction, user) -> {
+                    this.withReactionBehavior("point_right", (add, reaction, user) -> {
                         if (currentPage.get() == fieldIndices.length - 1) return;
                         this.embed.withFooterText(generateNote(currentPage.incrementAndGet()));
                         this.send(currentPage.get());

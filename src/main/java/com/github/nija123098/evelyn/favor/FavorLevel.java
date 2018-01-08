@@ -7,7 +7,7 @@ import java.awt.*;
 /**
  * The enum to indicate the name
  * of the favor level that
- * the user has with Evelyn.
+ * the user has with Emily.
  *
  * The amount indicated is inclusive.
  *

@@ -4,7 +4,7 @@ import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
-import com.github.nija123098.evelyn.exception.ArgumentException;
+import com.github.nija123098.evelyn.exeption.ArgumentException;
 import com.github.nija123098.evelyn.util.Rand;
 import com.github.nija123098.evelyn.util.RedditLink;
 import ga.dryco.redditjerk.implementation.RedditApi;
@@ -15,8 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 6/2/2017.
  */
 public class RedditCommand extends AbstractCommand {
     static {
@@ -46,6 +45,6 @@ public class RedditCommand extends AbstractCommand {
 
     @Override
     protected String getLocalUsages() {
-        return "#  reddit <search> // Get a random post from reddit based on <search>";
+        return "reddit <search> // Get a random post from reddit based on <search>";
     }
 }

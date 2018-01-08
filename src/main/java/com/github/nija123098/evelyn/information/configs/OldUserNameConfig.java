@@ -10,12 +10,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 5/13/2017.
  */
 public class OldUserNameConfig extends AbstractConfig<Set<String>, User> {
     public OldUserNameConfig() {
-        super("old_name_config", "", ConfigCategory.STAT_TRACKING, new HashSet<>(0), "A list of old names used by a user");
+        super("old_name_config", ConfigCategory.STAT_TRACKING, new HashSet<>(0), "A list of old names used by a user");
     }
     @EventListener
     public void handle(DiscordUserNameChangeEvent event){

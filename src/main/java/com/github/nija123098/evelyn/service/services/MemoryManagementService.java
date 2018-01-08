@@ -13,8 +13,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 3/26/2017.
  */
 public class MemoryManagementService extends AbstractService {
     private static final long SERVICE_ITERATION_TIME = 1_000;

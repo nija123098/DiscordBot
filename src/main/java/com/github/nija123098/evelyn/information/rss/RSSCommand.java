@@ -11,8 +11,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 6/19/2017.
  */
 public class RSSCommand extends AbstractCommand {
     public RSSCommand() {

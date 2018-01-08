@@ -1,15 +1,13 @@
 package com.github.nija123098.evelyn.fun;
 
 import com.github.nija123098.evelyn.command.AbstractCommand;
+import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
-
-import static com.github.nija123098.evelyn.command.ModuleLevel.FUN;
-import static com.github.nija123098.evelyn.util.Rand.getRand;
+import com.github.nija123098.evelyn.util.Rand;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 5/22/2017.
  */
 public class EightBallCommand extends AbstractCommand {
     private final String[] OPTIONS = {
@@ -34,18 +32,16 @@ public class EightBallCommand extends AbstractCommand {
             "Yes, unless you run out of memes",
             "You are doomed",
             "You can't handle the truth"};
-
     public EightBallCommand() {
-        super("8ball", FUN, "eightball", "crystal_ball", "See what the mystical 8ball has to say");
+        super("8ball", ModuleLevel.FUN, "eightball", "crystal_ball", "See what the mystical 8ball has to say");
     }
-
     @Command
-    public void command(MessageMaker maker) {
-        maker.append(OPTIONS[getRand(OPTIONS.length)]);
+    public void command(MessageMaker maker){
+        maker.append(OPTIONS[Rand.getRand(OPTIONS.length)]);
     }
 
     @Override
     protected String getLocalUsages() {
-        return "#  8ball <question> // predict the outcome of your yes/no question with the mystical 8ball";
+        return "8ball <question> // predict the outcome of your yes/no question with the mystical 8ball";
     }
 }

@@ -12,8 +12,7 @@ import java.util.ArrayList;
 import java.util.Set;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 8/11/2017.
  */
 public class CustomCommandCommand extends AbstractCommand {
     public CustomCommandCommand() {

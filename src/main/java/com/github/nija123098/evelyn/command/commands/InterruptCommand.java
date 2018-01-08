@@ -7,8 +7,7 @@ import com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager.Gui
 import com.github.nija123098.evelyn.util.LangString;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 7/16/2017.
  */
 public class InterruptCommand extends AbstractCommand {
     public InterruptCommand() {

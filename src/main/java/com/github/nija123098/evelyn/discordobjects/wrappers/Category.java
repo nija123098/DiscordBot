@@ -13,10 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
-/**
- * @author nija123098
- * @since 1.0.0
- */
 public class Category implements Configurable {
     private static final Map<ICategory, Category> MAP = new MemoryManagementService.ManagedMap<>(150000);
     public static Category getCategory(String id){

@@ -17,10 +17,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * @author nija123098
- * @since 1.0.0
- */
 public class CryptocurrencyCommand extends AbstractCommand {
     private static final List<MutablePair<String, String>> ORDER = new ArrayList<>();
     private static final String STATEMENT = "Trading should not be done using Evelyn and no responsibility is taken by the bot's developers for accuracy of information nor for trades done.";

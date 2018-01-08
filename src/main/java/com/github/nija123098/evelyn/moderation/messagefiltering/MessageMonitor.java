@@ -1,14 +1,14 @@
 package com.github.nija123098.evelyn.moderation.messagefiltering;
 
-import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
+import com.github.nija123098.evelyn.BotConfig.ReadConfig;
+import com.github.nija123098.evelyn.moderation.messagefiltering.configs.MessageMonitoringAdditionsConfig;
+import com.github.nija123098.evelyn.moderation.messagefiltering.configs.MessageMonitoringConfig;
+import com.github.nija123098.evelyn.moderation.messagefiltering.configs.MessageMonitoringExceptionsConfig;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordMessageReceived;
 import com.github.nija123098.evelyn.launcher.Reference;
-import com.github.nija123098.evelyn.moderation.messagefiltering.configs.MessageMonitoringAdditionsConfig;
-import com.github.nija123098.evelyn.moderation.messagefiltering.configs.MessageMonitoringConfig;
-import com.github.nija123098.evelyn.moderation.messagefiltering.configs.MessageMonitoringExceptionsConfig;
 import com.github.nija123098.evelyn.util.FormatHelper;
 import com.github.nija123098.evelyn.util.Log;
 import com.github.nija123098.evelyn.util.StringChecker;
@@ -22,8 +22,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 7/19/2017.
  */
 public class MessageMonitor {
     private static final Map<MessageMonitoringLevel, MessageFilter> FILTER_MAP = new HashMap<>();
@@ -38,7 +37,7 @@ public class MessageMonitor {
             }
         });
         try {
-            Path path = Paths.get(ConfigProvider.RESOURCE_FILES.language_filtering());
+            Path path = Paths.get(ReadConfig.LANGUAGE_FILTERING_NAME);
             if (Files.exists(path)) {
                 Files.readAllLines(path).forEach(s -> {
                     MessageMonitoringLevel type = MessageMonitoringLevel.valueOf(s.split(" ")[0].toUpperCase());
@@ -58,7 +57,7 @@ public class MessageMonitor {
         }
     }
     public static boolean monitor(DiscordMessageReceived received){
-        if (received.getChannel().isPrivate() || received.getGuild().getUserSize() < ConfigProvider.BOT_SETTINGS.message_filtering_server_size() || received.getChannel().isNSFW() || received.getMessage().getContent() == null || received.getMessage().getContent().isEmpty()) return false;
+        if (received.getChannel().isPrivate() || received.getGuild().getUserSize() < ReadConfig.MESSAGE_FILTERING_SERVER_SIZE || received.getChannel().isNSFW() || received.getMessage().getContent() == null || received.getMessage().getContent().isEmpty()) return false;
         try{CHANNEL_MAP.computeIfAbsent(received.getChannel(), MessageMonitor::calculate).forEach(filter -> filter.checkFilter(received));
         } catch (MessageMonitoringException exception){
             new MessageMaker(received.getMessage()).withDM().append("Your message on ").appendRaw(received.getGuild().getName()).append(" in ").appendRaw(received.getChannel().mention()).append(" has been deleted.  Reason: " + exception.getMessage()).send();

@@ -14,8 +14,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * @author nija123098
- * @since 1.0.0
+ * Made by nija123098 on 5/17/2017.
  */
 public class TodoListCommand extends AbstractCommand {
     public TodoListCommand() {
@@ -41,6 +40,6 @@ public class TodoListCommand extends AbstractCommand {
 
     @Override
     protected String getLocalUsages() {
-        return "#  todo // get your todo list";
+        return "todo // get your todo list";
     }
 }

@@ -3,7 +3,7 @@ package com.github.nija123098.evelyn.config;
 import com.github.nija123098.evelyn.audio.Playlist;
 import com.github.nija123098.evelyn.audio.Track;
 import com.github.nija123098.evelyn.discordobjects.wrappers.*;
-import com.github.nija123098.evelyn.exception.DevelopmentException;
+import com.github.nija123098.evelyn.exeption.DevelopmentException;
 
 import java.util.HashSet;
 import java.util.List;

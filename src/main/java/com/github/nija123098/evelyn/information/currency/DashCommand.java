@@ -4,7 +4,7 @@ import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
-import com.github.nija123098.evelyn.exception.DevelopmentException;
+import com.github.nija123098.evelyn.exeption.DevelopmentException;
 import com.github.nija123098.evelyn.service.services.MemoryManagementService;
 import com.github.nija123098.evelyn.util.FormatHelper;
 import com.google.common.util.concurrent.AtomicDouble;
@@ -15,14 +15,10 @@ import com.google.gson.JsonParser;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-/**
- * @author nija123098
- * @since 1.0.0
- */
 public class DashCommand extends AbstractCommand {
     private static final Color COLOR = new Color(0x0074B6);
     private static final JsonParser JSON_PARSER = new JsonParser();

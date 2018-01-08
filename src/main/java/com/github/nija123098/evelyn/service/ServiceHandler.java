@@ -3,7 +3,6 @@ package com.github.nija123098.evelyn.service;
 import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.launcher.Reference;
 import com.github.nija123098.evelyn.util.Log;
-import com.github.nija123098.evelyn.util.LogColor;
 import org.reflections.Reflections;
 
 import java.util.HashMap;
@@ -95,6 +94,6 @@ public class ServiceHandler {
      * Forces the initialization of this class.
      */
     public static void initialize(){
-        Log.log(LogColor.blue("Service Handler initialized.") + LogColor.yellow(" The tertiary sector or service sector is the third of the four economic sectors of the four-sector theory."));
+        Log.log("Service Handler initialized");
     }
 }

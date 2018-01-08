@@ -3,7 +3,7 @@ package com.github.nija123098.evelyn.config;
 import com.github.nija123098.evelyn.config.configs.ConfigurableExistsConfig;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
-import com.github.nija123098.evelyn.exception.ArgumentException;
+import com.github.nija123098.evelyn.exeption.ArgumentException;
 
 /**
  * A helper class that all objects that can

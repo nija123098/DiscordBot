@@ -8,8 +8,8 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordGuildJoin;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordUserJoin;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordUserLeave;
-import com.github.nija123098.evelyn.exception.ConfigurableConvertException;
-import com.github.nija123098.evelyn.exception.DevelopmentException;
+import com.github.nija123098.evelyn.exeption.ConfigurableConvertException;
+import com.github.nija123098.evelyn.exeption.DevelopmentException;
 import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.perms.BotRole;
 

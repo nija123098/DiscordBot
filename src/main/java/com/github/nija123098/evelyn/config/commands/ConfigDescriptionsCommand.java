@@ -12,10 +12,6 @@ import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 
-/**
- * @author nija123098
- * @since 1.0.0
- */
 public class ConfigDescriptionsCommand extends AbstractCommand {
     public ConfigDescriptionsCommand() {
         super(ConfigCommand.class, "descriptions", "cfginfo, cfgdesc", null, null, "Displays what a config does");

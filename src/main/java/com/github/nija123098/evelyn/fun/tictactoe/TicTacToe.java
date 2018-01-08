@@ -5,19 +5,15 @@ import com.github.nija123098.evelyn.fun.gamestructure.GameChoice;
 import com.github.nija123098.evelyn.fun.gamestructure.GameResultException;
 import com.github.nija123098.evelyn.fun.gamestructure.Team;
 import com.github.nija123098.evelyn.fun.gamestructure.neuralnet.AbstractNeuralNetGame;
-import com.github.nija123098.evelyn.util.ArrayUtils;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
 import com.github.nija123098.evelyn.util.LanguageHelper;
+import com.github.nija123098.evelyn.util.ArrayUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * @author nija123098
- * @since 1.0.0
- */
 public class TicTacToe extends AbstractNeuralNetGame {
     private final int size;
     private Boolean[][] grid;

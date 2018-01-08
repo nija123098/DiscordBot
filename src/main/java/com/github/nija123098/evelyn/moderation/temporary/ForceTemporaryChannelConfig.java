@@ -8,13 +8,9 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.VoiceChannel;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordVoiceJoin;
 
-/**
- * @author nija123098
- * @since 1.0.0
- */
 public class ForceTemporaryChannelConfig extends AbstractConfig<Boolean, Guild> {
     public ForceTemporaryChannelConfig() {
-        super("redirect_to_temporary", "Force Move to Co-op", ConfigCategory.GAME_TEMPORARY_CHANNELS, false, "Redirects the user to the correct temporary channel");
+        super("redirect_to_temporary", ConfigCategory.GAME_TEMPORARY_CHANNELS, false, "Redirects the user to the correct temporary channel");
     }
     @EventListener
     public void handle(DiscordVoiceJoin join){

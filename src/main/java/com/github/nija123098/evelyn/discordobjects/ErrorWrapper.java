@@ -1,7 +1,7 @@
 package com.github.nija123098.evelyn.discordobjects;
 
-import com.github.nija123098.evelyn.exception.DException;
-import com.github.nija123098.evelyn.exception.PermissionsException;
+import com.github.nija123098.evelyn.exeption.DException;
+import com.github.nija123098.evelyn.exeption.PermissionsException;
 import com.github.nija123098.evelyn.util.Care;
 import sx.blah.discord.util.DiscordException;
 import sx.blah.discord.util.MissingPermissionsException;
