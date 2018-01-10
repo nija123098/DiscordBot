@@ -10,13 +10,13 @@ public class GeneralEmotes {
     public final static String EMPTY = EmoticonHelper.getEmoji("empty").toString();
 
     // green tick emote
-    public final static String GREEN_TICK = EmoticonHelper.getEmoji("green_tick").toString();
+    public final static String GREEN_TICK = EmoticonHelper.getEmoji("GreenTick").toString();
 
     // red tick emote
-    public final static String RED_TICK = EmoticonHelper.getEmoji("red_tick").toString();
+    public final static String RED_TICK = EmoticonHelper.getEmoji("RedTick").toString();
 
     // blob aww emote
-    public final static String BLOB_AWW = EmoticonHelper.getEmoji("blob_aww").toString();
+    public final static String BLOB_AWW = EmoticonHelper.getEmoji("blobaww").toString();
 
     //nuke gif emote
     public final static String NUKEGIF = "<a:nuke:393725962203693064>";

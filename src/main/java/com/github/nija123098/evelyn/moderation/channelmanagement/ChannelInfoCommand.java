@@ -19,14 +19,14 @@ public class ChannelInfoCommand extends AbstractCommand {
 	}
 
 	@Command
-	public void command(@Argument(optional = true) Channel channel, Channel invokeChannel, MessageMaker maker) {
+	public void command(@Argument Channel channel, MessageMaker maker) {
 		maker.mustEmbed();
-		maker.getTitle().appendRaw(channel.getName());
-		maker.getNewListPart().appendRaw("\u200b");
-		maker.getNewFieldPart().withInline(true).withBoth("Topic", channel.getTopic() != "" ? channel.getTopic() : "none");
-		if (channel.getCategory() != null)maker.getNewFieldPart().withInline(true).withBoth("Category", channel.getCategory().getName());
-		maker.getNewFieldPart().withInline(false).withBoth("ID", channel.getID());
-		maker.getNewFieldPart().withInline(true).withBoth("NSFW", "" + channel.isNSFW());
-		maker.getNewFieldPart().withInline(true).withBoth("Users with access", (channel.getUsersHere().size() <= 12 ? FormatHelper.makeUserTable(channel.getUsersHere(), 23, 2) : "" + channel.getUsersHere().size()));
+        maker.getTitle().appendRaw(channel.getName());
+        maker.getNewListPart().appendRaw("\u200b");
+        maker.getNewFieldPart().withInline(true).withBoth("Topic", (String.valueOf(channel.getTopic()) != "null" ? channel.getTopic() : "none"));
+        if (channel.getCategory() != null)maker.getNewFieldPart().withInline(true).withBoth("Category", channel.getCategory().getName());
+        maker.getNewFieldPart().withInline(true).withBoth("ID", channel.getID());
+        maker.getNewFieldPart().withInline(true).withBoth("NSFW", "" + channel.isNSFW());
+        maker.getNewFieldPart().withInline(true).withBoth("Users with access", (channel.getUsersHere().size() <= 12 ? FormatHelper.makeUserTable(channel.getUsersHere(), 23, 2) : "" + channel.getUsersHere().size()));
 	}
 }

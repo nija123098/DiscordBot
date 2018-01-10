@@ -40,6 +40,7 @@ public class Database {
             dataSource.setDatabaseName(dbName);
             dataSource.setZeroDateTimeBehavior("convertToNull");
             dataSource.setUseUnicode(true);
+            dataSource.setGenerateSimpleParameterMetadata(true);
             c = dataSource.getConnection();
         } catch (SQLException e) {
             Log.log("Could not init database connection", e);

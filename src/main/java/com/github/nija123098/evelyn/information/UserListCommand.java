@@ -14,7 +14,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.User;
  */
 public class UserListCommand extends AbstractCommand {
     public UserListCommand() {
-        super(UserCommand.class, "list", "rlist", null, null, "Shows the user list for the guild, sorted by join count");
+        super(UserCommand.class, "list", "ulist", null, null, "Shows the user list for the guild, sorted by join count");
     }
 
     @Command
@@ -29,6 +29,7 @@ public class UserListCommand extends AbstractCommand {
             zero = zero + "0";
         }
         maker.getTitle().appendRaw(guild.getName() + " | " + guild.getUserSize() + " users");
+        maker.getNewListPart().appendRaw("\u200b");
         for (User user : guild.getUsers()) {
             GuildUser guildUser = GuildUser.getGuildUser(guild, user);
             users[guildUser.getJoinPosition()] = "`" + zeroes[String.valueOf(guildUser.getJoinPosition() + 1).length() - 1] + (guildUser.getJoinPosition() + 1) + " |` " + guildUser.getName();

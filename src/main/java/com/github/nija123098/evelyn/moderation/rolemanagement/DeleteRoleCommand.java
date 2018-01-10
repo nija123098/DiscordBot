@@ -25,7 +25,7 @@ public class DeleteRoleCommand extends AbstractCommand {
 			role.delete();
 			maker.mustEmbed().appendRaw(roleName + " deleted successfully");
 		} catch (PermissionsException e) {
-			throw new PermissionsException("I do not have permission to edit that role, check your discord permissions");
+			throw new PermissionsException("I could not delete the `" + role.getName() + "` role, check your discord permissions to ensure my role is higher than the role I'm trying to delete");
 		}
 	}
 }

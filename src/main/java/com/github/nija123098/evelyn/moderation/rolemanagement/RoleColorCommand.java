@@ -38,7 +38,7 @@ public class RoleColorCommand extends AbstractCommand {
 				maker.appendRaw("Please format your message using RGB e.g `role color roleName 255 0 0` or Hexadecimal e.g `role color roleName #FF000`");
 			}
 		} catch (PermissionsException e) {
-			throw new PermissionsException("I do not have permission to edit that role, check your discord permissions");
+			throw new PermissionsException("I could not change the colour of the `" + role.getName() + "` role, check your discord permissions to ensure my role is higher than the role I'm trying to change the colour of");
 		} catch (NumberFormatException e) {
 			throw new ArgumentException("Please enter your RGB colors as valid integers");
 		}

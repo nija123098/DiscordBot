@@ -33,8 +33,8 @@ public class RoleInfoCommand extends AbstractCommand {
 		maker.getNewFieldPart().withInline(true).withBoth("ID", role.getID());
 		maker.getNewFieldPart().withInline(true).withBoth("Mentionable", "" + role.isMentionable());
 		maker.getNewFieldPart().withInline(true).withBoth("Hoisted", "" + role.isHoisted());
-		maker.getNewFieldPart().withInline(true).withBoth("Color", "R: " + role.getColor().getRed() + " G: " + role.getColor().getGreen() + " B: " + role.getColor().getBlue() +
-																			   "\nHex: #" + Integer.toHexString(role.getColor().getRed()) + Integer.toHexString(role.getColor().getGreen()) + Integer.toHexString(role.getColor().getBlue()));
+		maker.getNewFieldPart().withInline(true).withBoth("Color", "RGB: " + role.getColor().getRed() + ", " + role.getColor().getGreen() + ", " + role.getColor().getBlue() +
+                "\nHex: #" + (Integer.toHexString(role.getColor().getRed()).length() == 1 ? "0" + Integer.toHexString(role.getColor().getRed()) : Integer.toHexString(role.getColor().getRed())) + (Integer.toHexString(role.getColor().getGreen()).length() == 1 ? "0" + Integer.toHexString(role.getColor().getGreen()) : Integer.toHexString(role.getColor().getGreen())) + (Integer.toHexString(role.getColor().getBlue()).length() == 1 ? "0" + Integer.toHexString(role.getColor().getBlue()) : Integer.toHexString(role.getColor().getBlue())));
 		maker.getNewFieldPart().withInline(true).withBoth("Permissions", FormatHelper.makeRolePermissionsTable(role));
 	}
 }

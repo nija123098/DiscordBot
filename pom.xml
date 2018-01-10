@@ -141,7 +141,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.40</version>
+            <version>5.1.45</version>
         </dependency>
         <dependency>
             <groupId>com.github.cmusphinx</groupId>
@@ -171,7 +171,7 @@
         <dependency><!-- https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client -->
             <groupId>org.mariadb.jdbc</groupId>
             <artifactId>mariadb-java-client</artifactId>
-            <version>2.1.0</version>
+            <version>2.2.0</version>
         </dependency>
         <dependency>
             <groupId>net.swisstech</groupId>

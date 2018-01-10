@@ -3,22 +3,10 @@ package com.github.nija123098.evelyn.economy.plantation;
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Command;
-import com.github.nija123098.evelyn.config.ConfigHandler;
-import com.github.nija123098.evelyn.config.configs.guild.GuildPrefixConfig;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
-import com.github.nija123098.evelyn.economy.configs.CurrencySymbolConfig;
-import com.github.nija123098.evelyn.economy.plantation.configs.*;
-import com.github.nija123098.evelyn.util.*;
-
-import java.awt.*;
-import java.time.Clock;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeParseException;
-import java.time.temporal.ChronoUnit;
+import com.github.nija123098.evelyn.util.EmoticonHelper;
 
 /**
  * "The big one"
@@ -33,8 +21,9 @@ public class PlantationCommand extends AbstractCommand {
 
     @Command
     public void command(Guild guild, User user, MessageMaker maker) {
-
+        maker.appendRaw(EmoticonHelper.getChars("eyes", false));
         /*
+        *//*
          * IMPORTANT NOTES:
          * USER LEVEL
          * CAP LEVEL 20
@@ -42,26 +31,26 @@ public class PlantationCommand extends AbstractCommand {
          *
          * BEAN COLLECTION FAIL
          * EVERY 10 BEANS HAVE A CHANCE OF NOT BEING COLLECTED/ROASTED
-         */
+         *//*
 
-        /*
+        *//*
          * Emoticons
-         */
+         *//*
         final String seedling = EmoticonHelper.getChars("seedling", false);
         final String upgrades = EmoticonHelper.getChars("arrow_up", false);
         final String symbol = ConfigHandler.getSetting(CurrencySymbolConfig.class, guild);
         String home = "", homeString = GeneralEmotes.EMPTY;
         String guildPrefix = ConfigHandler.getSetting(GuildPrefixConfig.class, guild);
 
-        /*
+        *//*
          * User XP and things
-         */
+         *//*
         int userLevel = ConfigHandler.getSetting(PlantationUserLevelConfig.class, user);
         int userXP = ConfigHandler.getSetting(PlantationUserXPConfig.class, user);
 
-        /*
+        *//*
          * upgrade costs and things
-         */
+         *//*
         int maxLevel = ConfigHandler.getSetting(CurrentHouseUpgradesConfig.class, user);
         int houseUpgradeCost = Integer.valueOf(Long.toString(Math.round(Math.pow(Double.parseDouble(String.valueOf(10 + ConfigHandler.getSetting(CurrentHouseUpgradesConfig.class, user))), 3))));
         int harvestUpgradeCost = Integer.valueOf(Long.toString(Math.round(Math.pow(Double.parseDouble(String.valueOf(10 + ConfigHandler.getSetting(CurrentHarvestUpgradesConfig.class, user))), 3))));
@@ -70,9 +59,9 @@ public class PlantationCommand extends AbstractCommand {
         int brewUpgradeCost = Integer.valueOf(Long.toString(Math.round(Math.pow(Double.parseDouble(String.valueOf(10 + ConfigHandler.getSetting(CurrentGrinderUpgradesConfig.class, user))), 3))));
         int steeperUpgradeCost = Integer.valueOf(Long.toString(Math.round(Math.pow(Double.parseDouble(String.valueOf(10 + ConfigHandler.getSetting(CurrentSteeperUpgradesConfig.class, user))), 3))));
 
-        /*
+        *//*
          * Do ye have the base upgrade?
-         */
+         *//*
         Boolean hasHouseUpgrade = ConfigHandler.getSetting(CurrentHouseUpgradesConfig.class, user) >= 1;
         Boolean hasHarvestUpgrade = ConfigHandler.getSetting(CurrentHarvestUpgradesConfig.class, user) >= 1;
         Boolean hasRoastUpgrade = ConfigHandler.getSetting(CurrentRoasterUpgradesConfig.class, user) >= 1;
@@ -80,9 +69,9 @@ public class PlantationCommand extends AbstractCommand {
         Boolean hasBrewUpgrade = ConfigHandler.getSetting(CurrentBrewerUpgradesConfig.class, user) >= 1;
         Boolean hasSteeperUpgrade = ConfigHandler.getSetting(CurrentSteeperUpgradesConfig.class, user) >= 1;
 
-        /*
+        *//*
          * Seedling rows + house
-         */
+         *//*
         StringBuilder seedlingBuilder = new StringBuilder();
         int counter = 0;
         switch (ConfigHandler.getSetting(CurrentHouseUpgradesConfig.class, user)) {
@@ -113,9 +102,9 @@ public class PlantationCommand extends AbstractCommand {
         }
         String plantation = seedlingBuilder.toString();
 
-        /*
+        *//*
          * Plantation
-         */
+         *//*
         maker.withColor(new Color(54,57,62)).getTitle().appendRaw(user.getDisplayName(guild) + "'s " + CoffeeEmotes.COFFEE + " Plantation");
         if (hasHarvestUpgrade || hasRoastUpgrade || hasGrindUpgrade || hasBrewUpgrade) {
             maker.getNewFieldPart().withInline(true).withBoth("Current Inventory:",
@@ -131,9 +120,9 @@ public class PlantationCommand extends AbstractCommand {
             maker.getNewFieldPart().withInline(false).withBoth("\u200b", (hasHarvestUpgrade ? (seedling + " `Harvest` | ") : "") + (hasRoastUpgrade ? (CoffeeEmotes.ROASTER + " `Roast` | ") : "") + (hasGrindUpgrade ? (CoffeeEmotes.GRINDER + " `Grind` | ") : "") + (hasBrewUpgrade ? (CoffeeEmotes.BREWER + " `Brew` | ") : "") + (hasSteeperUpgrade ? CoffeeEmotes.STEEPER + " `Steep` | " : "") + (upgrades + " `Upgrade`"));
         }
 
-        /*
+        *//*
          * Return to yer plantation
-         */
+         *//*
 
         if (hasHouseUpgrade) {
             maker.withReactionBehavior(homeString, ((add, reaction, u) -> {
@@ -153,9 +142,9 @@ public class PlantationCommand extends AbstractCommand {
             }));
         }
 
-        /*
+        *//*
          * Collect yer beans
-         */
+         *//*
         if (hasHarvestUpgrade) {
             maker.withReactionBehavior("seedling", ((add, reaction, u) -> {
                 maker.forceCompile().getHeader().clear();
@@ -163,9 +152,9 @@ public class PlantationCommand extends AbstractCommand {
                 maker.forceCompile().getFooter().clear();
 
 
-                /*
+                *//*
                  * Time be a fickle thing
-                 */
+                 *//*
                 Instant then = Instant.parse(ConfigHandler.getSetting(LastCoffeeHarvestConfig.class, user));
                 Instant thenDays = then.truncatedTo(ChronoUnit.DAYS);
                 Instant now = BotClock.getClock().instant();
@@ -211,9 +200,9 @@ public class PlantationCommand extends AbstractCommand {
             }));
         }
 
-        /*
+        *//*
          * Roast yer beans
-         */
+         *//*
         if (hasRoastUpgrade) {
             maker.withReactionBehavior("roaster", ((add, reaction, u) -> {
                 maker.forceCompile().getHeader().clear();
@@ -241,9 +230,9 @@ public class PlantationCommand extends AbstractCommand {
             }));
         }
 
-        /*
+        *//*
          * Grind yer roasted beans
-         */
+         *//*
         if (hasGrindUpgrade) {
             maker.withReactionBehavior("grinder", ((add, reaction, u) -> {
                 maker.forceCompile().getHeader().clear();
@@ -276,9 +265,9 @@ public class PlantationCommand extends AbstractCommand {
             }));
         }
 
-        /*
+        *//*
          * Brew some coffee out of the roasted beans you ground earlier
-         */
+         *//*
         if (hasBrewUpgrade) {
             maker.withReactionBehavior("brewer", ((add, reaction, u) -> {
                 maker.forceCompile().getHeader().clear();
@@ -323,18 +312,18 @@ public class PlantationCommand extends AbstractCommand {
             }));
         }
 
-        /*
+        *//*
          * Can't have more than one coffee? Bullshit, make some cold brew
-         */
+         *//*
         if (hasSteeperUpgrade) {
             maker.withReactionBehavior("steeper", (add, reaction, u) -> {
                 maker.forceCompile().getHeader().clear();
                 maker.forceCompile().clearFieldParts();
                 maker.forceCompile().getFooter().clear();
                 //add code here
-                /*
+                *//*
                  * Time be a fickle thing
-                 */
+                 *//*
                 Instant then;
                 try {
                     then = Instant.parse(ConfigHandler.getSetting(SteepedCoffeeBrewedConfig.class, user)).truncatedTo(ChronoUnit.SECONDS).plus(1, ChronoUnit.DAYS);
@@ -393,9 +382,9 @@ public class PlantationCommand extends AbstractCommand {
             });
         }
 
-        /*
+        *//*
          * You want to do anything with yer plantation do ye? start here, pleb.
-         */
+         *//*
         maker.withReactionBehavior("arrow_up", (add, reaction, u) -> {
             maker.forceCompile().getHeader().clear();
             maker.forceCompile().clearFieldParts();
@@ -423,6 +412,6 @@ public class PlantationCommand extends AbstractCommand {
             maker.getNewFieldPart().withBoth("\u200b", "use `" + guildPrefix + "upgrade <facility name>` to upgrade your plantation");
             maker.getNewFieldPart().withInline(false).withBoth("\u200b", (hasHarvestUpgrade ? (seedling + " `Harvest` | ") : "") + (hasRoastUpgrade ? (CoffeeEmotes.ROASTER + " `Roast` | ") : "") + (hasGrindUpgrade ? (CoffeeEmotes.GRINDER + " `Grind` | ") : "") + (hasBrewUpgrade ? (CoffeeEmotes.BREWER + " `Brew` | ") : "") + (hasSteeperUpgrade ? CoffeeEmotes.STEEPER + " `Steep` | " : "") + (upgrades + FormatHelper.embedLink(" `Upgrade`", "")));
             maker.forceCompile().send();
-        });
+        });*/
     }
 }

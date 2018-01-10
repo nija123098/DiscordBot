@@ -21,13 +21,13 @@ public class RoleAddCommand extends AbstractCommand {
 	}
 
 	@Command
-	public void command(@Argument User user, @Argument Role role, Guild guild, MessageMaker maker) {
+	public void command(@Argument Role role, @Argument User user, Guild guild, MessageMaker maker) {
 		maker.mustEmbed();
 		try {
 			user.addRole(role);
 			maker.appendRaw("Successfully added the `" + role.getName() + "` role to " + user.getDisplayName(guild));
 		} catch (PermissionsException e) {
-			throw new PermissionsException("Could not add the " + role.getName() + " role to " + user.getDisplayName(guild) + ", check your discord permissions to ensure my role is higher than the role I'm trying to add.");
+			throw new PermissionsException("I could not add the `" + role.getName() + "` role to " + user.getDisplayName(guild) + ", check your discord permissions to ensure my role is higher than the role I'm trying to add.");
 		}
 	}
 }

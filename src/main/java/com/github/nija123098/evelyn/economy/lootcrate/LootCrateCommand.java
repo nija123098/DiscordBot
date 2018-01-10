@@ -3,15 +3,10 @@ package com.github.nija123098.evelyn.economy.lootcrate;
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Command;
-import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
-import com.github.nija123098.evelyn.exception.InsufficientException;
-
-import java.awt.*;
-import java.util.ConcurrentModificationException;
-import java.util.concurrent.TimeUnit;
+import com.github.nija123098.evelyn.util.EmoticonHelper;
 
 /**
  * @author Dxeo
@@ -27,7 +22,8 @@ public class LootCrateCommand extends AbstractCommand {
 
     @Command
     public void command(Guild guild, User user, MessageMaker maker) throws InterruptedException {
-
+        maker.appendRaw(EmoticonHelper.getChars("eyes", false));
+        /*
         //save user loot crate amount
         int userCrates = ConfigHandler.getSetting(LootCrateConfig.class, user);
 
@@ -132,6 +128,6 @@ public class LootCrateCommand extends AbstractCommand {
             maker.send();
 
         }));
-        maker.send();
+        maker.send();*/
     }
 }

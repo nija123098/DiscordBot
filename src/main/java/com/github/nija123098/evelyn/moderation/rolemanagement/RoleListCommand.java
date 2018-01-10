@@ -35,7 +35,7 @@ public class RoleListCommand extends AbstractCommand {
 			zero = zero + "0";
 		}
 		final int[] counter = {0};
-		maker.getTitle().appendRaw("Role list for " + guild.getName());
+		maker.getTitle().appendRaw(guild.getName() + " | " + roles.size() + " roles");
 		maker.getNewListPart().appendRaw("\u200b");
 		maker.getNewListPart().appendRaw("`# " + zeroes[0].replace('0', ' ') + "|role name`");
 		Collections.reverse(roles);

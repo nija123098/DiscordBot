@@ -25,7 +25,7 @@ public class RenameRoleCommand extends AbstractCommand {
 			role.changeName(newName);
 			maker.mustEmbed().appendRaw("Successfully renamed the role `" + previous + "` to `" + role.getName() + "`");
 		} catch (PermissionsException e) {
-			throw new PermissionsException("I do not have permission to edit that role, check your discord permissions");
+			throw new PermissionsException("I could not rename the `" + role.getName() + "` role, check your discord permissions to ensure my role is higher than the role I'm trying to rename");
 		}
 	}
 }

@@ -29,7 +29,7 @@ public class RoleHoistCommand extends AbstractCommand {
 				maker.appendRaw("Successfully dehoisted role " + role.getName());
 			}
 		} catch (PermissionsException e) {
-			throw new PermissionsException("I do not have permission to edit that role, check your discord permissions");
+			throw new PermissionsException("I could not hoist the `" + role.getName() + "` role, check your discord permissions to ensure my role is higher than the role I'm trying to hoist");
 		}
 
 	}

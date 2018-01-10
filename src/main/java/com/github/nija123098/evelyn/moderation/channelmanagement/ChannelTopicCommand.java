@@ -46,7 +46,8 @@ public class ChannelTopicCommand extends AbstractCommand {
 				}
 			}
 		} catch (PermissionsException e) {
-			throw new PermissionsException("I can't edit that channel, check your discord permissions");
+            assert channel != null;
+            throw new PermissionsException("I could not change the topic for the `" + channel.getName() + "` channel, check your discord permissions to ensure I have permission to edit that channel.");
 		}
 
 	}

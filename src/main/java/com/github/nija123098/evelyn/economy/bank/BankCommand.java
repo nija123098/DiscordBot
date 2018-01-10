@@ -40,7 +40,7 @@ public class BankCommand extends AbstractCommand {
         int totalClaim = 256, bonus = 0;
         int streak = ConfigHandler.getSetting(CurrentCurrencyStreakConfig.class, user);
         maker.withColor(new Color(54,57,62));
-        /**
+        /*
          * Check for old money timer in database or if empty
          */
         try {
@@ -53,7 +53,7 @@ public class BankCommand extends AbstractCommand {
             totalClaim += 1000;
         }
 
-        /**
+        /*
          * Get most variables and check how many days it's been since last claim
          */
         int currentMoney = ConfigHandler.getSetting(CurrentCurrencyConfig.class, user);
@@ -78,7 +78,7 @@ public class BankCommand extends AbstractCommand {
 
         }
 
-        /**
+        /*
          * Calculate if the streak is valid, else remove X days from streak
          */
         if (counter < 0) counter = 0;
@@ -93,7 +93,7 @@ public class BankCommand extends AbstractCommand {
         totalClaim = totalClaim + (streak * 8) + (ConfigHandler.getSetting(EventActiveConfig.class, GlobalConfigurable.GLOBAL) ? ConfigHandler.getSetting(EventBonusConfig.class, GlobalConfigurable.GLOBAL) : 0);
         minutes = timeUntil;
 
-        /**
+        /*
          * Checks if it's been a day since the last time the user claimed, this is checked against 00:00 UTC, if it was more recent, display the time until 00:00 UTC
          */
         if (nowDays.compareTo(thenDays) == 1) {
@@ -120,7 +120,7 @@ public class BankCommand extends AbstractCommand {
         }
     }
 
-    public String ClaimBuilder(String time, String moneySymbol, int bonus, int streak, User user, Guild guild, boolean claim) {
+    private String ClaimBuilder(String time, String moneySymbol, int bonus, int streak, User user, Guild guild, boolean claim) {
         StringBuilder ret = new StringBuilder("```\n");
         String eventStart = "", eventEnd = "";
         if (ConfigHandler.getSetting(EventActiveConfig.class, GlobalConfigurable.GLOBAL)){
