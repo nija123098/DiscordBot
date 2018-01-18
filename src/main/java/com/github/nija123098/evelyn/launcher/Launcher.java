@@ -124,7 +124,6 @@ public class Launcher {
                 Log.log("Shutting down with code: " + code);
                 IS_READY.set(false);
                 SHUTDOWNS.forEach(Runnable::run);
-                ConfigHandler.saveAndDumpCaches();
                 DiscordClient.logout();
                 Care.lessSleep(2_000);
                 System.exit(code);
