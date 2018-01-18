@@ -4,15 +4,19 @@ import com.github.nija123098.evelyn.audio.Playlist;
 import com.github.nija123098.evelyn.audio.Track;
 import com.github.nija123098.evelyn.config.configs.ConfigurableExistsConfig;
 import com.github.nija123098.evelyn.discordobjects.wrappers.*;
+import com.github.nija123098.evelyn.exception.ArgumentException;
 import com.github.nija123098.evelyn.exception.DevelopmentException;
 import com.github.nija123098.evelyn.launcher.Reference;
 import com.github.nija123098.evelyn.util.Log;
 import com.github.nija123098.evelyn.util.LogColor;
+import com.github.nija123098.evelyn.util.StringHelper;
+import javafx.util.Pair;
 import org.reflections.Reflections;
 
 import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -32,6 +36,8 @@ import java.util.stream.Collectors;
 public class ConfigHandler {
     private static final Map<Class<? extends AbstractConfig<?, ? extends Configurable>>, AbstractConfig<?, ? extends Configurable>> CLASS_MAP;
     private static final Map<String, AbstractConfig<?, ? extends Configurable>> STRING_MAP;
+    private static final Map<Integer, Map<String, AbstractConfig<?, ? extends Configurable>>> DISPLAY_NAME_MAP = new HashMap<>();
+    private static final AtomicInteger MAX_DISPLAY_WORDS = new AtomicInteger();
     private static final Map<Class<? extends Configurable>, Function<String, ? extends Configurable>> FUNCTION_MAP = new ConcurrentHashMap<>(10);
     static {
         ConfigLevel.load();
@@ -45,6 +51,11 @@ public class ConfigHandler {
                 AbstractConfig config = clazz.newInstance();
                 CLASS_MAP.put((Class<? extends AbstractConfig<?, ? extends Configurable>>) clazz, config);
                 STRING_MAP.put(config.getName(), config);
+                STRING_MAP.put(config.getShortId(), config);
+                STRING_MAP.put("[" + config.getShortId() + "]", config);
+                int displayNameLength = StringHelper.instances(config.getDisplayName(), ' ');
+                DISPLAY_NAME_MAP.computeIfAbsent(displayNameLength, HashMap::new).put(config.getDisplayName(), config);
+                if (MAX_DISPLAY_WORDS.get() < displayNameLength) MAX_DISPLAY_WORDS.set(displayNameLength);
             } catch (InstantiationException | IllegalAccessException e) {
                 Log.log("Exception during init of a config: " + clazz.getSimpleName(), e);
             }
@@ -113,6 +124,21 @@ public class ConfigHandler {
         return STRING_MAP.get(configName);
     }
 
+    public static Pair<AbstractConfig, Integer> getConfigVarious(String args){
+        String first = args.split(" ")[0];
+        AbstractConfig<?, ? extends Configurable> config = STRING_MAP.get(first);
+        if (config != null) return new Pair<>(config, first.length());
+        String[] splitArgs = args.split(" ");
+        int wordLength = Math.min(splitArgs.length, MAX_DISPLAY_WORDS.get());
+        String joined;
+        for (int i = wordLength - 1; i > -1; --i) {
+            joined = StringHelper.join(splitArgs, " ", 0, wordLength);
+            config = DISPLAY_NAME_MAP.get(i).get(joined);
+            if (config != null) return new Pair<>(config, joined.length());
+        }
+        throw new ArgumentException("No recognized config: " + args);
+    }
+
     /**
      * Gets the config object representing a certain config.
      *
@@ -158,7 +184,7 @@ public class ConfigHandler {
      * @param value the value the config is being set at.
      */
     public static <V, T extends Configurable> V setSetting(Class<? extends AbstractConfig<V, T>> clazz, T configurable, V value){
-        return getConfig(clazz).setValue(configurable, value, false);
+        return getConfig(clazz).setValue(configurable, value);
     }
 
     /**
@@ -173,7 +199,7 @@ public class ConfigHandler {
         AbstractConfig config = getConfig(configName);
         if (config != null){
             try {
-                config.setValue(configurable, value, false);
+                config.setValue(configurable, value);
                 return true;
             } catch (ClassCastException e){
                 throw new RuntimeException("Attempted generic value config assignment with the wrong type on config \"" + config.getName() + "\" with value type: " + value.getClass().getName(), e);
@@ -244,7 +270,7 @@ public class ConfigHandler {
      * @return the value of the config for the configurable.
      */
     public static <I, T extends Configurable> I getSetting(Class<? extends AbstractConfig<I, T>> clazz, T configurable){
-        return getConfig(clazz).getValue(configurable, false);
+        return getConfig(clazz).getValue(configurable);
     }
 
     /**
@@ -270,7 +296,7 @@ public class ConfigHandler {
     public static Object getSetting(String configName, Configurable configurable){
         AbstractConfig config = getConfig(configName);
         if (config != null){
-            return config.getValue(configurable, false);
+            return config.getValue(configurable);
         } else {
             return null;
         }

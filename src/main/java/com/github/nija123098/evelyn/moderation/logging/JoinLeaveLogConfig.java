@@ -22,7 +22,7 @@ public class JoinLeaveLogConfig extends AbstractConfig<Channel, Guild> {
     @EventListener
     public void handle(DiscordUserJoin join){
         Channel channel;
-        if ((channel = this.getValue(join.getGuild(), false)) == null) return;
+        if ((channel = this.getValue(join.getGuild())) == null) return;
         MessageMaker maker = new MessageMaker(channel).withColor(Color.MAGENTA).appendRaw(join.getUser().getNameAndDiscrim());
         maker.getTitle().appendRaw("User joined");
         maker.getFooter().appendRaw("ID: " + join.getUser().getID());
@@ -31,7 +31,7 @@ public class JoinLeaveLogConfig extends AbstractConfig<Channel, Guild> {
     @EventListener// log rewrite soon
     public void handle(DiscordUserLeave leave){
         Channel channel;
-        if ((channel = this.getValue(leave.getGuild(), false)) == null) return;
+        if ((channel = this.getValue(leave.getGuild())) == null) return;
         MessageMaker maker = new MessageMaker(channel).withColor(Color.MAGENTA).appendRaw(leave.getUser().getNameAndDiscrim());
         maker.getTitle().appendRaw("User left");
         maker.getFooter().appendRaw("ID: " + leave.getUser().getID());

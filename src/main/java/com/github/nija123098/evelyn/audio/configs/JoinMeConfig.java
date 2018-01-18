@@ -21,7 +21,7 @@ public class JoinMeConfig extends AbstractConfig<Boolean, User> {
     }
     @EventListener
     public void handle(DiscordVoiceJoin join, MessageMaker maker) {
-        if (!config.getValue(join.getUser(), false)) return;
+        if (!config.getValue(join.getUser())) return;
         GuildAudioManager manager = GuildAudioManager.getManager(join.getGuild());
         if (join.getGuild().getConnectedVoiceChannel() == null) JoinCommand.command(manager, join.getChannel(), maker);
     }

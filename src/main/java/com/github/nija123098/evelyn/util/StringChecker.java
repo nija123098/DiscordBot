@@ -9,9 +9,9 @@ import java.util.stream.Collectors;
  * @since 1.0.0
  */
 public class StringChecker {
-    private static final Map<String, List<StringChecker>> CASHE = new HashMap<>();
+    private static final Map<String, List<StringChecker>> CACHE = new HashMap<>();
     private static StringChecker getCheckingString(String s, Consumer<String> catchPolicy){
-        List<StringChecker> list = CASHE.computeIfAbsent(s, s1 -> new ArrayList<>(2));
+        List<StringChecker> list = CACHE.computeIfAbsent(s, s1 -> new ArrayList<>(2));
         return list.isEmpty() ? new StringChecker(s, catchPolicy) : list.remove(0).setCatchPolicy(catchPolicy);
     }
     public static void checkoutString(String target, Collection<String> check, Consumer<String> catchPolicy){
@@ -43,6 +43,6 @@ public class StringChecker {
     private void done(){
         reset();
         this.catchPolicy = null;
-        CASHE.get(this.check).add(this);
+        CACHE.get(this.check).add(this);
     }
 }

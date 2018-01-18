@@ -14,6 +14,7 @@ import com.github.nija123098.evelyn.util.Log;
 import com.github.nija123098.evelyn.util.StringChecker;
 import org.reflections.Reflections;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -28,7 +29,13 @@ import java.util.stream.Collectors;
 public class MessageMonitor {
     private static final Map<MessageMonitoringLevel, MessageFilter> FILTER_MAP = new HashMap<>();
     private static final Map<Channel, Set<MessageFilter>> CHANNEL_MAP = new HashMap<>();
+    private static final Set<String> WORDS = new HashSet<>();
     static {
+        try {
+            WORDS.addAll(Files.readAllLines(Paths.get(ConfigProvider.RESOURCE_FILES.words())).stream().map(String::toLowerCase).collect(Collectors.toSet()));
+        } catch (IOException e) {
+            Log.log("Could not read words file", e);
+        }
         new Reflections(Reference.BASE_PACKAGE).getSubTypesOf(MessageFilter.class).stream().filter(aClass -> !aClass.getSimpleName().isEmpty()).forEach(clazz -> {
             try {
                 MessageFilter filter = clazz.newInstance();
@@ -42,11 +49,17 @@ public class MessageMonitor {
             if (Files.exists(path)) {
                 Files.readAllLines(path).forEach(s -> {
                     MessageMonitoringLevel type = MessageMonitoringLevel.valueOf(s.split(" ")[0].toUpperCase());
-                    Consumer<String> policy = s1 -> {throw new MessageMonitoringException("banned phrase: " + s1);};
+                    Consumer<String> policy = s1 -> {throw new MessageMonitoringException("banned phrase: " + s1, s1);};
                     FILTER_MAP.put(type, new MessageFilter() {
                         @Override
                         public void checkFilter(DiscordMessageReceived event) {
-                            StringChecker.checkoutString(FormatHelper.filtering(event.getMessage().getContent(), Character::isLetterOrDigit).toLowerCase(), Arrays.asList(s.substring(type.name().length(), s.length()).split(",")), policy);
+                            try {
+                                StringChecker.checkoutString(FormatHelper.filtering(event.getMessage().getContent(), Character::isLetterOrDigit).toLowerCase(), Arrays.asList(s.substring(type.name().length(), s.length()).split(",")), policy);
+                            } catch (MessageMonitoringException e){
+                                for (String word : FormatHelper.filtering(FormatHelper.reduceRepeats(event.getMessage().getContent().toLowerCase(), ' '), Character::isLetter).split(" ")){
+                                    if (!WORDS.contains(word) && !e.getBlocked().equals(word)) throw e;
+                                }
+                            }
                         }
                         @Override
                         public MessageMonitoringLevel getType() {return type;}

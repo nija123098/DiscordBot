@@ -7,8 +7,6 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventDistribut
 import com.github.nija123098.evelyn.exception.ArgumentException;
 import com.github.nija123098.evelyn.exception.DevelopmentException;
 import com.github.nija123098.evelyn.perms.BotRole;
-import com.github.nija123098.evelyn.service.services.ScheduleService;
-import com.github.nija123098.evelyn.util.Care;
 import com.github.nija123098.evelyn.util.Log;
 import com.thoughtworks.xstream.io.StreamException;
 
@@ -31,42 +29,43 @@ import java.util.function.Function;
 @LaymanName(value = "Configuration name", help = "The config name")
 public class AbstractConfig<V, T extends Configurable> {
     private final Function<T, V> defaul;
-    private final String tableName, name, description;
+    private final String name, displayName, shortId, configCommandDisplay, description;
     private final BotRole botRole;
     private final ConfigLevel configLevel;
     private final ConfigCategory category;
     private final Class<V> valueType;
     private final boolean normalViewing;
     private final Map<T, V> cache;
-    private final Set<T> change;
-    public AbstractConfig(String tableName, String name, ConfigCategory category, V defaul, String description) {
-        this(tableName, name, category, v -> defaul, description);
+    private final Set<T> nullCache;
+    public AbstractConfig(String name, String displayName, ConfigCategory category, V defaul, String description) {
+        this(name, displayName, category, v -> defaul, description);
     }
-    public AbstractConfig(String tableName, String name, BotRole botRole, ConfigCategory category, V defaul, String description) {
-        this(tableName, name, botRole, category, v -> defaul, description);
+    public AbstractConfig(String name, String displayName, BotRole botRole, ConfigCategory category, V defaul, String description) {
+        this(name, displayName, botRole, category, v -> defaul, description);
     }
-    public AbstractConfig(String tableName, String name, ConfigCategory category, Function<T, V> defaul, String description) {
-        this(tableName, name, category.getBotRole(), category, defaul, description);
+    public AbstractConfig(String name, String displayName, ConfigCategory category, Function<T, V> defaul, String description) {
+        this(name, displayName, category.getBotRole(), category, defaul, description);
     }
 
     /**
      * The constructor to make a config instance.
      *
-     * @param tableName the tableName of the config, spaces are not allowed.
+     * @param name the name of the config, spaces are not allowed.
      * @param name the display name of the config, required
      * @param botRole the minimum role allowed to change the value.
      * @param category the catagory to that the config is in.
      * @param defaul the function to get the default value for a given config.
      * @param description a description of the config.
      */
-    public AbstractConfig(String tableName, String name, BotRole botRole, ConfigCategory category, Function<T, V> defaul, String description) {
-        this.tableName = tableName;
+    public AbstractConfig(String name, String displayName, BotRole botRole, ConfigCategory category, Function<T, V> defaul, String description) {
         this.name = name;
+        this.displayName = displayName.isEmpty() ? this.name : displayName;
         this.botRole = botRole;
         this.defaul = defaul;
         this.description = description;
         this.category = category;
-        this.category.addConfig((AbstractConfig<? extends Configurable, ?>) this);
+        this.shortId = this.category.addConfig((AbstractConfig<? extends Configurable, ?>) this);
+        this.configCommandDisplay = this.displayName + " [" + this.shortId + "]";
         Type[] types = TypeChanger.getRawClasses(this.getClass());
         this.valueType = (Class<V>) types[0];
         if (!ObjectCloner.supports(this.valueType)) throw new DevelopmentException("Cloner does not support type: " + this.valueType.getName());
@@ -74,11 +73,10 @@ public class AbstractConfig<V, T extends Configurable> {
         this.configLevel = ConfigLevel.getLevel((Class<T>) types[types.length - 1]);
         if (this.configLevel.mayCache()){
             this.cache = new ConcurrentHashMap<>();
-            this.change = new HashSet<>();
-            ScheduleService.scheduleRepeat(600_000, 600_000, this::saveCashed);
+            this.nullCache = new HashSet<>();
         }else {
             this.cache = null;
-            this.change = null;
+            this.nullCache = null;
         }
         EventDistributor.register(this);
         this.configLevel.getAssignable().forEach(level -> {
@@ -96,24 +94,21 @@ public class AbstractConfig<V, T extends Configurable> {
     }
 
     /**
-     * Saves any cached values and removes them from the cache.
-     */
-    void saveCashed(){// make slowly change, not all at once unless shutting down
-        this.cache.forEach((t, val) -> {
-            V v = this.cache.remove(t);
-            if (v == null || !this.change.remove(t)) return;
-            this.saveValue(t, v);
-            Care.lessSleep(10);
-        });
-    }
-
-    /**
      * A standard getter.
      *
      * @return the name of the config.
      */
     public String getName() {
-        return this.tableName;
+        return this.name;
+    }
+
+    /**
+     * A standard getter.
+     *
+     * @return the short id of the config.
+     */
+    public String getShortId(){
+        return this.shortId;
     }
 
     /**
@@ -122,7 +117,16 @@ public class AbstractConfig<V, T extends Configurable> {
      * @return the display name of the config
      */
     public String getDisplayName() {
-        return this.name;
+        return this.displayName;
+    }
+
+    /**
+     * A standard getter.
+     *
+     * @return the display name with the short id.
+     */
+    public String getConfigCommandDisplay() {
+        return this.configCommandDisplay;
     }
 
     /**
@@ -168,7 +172,7 @@ public class AbstractConfig<V, T extends Configurable> {
      * @return the table name for this config and a config level.
      */
     private String getNameForType(ConfigLevel level){
-        return this.tableName + "_" + level.name().toLowerCase();
+        return this.name + "_" + level.name().toLowerCase();
     }
 
     /**
@@ -254,15 +258,14 @@ public class AbstractConfig<V, T extends Configurable> {
      * @param value the value to set the config to for the given configurable.
      * @return the value set to the config.
      */
-    public V setValue(T configurable, V value, boolean overrideCache){
+    public V setValue(T configurable, V value){
         if (!(value == null || this.valueType.isInstance(value))) throw new ArgumentException("Attempted passing incorrect type of argument");
         value = validateInput(configurable, value);
-        if (overrideCache || this.cache == null || value == null) return saveValue(configurable, value);
-        else {
-            this.cache.put(configurable, value);
-            this.change.add(configurable);
+        if (this.cache != null) {
+            if (value == null) this.nullCache.add(configurable);
+            else this.cache.put(configurable, value);
         }
-        return value;
+        return saveValue(configurable, value);
     }
 
     /**
@@ -272,11 +275,11 @@ public class AbstractConfig<V, T extends Configurable> {
      * @param value the value to save the config to for the given configurable.
      * @return the value saved to the database.
      */
-    public V saveValue(T configurable, V value){
-        V current = this.getValue(configurable, false), defaul = this.getDefault(configurable);
+    private V saveValue(T configurable, V value){
+        V current = this.getValue(configurable), defaul = this.getDefault(configurable);
         if (Objects.equals(value, defaul)) reset(configurable);
         else if (Objects.equals(current, defaul)) Database.insert("INSERT INTO " + this.getNameForType(configurable.getConfigLevel()) + " (`id`, `value`, `millis`) VALUES ('" + configurable.getID() + "','" + this.getSQLRepresentation(value) + "','" + System.currentTimeMillis() + "');");
-        else Database.insert("UPDATE " + this.getNameForType(configurable.getConfigLevel()) + " SET millis = " + System.currentTimeMillis() + ", value = \'" + Database.quote(this.getSQLRepresentation(value)) + "\' WHERE id = " + Database.quote(configurable.getID()) + ";");
+        else Database.insert("UPDATE " + this.getNameForType(configurable.getConfigLevel()) + " SET millis = " + System.currentTimeMillis() + ", value = " + Database.quote(this.getSQLRepresentation(value)) + " WHERE id = " + Database.quote(configurable.getID()) + ";");
         return value;
     }
 
@@ -287,7 +290,7 @@ public class AbstractConfig<V, T extends Configurable> {
      */
     public void reset(T configurable){
         if (this.cache != null) {
-            this.change.remove(configurable);
+            this.nullCache.remove(configurable);
             this.cache.remove(configurable);
         }
         Database.query("DELETE FROM " + this.getNameForType(configurable.getConfigLevel()) + " WHERE id = " + Database.quote(configurable.getID()));
@@ -299,14 +302,14 @@ public class AbstractConfig<V, T extends Configurable> {
      * @param configurable the configurable that the setting is being gotten for.
      * @return the config's value for the given {@link Configurable}.
      */
-    public V getValue(T configurable, boolean overrideCache){// slq here as well
+    public V getValue(T configurable){// slq here as well
         V value;
-        if (this.cache == null || overrideCache) value = grabValue(configurable);
+        if (this.cache == null) value = grabValue(configurable);
         else{
             value = this.cache.get(configurable);
-            if (value == null) value = grabValue(configurable);
+            if (value == null && !this.nullCache.contains(configurable)) value = grabValue(configurable);
         }
-        if (this.cache != null && value != null && !overrideCache) return this.cache.computeIfAbsent(configurable, this::grabValue);
+        if (this.cache != null && value != null) return this.cache.computeIfAbsent(configurable, this::grabValue);
         return value;
     }
 
@@ -343,7 +346,7 @@ public class AbstractConfig<V, T extends Configurable> {
      * @param function the function the config gives the old value to and gets a new value from.
      */
     public V changeSetting(T configurable, Function<V, V> function) {
-        return this.setValue(configurable, function.apply(this.getValue(configurable, false)), false);
+        return this.setValue(configurable, function.apply(this.getValue(configurable)));
     }
 
     /**
@@ -354,9 +357,9 @@ public class AbstractConfig<V, T extends Configurable> {
      * @return the value saved to the database.
      */
     public V alterSetting(T configurable, Consumer<V> consumer) {
-        V val = ObjectCloner.clone(this.getValue(configurable, false));
+        V val = ObjectCloner.clone(this.getValue(configurable));
         consumer.accept(val);
-        return this.setValue(configurable, val, false);
+        return this.setValue(configurable, val);
     }
 
     /**
@@ -367,8 +370,8 @@ public class AbstractConfig<V, T extends Configurable> {
      * @return the value set for the given configurable.
      */
     public V setIfDefault(T configurable, Function<V, V> function) {
-        V value = getValue(configurable, false);
-        if (Objects.equals(value, this.getDefault(configurable))) value = this.setValue(configurable, function.apply(value), false);
+        V value = getValue(configurable);
+        if (Objects.equals(value, this.getDefault(configurable))) value = this.setValue(configurable, function.apply(value));
         return value;
     }
 
@@ -381,7 +384,7 @@ public class AbstractConfig<V, T extends Configurable> {
      * @return the value set or kept from the.
      */
     public V setIfOld(T configurable, long age, Function<V, V> function) {
-        V val = this.getValue(configurable, false);
+        V val = this.getValue(configurable);
         if (System.currentTimeMillis() - getAge(configurable) >= age) val = function.apply(val);
         return val;
     }
@@ -394,7 +397,7 @@ public class AbstractConfig<V, T extends Configurable> {
      * of the config value for the given configurable.
      */
     public String getExteriorValue(T configurable) {
-        String result = wrapTypeOut(getValue(configurable, false), configurable);
+        String result = wrapTypeOut(getValue(configurable), configurable);
         if (result.equals("null")) result = getValueType().getSimpleName() + " not set";
         return result;
     }
@@ -412,7 +415,7 @@ public class AbstractConfig<V, T extends Configurable> {
     public void setExteriorValue(T configurable, User user, Channel channel, Guild guild, Message message, String value) {
         if (!this.isNormalViewing()) throw new ArgumentException("Slow down there malicious user, we have that covered!");
         if (value.length() == 7 && value.toLowerCase().equals("not set")) value = "null";
-        setValue(configurable, InvocationObjectGetter.convert(this.getValueType(), user, null, channel, guild, message, null, value).getKey(), true);
+        setValue(configurable, InvocationObjectGetter.convert(this.getValueType(), user, null, channel, guild, message, null, value).getKey());
     }
 
     /**

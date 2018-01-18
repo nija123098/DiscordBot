@@ -21,7 +21,7 @@ public class StreamerRoleConfig extends AbstractConfig<Role, Guild> {
     public void handle(DiscordPresenceUpdate update) {
         if (update.getNewPresence().getOptionalStreamingUrl().isPresent()) {
             update.getUser().getGuilds().forEach(guild -> {
-                Role role = this.getValue(guild, false);
+                Role role = this.getValue(guild);
                 if (role != null && !role.getGuild().getRolesForUser(update.getUser()).contains(role))
                     update.getUser().addRole(role);
             });

@@ -13,4 +13,5 @@ public interface ResourceFiles {
     String supportedLangs();
     String timeStats();
     String verifiedGames();
+    String words();
 }

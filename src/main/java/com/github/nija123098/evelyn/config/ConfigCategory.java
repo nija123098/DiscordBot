@@ -14,19 +14,20 @@ import java.util.Set;
  * @since 1.0.0
  */
 public enum ConfigCategory {
-    GAME_TEMPORARY_CHANNELS(ModuleLevel.ADMINISTRATIVE),
-    STAT_TRACKING(ModuleLevel.SYSTEM_LEVEL),
-    GUILD_PERSONALIZATION(ModuleLevel.ADMINISTRATIVE),
-    MUSIC(ModuleLevel.MUSIC),
-    ECONOMY(ModuleLevel.ECONOMY),
-    LOGGING(ModuleLevel.ADMINISTRATIVE),
-    FAVOR(ModuleLevel.ADMINISTRATIVE),
-    PERSONAL_PERSONALIZATION(ModuleLevel.NONE, BotRole.BOT),
-    MODERATION(ModuleLevel.ADMINISTRATIVE),
-    GUILD_HIERARCHY(ModuleLevel.ADMINISTRATIVE, BotRole.GUILD_ADMIN);
+    GAME_TEMPORARY_CHANNELS("GTC", ModuleLevel.ADMINISTRATIVE),
+    STAT_TRACKING("STAT", ModuleLevel.SYSTEM_LEVEL),
+    GUILD_PERSONALIZATION("GPER", ModuleLevel.ADMINISTRATIVE),
+    MUSIC("MUS", ModuleLevel.MUSIC),
+    ECONOMY("ECO", ModuleLevel.ECONOMY),
+    LOGGING("LOG", ModuleLevel.ADMINISTRATIVE),
+    FAVOR("FAVOR", ModuleLevel.ADMINISTRATIVE),
+    PERSONAL_PERSONALIZATION("PPER", ModuleLevel.NONE, BotRole.BOT),
+    MODERATION("MOD", ModuleLevel.ADMINISTRATIVE),
+    GUILD_HIERARCHY("HI", ModuleLevel.ADMINISTRATIVE, BotRole.GUILD_ADMIN);
     private final Set<AbstractConfig<? extends Configurable, ?>> configs = new HashSet<>();
     private final ModuleLevel level;
     private final BotRole botRole;
+    private final String abbreviation;
 
     /**
      * The override for setting the {@link BotRole} as the
@@ -35,7 +36,8 @@ public enum ConfigCategory {
      * @param level the module level this config category.
      * @param botRole the {@link BotRole} required to edit a config from the category.
      */
-    ConfigCategory(ModuleLevel level, BotRole botRole) {
+    ConfigCategory(String abbreviation, ModuleLevel level, BotRole botRole) {
+        this.abbreviation = abbreviation;
         this.level = level;
         this.botRole = botRole;
     }
@@ -45,8 +47,8 @@ public enum ConfigCategory {
      *
      * @param level the {@link ModuleLevel} this belongs to.
      */
-    ConfigCategory(ModuleLevel level) {
-        this(level, null);
+    ConfigCategory(String abbreviation, ModuleLevel level) {
+        this(abbreviation, level, null);
     }
     public ModuleLevel getLevel() {
         return this.level;
@@ -65,7 +67,8 @@ public enum ConfigCategory {
      *
      * @param abstractConfig the config to add to the category.
      */
-    public void addConfig(AbstractConfig<? extends Configurable, ?> abstractConfig){
+    public String addConfig(AbstractConfig<? extends Configurable, ?> abstractConfig){
         this.configs.add(abstractConfig);
+        return this.abbreviation + "-" + this.configs.size();
     }
 }

@@ -21,10 +21,10 @@ public class GuildUserJoinTimeConfig extends AbstractConfig<Long, GuildUser> {
     private static GuildUserJoinTimeConfig config;
 
     public static long get(GuildUser guildUser) {
-        Long aLong = config.getValue(guildUser, false);
+        Long aLong = config.getValue(guildUser);
         if (aLong == null) {
             aLong = guildUser.getGuild().getJoinTimeForUser(guildUser.getUser());
-            config.setValue(guildUser, aLong, false);
+            config.setValue(guildUser, aLong);
         }
         return aLong;
     }
@@ -32,7 +32,6 @@ public class GuildUserJoinTimeConfig extends AbstractConfig<Long, GuildUser> {
     @EventListener
     public void handle(DiscordUserJoin event) {
         GuildUser guildUser = getGuildUser(event.getGuild(), event.getUser());
-        if (this.getValue(guildUser, false) != null) return;
-        this.setValue(guildUser, event.getJoinTime(), false);
+        if (this.getValue(guildUser) == null) this.setValue(guildUser, event.getJoinTime());
     }
 }

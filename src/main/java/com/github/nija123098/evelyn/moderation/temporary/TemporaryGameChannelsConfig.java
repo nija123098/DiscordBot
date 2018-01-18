@@ -28,10 +28,10 @@ public class TemporaryGameChannelsConfig extends AbstractConfig<Integer, Guild> 
         String playText = update.getNewPresence().getPlayingText(), reducedPlayText = playTextToChannel.apply(playText);
         int count = 0;
         for (Guild guild : update.getUser().getGuilds()){
-            if (!DiscordClient.getOurUser().getPermissionsForGuild(guild).contains(DiscordPermission.MANAGE_CHANNELS) || this.getValue(guild, false) < 1 || guild.getVoiceChannels().stream().map(Channel::getName).filter(s -> s.equals(reducedPlayText)).count() > 0) continue;
+            if (!DiscordClient.getOurUser().getPermissionsForGuild(guild).contains(DiscordPermission.MANAGE_CHANNELS) || this.getValue(guild) < 1 || guild.getVoiceChannels().stream().map(Channel::getName).filter(s -> s.equals(reducedPlayText)).count() > 0) continue;
             for (User user : guild.getUsers()){
                 if (!user.getPresence().getOptionalPlayingText().isPresent()) continue;
-                if (playText.equals(user.getPresence().getPlayingText()) && ++count > this.getValue(guild, false)) {
+                if (playText.equals(user.getPresence().getPlayingText()) && ++count > this.getValue(guild)) {
                     TemporaryChannelCommand.command(false, reducedPlayText, guild);
                     break;
                 }

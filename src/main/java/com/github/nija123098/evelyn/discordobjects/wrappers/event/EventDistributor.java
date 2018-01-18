@@ -86,7 +86,7 @@ public class EventDistributor {
                 Log.log("This should never happen", e);
             } catch (InvocationTargetException e) {
                 if (GhostException.isGhostCaused(e.getCause())) return;
-                Log.log("Error while distributing event: " + this.m.getDeclaringClass().getName() + "#" + this.m.getName() + " - " + e.getCause().getMessage(), e);
+                Log.log("Exception while distributing event: " + this.m.getDeclaringClass().getName() + "#" + this.m.getName() + " - " + e.getCause().getMessage(), e);
             }
         }
     }

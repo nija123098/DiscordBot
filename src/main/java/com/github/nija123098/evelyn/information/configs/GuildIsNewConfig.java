@@ -39,9 +39,8 @@ public class GuildIsNewConfig extends AbstractConfig<Boolean, Guild> {
         this.reset(leave.getGuild());
     }
     private void welcome(Guild guild){
-        if (!GUILDS.add(guild)) return;
-        if (!this.getValue(guild, false)) return;
-        this.setValue(guild, false, false);
+        if (!GUILDS.add(guild) || !this.getValue(guild)) return;
+        this.setValue(guild, false);
         Channel channel = ConfigHandler.getSetting(BotChannelConfig.class, guild);
         MessageMaker maker = new MessageMaker(channel == null ? guild.getGeneralChannel() != null ? guild.getGeneralChannel() : guild.getChannels().get(0) : channel);
         if (channel == null){

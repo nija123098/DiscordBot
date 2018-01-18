@@ -24,7 +24,7 @@ public class CapsFilter implements MessageFilter {
                 continue;
             }
             if (c == ' ') skip = true;
-            if (Character.isUpperCase(c) && ++capsCount / (float) content.length() >= ALLOWED) throw new MessageMonitoringException("excessive use of capitals");
+            if (Character.isUpperCase(c) && ++capsCount / (float) content.length() >= ALLOWED) throw new MessageMonitoringException("Excessive use of capitals");
         }
     }
     @Override

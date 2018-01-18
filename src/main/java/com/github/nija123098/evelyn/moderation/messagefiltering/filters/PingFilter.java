@@ -21,7 +21,7 @@ public class PingFilter implements MessageFilter {
         GuildUser guildUser = GuildUser.getGuildUser(event.getGuild(), event.getAuthor());
         if (PINGERS.contains(guildUser)) {
             PINGERS.add(guildUser);
-            throw new MessageMonitoringException("too many mentions in too short a period");
+            throw new MessageMonitoringException("Too many mentions in too short a period");
         }
         PINGERS.add(guildUser);
     }

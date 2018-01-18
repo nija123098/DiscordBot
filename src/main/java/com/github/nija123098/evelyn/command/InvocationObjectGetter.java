@@ -304,11 +304,7 @@ public class InvocationObjectGetter {
                 throw new ArgumentException("That is not a decimal number", e);
             }
         });
-        addConverter(AbstractConfig.class, (user, shard, channel, guild, message, reaction, args) -> {
-            AbstractConfig<?, ? extends Configurable> a = ConfigHandler.getConfig(args.split(" ")[0]);
-            if (a == null) throw new ArgumentException("No such config");
-            return new Pair<>(a, a.getName().length());
-        });
+        addConverter(AbstractConfig.class, (user, shard, channel, guild, message, reaction, args) -> ConfigHandler.getConfigVarious(args.split(" ")[0]));
         addConverter(Configurable.class, (user, shard, channel, guild, message, reaction, args) -> {
             AtomicReference<Pair<Configurable, Integer>> pair = new AtomicReference<>();
             CONVERTER_MAP.forEach((type, converter) -> {

@@ -35,7 +35,7 @@ public class ConfigCommand extends AbstractCommand {
             maker.getAuthorName().appendRaw(LanguageHelper.makePossessive(configurable.getName()) + " ").append(" Settings");
             if (configurable instanceof User || configurable instanceof Guild) maker.withAuthorIcon(configurable instanceof User ? ((User) configurable).getAvatarURL() : ((Guild) configurable).getIconURL());
             maker.getNote().append("To view " + (configurable instanceof User ? "server" : "user") + " settings use this command in a " + (configurable instanceof User ? "server" : "DM with me"));
-            if (configCategory != null) configCategory.getConfigs().stream().filter(AbstractConfig::isNormalViewing).filter(abstractConfig -> abstractConfig.getConfigLevel() == finalConfigurable.getConfigLevel()).filter(abstractConfig -> abstractConfig.getBotRole().hasRequiredRole(user, guild)).forEach(abstractConfig -> maker.getNewFieldPart().withBoth(abstractConfig.getName(), ConfigHandler.getExteriorSetting(abstractConfig.getName(), finalConfigurable)));
+            if (configCategory != null) configCategory.getConfigs().stream().filter(AbstractConfig::isNormalViewing).filter(abstractConfig -> abstractConfig.getConfigLevel() == finalConfigurable.getConfigLevel()).filter(abstractConfig -> abstractConfig.getBotRole().hasRequiredRole(user, guild)).forEach(abstractConfig -> maker.getNewFieldPart().withBoth(abstractConfig.getConfigCommandDisplay(), ConfigHandler.getExteriorSetting(abstractConfig.getName(), finalConfigurable)));
             else Stream.of(ConfigCategory.values()).filter(category -> category.getBotRole().hasRequiredRole(user, guild)).forEach(category -> {
                 if (finalConfigurable instanceof Guild) {
                     if (!category.getBotRole().name().contains("BOT") && !category.getBotRole().name().contains("ADMIN")) {
@@ -46,7 +46,7 @@ public class ConfigCommand extends AbstractCommand {
                         maker.getNewFieldPart().withInline(false).withBoth("\u200b", FormatHelper.embedLink(category.name(), ""));
                     }
                 }
-                if (category.getConfigs().stream().filter(AbstractConfig::isNormalViewing).filter(abstractConfig -> abstractConfig.getConfigLevel() == finalConfigurable.getConfigLevel() || abstractConfig.getConfigLevel() == ConfigLevel.ALL).filter(abstractConfig -> abstractConfig.getBotRole().hasRequiredRole(user, guild)).peek(config -> maker.getNewFieldPart().withBoth(config.getName(), ConfigHandler.getExteriorSetting(config.getName(), finalConfigurable))).count() > 0){
+                if (category.getConfigs().stream().filter(AbstractConfig::isNormalViewing).filter(abstractConfig -> abstractConfig.getConfigLevel() == finalConfigurable.getConfigLevel() || abstractConfig.getConfigLevel() == ConfigLevel.ALL).filter(abstractConfig -> abstractConfig.getBotRole().hasRequiredRole(user, guild)).peek(config -> maker.getNewFieldPart().withBoth(config.getConfigCommandDisplay(), ConfigHandler.getExteriorSetting(config.getName(), finalConfigurable))).count() > 0){
                     maker.guaranteeNewFieldPage();
                 }
             });

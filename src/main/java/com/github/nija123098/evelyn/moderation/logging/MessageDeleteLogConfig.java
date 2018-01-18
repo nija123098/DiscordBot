@@ -22,7 +22,7 @@ public class MessageDeleteLogConfig extends AbstractConfig<Channel, Guild> {
     @EventListener
     public void handle(DiscordMessageDelete delete){
         Channel channel;
-        if (delete.getMessage() == null || delete.getChannel().isPrivate() || delete.getMessage().getAuthor().isBot() || (channel = this.getValue(delete.getGuild(), false)) == null) return;
+        if (delete.getMessage() == null || delete.getChannel().isPrivate() || delete.getMessage().getAuthor().isBot() || (channel = this.getValue(delete.getGuild())) == null) return;
         MessageMaker maker = new MessageMaker(channel).withColor(Color.GRAY).withAuthor(delete.getMessage().getAuthor()).append("Message deleted from ").appendRaw(delete.getAuthor().getDisplayName(delete.getGuild())).appendRaw(" ").append("in ").appendRaw(delete.getChannel().mention()).appendRaw("\n" + delete.getMessage().getMentionCleanedContent());
         maker.getNote().appendRaw("ID: " + delete.getMessage().getID());
         Attachment attachment = delete.getMessage().getAttachments().stream().filter(att -> att.getUrl().endsWith("gif") || att.getUrl().endsWith("webv")).findFirst().orElse(null);

@@ -25,6 +25,6 @@ public class ConfigNullCommand extends AbstractCommand {
     @Command
     public <V, T extends Configurable> void command(@Argument AbstractConfig<V, T> config, @Argument(optional = true) T target, String arg, @Context(softFail = true) Track track, @Context(softFail = true) Playlist playlist, User user, Channel channel, @Context(softFail = true) GuildUser guildUser, @Context(softFail = true) Guild guild) {
         if (target == null) target = (T) (guild == null ? user : guild);
-        config.setValue(target, null, false);
+        config.setValue(target, null);
     }
 }

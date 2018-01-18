@@ -13,7 +13,6 @@ src/main/java/META-INF/MANIFEST.MF
 logs/
 sound/
 badges/
-configs/
 executables/
 neuralnets/
 required/

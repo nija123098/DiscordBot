@@ -12,14 +12,4 @@ public class LastCurrencyUseConfig extends AbstractConfig<String, User> {
     public LastCurrencyUseConfig() {
         super("last_currency_use", "", ConfigCategory.STAT_TRACKING, "", "The last time the bank command was used");
     }
-
-    @Override
-    public String setValue(User configurable, String value, boolean overrideCache) {
-        return super.setValue(configurable, value, true);
-    }
-
-    @Override
-    public String getValue(User configurable, boolean overrideCache) {
-        return super.getValue(configurable, true);
-    }
 }

@@ -16,14 +16,14 @@ public class CurrencySymbolConfig extends AbstractConfig<String, Guild> {
     }
 
     @Override
-    public String setValue(Guild configurable, String value, boolean overrideCache) {
+    public String setValue(Guild configurable, String value) {
         if (EmoticonHelper.getChars(value.toLowerCase(), false) != null) value = EmoticonHelper.getChars(value, false);
         if (EmoticonHelper.getName(value) == null) throw new ArgumentException("Unknown emote. Please choose a valid Unicode emote.");
-        return super.setValue(configurable, EmoticonHelper.getName(value), true);
+        return super.setValue(configurable, EmoticonHelper.getName(value));
     }
 
     @Override
-    public String getValue(Guild configurable, boolean overrideCache) {
-        return EmoticonHelper.getChars(super.getValue(configurable, false), false);
+    public String getValue(Guild configurable) {
+        return EmoticonHelper.getChars(super.getValue(configurable), false);
     }
 }

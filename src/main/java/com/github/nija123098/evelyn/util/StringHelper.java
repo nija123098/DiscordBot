@@ -96,4 +96,14 @@ public class StringHelper {
         for (int i = 0; i < s.length(); i++) if (s.charAt(i) == c) ++count;
         return count;
     }
+
+    public static String join(String[] args, String splitter, int start, int length) {
+        StringBuilder builder = new StringBuilder();
+        length += start - 1;
+        for (int i = start; i < length; i++) {
+            builder.append(args[i]);
+            builder.append(splitter);
+        }
+        return builder.append(args[length]).toString();
+    }
 }

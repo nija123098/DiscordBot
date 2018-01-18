@@ -34,17 +34,17 @@ public class EarnRankConfig extends AbstractConfig<Float, Role> {
         GuildUser user = (GuildUser) event.getConfigurable();
         if (user.getUser().isBot()) return;
         if (!USERS.add(user)) return;
-        Set<Role> roles = user.getGuild().getRoles().stream().filter(role -> this.getValue(role, false) != null).collect(toSet());
+        Set<Role> roles = user.getGuild().getRoles().stream().filter(role -> this.getValue(role) != null).collect(toSet());
         Set<Role> independents = roles.stream().filter(role -> getSetting(StackFavorRankConfig.class, role)).collect(toSet());
         independents.forEach(role -> {
-            if (this.getValue(role, false) > event.getNewValue()) user.getUser().removeRole(role);
+            if (this.getValue(role) > event.getNewValue()) user.getUser().removeRole(role);
             else user.getUser().addRole(role);
         });
         roles.removeAll(independents);
         AtomicDouble highest = new AtomicDouble(-1);
         AtomicReference<Role> highestRole = new AtomicReference<>();
         roles.forEach(role -> {
-            float val = this.getValue(role, false);
+            float val = this.getValue(role);
             if (val < event.getNewValue() && val > highest.get()) {
                 highest.set(val);
                 highestRole.set(role);
