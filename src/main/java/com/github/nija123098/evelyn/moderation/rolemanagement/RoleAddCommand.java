@@ -15,19 +15,19 @@ import com.github.nija123098.evelyn.exception.PermissionsException;
  */
 public class RoleAddCommand extends AbstractCommand {
 
-	//constructor
-	public RoleAddCommand() {
-		super(RoleCommand.class, "add", "radd", null, null, "give a user a role");
-	}
+    //constructor
+    public RoleAddCommand() {
+        super(RoleCommand.class, "add", "radd", null, null, "give a user a role");
+    }
 
-	@Command
-	public void command(@Argument Role role, @Argument User user, Guild guild, MessageMaker maker) {
-		maker.mustEmbed();
-		try {
-			user.addRole(role);
-			maker.appendRaw("Successfully added the `" + role.getName() + "` role to " + user.getDisplayName(guild));
-		} catch (PermissionsException e) {
-			throw new PermissionsException("I could not add the `" + role.getName() + "` role to " + user.getDisplayName(guild) + ", check your discord permissions to ensure my role is higher than the role I'm trying to add.");
-		}
-	}
+    @Command
+    public void command(@Argument Role role, @Argument User user, Guild guild, MessageMaker maker) {
+        maker.mustEmbed();
+        try {
+            user.addRole(role);
+            maker.appendRaw("Successfully added the `" + role.getName() + "` role to " + user.getDisplayName(guild));
+        } catch (PermissionsException e) {
+            throw new PermissionsException("I could not add the `" + role.getName() + "` role to " + user.getDisplayName(guild) + ", check your discord permissions to ensure my role is higher than the role I'm trying to add.");
+        }
+    }
 }

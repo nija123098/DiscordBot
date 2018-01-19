@@ -21,16 +21,16 @@ import com.github.nija123098.evelyn.util.FormatHelper;
  */
 public class RoleCommand extends AbstractCommand {
 
-	//constructor
-	public RoleCommand() {
-		super("role", ModuleLevel.ADMINISTRATIVE, null, null, "displays info about a role, or what the bot can edit");
-	}
+    //constructor
+    public RoleCommand() {
+        super("role", ModuleLevel.ADMINISTRATIVE, null, null, "displays info about a role, or what the bot can edit");
+    }
 
-	@Command
-	public void command(@Argument(optional = true, replacement = ContextType.NONE) Role role, MessageMaker maker, Guild guild) {
-		String prefix = ConfigHandler.getSetting(GuildPrefixConfig.class, guild);
-		maker.mustEmbed();
-		if (role == null) {
+    @Command
+    public void command(@Argument(optional = true, replacement = ContextType.NONE) Role role, MessageMaker maker, Guild guild) {
+        String prefix = ConfigHandler.getSetting(GuildPrefixConfig.class, guild);
+        maker.mustEmbed();
+        if (role == null) {
             if (DiscordClient.getOurUser().getPermissionsForGuild(guild).contains(DiscordPermission.MANAGE_ROLES)) {
                 maker.getTitle().appendRaw("I can perform the following changes to roles in this server:");
                 maker.appendRaw("Change role name\nChange role colour\nToggle role hoist\nClear all roles from a user\nRemove x role from a user\nAdd x role to a user\nDelete role\nGet detailed role info");
@@ -52,5 +52,5 @@ public class RoleCommand extends AbstractCommand {
                     "\nHex: #" + (Integer.toHexString(role.getColor().getRed()).length() == 1 ? "0" + Integer.toHexString(role.getColor().getRed()) : Integer.toHexString(role.getColor().getRed())) + (Integer.toHexString(role.getColor().getGreen()).length() == 1 ? "0" + Integer.toHexString(role.getColor().getGreen()) : Integer.toHexString(role.getColor().getGreen())) + (Integer.toHexString(role.getColor().getBlue()).length() == 1 ? "0" + Integer.toHexString(role.getColor().getBlue()) : Integer.toHexString(role.getColor().getBlue())));
             maker.getNewFieldPart().withInline(true).withBoth("Permissions", FormatHelper.makeRolePermissionsTable(role));
         }
-	}
+    }
 }

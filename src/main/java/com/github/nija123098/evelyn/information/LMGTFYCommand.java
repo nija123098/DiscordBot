@@ -14,19 +14,19 @@ import com.github.nija123098.evelyn.util.FormatHelper;
  */
 public class LMGTFYCommand extends AbstractCommand {
 
-	//constructor
-	public LMGTFYCommand() {
-		super("lmgtfy", ModuleLevel.INFO, null, null, "help another user use google");
-	}
+    //constructor
+    public LMGTFYCommand() {
+        super("lmgtfy", ModuleLevel.INFO, null, null, "help another user use google");
+    }
 
-	@Command
-	public void command(@Argument String arg, MessageMaker maker) {
+    @Command
+    public void command(@Argument String arg, MessageMaker maker) {
 
-		if (arg.length() > 0) {
-			maker.mustEmbed().appendRaw(FormatHelper.embedLink("let me google that for you", ("http://lmgtfy.com/?q=" + arg.replace(' ', '+'))));
-		} else {
-			throw new ArgumentException("You'll need to provide a search term");
-		}
+        if (arg.length() > 0) {
+            maker.mustEmbed().appendRaw(FormatHelper.embedLink("let me google that for you", ("http://lmgtfy.com/?q=" + arg.replace(' ', '+'))));
+        } else {
+            throw new ArgumentException("You'll need to provide a search term");
+        }
 
-	}
+    }
 }

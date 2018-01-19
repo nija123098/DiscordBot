@@ -13,19 +13,19 @@ import com.github.nija123098.evelyn.exception.PermissionsException;
  */
 public class DeleteRoleCommand extends AbstractCommand {
 
-	//constructor
-	public DeleteRoleCommand() {
-		super(RoleCommand.class, "delete", "delrole", null, null, "delete a role from the server");
-	}
+    //constructor
+    public DeleteRoleCommand() {
+        super(RoleCommand.class, "delete", "delrole", null, null, "delete a role from the server");
+    }
 
-	@Command
-	public void command(@Argument Role role, MessageMaker maker) {
-		try {
-			String roleName = role.getName();
-			role.delete();
-			maker.mustEmbed().appendRaw(roleName + " deleted successfully");
-		} catch (PermissionsException e) {
-			throw new PermissionsException("I could not delete the `" + role.getName() + "` role, check your discord permissions to ensure my role is higher than the role I'm trying to delete");
-		}
-	}
+    @Command
+    public void command(@Argument Role role, MessageMaker maker) {
+        try {
+            String roleName = role.getName();
+            role.delete();
+            maker.mustEmbed().appendRaw(roleName + " deleted successfully");
+        } catch (PermissionsException e) {
+            throw new PermissionsException("I could not delete the `" + role.getName() + "` role, check your discord permissions to ensure my role is higher than the role I'm trying to delete");
+        }
+    }
 }

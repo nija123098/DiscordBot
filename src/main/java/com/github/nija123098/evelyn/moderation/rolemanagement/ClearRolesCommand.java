@@ -17,16 +17,16 @@ import java.util.ArrayList;
  */
 public class ClearRolesCommand extends AbstractCommand {
 
-	//constructor
-	public ClearRolesCommand() {
-		super(RoleCommand.class, "clear", "rclear", null, null, "remove all roles from a user");
-	}
+    //constructor
+    public ClearRolesCommand() {
+        super(RoleCommand.class, "clear", "rclear", null, null, "remove all roles from a user");
+    }
 
-	@Command
-	public void command(@Argument User user, Guild guild, MessageMaker maker) {
+    @Command
+    public void command(@Argument User user, Guild guild, MessageMaker maker) {
         maker.mustEmbed();
-	    ArrayList<String> failedRoles = new ArrayList<>();
-		for (Role role : user.getRolesForGuild(guild)) {
+        ArrayList<String> failedRoles = new ArrayList<>();
+        for (Role role : user.getRolesForGuild(guild)) {
             try {
                 user.removeRole(role);
             } catch (PermissionsException IGNORE) {
@@ -34,8 +34,8 @@ public class ClearRolesCommand extends AbstractCommand {
             }
         }
         if (failedRoles.size() > 0) {
-		    StringBuilder builder = new StringBuilder();
-		    failedRoles.forEach(role ->  builder.append("`" + role + "`\n"));
+            StringBuilder builder = new StringBuilder();
+            failedRoles.forEach(role ->  builder.append("`" + role + "`\n"));
             throw new PermissionsException("I could not remove the following roles from " + user.getDisplayName(guild) + ":\n" + builder.toString() + "\ncheck your discord permissions to ensure my role is higher than the role I'm trying to remove.");
         } else {
             maker.appendRaw("successfully removed all roles from " + user.getDisplayName(guild));

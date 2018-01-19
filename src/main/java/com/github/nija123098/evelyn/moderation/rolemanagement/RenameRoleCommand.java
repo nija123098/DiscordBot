@@ -13,19 +13,19 @@ import com.github.nija123098.evelyn.exception.PermissionsException;
  */
 public class RenameRoleCommand extends AbstractCommand {
 
-	//constructor
-	public RenameRoleCommand() {
-		super(RoleCommand.class, "rename", "rname", null, null, "rename a role in the server");
-	}
+    //constructor
+    public RenameRoleCommand() {
+        super(RoleCommand.class, "rename", "rname", null, null, "rename a role in the server");
+    }
 
-	@Command
-	public void command(@Argument Role role, @Argument String newName, MessageMaker maker) {
-		try {
-			String previous = role.getName();
-			role.changeName(newName);
-			maker.mustEmbed().appendRaw("Successfully renamed the role `" + previous + "` to `" + role.getName() + "`");
-		} catch (PermissionsException e) {
-			throw new PermissionsException("I could not rename the `" + role.getName() + "` role, check your discord permissions to ensure my role is higher than the role I'm trying to rename");
-		}
-	}
+    @Command
+    public void command(@Argument Role role, @Argument String newName, MessageMaker maker) {
+        try {
+            String previous = role.getName();
+            role.changeName(newName);
+            maker.mustEmbed().appendRaw("Successfully renamed the role `" + previous + "` to `" + role.getName() + "`");
+        } catch (PermissionsException e) {
+            throw new PermissionsException("I could not rename the `" + role.getName() + "` role, check your discord permissions to ensure my role is higher than the role I'm trying to rename");
+        }
+    }
 }

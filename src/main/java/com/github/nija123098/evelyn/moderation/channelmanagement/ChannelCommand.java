@@ -20,16 +20,16 @@ import com.github.nija123098.evelyn.util.FormatHelper;
  */
 public class ChannelCommand extends AbstractCommand {
 
-	//constructor
-	public ChannelCommand() {
-		super("channel", ModuleLevel.ADMINISTRATIVE, null, null, "supercommand for channel management");
-	}
+    //constructor
+    public ChannelCommand() {
+        super("channel", ModuleLevel.ADMINISTRATIVE, null, null, "supercommand for channel management");
+    }
 
-	@Command
-	public void command(@Argument(optional = true, replacement = ContextType.NONE) Channel channel, MessageMaker maker, Guild guild) {
-		String prefix = ConfigHandler.getSetting(GuildPrefixConfig.class, guild);
-		maker.mustEmbed();
-		if (channel == null) {
+    @Command
+    public void command(@Argument(optional = true, replacement = ContextType.NONE) Channel channel, MessageMaker maker, Guild guild) {
+        String prefix = ConfigHandler.getSetting(GuildPrefixConfig.class, guild);
+        maker.mustEmbed();
+        if (channel == null) {
             if (DiscordClient.getOurUser().getPermissionsForGuild(guild).contains(DiscordPermission.MANAGE_CHANNELS)) {
                 maker.getTitle().appendRaw("I can perform the following changes to channels in this server");
                 maker.appendRaw("Change channel name\nChange channel topic\nGet detailed channel info");
@@ -44,5 +44,5 @@ public class ChannelCommand extends AbstractCommand {
             maker.getNewFieldPart().withInline(true).withBoth("NSFW", "" + channel.isNSFW());
             maker.getNewFieldPart().withInline(true).withBoth("Users with access", (channel.getUsersHere().size() <= 12 ? FormatHelper.makeUserTable(channel.getUsersHere(), 23, 2) : "" + channel.getUsersHere().size()));
         }
-	}
+    }
 }
