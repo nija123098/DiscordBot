@@ -17,7 +17,7 @@ public class ConfigProvider {
     public static final AudioSettings AUDIO_SETTINGS = ConfigLoader.configurationProvider().bind("AudioSettings", AudioSettings.class);
     public static final FolderSettings FOLDER_SETTINGS = ConfigLoader.configurationProvider().bind("FolderSettings", FolderSettings.class);
     public static final ResourceFiles RESOURCE_FILES = ConfigLoader.configurationProvider().bind("ResourceFiles", ResourceFiles.class);
-    public static final LibrariesFiles LIBRARIES_FILES = ConfigLoader.configurationProvider().bind("LibrariesFiles", LibrariesFiles.class);
+    public static final ExecutableFiles EXECUTABLE_FILES = ConfigLoader.configurationProvider().bind("ExecutableFiles", ExecutableFiles.class);
 
     //Settings from urls.yaml
     public static final URLs URLS = ConfigLoader.configurationProvider().bind("URLs", URLs.class);

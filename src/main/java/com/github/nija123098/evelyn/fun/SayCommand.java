@@ -6,7 +6,6 @@ import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.command.annotations.Context;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
-import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.util.LangString;
 
@@ -23,7 +22,7 @@ public class SayCommand extends AbstractCommand {
     }
 
     @Command
-    public void command(@Argument(info = "Text you want me to repeat, if you're in a voice channel you'll hear it there") String s, Channel channel, @Context(softFail = true) Guild guild, MessageMaker maker) {
+    public void command(@Argument(info = "Text you want me to repeat, if you're in a voice channel you'll hear it there") String s, @Context(softFail = true) Guild guild, MessageMaker maker) {
         GuildAudioManager manager = getManager(guild);
         if (manager != null)
             manager.queueSpeech(new LangString(false, s));// && BotRole.CONTRIBUTOR.hasRequiredRole(user, channel.getGuild())

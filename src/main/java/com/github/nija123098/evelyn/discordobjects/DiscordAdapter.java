@@ -14,7 +14,6 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventDistribut
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.*;
 import com.github.nija123098.evelyn.exception.InvalidEventException;
 import com.github.nija123098.evelyn.launcher.Launcher;
-import com.github.nija123098.evelyn.launcher.Reference;
 import com.github.nija123098.evelyn.moderation.DeletePinNotificationConfig;
 import com.github.nija123098.evelyn.moderation.messagefiltering.MessageMonitor;
 import com.github.nija123098.evelyn.perms.ContributorMonitor;
@@ -74,7 +73,7 @@ public class DiscordAdapter {
     private static final AtomicBoolean BOT_LAG_LOCKED = new AtomicBoolean();
     public static final ScheduleService.ScheduledRepeatedTask PLAY_TEXT_UPDATER;
     static {
-        Set<Class<? extends BotEvent>> classes = new Reflections(Reference.BASE_PACKAGE + ".discordobjects.wrappers.event.events").getSubTypesOf(BotEvent.class);
+        Set<Class<? extends BotEvent>> classes = new Reflections(Launcher.BASE_PACKAGE + ".discordobjects.wrappers.event.events").getSubTypesOf(BotEvent.class);
         classes.remove(DiscordMessageReceived.class);
         EVENT_MAP = new HashMap<>(classes.size() + 2, 1);
         classes.stream().filter(clazz -> !clazz.equals(DiscordMessageReceived.class)).filter(clazz -> !clazz.equals(DiscordUserLeave.class)).filter(clazz -> !clazz.isAssignableFrom(ReactionEvent.class)).map(clazz -> clazz.getConstructors()[0]).forEach(constructor -> EVENT_MAP.put((Class<? extends Event>) constructor.getParameterTypes()[0], (Constructor<? extends BotEvent>) constructor));

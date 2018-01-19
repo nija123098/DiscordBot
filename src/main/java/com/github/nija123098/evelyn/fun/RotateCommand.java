@@ -1,15 +1,13 @@
 package com.github.nija123098.evelyn.fun;
 
 import com.github.nija123098.evelyn.command.AbstractCommand;
+import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.exception.ArgumentException;
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
-
-import static com.github.nija123098.evelyn.command.ModuleLevel.FUN;
-import static java.util.stream.Stream.of;
 
 /**
  * @author nija123098
@@ -82,20 +80,18 @@ public class RotateCommand extends AbstractCommand {
     }
 
     public RotateCommand() {
-        super("rotate", FUN, null, null, "Rotate text!");
+        super("rotate", ModuleLevel.FUN, null, null, "Rotate text!");
     }
 
     @Command
     public void command(MessageMaker maker, @Argument(info = "The text to rotate") String arg) {
         if (arg == null || arg.isEmpty()) throw new ArgumentException("Please give text for me to rotate");
         StringBuilder builder = new StringBuilder(arg.length());
-        of(arg.split("")).forEach(s -> {
+        for (char s : arg.toCharArray()){
             String st = CHAR_MAP.get(s);
             if (st == null) st = CHAR_MAP.getKey(s);
-            if (st == null) st = s;
-            builder.append(st);
-        });
-        builder.reverse();
-        maker.appendRaw(builder.toString());
+            builder.append(st == null ? s : st);
+        }
+        maker.appendRaw(builder.reverse().toString());
     }
 }

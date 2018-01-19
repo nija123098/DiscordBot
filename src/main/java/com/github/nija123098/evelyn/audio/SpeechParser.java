@@ -159,7 +159,7 @@ public class SpeechParser implements IAudioReceiver {
         File ret = new File(file.getPath().replace(".pcm", ".wav"));
         if (ret.exists()) ret.delete();
         List<String> command = new ArrayList<>();
-        command.add(ConfigProvider.LIBRARIES_FILES.ffmPeg());
+        command.add(ConfigProvider.EXECUTABLE_FILES.ffmPeg());
         command.add("-f");// depth
         command.add("s16be");
         command.add("-ar");

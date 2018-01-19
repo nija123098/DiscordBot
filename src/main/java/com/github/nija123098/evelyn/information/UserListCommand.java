@@ -18,7 +18,7 @@ public class UserListCommand extends AbstractCommand {
     }
 
     @Command
-    public void command( @Context(softFail = true) Guild guild, MessageMaker maker) {
+    public void command(@Context(softFail = true) Guild guild, MessageMaker maker) {
         int userCount = guild.getUsers().size();
         String[] users = new String[userCount];
 		int magnitude = String.valueOf(userCount).length();

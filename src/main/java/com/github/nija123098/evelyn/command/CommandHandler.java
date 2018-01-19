@@ -18,7 +18,6 @@ import com.github.nija123098.evelyn.exception.BotException;
 import com.github.nija123098.evelyn.exception.DevelopmentException;
 import com.github.nija123098.evelyn.exception.GhostException;
 import com.github.nija123098.evelyn.launcher.Launcher;
-import com.github.nija123098.evelyn.launcher.Reference;
 import com.github.nija123098.evelyn.service.services.MemoryManagementService;
 import com.github.nija123098.evelyn.template.CustomCommandHandler;
 import com.github.nija123098.evelyn.util.*;
@@ -48,7 +47,7 @@ public class CommandHandler {
     public static final AtomicReference<String> MENTION = new AtomicReference<>(), MENTION_NICK = new AtomicReference<>();
     static {
         Map<Class<? extends AbstractCommand>, Set<AbstractCommand>> typeMap = new HashMap<>();
-        Set<Class<? extends AbstractCommand>> classes = new Reflections(Reference.BASE_PACKAGE).getSubTypesOf(AbstractCommand.class);
+        Set<Class<? extends AbstractCommand>> classes = new Reflections(Launcher.BASE_PACKAGE).getSubTypesOf(AbstractCommand.class);
         classes.removeIf(clazz -> Modifier.isAbstract(clazz.getModifiers()));
         CLASS_MAP = new HashMap<>(classes.size() + 10, 1);
         classes.forEach(clazz -> {

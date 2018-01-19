@@ -29,14 +29,13 @@ public class InfoCommand extends AbstractCommand {
         if (totalCommands == -1) totalCommands = (int) CommandHandler.getCommands().stream().filter(AbstractCommand::isHighCommand).filter(o -> !o.isTemplateCommand()).count();
         maker.mustEmbed().withColor(new Color(39, 209, 110)).withThumb(DiscordClient.getOurUser().getAvatarURL());
         maker.getTitle().clear().appendRaw(EmoticonHelper.getChars("bulb",false) + "INFO");
-        String prefix = ConfigHandler.getSetting(GuildPrefixConfig.class, guild);
         maker.appendRaw("\u200B\nI am Evelyn, a music playing auto moderation bot!\n" +
                 "\n" +
                 "Type " + FormatHelper.embedLink("@Evelyn help","") + " to see a list of commands. In total there are " + FormatHelper.embedLink(String.valueOf(totalCommands),"") + " unique commands I can perform.\n" +
                 "\n" +
-                "For help about a command type " + FormatHelper.embedLink(prefix + "help <command>\n","") +
-                "An example: " + FormatHelper.embedLink("@Evelyn help ping","") + " to see what you can do with the ping command.\n" +
+                "For help about a command type " + FormatHelper.embedLink(ConfigHandler.getSetting(GuildPrefixConfig.class, guild) + "help <command>\n","") +
+                "An example: <@" + DiscordClient.getOurUser().getID() + "> help ping` to see what you can do with the ping command.\n" +
                 "\n" +
-                "If you need assistance, want to share your thoughts or want to contribute feel free to join my discord " + FormatHelper.embedLink("here", ConfigProvider.URLS.discordInviteUrl()) + ".");
+                "If you want assistance, to share your thoughts, or to contribute, you should join my Discord server " + FormatHelper.embedLink("here", ConfigProvider.URLS.discordInviteUrl()) + ".");
     }
 }

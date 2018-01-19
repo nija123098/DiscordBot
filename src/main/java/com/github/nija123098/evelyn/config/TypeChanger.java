@@ -1,6 +1,6 @@
 package com.github.nija123098.evelyn.config;
 
-import com.github.nija123098.evelyn.launcher.Reference;
+import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
 import com.github.nija123098.evelyn.util.LanguageHelper;
 import com.github.nija123098.evelyn.util.Log;
@@ -32,8 +32,8 @@ public class TypeChanger {
     }
     static {
         XStream.setupDefaultSecurity(X_STREAM);
-        X_STREAM.aliasPackage("evelyn-package", Reference.BASE_PACKAGE);
-        new Reflections(Reference.BASE_PACKAGE, new SubTypesScanner(false)).getSubTypesOf(Object.class).stream().filter(clazz -> !clazz.isAnnotation()).filter(clazz -> !clazz.isEnum()).filter(clazz -> !clazz.isInterface()).filter(clazz -> !clazz.getName().contains("util")).filter(clazz -> !clazz.getName().contains("$")).filter(clazz -> Stream.of(clazz.getDeclaredFields()).filter(field -> !Modifier.isStatic(field.getModifiers())).count() > 0).map(clazz -> {
+        X_STREAM.aliasPackage("evelyn-package", Launcher.BASE_PACKAGE);
+        new Reflections(Launcher.BASE_PACKAGE, new SubTypesScanner(false)).getSubTypesOf(Object.class).stream().filter(clazz -> !clazz.isAnnotation()).filter(clazz -> !clazz.isEnum()).filter(clazz -> !clazz.isInterface()).filter(clazz -> !clazz.getName().contains("util")).filter(clazz -> !clazz.getName().contains("$")).filter(clazz -> Stream.of(clazz.getDeclaredFields()).filter(field -> !Modifier.isStatic(field.getModifiers())).count() > 0).map(clazz -> {
             Class<?> previous = clazz;
             Class<?> current;
             while (!(current = previous.getSuperclass()).equals(Object.class)) previous = current;

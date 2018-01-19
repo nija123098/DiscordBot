@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.util.ArrayIterator;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,7 +39,7 @@ public class StringHelper {
         else return string.substring(0, size - 3) + "...";
     }
 
-    public static String readAll(String url) throws IOException, UnirestException {
+    public static String readAll(String url) throws UnirestException {
         return get(url).asString().getBody();
     }
 

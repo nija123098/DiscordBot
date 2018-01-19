@@ -1,6 +1,5 @@
-package com.github.nija123098.evelyn.service.services;
+package com.github.nija123098.evelyn.audio;
 
-import com.github.nija123098.evelyn.audio.DownloadableTrack;
 import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.service.AbstractService;
 import com.github.nija123098.evelyn.util.Log;

@@ -14,6 +14,7 @@ import com.github.nija123098.evelyn.util.FormatHelper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author nija123098
@@ -21,42 +22,22 @@ import java.util.List;
  */
 public class StatsCommand extends AbstractCommand {
     public StatsCommand() {
-        super("stats", ModuleLevel.INFO, "guildstats", null, "shows some statistics");
+        super("stats", ModuleLevel.INFO, "guildstats", null, "Shows statistics about the overall bot");
     }
     @Command
     public void command(MessageMaker maker, String s){
         maker.mustEmbed().getTitle().clear().appendRaw(EmoticonHelper.getChars("chart_with_upwards_trend",false) + " Evelyn Stats");
         maker.appendRaw(getTotalTable(s.startsWith("mini")));
     }
-    private String getTotalTable(boolean minified) {
+    private String getTotalTable(boolean mini) {
         List<List<String>> body = new ArrayList<>();
-        int totGuilds = 0, totUsers = DiscordClient.getUsers().size(), totChannels = 0, totVoice = 0, totActiveVoice = 0;
+        int totalActiveVoice = 0;
         for (Shard shard : DiscordClient.getShards()) {
             List<Guild> guilds = shard.getGuilds();
-            int numGuilds = guilds.size();
-            int users = shard.getUsers().size();
-            int channels = shard.getChannels().size();
-            int voiceChannels = shard.getVoiceChannels().size();
-            int activeVoice = 0;
-            for (Guild guild : shard.getGuilds()) {
-                if (GuildAudioManager.getManager(guild) != null) {
-                    activeVoice++;
-                }
-            }
-            totGuilds += numGuilds;
-            totChannels += channels;
-            totVoice += voiceChannels;
-            totActiveVoice += activeVoice;
-            if (minified) body.add(Arrays.asList("" + numGuilds, "" + users, "" + channels, "" + voiceChannels, "" + activeVoice));
-            else body.add(Arrays.asList("" + shard.getID(), "" + numGuilds, "" + users, "" + channels, "" + voiceChannels, "" + activeVoice));
+            int activeVoice = (int) shard.getGuilds().stream().map(GuildAudioManager::getManager).filter(Objects::nonNull).count();
+            totalActiveVoice += activeVoice;
+            body.add(Arrays.asList(Integer.toString(shard.getID()), Integer.toString(guilds.size()), Integer.toString(shard.getUsers().size()), Integer.toString(shard.getChannels().size()), Integer.toString(shard.getVoiceChannels().size()), Integer.toString(activeVoice)));
         }
-        List<String> header = minified ? Arrays.asList("G", "U", "T", "V", "DJ") : Arrays.asList("Shard", "Guilds", "Users", "Text", "Voice", "DJ");
-        if (DiscordClient.getShards().size() > 1) {
-            if (minified) {
-                return FormatHelper.makeAsciiTable(header, body, Arrays.asList("" + totGuilds, "" + totUsers, "" + totChannels, "" + totVoice, "" + totActiveVoice));
-            }
-            return FormatHelper.makeAsciiTable(header, body, Arrays.asList("TOTAL", "" + totGuilds, "" + totUsers, "" + totChannels, "" + totVoice, "" + totActiveVoice));
-        }
-        return FormatHelper.makeAsciiTable(header, body, null);
+        return FormatHelper.makeAsciiTable(mini ? Arrays.asList("G", "U", "T", "V", "DJ") : Arrays.asList("Shard", "Guilds", "Users", "Text", "Voice", "DJ"), body, DiscordClient.getShards().size() == 1 ? null : Arrays.asList("TOTAL", Integer.toString(DiscordClient.getGuilds().size()), Integer.toString(DiscordClient.getUsers().size()), Integer.toString(DiscordClient.getChannels().size()), Integer.toString(DiscordClient.getVoiceChannels().size()), Integer.toString(totalActiveVoice)));
     }
 }

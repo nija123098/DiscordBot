@@ -21,6 +21,6 @@ public class SupportCommand extends AbstractCommand {
     public void command(MessageMaker maker){
         maker.mustEmbed().withThumb(DiscordClient.getOurUser().getAvatarURL());
         maker.getTitle().clear().appendRaw(EmoticonHelper.getChars("tools",false) + " Evelyn Support");
-        maker.appendRaw("If you need help or have any questions/suggestions\nfeel free to join the Evelyn discord " + FormatHelper.embedLink("here", ConfigProvider.URLS.discordInviteUrl()) + ".");
+        maker.appendRaw("If you want assistance or have questions or suggestions please join the Evelyn Discord server " + FormatHelper.embedLink("here", ConfigProvider.URLS.discordInviteUrl()) + ".");
     }
 }

@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.github.nija123098.evelyn.botconfiguration.ConfigProvider.LIBRARIES_FILES;
+import static com.github.nija123098.evelyn.botconfiguration.ConfigProvider.EXECUTABLE_FILES;
 import static com.github.nija123098.evelyn.util.FileHelper.getTempFile;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.regex.Pattern.quote;
@@ -63,7 +63,7 @@ public class SpeechHelper {
         if (first == null) return second;
         File to = getTempFile("speech", "mp3");
         List<String> arguments = new ArrayList<>();
-        arguments.add(LIBRARIES_FILES.ffmPeg());
+        arguments.add(EXECUTABLE_FILES.ffmPeg());
         arguments.add("-i");
         arguments.add("\"concat:" + first.getPath() + "|" + second.getPath() + "\"");
         arguments.add("-acodec");

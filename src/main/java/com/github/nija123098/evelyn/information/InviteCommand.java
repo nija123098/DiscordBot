@@ -19,9 +19,9 @@ public class InviteCommand extends AbstractCommand {
     }
     @Command
     public void command(MessageMaker maker){
-        maker.getTitle().append("I am honored you'd want to invite me! " + GeneralEmotes.BLOB_AWW);
-        maker.append("You can add me to your guild/server with this " + FormatHelper.embedLink("link", ConfigProvider.URLS.botInviteUrl()) +
-                ".\nI am serving " + FormatHelper.embedLink(String.valueOf(DiscordClient.getGuilds().size()),"") + " servers and counting!")
+        maker.getTitle().append("I am honored you would like to invite me! " + GeneralEmotes.BLOB_AWW);
+        maker.append("You can add me to your server with this " + FormatHelper.embedLink("link", ConfigProvider.URLS.botInviteUrl()) +
+                ".\nI am currentl serving " + FormatHelper.embedLink(String.valueOf(DiscordClient.getGuilds().size()),"") + " servers and counting!")
                 .withThumb(DiscordClient.getOurUser().getAvatarURL());
     }
 }

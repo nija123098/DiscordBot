@@ -1,26 +1,17 @@
 package com.github.nija123098.evelyn.util;
 
+import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Role;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.exception.DevelopmentException;
-import com.google.common.base.Strings;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
-
-import static com.github.nija123098.evelyn.botconfiguration.ConfigProvider.URLS;
-import static com.github.nija123098.evelyn.util.EmoticonHelper.getChars;
-import static java.lang.Math.max;
-import static java.lang.String.format;
-import static java.lang.String.valueOf;
-import static java.util.Arrays.fill;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author nija123098
@@ -29,7 +20,7 @@ import static java.util.stream.Collectors.toSet;
 public class FormatHelper {
     public static String repeat(char c, int i) {
         char[] chars = new char[i];
-        fill(chars, c);
+        Arrays.fill(chars, c);
         return new String(chars);
     }
 
@@ -72,80 +63,43 @@ public class FormatHelper {
     }
 
     public static String embedLink(String text, String link) {
-        if (link.isEmpty()) return "[" + text + "](" + URLS.rickrollVid() + ")";
-        return "[" + text + "](" + link + ")";
+        return "[" + text + "](" + (link.isEmpty() ? ConfigProvider.URLS.rickrollVid() : link) + ")";
     }
 
     /**
+     *
+     *
      * @param headers array containing the headers
      * @param table   array[n size] of array's[header size], containing the rows of the controllers
      * @param footer
      * @return a formatted controllers
      */
-    public static String makeAsciiTable(List<String> headers, List<List<String>> table, List<String> footer) {
-        StringBuilder sb = new StringBuilder();
-        int padding = 1;
-        int[] widths = new int[headers.size()];
-        fill(widths, 0);
-        for (int i = 0; i < headers.size(); i++) {
-            if (headers.get(i).length() > widths[i]) {
-                widths[i] = headers.get(i).length();
-                if (footer != null) {
-                    widths[i] = max(widths[i], footer.get(i).length());
-                }
-            }
-        }
-        for (List<String> row : table) {
-            for (int i = 0; i < row.size(); i++) {
-                String cell = row.get(i);
-                if (cell.length() > widths[i]) {
-                    widths[i] = cell.length();
-                }
-            }
-        }
-        sb.append("```").append("\n");
-        String formatLine = "|";
-        for (int width : widths) {
-            formatLine += " %-" + width + "s |";
-        }
-        formatLine += "\n";
-        sb.append(appendSeparatorLine("+", "+", "+", padding, widths));
-        sb.append(format(formatLine, headers.toArray()));
-        sb.append(appendSeparatorLine("+", "+", "+", padding, widths));
-        for (List<String> row : table) {
-            sb.append(format(formatLine, row.toArray()));
-        }
+    public static String makeAsciiTable(List<String> headers, List<List<String>> table, List<String> footer) {// ----------------------------------------
+        List<Integer> widths = Stream.concat(Stream.of(headers, footer), table.stream()).filter(Objects::nonNull).map(strings -> strings.stream().map(String::length).collect(Collectors.toList())).reduce((integers, integers2) -> {
+            for (int i = 0; i < integers2.size(); i++) integers.set(i, Math.max(integers.get(i), integers2.get(i)));
+            return integers;
+        }).get();
+        StringBuilder builder = new StringBuilder("```\n");
+        String midBar = "+" + widths.stream().map(integer -> repeat('-', integer + 2)).reduce((s, s2) -> s + "+" + s2).get() + "+\n";
+        builder.append(midBar);
+        formatContents(builder, widths, headers);
+        builder.append(midBar);
+        table.forEach(strings -> formatContents(builder, widths, strings));
+        builder.append(midBar);
         if (footer != null) {
-            sb.append(appendSeparatorLine("+", "+", "+", padding, widths));
-            sb.append(format(formatLine, footer.toArray()));
+            formatContents(builder, widths, footer);
+            builder.append(midBar);
         }
-        sb.append(appendSeparatorLine("+", "+", "+", padding, widths));
-        sb.append("```");
-        return sb.toString();
+        return builder.append("```").toString();
     }
 
-    /**
-     * helper function for makeAsciiTable
-     *
-     * @param left    character on the left
-     * @param middle  character in the middle
-     * @param right   character on the right
-     * @param padding controllers cell padding
-     * @param sizes   width of each cell
-     * @return a filler row for the controllers
-     */
-    private static String appendSeparatorLine(String left, String middle, String right, int padding, int... sizes) {
-        boolean first = true;
-        StringBuilder ret = new StringBuilder();
-        for (int size : sizes) {
-            if (first) {
-                first = false;
-                ret.append(left).append(Strings.repeat("-", size + padding * 2));
-            } else {
-                ret.append(middle).append(Strings.repeat("-", size + padding * 2));
-            }
+    private static void formatContents(StringBuilder builder, List<Integer> widths, List<String> contents){
+        builder.append("| ");
+        for (int i = 0; i < widths.size(); i++) {
+            builder.append(contents.get(i)).append(repeat(' ', widths.get(i) - contents.get(i).length()));
+            if (i != widths.size() - 1) builder.append(" | ");
         }
-        return ret.append(right).append("\n").toString();
+        builder.append(" |\n");
     }
 
     /**
@@ -153,51 +107,29 @@ public class FormatHelper {
      * @return formatted controllers
      */
     public static String makeTable(List<String> items) {
-        return makeTable(items, 16, 4);
-    }
-
-    /**
-     * @param items items in the controllers
-     * @return formatted controllers
-     */
-    public static String makeTable(List<String> items, boolean codeBlock) {
-        return makeTable(items, 20, 3, codeBlock);
-    }
-
-    /**
-     * Makes a controllers-like display of list of items
-     *
-     * @param items        items in the controllers
-     * @param columnLength length of a column(filled up with whitespace)
-     * @param columns      amount of columns
-     * @return formatted controllers
-     */
-    public static String makeTable(List<String> items, int columnLength, int columns) {
-        StringBuilder ret = new StringBuilder("```\n");
-        int counter = 0;
-        for (String item : items) {
-            counter++;
-            ret.append(format("%-" + columnLength + "s", item));
-            if (counter % columns == 0) {
-                ret.append("\n");
+        int length = items.stream().map(String::length).reduce(Math::max).orElse(0) + 3;
+        StringBuilder builder = new StringBuilder();
+        AtomicInteger currentLength = new AtomicInteger();
+        items.forEach(s -> {
+            if (currentLength.get() + s.length() > 64 && currentLength.get() != 0){
+                builder.append("\n");
+                currentLength.set(0);
             }
-        }
-        if (counter % columns != 0) {
-            ret.append("\n");
-        }
-        return ret + "```\n";
+            builder.append(s).append(repeat(' ', length - s.length()));
+        });
+        return builder.toString();
     }
 
     /**
      * Makes a formatted table of user permissions
      *
-     * @param user        User
-     * @param guild      Guild
-     * @param simple     simple
-     * @return formatted table
+     * @param user the user to get the permissions table for.
+     * @param guild the guild to get the user's permissions table for.
+     * @param simple if the table should be in a simple format.
+     * @return the formatted permissions table.
      */
     public static String makeUserPermissionsTable(User user, Guild guild, boolean simple) {
-        List<String> permissions = new ArrayList();
+        List<String> permissions = new ArrayList<>();
         user.getPermissionsForGuild(guild).forEach(permission -> {
             if (permission.name().contains("MANAGE")) {
                 permissions.add("'" + permission.name().toLowerCase() + "'");
@@ -210,12 +142,11 @@ public class FormatHelper {
             }
         });
         Collections.sort(permissions);
-
         StringBuilder ret = new StringBuilder("```ml\n");
         int counter = 0;
         for (String item : permissions) {
             counter++;
-            ret.append(format("%-" + 23 + "s", item));
+            ret.append(String.format("%-" + 23 + "s", item));
             if (counter % 2 == 0) {
                 ret.append("\n");
             }
@@ -227,13 +158,13 @@ public class FormatHelper {
     }
 
     /**
-     * Makes a formatted table of role permissions
+     * Makes a formatted table of role permissions.
      *
-     * @param role        Role
-     * @return formatted table
+     * @param role the role to get the permissions table for.
+     * @return the formatted permissions table.
      */
     public static String makeRolePermissionsTable(Role role) {
-        List<String> permissions = new ArrayList();
+        List<String> permissions = new ArrayList<>();
         role.getPermissions().forEach(permission -> {
             if (permission.name().contains("MANAGE") || permission.name().contains("LOG")) {
                 permissions.add("'" + permission.name().toLowerCase() + "'");
@@ -246,12 +177,11 @@ public class FormatHelper {
             }
         });
         Collections.sort(permissions);
-
         StringBuilder ret = new StringBuilder("```ml\n");
         int counter = 0;
         for (String item : permissions) {
             counter++;
-            ret.append(format("%-" + 23 + "s", item));
+            ret.append(String.format("%-" + 23 + "s", item));
             if (counter % 2 == 0) {
                 ret.append("\n");
             }
@@ -263,19 +193,19 @@ public class FormatHelper {
     }
 
     /**
-     * Makes a controllers-like display of list of items
+     * Makes a controllers-like display of list of items.
      *
-     * @param items        items in the controllers
-     * @param columnLength length of a column(filled up with whitespace)
-     * @param columns      amount of columns
-     * @return formatted controllers
+     * @param items        the items in the controllers.
+     * @param columnLength the length of a column filled with whitespace.
+     * @param columns      the amount of columns.
+     * @return the formatted controller-like display.
      */
     public static String makeUserTable(List<User> items, int columnLength, int columns) {
         StringBuilder ret = new StringBuilder("```\n");
         int counter = 0;
         for (User item : items) {
             counter++;
-            ret.append(format("%-" + columnLength + "s", item.getName()));
+            ret.append(String.format("%-" + columnLength + "s", item.getName()));
             if (counter % columns == 0) {
                 ret.append("\n");
             }
@@ -284,47 +214,6 @@ public class FormatHelper {
             ret.append("\n");
         }
         return ret + "```\n";
-    }
-
-
-    /**
-     * Makes a controllers-like display of list of items
-     *
-     * @param items        items in the controllers
-     * @param columnLength length of a column(filled up with whitespace)
-     * @param columns      amount of columns
-     * @param codeBlock    whether to make it a code block
-     * @return formatted controllers
-     */
-    public static String makeTable(List<String> items, int columnLength, int columns, boolean codeBlock) {
-        StringBuilder ret = new StringBuilder();
-        if (codeBlock) ret.insert(0, "```");
-        int counter = 0;
-        for (String item : items) {
-            counter++;
-            ret.append(format(("%-" + columnLength + "s"), item));
-            if (counter % columns == 0) {
-                ret.append("\n");
-            }
-        }
-        if (counter % columns != 0) {
-            ret.append("\n");
-        }
-        if (codeBlock) return ret + "```";
-        return ret.toString();
-    }
-
-    private static final String DASH = getChars("wavy_dash", true);
-
-    public static String makeStackedBar(int max, int bar, String barChar) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < bar; i++) {
-            sb.append(barChar);
-        }
-        for (int i = bar; i < max; i++) {
-            sb.append(DASH);
-        }
-        return sb.toString();
     }
 
     public static String getList(List<String> strings) {
@@ -362,7 +251,7 @@ public class FormatHelper {
     }
 
     public static List<String> cleanOfXML(List<String> strings) {
-        return strings.stream().map(FormatHelper::cleanOfXML).collect(toList());
+        return strings.stream().map(FormatHelper::cleanOfXML).collect(Collectors.toList());
     }
 
     public static String filtering(String s, Function<Character, Boolean> filter) {
@@ -387,11 +276,11 @@ public class FormatHelper {
     }
 
     public static Set<String> reduce(Set<String> strings) {
-        return strings.stream().map(FormatHelper::reduce).collect(toSet());
+        return strings.stream().map(FormatHelper::reduce).collect(Collectors.toSet());
     }
 
     public static String addComas(double l) {
-        String str = valueOf(l);
+        String str = String.valueOf(l);
         if (str.endsWith(".0")) str = str.substring(0, str.length() - 2);
         int eIndex = str.indexOf("E");
         if (eIndex != -1) return str.substring(0, 4) + str.substring(eIndex);

@@ -4,7 +4,7 @@ import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
-import com.github.nija123098.evelyn.launcher.Reference;
+import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.util.Care;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -16,12 +16,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class SystemCommand extends AbstractCommand {
     private static AtomicInteger integer = new AtomicInteger();
     public SystemCommand() {
-        super("system", ModuleLevel.INFO, "sys", null, "Shows memory usage and Evelyns's version");
+        super("system", ModuleLevel.INFO, "sys", null, "Shows memory usage and Evelyn's version");
     }
     @Command
     public void command(MessageMaker maker){
+        maker.append("Getting memory").send();
+        maker.getHeader().clear();
         maker.mustEmbed();
-        maker.getTitle().clear().appendRaw("Evelyn Version: " + Reference.EVELYN_VERSION + "\n");
+        maker.getTitle().clear().appendRaw("Evelyn Version: " + Launcher.EVELYN_VERSION + "\n");
         Runtime runtime = Runtime.getRuntime();
         long memoryLimit = runtime.maxMemory();
         long leastMemory = runtime.freeMemory(), freeMemory;

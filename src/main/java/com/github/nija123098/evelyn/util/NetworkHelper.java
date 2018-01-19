@@ -1,5 +1,6 @@
 package com.github.nija123098.evelyn.util;
 
+import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import org.apache.commons.validator.UrlValidator;
 import org.jsoup.Jsoup;
 
@@ -24,7 +25,7 @@ public class NetworkHelper {
     }
     public static boolean isValid(String url){
         return CACHE.computeIfAbsent(url, s -> {
-            try{Jsoup.connect((url.startsWith("http") ? "" : "https://") + url).userAgent("Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36").get();
+            try{Jsoup.connect((url.startsWith("http") ? "" : "https://") + url).userAgent(ConfigProvider.BOT_SETTINGS.userAgent()).get();
                 return VALIDATOR.isValid((url.startsWith("http") ? "" : "https://") + url);
             } catch (IllegalArgumentException | IOException e) {return false;}
         });

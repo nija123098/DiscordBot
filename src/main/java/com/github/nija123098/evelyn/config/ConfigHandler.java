@@ -6,7 +6,7 @@ import com.github.nija123098.evelyn.config.configs.ConfigurableExistsConfig;
 import com.github.nija123098.evelyn.discordobjects.wrappers.*;
 import com.github.nija123098.evelyn.exception.ArgumentException;
 import com.github.nija123098.evelyn.exception.DevelopmentException;
-import com.github.nija123098.evelyn.launcher.Reference;
+import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.util.Log;
 import com.github.nija123098.evelyn.util.LogColor;
 import com.github.nija123098.evelyn.util.StringHelper;
@@ -42,7 +42,7 @@ public class ConfigHandler {
     static {
         ConfigLevel.load();
         Database.init();
-        Set<Class<? extends AbstractConfig>> classes = new Reflections(Reference.BASE_PACKAGE).getSubTypesOf(AbstractConfig.class);
+        Set<Class<? extends AbstractConfig>> classes = new Reflections(Launcher.BASE_PACKAGE).getSubTypesOf(AbstractConfig.class);
         classes.removeIf(clazz -> Modifier.isAbstract(clazz.getModifiers()));
         CLASS_MAP = new HashMap<>(classes.size() + 2, 1);
         STRING_MAP = new HashMap<>(classes.size() + 2, 1);

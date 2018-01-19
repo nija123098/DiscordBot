@@ -10,7 +10,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.github.nija123098.evelyn.botconfiguration.ConfigProvider.LIBRARIES_FILES;
+import static com.github.nija123098.evelyn.botconfiguration.ConfigProvider.EXECUTABLE_FILES;
 import static com.github.nija123098.evelyn.util.Log.log;
 import static com.github.nija123098.evelyn.util.NetworkHelper.isValid;
 import static com.github.nija123098.evelyn.util.NetworkHelper.stripProtocol;
@@ -52,7 +52,7 @@ public class SCUtil {
 
     public static List<Track> getTracksFromList(String code) {
         List<String> commands = new ArrayList<>();
-        commands.add(LIBRARIES_FILES.youtubeDl());
+        commands.add(EXECUTABLE_FILES.youtubeDl());
         commands.add("--flat-playlist");
         commands.add("--dump-json");
         commands.add("https://soundcloud.com/" + code);

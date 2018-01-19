@@ -5,7 +5,7 @@ import com.github.nija123098.evelyn.config.Configurable;
 import com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
-import com.github.nija123098.evelyn.launcher.Reference;
+import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.perms.BotRole;
 import com.github.nija123098.evelyn.util.Log;
 import com.github.nija123098.evelyn.util.SCUtil;
@@ -33,7 +33,7 @@ public abstract class Track implements Configurable {
     private static final Map<Class<? extends Track>, Function<String, Track>> CODE_MAP = new HashMap<>();
     private static final Map<Class<? extends Track>, Function<String, Track>> ID_MAP = new HashMap<>();
     static {
-        new Reflections(Reference.BASE_PACKAGE).getSubTypesOf(Track.class).forEach(clazz -> {
+        new Reflections(Launcher.BASE_PACKAGE).getSubTypesOf(Track.class).forEach(clazz -> {
             try{Class.forName(clazz.getName());
             } catch (ClassNotFoundException e) {
                 Log.log("Error while loading track type " + clazz.getName(), e);

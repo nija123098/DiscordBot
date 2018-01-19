@@ -21,7 +21,7 @@ public class ExcecuteCommand extends AbstractCommand {
         if (PlatformDetector.isWindows()) args = "cmd /c" + args;
         ExecuteShellCommand.commandToExecute(args);
         if (ExecuteShellCommand.getOutput().length() >= 2000) {
-            maker.append("Command Output:\n").appendRaw(HastebinUtil.handleHastebin(ExecuteShellCommand.getOutput()));
+            maker.append("Command Output:\n").appendRaw(HastebinUtil.postToHastebin(ExecuteShellCommand.getOutput()));
         } else maker.append("Command Output:\n```").appendRaw(ExecuteShellCommand.getOutput()).appendRaw("```");
     }
 }

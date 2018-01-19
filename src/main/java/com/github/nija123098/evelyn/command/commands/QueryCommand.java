@@ -45,6 +45,6 @@ public class QueryCommand extends AbstractCommand {
             }
             return FormatHelper.makeAsciiTable(header, table, null);
         });
-        maker.appendRaw(output.length() < 2000 ? output : HastebinUtil.handleHastebin(output));
+        maker.appendRaw(output.length() < 2000 ? output : HastebinUtil.postToHastebin(output));
     }
 }

@@ -32,6 +32,8 @@ import java.util.concurrent.atomic.AtomicReference;
  * @since 1.0.0
  */
 public class Launcher {
+    public static final String EVELYN_VERSION = "1.0.0";
+    public static final String BASE_PACKAGE = "com.github.nija123098.evelyn";
     private static final Set<User> SYSTEM_PERM_USERS = new MemoryManagementService.ManagedSet<>(300_000);// 5 min
     private static final Set<Runnable> STARTUPS = new HashSet<>();
     private static final Set<Runnable> ASYNC_STARTUPS = new HashSet<>();

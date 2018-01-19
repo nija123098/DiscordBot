@@ -17,9 +17,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class FileHelper {
     private static final Set<File> FILES = new ConcurrentHashSet<>();
-    private static final AtomicInteger i = new AtomicInteger();
+    private static final AtomicInteger UNIQUE_INTEGER = new AtomicInteger();
     public static File getTempFile(String cat, String end){
-        return getTempFile(cat, end, "gen" + i.incrementAndGet(), file -> {});
+        return getTempFile(cat, end, "gen" + UNIQUE_INTEGER.incrementAndGet(), file -> {});
     }
     public static File getTempFile(String cat, String end, String snowflake){
         return getTempFile(cat,  end, snowflake, file -> {});

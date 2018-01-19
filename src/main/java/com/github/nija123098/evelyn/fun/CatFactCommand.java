@@ -39,12 +39,9 @@ public class CatFactCommand extends AbstractCommand {
 
     public static String getFact(String url) {
         try {
-            URL loginurl = new URL(url);
-            URLConnection yc = loginurl.openConnection();
+            URLConnection yc = new URL(url).openConnection();
             yc.setConnectTimeout(10_000);
-            BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
-            String inputLine = in.readLine();
-            return new JsonParser().parse(inputLine).getAsJsonObject().get("fact").getAsString();
+            return new JsonParser().parse(new BufferedReader(new InputStreamReader(yc.getInputStream())).readLine()).getAsJsonObject().get("fact").getAsString();
         } catch (Exception e) {
             log("Exception getting cat facts", e);
         }

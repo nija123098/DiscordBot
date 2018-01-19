@@ -14,7 +14,6 @@ import com.github.nija123098.evelyn.util.EmoticonHelper;
 import com.github.nija123098.evelyn.util.Log;
 import com.github.nija123098.evelyn.util.Rand;
 
-import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,7 +31,6 @@ public class RollCommand extends AbstractCommand {
         String[] notOperands = arg.split("(\\s*[^0-z]+\\s*)");
         String[] operands = arg.split("([\\w]+)");
         String[] res = new String[operands.length + notOperands.length];
-        Log.log("res length: " + (operands.length + notOperands.length));
         final Pattern dice = Pattern.compile("(\\d+)d(\\d+)");
         if (first != null) {
             if (second == null) {
@@ -51,27 +49,23 @@ public class RollCommand extends AbstractCommand {
             maker.append("Rolling 1 [6] sided " + EmoticonHelper.getChars("game_die", false) + " | Rolled: " + value).mustEmbed();
         } else {
             int max_dice = 144, min_sides = 2;
-            Log.log("operands: " + Arrays.toString(operands));
-            Log.log("notOperands: " + Arrays.toString(notOperands));
             for(int i = 0; i < res.length; i++) {
-                res[i] = i%2==0 ? notOperands[i / 2] : operands[i / 2 + 1];
+                res[i] = i % 2 == 0 ? notOperands[i / 2] : operands[i / 2 + 1];
             }
-            Log.log("res: " + Arrays.toString(res));
-
-            int dicecount = 0;
-            int bonuscount = 0;
-            for (int o = 0; o < res.length; o++) {
-                if (res[o].matches("(\\d+)d(\\d+)")) {
-                    dicecount++;
-                } else if (res[o].matches("(\\d+)")) {
-                    bonuscount++;
+            int diceCount = 0;
+            int bonusCount = 0;
+            for (String re : res) {
+                if (re.matches("(\\d+)d(\\d+)")) {
+                    diceCount++;
+                } else if (re.matches("(\\d+)")) {
+                    bonusCount++;
                 }
             }
-            Log.log("dicecount: " + dicecount);
-            Log.log("other numbers: " + bonuscount);
+            Log.log("diceCount: " + diceCount);
+            Log.log("other numbers: " + bonusCount);
 
             Matcher match = dice.matcher(arg);
-            if (match.find() && dicecount == 1) {
+            if (match.find() && diceCount == 1) {
                 int die = Integer.parseInt(match.group(1));
                 int sides = Integer.parseInt(match.group(2));
                 int bonus = 0;
@@ -85,7 +79,7 @@ public class RollCommand extends AbstractCommand {
                     maker.append(multiDice(die, sides, bonus));
                 }
             } else {
-                maker.appendRaw("how did you get here?");
+                maker.appendRaw("Message Soarnir for your prize.");
             }
         }
         GuildAudioManager manager = GuildAudioManager.getManager(guild);
@@ -93,23 +87,23 @@ public class RollCommand extends AbstractCommand {
     }
 
     private static String multiDice(int dices, int sides, int bonus) {
-        String text = String.format("Rolling %s [%s] sided " + EmoticonHelper.getChars("game_die", false), dices, sides);
+        StringBuilder text = new StringBuilder(String.format("Rolling %s [%s] sided " + EmoticonHelper.getChars("game_die", false), dices, sides));
         int total = 0;
         int magnitude = String.valueOf(sides).length();
         String zero = "";
         String[] zeroes = new String[magnitude];
-        String dashes = "-";
+        StringBuilder dashes = new StringBuilder("-");
         zeroes[magnitude-1] = "";
         for (int l = magnitude-1; l > 0; l--) {
             zero = zero + "0";
-            dashes = dashes + "-";
+            dashes.append("-");
             zeroes[l-1] = zero;
         }
         if (bonus != 0) {
-            text = text + " + (" + bonus + "): \n";
+            text.append(" + (").append(bonus).append("): \n");
             total = total + bonus;
         } else {
-            text = text + ": \n";
+            text.append(": \n");
         }
         int gridArray[][] = fancyGrid(dices, sides);
         for (int t = 0; t < gridArray.length; t++) {
@@ -117,28 +111,24 @@ public class RollCommand extends AbstractCommand {
                 total = total + gridArray[t][j];
                 magnitude = String.valueOf(gridArray[t][j]).length() - 1;
                 if (gridArray[t][j] == 0) {
-                    text = text + ("| **`" + dashes + "`** ");
+                    text.append("| **`").append(dashes).append("`** ");
                 } else {
-                    text = text + ("| **`" + zeroes[magnitude] + gridArray[t][j] + "`** ");
+                    text.append("| **`").append(zeroes[magnitude]).append(gridArray[t][j]).append("`** ");
                 }
             }
-            text = text + ("|\n");
+            text.append("|\n");
         }
         return text + " Total: **" + total + "**";
     }
 
-    public static int[][] fancyGrid(int dice, int sides) {
-        int [] randArray = new int[dice];
-        for (int k = 0; k < dice; k++) {
-            randArray[k] = (Rand.getRand(sides + 1) + 1);
-        }
-        int [] tableArray = Counter(dice);
-        int [][] gridArray = new int[tableArray[0]][tableArray[1]];
+    private static int[][] fancyGrid(int dice, int sides) {
+        int[] tableArray = counter(dice);
+        int[][] gridArray = new int[tableArray[0]][tableArray[1]];
         int row = 0, col = 0;
         //fill the grid
         for (int c = 0; c < dice; c++) {
-            gridArray[col][row] = randArray[c];
-            if (row < gridArray[0].length-1) {
+            gridArray[col][row] = Rand.getRand(sides + 1) + 1;
+            if (row < gridArray[0].length - 1) {
                 row = row + 1; //row
             } else {
                 col = col + 1; //col
@@ -148,21 +138,21 @@ public class RollCommand extends AbstractCommand {
         return gridArray;
     }
 
-    public static int[] Counter(int i) {
+    private static int[] counter(int i) {
         int total = 0;
-        int rowtest = 0;
-        int coltest = 0;
+        int rowTest = 0;
+        int colTest = 0;
         int[] rowColArray = new int[2];
         while (total < i) {
-            if (rowtest <= coltest) {
-                rowtest++;
+            if (rowTest <= colTest) {
+                rowTest++;
             } else {
-                coltest++;
+                colTest++;
             }
-            total = rowtest * coltest;
+            total = rowTest * colTest;
         }
-        rowColArray[0] = rowtest;
-        rowColArray[1] = coltest;
+        rowColArray[0] = rowTest;
+        rowColArray[1] = colTest;
         return rowColArray;
     }
 }

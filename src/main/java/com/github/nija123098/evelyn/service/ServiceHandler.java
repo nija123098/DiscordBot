@@ -1,7 +1,6 @@
 package com.github.nija123098.evelyn.service;
 
 import com.github.nija123098.evelyn.launcher.Launcher;
-import com.github.nija123098.evelyn.launcher.Reference;
 import com.github.nija123098.evelyn.util.Log;
 import com.github.nija123098.evelyn.util.LogColor;
 import org.reflections.Reflections;
@@ -26,7 +25,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class ServiceHandler {
     private static final Map<AbstractService, Long> NORMAL_SERVICES;
     static {
-        Set<Class<? extends AbstractService>> classes = new Reflections(Reference.BASE_PACKAGE).getSubTypesOf(AbstractService.class);
+        Set<Class<? extends AbstractService>> classes = new Reflections(Launcher.BASE_PACKAGE).getSubTypesOf(AbstractService.class);
         NORMAL_SERVICES = new HashMap<>();
         final AtomicInteger mayBlockCount = new AtomicInteger();
         long now = System.currentTimeMillis();

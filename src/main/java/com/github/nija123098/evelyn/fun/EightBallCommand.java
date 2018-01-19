@@ -1,47 +1,50 @@
 package com.github.nija123098.evelyn.fun;
 
 import com.github.nija123098.evelyn.command.AbstractCommand;
+import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
-
-import static com.github.nija123098.evelyn.command.ModuleLevel.FUN;
-import static com.github.nija123098.evelyn.util.Rand.getRand;
+import com.github.nija123098.evelyn.util.EmoticonHelper;
+import com.github.nija123098.evelyn.util.Rand;
 
 /**
  * @author nija123098
  * @since 1.0.0
  */
 public class EightBallCommand extends AbstractCommand {
-    private final String[] OPTIONS = {
-            "As I see it, yes",
-            "Better not tell you now",
-            "Cannot predict now",
-            "Don't count on it",
-            "If you say so",
-            "In your dreams",
-            "It is certain",
-            "Most likely",
-            "My CPU is saying no",
-            "My CPU is saying yes",
-            "Out of psychic coverage range",
-            "Signs point to yes",
-            "Sure, sure",
-            "Very doubtful",
-            "When life gives you lemon, you drink it",
-            "Without a doubt",
-            "Wow, Much no, very yes, so maybe",
-            "Yes, definitely",
-            "Yes, unless you run out of memes",
-            "You are doomed",
-            "You can't handle the truth"};
+    private static final String EIGHT_BALL = EmoticonHelper.getChars("crystal_ball", false) + " ";
+    private static final String[] OPTIONS = {
+            "For now, yes.",
+            "I don't think you want to know.",
+            "I am not in the office right now, try again later.",
+            "Don't bet on it.",
+            "Well, if you think so.",
+            "Only in dreams.",
+            "Certainly.",
+            "More than likely.",
+            "I'm saying no.",
+            "I'm saying yes.",
+            "I can't reach the physic phone line right now.",
+            "I'm going to make up stuff later, and just say yes now.",
+            "Sure, sure, go away now.",
+            "Very unlikely, super unlikely, as in no chance.",
+            "When life gives you lemons, don't make lemonade.  Make life take the lemons back.",
+            "Undoubtedly, except the doubt in your mind.",
+            "Do you find memes funny?",
+            "In a manner of speaking yes.",
+            "Yes, inject those memes into your blood stream.",
+            "You are out of time.",
+            "Inconceivable.",
+            "If it helps you sleep at night, no."
+    };
 
     public EightBallCommand() {
-        super("8ball", FUN, "eightball", "crystal_ball", "See what the mystical 8ball has to say");
+        super("8ball", ModuleLevel.FUN, "eightball", "crystal_ball", "See what the mystical 8ball has to say");
     }
 
     @Command
     public void command(MessageMaker maker) {
-        maker.append(OPTIONS[getRand(OPTIONS.length)]);
+        maker.appendRaw(EIGHT_BALL).append(OPTIONS[Rand.getRand(OPTIONS.length)]);
     }
 
     @Override

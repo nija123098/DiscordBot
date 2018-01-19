@@ -4,20 +4,20 @@ import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
 /**
- * @author Kaaz
+ * @author nija123098
  */
 public class HastebinUtil {
     /**
-     * dumps a string to hastebin
+     * Sends a string to be hosted on hastebin.com.
      *
-     * @param message the text to send
-     * @return key how to find it
+     * @param message the text to send to hastebind.
+     * @return the key to find the post.
      */
-    public static String handleHastebin(String message) {
-        try{return "https://hastebin.com/" + Unirest.post("https://hastebin.com/documents").body(message).asJson().getBody().getObject().getString("key");
+    public static String postToHastebin(String message) {
+        try{return "https://hastebin.com/" + Unirest.post("https://hastebin.com/documents").body(message).asString().getBody().substring(8, 18);
         } catch (UnirestException e) {
             Log.log("Failed posting to hastebin", e);
         }
-        return "Pastebin posting fail";
+        return "Pastebin posting failed";
     }
 }

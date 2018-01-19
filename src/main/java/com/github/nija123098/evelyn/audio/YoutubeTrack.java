@@ -9,8 +9,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.IOException;
-
 /**
  * The track defining the audio portion of the video.
  *
@@ -33,7 +31,7 @@ public class YoutubeTrack extends DownloadableTrack {
             try {
                 String content = StringHelper.readAll("https://www.youtube.com/oembed?url=http%3A//youtube.com/watch%3Fv%3D" + this.getCode());
                 this.name = content.equals("Unauthorized") ? YTUtil.getVideoName(this.getCode()) : ((JSONObject) new JSONParser().parse(content)).get("title").toString();
-            } catch (ParseException | IOException | UnirestException e) {
+            } catch (ParseException | UnirestException e) {
                 Log.log("Exception getting name from Youtube track: " + this.getCode(), e);
             }
         }

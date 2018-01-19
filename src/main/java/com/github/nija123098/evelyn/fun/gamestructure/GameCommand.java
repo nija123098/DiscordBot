@@ -4,7 +4,7 @@ import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
-import com.github.nija123098.evelyn.launcher.Reference;
+import com.github.nija123098.evelyn.launcher.Launcher;
 import org.reflections.Reflections;
 
 import java.lang.reflect.Modifier;
@@ -18,7 +18,7 @@ import java.util.Map;
 public class GameCommand extends AbstractCommand {
     static final Map<String, Class<? extends AbstractGame>> CLASS_MAP = new HashMap<>();
     static {
-        new Reflections(Reference.BASE_PACKAGE).getSubTypesOf(AbstractGame.class).forEach(clazz -> CLASS_MAP.put(clazz.getSimpleName().toLowerCase(), clazz));
+        new Reflections(Launcher.BASE_PACKAGE).getSubTypesOf(AbstractGame.class).forEach(clazz -> CLASS_MAP.put(clazz.getSimpleName().toLowerCase(), clazz));
     }
     public GameCommand() {
         super("game", ModuleLevel.FUN, null, null, "Lists the games avalable which support team decisions");

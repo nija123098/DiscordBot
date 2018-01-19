@@ -19,14 +19,13 @@ public class DonateCommand extends AbstractCommand {
     @Command
     public void command(MessageMaker maker){
         maker.getTitle().append("Contributions!");
-        maker.append("\u200B\n**Did you find a bug?**\n" +
-                "You can report them on ").appendRaw(FormatHelper.embedLink("here", ConfigProvider.URLS.discordInviteUrl()) + "\n").append(
+        maker.append("\u200B\n**Bugs?**\n" +
+                "Report them ").appendRaw(FormatHelper.embedLink("here", ConfigProvider.URLS.discordInviteUrl()) + "\n").append(
                 "\n" +
-                "**Want to contribute or share your thoughts?**\n" +
-                "Feel free to join ").appendRaw(FormatHelper.embedLink("here", ConfigProvider.URLS.discordInviteUrl())).append(" and let your voice be heard! Feedback and suggestions are always welcome!\n" +
-                "\n" +
-                "**You'd like to donate?**  (Yes you would)\n" +
-                "You can do this though my ").appendRaw(FormatHelper.embedLink("Patreon", ConfigProvider.URLS.donateUrl()) + ".");
+                "**Want to contribute or give feedback?**\n" +
+                "Feel free to join ").appendRaw(FormatHelper.embedLink("here", ConfigProvider.URLS.discordInviteUrl())).append("\n" +
+                "**Want to donate?**\n" +
+                "You can do that though ").appendRaw(FormatHelper.embedLink("Patreon", ConfigProvider.URLS.donateUrl()) + ".");
         maker.withThumb(DiscordClient.getOurUser().getAvatarURL());
     }
 }

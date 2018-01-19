@@ -6,7 +6,6 @@ import com.github.nija123098.evelyn.audio.configs.track.TrackTypeConfig;
 import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
-import com.github.nija123098.evelyn.service.services.MusicDownloadService;
 import com.github.nija123098.evelyn.util.Log;
 import com.github.nija123098.evelyn.util.YTDLHelper;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;

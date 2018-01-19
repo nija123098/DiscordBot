@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.github.nija123098.evelyn.botconfiguration.ConfigProvider.FOLDER_SETTINGS;
-import static com.github.nija123098.evelyn.botconfiguration.ConfigProvider.LIBRARIES_FILES;
+import static com.github.nija123098.evelyn.botconfiguration.ConfigProvider.EXECUTABLE_FILES;
 import static com.github.nija123098.evelyn.util.Log.log;
 import static com.github.nija123098.evelyn.util.NetworkHelper.isValid;
 import static java.util.concurrent.TimeUnit.MINUTES;
@@ -23,7 +23,7 @@ public class YTDLHelper {
         String location = FOLDER_SETTINGS.audioFolder() + id;
         List<String> commands = new ArrayList<>();
         ProcessBuilder builder = new ProcessBuilder();
-        commands.add(LIBRARIES_FILES.youtubeDl());
+        commands.add(EXECUTABLE_FILES.youtubeDl());
         commands.add("--no-check-certificate");
         commands.add("--extract-audio");//-x
         commands.add("--audio-format");

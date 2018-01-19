@@ -3,7 +3,6 @@ package com.github.nija123098.evelyn.util;
 import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.exception.ArgumentException;
 import com.github.nija123098.evelyn.exception.DevelopmentException;
-import com.github.nija123098.evelyn.launcher.Reference;
 import javafx.util.Pair;
 import org.json.JSONArray;
 
@@ -29,6 +28,7 @@ import java.util.regex.Pattern;
  * @since 1.0.0
  */
 public class LangString {
+    private static final String NEW_LINE = System.getProperty("line.separator");
     /**
      * The value of the lang string in pairs
      * of strings and booleans, representing
@@ -70,7 +70,7 @@ public class LangString {
         return this.translated.computeIfAbsent(lang, s -> {
             final StringBuilder builder = new StringBuilder();
             this.value.forEach(pair -> builder.append(pair.getKey() ? translate(lang, pair.getValue()) : pair.getValue()));
-            return builder.toString().replace("\n", Reference.NL);
+            return builder.toString().replace("\n", NEW_LINE);
         });
     }
 
