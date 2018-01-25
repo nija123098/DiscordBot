@@ -13,8 +13,6 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
 import com.github.nija123098.evelyn.util.FormatHelper;
 
-import java.awt.*;
-
 /**
  * @author nija123098
  * @since 1.0.0
@@ -27,7 +25,7 @@ public class InfoCommand extends AbstractCommand {
     @Command
     public void command(MessageMaker maker, Guild guild){
         if (totalCommands == -1) totalCommands = (int) CommandHandler.getCommands().stream().filter(AbstractCommand::isHighCommand).filter(o -> !o.isTemplateCommand()).count();
-        maker.mustEmbed().withColor(new Color(39, 209, 110)).withThumb(DiscordClient.getOurUser().getAvatarURL());
+        maker.mustEmbed().withThumb(DiscordClient.getOurUser().getAvatarURL());
         maker.getTitle().clear().appendRaw(EmoticonHelper.getChars("bulb",false) + "INFO");
         maker.appendRaw("\u200B\nI am Evelyn, a music playing auto moderation bot!\n" +
                 "\n" +

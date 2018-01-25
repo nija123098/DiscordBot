@@ -17,9 +17,7 @@ import com.github.nija123098.evelyn.exception.PermissionsException;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
 import com.github.nija123098.evelyn.util.FormatHelper;
 
-import java.awt.*;
 import java.util.*;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -34,7 +32,6 @@ public class HelpCommand extends AbstractCommand {
     }
     @Command
     public static void command(@Argument(optional = true, replacement = ContextType.NONE) AbstractCommand command, MessageMaker maker, User user, Channel channel, @Context(softFail = true) Guild guild, @Context(softFail = true) ModuleLevel levelSelection, String full){
-        maker.withColor(new Color(39, 209, 110));
         if (command == null) {
             maker.mustEmbed();
             maker.getTitle().clear().appendRaw("I'll show you the following commands:\n");

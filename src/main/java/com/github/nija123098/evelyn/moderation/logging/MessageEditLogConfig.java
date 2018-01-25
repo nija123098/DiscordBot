@@ -26,8 +26,8 @@ public class MessageEditLogConfig extends AbstractConfig<Channel, Guild> {
         if (message.getOldMessage() == null || message.getChannel().isPrivate() || message.getOldMessage().getAuthor().isBot() || (channel = this.getValue(message.getGuild())) == null) return;
         MessageMaker maker = new MessageMaker(channel).withColor(Color.GRAY).withAuthor(message.getOldMessage().getAuthor());
         maker.append("Message from ").appendRaw(message.getAuthor().getDisplayName(message.getGuild())).appendRaw(" edited ").append("in ").appendRaw(message.getChannel().mention());
-        maker.getNewFieldPart().withInline(false).withBoth("Previous", message.getOldMessage().getMentionCleanedContent());
-        maker.getNewFieldPart().withInline(false).withBoth("New", message.getNewMessage().getMentionCleanedContent());
+        maker.getNewFieldPart().withInline(false).withBoth("Previous", message.getOldMessageCleanedContent());
+        maker.getNewFieldPart().withInline(false).withBoth("New", message.getNewMessageCleanedString());
         maker.getNote().appendRaw("ID: " + message.getOldMessage().getID());
         Attachment attachment = message.getOldMessage().getAttachments().stream().filter(att -> att.getUrl().endsWith("gif") || att.getUrl().endsWith("webv")).findFirst().orElse(null);
         if (attachment != null) maker.withImage(attachment.getUrl());

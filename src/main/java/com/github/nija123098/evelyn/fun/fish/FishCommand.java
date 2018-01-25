@@ -10,18 +10,16 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.economy.configs.CurrencySymbolConfig;
 import com.github.nija123098.evelyn.economy.configs.CurrentCurrencyConfig;
 import com.github.nija123098.evelyn.economy.lootcrate.LootCrateConfig;
-import com.github.nija123098.evelyn.exception.InsufficientException;
+import com.github.nija123098.evelyn.exception.InsufficientFundsException;
 import com.github.nija123098.evelyn.util.Rand;
 
-import java.awt.*;
-import java.util.ConcurrentModificationException;
 import java.util.concurrent.TimeUnit;
 
 /**
  * @author Soarnir
  * @since 1.0.0
  */
-public class FishCommand extends AbstractCommand {
+public class FishCommand extends AbstractCommand {// TODO clean and optimize
 
     //constructor
     public FishCommand() {
@@ -52,18 +50,13 @@ public class FishCommand extends AbstractCommand {
 
         //subtract cost
         int userBalance = ConfigHandler.getSetting(CurrentCurrencyConfig.class, user);
-        if (userBalance < cost) {
-
-            //not enough funds
-            throw new InsufficientException("You need `\u200B " + currency_symbol + " " + (cost - userBalance) + " \u200B` more to perform this transaction.");
-        }
+        if (userBalance < cost) throw new InsufficientFundsException(this.cost, userBalance, currency_symbol);
         ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, userBalance - cost);
         userBalance -= cost;
 
         //configure message maker
         maker.withAutoSend(false);
         maker.mustEmbed();
-        maker.withColor(new Color(54,57,62));
 
         //print the first frame
         maker.appendRaw("```\uD83C\uDFA3 @" + user.getDisplayName(guild) + " \uD83C\uDFA3\n");
@@ -132,26 +125,13 @@ public class FishCommand extends AbstractCommand {
 
             //subtract cost
             int r_userBalance = ConfigHandler.getSetting(CurrentCurrencyConfig.class, user);
-            if (r_userBalance < cost) {
-
-                //not enough funds
-                try {
-                    maker.clearReactionBehaviors();
-                } catch (ConcurrentModificationException IGNORE){ }
-
-                //print the error
-                maker.withColor(new Color(255, 183, 76));
-                maker.getHeader().clear().appendRaw("You need `\u200B " + currency_symbol + " " + (cost - r_userBalance) + " \u200B` more to perform this transaction.");
-                maker.send();
-                return;
-            }
+            if (r_userBalance < cost) throw new InsufficientFundsException(cost, r_userBalance, currency_symbol);
             ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, r_userBalance - cost);
             r_userBalance -= cost;
 
             //configure message maker
             maker.withAutoSend(false);
             maker.mustEmbed();
-            maker.withColor(new Color(54,57,62));
             maker.getHeader().clear();
 
             //print the first frame

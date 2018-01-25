@@ -11,8 +11,6 @@ import com.github.nija123098.evelyn.perms.BotRole;
 import com.github.nija123098.evelyn.template.KeyPhrase;
 import com.github.nija123098.evelyn.template.TemplateHandler;
 
-import java.awt.*;
-
 /**
  * @author nija123098
  * @since 1.0.0
@@ -25,7 +23,7 @@ public class TemplateAddCommand extends AbstractCommand {
     public void command(@Argument KeyPhrase keyPhrase, @Context(softFail = true) Guild guild, @Argument(info = "text") String s, User user, MessageMaker maker){
         TemplateCommand.checkPerms(user, guild, keyPhrase);
         TemplateHandler.addTemplate(keyPhrase, guild, s);
-        maker.appendRaw("You've added " + s + " to " + keyPhrase).mustEmbed().withColor(new Color(0, 206, 209));
+        maker.appendRaw("You've added a template for the keyphrase successfully:\n" + s).mustEmbed();
     }
     @Override
     public BotRole getBotRole() {

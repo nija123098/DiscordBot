@@ -1,6 +1,5 @@
 package com.github.nija123098.evelyn.economy.bank;
 
-import com.github.nija123098.evelyn.audio.Track;
 import com.github.nija123098.evelyn.audio.YoutubeTrack;
 import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.command.AbstractCommand;
@@ -19,18 +18,15 @@ import com.github.nija123098.evelyn.economy.configs.CurrentCurrencyStreakConfig;
 import com.github.nija123098.evelyn.economy.event.configs.*;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
 
-import java.awt.*;
 import java.time.*;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Soarnir
  * @since 1.0.0
  */
-public class BankCommand extends AbstractCommand {
+public class BankCommand extends AbstractCommand {// todo clean and optimize
     public BankCommand() {
         super("bank", ModuleLevel.ECONOMY, null, null, "For checking your balance and claiming your currency");
     }
@@ -39,7 +35,6 @@ public class BankCommand extends AbstractCommand {
         String name = ConfigHandler.getSetting(CurrencyNameConfig.class, guild), symbol = ConfigHandler.getSetting(CurrencySymbolConfig.class, guild), booster = EmoticonHelper.getChars("rocket", false), claim = EmoticonHelper.getChars("inbox_tray", false);
         int totalClaim = 256, bonus = 0;
         int streak = ConfigHandler.getSetting(CurrentCurrencyStreakConfig.class, user);
-        maker.withColor(new Color(54,57,62));
         /*
          * Check for old money timer in database or if empty
          */
@@ -96,31 +91,25 @@ public class BankCommand extends AbstractCommand {
         /*
          * Checks if it's been a day since the last time the user claimed, this is checked against 00:00 UTC, if it was more recent, display the time until 00:00 UTC
          */
-        if (nowDays.compareTo(thenDays) == 1) {
-            maker.appendRaw(ClaimBuilder((hours + "h " + minutes + "m"), symbol, bonus, streak, user, guild, true)).mustEmbed();
+        if (nowDays.compareTo(thenDays) > 0) {
+            maker.appendRaw(claimBuilder((hours + "h " + minutes + "m"), symbol, bonus, streak, user, guild, true)).mustEmbed();
             ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, (currentMoney + totalClaim));
             ConfigHandler.setSetting(LastCurrencyUseConfig.class, user, now.truncatedTo(ChronoUnit.SECONDS).toString());
             if (streak < 8) ConfigHandler.setSetting(CurrentCurrencyStreakConfig.class, user, (streak + 1));
         } else {
             if (hours == 0 && minutes <= 1) {
                 GuildAudioManager manager = GuildAudioManager.getManager(guild);
-                if (manager != null) {
-                    List<Track> thing = new ArrayList<>();
-                    thing.add(manager.currentTrack());
-                    thing.addAll(manager.getQueue());
-                    manager.clearQueue();
+                if (manager != null && manager.getQueue().isEmpty()) {
                     manager.queueTrack(new YoutubeTrack("9jK-NcRmVcw"));
-                    manager.skipTrack();
-                    thing.forEach(manager::queueTrack);
                 }
                 maker.withImage(ConfigProvider.URLS.bankGif());
                 return;
             }
-            maker.appendRaw(ClaimBuilder((hours + "h " + minutes + "m"), symbol, bonus, streak, user, guild, false)).mustEmbed();
+            maker.appendRaw(claimBuilder((hours + "h " + minutes + "m"), symbol, bonus, streak, user, guild, false)).mustEmbed();
         }
     }
 
-    private String ClaimBuilder(String time, String moneySymbol, int bonus, int streak, User user, Guild guild, boolean claim) {
+    private String claimBuilder(String time, String moneySymbol, int bonus, int streak, User user, Guild guild, boolean claim) {
         StringBuilder ret = new StringBuilder("```\n");
         String eventStart = "", eventEnd = "";
         if (ConfigHandler.getSetting(EventActiveConfig.class, GlobalConfigurable.GLOBAL)){

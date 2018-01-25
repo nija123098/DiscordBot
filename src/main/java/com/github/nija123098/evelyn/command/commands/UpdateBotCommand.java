@@ -11,9 +11,6 @@ import com.github.nija123098.evelyn.util.ExecuteShellCommand;
 import com.github.nija123098.evelyn.util.HastebinUtil;
 import com.github.nija123098.evelyn.util.PlatformDetector;
 
-import java.awt.*;
-import java.io.IOException;
-
 /**
  * @author Celestialdeath99
  * @since 1.0.0
@@ -23,7 +20,7 @@ public class UpdateBotCommand extends AbstractCommand {
         super("updatebot", ModuleLevel.DEVELOPMENT, "update", null, "Updates bot to latest git version.");
     }
     @Command
-    public void command(MessageMaker maker) throws IOException {
+    public void command(MessageMaker maker) {
         String commandPrefix = null;
 
         if (PlatformDetector.isWindows()) {
@@ -34,7 +31,7 @@ public class UpdateBotCommand extends AbstractCommand {
             commandPrefix = "./";
         }
 
-        maker.append("The bot will now download, compile and update itself from the latest version on GitHub." + "\n").mustEmbed().withColor(new Color(46, 204, 113));
+        maker.append("The bot will now download, compile and update itself from the latest version on GitHub." + "\n").mustEmbed();
         ExecuteShellCommand.commandToExecute(commandPrefix + ConfigProvider.UPDATE_SCRIPTS.pullScript());
         if (ExecuteShellCommand.getOutput().contains("Already up-to-date.")) {
             maker.appendRaw("\n**The bot is already at the latest version. Aborting update sequence.**");

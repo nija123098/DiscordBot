@@ -15,14 +15,14 @@ import java.util.Set;
  */
 public enum ConfigCategory {
     GAME_TEMPORARY_CHANNELS("GTC", ModuleLevel.ADMINISTRATIVE),
-    STAT_TRACKING("STAT", ModuleLevel.SYSTEM_LEVEL),
-    GUILD_PERSONALIZATION("GPER", ModuleLevel.ADMINISTRATIVE),
-    MUSIC("MUS", ModuleLevel.MUSIC),
+    STAT_TRACKING("ST", ModuleLevel.SYSTEM_LEVEL),
+    GUILD_PERSONALIZATION("GP", ModuleLevel.ADMINISTRATIVE),
+    MUSIC("MS", ModuleLevel.MUSIC),
     ECONOMY("ECO", ModuleLevel.ECONOMY),
-    LOGGING("LOG", ModuleLevel.ADMINISTRATIVE),
-    FAVOR("FAVOR", ModuleLevel.ADMINISTRATIVE),
-    PERSONAL_PERSONALIZATION("PPER", ModuleLevel.NONE, BotRole.BOT),
-    MODERATION("MOD", ModuleLevel.ADMINISTRATIVE),
+    LOGGING("L", ModuleLevel.ADMINISTRATIVE),
+    FAVOR("FA", ModuleLevel.ADMINISTRATIVE),
+    PERSONAL_PERSONALIZATION("PP", ModuleLevel.NONE, BotRole.BOT),
+    MODERATION("MD", ModuleLevel.ADMINISTRATIVE),
     GUILD_HIERARCHY("HI", ModuleLevel.ADMINISTRATIVE, BotRole.GUILD_ADMIN);
     private final Set<AbstractConfig<? extends Configurable, ?>> configs = new HashSet<>();
     private final ModuleLevel level;
@@ -33,6 +33,7 @@ public enum ConfigCategory {
      * The override for setting the {@link BotRole} as the
      * default for setting configs which are under this category.
      *
+     * @param abbreviation the abbreviation for setting a {@link AbstractConfig} shortID.
      * @param level the module level this config category.
      * @param botRole the {@link BotRole} required to edit a config from the category.
      */
@@ -45,6 +46,7 @@ public enum ConfigCategory {
     /**
      * A constructor which sets the {@link ModuleLevel} for the {@link ConfigCategory}.
      *
+     * @param abbreviation the abbreviation for setting a {@link AbstractConfig} shortID.
      * @param level the {@link ModuleLevel} this belongs to.
      */
     ConfigCategory(String abbreviation, ModuleLevel level) {

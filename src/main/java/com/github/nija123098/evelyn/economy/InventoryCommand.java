@@ -18,8 +18,6 @@ import com.github.nija123098.evelyn.economy.plantation.configs.CurrentGroundsCon
 import com.github.nija123098.evelyn.economy.plantation.configs.CurrentRoastedBeansConfig;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
 
-import java.awt.*;
-
 /**
  * @author Dxeo
  * @since 1.0.0
@@ -33,11 +31,7 @@ public class InventoryCommand extends AbstractCommand {
 
     @Command
     public void command(Guild guild, User user, MessageMaker maker){
-
-        //configure maker
-        maker.withAutoSend(false);
         maker.mustEmbed();
-        maker.withColor(new Color(54,57,62));
 
         //construct inventory to send
         maker.getTitle().clear().appendRaw(EmoticonHelper.getChars("school_satchel",false) + " " + user.getDisplayName(guild) + "'s inventory");
@@ -51,12 +45,9 @@ public class InventoryCommand extends AbstractCommand {
                 " \u200B`");
 
         //plantation section
-        maker.getNewFieldPart().withBoth("Plantation",(
+        maker.getNewFieldPart().withBoth("Plantation",
                 CoffeeEmotes.BEANS + " `\u200B " + ConfigHandler.getSetting(CurrentBeansConfig.class, user) + " \u200B`\n" +
                 CoffeeEmotes.ROASTBEANS + " `\u200B " + ConfigHandler.getSetting(CurrentRoastedBeansConfig.class, user) + " \u200B`\n" +
-                CoffeeEmotes.GROUNDS + " `\u200B " + ConfigHandler.getSetting(CurrentGroundsConfig.class, user) + " \u200B`"));
-        maker.send();
-
+                CoffeeEmotes.GROUNDS + " `\u200B " + ConfigHandler.getSetting(CurrentGroundsConfig.class, user) + " \u200B`");
     }
-
 }

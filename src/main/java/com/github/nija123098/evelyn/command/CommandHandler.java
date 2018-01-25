@@ -1,6 +1,5 @@
 package com.github.nija123098.evelyn.command;
 
-import com.github.nija123098.evelyn.util.Log;
 import com.github.nija123098.evelyn.command.configs.UnknownReactionConfig;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.configs.guild.GuildPrefixConfig;
@@ -13,7 +12,6 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordMessageEditEvent;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordMessageReceived;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordReactionEvent;
-import com.github.nija123098.evelyn.economy.configs.CurrencySymbolConfig;
 import com.github.nija123098.evelyn.exception.BotException;
 import com.github.nija123098.evelyn.exception.DevelopmentException;
 import com.github.nija123098.evelyn.exception.GhostException;
@@ -192,6 +190,7 @@ public class CommandHandler {
      * @param user the invoking user.
      * @param message the message reacted to or sent to invoke the command.
      * @param reaction the reaction that invoked this command, if applicable.
+     * @return true if there is a command invoked, null if chat is invoked, false otherwise.
      */
     public static Boolean attemptInvocation(String string, User user, Message message, Reaction reaction){
         if (reaction != null) string = string == null ? "" : string;
@@ -217,9 +216,6 @@ public class CommandHandler {
         }else{
             String pref = ConfigHandler.getSetting(GuildPrefixConfig.class, message.getGuild());
             if (string.startsWith(pref)) string = string.substring(pref.length());
-            //Hey! This line is commented as opposed to the rest of the code. Isn't it great?
-            //The next "else if" compares the message to the currency_symbol for the guild, if it matches it runs the bank command
-            else if (Objects.equals(string, ConfigHandler.getSetting(CurrencySymbolConfig.class, message.getGuild()))) string = "bank";
             else{
                 String split = string.split(" ")[0];
                 if ((command = REACTION_COMMAND_MAP.get(split)) != null){

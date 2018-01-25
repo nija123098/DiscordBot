@@ -44,6 +44,7 @@ public class MessageMaker {
     static {
         Launcher.registerShutdown(ReactionBehavior::deregisterAll);
     }
+    private static final Color DEFAULT_COLOR = new Color(175, 30, 5);
     private static final int CHAR_LIMIT = 2000;
     private static final int EMBED_LIMIT = 1000;
     private TextPart authorName, title, header, footer, note, external;
@@ -63,7 +64,7 @@ public class MessageMaker {
     private final Set<String> reactions = new HashSet<>(1);
     private Long deleteDelay;
     private File file;
-    private boolean okHand, maySend, mustEmbed, forceCompile, colored, isMessageError, autoSend = true;
+    private boolean okHand, maySend, mustEmbed, forceCompile, colored, messageError, autoSend = true;
 
     /**
      * Builds the message maker and sets it up.
@@ -491,6 +492,15 @@ public class MessageMaker {
     // embed methods
 
     /**
+     * Returns if the associated embed has been colored.
+     *
+     * @return
+     */
+    public boolean isColored(){
+        return this.colored;
+    }
+
+    /**
      * Sets a {@link Color} for the building message's embed color.
      *
      * @param color the color for the building message's embed color.
@@ -672,10 +682,10 @@ public class MessageMaker {
     public void send(){
         try{send(0);
         } catch (Exception e){
-            Log.log("Error while sending " + (this.isMessageError ? "internal message error" : "") + " message", e);
-            if (!this.isMessageError){
+            Log.log("Error while sending " + (this.messageError ? "internal message error" : "") + " message", e);
+            if (!this.messageError){
                 MessageMaker maker = new DevelopmentException(e).makeMessage(this.channel);
-                maker.isMessageError = true;
+                maker.messageError = true;
                 maker.send();
             }
         }
@@ -752,7 +762,7 @@ public class MessageMaker {
      */
     private void compile(){
         if (this.lang != null && !this.forceCompile) return;
-        if (!this.colored) this.withColor(new Color(0, 206, 209));
+        if (!this.colored) this.withColor(DEFAULT_COLOR);
         this.lang = getLang(this.user, this.channel);
         // message
         if (this.couldNormalize()) this.asNormalMessage();

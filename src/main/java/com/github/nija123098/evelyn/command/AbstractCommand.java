@@ -56,7 +56,7 @@ public class AbstractCommand {
     private Set<ContextRequirement> contextRequirements;
     private Set<AbstractCommand> subCommands;
     private boolean prefixRequired = true;
-    protected boolean okOnSuccess = false;
+    private boolean okOnSuccess = false;
 
     /**
      * The high constructor for a command which all other constructors call.
@@ -398,6 +398,15 @@ public class AbstractCommand {
     }
 
     /**
+     * Returns if the bot should log the use of this command.
+     *
+     * @return if the bot should log the use of this command.
+     */
+    public boolean shouldLog() {
+        return true;
+    }
+
+    /**
      * A check if the user can use a command in the context.
      *
      * @param user the user that is being checked for permission.
@@ -474,7 +483,7 @@ public class AbstractCommand {
         LastCommandTimeConfig.update(user);
         if (message != null){
             if (this.okOnSuccess) message.addReactionByName("ok_hand");
-            if (!message.getChannel().isPrivate()) {
+            if (this.shouldLog() && !message.getChannel().isPrivate()) {
                 Channel chan = ConfigHandler.getSetting(BotLogConfig.class, message.getGuild());
                 if (chan == null || !chan.canPost()) return;
                 new MessageMaker(chan).withAuthorIcon(user.getAvatarURL()).getAuthorName().appendRaw(message.getAuthor().getDisplayName(message.getGuild()) + (message.getAuthor().getNickname(message.getGuild()) == null ? "" : " AKA " + message.getAuthor().getNameAndDiscrim())).getMaker().append(message.getChannel().mention() + " - used command ***" + this.name + "***").appendRaw("\n" + message.getMentionCleanedContent()).send();
@@ -531,7 +540,7 @@ public class AbstractCommand {
         }
         try {
             Object object = this.method.invoke(this, objects);
-            Stream.of(objects).filter(MessageMaker.class::isInstance).forEach(o -> ((MessageMaker) o).send(true));
+            Stream.of(objects).filter(MessageMaker.class::isInstance).map(o -> ((MessageMaker) o)).forEach(o -> (o.isColored() ? o : o.withColor(this.module.getColor())).send(true));
             return object;
         } catch (IllegalAccessException e) {
             Log.log("Malformed command: " + getName(), e);

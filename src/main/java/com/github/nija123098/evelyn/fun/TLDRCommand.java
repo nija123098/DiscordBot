@@ -14,9 +14,7 @@ import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.TwitterException;
 
-import java.awt.*;
 import java.util.*;
-import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -71,23 +69,14 @@ public class TLDRCommand extends AbstractCommand {
 
     @Command
     public void command(MessageMaker maker, String s) {
-        try {
-            if (s.isEmpty()) s = Rand.getRand(this.entries, false);
-            else s = FormatHelper.removeChars(s, ' ').toLowerCase();
-            Pair<String, String> pair = this.map.get(s);
-            if (pair == null) {
-                maker.append("There is no an entry for that");
-                return;
-            }
-            maker.getTitle().appendRaw(pair.getKey());
-            maker.withImage(pair.getValue());
-        } catch (NullPointerException e) {
-            if (Objects.equals(ConfigProvider.AUTH_KEYS.twitterSecret(), "na")) {
-                maker.mustEmbed().withColor(new Color(255, 0, 0));
-                maker.getHeader().clear().append("Sorry, we are in the process of updating our API key!");
-            } else {
-                Log.log("Could not load TLDR map.", e);
-            }
+        if (s.isEmpty()) s = Rand.getRand(this.entries, false);
+        else s = FormatHelper.removeChars(s, ' ').toLowerCase();
+        Pair<String, String> pair = this.map.get(s);
+        if (pair == null) {
+            maker.append("There is no an entry for that");
+            return;
         }
+        maker.getTitle().appendRaw(pair.getKey());
+        maker.withImage(pair.getValue());
     }
 }

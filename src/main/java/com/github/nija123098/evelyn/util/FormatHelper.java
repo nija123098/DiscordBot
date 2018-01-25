@@ -108,7 +108,7 @@ public class FormatHelper {
      */
     public static String makeTable(List<String> items) {
         int length = items.stream().map(String::length).reduce(Math::max).orElse(0) + 3;
-        StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder("```\n");
         AtomicInteger currentLength = new AtomicInteger();
         items.forEach(s -> {
             if (currentLength.get() + s.length() > 64 && currentLength.get() != 0){
@@ -117,7 +117,7 @@ public class FormatHelper {
             }
             builder.append(s).append(repeat(' ', length - s.length()));
         });
-        return builder.toString();
+        return builder.append("\n```").toString();
     }
 
     /**

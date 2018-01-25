@@ -29,7 +29,7 @@ public class LootCrateCommand extends AbstractCommand {
 
         //if user has crates
         if (userCrates < 1) {
-            throw new InsufficientException("You need `\u200B " + LootCrateEmotes.CRATE + " 1 \u200B` more to perform this transaction.");
+            throw new InsufficientFundsException("You need `\u200B " + LootCrateEmotes.CRATE + " 1 \u200B` more to perform this transaction.");
         }
 
         //configure message maker

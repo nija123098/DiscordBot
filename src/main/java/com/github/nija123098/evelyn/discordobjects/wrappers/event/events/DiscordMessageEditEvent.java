@@ -19,7 +19,15 @@ public class DiscordMessageEditEvent implements BotEvent {
     public Message getOldMessage(){
         return Message.getMessage(this.event.getOldMessage());
     }
-    public Message getNewMessage() { return Message.getMessage(this.event.getNewMessage());}
+    public String getOldMessageCleanedContent(){
+        return Message.getCleanContent(this.event.getOldMessage());
+    }
+    public Message getNewMessage() {
+        return Message.getMessage(this.event.getNewMessage());
+    }
+    public String getNewMessageCleanedString() {
+        return Message.getCleanContent(this.event.getNewMessage());
+    }
     public User getAuthor(){
         return User.getUser(this.event.getAuthor());
     }

@@ -10,8 +10,6 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.perms.BotRole;
 
-import java.awt.*;
-
 /**
  * @author nija123098
  * @since 1.0.0
@@ -25,7 +23,6 @@ public class PrefixCommand extends AbstractCommand {
         if ((s != null && !s.isEmpty()) && BotRole.GUILD_TRUSTEE.hasRequiredRole(user, guild)) {
             ConfigHandler.setSetting(GuildPrefixConfig.class, guild, s);
         }
-        maker.mustEmbed().withColor(new Color(0, 206, 209));
-        maker.appendAlternate(false, "My prefix is `", ConfigHandler.getSetting(GuildPrefixConfig.class, guild), "`\nTo change it, use the prefix command.");
+        maker.mustEmbed().appendAlternate(false, "My prefix is `", ConfigHandler.getSetting(GuildPrefixConfig.class, guild), "`\nTo change it, use the prefix command.");
     }
 }

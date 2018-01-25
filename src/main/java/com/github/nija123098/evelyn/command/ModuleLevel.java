@@ -6,6 +6,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.perms.BotRole;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,26 +21,28 @@ import java.util.stream.Stream;
  */
 @LaymanName(value = "Module", help = "A group of commands.  MUSIC, FUN, BOT_ADMINISTRATIVE, ADMINISTRATIVE, ECONOMY, DEVELOPMENT, INFO, HELPER, NONE")
 public enum ModuleLevel {
-    SYSTEM_LEVEL(BotRole.SYSTEM, "floppy_disk"),
-    DEVELOPMENT(BotRole.CONTRIBUTOR, "computer"),
-    BOT_ADMINISTRATIVE(BotRole.BOT_ADMIN, "monkey"),
-    ADMINISTRATIVE(BotRole.GUILD_TRUSTEE, "oncoming_police_car"),
-    ECONOMY("moneybag"),
-    INFO("chart_with_upwards_trend"),
-    HELPER("hand_splayed"),
-    FUN("game_die"),
-    MUSIC("headphones"),
-    NONE("grey_question"),;
-    private String icon, iconName;
-    private BotRole botRole;
-    private List<AbstractCommand> commands = new ArrayList<>();
+    SYSTEM_LEVEL(Color.GRAY, BotRole.SYSTEM, "floppy_disk"),
+    DEVELOPMENT(Color.BLACK, BotRole.CONTRIBUTOR, "computer"),
+    BOT_ADMINISTRATIVE(new Color(175, 30, 5), BotRole.BOT_ADMIN, "monkey"),
+    ADMINISTRATIVE(Color.BLUE, BotRole.GUILD_TRUSTEE, "oncoming_police_car"),
+    ECONOMY(Color.YELLOW, "moneybag"),
+    INFO(new Color(39, 209, 110), "chart_with_upwards_trend"),
+    HELPER(Color.CYAN,"hand_splayed"),
+    FUN(Color.MAGENTA, "game_die"),
+    MUSIC(Color.BLUE, "headphones"),
+    NONE(Color.WHITE, "grey_question"),;
+    private final String icon, iconName;
+    private final BotRole botRole;
+    private final List<AbstractCommand> commands = new ArrayList<>();
+    private final Color color;
     void addCommand(AbstractCommand command){
         this.commands.add(command);
     }
-    ModuleLevel(String icon) {
-        this(BotRole.USER, icon);
+    ModuleLevel(Color color, String icon) {
+        this(color, BotRole.USER, icon);
     }
-    ModuleLevel(BotRole role, String icon) {
+    ModuleLevel(Color color, BotRole role, String icon) {
+        this.color = color;
         this.botRole = role;
         this.iconName = icon;
         this.icon = EmoticonHelper.getChars(icon, true);
@@ -55,6 +58,9 @@ public enum ModuleLevel {
     }
     public List<AbstractCommand> getCommands() {
         return this.commands;
+    }
+    public Color getColor() {
+        return this.color;
     }
     public static List<ModuleLevel> getGeneralApproved(User user, Guild guild){
         return Stream.of(values()).filter(level -> level.getDefaultRole().hasRequiredRole(user, guild)).collect(Collectors.toList());

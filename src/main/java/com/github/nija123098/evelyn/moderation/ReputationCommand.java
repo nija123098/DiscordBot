@@ -39,4 +39,9 @@ public class ReputationCommand extends AbstractCommand {
     public boolean useReactions() {
         return true;
     }
+
+    @Override
+    public boolean shouldLog() {
+        return false;
+    }
 }

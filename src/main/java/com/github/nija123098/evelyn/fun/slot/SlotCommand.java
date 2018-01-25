@@ -11,17 +11,16 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.economy.configs.CurrencySymbolConfig;
 import com.github.nija123098.evelyn.economy.configs.CurrentCurrencyConfig;
 import com.github.nija123098.evelyn.exception.ArgumentException;
+import com.github.nija123098.evelyn.exception.InsufficientFundsException;
 import com.github.nija123098.evelyn.util.Rand;
 
-import java.awt.*;
-import java.util.ConcurrentModificationException;
 import java.util.concurrent.TimeUnit;
 
 /**
  * @author Dxeo
  * @since 1.0.0
  */
-public class SlotCommand extends AbstractCommand {
+public class SlotCommand extends AbstractCommand {// todo optimization and cleanup
 
     //constructor
     public SlotCommand() {
@@ -63,9 +62,7 @@ public class SlotCommand extends AbstractCommand {
         userBalance -= bet;
 
         //configure message maker
-        maker.withAutoSend(false);
-        maker.mustEmbed();
-        maker.withColor(new Color(54,57,62));
+        maker.mustEmbed().withAutoSend(false);
 
         //print the first frame
         maker.appendRaw("```\uD83C\uDFB0 @" + user.getDisplayName(guild) + " \uD83C\uDFB0\n");
@@ -147,26 +144,13 @@ public class SlotCommand extends AbstractCommand {
 
             //subtract bet
             int r_userBalance = ConfigHandler.getSetting(CurrentCurrencyConfig.class, user);
-            if (r_userBalance < bet) {
-
-                //not enough funds
-                try {
-                    maker.clearReactionBehaviors();
-                } catch (ConcurrentModificationException IGNORE){ }
-
-                //print the error
-                maker.withColor(new Color(255, 183, 76));
-                maker.getHeader().clear().appendRaw("You need `\u200B " + currency_symbol + " " + (bet - r_userBalance) + " \u200B` more to perform this transaction.");
-                maker.send();
-                return;
-            }
+            if (r_userBalance < bet) throw new InsufficientFundsException(bet, r_userBalance, currency_symbol);
             ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, r_userBalance - bet);
             r_userBalance -= bet;
 
             //configure message maker
             maker.withAutoSend(false);
             maker.mustEmbed();
-            maker.withColor(new Color(54,57,62));
             maker.getHeader().clear();
 
             //print the first frame

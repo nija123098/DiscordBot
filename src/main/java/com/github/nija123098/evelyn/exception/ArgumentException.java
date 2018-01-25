@@ -3,10 +3,7 @@ package com.github.nija123098.evelyn.exception;
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.LaymanName;
-import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
-import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 
-import java.awt.*;
 import java.lang.reflect.Parameter;
 
 /**
@@ -16,12 +13,10 @@ import java.lang.reflect.Parameter;
  * @author nija123098
  * @since 1.0.0
  */
-public class ArgumentException extends BotException {
+public class ArgumentException extends UserIssueException {
     private AbstractCommand command;
     private Parameter[] args;
     private int parameter;
-    public ArgumentException() {
-    }
 
     public ArgumentException(String message) {
         super(message);
@@ -69,10 +64,4 @@ public class ArgumentException extends BotException {
         }
         return s.substring(0, s.length() - 2);
     }
-
-    @Override
-    public MessageMaker makeMessage(Channel channel) {
-        return super.makeMessage(channel).getNote().append("Please check the help command for more information on how to use this command.").getMaker().withColor(new Color(255, 183, 76)).getTitle().clear().appendRaw("Invalid Argument").getMaker();
-    }
-
 }

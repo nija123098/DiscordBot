@@ -70,13 +70,17 @@ public class Message {// should not be kept stored, too many are made
         return message().getContent();
     }
 
-    public String getMentionCleanedContent(){
-        AtomicReference<String> reference = new AtomicReference<>(this.getContent());
-        if (this.mentionsEveryone()) reference.getAndUpdate(s -> s.replace("@everyone", "***everyone***"));
-        if (this.mentionsHere()) return reference.getAndUpdate(s -> s.replace("@here", "***here***"));
-        this.getMentions().forEach(user -> reference.getAndUpdate(s -> s.replace(user.mention().replace("!", "!?"), "***" + user.getNameAndDiscrim() + "***")));
-        this.getRoleMentions().forEach(role -> reference.getAndUpdate(s -> s.replace(role.mention(), "***" + role.getName() + "***")));
+    public static String getCleanContent(IMessage message){
+        AtomicReference<String> reference = new AtomicReference<>(message.getContent());
+        if (message.mentionsEveryone()) reference.getAndUpdate(s -> s.replace("@everyone", "***everyone***"));
+        if (message.mentionsHere()) return reference.getAndUpdate(s -> s.replace("@here", "***here***"));
+        message.getMentions().forEach(user -> reference.getAndUpdate(s -> s.replace(user.mention().replace("!", "!?"), "***" + user.getName() + "#" + user.getDiscriminator() + "***")));
+        message.getRoleMentions().forEach(role -> reference.getAndUpdate(s -> s.replace(role.mention(), "***" + role.getName() + "***")));
         return reference.get();
+    }
+
+    public String getMentionCleanedContent(){
+        return getCleanContent(this.iMessage);
     }
 
     public Channel getChannel() {
