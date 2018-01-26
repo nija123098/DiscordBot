@@ -21,7 +21,6 @@ import java.util.concurrent.TimeUnit;
  */
 public class FishCommand extends AbstractCommand {// TODO clean and optimize
 
-    //constructor
     public FishCommand() {
         super("fish", ModuleLevel.FUN, null, null, "fish for stuff");
     }

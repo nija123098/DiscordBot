@@ -15,7 +15,6 @@ import com.github.nija123098.evelyn.exception.PermissionsException;
  */
 public class RoleAddCommand extends AbstractCommand {
 
-    //constructor
     public RoleAddCommand() {
         super(RoleCommand.class, "add", "radd", null, null, "give a user a role");
     }

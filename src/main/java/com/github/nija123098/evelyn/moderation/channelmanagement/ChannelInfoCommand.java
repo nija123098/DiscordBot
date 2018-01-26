@@ -13,9 +13,8 @@ import com.github.nija123098.evelyn.util.FormatHelper;
  */
 public class ChannelInfoCommand extends AbstractCommand {
 
-    //constructor
     public ChannelInfoCommand() {
-        super(ChannelCommand.class,"info", null, null, null, null);
+        super(ChannelCommand.class,"info", "cinfo", null, null, null);
     }
 
     @Command

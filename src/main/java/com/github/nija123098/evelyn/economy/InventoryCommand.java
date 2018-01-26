@@ -3,19 +3,9 @@ package com.github.nija123098.evelyn.economy;
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Command;
-import com.github.nija123098.evelyn.config.ConfigHandler;
-import com.github.nija123098.evelyn.config.configs.guild.GuildPrefixConfig;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
-import com.github.nija123098.evelyn.economy.configs.CurrencySymbolConfig;
-import com.github.nija123098.evelyn.economy.configs.CurrentCurrencyConfig;
-import com.github.nija123098.evelyn.economy.lootcrate.LootCrateConfig;
-import com.github.nija123098.evelyn.economy.lootcrate.LootCrateEmotes;
-import com.github.nija123098.evelyn.economy.plantation.configs.CoffeeEmotes;
-import com.github.nija123098.evelyn.economy.plantation.configs.CurrentBeansConfig;
-import com.github.nija123098.evelyn.economy.plantation.configs.CurrentGroundsConfig;
-import com.github.nija123098.evelyn.economy.plantation.configs.CurrentRoastedBeansConfig;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
 
 /**
@@ -24,14 +14,18 @@ import com.github.nija123098.evelyn.util.EmoticonHelper;
  */
 public class InventoryCommand extends AbstractCommand {
 
-    //constructor
     public InventoryCommand() {
-        super("inventory", ModuleLevel.ECONOMY, "inv", null, "open your inventory");
+        super("inventory", ModuleLevel.BOT_ADMINISTRATIVE, "inv", null, "open your inventory");
     }
 
     @Command
-    public void command(Guild guild, User user, MessageMaker maker){
+    public void command(Guild guild, User user, MessageMaker maker) {
+        maker.appendRaw(EmoticonHelper.getChars("eyes", false));
+        /*
+        //configure maker
+        maker.withAutoSend(false);
         maker.mustEmbed();
+        maker.withColor(new Color(54,57,62));
 
         //construct inventory to send
         maker.getTitle().clear().appendRaw(EmoticonHelper.getChars("school_satchel",false) + " " + user.getDisplayName(guild) + "'s inventory");
@@ -45,9 +39,11 @@ public class InventoryCommand extends AbstractCommand {
                 " \u200B`");
 
         //plantation section
-        maker.getNewFieldPart().withBoth("Plantation",
+        maker.getNewFieldPart().withBoth("Plantation",(
                 CoffeeEmotes.BEANS + " `\u200B " + ConfigHandler.getSetting(CurrentBeansConfig.class, user) + " \u200B`\n" +
                 CoffeeEmotes.ROASTBEANS + " `\u200B " + ConfigHandler.getSetting(CurrentRoastedBeansConfig.class, user) + " \u200B`\n" +
-                CoffeeEmotes.GROUNDS + " `\u200B " + ConfigHandler.getSetting(CurrentGroundsConfig.class, user) + " \u200B`");
+                CoffeeEmotes.GROUNDS + " `\u200B " + ConfigHandler.getSetting(CurrentGroundsConfig.class, user) + " \u200B`"));
+        maker.send();*/
+
     }
 }

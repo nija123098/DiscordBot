@@ -16,7 +16,7 @@ import com.github.nija123098.evelyn.util.EmoticonHelper;
  */
 public class PlantationCommand extends AbstractCommand {
     public PlantationCommand() {
-        super("plantation", ModuleLevel.ECONOMY, "plant", "seedling", "check out your plantation");
+        super("plantation", ModuleLevel.BOT_ADMINISTRATIVE, "plant", "seedling", "check out your plantation");
     }
 
     @Command

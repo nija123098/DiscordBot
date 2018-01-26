@@ -15,7 +15,6 @@ import java.util.List;
  */
 public class RoleListCommand extends AbstractCommand {
 
-    //constructor
     public RoleListCommand() {
         super(RoleCommand.class,"list", "rlist", null, null, "Show a list of all roles in a server");
     }

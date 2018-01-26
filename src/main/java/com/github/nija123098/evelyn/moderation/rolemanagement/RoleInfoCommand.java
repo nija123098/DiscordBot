@@ -16,7 +16,6 @@ import com.github.nija123098.evelyn.util.FormatHelper;
  */
 public class RoleInfoCommand extends AbstractCommand {
 
-    //constructor
     public RoleInfoCommand() {
         super(RoleCommand.class, "info", "rinfo", null, null, "Get info about a role");
     }
@@ -28,13 +27,17 @@ public class RoleInfoCommand extends AbstractCommand {
         maker.withColor(role);
         if (role.getPermissions().contains(DiscordPermission.ADMINISTRATOR)) maker.appendRaw(EmoticonHelper.getChars("oncoming_police_car", false) + " Administrator");
         maker.getHeader().appendRaw("\u200b");
-        maker.getNewFieldPart().withInline(true).withBoth("Role Position", "" + (guild.getRoles().size() - role.getPosition()));
-        maker.getNewFieldPart().withInline(true).withBoth("Users", "" + role.getUsers().size());
-        maker.getNewFieldPart().withInline(true).withBoth("ID", role.getID());
-        maker.getNewFieldPart().withInline(true).withBoth("Mentionable", "" + role.isMentionable());
-        maker.getNewFieldPart().withInline(true).withBoth("Hoisted", "" + role.isHoisted());
-        maker.getNewFieldPart().withInline(true).withBoth("Color", "RGB: " + role.getColor().getRed() + ", " + role.getColor().getGreen() + ", " + role.getColor().getBlue() +
+        addFieldPart(maker, "Role Position", "" + (guild.getRoles().size() - role.getPosition()));
+        addFieldPart(maker, "Users", "" + role.getUsers().size());
+        addFieldPart(maker, "ID", role.getID());
+        addFieldPart(maker, "Mentionable", "" + role.isMentionable());
+        addFieldPart(maker, "Hoisted", "" + role.isHoisted());
+        addFieldPart(maker, "Color", "RGB: " + role.getColor().getRed() + ", " + role.getColor().getGreen() + ", " + role.getColor().getBlue() +
                 "\nHex: #" + (Integer.toHexString(role.getColor().getRed()).length() == 1 ? "0" + Integer.toHexString(role.getColor().getRed()) : Integer.toHexString(role.getColor().getRed())) + (Integer.toHexString(role.getColor().getGreen()).length() == 1 ? "0" + Integer.toHexString(role.getColor().getGreen()) : Integer.toHexString(role.getColor().getGreen())) + (Integer.toHexString(role.getColor().getBlue()).length() == 1 ? "0" + Integer.toHexString(role.getColor().getBlue()) : Integer.toHexString(role.getColor().getBlue())));
-        maker.getNewFieldPart().withInline(true).withBoth("Permissions", FormatHelper.makeRolePermissionsTable(role));
+        addFieldPart(maker, "Permissions", FormatHelper.makeRolePermissionsTable(role));
+    }
+
+    private static void addFieldPart(MessageMaker maker, String title, String value) {
+        maker.getNewFieldPart().withInline(true).withBoth(title, value);
     }
 }

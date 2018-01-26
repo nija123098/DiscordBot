@@ -13,7 +13,6 @@ import com.github.nija123098.evelyn.exception.PermissionsException;
  */
 public class RoleHoistCommand extends AbstractCommand {
 
-    //constructor
     public RoleHoistCommand() {
         super(RoleCommand.class, "hoist", "rhoist", null, null, "toggles whether a role is displayed separately");
     }

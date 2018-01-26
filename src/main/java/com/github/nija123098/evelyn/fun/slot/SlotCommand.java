@@ -22,7 +22,6 @@ import java.util.concurrent.TimeUnit;
  */
 public class SlotCommand extends AbstractCommand {// todo optimization and cleanup
 
-    //constructor
     public SlotCommand() {
         super("slot", ModuleLevel.FUN, null, null, "Challenge the RNG and test your fate.");
     }
@@ -46,6 +45,8 @@ public class SlotCommand extends AbstractCommand {// todo optimization and clean
         //bet not zero
         if (bet < 1){
             throw new ArgumentException("You cannot bet less than `\u200B " + currency_symbol + " 1 \u200B` currency.");
+        } else if (bet > 200) {
+            throw new ArgumentException("You cannot bet more than `\u200b " + currency_symbol + " 200 \u200b` currency.");
         }
 
         //save guild jackpot

@@ -71,6 +71,6 @@ public enum ConfigCategory {
      */
     public String addConfig(AbstractConfig<? extends Configurable, ?> abstractConfig){
         this.configs.add(abstractConfig);
-        return this.abbreviation + "-" + this.configs.size();
+        return this.abbreviation + this.configs.size();
     }
 }

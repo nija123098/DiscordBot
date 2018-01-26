@@ -20,7 +20,6 @@ import com.github.nija123098.evelyn.util.FormatHelper;
  */
 public class ChannelCommand extends AbstractCommand {
 
-    //constructor
     public ChannelCommand() {
         super("channel", ModuleLevel.ADMINISTRATIVE, null, null, "supercommand for channel management");
     }
@@ -32,7 +31,7 @@ public class ChannelCommand extends AbstractCommand {
         if (channel == null) {
             if (DiscordClient.getOurUser().getPermissionsForGuild(guild).contains(DiscordPermission.MANAGE_CHANNELS)) {
                 maker.getTitle().appendRaw("I can perform the following changes to channels in this server");
-                maker.appendRaw("Change channel name\nChange channel topic\nGet detailed channel info");
+                maker.appendRaw("Create channel\nDelete channel\nChange channel name\nChange channel topic\nGet detailed channel info");
                 maker.getFooter().appendRaw("use `" + prefix + "help channel` to see a overview of how to use the commands");
             }
         } else {

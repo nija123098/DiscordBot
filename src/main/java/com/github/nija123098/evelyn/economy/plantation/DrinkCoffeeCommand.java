@@ -1,9 +1,9 @@
 package com.github.nija123098.evelyn.economy.plantation;
 
 import com.github.nija123098.evelyn.command.AbstractCommand;
+import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.config.ConfigHandler;
-import com.github.nija123098.evelyn.config.configs.guild.GuildPrefixConfig;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
@@ -23,7 +23,7 @@ import java.time.temporal.ChronoUnit;
  */
 public class DrinkCoffeeCommand extends AbstractCommand {
     public DrinkCoffeeCommand() {
-        super("drink", null, null, "coffee", "drink your coffee");
+        super("drink", ModuleLevel.FUN, null, "coffee", "drink your coffee");
     }
 
     @Command
@@ -62,7 +62,8 @@ public class DrinkCoffeeCommand extends AbstractCommand {
                 ConfigHandler.setSetting(HasCoffeeConfig.class, user, false);
             }
         } else {
-            maker.appendRaw("You stare blankly out your window and sigh as you realise you don't currently have a " + CoffeeEmotes.COFFEE + " to drink.\nYou should probably check your `" + ConfigHandler.getSetting(GuildPrefixConfig.class, guild) + "plantation`.");
+            maker.appendRaw("You stare meaninglessly out your window and sigh as you realise you don't currently have a " + CoffeeEmotes.COFFEE + " to drink.\nYou think about the prospects of brewing your own coffee and sigh contentedly, a problem for another day.");
+            //"\nYou should probably check your `" + ConfigHandler.getSetting(GuildPrefixConfig.class, guild) + "plantation`.");
         }
     }
 }

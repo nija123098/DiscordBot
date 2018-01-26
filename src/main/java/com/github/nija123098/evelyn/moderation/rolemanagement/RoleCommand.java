@@ -21,7 +21,6 @@ import com.github.nija123098.evelyn.util.FormatHelper;
  */
 public class RoleCommand extends AbstractCommand {
 
-    //constructor
     public RoleCommand() {
         super("role", ModuleLevel.ADMINISTRATIVE, null, null, "displays info about a role, or what the bot can edit");
     }
@@ -33,8 +32,8 @@ public class RoleCommand extends AbstractCommand {
         if (role == null) {
             if (DiscordClient.getOurUser().getPermissionsForGuild(guild).contains(DiscordPermission.MANAGE_ROLES)) {
                 maker.getTitle().appendRaw("I can perform the following changes to roles in this server:");
-                maker.appendRaw("Change role name\nChange role colour\nToggle role hoist\nClear all roles from a user\nRemove x role from a user\nAdd x role to a user\nDelete role\nGet detailed role info");
-                maker.getFooter().appendRaw("use `" + prefix + "help role` to see a overview of how to use the commands");
+                maker.appendRaw("Change role name\nChange role colour\nToggle role hoist\nClear all roles from a user\nRemove x role from a user\nAdd x role to a user\nDelete role\nGet role list for server\nGet role list of roles with zero users\nGet detailed role info");
+                maker.getFooter().appendRaw("use `" + prefix + "help role` to see all the commands");
             } else {
                 maker.appendRaw("I'm lacking the `manage roles` permission in your server to be able to perform any role management commands.");
             }

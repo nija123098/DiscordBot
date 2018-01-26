@@ -371,9 +371,9 @@ public class CommandHandler {
      */
     @EventListener
     public static void handle(DiscordMessageEditEvent event){
-        if (!event.getAuthor().isBot() && OPEN_EDIT_MESSAGES.contains(event.getNewMessage().getID())){
-            if (Care.lessBoolean(attemptInvocation(event.getNewMessage().getContent(), event.getAuthor(), event.getNewMessage(), null))){
-                OPEN_EDIT_MESSAGES.remove(event.getNewMessage().getID());
+        if (!event.getAuthor().isBot() && OPEN_EDIT_MESSAGES.contains(event.getOldMessage().getID())){
+            if (Care.lessBoolean(attemptInvocation(event.getOldMessage().getContent(), event.getAuthor(), event.getOldMessage(), null))){
+                OPEN_EDIT_MESSAGES.remove(event.getOldMessage().getID());
             }
         }
     }

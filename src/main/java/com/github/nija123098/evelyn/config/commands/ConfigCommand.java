@@ -12,7 +12,6 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Message;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.perms.BotRole;
-import com.github.nija123098.evelyn.util.FormatHelper;
 import com.github.nija123098.evelyn.util.LanguageHelper;
 
 import java.util.stream.Stream;
@@ -22,9 +21,11 @@ import java.util.stream.Stream;
  * @since 1.0.0
  */
 public class ConfigCommand extends AbstractCommand {
+
     public ConfigCommand() {
         super("config", BotRole.USER, ModuleLevel.ADMINISTRATIVE, "cfg", null, "Gets information on config values");
     }
+
     @Command
     public <C extends Configurable> void command(@Argument(optional = true, info = "config/user/channel/role") C configurable, @Argument(optional = true, replacement = ContextType.NONE) ConfigCategory configCategory, @Argument String s, User user, @Context(softFail = true) Guild guild, MessageMaker maker, @Context(softFail = true) Message message){
         if (configurable != null || s == null || s.isEmpty()){
@@ -37,11 +38,11 @@ public class ConfigCommand extends AbstractCommand {
             else Stream.of(ConfigCategory.values()).filter(category -> category.getBotRole().hasRequiredRole(user, guild)).forEach(category -> {
                 if (finalConfigurable instanceof Guild) {
                     if (!category.getBotRole().name().contains("BOT") && !category.getBotRole().name().contains("ADMIN")) {
-                        maker.getNewFieldPart().withInline(false).withBoth("\u200b", FormatHelper.embedLink(category.name(), ""));
+                        maker.getNewFieldPart().withInline(false).withBoth("\u200b", category.name());
                     }
                 } else {
                     if (!category.getBotRole().name().contains("ADMIN")) {
-                        maker.getNewFieldPart().withInline(false).withBoth("\u200b", FormatHelper.embedLink(category.name(), ""));
+                        maker.getNewFieldPart().withInline(false).withBoth("\u200b", category.name());
                     }
                 }
                 if (category.getConfigs().stream().filter(AbstractConfig::isNormalViewing).filter(abstractConfig -> abstractConfig.getConfigLevel() == finalConfigurable.getConfigLevel() || abstractConfig.getConfigLevel() == ConfigLevel.ALL).filter(abstractConfig -> abstractConfig.getBotRole().hasRequiredRole(user, guild)).peek(config -> maker.getNewFieldPart().withBoth(config.getConfigCommandDisplay(), ConfigHandler.getExteriorSetting(config.getName(), finalConfigurable))).count() > 0){

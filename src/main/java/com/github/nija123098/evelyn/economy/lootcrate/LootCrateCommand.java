@@ -14,11 +14,9 @@ import com.github.nija123098.evelyn.util.EmoticonHelper;
  */
 public class LootCrateCommand extends AbstractCommand {
 
-    //constructor
     public LootCrateCommand() {
-        super("lootcrate", ModuleLevel.ECONOMY, "lc", null, "open your loot crates");
+        super("lootcrate", ModuleLevel.BOT_ADMINISTRATIVE, "lc", null, "open your loot crates");
     }
-
 
     @Command
     public void command(Guild guild, User user, MessageMaker maker) throws InterruptedException {

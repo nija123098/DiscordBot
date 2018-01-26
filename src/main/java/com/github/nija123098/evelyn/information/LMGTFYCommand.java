@@ -14,7 +14,6 @@ import com.github.nija123098.evelyn.util.FormatHelper;
  */
 public class LMGTFYCommand extends AbstractCommand {
 
-    //constructor
     public LMGTFYCommand() {
         super("lmgtfy", ModuleLevel.INFO, null, null, "help another user use google");
     }

@@ -13,7 +13,6 @@ import com.github.nija123098.evelyn.exception.PermissionsException;
  */
 public class ChannelNameCommand extends AbstractCommand {
 
-    //constructor
     public ChannelNameCommand() {
         super(ChannelCommand.class,"name", "cname", null, null, "Change the channel name");
     }

@@ -13,7 +13,6 @@ import com.github.nija123098.evelyn.exception.PermissionsException;
  */
 public class ChannelTopicCommand extends AbstractCommand {
 
-    //constructor
     public ChannelTopicCommand() {
         super(ChannelCommand.class,"topic", "ctopic", null, null, "change the topic of a channel");
     }

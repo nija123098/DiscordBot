@@ -12,7 +12,7 @@ import com.github.nija123098.evelyn.util.EmoticonHelper;
  */
 public class CurrencySymbolConfig extends AbstractConfig<String, Configurable> {
     public CurrencySymbolConfig() {
-        super("currency_symbol", "Currency Symbol", ConfigCategory.ECONOMY, "", "The symbol currency is represented by");
+        super("currency_symbol", "Currency Symbol", ConfigCategory.ECONOMY, "cookie", "The symbol currency is represented by");
     }
 
     @Override

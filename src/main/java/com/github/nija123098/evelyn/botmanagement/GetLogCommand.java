@@ -12,7 +12,6 @@ import com.github.nija123098.evelyn.util.Log;
  */
 public class GetLogCommand extends AbstractCommand {
 
-    //constructor
     public GetLogCommand() {
         super("getlog", ModuleLevel.DEVELOPMENT, "gl", null, null);
     }

@@ -13,7 +13,6 @@ import com.github.nija123098.evelyn.exception.PermissionsException;
  */
 public class RenameRoleCommand extends AbstractCommand {
 
-    //constructor
     public RenameRoleCommand() {
         super(RoleCommand.class, "rename", "rname", null, null, "rename a role in the server");
     }

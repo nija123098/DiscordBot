@@ -16,7 +16,6 @@ import com.github.nija123098.evelyn.util.FormatHelper;
  */
 public class UserPermissionsCommand extends AbstractCommand {
 
-    //constructor
     public UserPermissionsCommand() {
         super("user permissions", ModuleLevel.ADMINISTRATIVE, null, null, "Get a detailed view of a users permissions");
     }
