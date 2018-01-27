@@ -9,11 +9,7 @@ import com.github.nija123098.evelyn.config.GlobalConfigurable;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.economy.event.configs.EventBonusConfig;
-import com.github.nija123098.evelyn.economy.event.configs.EventEndConfig;
 import com.github.nija123098.evelyn.economy.event.configs.EventNameConfig;
-import com.github.nija123098.evelyn.economy.event.configs.EventStartConfig;
-
-import java.time.Instant;
 
 /**
  * @author Soarnir
@@ -31,8 +27,8 @@ public class EventCreateCommand extends AbstractCommand {
             ConfigHandler.setSetting(EventNameConfig.class, GlobalConfigurable.GLOBAL, String.valueOf(args[0]));
             ConfigHandler.setSetting(EventBonusConfig.class, GlobalConfigurable.GLOBAL, Integer.valueOf(args[1]));
             maker.appendRaw("Created a new event called: " + args[1] + " with a " + args[2] + " bonus.");
-            ConfigHandler.setSetting(EventStartConfig.class, GlobalConfigurable.GLOBAL, Instant.parse(args[2] + "T00:00:00Z").toString());
-            ConfigHandler.setSetting(EventEndConfig.class, GlobalConfigurable.GLOBAL, Instant.parse(args[3] + "T00:00:00Z").toString());
+            /*ConfigHandler.setSetting(EventStartConfig.class, GlobalConfigurable.GLOBAL, insert thing here).toString());
+            ConfigHandler.setSetting(EventEndConfig.class, GlobalConfigurable.GLOBAL, insert thing here).toString());*/
         } else {
             maker.appendRaw("successfully finished the event");
         }
