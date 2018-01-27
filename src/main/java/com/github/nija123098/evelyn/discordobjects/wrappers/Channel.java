@@ -4,13 +4,9 @@ import com.github.nija123098.evelyn.config.ConfigLevel;
 import com.github.nija123098.evelyn.config.Configurable;
 import com.github.nija123098.evelyn.config.GlobalConfigurable;
 import com.github.nija123098.evelyn.discordobjects.ExceptionWrapper;
-import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventDistributor;
-import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
-import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordMessageReceived;
 import com.github.nija123098.evelyn.exception.ConfigurableConvertException;
 import com.github.nija123098.evelyn.perms.BotRole;
 import com.github.nija123098.evelyn.service.services.MemoryManagementService;
-import com.github.nija123098.evelyn.service.services.ScheduleService;
 import com.github.nija123098.evelyn.util.FormatHelper;
 import com.github.nija123098.evelyn.util.GetterUtil;
 import com.github.nija123098.evelyn.util.Time;
@@ -20,8 +16,6 @@ import sx.blah.discord.handle.obj.IVoiceChannel;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Wraps a Discord4J {@link IChannel} object.
@@ -231,26 +225,8 @@ public class Channel implements Configurable {
         return Message.getMessages(Arrays.asList(this.channel().getMessageHistoryTo(this.channel().getCreationDate()).asArray()));
     }
 
-    static {
-        EventDistributor.register(Channel.class);
-    }// this is done since D4J doesn't update the cache with messages for ~60 seconds
-    private static final long CACHE_RETENTION = 120_000;
-    private static final Map<Channel, List<Message>> SENT_MESSAGES_CACHE = new HashMap<>();
-    @EventListener
-    public static void messageListen(DiscordMessageReceived event){
-        List<Message> messages = SENT_MESSAGES_CACHE.computeIfAbsent(event.getChannel(), channel -> new ArrayList<>());
-        messages.add(event.getMessage());
-        ScheduleService.schedule(CACHE_RETENTION, () -> messages.remove(0));
-    }// will remove the message from the event barring something peculiar
-
     public List<Message> getMessages(int count){
-        Map<Long, Message> timeCache = new HashMap<>(count + 20, 1);
-        List<Message> cached = SENT_MESSAGES_CACHE.computeIfAbsent(this, channel -> new ArrayList<>());
-        if (cached.size() >= count) return cached.subList(count - cached.size(), count);// for if we have all the messages cached
-        Stream.concat(Message.getMessages(channel().getMessageHistory(count)).stream(), cached.stream()).forEach(message -> timeCache.put(message.getTime(), message));
-        Long[] timeArray = timeCache.keySet().toArray(new Long[timeCache.size()]);
-        Arrays.sort(timeArray);
-        return Stream.of(Arrays.copyOfRange(timeArray, timeCache.size() - count, timeCache.size())).map(timeCache::get).collect(Collectors.toList());
+        return Message.getMessages(channel().getMessageHistory(count));
     }
 
     public List<Message> getMessagesTo(long date){
@@ -274,8 +250,9 @@ public class Channel implements Configurable {
     }
 
     public boolean canPost(User user){
-            return DiscordPermission.hasChannelPermissions(user, this, DiscordPermission.READ_MESSAGES, DiscordPermission.READ_MESSAGE_HISTORY, DiscordPermission.SEND_MESSAGES);
+        return DiscordPermission.hasChannelPermissions(user, this, DiscordPermission.READ_MESSAGES, DiscordPermission.READ_MESSAGE_HISTORY, DiscordPermission.SEND_MESSAGES);
     }
+
     public boolean canPost(){
         return DiscordPermission.hasChannelPermissions(DiscordClient.getOurUser(), this, DiscordPermission.READ_MESSAGES, DiscordPermission.READ_MESSAGE_HISTORY, DiscordPermission.SEND_MESSAGES);
     }

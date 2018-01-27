@@ -19,7 +19,7 @@ public class PurgeCommand extends AbstractCommand {
 
     @Command
     public void command(@Argument Integer count, Channel channel, Message message, Guild guild) {
-        MessageDeleteService.delete(channel.getMessages(count));
+        MessageDeleteService.delete(channel.getMessages(count + 1));
         message.delete();
     }
 }
