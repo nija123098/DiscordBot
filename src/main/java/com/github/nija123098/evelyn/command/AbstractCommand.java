@@ -10,6 +10,7 @@ import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.Configurable;
 import com.github.nija123098.evelyn.config.GlobalConfigurable;
 import com.github.nija123098.evelyn.config.GuildUser;
+import com.github.nija123098.evelyn.config.configs.guild.GuildLastCommandTimeConfig;
 import com.github.nija123098.evelyn.config.configs.user.LastCommandTimeConfig;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
@@ -481,6 +482,7 @@ public class AbstractCommand {
         }
         CommandsUsedCountConfig.increment(user);
         LastCommandTimeConfig.update(user);
+        if (!channel.isPrivate()) GuildLastCommandTimeConfig.update(channel.getGuild());
         if (message != null){
             if (this.okOnSuccess) message.addReactionByName("ok_hand");
             if (this.shouldLog() && !message.getChannel().isPrivate()) {
