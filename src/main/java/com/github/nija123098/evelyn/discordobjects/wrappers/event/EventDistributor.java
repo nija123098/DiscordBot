@@ -5,7 +5,6 @@ import com.github.nija123098.evelyn.exception.GhostException;
 import com.github.nija123098.evelyn.util.Log;
 import com.github.nija123098.evelyn.util.ReflectionHelper;
 import com.github.nija123098.evelyn.util.ThreadProvider;
-import org.eclipse.jetty.util.ConcurrentHashSet;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -41,7 +40,7 @@ public class EventDistributor {
             Class<E> peram = (Class<E>) method.getParameterTypes()[0];
             ReflectionHelper.getAssignableTypes(clazz).forEach(LISTENER_CASH::remove);
             LISTENER_CASH.remove(peram);
-            Set<Listener> listeners = LISTENER_MAP.computeIfAbsent(peram, cl -> new ConcurrentHashSet<>());
+            Set<Listener> listeners = LISTENER_MAP.computeIfAbsent(peram, cl -> ConcurrentHashMap.newKeySet());
             if (Modifier.isStatic(method.getModifiers())){
                 listeners.add(new Listener<E>(method, null));
             } else if (!(o instanceof Class)){

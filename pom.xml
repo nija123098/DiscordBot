@@ -45,7 +45,7 @@
         <dependency>
             <groupId>com.github.austinv11</groupId>
             <artifactId>Discord4j</artifactId>
-            <version>49a6f26</version>
+            <version>5c6693c</version>
             <classifier>shaded</classifier>
         </dependency>
         <dependency>
@@ -182,6 +182,11 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>1.2.3</version>
+        </dependency>
+        <dependency><!-- https://mvnrepository.com/artifact/org.apache.commons/commons-text -->
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>1.2</version>
         </dependency>
     </dependencies>
 

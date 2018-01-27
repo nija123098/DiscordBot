@@ -5,7 +5,7 @@ import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.template.KeyPhrase;
 import com.github.nija123098.evelyn.util.StringHelper;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.similarity.LevenshteinDistance;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,8 +20,8 @@ public class TemplateSearchCommand extends AbstractCommand {
         super(TemplateCommand.class, "search", null, null, null, "Searches for template key phrases closest to your input");
     }
     @Command
-    public void command(MessageMaker maker, String s){// won't use enum identification here due to requiring a brauder search
-        List<String> results = StringHelper.getGoodMatch(s, Stream.of(KeyPhrase.values()).map(KeyPhrase::name).collect(Collectors.toList()), StringUtils::getLevenshteinDistance, true, true);
+    public void command(MessageMaker maker, String s){// won't use enum identification here due to requiring a broad search
+        List<String> results = StringHelper.getGoodMatch(s, Stream.of(KeyPhrase.values()).map(KeyPhrase::name).collect(Collectors.toList()), LevenshteinDistance.getDefaultInstance()::apply, true, true);
         if (results.isEmpty()) {
             maker.append("I couldn't find anything matching that!  Your options are as follows:");
             TemplateListCommand.command(maker);

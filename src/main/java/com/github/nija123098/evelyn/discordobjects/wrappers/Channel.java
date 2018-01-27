@@ -254,7 +254,7 @@ public class Channel implements Configurable {
     }
 
     public List<Message> getMessagesTo(long date){
-        return Message.getMessages(channel().getMessageHistoryTo(Time.toLocalDateTime(date)));
+        return Message.getMessages(channel().getMessageHistoryTo(Time.toInstant(date)));
     }
 
     public void pin(Message message) {

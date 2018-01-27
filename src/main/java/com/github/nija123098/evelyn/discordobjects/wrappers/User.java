@@ -114,7 +114,6 @@ public class User implements Configurable {
         leave.getUser().guilds.add(leave.getGuild());
     }
 
-
     public String getNameAndDiscrim(){
         return getName() + "#" + getDiscriminator();
     }

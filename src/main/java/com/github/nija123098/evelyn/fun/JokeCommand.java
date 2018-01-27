@@ -1,20 +1,19 @@
 package com.github.nija123098.evelyn.fun;
 
 import com.github.nija123098.evelyn.command.AbstractCommand;
+import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
+import com.github.nija123098.evelyn.util.Log;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.apache.commons.text.StringEscapeUtils;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
-
-import static com.github.nija123098.evelyn.command.ModuleLevel.FUN;
-import static com.github.nija123098.evelyn.util.Log.log;
-import static org.apache.commons.lang3.StringEscapeUtils.unescapeHtml4;
 
 /**
  * @author nija123098
@@ -24,7 +23,7 @@ public class JokeCommand extends AbstractCommand {
     private static final String[] REDDIT_OPTIONS = new String[0];
 
     public JokeCommand() {
-        super("joke", FUN, null, null, "Let me tell you a joke!");
+        super("joke", ModuleLevel.FUN, null, null, "Let me tell you a joke!");
     }
 
     @Command
@@ -46,9 +45,9 @@ public class JokeCommand extends AbstractCommand {
             String inputLine = in.readLine();
             JsonParser parser = new JsonParser();
             JsonObject array = parser.parse(inputLine).getAsJsonObject();
-            return unescapeHtml4(array.get("value").getAsJsonObject().get("joke").getAsString()).replace("UNIQUE_SEQUENCE", username);
+            return StringEscapeUtils.unescapeHtml4(array.get("value").getAsJsonObject().get("joke").getAsString()).replace("UNIQUE_SEQUENCE", username);
         } catch (Exception e) {
-            log("Exception loading joke from web", e);
+            Log.log("Exception loading joke from web", e);
         }
         return null;
     }

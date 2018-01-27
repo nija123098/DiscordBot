@@ -1,6 +1,7 @@
 package com.github.nija123098.evelyn.discordobjects.wrappers;
 
 import com.github.nija123098.evelyn.service.services.MemoryManagementService;
+import sx.blah.discord.handle.obj.ActivityType;
 import sx.blah.discord.handle.obj.IPresence;
 import sx.blah.discord.handle.obj.StatusType;
 
@@ -36,15 +37,15 @@ public class Presence {
 
     @Override
     public int hashCode() {
-        return this.iPresence.getPlayingText().isPresent() ? this.iPresence.getPlayingText().get().hashCode() : 0;
+        return this.iPresence.getText().isPresent() ? this.iPresence.getText().get().hashCode() : 0;
     }
 
     public Optional<String> getOptionalPlayingText() {
-        return iPresence.getPlayingText();
+        return iPresence.getText();
     }
 
     public String getPlayingText(){
-        return iPresence.getPlayingText().orElse(null);
+        return iPresence.getText().orElse(null);
     }
 
     public Optional<String> getOptionalStreamingUrl() {
@@ -59,8 +60,16 @@ public class Presence {
         return get(iPresence.getStatus());
     }
 
+    public Activity getActivity(){
+        return get(iPresence.getActivity().orElse(null));
+    }
+
     private static Status get(StatusType type) {
         return Status.values()[type.ordinal()];
+    }
+
+    private static Activity get(ActivityType type) {
+        return type == null ? null : Activity.values()[type.ordinal()];
     }
 
     public enum Status {
@@ -69,7 +78,18 @@ public class Presence {
         IDLE,
         INVISIBLE,
         OFFLINE,
-        STREAMING,
         UNKNOWN,;
+        public StatusType convert(){
+            return StatusType.values()[this.ordinal()];
+        }
+    }
+    public enum Activity {
+        PLAYING,// playing ____
+        STREAMING,// streaming ____
+        LISTENING,// listening to ____
+        WATCHING,;// watching ____
+        public ActivityType convert(){
+            return ActivityType.values()[this.ordinal()];
+        }
     }
 }

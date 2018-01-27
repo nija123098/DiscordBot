@@ -1,8 +1,10 @@
 package com.github.nija123098.evelyn.util;
 
-import org.eclipse.jetty.util.ConcurrentHashSet;
-
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static java.util.Collections.*;
 
@@ -18,7 +20,7 @@ public class ReflectionHelper {
         if (lowest == null) return emptySet();
         if (lowest == Object.class) return OBJECT;
         return SUPERCLASS_MAP.computeIfAbsent(lowest, l -> {
-            Set<Class<?>> classes = new ConcurrentHashSet<>();
+            Set<Class<?>> classes = ConcurrentHashMap.newKeySet();
             Class<?> clazz = lowest.getSuperclass();
             if (clazz != null) classes.add(clazz);// can not remove null
             addAll(classes, lowest.getInterfaces());

@@ -5,8 +5,6 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.BotEvent;
 import sx.blah.discord.handle.impl.events.guild.member.UserJoinEvent;
 
-import java.time.ZoneOffset;
-
 /**
  * @author nija123098
  * @since 1.0.0
@@ -23,6 +21,6 @@ public class DiscordUserJoin implements BotEvent {
         return User.getUser(this.event.getUser());
     }
     public long getJoinTime(){
-        return this.event.getJoinTime().toInstant(ZoneOffset.UTC).toEpochMilli();
+        return this.event.getJoinTime().toEpochMilli();
     }
 }

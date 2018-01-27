@@ -1,12 +1,8 @@
 package com.github.nija123098.evelyn.service.services;
 
 import com.github.nija123098.evelyn.service.AbstractService;
-import org.eclipse.jetty.util.ConcurrentHashSet;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
@@ -97,7 +93,7 @@ public class MemoryManagementService extends AbstractService {
             super.forEach(action);
         }
     }
-    public static class ManagedSet<E> extends ConcurrentHashSet<E> {
+    public static class ManagedSet<E> extends HashSet<E> {
         private final long persistence;
         private final Map<E, ScheduleService.ScheduledTask> removalTasks = new HashMap<>();
         public ManagedSet(long persistence) {

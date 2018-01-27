@@ -43,8 +43,10 @@ import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelMoveE
 import sx.blah.discord.handle.impl.events.shard.ShardReadyEvent;
 import sx.blah.discord.handle.impl.events.user.UserUpdateEvent;
 import sx.blah.discord.handle.impl.obj.ReactionEmoji;
+import sx.blah.discord.handle.obj.ActivityType;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.Permissions;
+import sx.blah.discord.handle.obj.StatusType;
 
 import java.io.File;
 import java.io.IOException;
@@ -80,7 +82,7 @@ public class DiscordAdapter {
         ClientBuilder builder = new ClientBuilder();
         builder.withToken(ConfigProvider.BOT_SETTINGS.botToken());
         builder.withMaximumDispatchThreads(2);
-        builder.registerListener((IListener<ShardReadyEvent>) event -> event.getShard().idle("with the login screen!"));
+        builder.registerListener((IListener<ShardReadyEvent>) event -> event.getShard().changePresence(StatusType.IDLE, ActivityType.WATCHING, "the login screen!"));
         int total = Requests.GENERAL_REQUESTS.GET.makeRequest(DiscordEndpoints.GATEWAY + "/bot", GatewayBotResponse.class, new BasicNameValuePair("Authorization", "Bot " + ConfigProvider.BOT_SETTINGS.botToken()), new BasicNameValuePair("Content-Type", "application/json")).shards;
         List<Integer> list = new ArrayList<>(total);
         for (int i = 0; i < total; i++) if (i % ConfigProvider.BOT_SETTINGS.numberOfShards() == ConfigProvider.BOT_SETTINGS.evelynShardNumber()) list.add(i);
@@ -110,7 +112,7 @@ public class DiscordAdapter {
                 TemplateHandler.addTemplate(KeyPhrase.PLAY_TEXT, null, "with nitroglycerine");
                 Log.log("Template KeyPhrase for " + KeyPhrase.PLAY_TEXT.name() + " has been added: \"with nitroglycerine\"");
             }
-            if (template != null) DiscordClient.getShards().forEach(shard -> shard.online(template.interpret((User) null, shard, null, null, null, null)));
+            if (template != null) DiscordClient.getShards().forEach(shard -> shard.changePresence(Presence.Status.ONLINE, Presence.Activity.PLAYING, template.interpret((User) null, shard, null, null, null, null)));
         });
         AtomicInteger count = new AtomicInteger();
         PLAY_TEXT_UPDATER = ScheduleService.scheduleRepeat(5000, 5000, () -> {
@@ -151,7 +153,7 @@ public class DiscordAdapter {
     }
     @EventSubscriber
     public static void handle(ShardReadyEvent event){
-        event.getShard().idle("with the loading screen!");
+        event.getShard().changePresence(StatusType.IDLE, ActivityType.PLAYING, "with the loading screen!");
     }
     @EventSubscriber
     public static void handle(UserUpdateEvent event){

@@ -35,7 +35,6 @@ import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
-import org.eclipse.jetty.util.ConcurrentHashSet;
 import sx.blah.discord.handle.audio.AudioEncodingType;
 import sx.blah.discord.handle.audio.IAudioProvider;
 import sx.blah.discord.handle.obj.IVoiceState;
@@ -144,7 +143,7 @@ public class GuildAudioManager extends AudioEventAdapter{
     private VoiceChannel channel;
     private AudioPlayer lavaPlayer;
     private final List<Message> currentDisplays = new ArrayList<>(3);
-    private final Set<User> skipSet = new ConcurrentHashSet<>();
+    private final Set<User> skipSet = ConcurrentHashMap.newKeySet();
     private final List<LangString> speeches = new CopyOnWriteArrayList<>();
     private final List<Track> queue = new CopyOnWriteArrayList<>();
     private final List<LangString> interups = new CopyOnWriteArrayList<>();

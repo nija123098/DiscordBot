@@ -2,6 +2,7 @@ package com.github.nija123098.evelyn.discordobjects.wrappers;
 
 import com.github.nija123098.evelyn.discordobjects.ExceptionWrapper;
 import sx.blah.discord.api.IShard;
+import sx.blah.discord.handle.obj.StatusType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,28 +72,12 @@ public class Shard {
         return shard().getResponseTime();
     }
 
-    public void changePlayingText(String playingText) {
-        shard().changePlayingText(playingText);
+    public void changePresence(String text, String stream){
+        ExceptionWrapper.wrap(() -> shard().changeStreamingPresence(StatusType.ONLINE, text, stream));
     }
 
-    public void online(String playingText) {
-        ExceptionWrapper.wrap(() -> shard().online(playingText));
-    }
-
-    public void online() {
-        ExceptionWrapper.wrap(() -> shard().online());
-    }
-
-    public void idle(String playingText) {
-        ExceptionWrapper.wrap(() -> shard().idle(playingText));
-    }
-
-    public void idle() {
-        ExceptionWrapper.wrap(() -> shard().idle());
-    }
-
-    public void streaming(String playingText, String streamingUrl) {
-        ExceptionWrapper.wrap(() -> shard().streaming(playingText, streamingUrl));
+    public void changePresence(Presence.Status status, Presence.Activity activity, String text){
+        ExceptionWrapper.wrap(() -> shard().changePresence(status.convert(), activity.convert(), text));
     }
 
     public List<Channel> getChannels(boolean includePrivate) {

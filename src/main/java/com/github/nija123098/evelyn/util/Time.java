@@ -2,18 +2,12 @@ package com.github.nija123098.evelyn.util;
 
 import com.github.nija123098.evelyn.exception.ArgumentException;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
-
-import static com.github.nija123098.evelyn.util.FormatHelper.removeChars;
-import static java.lang.Character.isDigit;
-import static java.lang.Integer.parseInt;
-import static java.lang.String.valueOf;
-import static java.lang.System.currentTimeMillis;
-import static java.time.Instant.ofEpochMilli;
-import static java.time.ZoneId.systemDefault;
 
 /**
  * @author nija123098
@@ -37,23 +31,23 @@ public class Time {// TODO CLEAN
     }
 
     public Time(String s) {
-        s = removeChars(s.toLowerCase(), ' ');
+        s = FormatHelper.removeChars(s.toLowerCase(), ' ');
         long val = 0;
         String working = "";
         for (int i = 0; i < s.length(); i++) {
-            if (isDigit(s.charAt(i))) {
+            if (Character.isDigit(s.charAt(i))) {
                 working += s.charAt(i);
             } else if (TIME_SYMBOLS.containsKey(s.charAt(i)) && !working.isEmpty()) {
-                val += parseInt(working) * TIME_SYMBOLS.get(s.charAt(i));
+                val += Integer.parseInt(working) * TIME_SYMBOLS.get(s.charAt(i));
                 working = "";
             } else {
                 throw new ArgumentException("Empty option for time symbol");
             }
         }
         if (working.length() != 0) {
-            val += parseInt(s);
+            val += Integer.parseInt(s);
         }
-        this.time = val + currentTimeMillis();
+        this.time = val + System.currentTimeMillis();
     }
 
     public long schedualed() {
@@ -61,7 +55,7 @@ public class Time {// TODO CLEAN
     }
 
     public long timeUntil() {
-        return this.time - currentTimeMillis();
+        return this.time - System.currentTimeMillis();
     }
 
     public static String getAbbreviated(long time) {
@@ -78,11 +72,19 @@ public class Time {// TODO CLEAN
     }
 
     public static long toMillis(LocalDateTime time) {
-        return time.toInstant(time.atZone(systemDefault()).getOffset()).toEpochMilli();
+        return time.toInstant(time.atZone(ZoneId.systemDefault()).getOffset()).toEpochMilli();
+    }
+
+    public static long toMillis(Instant time) {
+        return time.toEpochMilli();
     }
 
     public static LocalDateTime toLocalDateTime(long time) {
-        return ofEpochMilli(time).atZone(systemDefault()).toLocalDateTime();
+        return Instant.ofEpochMilli(time).atZone(ZoneId.systemDefault()).toLocalDateTime();
+    }
+
+    public static Instant toInstant(long time){
+        return Instant.ofEpochMilli(time);
     }
 
     public static String getAbbreviatedMusic(long time) {
@@ -92,11 +94,11 @@ public class Time {// TODO CLEAN
         time -= min * 60_000;
         int sec = (int) (time / 1000);
         String builder = "";
-        if (hours > 0) builder = valueOf(hours) + ":";
-        String current = valueOf(min);
+        if (hours > 0) builder = String.valueOf(hours) + ":";
+        String current = String.valueOf(min);
         if (current.length() == 1) current = 0 + current;
         builder += current + ":";
-        current = valueOf(sec);
+        current = String.valueOf(sec);
         if (current.length() == 1) current = 0 + current;
         return builder + current;
     }

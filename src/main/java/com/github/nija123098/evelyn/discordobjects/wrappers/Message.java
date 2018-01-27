@@ -10,7 +10,7 @@ import com.github.nija123098.evelyn.util.Time;
 import sx.blah.discord.handle.impl.obj.ReactionEmoji;
 import sx.blah.discord.handle.obj.IMessage;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -91,12 +91,8 @@ public class Message {// should not be kept stored, too many are made
         return User.getUser(message().getAuthor());
     }
 
-    public LocalDateTime getTimestamp() {
-        return message().getTimestamp();
-    }
-
     public long getTime(){
-        return Time.toMillis(this.getTimestamp());
+        return Time.toMillis(message().getTimestamp());
     }
 
     public List<User> getMentions() {
@@ -132,7 +128,7 @@ public class Message {// should not be kept stored, too many are made
         ExceptionWrapper.wrap(() -> message().delete());
     }
 
-    public Optional<LocalDateTime> getEditedTimestamp() {
+    public Optional<Instant> getEditedTimestamp() {
         return message().getEditedTimestamp();
     }
 
@@ -202,7 +198,7 @@ public class Message {// should not be kept stored, too many are made
         return Shard.getShard(message().getShard());
     }
 
-    public LocalDateTime getCreationDate() {
+    public Instant getCreationDate() {
         return message().getCreationDate();
     }
 }

@@ -4,11 +4,11 @@ import com.github.nija123098.evelyn.service.AbstractService;
 import com.github.nija123098.evelyn.util.Care;
 import com.github.nija123098.evelyn.util.Log;
 import com.github.nija123098.evelyn.util.ThreadProvider;
-import org.eclipse.jetty.util.ConcurrentHashSet;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -52,7 +52,7 @@ public class ScheduleService extends AbstractService {
                 this.run();
                 return;
             }
-            SERVICE_MAP.computeIfAbsent(this.time, l -> new ConcurrentHashSet<>()).add(this);
+            SERVICE_MAP.computeIfAbsent(this.time, l -> ConcurrentHashMap.newKeySet()).add(this);
         }
         public void cancel(){
             this.cancel = true;
@@ -84,7 +84,7 @@ public class ScheduleService extends AbstractService {
         @Override
         boolean run(){
             if (!this.skipping && super.run()){
-                SERVICE_MAP.computeIfAbsent(this.delayBetween + System.currentTimeMillis(), l -> new ConcurrentHashSet<>()).add(this);
+                SERVICE_MAP.computeIfAbsent(this.delayBetween + System.currentTimeMillis(), l -> ConcurrentHashMap.newKeySet()).add(this);
                 return true;
             }
             return false;

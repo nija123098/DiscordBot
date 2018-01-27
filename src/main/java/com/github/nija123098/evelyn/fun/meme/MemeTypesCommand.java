@@ -5,7 +5,6 @@ import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.util.FormatHelper;
 import com.github.nija123098.evelyn.util.Log;
-import org.eclipse.jetty.util.ConcurrentHashSet;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -14,13 +13,14 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author nija123098
  * @since 1.0.0
  */
 public class MemeTypesCommand extends AbstractCommand {
-    static final Set<String> MEME_TYPES = new ConcurrentHashSet<>();
+    static final Set<String> MEME_TYPES = ConcurrentHashMap.newKeySet();
     public MemeTypesCommand() {
         super(MemeCommand.class, "types", null, null, "list", "List of all valid types");
         loadMemeTypes();

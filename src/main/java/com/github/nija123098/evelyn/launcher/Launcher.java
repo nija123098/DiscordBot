@@ -5,6 +5,7 @@ import com.github.nija123098.evelyn.command.InvocationObjectGetter;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.discordobjects.DiscordAdapter;
 import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
+import com.github.nija123098.evelyn.discordobjects.wrappers.Presence;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.perms.BotRole;
 import com.github.nija123098.evelyn.service.ServiceHandler;
@@ -120,7 +121,7 @@ public class Launcher {
         }
         if (code != null) {
             DiscordAdapter.PLAY_TEXT_UPDATER.setSkipping(true);
-            DiscordClient.dnd("with a quick restart!");
+            DiscordClient.changePresence(Presence.Status.DND, Presence.Activity.PLAYING, "with a quick restart!");
             Log.log("Scheduled shutdown with code: " + code);
             SHUTDOWN_TASK.set(ScheduleService.schedule(delay, () -> {
                 Log.log("Shutting down with code: " + code);
@@ -171,7 +172,7 @@ public class Launcher {
         STARTUPS.forEach(Runnable::run);
         ASYNC_STARTUPS.forEach(ThreadProvider::sub);
         IS_READY.set(true);
-        DiscordClient.online("with users!");
+        DiscordClient.changePresence(Presence.Status.ONLINE, Presence.Activity.PLAYING, "with users!");
         Log.log(LogColor.blue("Bot finished initializing.") + LogColor.yellow(" Burn the heretic. Kill the Mee6. Purge the unclean."));
     }
 }

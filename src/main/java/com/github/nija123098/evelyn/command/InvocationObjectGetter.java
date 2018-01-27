@@ -5,7 +5,6 @@ import com.github.nija123098.evelyn.audio.Playlist;
 import com.github.nija123098.evelyn.audio.Track;
 import com.github.nija123098.evelyn.audio.configs.guild.GuildPlaylistsConfig;
 import com.github.nija123098.evelyn.audio.configs.playlist.UserPlaylistsConfig;
-import com.github.nija123098.evelyn.util.Log;
 import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Context;
 import com.github.nija123098.evelyn.config.AbstractConfig;
@@ -29,9 +28,11 @@ import javafx.util.Pair;
 
 import java.awt.*;
 import java.lang.reflect.Parameter;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 /**
  * The source for getting context and arguments for arguments for a command.
@@ -98,6 +99,7 @@ public class InvocationObjectGetter {
         addContext(AbstractGame.class, ContextType.DEFAULT, (invoker, shard, channel, guild, message, reaction, args) -> GameHandler.getGame(guild, message.getAuthor()), ContextRequirement.GUILD, ContextRequirement.USER);
         addContext(ContextPack.class, ContextType.DEFAULT, ContextPack::new);
         addContext(Float.class, ContextType.NONE, (invoker, shard, channel, guild, message, reaction, args) -> null);
+        addContext(ZoneId.class, ContextType.DEFAULT, (invoker, shard, channel, guild, message, reaction, args) -> ZoneId.of("Etc/GMT+0"));
         addContext(Configurable.class, ContextType.DEFAULT, (user, shard, channel, guild, message, reaction, args) -> null);
     }// ^ is for the optional on configurable conversions
 
@@ -421,6 +423,20 @@ public class InvocationObjectGetter {
                 if (cryptocurrency != null) return new Pair<>(cryptocurrency, total.length());
             }
             throw new ArgumentException("Could not identify Cryptocurrency");
+        });
+
+        Map<String, ZoneId> zoneIds = ZoneId.getAvailableZoneIds().stream().collect(Collectors.toMap(String::toLowerCase, ZoneId::of));
+        final Map<String, ZoneId> zoneMap = new HashMap<>(zoneIds);
+        zoneIds.forEach((s, id) -> {
+            if (s.startsWith("Etc/GMT")) zoneMap.put("utc" + s.substring(6), id);
+            int slashIndex = s.indexOf('/');
+            if (slashIndex != -1) zoneMap.put(s.substring(slashIndex), id);
+        });
+        addConverter(ZoneId.class, (invoker, shard, channel, guild, message, reaction, args) -> {
+            String first = args.split(" ")[0].toLowerCase();
+            ZoneId id = zoneMap.get(first);
+            if (id == null) throw new ArgumentException("Unrecognized zone ID: " + first);
+            return new Pair<>(id, first.length());
         });
     }
 

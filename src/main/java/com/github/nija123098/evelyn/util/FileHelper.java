@@ -2,13 +2,13 @@ package com.github.nija123098.evelyn.util;
 
 import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.exception.DevelopmentException;
-import org.eclipse.jetty.util.ConcurrentHashSet;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 1.0.0
  */
 public class FileHelper {
-    private static final Set<File> FILES = new ConcurrentHashSet<>();
+    private static final Set<File> FILES = ConcurrentHashMap.newKeySet();
     private static final AtomicInteger UNIQUE_INTEGER = new AtomicInteger();
     public static File getTempFile(String cat, String end){
         return getTempFile(cat, end, "gen" + UNIQUE_INTEGER.incrementAndGet(), file -> {});

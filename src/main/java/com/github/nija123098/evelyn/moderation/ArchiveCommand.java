@@ -11,6 +11,7 @@ import com.github.nija123098.evelyn.util.Time;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,20 +29,20 @@ import static java.time.format.DateTimeFormatter.ISO_DATE_TIME;
  * @since 1.0.0
  */
 public class ArchiveCommand extends AbstractCommand {
+    private static final String NEW_LINE_SPLITTER = "     ";
+
     public ArchiveCommand() {
         super("archive", USER, ADMINISTRATIVE, null, null, "Archives all data to a txt file");
     }
 
     @Command
-    public void command(@Argument Time time, MessageMaker maker, Channel channel) {
+    public void command(@Argument Time time, MessageMaker maker, Channel channel, ZoneId zoneId) {
         List<Message> messages = channel.getMessagesTo(time == null ? 0 : currentTimeMillis() - time.timeUntil());
         List<String> strings = new ArrayList<>(messages.size());
         messages.forEach(message -> {
             String content = message.getContent();
-            while (content.contains("\n")) {
-                content = content.replace("\n", "     ");
-            }
-            strings.add(message.getCreationDate().format(ISO_DATE_TIME).replace("T", " | ") + " " + message.getAuthor().getNameAndDiscrim() + ": " + content);
+            while (content.contains("\n")) content = content.replace("\n", NEW_LINE_SPLITTER);
+            strings.add(message.getCreationDate().atZone(zoneId).format(ISO_DATE_TIME).replace("T", " | ") + " " + message.getAuthor().getNameAndDiscrim() + ": " + content);
         });
         try {
             File file = getTempFile("archive", "txt");// may want to put to hastebin

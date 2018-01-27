@@ -4,6 +4,7 @@ import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.discordobjects.ExceptionWrapper;
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.handle.obj.IUser;
+import sx.blah.discord.handle.obj.StatusType;
 
 import java.util.*;
 import java.util.function.Function;
@@ -53,37 +54,14 @@ public class DiscordClient {
         clients.forEach(client -> ExceptionWrapper.wrap(() -> client.changeUsername(username)));
     }
 
-    public static void changePlayingText(String playingText) {
-        clients.forEach(client -> ExceptionWrapper.wrap(() -> client.changePlayingText(playingText)));
+    public static void changePresence(String text, String stream){
+        clients().forEach(iDiscordClient -> ExceptionWrapper.wrap(() -> iDiscordClient.changeStreamingPresence(StatusType.ONLINE, text, stream)));
     }
 
-    public static void online(String playingText) {
-        clients.forEach(client -> ExceptionWrapper.wrap(() -> client.online(playingText)));
+    public static void changePresence(Presence.Status status, Presence.Activity activity, String text){
+        clients().forEach(iDiscordClient -> ExceptionWrapper.wrap(() -> iDiscordClient.changePresence(status.convert(), activity.convert(), text)));
     }
 
-    public static void online() {
-        clients.forEach(client -> ExceptionWrapper.wrap(client::online));
-    }
-
-    public static void idle(String playingText) {
-        clients.forEach(client -> ExceptionWrapper.wrap(() -> client.idle(playingText)));
-    }
-
-    public static void idle() {
-        clients.forEach(client -> ExceptionWrapper.wrap(client::idle));
-    }
-
-    public static void streaming(String playingText, String streamingUrl) {
-        clients.forEach(client -> ExceptionWrapper.wrap(() -> client.streaming(playingText, streamingUrl)));
-    }
-
-    public static void dnd() {
-        clients.forEach(client -> ExceptionWrapper.wrap(client::dnd));
-    }
-
-    public static void dnd(String playingText) {
-        clients.forEach(client -> ExceptionWrapper.wrap(() -> client.dnd(playingText)));
-    }
 
     public static boolean isReady() {
         for (IDiscordClient client : clients) if (!client.isReady()) return false;

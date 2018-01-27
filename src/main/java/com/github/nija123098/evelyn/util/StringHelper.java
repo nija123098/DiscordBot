@@ -1,30 +1,22 @@
 package com.github.nija123098.evelyn.util;
 
-import com.fasterxml.jackson.databind.util.ArrayIterator;
+import com.google.common.base.Joiner;
+import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.similarity.JaroWinklerDistance;
+import org.apache.commons.text.similarity.LevenshteinDistance;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiFunction;
-
-import static com.github.nija123098.evelyn.util.FormatHelper.filtering;
-import static com.google.api.client.util.Joiner.on;
-import static com.mashape.unirest.http.Unirest.get;
-import static java.lang.Double.MAX_VALUE;
-import static java.lang.Math.max;
-import static java.lang.Math.min;
-import static java.util.Arrays.copyOfRange;
-import static org.apache.commons.lang3.StringUtils.getJaroWinklerDistance;
-import static org.apache.commons.lang3.StringUtils.getLevenshteinDistance;
 
 /**
  * @author nija123098
  * @since 1.0.0
  */
 public class StringHelper {
+    private static final LevenshteinDistance LEVENSHTEIN_DISTANCE = new LevenshteinDistance();
+    private static final JaroWinklerDistance JARO_WINKLER_DISTANCE = new JaroWinklerDistance();
+
     public static String getFileType(String url) {
         StringBuilder builder = new StringBuilder();
         for (int i = url.length() - 1; i > -1; --i) {
@@ -40,7 +32,7 @@ public class StringHelper {
     }
 
     public static String readAll(String url) throws UnirestException {
-        return get(url).asString().getBody();
+        return Unirest.get(url).asString().getBody();
     }
 
     public static String getGoodMatch(String in, List<String> strings) {
@@ -48,30 +40,30 @@ public class StringHelper {
         removing.removeIf(s -> !s.toLowerCase().contains(in.toLowerCase()));
         if (removing.size() == 1 && acceptableDistance(removing.get(0), in)) return removing.get(0);
         else if (!removing.isEmpty()) strings = removing;
-        List<String> best = getGoodMatch(in, strings, StringUtils::getLevenshteinDistance, true, true);
-        best = getGoodMatch(in, best, StringUtils::getJaroWinklerDistance, true, true);
+        List<String> best = getGoodMatch(in, strings, LEVENSHTEIN_DISTANCE::apply, true, true);
+        best = getGoodMatch(in, best, JARO_WINKLER_DISTANCE::apply, true, true);
         if (best.size() > 1) {
-            best = getGoodMatch(in, best, StringUtils::getLevenshteinDistance, true, false);
+            best = getGoodMatch(in, best, LEVENSHTEIN_DISTANCE::apply, true, false);
         }
-        best.removeIf(s -> getJaroWinklerDistance(in, s) == 0);
+        best.removeIf(s -> JARO_WINKLER_DISTANCE.apply(in, s) == 0);
         return best.size() != 1 || !acceptableDistance(best.get(0), in) ? null : best.get(0);
     }
 
     public static boolean acceptableDistance(String best, String in) {
         best = best.toLowerCase();
         in = in.toLowerCase();
-        return getLevenshteinDistance(best, in) < .25F * max(max(in.length(), best.length()), 6) || getLevenshteinDistance(best, filtering(in, Character::isLetter)) < .25F * max(in.length(), best.length());
+        return LEVENSHTEIN_DISTANCE.apply(best, in) < .25F * Math.max(Math.max(in.length(), best.length()), 6) || LEVENSHTEIN_DISTANCE.apply(best, FormatHelper.filtering(in, Character::isLetter)) < .25F * Math.max(in.length(), best.length());
     }
 
     public static List<String> getGoodMatch(String matching, List<String> candidates, BiFunction<String, String, Number> function, boolean golf, boolean containment) {
-        double bestScore = MAX_VALUE;
+        double bestScore = Integer.MAX_VALUE;
         List<String> best = new ArrayList<>();
         Map<Integer, String> splitting = new HashMap<>();
         String match;
         for (String s : candidates) {
             match = splitting.computeIfAbsent(s.split(" ").length, integer -> {
                 String[] matchingSplit = matching.split(" ");
-                return on(' ').join(new ArrayIterator<>(copyOfRange(matchingSplit, 0, min(integer, matchingSplit.length))));
+                return Joiner.on(' ').join(Arrays.copyOfRange(matchingSplit, 0, Math.min(integer, matchingSplit.length)));
             });
             if ((match.toLowerCase().contains(s.toLowerCase()) || s.toLowerCase().contains(match.toLowerCase())) && containment) {
                 if (golf ? bestScore > .001 : bestScore < .001) best.clear();

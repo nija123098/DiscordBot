@@ -3,7 +3,6 @@ package com.github.nija123098.evelyn.audio;
 import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.service.AbstractService;
 import com.github.nija123098.evelyn.util.Log;
-import org.eclipse.jetty.util.ConcurrentHashSet;
 
 import java.util.List;
 import java.util.Map;
@@ -22,7 +21,7 @@ public class MusicDownloadService extends AbstractService {
         return t;
     }, (r, executor) -> Log.log("Music download queue exceeded"));
     private static final Consumer<DownloadableTrack> NOTHING = o -> {};
-    private static final Set<DownloadableTrack> DOWNLOADING = new ConcurrentHashSet<>();
+    private static final Set<DownloadableTrack> DOWNLOADING = ConcurrentHashMap.newKeySet();
     private static final List<List<DownloadableTrack>> Q = new CopyOnWriteArrayList<>();
     private static final Map<DownloadableTrack, Integer> PRIORITY_MAP = new ConcurrentHashMap<>();
     private static final Map<DownloadableTrack, Set<Consumer<DownloadableTrack>>> CONSUMER_MAP = new ConcurrentHashMap<>();
@@ -47,7 +46,7 @@ public class MusicDownloadService extends AbstractService {
             CONSUMER_MAP.get(track).add(consumer);
             return;
         }
-        CONSUMER_MAP.computeIfAbsent(track, t -> new ConcurrentHashSet<>()).add(consumer);
+        CONSUMER_MAP.computeIfAbsent(track, t -> ConcurrentHashMap.newKeySet()).add(consumer);
         Integer originalPriority = PRIORITY_MAP.get(track);
         if (originalPriority != null){
             if (originalPriority > priority) return;
