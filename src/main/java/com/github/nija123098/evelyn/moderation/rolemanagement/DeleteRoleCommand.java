@@ -14,7 +14,7 @@ import com.github.nija123098.evelyn.exception.PermissionsException;
 public class DeleteRoleCommand extends AbstractCommand {
 
     public DeleteRoleCommand() {
-        super(RoleCommand.class, "delete", "delrole", null, null, "delete a role from the server");
+        super(RoleCommand.class, "delete", "delrole", null, null, "Delete a role from the server");
     }
 
     @Command

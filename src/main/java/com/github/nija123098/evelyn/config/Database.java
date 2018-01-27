@@ -48,7 +48,7 @@ public class Database {
         CONNECTION = c;
         HikariConfig config = new HikariConfig();
         config.setMaximumPoolSize(20);
-        config.setJdbcUrl("jdbc:mariadb://" + serverIP + ":" + serverPort + "/" + dbName);
+        config.setJdbcUrl("jdbc:mariadb://" + serverIP + ":" + serverPort + "/" + dbName + "?characterEncoding=utf8mb4");
         config.setDriverClassName("org.mariadb.jdbc.Driver");
         config.setUsername(username);
         config.setPassword(password);

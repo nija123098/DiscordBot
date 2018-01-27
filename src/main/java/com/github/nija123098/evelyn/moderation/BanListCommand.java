@@ -20,7 +20,7 @@ import java.util.List;
 public class BanListCommand extends AbstractCommand {
 
     public BanListCommand() {
-        super("banlist", ModuleLevel.ADMINISTRATIVE, "bl", null, "get the current banned users for the guild");
+        super("banlist", ModuleLevel.ADMINISTRATIVE, "bl", null, "Get a list of the current banned users for the server");
     }
 
     @Command

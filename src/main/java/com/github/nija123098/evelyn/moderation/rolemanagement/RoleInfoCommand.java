@@ -17,7 +17,7 @@ import com.github.nija123098.evelyn.util.FormatHelper;
 public class RoleInfoCommand extends AbstractCommand {
 
     public RoleInfoCommand() {
-        super(RoleCommand.class, "info", "rinfo", null, null, "Get info about a role");
+        super(RoleCommand.class, "info", "rinfo", null, null, "Get detailed info about a role");
     }
 
     @Command

@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public class RoleListRedundantCommand extends AbstractCommand {
 
     public RoleListRedundantCommand() {
-        super(RoleCommand.class,"list redundant", "rlist redundant", null, null, "show all roles with zero users");
+        super(RoleCommand.class,"list redundant", "rlist redundant", null, null, "Show a list of all roles with no users");
     }
 
     @Command

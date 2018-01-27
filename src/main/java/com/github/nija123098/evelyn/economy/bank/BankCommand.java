@@ -27,10 +27,12 @@ import java.util.List;
  * @author Soarnir
  * @since 1.0.0
  */
-public class BankCommand extends AbstractCommand {// todo clean and optimize
+public class BankCommand extends AbstractCommand {
+
     public BankCommand() {
         super("bank", ModuleLevel.ECONOMY, null, null, "For checking your balance and claiming your currency");
     }
+
     @Command
     public void command(Guild guild, User user, MessageMaker maker){
         String name = ConfigHandler.getSetting(CurrencyNameConfig.class, guild), symbol = ConfigHandler.getSetting(CurrencySymbolConfig.class, guild), booster = EmoticonHelper.getChars("rocket", false), claim = EmoticonHelper.getChars("inbox_tray", false);

@@ -16,7 +16,7 @@ import java.util.ConcurrentModificationException;
 public class ChannelDeleteCommand extends AbstractCommand {
 
     public ChannelDeleteCommand() {
-        super(ChannelCommand.class, "delete", "cdelete", null, null, "delete the mentioned channel");
+        super(ChannelCommand.class, "delete", "cdelete", null, null, "Delete the mentioned channel, requires confirmation");
     }
 
     @Command

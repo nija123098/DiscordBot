@@ -22,7 +22,7 @@ import com.github.nija123098.evelyn.util.FormatHelper;
 public class RoleCommand extends AbstractCommand {
 
     public RoleCommand() {
-        super("role", ModuleLevel.ADMINISTRATIVE, null, null, "displays info about a role, or what the bot can edit");
+        super("role", ModuleLevel.ADMINISTRATIVE, null, null, "Displays info about a role, or what the bot can edit");
     }
 
     @Command

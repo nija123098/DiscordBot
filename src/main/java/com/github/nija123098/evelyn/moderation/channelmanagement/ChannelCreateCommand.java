@@ -16,7 +16,7 @@ import com.github.nija123098.evelyn.exception.PermissionsException;
 public class ChannelCreateCommand extends AbstractCommand {
 
     public ChannelCreateCommand() {
-        super(ChannelCommand.class, "create", "ccreate", null, null, "create a channel");
+        super(ChannelCommand.class, "create", "ccreate", null, null, "Create a channel");
     }
 
     @Command

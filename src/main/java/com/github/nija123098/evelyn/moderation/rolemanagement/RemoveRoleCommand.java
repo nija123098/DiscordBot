@@ -16,7 +16,7 @@ import com.github.nija123098.evelyn.exception.PermissionsException;
 public class RemoveRoleCommand extends AbstractCommand {
 
     public RemoveRoleCommand() {
-        super(RoleCommand.class, "remove", null, null, null, "remove a role from a user");
+        super(RoleCommand.class, "remove", null, null, null, "Remove a role from a user");
     }
 
     @Command

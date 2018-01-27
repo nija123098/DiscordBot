@@ -21,7 +21,7 @@ import com.github.nija123098.evelyn.util.FormatHelper;
 public class ChannelCommand extends AbstractCommand {
 
     public ChannelCommand() {
-        super("channel", ModuleLevel.ADMINISTRATIVE, null, null, "supercommand for channel management");
+        super("channel", ModuleLevel.ADMINISTRATIVE, null, null, "Check if I can perform channel changes, will also get info of mentioned channel");
     }
 
     @Command

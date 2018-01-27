@@ -32,7 +32,7 @@ public class InfoCommand extends AbstractCommand {
                 "Type " + FormatHelper.embedLink("@Evelyn help","") + " to see a list of commands. In total there are " + FormatHelper.embedLink(String.valueOf(totalCommands),"") + " unique commands I can perform.\n" +
                 "\n" +
                 "For help about a command type " + FormatHelper.embedLink(ConfigHandler.getSetting(GuildPrefixConfig.class, guild) + "help <command>\n","") +
-                "An example: <@" + DiscordClient.getOurUser().getID() + "> help ping` to see what you can do with the ping command.\n" +
+                "For example: `" + ConfigHandler.getSetting(GuildPrefixConfig.class, guild) + "help ping` to see what you can do with the ping command.\n" +
                 "\n" +
                 "If you want assistance, to share your thoughts, or to contribute, you should join my Discord server " + FormatHelper.embedLink("here", ConfigProvider.URLS.discordInviteUrl()) + ".");
     }

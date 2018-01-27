@@ -9,7 +9,6 @@ public interface AuthKeys {
     String catApiToken();
     String giphyToken();
     String googleApiToken();
-    String riotGamesToken();
     String twitchId();
     String twitterKey();
     String twitterSecret();

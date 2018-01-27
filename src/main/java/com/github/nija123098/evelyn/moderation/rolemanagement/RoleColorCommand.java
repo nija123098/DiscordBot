@@ -16,7 +16,7 @@ import java.awt.*;
 public class RoleColorCommand extends AbstractCommand {
 
     public RoleColorCommand() {
-        super(RoleCommand.class, "color", "rcolour, role colour, rcolor", null, null, "change the color of a role (colour is supported)");
+        super(RoleCommand.class, "color", "rcolour, role colour, rcolor", null, null, "Change the color of a role (colour is supported)");
     }
 
     @Command

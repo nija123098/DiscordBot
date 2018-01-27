@@ -21,7 +21,7 @@ import java.util.EnumSet;
 public class SetupCommand extends AbstractCommand {
 
     public SetupCommand() {
-        super("setup", ModuleLevel.ADMINISTRATIVE, null, null, "setup bot channels automatically");
+        super("setup", ModuleLevel.ADMINISTRATIVE, null, null, "Setup bot channels automatically");
     }
 
     @Command
