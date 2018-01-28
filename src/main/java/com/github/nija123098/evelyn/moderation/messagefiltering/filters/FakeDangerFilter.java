@@ -3,6 +3,7 @@ package com.github.nija123098.evelyn.moderation.messagefiltering.filters;
 import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordMessageReceived;
 import com.github.nija123098.evelyn.moderation.messagefiltering.MessageFilter;
+import com.github.nija123098.evelyn.moderation.messagefiltering.MessageMonitoringException;
 import com.github.nija123098.evelyn.moderation.messagefiltering.MessageMonitoringLevel;
 import com.github.nija123098.evelyn.util.FormatHelper;
 import com.github.nija123098.evelyn.util.Log;
@@ -51,7 +52,10 @@ public class FakeDangerFilter implements MessageFilter {
         String reduced = FormatHelper.reduceRepeats(FormatHelper.reformat(event.getMessage().getContent(), c -> c == '\n' || c == '\r' ? ' ' : c), ' ');
         if (reduced.length() < 60) return;
         StringChecker.checkoutString(reduced, DANGER_COMPONENTS.keySet(), policy);
-        if (score.get() / reduced.length() >= REQUIREMENT) System.out.println(score.get() + " " + event.getMessage().getContent());//throw new MessageMonitoringException("Dake danger identified.  Do not spread these.");
+        if (score.get() / reduced.length() >= REQUIREMENT) {
+            Log.log("Identified fake danger message score: " + score.get() + " content: " + event.getMessage().getContent());
+            throw new MessageMonitoringException("Fake danger identified.  Do not spread these.");
+        }
     }
     @Override
     public MessageMonitoringLevel getType() {

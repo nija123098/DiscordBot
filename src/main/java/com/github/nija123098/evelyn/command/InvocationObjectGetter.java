@@ -276,9 +276,9 @@ public class InvocationObjectGetter {
         });
         addConverter(Role.class, (user, shard, channel, guild, message, reaction, args) -> {
             String arg = args.split(" ")[0];
+            if (message.getChannel().isPrivate()) throw new ContextException("You must be in a guild to use that command");
             Role role = message.getGuild().getRoleByID(arg);
             if (role != null) return new Pair<>(role, arg.length());
-            if (guild == null) throw new ArgumentException("You must be in a guild to use that command");
             if (arg.toLowerCase().equals("everyone")) return new Pair<>(guild.getEveryoneRole(), 8);
             for (Role r : message.getGuild().getRoles()){
                 if (args.toLowerCase().startsWith(r.getName().toLowerCase()) && (args.length() == arg.length() || args.charAt(arg.length()) == ' ')){

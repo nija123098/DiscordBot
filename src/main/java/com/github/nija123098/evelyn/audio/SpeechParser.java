@@ -1,14 +1,12 @@
 package com.github.nija123098.evelyn.audio;
 
 import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
+import com.github.nija123098.evelyn.discordobjects.wrappers.*;
 import com.github.nija123098.evelyn.util.Log;
 import com.github.nija123098.evelyn.chatbot.ChatBot;
 import com.github.nija123098.evelyn.command.CommandHandler;
 import com.github.nija123098.evelyn.discordobjects.DiscordAdapter;
 import com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
-import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
-import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
-import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventDistributor;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordSpeakingEvent;
@@ -36,6 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -53,6 +52,7 @@ import java.util.stream.Collectors;
  * @since 1.0.0
  */
 public class SpeechParser implements IAudioReceiver {
+    private static final Predicate<User> ALLOW_PARSER = u -> BotRole.SUPPORTER.hasRole(u, null);
     private static final InitBuffer<StreamSpeechRecognizer> SPEECH_RECOGNIZER_BUFFER;
     private static final Map<Guild, Map<User, SpeechParser>> PARSER_MAP;
     static {
@@ -87,7 +87,7 @@ public class SpeechParser implements IAudioReceiver {
     }
 
     /**
-     * Recives the user's voice data and stops
+     * Receives the user's voice data and stops
      * listening if the cumulative data becomes too long.
      *
      * @param audio the raw OPUS data sent by the user.
@@ -98,7 +98,7 @@ public class SpeechParser implements IAudioReceiver {
     @Override
     public synchronized void receive(byte[] audio, IUser user, char sequence, int timestamp) {
         if (this.lon) return;
-        if (this.bytes.size() > 100_000){
+        if (this.bytes.size() >= 1_000_000){
             this.bytes.clear();
             this.lon = true;
             return;
@@ -114,8 +114,8 @@ public class SpeechParser implements IAudioReceiver {
             this.lon = false;
             return;
         }
-        if (this.bytes.size() > 2000) {
-            process(scan(alter(write(FileHelper.getTempFile("voiceparsing", "pcm")))));// this might need to be more condiment
+        if (this.bytes.size() > 100_000) {
+            process(scan(alter(write(FileHelper.getTempFile("voiceparsing", "pcm")), this.audioManager.voiceChannel().getBitrate())));// this might need to be more condiment
         }
         this.bytes.clear();
     }
@@ -153,9 +153,10 @@ public class SpeechParser implements IAudioReceiver {
      * Adds a WAV header to the PCM data at the file.
      *
      * @param file the file to add the WAV header for.
+     * @param bitrate the bitrate of the incoming audio.
      * @return the input file.
      */
-    private static File alter(File file){
+    private static File alter(File file, int bitrate){
         File ret = new File(file.getPath().replace(".pcm", ".wav"));
         if (ret.exists()) ret.delete();
         List<String> command = new ArrayList<>();
@@ -168,6 +169,8 @@ public class SpeechParser implements IAudioReceiver {
         command.add("2");// channels
         command.add("-i");
         command.add(file.getPath());
+        command.add("-b:a");// bit rate
+        command.add(Integer.toString(bitrate));
         command.add("-ac");
         command.add("1");// to channels
         command.add("-ar");
@@ -206,7 +209,7 @@ public class SpeechParser implements IAudioReceiver {
             } catch (IOException e) {
                 Log.log("Exception scanning file for voice data", e);
             }
-            ScheduleService.schedule(file.length() * 5, () -> {
+            ScheduleService.schedule(600_000, () -> {
                 try{Files.delete(file.toPath());
                 }catch(IOException e) {Log.log("Exception deleting voice data file", e);}
             });
@@ -233,11 +236,10 @@ public class SpeechParser implements IAudioReceiver {
     public static void handle(DiscordVoiceJoin event){
         if (!event.getChannel().isConnected()) return;
         if (DiscordClient.getOurUser().equals(event.getUser())){
+            if (GuildAudioManager.getManager(event.getChannel(), false) == null) return;
             boolean found = false;
-            List<User> connected = event.getChannel().getConnectedUsers();
-            for (User user : connected){
-                if (user.isBot()) continue;
-                if (BotRole.SUPPORTER.hasRole(user, null)){
+            for (User user : event.getChannel().getConnectedUsers()){// break as soon as match is found
+                if (!user.isBot() && ALLOW_PARSER.test(user)){
                     found = true;
                     break;
                 }
@@ -261,7 +263,12 @@ public class SpeechParser implements IAudioReceiver {
             PARSER_MAP.remove(event.getGuild()).values().forEach(SpeechParser::close);
         } else {
             if (event.getUser().isBot()) return;
-            for (User user : event.getChannel().getConnectedUsers()) if (BotRole.SUPPORTER.hasRole(user, null)) return;
+            for (User user : event.getChannel().getConnectedUsers()) {
+                if (BotRole.SUPPORTER.hasRole(user, null)) {// break as soon as match is found
+                    PARSER_MAP.get(event.getGuild()).remove(event.getUser()).close();
+                    return;
+                }
+            }
             PARSER_MAP.remove(event.getGuild()).values().forEach(SpeechParser::close);
         }
     }

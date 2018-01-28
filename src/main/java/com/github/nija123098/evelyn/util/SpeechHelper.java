@@ -24,7 +24,7 @@ import static org.apache.commons.io.IOUtils.copy;
  * @since 1.0.0
  */
 public class SpeechHelper {
-    private static final LangString GIBERISH = new LangString(true, "You sent me gibberish");
+    private static final LangString GIBBERISH = new LangString(true, "You sent me gibberish");
     private static final Map<String, Map<String, File>> MAP = new ConcurrentHashMap<>();
     private static final Synthesiser SYNTHESISER = new Synthesiser();
 
@@ -35,7 +35,7 @@ public class SpeechHelper {
             File file = null;
             String total = "";
             String[] split = s.split(quote(". "));
-            if (split.length == 1) return getFile(GIBERISH.translate(lang), lang);
+            if (split.length == 1) return getFile(GIBBERISH.translate(lang), lang);
             for (int i = 0; i < split.length; i++) {
                 if (split[i].length() + total.length() > 100) {
                     --i;

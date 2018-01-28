@@ -16,8 +16,6 @@ public class ContributorMonitor {
     private static final Role SUPPORT_SIGN_ROLE = Role.getRole(ConfigProvider.BOT_SETTINGS.supporterSignRole());
     public static void init(){
         if (CONTRIB_SIGN_ROLE == null) return;// is not the instance serving Evelyn's Space
-        System.out.println(CONTRIB_SIGN_ROLE.getName());
-        System.out.println(CONTRIB_SIGN_ROLE.getGuild().getName());
         EventDistributor.register(ContributorMonitor.class);
         Launcher.registerStartup(() -> {
             reload(SUPPORT_SIGN_ROLE, BotRole.SUPPORTER);

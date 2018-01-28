@@ -1,30 +1,29 @@
 package com.github.nija123098.evelyn.fun;
 
+import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.command.AbstractCommand;
+import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.config.Configurable;
-import com.github.nija123098.evelyn.config.GlobalConfigurable;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
-import com.github.nija123098.evelyn.discordobjects.wrappers.Region;
+import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
+import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
+import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
+import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.exception.DevelopmentException;
-import javafx.util.Pair;
+import com.github.nija123098.evelyn.util.FileHelper;
+import com.github.nija123098.evelyn.util.Rand;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
-
-import static com.github.nija123098.evelyn.botconfiguration.ConfigProvider.RESOURCE_FILES;
-import static com.github.nija123098.evelyn.command.ModuleLevel.FUN;
-import static com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient.getGuilds;
-import static com.github.nija123098.evelyn.util.FileHelper.getTempFile;
-import static com.github.nija123098.evelyn.util.Rand.getRand;
-import static java.nio.file.Paths.get;
-import static java.util.Collections.addAll;
-import static javax.imageio.ImageIO.read;
-import static javax.imageio.ImageIO.write;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 /**
  * @author nija123098
@@ -32,84 +31,67 @@ import static javax.imageio.ImageIO.write;
  */
 public class MapCommand extends AbstractCommand {
     private static final int DOT_SIZE = 2;
-    private static final File FILE = getTempFile("map", "png", "map");
+    private static final File FILE = FileHelper.getTempFile("map", "png", "map");
+    private static final Map<String, Integer> REGION_MAP = new HashMap<>();
+    private static final Map<Integer, List<Point>> POINT_MAP = new HashMap<>();
+    private static final AtomicInteger GUILD_COUNT = new AtomicInteger();
+    private static final int[] COLOR_ARRAY = new int[DOT_SIZE * 2];
+    static {
+        try {
+            BufferedImage image = ImageIO.read(Paths.get(ConfigProvider.RESOURCE_FILES.finalMap()).toFile());
+            for (int i = 0; i < image.getWidth() / DOT_SIZE; i++) {
+                for (int j = 0; j < image.getHeight() / DOT_SIZE; j++) {
+                    POINT_MAP.computeIfAbsent(image.getRGB(i * DOT_SIZE, j * DOT_SIZE), l -> new ArrayList<>(1000)).add(new Point(i * DOT_SIZE, j * DOT_SIZE));
+                }
+            }
+        } catch (IOException e) {
+            throw new DevelopmentException("Unable to read map template", e);
+        }
+        Arrays.fill(COLOR_ARRAY, 0xFFFFFFFF);
+        // AF -76498 AN -16760577
+        registerColor(-16724992, "US Central", "US East", "US West", "US South");
+        registerColor(-16744448, "Brazil");
+        registerColor(-4128768, "Central Europe", "Western Europe", "Amsterdam", "London", "Frankfurt");
+        registerColor(-11231522, "Russia");
+        registerColor(-836095, "Hong Kong", "Japan");
+        registerColor(-5220838, "Singapore");
+        registerColor(-4177792, "Sydney");
+    }
+
+    private static void registerColor(int color, String...regionNames){
+        for (String name : regionNames) REGION_MAP.put(name, color);
+    }
 
     public MapCommand() {
-        super("map", FUN, null, null, "Displays a map of Evelyn's server distribution");
+        super("map", ModuleLevel.FUN, null, null, "Displays a map of Evelyn's server distribution");
     }
 
     @Command
     public void command(MessageMaker maker) {
-        try {
-            Map<Region, Integer> map = new HashMap<>();
-            getGuilds().forEach(guild -> map.compute(guild.getRegion(), (region, integer) -> integer == null ? 1 : integer + 1));
-            BufferedImage image = read(get(RESOURCE_FILES.finalMap()).toFile());
-            Map<ColorAria, List<Pair<Integer, Integer>>> setMap = new HashMap<>();
-            for (int i = 0; i < image.getWidth(); i++)
-                for (int j = 0; j < image.getHeight(); j++)
-                    setMap.computeIfAbsent(getColorAria(image.getRGB(i, j)), region -> new ArrayList<>(1000)).add(new Pair<>(i, j));
-            Set<Pair<Integer, Integer>> pairs = new HashSet<>();
-            map.forEach((region, integer) -> {
-                List<Pair<Integer, Integer>> list = setMap.get(getColorAria(region.getName()));
-                if (list == null) return;
-                for (int i = 0; i < integer; i++) {
-                    Pair<Integer, Integer> pair = getRand(list, true);
-                    for (int x = 0; x < DOT_SIZE; x++) {
-                        for (int y = 0; y < DOT_SIZE; y++) {
-                            pairs.add(new Pair<>(pair.getKey() + x, pair.getValue() + y));
-                        }
+        List<Guild> guilds = DiscordClient.getGuilds();
+        if (GUILD_COUNT.getAndSet(guilds.size()) != guilds.size()) {
+            try {// color, count
+                Map<Integer, Integer> regionGuildCountMap = guilds.stream().collect(Collectors.toMap(g -> REGION_MAP.get(g.getRegion().getName()), g -> 1, (one, two) -> one + two));
+                BufferedImage img = ImageIO.read(Paths.get(ConfigProvider.RESOURCE_FILES.finalMap()).toFile());
+                regionGuildCountMap.forEach((color, count) -> {
+                    Set<Point> use = new HashSet<>(200, 1);
+                    for (int i = 0; i < count; i++) {
+                        if (use.add(Rand.getRand(POINT_MAP.get(color), false))) --count;
                     }
-                }
-            });
-            pairs.forEach(cord -> image.setRGB(cord.getKey(), cord.getValue(), 0xFFFFFFFF));
-            write(image, "PNG", FILE);
-        } catch (IOException e) {
-            throw new DevelopmentException(e);
+                    use.forEach(point -> img.setRGB(point.x, point.y, DOT_SIZE, DOT_SIZE, COLOR_ARRAY, 0, 1));
+                });
+                if (!FILE.exists()) FILE.createNewFile();
+                ImageIO.write(img, "PNG", FILE);
+            } catch (IOException e) {
+                throw new DevelopmentException("Issue making map", e);
+            }
         }
         maker.withFile(FILE);
     }
 
     @Override
     public long getCoolDown(Class<? extends Configurable> clazz) {
-        if (clazz.equals(GlobalConfigurable.class)) return 30_000;
+        if (clazz.equals(User.class) || clazz.equals(Guild.class) || clazz.equals(Channel.class)) return 60_000;
         return super.getCoolDown(clazz);
-    }
-
-    private enum ColorAria {// AF -76498
-        NA(-16724992, "US Central", "US East", "US West", "US South"),
-        SA(-16744448, "Brazil"),
-        EU(-4128768, "Central Europe", "Western Europe", "Amsterdam", "London", "Frankfurt"),
-        RU(-11231522, "Russia"),
-        EMA(-836095, "Hong Kong"),
-        SEA(-5220838, "Singapore"),
-        AUS(-4177792, "Sydney"),
-        AN(-16760577),;
-        private int color;
-        Set<String> names;
-
-        ColorAria(int color, String... names) {
-            this.color = color;
-            this.names = new HashSet<>();
-            addAll(this.names, names);
-        }
-    }
-
-    private static final Map<Integer, Integer> COLOR = new HashMap<>();
-
-    private static ColorAria getColorAria(int color) {
-        COLOR.compute(new Color(color).getRGB(), (i, in) -> in == null ? 1 : in + 1);
-        for (ColorAria aria : ColorAria.values()) {
-            if (aria.color == new Color(color).getRGB()) {
-                return aria;
-            }
-        }
-        return null;
-    }
-
-    private static ColorAria getColorAria(String name) {
-        for (ColorAria aria : ColorAria.values()) {
-            if (aria.names.contains(name)) return aria;
-        }
-        return null;
     }
 }

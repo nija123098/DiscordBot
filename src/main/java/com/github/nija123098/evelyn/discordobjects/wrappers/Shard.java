@@ -1,5 +1,6 @@
 package com.github.nija123098.evelyn.discordobjects.wrappers;
 
+import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.discordobjects.ExceptionWrapper;
 import sx.blah.discord.api.IShard;
 import sx.blah.discord.handle.obj.StatusType;
@@ -73,10 +74,12 @@ public class Shard {
     }
 
     public void changePresence(String text, String stream){
+        if (ConfigProvider.BOT_SETTINGS.ghostModeEnabled()) return;
         ExceptionWrapper.wrap(() -> shard().changeStreamingPresence(StatusType.ONLINE, text, stream));
     }
 
     public void changePresence(Presence.Status status, Presence.Activity activity, String text){
+        if (ConfigProvider.BOT_SETTINGS.ghostModeEnabled()) return;
         ExceptionWrapper.wrap(() -> shard().changePresence(status.convert(), activity.convert(), text));
     }
 

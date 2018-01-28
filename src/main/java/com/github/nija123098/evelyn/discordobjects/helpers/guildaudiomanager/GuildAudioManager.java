@@ -139,9 +139,9 @@ public class GuildAudioManager extends AudioEventAdapter{
         if (guild == null) return null;
         return MAP.get(guild.getID());
     }
-    private AudioProvider audioProvider;
-    private VoiceChannel channel;
-    private AudioPlayer lavaPlayer;
+    private final AudioProvider audioProvider;
+    private final VoiceChannel channel;
+    private final AudioPlayer lavaPlayer;
     private final List<Message> currentDisplays = new ArrayList<>(3);
     private final Set<User> skipSet = ConcurrentHashMap.newKeySet();
     private final List<LangString> speeches = new CopyOnWriteArrayList<>();
