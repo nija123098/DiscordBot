@@ -17,6 +17,8 @@ import com.github.nija123098.evelyn.economy.configs.CurrencySymbolConfig;
 import com.github.nija123098.evelyn.economy.configs.CurrentCurrencyConfig;
 import com.github.nija123098.evelyn.economy.configs.CurrentCurrencyStreakConfig;
 import com.github.nija123098.evelyn.economy.event.configs.*;
+import com.github.nija123098.evelyn.tag.Tag;
+import com.github.nija123098.evelyn.tag.Tags;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
 import com.github.nija123098.evelyn.util.Time;
 
@@ -27,10 +29,10 @@ import java.util.List;
  * @author Soarnir
  * @since 1.0.0
  */
+@Tags(value = {Tag.ARCADE})
 public class BankCommand extends AbstractCommand {
-
     public BankCommand() {
-        super("bank", ModuleLevel.ECONOMY, null, null, "For checking your balance and claiming your currency");
+        super("bank", ModuleLevel.ECONOMY, "cookie, cookies", "cookie", "For checking your balance and claiming your currency");
     }
 
     @Command

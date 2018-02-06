@@ -5,6 +5,8 @@ import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
+import com.github.nija123098.evelyn.tag.Tag;
+import com.github.nija123098.evelyn.tag.Tags;
 import com.github.nija123098.evelyn.util.Log;
 
 import java.io.IOException;
@@ -16,6 +18,7 @@ import java.util.List;
  * @author Soarnir
  * @since 1.0.0
  */
+@Tags(value = {Tag.HELPFUL})
 public class GuideCommand extends AbstractCommand {
     public GuideCommand() {
         super("guide", ModuleLevel.INFO, null, null, "A quickstart guide to Evelyn");

@@ -24,9 +24,13 @@ public class NetworkHelper {
         return s;
     }
     public static boolean isValid(String url){
+        if (url.startsWith("http:")) url = "https" + url.substring(4, url.length());
+        else if (!url.startsWith("http")) url = "https://" + url;
+        String urlFinal = url;
         return CACHE.computeIfAbsent(url, s -> {
-            try{Jsoup.connect((url.startsWith("http") ? "" : "https://") + url).userAgent(ConfigProvider.BOT_SETTINGS.userAgent()).get();
-                return VALIDATOR.isValid((url.startsWith("http") ? "" : "https://") + url);
+            try{if (!VALIDATOR.isValid(urlFinal)) return false;
+                Jsoup.connect(urlFinal).userAgent(ConfigProvider.BOT_SETTINGS.userAgent()).get();
+                return true;
             } catch (IllegalArgumentException | IOException e) {return false;}
         });
     }

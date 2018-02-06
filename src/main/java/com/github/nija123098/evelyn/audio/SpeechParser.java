@@ -79,7 +79,7 @@ public class SpeechParser implements IAudioReceiver {
     private boolean lon;
     private final User user;
     private final GuildAudioManager audioManager;
-    private final List<Byte> bytes = new ArrayList<>();
+    private final ArrayList<Byte> bytes = new ArrayList<>();
     private SpeechParser(User user, GuildAudioManager audioManager) {
         this.user = user;
         this.audioManager = audioManager;
@@ -99,10 +99,12 @@ public class SpeechParser implements IAudioReceiver {
     public synchronized void receive(byte[] audio, IUser user, char sequence, int timestamp) {
         if (this.lon) return;
         if (this.bytes.size() >= 1_000_000){
+            System.out.println("TOO LARGE");
             this.bytes.clear();
             this.lon = true;
             return;
         }
+        this.bytes.ensureCapacity(this.bytes.size() + audio.length - 1);
         for (byte anAudio : audio) this.bytes.add(anAudio);
     }
 
@@ -116,7 +118,7 @@ public class SpeechParser implements IAudioReceiver {
         }
         if (this.bytes.size() > 100_000) {
             process(scan(alter(write(FileHelper.getTempFile("voiceparsing", "pcm")), this.audioManager.voiceChannel().getBitrate())));// this might need to be more condiment
-        }
+        } else System.out.println("TOO SMALL");
         this.bytes.clear();
     }
 

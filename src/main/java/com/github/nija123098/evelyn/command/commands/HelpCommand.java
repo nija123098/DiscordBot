@@ -14,6 +14,8 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.exception.DevelopmentException;
 import com.github.nija123098.evelyn.exception.PermissionsException;
+import com.github.nija123098.evelyn.tag.Tag;
+import com.github.nija123098.evelyn.tag.Tags;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
 import com.github.nija123098.evelyn.util.FormatHelper;
 
@@ -26,6 +28,7 @@ import java.util.stream.Stream;
  * @author nija123098
  * @since 1.0.0
  */
+@Tags(value = {Tag.HELPFUL})
 public class HelpCommand extends AbstractCommand {
     public HelpCommand() {
         super("help", ModuleLevel.INFO, null, null, "Gives information about a command");

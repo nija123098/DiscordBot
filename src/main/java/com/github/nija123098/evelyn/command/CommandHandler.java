@@ -25,6 +25,7 @@ import org.reflections.Reflections;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -48,11 +49,11 @@ public class CommandHandler {
         Set<Class<? extends AbstractCommand>> classes = new Reflections(Launcher.BASE_PACKAGE).getSubTypesOf(AbstractCommand.class);
         classes.removeIf(clazz -> Modifier.isAbstract(clazz.getModifiers()));
         CLASS_MAP = new HashMap<>(classes.size() + 10, 1);
+        Set<Class<? extends AbstractCommand>> failed = new HashSet<>();
         classes.forEach(clazz -> {
+            AbstractCommand command = null;
             try {
-                AbstractCommand command = clazz.newInstance();
-                CLASS_MAP.put(clazz, command);
-                typeMap.computeIfAbsent(command.getSuperCommandType(), s -> new HashSet<>()).add(command);
+                command = clazz.newInstance();
             } catch (InstantiationException e) {
                 Log.log("Exception attempting to initialize command: " + clazz.getName(), e);
             } catch (IllegalAccessException e) {
@@ -62,7 +63,26 @@ public class CommandHandler {
             } catch (RuntimeException e){
                 Log.log("Exception while initializing command: " + clazz.getName(), e);
             }
+            if (command == null || !clazz.isInstance(command)) {
+                failed.add(clazz);
+            } else {
+                CLASS_MAP.put(clazz, command);
+                typeMap.computeIfAbsent(command.getSuperCommandType(), s -> new HashSet<>()).add(command);
+            }
         });
+        AtomicBoolean modified = new AtomicBoolean(true);
+        while (true) {
+            modified.set(false);
+            typeMap.forEach((clazz, commands) -> {
+                if (failed.contains(clazz)) {
+                    modified.set(true);
+                    commands.forEach(command -> failed.add(command.getClass()));
+                }
+            });
+            if (!modified.get()) break;
+            failed.forEach(typeMap::remove);
+        }
+        failed.forEach(CLASS_MAP::remove);
         COMMANDS_MAP = new HashMap<>(CLASS_MAP.size(), 1);
         EXACT_COMMAND_MAP = new HashMap<>(CLASS_MAP.size(), 1);
         REACTION_COMMAND_MAP = new HashMap<>(CLASS_MAP.size() / 2, 1);

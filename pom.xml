@@ -128,11 +128,6 @@
             <artifactId>rome</artifactId>
             <version>1.7.3</version>
         </dependency>
-        <dependency>
-            <groupId>com.github.rithms</groupId>
-            <artifactId>riot-api-java</artifactId>
-            <version>4.0.1</version>
-        </dependency>
         <dependency><!-- https://mvnrepository.com/artifact/org.jscience/jscience -->
             <groupId>org.jscience</groupId>
             <artifactId>jscience</artifactId>

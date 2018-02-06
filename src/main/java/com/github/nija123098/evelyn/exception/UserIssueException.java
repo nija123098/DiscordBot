@@ -10,7 +10,7 @@ import java.awt.*;
  * classing exceptions which stem from the user's fault.
  */
 public class UserIssueException extends BotException {
-    private static final Color COLOR = new Color(255, 90, 0);
+    private static final Color COLOR = new Color(255, 183, 76);
     public UserIssueException(String message) {
         super(message);
     }

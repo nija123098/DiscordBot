@@ -63,15 +63,15 @@ public class FormatHelper {
     }
 
     public static String embedLink(String text, String link) {
-        return "[" + text + "](" + (link.isEmpty() ? ConfigProvider.URLS.rickrollVid() : link) + ")";
+        return "[" + text + "](" + (link == null || link.isEmpty() ? ConfigProvider.URLS.rickrollVid() : link) + ")";
     }
 
     /**
+     * Builds a ascii style table.
      *
-     *
-     * @param headers array containing the headers
-     * @param table   array[n size] of array's[header size], containing the rows of the controllers
-     * @param footer
+     * @param headers An array containing the headers of the table.
+     * @param table   An array of arbitrary size of arrays of the header's length.
+     * @param footer  An array containing the footers of the table.
      * @return a formatted controllers
      */
     public static String makeAsciiTable(List<String> headers, List<List<String>> table, List<String> footer) {// ----------------------------------------

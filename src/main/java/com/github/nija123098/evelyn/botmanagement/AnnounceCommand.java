@@ -10,8 +10,8 @@ import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Message;
-import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.moderation.logging.BotChannelConfig;
+import com.github.nija123098.evelyn.util.NetworkHelper;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -25,27 +25,36 @@ public class AnnounceCommand extends AbstractCommand {
         super("announce", ModuleLevel.BOT_ADMINISTRATIVE, null, null, null);
     }
     @Command
-    public void command(@Argument(info = "The stuff to say") String text, MessageMaker maker, User user, Message message) {
-        text = text.replace("\\n","\n");
-
+    public void command(@Argument(info = "The stuff to say") String text, MessageMaker maker) {
         maker.withAuthorIcon(DiscordClient.getOurUser().getAvatarURL()).getAuthorName().clear().appendRaw("Evelyn Announcement");
         maker.withThumb(ConfigProvider.URLS.announceThumb());
-        maker.withAutoSend(false).mustEmbed();
-        maker.withReactionBehavior("GreenTick", ((add, reaction, u) -> {
+        maker.withAutoSend(false);
+
+        text = text.replace("\\n","\n");
+        String[] split = text.split("|");
+        for (int i = 0; i < split.length - 1; i++) {
+            if (NetworkHelper.isValid(split[i])) {
+                if (split[i].endsWith("png") || split[i].endsWith("svg") || split[i].endsWith("jpeg")) maker.withThumb(split[i]);
+                else maker.withUrl(split[i]);
+            }
+            else maker.getTitle().append(split[i]);
+        }
+        maker.append(split[split.length - 1]);
+        maker.send();
+        Message message = maker.sentMessage();
+        maker.withReactionBehavior("green_tick", ((add, reaction, u) -> {
             maker.clearReactionBehaviors();
             Set<Channel> channels = DiscordClient.getGuilds().stream().map((guild -> ConfigHandler.getSetting(BotChannelConfig.class, guild))).filter(Channel::canPost).collect(Collectors.toSet());
             channels.remove(null);
             maker.clearMessage();
             channels.forEach(channel -> maker.clearMessage().withChannel(channel).send());
+            message.addReaction("ok_hand");
         }));
-        maker.clearReactionBehaviors();
     }
 
     @Override
     public String getUsages() {
-        return  "#  announce <text> // Send <text> to all servers\n" +
-                "#  announce <title;text> // Send <title;text> to all servers\n" +
-                "#  announce <url[SPACE]|title;text> // Send <title;text> with image to all servers";
+        return  "#  announce [url]|[png link]|[title]|<text> // Send <text> to all servers";
     }
 
     @Override

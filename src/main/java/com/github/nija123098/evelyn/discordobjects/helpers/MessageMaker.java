@@ -1,7 +1,6 @@
 package com.github.nija123098.evelyn.discordobjects.helpers;
 
 import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
-import com.github.nija123098.evelyn.util.Log;
 import com.github.nija123098.evelyn.command.ProcessingHandler;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.configs.guild.GuildLanguageConfig;
@@ -44,7 +43,7 @@ public class MessageMaker {
     static {
         Launcher.registerShutdown(ReactionBehavior::deregisterAll);
     }
-    private static final Color DEFAULT_COLOR = new Color(175, 30, 5);
+    private static final Color DEFAULT_COLOR = new Color(116, 32, 196);
     private static final int CHAR_LIMIT = 2000;
     private static final int EMBED_LIMIT = 1000;
     private TextPart authorName, title, header, footer, note, external;
@@ -494,7 +493,7 @@ public class MessageMaker {
     /**
      * Returns if the associated embed has been colored.
      *
-     * @return
+     * @return if the instance's color has been set.
      */
     public boolean isColored(){
         return this.colored;

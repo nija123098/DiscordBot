@@ -13,11 +13,14 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Role;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.exception.ArgumentException;
+import com.github.nija123098.evelyn.tag.Tag;
+import com.github.nija123098.evelyn.tag.Tags;
 
 /**
  * @author nija123098
  * @since 1.0.0
  */
+@Tags(value = {Tag.HELPFUL})
 public class ConfigGetCommand extends AbstractCommand {
     public ConfigGetCommand() {
         super(ConfigCommand.class, "get", "get", null, null, "Gets the value of a config for a configurable");

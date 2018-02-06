@@ -11,11 +11,14 @@ import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.*;
 import com.github.nija123098.evelyn.exception.ArgumentException;
 import com.github.nija123098.evelyn.exception.PermissionsException;
+import com.github.nija123098.evelyn.tag.Tag;
+import com.github.nija123098.evelyn.tag.Tags;
 
 /**
  * @author nija123098
  * @since 1.0.0
  */
+@Tags(value = {Tag.HELPFUL})
 public class ConfigSetCommand extends AbstractCommand {
     public ConfigSetCommand() {
         super(ConfigCommand.class, "set", "set", null, null, "Sets");

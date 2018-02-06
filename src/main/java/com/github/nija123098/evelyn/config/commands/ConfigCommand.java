@@ -12,6 +12,8 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Message;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.perms.BotRole;
+import com.github.nija123098.evelyn.tag.Tag;
+import com.github.nija123098.evelyn.tag.Tags;
 import com.github.nija123098.evelyn.util.LanguageHelper;
 
 import java.util.stream.Stream;
@@ -20,8 +22,8 @@ import java.util.stream.Stream;
  * @author nija123098
  * @since 1.0.0
  */
+@Tags(value = {Tag.HELPFUL})
 public class ConfigCommand extends AbstractCommand {
-
     public ConfigCommand() {
         super("config", BotRole.USER, ModuleLevel.ADMINISTRATIVE, "cfg", null, "Gets information on config values");
     }

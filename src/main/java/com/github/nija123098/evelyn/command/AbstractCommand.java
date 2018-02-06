@@ -24,13 +24,18 @@ import com.github.nija123098.evelyn.perms.BotRole;
 import com.github.nija123098.evelyn.perms.configs.specialperms.GuildSpecialPermsConfig;
 import com.github.nija123098.evelyn.perms.configs.specialperms.SpecialPermsContainer;
 import com.github.nija123098.evelyn.service.services.MemoryManagementService;
+import com.github.nija123098.evelyn.tag.Tag;
+import com.github.nija123098.evelyn.tag.Tagable;
+import com.github.nija123098.evelyn.tag.Tags;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
 import com.github.nija123098.evelyn.util.Log;
 
+import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Stream;
 
 /**
@@ -40,7 +45,7 @@ import java.util.stream.Stream;
  * @since 1.0.0
  */
 @LaymanName(value = "Command", help = "The command represented by a string or some alias")
-public class AbstractCommand {
+public class AbstractCommand implements Tagable {
     private final Class<? extends AbstractCommand> superCommand;
     private AbstractCommand highCommand;
     private String name, aAliases, eAliases, rAliases, help;
@@ -56,6 +61,7 @@ public class AbstractCommand {
     private List<GuildUser> guildUserCoolDowns;
     private Set<ContextRequirement> contextRequirements;
     private Set<AbstractCommand> subCommands;
+    private List<Tag> tags;
     private boolean prefixRequired = true;
     private boolean okOnSuccess = false;
 
@@ -80,6 +86,8 @@ public class AbstractCommand {
         this.rAliases = relativeAliases;
         this.name = name;
         this.help = help != null ? help : "No provided help for this command";
+        Tags tags = this.getClass().getAnnotation(Tags.class);
+        this.tags = tags == null ? Collections.emptyList() : Arrays.asList(tags.value());
     }
 
     /**
@@ -200,6 +208,15 @@ public class AbstractCommand {
     }
 
     /**
+     * Return if the command has been loaded.
+     *
+     * @return if the command has been loaded.
+     */
+    public boolean isLoaded(){
+        return this.allNames != null;
+    }
+
+    /**
      * A getter for the object representing the super command.
      * This gives the command directly above this command.
      *
@@ -255,6 +272,16 @@ public class AbstractCommand {
      */
     public String getName(){
         return this.name;
+    }
+
+    @Override
+    public String typeName() {
+        return "command";
+    }
+
+    @Override
+    public List<Tag> getTags() {
+        return this.tags;
     }
 
     /**
@@ -542,7 +569,7 @@ public class AbstractCommand {
         }
         try {
             Object object = this.method.invoke(this, objects);
-            Stream.of(objects).filter(MessageMaker.class::isInstance).map(o -> ((MessageMaker) o)).forEach(o -> (o.isColored() ? o : o.withColor(this.module.getColor())).send(true));
+            Stream.of(objects).filter(MessageMaker.class::isInstance).map(o -> ((MessageMaker) o)).forEach(o -> (this.getTags().isEmpty() ? o : o.withColor(this.getTags().get(0).getColor())).send(true));
             return object;
         } catch (IllegalAccessException e) {
             Log.log("Malformed command: " + getName(), e);

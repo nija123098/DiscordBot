@@ -10,10 +10,10 @@ public class GeneralEmotes {
     public final static String EMPTY = EmoticonHelper.getEmoji("empty").toString();
 
     // green tick emote
-    public final static String GREEN_TICK = EmoticonHelper.getEmoji("GreenTick").toString();
+    public final static String GREEN_TICK = EmoticonHelper.getEmoji("green_tick").toString();
 
     // red tick emote
-    public final static String RED_TICK = EmoticonHelper.getEmoji("RedTick").toString();
+    public final static String RED_TICK = EmoticonHelper.getEmoji("red_tick").toString();
 
     // blob aww emote
     public final static String BLOB_AWW = EmoticonHelper.getEmoji("blobaww").toString();

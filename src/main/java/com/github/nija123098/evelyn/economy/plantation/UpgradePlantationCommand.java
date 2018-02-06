@@ -57,7 +57,7 @@ public class UpgradePlantationCommand extends AbstractCommand {
                     maker.appendRaw("\nCurrent level: " + FormatHelper.embedLink(String.valueOf(ConfigHandler.getSetting(CurrentHouseUpgradesConfig.class, user)), ""));
                     maker.appendRaw("\nUpgrade cost: `\u200b " + symbol + " " +  houseUpgradeCost + " \u200b`");
                     maker.appendRaw("\nCurrent Funds: `\u200b " + symbol + " " +  currency + " \u200b`");
-                    maker.withReactionBehavior("RedTick", ((add, reaction, u) -> {
+                    maker.withReactionBehavior("red_tick", ((add, reaction, u) -> {
                         //remove reactions
                         try {
                             maker.clearReactionBehaviors();
@@ -66,7 +66,7 @@ public class UpgradePlantationCommand extends AbstractCommand {
                         maker.sentMessage().getReactions().forEach(reactions -> maker.sentMessage().removeReaction(reactions));
 
                     }));
-                    maker.withReactionBehavior("GreenTick", ((add, reaction, u) -> {
+                    maker.withReactionBehavior("green_tick", ((add, reaction, u) -> {
 
                         //remove reactions
                         try {
@@ -97,7 +97,7 @@ public class UpgradePlantationCommand extends AbstractCommand {
                             ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, (currencyTemp - houseUpgradeCost));
                             ConfigHandler.setSetting(CurrentHouseUpgradesConfig.class, user, houseUpgrades);
                         }
-                        maker.forceCompile().withoutReactionBehavior("GreenTick").send();
+                        maker.forceCompile().withoutReactionBehavior("green_tick").send();
                         maker.forceCompile().send();
                     }));
                 }
@@ -114,7 +114,7 @@ public class UpgradePlantationCommand extends AbstractCommand {
                     maker.appendRaw("\nCurrent level: " + FormatHelper.embedLink(String.valueOf(ConfigHandler.getSetting(CurrentHarvestUpgradesConfig.class, user)), ""));
                     maker.appendRaw("\nUpgrade cost: `\u200b " + symbol + " " +  harvestUpgradeCost + " \u200b`");
                     maker.appendRaw("\nCurrent Funds: `\u200b " + symbol + " " +  currency + " \u200b`");
-                    maker.withReactionBehavior("RedTick", ((add, reaction, u) -> {
+                    maker.withReactionBehavior("red_tick", ((add, reaction, u) -> {
                         //remove reactions
                         try {
                             maker.clearReactionBehaviors();
@@ -123,7 +123,7 @@ public class UpgradePlantationCommand extends AbstractCommand {
                         maker.sentMessage().getReactions().forEach(reactions -> maker.sentMessage().removeReaction(reactions));
 
                     }));
-                    maker.withReactionBehavior("GreenTick", ((add, reaction, u) -> {
+                    maker.withReactionBehavior("green_tick", ((add, reaction, u) -> {
 
                         //remove reactions
                         try {
@@ -142,7 +142,7 @@ public class UpgradePlantationCommand extends AbstractCommand {
                             ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, (currencyTemp - harvestUpgradeCost));
                             ConfigHandler.setSetting(CurrentHarvestUpgradesConfig.class, user, harvestUpgrades);
                         }
-                        maker.forceCompile().withoutReactionBehavior("GreenTick").send();
+                        maker.forceCompile().withoutReactionBehavior("green_tick").send();
                         maker.forceCompile().send();
                     }));
                 }
@@ -160,7 +160,7 @@ public class UpgradePlantationCommand extends AbstractCommand {
                     maker.appendRaw("\nCurrent level: " + FormatHelper.embedLink(String.valueOf(ConfigHandler.getSetting(CurrentRoasterUpgradesConfig.class, user)), ""));
                     maker.appendRaw("\nUpgrade cost: `\u200b " + symbol + " " + roasterUpgradeCost + " \u200b`");
                     maker.appendRaw("\nCurrent Funds: `\u200b " + symbol + " " + currency + " \u200b`");
-                    maker.withReactionBehavior("RedTick", ((add, reaction, u) -> {
+                    maker.withReactionBehavior("red_tick", ((add, reaction, u) -> {
                         //remove reactions
                         try {
                             maker.clearReactionBehaviors();
@@ -169,7 +169,7 @@ public class UpgradePlantationCommand extends AbstractCommand {
                         maker.sentMessage().getReactions().forEach(reactions -> maker.sentMessage().removeReaction(reactions));
 
                     }));
-                    maker.withReactionBehavior("GreenTick", ((add, reaction, u) -> {
+                    maker.withReactionBehavior("green_tick", ((add, reaction, u) -> {
 
                         //remove reactions
                         try {
@@ -189,7 +189,7 @@ public class UpgradePlantationCommand extends AbstractCommand {
                             ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, (currency - roasterUpgradeCost));
                             ConfigHandler.setSetting(CurrentRoasterUpgradesConfig.class, user, roasterUpgrades);
                         }
-                        maker.forceCompile().withoutReactionBehavior("GreenTick").send();
+                        maker.forceCompile().withoutReactionBehavior("green_tick").send();
                         maker.forceCompile().send();
                     }));
                 }
@@ -207,7 +207,7 @@ public class UpgradePlantationCommand extends AbstractCommand {
                     maker.appendRaw("\nCurrent level: " + FormatHelper.embedLink(String.valueOf(ConfigHandler.getSetting(CurrentGrinderUpgradesConfig.class, user)), ""));
                     maker.appendRaw("\nUpgrade cost: `\u200b " + symbol + " " + grinderUpgradeCost + " \u200b`");
                     maker.appendRaw("\nCurrent Funds: `\u200b " + symbol + " " + currency + " \u200b`");
-                    maker.withReactionBehavior("RedTick", ((add, reaction, u) -> {
+                    maker.withReactionBehavior("red_tick", ((add, reaction, u) -> {
                         //remove reactions
                         try {
                             maker.clearReactionBehaviors();
@@ -216,7 +216,7 @@ public class UpgradePlantationCommand extends AbstractCommand {
                         maker.sentMessage().getReactions().forEach(reactions -> maker.sentMessage().removeReaction(reactions));
 
                     }));
-                    maker.withReactionBehavior("GreenTick", ((add, reaction, u) -> {
+                    maker.withReactionBehavior("green_tick", ((add, reaction, u) -> {
 
                         //remove reactions
                         try {
@@ -237,7 +237,7 @@ public class UpgradePlantationCommand extends AbstractCommand {
                             ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, (currencyTemp - grinderUpgradeCost));
                             ConfigHandler.setSetting(CurrentGrinderUpgradesConfig.class, user, grinderUpgrades);
                         }
-                        maker.forceCompile().withoutReactionBehavior("GreenTick").send();
+                        maker.forceCompile().withoutReactionBehavior("green_tick").send();
                         maker.forceCompile().send();
                      }));
                 }
@@ -255,7 +255,7 @@ public class UpgradePlantationCommand extends AbstractCommand {
                     maker.appendRaw("\nCurrent level: " + FormatHelper.embedLink(String.valueOf(ConfigHandler.getSetting(CurrentBrewerUpgradesConfig.class, user)), ""));
                     maker.appendRaw("\nUpgrade cost: `\u200b " + symbol + " " + brewerUpgradeCost + " \u200b`");
                     maker.appendRaw("\nCurrent Funds: `\u200b " + symbol + " " + currency + " \u200b`");
-                    maker.withReactionBehavior("RedTick", ((add, reaction, u) -> {
+                    maker.withReactionBehavior("red_tick", ((add, reaction, u) -> {
                         //remove reactions
                         try {
                             maker.clearReactionBehaviors();
@@ -264,7 +264,7 @@ public class UpgradePlantationCommand extends AbstractCommand {
                         maker.sentMessage().getReactions().forEach(reactions -> maker.sentMessage().removeReaction(reactions));
 
                     }));
-                    maker.withReactionBehavior("GreenTick", ((add, reaction, u) -> {
+                    maker.withReactionBehavior("green_tick", ((add, reaction, u) -> {
 
                         //remove reactions
                         try {
@@ -284,7 +284,7 @@ public class UpgradePlantationCommand extends AbstractCommand {
                             ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, (currencyTemp - brewerUpgradeCost));
                             ConfigHandler.setSetting(CurrentBrewerUpgradesConfig.class, user, brewerUpgrades);
                         }
-                        maker.forceCompile().withoutReactionBehavior("GreenTick").send();
+                        maker.forceCompile().withoutReactionBehavior("green_tick").send();
                         maker.forceCompile().send();
                     }));
                 }
@@ -302,7 +302,7 @@ public class UpgradePlantationCommand extends AbstractCommand {
                     maker.appendRaw("\nCurrent level: " + FormatHelper.embedLink(String.valueOf(ConfigHandler.getSetting(CurrentSteeperUpgradesConfig.class, user)), ""));
                     maker.appendRaw("\nUpgrade cost: `\u200b " + symbol + " " + steeperUpgradeCost + " \u200b`");
                     maker.appendRaw("\nCurrent Funds: `\u200b " + symbol + " " + currency + " \u200b`");
-                    maker.withReactionBehavior("RedTick", ((add, reaction, u) -> {
+                    maker.withReactionBehavior("red_tick", ((add, reaction, u) -> {
                         //remove reactions
                         try {
                             maker.clearReactionBehaviors();
@@ -311,7 +311,7 @@ public class UpgradePlantationCommand extends AbstractCommand {
                         maker.sentMessage().getReactions().forEach(reactions -> maker.sentMessage().removeReaction(reactions));
 
                     }));
-                    maker.withReactionBehavior("GreenTick", ((add, reaction, u) -> {
+                    maker.withReactionBehavior("green_tick", ((add, reaction, u) -> {
 
                         //remove reactions
                         try {
@@ -331,7 +331,7 @@ public class UpgradePlantationCommand extends AbstractCommand {
                             ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, (currencyTemp - steeperUpgradeCost));
                             ConfigHandler.setSetting(CurrentSteeperUpgradesConfig.class, user, steeperUpgrades);
                         }
-                        maker.forceCompile().withoutReactionBehavior("GreenTick").send();
+                        maker.forceCompile().withoutReactionBehavior("green_tick").send();
                         maker.forceCompile().send();
                     }));
                 }

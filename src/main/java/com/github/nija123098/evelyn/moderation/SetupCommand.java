@@ -33,7 +33,7 @@ public class SetupCommand extends AbstractCommand {
         maker.appendRaw(channel.getCategory() == null ? "These channels will be created at the top of your discord server, use this command in a category to create them there" : "These channels will be created in this server category, to create them outside, use this command in a channel which is not in a category.");
         maker.withAutoSend(false).mustEmbed();
 
-        maker.withReactionBehavior("RedTick", ((add, reaction, u) -> {
+        maker.withReactionBehavior("red_tick", ((add, reaction, u) -> {
             //remove reactions
             try {
                 maker.clearReactionBehaviors();
@@ -43,7 +43,7 @@ public class SetupCommand extends AbstractCommand {
         }));
 
         //if send
-        maker.withReactionBehavior("GreenTick", ((add, reaction, u) -> {
+        maker.withReactionBehavior("green_tick", ((add, reaction, u) -> {
 
             //remove reactions
             try {
@@ -134,7 +134,7 @@ public class SetupCommand extends AbstractCommand {
                 }
             }
             maker.sentMessage().delete();
-            maker2.withoutReactionBehavior("GreenTick");
+            maker2.withoutReactionBehavior("green_tick");
             maker2.forceCompile().send();
         }));
 

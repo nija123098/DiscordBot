@@ -12,6 +12,8 @@ import com.github.nija123098.evelyn.economy.configs.CurrencySymbolConfig;
 import com.github.nija123098.evelyn.economy.configs.CurrentCurrencyConfig;
 import com.github.nija123098.evelyn.exception.ArgumentException;
 import com.github.nija123098.evelyn.exception.InsufficientFundsException;
+import com.github.nija123098.evelyn.tag.Tag;
+import com.github.nija123098.evelyn.tag.Tags;
 import com.github.nija123098.evelyn.util.Rand;
 
 import java.util.concurrent.TimeUnit;
@@ -20,6 +22,7 @@ import java.util.concurrent.TimeUnit;
  * @author Dxeo
  * @since 1.0.0
  */
+@Tags(value = {Tag.ARCADE})
 public class SlotCommand extends AbstractCommand {// todo optimization and cleanup
 
     public SlotCommand() {

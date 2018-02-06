@@ -26,7 +26,7 @@ public class ChannelDeleteCommand extends AbstractCommand {
         maker.appendRaw("The " + channel.mention() + " channel will be deleted, this is an irreversible action and all messages in this channel will be deleted, use at your own risk");
 
         //command code
-        maker.withReactionBehavior("RedTick", ((add, reaction, u) -> {
+        maker.withReactionBehavior("red_tick", ((add, reaction, u) -> {
             //remove reactions
             try {
                 maker.clearReactionBehaviors();
@@ -36,7 +36,7 @@ public class ChannelDeleteCommand extends AbstractCommand {
         }));
 
         //if send
-        maker.withReactionBehavior("GreenTick", ((add, reaction, u) -> {
+        maker.withReactionBehavior("green_tick", ((add, reaction, u) -> {
 
             //remove reactions
             try {

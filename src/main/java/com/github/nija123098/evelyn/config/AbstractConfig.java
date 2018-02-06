@@ -7,6 +7,9 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventDistribut
 import com.github.nija123098.evelyn.exception.ArgumentException;
 import com.github.nija123098.evelyn.exception.DevelopmentException;
 import com.github.nija123098.evelyn.perms.BotRole;
+import com.github.nija123098.evelyn.tag.Tag;
+import com.github.nija123098.evelyn.tag.Tagable;
+import com.github.nija123098.evelyn.tag.Tags;
 import com.github.nija123098.evelyn.util.Log;
 import com.thoughtworks.xstream.io.StreamException;
 
@@ -27,8 +30,8 @@ import java.util.function.Function;
  * @param <T> The type of config that this config defines.
  */
 @LaymanName(value = "Configuration name", help = "The config name")
-public class AbstractConfig<V, T extends Configurable> {
-    private final Function<T, V> defaul;
+public class AbstractConfig<V, T extends Configurable> implements Tagable {
+    private final Function<T, V> defaultValue;
     private final String name, displayName, shortId, configCommandDisplay, description;
     private final BotRole botRole;
     private final ConfigLevel configLevel;
@@ -37,14 +40,15 @@ public class AbstractConfig<V, T extends Configurable> {
     private final boolean normalViewing;
     private final Map<T, V> cache;
     private final Set<T> nullCache;
-    public AbstractConfig(String name, String displayName, ConfigCategory category, V defaul, String description) {
-        this(name, displayName, category, v -> defaul, description);
+    private final List<Tag> tags;
+    public AbstractConfig(String name, String displayName, ConfigCategory category, V defaultValue, String description) {
+        this(name, displayName, category, v -> defaultValue, description);
     }
-    public AbstractConfig(String name, String displayName, BotRole botRole, ConfigCategory category, V defaul, String description) {
-        this(name, displayName, botRole, category, v -> defaul, description);
+    public AbstractConfig(String name, String displayName, BotRole botRole, ConfigCategory category, V defaultValue, String description) {
+        this(name, displayName, botRole, category, v -> defaultValue, description);
     }
-    public AbstractConfig(String name, String displayName, ConfigCategory category, Function<T, V> defaul, String description) {
-        this(name, displayName, category.getBotRole(), category, defaul, description);
+    public AbstractConfig(String name, String displayName, ConfigCategory category, Function<T, V> defaultValue, String description) {
+        this(name, displayName, category.getBotRole(), category, defaultValue, description);
     }
 
     /**
@@ -54,14 +58,14 @@ public class AbstractConfig<V, T extends Configurable> {
      * @param name the display name of the config, required
      * @param botRole the minimum role allowed to change the value.
      * @param category the catagory to that the config is in.
-     * @param defaul the function to get the default value for a given config.
+     * @param defaultValue the function to get the default value for a given config.
      * @param description a description of the config.
      */
-    public AbstractConfig(String name, String displayName, BotRole botRole, ConfigCategory category, Function<T, V> defaul, String description) {
+    public AbstractConfig(String name, String displayName, BotRole botRole, ConfigCategory category, Function<T, V> defaultValue, String description) {
         this.name = name;
         this.displayName = displayName.isEmpty() ? this.name : displayName;
         this.botRole = botRole;
-        this.defaul = defaul;
+        this.defaultValue = defaultValue;
         this.description = description;
         this.category = category;
         this.shortId = this.category.addConfig((AbstractConfig<? extends Configurable, ?>) this);
@@ -78,6 +82,8 @@ public class AbstractConfig<V, T extends Configurable> {
             this.cache = null;
             this.nullCache = null;
         }
+        Tags tags = this.getClass().getAnnotation(Tags.class);
+        this.tags = tags == null ? Collections.emptyList() : Arrays.asList(tags.value());
         EventDistributor.register(this);
         this.configLevel.getAssignable().forEach(level -> {
             if (level == ConfigLevel.ALL) return;
@@ -100,6 +106,16 @@ public class AbstractConfig<V, T extends Configurable> {
      */
     public String getName() {
         return this.name;
+    }
+
+    @Override
+    public String typeName() {
+        return "config";
+    }
+
+    @Override
+    public List<Tag> getTags() {
+        return this.tags;
     }
 
     /**
@@ -153,7 +169,7 @@ public class AbstractConfig<V, T extends Configurable> {
      * @return the default value of this config.
      */
     public V getDefault(T t){
-        return this.defaul.apply(t);
+        return this.defaultValue.apply(t);
     }
 
     /**

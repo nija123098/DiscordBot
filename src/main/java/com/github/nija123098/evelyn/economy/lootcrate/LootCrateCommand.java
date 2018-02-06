@@ -6,12 +6,15 @@ import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
+import com.github.nija123098.evelyn.tag.Tag;
+import com.github.nija123098.evelyn.tag.Tags;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
 
 /**
  * @author Dxeo
  * @since 1.0.0
  */
+@Tags(value = {Tag.ARCADE})
 public class LootCrateCommand extends AbstractCommand {
 
     public LootCrateCommand() {
