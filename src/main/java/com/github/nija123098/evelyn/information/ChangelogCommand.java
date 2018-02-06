@@ -41,7 +41,7 @@ public class ChangelogCommand extends AbstractCommand {
     public String reader() {
         try {
             StringBuilder texty = new StringBuilder();
-            List<String> text = Files.readAllLines(Paths.get(ConfigProvider.RESOURCE_FILES.changelog()));
+            List<String> text = Files.readAllLines(Paths.get(ConfigProvider.RESOURCE_FILES.changeLog()));
             text.forEach(s -> {
                 if (s.isEmpty()) {
                     texty.append("|");
@@ -52,8 +52,8 @@ public class ChangelogCommand extends AbstractCommand {
             });
             return texty.toString();
         } catch (IOException e) {
-            Log.log("changelog.txt not found");
-            return "missing changelog.txt";
+            Log.log(ConfigProvider.RESOURCE_FILES.changeLog() + " not found");
+            return "missing " + ConfigProvider.RESOURCE_FILES.changeLog();
         }
     }
 }

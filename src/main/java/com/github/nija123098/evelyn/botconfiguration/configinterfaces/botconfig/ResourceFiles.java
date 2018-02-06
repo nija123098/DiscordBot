@@ -14,5 +14,5 @@ public interface ResourceFiles {
     String timeStats();
     String verifiedGames();
     String words();
-    String changelog();
+    String changeLog();
 }
