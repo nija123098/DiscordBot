@@ -107,9 +107,9 @@ public abstract class Track implements Configurable {
             return tracks;
         }
         code = TwitchUtil.extractCode(s);
-        if (code != null){
-            return Collections.singletonList(Track.getTrack(TwitchTrack.class, code));
-        }
+        //if (code != null){
+        //    return Collections.singletonList(Track.getTrack(TwitchTrack.class, code));
+        //}
         return new ArrayList<>(1);
     }
     private String id;

@@ -1,7 +1,6 @@
 package com.github.nija123098.evelyn.moderation.channelmanagement;
 
 import com.github.nija123098.evelyn.command.AbstractCommand;
-import com.github.nija123098.evelyn.command.ContextType;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
@@ -25,7 +24,7 @@ public class ChannelCommand extends AbstractCommand {
     }
 
     @Command
-    public void command(@Argument(optional = true, replacement = ContextType.NONE) Channel channel, MessageMaker maker, Guild guild) {
+    public void command(@Argument(optional = true) Channel channel, MessageMaker maker, Guild guild) {
         String prefix = ConfigHandler.getSetting(GuildPrefixConfig.class, guild);
         maker.mustEmbed();
         if (channel == null) {
@@ -37,7 +36,7 @@ public class ChannelCommand extends AbstractCommand {
         } else {
             maker.getTitle().appendRaw(channel.getName());
             maker.getNewListPart().appendRaw("\u200b");
-            maker.getNewFieldPart().withInline(true).withBoth("Topic", (String.valueOf(channel.getTopic()) != "null" ? channel.getTopic() : "none"));
+            maker.getNewFieldPart().withInline(true).withBoth("Topic", (!channel.getTopic().isEmpty() ? channel.getTopic() : "none"));
             if (channel.getCategory() != null)maker.getNewFieldPart().withInline(true).withBoth("Category", channel.getCategory().getName());
             maker.getNewFieldPart().withInline(true).withBoth("ID", channel.getID());
             maker.getNewFieldPart().withInline(true).withBoth("NSFW", "" + channel.isNSFW());

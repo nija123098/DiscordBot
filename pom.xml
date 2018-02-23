@@ -143,11 +143,11 @@
             <artifactId>sphinx4</artifactId>
             <version>c59a4b0be3</version>
         </dependency>
-        <dependency>
+        <!-- <dependency>
             <groupId>com.github.nija123098</groupId>
             <artifactId>Java_Twitch_Api_Wrapper</artifactId>
             <version>ff3b8af</version>
-        </dependency>
+        </dependency> -->
         <dependency><!-- https://mvnrepository.com/artifact/org.twitter4j/twitter4j -->
             <groupId>org.twitter4j</groupId>
             <artifactId>twitter4j-core</artifactId>
