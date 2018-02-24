@@ -48,11 +48,11 @@ public class UDCommand extends AbstractCommand {
             }
             AtomicInteger integer = new AtomicInteger();
             getMessage(maker, link, listObject, 0);
-            maker.withReactionBehavior("point_left", (add, reaction, user) -> {
+            maker.withReactionBehavior("arrow_left", (add, reaction, user) -> {
                 if (integer.get() - 1 < 0) return;
                 getMessage(maker, link, listObject, integer.decrementAndGet());
             });
-            maker.withReactionBehavior("point_right", (add, reaction, user) -> {
+            maker.withReactionBehavior("arrow_right", (add, reaction, user) -> {
                 if (integer.get() + 1 > listObject.size() - 1) return;
                 getMessage(maker, link, listObject, integer.incrementAndGet());
             });

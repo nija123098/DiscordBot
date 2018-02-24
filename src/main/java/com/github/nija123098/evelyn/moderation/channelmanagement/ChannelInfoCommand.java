@@ -37,6 +37,5 @@ public class ChannelInfoCommand extends AbstractCommand {
             maker.getNewFieldPart().withInline(true).withBoth("NSFW", "" + invokeChannel.isNSFW());
             maker.getNewFieldPart().withInline(true).withBoth("Users with access", (invokeChannel.getUsersHere().size() <= 12 ? FormatHelper.makeUserTable(invokeChannel.getUsersHere(), 23, 2) : "" + invokeChannel.getUsersHere().size()));
         }
-
     }
 }

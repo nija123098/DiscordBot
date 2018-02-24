@@ -291,8 +291,8 @@ public class AbstractConfig<V, T extends Configurable> implements Tagable {
      * @param value the value to save the config to for the given configurable.
      * @return the value saved to the database.
      */
-    private V saveValue(T configurable, V value){
-        V current = this.getValue(configurable), defaul = this.getDefault(configurable);
+    private V saveValue(T configurable, V value) {
+        V current = this.grabValue(configurable), defaul = this.getDefault(configurable);
         if (Objects.equals(value, defaul)) reset(configurable);
         else if (Objects.equals(current, defaul)) Database.insert("INSERT INTO " + this.getNameForType(configurable.getConfigLevel()) + " (`id`, `value`, `millis`) VALUES ('" + configurable.getID() + "','" + this.getSQLRepresentation(value) + "','" + System.currentTimeMillis() + "');");
         else Database.insert("UPDATE " + this.getNameForType(configurable.getConfigLevel()) + " SET millis = " + System.currentTimeMillis() + ", value = " + Database.quote(this.getSQLRepresentation(value)) + " WHERE id = " + Database.quote(configurable.getID()) + ";");
