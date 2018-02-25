@@ -11,14 +11,13 @@ import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.*;
 import com.github.nija123098.evelyn.exception.ArgumentException;
 import com.github.nija123098.evelyn.exception.PermissionsException;
-import com.github.nija123098.evelyn.tag.Tag;
-import com.github.nija123098.evelyn.tag.Tags;
+
+import java.awt.*;
 
 /**
  * @author nija123098
  * @since 1.0.0
  */
-@Tags(value = {Tag.HELPFUL})
 public class ConfigSetCommand extends AbstractCommand {
     public ConfigSetCommand() {
         super(ConfigCommand.class, "set", "set", null, null, "Sets");
@@ -26,7 +25,7 @@ public class ConfigSetCommand extends AbstractCommand {
     @Command
     @ConfigurableTypeAddLocation("The array in the first line of the else statement must have a additional index, ordered by ordinal in ConfigLevel")
     public <V, T extends Configurable> void command(@Argument AbstractConfig<V, T> config, @Argument(optional = true) T target, String arg, @Context(softFail = true) Track track, @Context(softFail = true) Playlist playlist, User user, Channel channel, Message message, @Context(softFail = true) GuildUser guildUser, @Context(softFail = true) Guild guild, MessageMaker maker){
-        maker.mustEmbed();
+        maker.mustEmbed().withColor(new Color(116, 32, 196));
         if (!config.requiredBotRole().hasRequiredRole(user, guild)){
             throw new PermissionsException("You must be at least a " + config.requiredBotRole().name() + " to edit that config");
         }

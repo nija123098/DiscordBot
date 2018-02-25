@@ -58,4 +58,14 @@ public class StarBoardCommand extends AbstractCommand {
     public boolean shouldLog() {
         return false;
     }
+
+    @Override
+    public String getExample() {
+        return "// Starlevel defaults:\n" +
+                "SPARKLE   | 3\n" +
+                "DWARF     | 5\n" +
+                "YELLOW    | 7\n" +
+                "SOLAR     | 10\n" +
+                "EXPLOSIVE | 15";
+    }
 }

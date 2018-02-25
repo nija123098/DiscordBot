@@ -50,7 +50,7 @@ public class FormatHelper {
         return "";
     }
 
-    public static String makePleural(String s) {
+    public static String makePlural(String s) {
         return s + "'" + (s.endsWith("s") ? s + "" : "s");
     }
 

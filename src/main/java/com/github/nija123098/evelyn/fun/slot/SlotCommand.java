@@ -16,6 +16,7 @@ import com.github.nija123098.evelyn.tag.Tag;
 import com.github.nija123098.evelyn.tag.Tags;
 import com.github.nija123098.evelyn.util.Rand;
 
+import java.awt.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -66,7 +67,7 @@ public class SlotCommand extends AbstractCommand {// todo optimization and clean
         userBalance -= bet;
 
         //configure message maker
-        maker.mustEmbed().withAutoSend(false);
+        maker.mustEmbed().withAutoSend(false).withColor(new Color(54, 57, 62));
 
         //print the first frame
         maker.appendRaw("```\uD83C\uDFB0 @" + user.getDisplayName(guild) + " \uD83C\uDFB0\n");

@@ -20,10 +20,7 @@ public enum StarLevel {
     YELLOW("dizzy"),// 0xFFFB3A
     SOLAR("sunny"),// 0xFFEC00
     EXPLOSIVE("boom"),;//something
-    /**
-     * @author nija123098
-     * @since 1.0.0
-     */
+
     private String emoticon;
 
     StarLevel(String emoticon) {

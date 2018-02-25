@@ -13,6 +13,7 @@ import com.github.nija123098.evelyn.economy.lootcrate.LootCrateConfig;
 import com.github.nija123098.evelyn.exception.InsufficientFundsException;
 import com.github.nija123098.evelyn.util.Rand;
 
+import java.awt.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -54,8 +55,7 @@ public class FishCommand extends AbstractCommand {// TODO clean and optimize
         userBalance -= cost;
 
         //configure message maker
-        maker.withAutoSend(false);
-        maker.mustEmbed();
+        maker.mustEmbed().withAutoSend(false).withColor(new Color(54, 57, 62));
 
         //print the first frame
         maker.appendRaw("```\uD83C\uDFA3 @" + user.getDisplayName(guild) + " \uD83C\uDFA3\n");

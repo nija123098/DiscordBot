@@ -27,7 +27,7 @@ public class PlaylistCommand extends AbstractCommand {
 
     @Command
     public void play(@Argument(optional = true) Playlist playlist, String s, Guild guild, MessageMaker maker) {
-        if (s.isEmpty()) maker.getExternal().append("Use `@Evelyn pl make` to make a playlist.");
+        if (s.isEmpty()) maker.getFooter().append("Use `@Evelyn pl make` to make a playlist.");
         if (playlist != null) setSetting(GuildActivePlaylistConfig.class, guild, playlist);
         else playlist = getSetting(GuildActivePlaylistConfig.class, guild);
         Configurable owner = playlist.getOwner();
