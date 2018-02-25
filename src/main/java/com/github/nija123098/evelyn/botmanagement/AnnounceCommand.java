@@ -59,7 +59,7 @@ public class AnnounceCommand extends AbstractCommand {
 
         //confirm message with user
         //if no send
-        maker.withReactionBehavior("RedTick", ((add, reaction, u) -> {
+        maker.withReactionBehavior("red_tick", ((add, reaction, u) -> {
             //remove reactions
             try {
                 maker.clearReactionBehaviors();
@@ -69,7 +69,7 @@ public class AnnounceCommand extends AbstractCommand {
         }));
 
         //if send
-        maker.withReactionBehavior("GreenTick", ((add, reaction, u) -> {
+        maker.withReactionBehavior("green_tick", ((add, reaction, u) -> {
 
             //remove reactions
             try {
@@ -82,7 +82,7 @@ public class AnnounceCommand extends AbstractCommand {
             channels.remove(null);
             maker.clearMessage();
             MessageMaker maker2 = maker;
-            maker2.withoutReactionBehavior("GreenTick");
+            maker2.withoutReactionBehavior("green_tick");
             for (Channel channel : channels) {
                 if (channel.canPost()){
                     maker2.forceCompile().withChannel(channel).send();
