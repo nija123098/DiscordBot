@@ -339,7 +339,7 @@ public class AbstractConfig<V, T extends Configurable> implements Tagable {
         try {
             return Database.select("SELECT * FROM " + this.getNameForType(configurable.getConfigLevel()) + " WHERE id = " + Database.quote(configurable.getID()), set -> {
                 try{set.next();
-                    if (Configurable.class.isAssignableFrom(this.valueType)) return (V) ConfigHandler.getConfigurable(this.configLevel.getType(), this.configLevel.isLongID() ? String.valueOf(Integer.parseInt(set.getString(2), 2)) : set.getString(2));
+                    if (Configurable.class.isAssignableFrom(this.valueType)) return (V) ConfigHandler.getConfigurable(this.configLevel.getType(), set.getString(2));
                     if (this.valueType.equals(Long.class)) return (V) Long.valueOf(set.getLong(2));
                     if (this.valueType.equals(Boolean.class)) return (V) Boolean.valueOf(set.getBoolean(2));
                     if (this.valueType.equals(Float.class)) return (V) Float.valueOf(set.getFloat(2));
