@@ -51,7 +51,7 @@ public class AnnounceCommand extends AbstractCommand {
         if (text.contains(";")){
             String[] textWithSplit = text.split(";",2);
             maker.forceCompile().getHeader().clear().appendRaw("\u200B");
-            maker.forceCompile().getNewFieldPart().withBoth(textWithSplit[0],textWithSplit[1] + "\n\n- " + user.getName()).getValue().appendRaw("\n\nClick " + FormatHelper.embedLink("here", ConfigProvider.URLS.announceThumb()) + " to join the support server.");
+            maker.forceCompile().getNewFieldPart().withBoth(textWithSplit[0],textWithSplit[1] + "\n\n- " + user.getName()).getValue().appendRaw("\n\nClick " + FormatHelper.embedLink("here", ConfigProvider.URLS.discordInviteUrl()) + " to join the support server.");
         }else {
             maker.forceCompile().getFooter().clear().appendRaw("Click " + FormatHelper.embedLink("here", ConfigProvider.URLS.discordInviteUrl()) + " to join the support server.");
             maker.forceCompile().getHeader().clear().appendRaw("\u200B\n" + text + "\n\n- " + user.getName());

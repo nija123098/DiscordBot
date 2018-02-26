@@ -183,6 +183,11 @@
             <artifactId>commons-text</artifactId>
             <version>1.2</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.kennedyoliveira</groupId>
+            <artifactId>pastebin4j</artifactId>
+            <version>1.2.1</version>
+        </dependency>
     </dependencies>
 
     <build>

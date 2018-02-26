@@ -5,7 +5,7 @@ import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.util.ExecuteShellCommand;
-import com.github.nija123098.evelyn.util.HastebinUtil;
+import com.github.nija123098.evelyn.util.PastebinUtil;
 import com.github.nija123098.evelyn.util.PlatformDetector;
 
 /**
@@ -21,7 +21,7 @@ public class ExcecuteCommand extends AbstractCommand {
         if (PlatformDetector.isWindows()) args = "cmd /c" + args;
         ExecuteShellCommand.commandToExecute(args);
         if (ExecuteShellCommand.getOutput().length() >= 2000) {
-            maker.append("Command Output:\n").appendRaw(HastebinUtil.postToHastebin(ExecuteShellCommand.getOutput()));
+            maker.append("Command Output:\n").appendRaw(PastebinUtil.postToPastebin("Command Output", ExecuteShellCommand.getOutput()));
         } else maker.append("Command Output:\n```").appendRaw(ExecuteShellCommand.getOutput()).appendRaw("```");
     }
 }

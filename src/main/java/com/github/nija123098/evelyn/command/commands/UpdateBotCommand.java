@@ -8,7 +8,7 @@ import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.service.services.ScheduleService;
 import com.github.nija123098.evelyn.util.ExecuteShellCommand;
-import com.github.nija123098.evelyn.util.HastebinUtil;
+import com.github.nija123098.evelyn.util.PastebinUtil;
 import com.github.nija123098.evelyn.util.PlatformDetector;
 
 /**
@@ -36,14 +36,14 @@ public class UpdateBotCommand extends AbstractCommand {
         if (ExecuteShellCommand.getOutput().contains("Already up-to-date.")) {
             maker.appendRaw("\n**The bot is already at the latest version. Aborting update sequence.**");
         } else {
-            maker.appendRaw("\n*GIT Pull Results:*\n" + HastebinUtil.postToHastebin(ExecuteShellCommand.getOutput()) + "\n");
+            maker.appendRaw("\n*GIT Pull Results:*\n" + PastebinUtil.postToPastebin("Pull Results", ExecuteShellCommand.getOutput()) + "\n");
             ExecuteShellCommand.commandToExecute(commandPrefix + ConfigProvider.UPDATE_SCRIPTS.buildScript());
             if (ExecuteShellCommand.getOutput().contains("BUILD SUCCESS")) {
-                maker.appendRaw("\n*Compilation Results:*\n" + HastebinUtil.postToHastebin(ExecuteShellCommand.getOutput()) + "\n");
+                maker.appendRaw("\n*Compilation Results:*\n" + PastebinUtil.postToPastebin("Compilation Results", ExecuteShellCommand.getOutput()) + "\n");
                 maker.append("\n**The bot will now restart to apply the updates.**").send();
                 ScheduleService.schedule(10000, () -> Launcher.shutdown(1, 0, false));
                 ExecuteShellCommand.commandToExecute(commandPrefix + ConfigProvider.UPDATE_SCRIPTS.updateScript());
-            } else maker.appendRaw("\n**ERROR COMPILING BOT**. You can view the log here:\n" + HastebinUtil.postToHastebin(ExecuteShellCommand.getOutput()));
+            } else maker.appendRaw("\n**ERROR COMPILING BOT**. You can view the log here:\n" + PastebinUtil.postToPastebin("Compilation Error Log", ExecuteShellCommand.getOutput()));
         }
     }
 }

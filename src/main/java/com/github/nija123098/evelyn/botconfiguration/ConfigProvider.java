@@ -1,6 +1,7 @@
 package com.github.nija123098.evelyn.botconfiguration;
 
 import com.github.nija123098.evelyn.botconfiguration.configinterfaces.botconfig.*;
+import com.github.nija123098.evelyn.botconfiguration.configinterfaces.pastebinconfig.PasteBinSettings;
 import com.github.nija123098.evelyn.botconfiguration.configinterfaces.urls.URLs;
 
 /**
@@ -18,6 +19,9 @@ public class ConfigProvider {
     public static final FolderSettings FOLDER_SETTINGS = ConfigLoader.configurationProvider().bind("FolderSettings", FolderSettings.class);
     public static final ResourceFiles RESOURCE_FILES = ConfigLoader.configurationProvider().bind("ResourceFiles", ResourceFiles.class);
     public static final ExecutableFiles EXECUTABLE_FILES = ConfigLoader.configurationProvider().bind("ExecutableFiles", ExecutableFiles.class);
+
+    //Settings from pastebinsettings.yaml
+    public static final PasteBinSettings PASTE_BIN_SETTINGS = ConfigLoader.configurationProvider().bind("PasteBinSettings", PasteBinSettings.class);
 
     //Settings from urls.yaml
     public static final URLs URLS = ConfigLoader.configurationProvider().bind("URLs", URLs.class);
