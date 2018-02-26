@@ -26,7 +26,7 @@ public class ConfigLoader {
 
         String configPaths = ConvertPath(System.getProperty("user.dir")) + "/configs/";
 
-        ConfigFilesProvider configFilesProvider = () -> Arrays.asList(Paths.get("BotConfig.yaml"), Paths.get("URLs.yaml"));
+        ConfigFilesProvider configFilesProvider = () -> Arrays.asList(Paths.get("BotConfig.yaml"), Paths.get("URLs.yaml"), Paths.get("PasteBinSettings.yaml"));
         ConfigurationSource source = new FilesConfigurationSource(configFilesProvider);
         Environment environment = new ImmutableEnvironment(configPaths);
         ReloadStrategy reloadStrategy = new PeriodicalReloadStrategy(1, TimeUnit.MINUTES);
