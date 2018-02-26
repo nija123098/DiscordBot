@@ -12,7 +12,7 @@ import java.util.Set;
 
 import static com.github.nija123098.evelyn.command.ModuleLevel.BOT_ADMINISTRATIVE;
 import static com.github.nija123098.evelyn.perms.BotRole.getSet;
-import static com.github.nija123098.evelyn.util.FormatHelper.makePleural;
+import static com.github.nija123098.evelyn.util.FormatHelper.makePlural;
 import static com.github.nija123098.evelyn.util.GeneralEmotes.GREEN_TICK;
 import static com.github.nija123098.evelyn.util.GeneralEmotes.RED_TICK;
 import static java.util.stream.Stream.of;
@@ -28,7 +28,7 @@ public class BotRoleCommand extends AbstractCommand {
 
     @Command
     public static void command(@Argument(optional = true) User user, Guild guild, MessageMaker maker) {
-        maker.getAuthorName().appendAlternate(true, makePleural(user.getDisplayName(guild)) + " BotRoles");
+        maker.getAuthorName().appendAlternate(true, makePlural(user.getDisplayName(guild)) + " BotRoles");
         maker.withAuthorIcon(user.getAvatarURL());
         Set<BotRole> botRoles = getSet(user, guild);
         maker.getHeader().clear().appendRaw("\u200B\n");
