@@ -3,6 +3,7 @@ package com.github.nija123098.evelyn.perms.commands;
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
+import com.github.nija123098.evelyn.command.annotations.Context;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
@@ -27,11 +28,15 @@ public class BotRoleCommand extends AbstractCommand {
     }
 
     @Command
-    public static void command(@Argument(optional = true) User user, Guild guild, MessageMaker maker) {
+    public static void command(@Argument(optional = true) User user, Guild guild, MessageMaker maker, @Context(softFail = true) Boolean trusted) {
         maker.getAuthorName().appendAlternate(true, makePlural(user.getDisplayName(guild)) + " BotRoles");
         maker.withAuthorIcon(user.getAvatarURL());
         Set<BotRole> botRoles = getSet(user, guild);
-        maker.getHeader().clear().appendRaw("\u200B\n");
+        if (trusted == null) {
+            maker.getHeader().clear().appendRaw("\u200B\n");
+        } else {
+            maker.getHeader().clear().appendRaw(trusted ? user.getDisplayName(guild) + " now trusted" : user.getDisplayName(guild) + " no longer trusted");
+        }
         of(BotRole.values()).forEach(role -> maker.getNewFieldPart().getTitle().appendRaw(role.name()).getFieldPart().getValue().appendRaw(botRoles.contains(role) ? GREEN_TICK : RED_TICK));
     }
 }
