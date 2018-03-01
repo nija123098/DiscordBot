@@ -33,8 +33,8 @@ public class UserCommand extends AbstractCommand {
         maker.withThumb(user.getAvatarURL()).withColor(user);
         maker.getTitle().appendRaw(user.getName());
         maker.withColor(user.getAvatarURL());
-        withText(maker, "\u200b", user.getPermissionsForGuild(guild).contains(DiscordPermission.ADMINISTRATOR) ? ("\n" + EmoticonHelper.getChars("oncoming_police_car", false) + " Administrator\n") : "\n\u200b");
         if (guild != null) {
+            withText(maker, "\u200b", user.getPermissionsForGuild(guild).contains(DiscordPermission.ADMINISTRATOR) ? ("\n" + EmoticonHelper.getChars("oncoming_police_car", false) + " Administrator\n") : "\n\u200b");
             GuildUser guildUser = GuildUser.getGuildUser(guild, user);
             maker.getNewFieldPart().withInline(true).withBoth(EmoticonHelper.getChars("hash", false) + " User number", " " + (guildUser.getJoinPosition() + 1));
         }
@@ -46,7 +46,7 @@ public class UserCommand extends AbstractCommand {
             maker.getNewFieldPart().withInline(true).withBoth(EmoticonHelper.getChars( "date", false) +  " Joined server", " " + Time.getAbbreviated(System.currentTimeMillis() - GuildUserJoinTimeConfig.get(guildUser)) + " ago");
         }
         withText(maker, EmoticonHelper.getChars("calendar_spiral", false) + " Joined discord ", Time.getAbbreviated(System.currentTimeMillis() - user.getJoinDate()) + " ago");
-        if (invoker.getPermissionsForGuild(guild).contains(DiscordPermission.ADMINISTRATOR) || invoker.getPermissionsForGuild(guild).contains(DiscordPermission.MANAGE_ROLES) || invoker.getPermissionsForGuild(guild).contains(DiscordPermission.MANAGE_SERVER)) {
+        if (guild != null && (invoker.getPermissionsForGuild(guild).contains(DiscordPermission.ADMINISTRATOR) || invoker.getPermissionsForGuild(guild).contains(DiscordPermission.MANAGE_ROLES) || invoker.getPermissionsForGuild(guild).contains(DiscordPermission.MANAGE_SERVER))) {
             maker.getNewFieldPart().withInline(false).withBoth("Key permissions", FormatHelper.makeUserPermissionsTable(user, guild, true));
             maker.getNote().appendRaw("use `" + ConfigHandler.getSetting(GuildPrefixConfig.class, guild) + "user permissions` to see a detailed view of user permissions");
         }

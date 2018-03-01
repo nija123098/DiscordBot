@@ -34,6 +34,7 @@ public class User implements Configurable {
         }
     }
     public static User getUser(IUser user){
+        if (user == null) return null;
         return MAP.computeIfAbsent(user.getStringID(), s -> new User(user));
     }
     static List<User> getUsers(Collection<IUser> iUsers){

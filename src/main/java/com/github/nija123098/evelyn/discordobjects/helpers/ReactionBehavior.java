@@ -1,5 +1,6 @@
 package com.github.nija123098.evelyn.discordobjects.helpers;
 
+import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Message;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Reaction;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
@@ -70,7 +71,7 @@ public interface ReactionBehavior {
      */
     @EventListener
     static void handle(DiscordReactionEvent reaction){
-        if (reaction.getUser().isBot()) return;
+        if (reaction.getUser() == null || reaction.getUser().isBot() || !reaction.getMessage().getAuthor().equals(DiscordClient.getOurUser())) return;
         Map<String, Pair<ReactionBehavior, ScheduleService.ScheduledTask>> map = BEHAVIORS.get(reaction.getMessage());
         if (map == null) return;
         Pair<ReactionBehavior, ScheduleService.ScheduledTask> pair = map.get(reaction.getReaction().getName());

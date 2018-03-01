@@ -63,7 +63,7 @@ public class MessageMaker {
     private final Set<String> reactions = new HashSet<>(1);
     private Long deleteDelay;
     private File file;
-    private boolean okHand, maySend, mustEmbed, forceCompile, colored, messageError, autoSend = true;
+    private boolean okHand, maySend, mustEmbed, forceCompile, compiled, colored, messageError, autoSend = true, translate;
 
     /**
      * Builds the message maker and sets it up.
@@ -644,6 +644,51 @@ public class MessageMaker {
         this.mustEmbed = true;
         return this;
     }
+
+    /**
+     * Forces the translation of the resulting message instance.
+     *
+     * This may be useful for when messages may contain arbitrary text not set by the receiver.
+     *
+     * @return the instance.
+     */
+    public MessageMaker withForceTranslate(){
+        this.translate = true;
+        return this;
+    }
+
+    /**
+     * Sets the language that the message should be sent in.
+     *
+     * @param lang the language code to set the message to translate as.
+     * @return the instance.
+     */
+    public MessageMaker withLang(String lang) {
+        this.lang = lang;
+        return this;
+    }
+
+    /**
+     * Sets the page to start the message maker on, or the closest one.
+     *
+     * @param page the page to start on.
+     * @return the instance.
+     */
+    public MessageMaker withPage(int page) {
+        this.currentPage.set(page);
+        return this;
+    }
+
+    /**
+     * Sets the page to start the message maker on, or the closest one, but paging starts at 1.
+     *
+     * @param page the page to start on.
+     * @return the instance.
+     */
+    public MessageMaker withPageFromOne(int page) {
+        return this.withPage(page - 1);
+    }
+
     // getting
 
     /**
@@ -710,10 +755,10 @@ public class MessageMaker {
             }
         }
         if (this.origin != null && this.okHand) ExceptionWrapper.wrap(() -> null);
-        this.compile();
+        this.compile();// page must be 0 if fieldIndices is null, which indicates no pages, I think.  It's been a while.
         if (this.embed != null){
             if (page < 0 || page >= this.fieldIndices.length) throw new DevelopmentException("Attempted to get a page that doesn't exit");
-            this.embed.clearFields().withDesc((this.header.langString.translate(this.lang) + "\n\n" + (page >= textVals.length ? "" : textVals[page]) + "\n\n" + this.footer.langString.translate(lang)).replace("\n\n\n\n", "\n\n"));
+            this.embed.clearFields().withDesc((this.header.langString.translate(this.lang, this.translate) + "\n\n" + (page >= textVals.length ? "" : textVals[page]) + "\n\n" + this.footer.langString.translate(lang, this.translate)).replace("\n\n\n\n", "\n\n"));
             for (Triple<String, String, Boolean> ind : fieldIndices[page]){
                 this.embed.appendField(ind.getLeft(), ind.getMiddle(), ind.getRight());
             }
@@ -760,17 +805,19 @@ public class MessageMaker {
      * Compiles how the building message should be sent.
      */
     private void compile(){
-        if (this.lang != null && !this.forceCompile) return;
+        if (this.compiled && !this.forceCompile) return;
+        this.compiled = true;
         if (!this.colored) this.withColor(DEFAULT_COLOR);
-        this.lang = getLang(this.user, this.channel);
+        if (this.lang == null) this.lang = getLang(this.user, this.channel);
+        this.translate = this.translate || !this.lang.equals("en");
         // message
         if (this.couldNormalize()) this.asNormalMessage();
         else if (this.channel instanceof VoiceChannel) this.channel = ConfigHandler.getSetting(VoiceCommandPrintChannelConfig.class, this.channel.getGuild());
-        if (this.embed == null) this.builder.withContent(this.header.langString.translate(this.lang));
+        if (this.embed == null) this.builder.withContent(this.header.langString.translate(this.lang, translate));
         else {// embed
-            this.embed.withAuthorName(authorName.langString.translate(lang));
-            this.embed.withTitle(title.langString.translate(lang));
-            int starterChars = this.embed.getTotalVisibleCharacters() + header.langString.translate(lang).length() + footer.langString.translate(lang).length();
+            this.embed.withAuthorName(authorName.langString.translate(lang, this.translate));
+            this.embed.withTitle(title.langString.translate(lang, this.translate));
+            int starterChars = this.embed.getTotalVisibleCharacters() + header.langString.translate(this.lang, translate).length() + footer.langString.translate(this.lang, translate).length();
             if (CHAR_LIMIT < starterChars){
                 throw new DevelopmentException("Header and footer are too big.");
             }
@@ -784,14 +831,14 @@ public class MessageMaker {
                         strings.add(s);
                         break;
                     }// make new page compatible with recompile
-                    if (textList.get(index) == null || starterChars + s.length() + textList.get(index).langString.translate(lang).length() > CHAR_LIMIT || (newLines += StringHelper.instances(textList.get(index).langString.translate(lang), '\n')) > 21){
+                    if (textList.get(index) == null || starterChars + s.length() + textList.get(index).langString.translate(lang, translate).length() > CHAR_LIMIT || (newLines += StringHelper.instances(textList.get(index).langString.translate(lang, translate), '\n')) > 21){
                         if (textList.get(index) == null) textList.remove(index);
                         newLines = 0;
                         --index;
                         strings.add(s);
                         s = "";
                     } else {
-                        s += "\n" + textList.get(index).langString.translate(lang);
+                        s += "\n" + textList.get(index).langString.translate(lang, translate);
                     }
                 }
                 textVals = new String[strings.size()];
@@ -820,8 +867,9 @@ public class MessageMaker {
                     } else {
                         if (fieldList.get(index) == null) newPage = true;
                         else {
-                            size = fieldList.get(index).title.langString.translate(lang).length() + fieldList.get(index).value.langString.translate(lang).length();
-                            vals.get(page).add(new ImmutableTriple<>(fieldList.get(index).title.langString.translate(lang), fieldList.get(index).value.langString.translate(lang), fieldList.get(index).inline));
+                            size = fieldList.get(index).title.langString.translate(lang, translate).length() + fieldList.get(index).value.langString.translate(lang, translate).length();
+                            vals.get(page).add(new ImmutableTriple<>(fieldList.get(index).title.langString.translate(lang, translate), fieldList.get(index).value.langString.translate(lang, translate), fieldList.get(index).inline)
+                            );
                         }
                     }
                 }
@@ -853,7 +901,7 @@ public class MessageMaker {
                         this.send(currentPage.get());
                     });
                 }
-                this.embed.withFooterText(generateNote(0));
+                this.embed.withFooterText(generateNote(this.currentPage.get()));
             }
         }
     }
@@ -865,10 +913,10 @@ public class MessageMaker {
      * @return the content of the message.
      */
     private String generateNote(int page){
-        String note = this.note.langString.translate(lang);
+        String note = this.note.langString.translate(lang, translate);
         if (this.fieldIndices.length > 1) {
             if (!note.isEmpty()) note = " - " + note;
-            note = "Page " + ++page + " of " + this.fieldIndices.length + note;
+            note = "Page " + (page + 1) + " of " + this.fieldIndices.length + note;
         }
         return note;
     }
@@ -1041,7 +1089,7 @@ public class MessageMaker {
          * @return a translation of the {@link LangString} content.
          */
         public String translate(String langCode) {
-            return this.langString.translate(langCode);
+            return this.langString.translate(langCode, translate);
         }
     }
 

@@ -75,6 +75,18 @@ public class LangString {
     }
 
     /**
+     * Translates the contents of this instance if
+     * {@param doTranslate} is {@code true}.
+     *
+     * @param lang the language to translate to.
+     * @param doTranslate if the contents should be translated.
+     * @return the possibly translated instance.
+     */
+    public String translate(String lang, boolean doTranslate) {
+        return doTranslate ? this.translate(lang) : this.asBuilt();
+    }
+
+    /**
      * Returns the value of the string
      * without translation, which should be
      * equivalent to translating the LangString

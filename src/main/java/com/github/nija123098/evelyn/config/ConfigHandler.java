@@ -52,6 +52,7 @@ public class ConfigHandler {
                 CLASS_MAP.put((Class<? extends AbstractConfig<?, ? extends Configurable>>) clazz, config);
                 STRING_MAP.put(config.getName(), config);
                 STRING_MAP.put(config.getShortId(), config);
+                STRING_MAP.put(config.getShortId().toLowerCase(), config);
                 STRING_MAP.put("[" + config.getShortId() + "]", config);
                 int displayNameLength = StringHelper.instances(config.getDisplayName(), ' ');
                 DISPLAY_NAME_MAP.computeIfAbsent(displayNameLength, HashMap::new).put(config.getDisplayName(), config);
