@@ -23,7 +23,7 @@ public class ChannelInfoCommand extends AbstractCommand {
         if (channel != null) {
             maker.getTitle().appendRaw(channel.getName());
             maker.getNewListPart().appendRaw("\u200b");
-            maker.getNewFieldPart().withInline(true).withBoth("Topic", (!channel.getTopic().isEmpty() ? channel.getTopic() : "none"));
+            maker.getNewFieldPart().withInline(true).withBoth("Topic", (channel.getTopic() != null ? channel.getTopic() : "none"));
             if (channel.getCategory() != null)maker.getNewFieldPart().withInline(true).withBoth("Category", channel.getCategory().getName());
             maker.getNewFieldPart().withInline(true).withBoth("ID", channel.getID());
             maker.getNewFieldPart().withInline(true).withBoth("NSFW", "" + channel.isNSFW());
@@ -31,7 +31,7 @@ public class ChannelInfoCommand extends AbstractCommand {
         } else {
             maker.getTitle().appendRaw(invokeChannel.getName());
             maker.getNewListPart().appendRaw("\u200b");
-            maker.getNewFieldPart().withInline(true).withBoth("Topic", (!invokeChannel.getTopic().isEmpty() ? channel.getTopic() : "none"));
+            maker.getNewFieldPart().withInline(true).withBoth("Topic", (invokeChannel.getTopic() != null ? channel.getTopic() : "none"));
             if (invokeChannel.getCategory() != null)maker.getNewFieldPart().withInline(true).withBoth("Category", invokeChannel.getCategory().getName());
             maker.getNewFieldPart().withInline(true).withBoth("ID", invokeChannel.getID());
             maker.getNewFieldPart().withInline(true).withBoth("NSFW", "" + invokeChannel.isNSFW());

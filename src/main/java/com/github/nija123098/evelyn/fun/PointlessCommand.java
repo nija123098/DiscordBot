@@ -23,7 +23,7 @@ public class PointlessCommand extends AbstractCommand {
 
     @Command
     public void command(User user, MessageMaker maker) {
-        maker.appendRaw(EmoticonHelper.getEmoji("EMPTY").toString());
+        maker.appendRaw(EmoticonHelper.getEmoji("empty").toString());
         maker.withReactionBehavior("red_circle", (add, reaction, user1) -> {
             int currency = ConfigHandler.getSetting(CurrentCurrencyConfig.class, user);
             if (currency > 0) {
