@@ -41,7 +41,7 @@ public class CommandHandler {
     private static final Map<String, AbstractCommand> REACTION_COMMAND_MAP;
     private static final Map<String, AbstractCommand> EXACT_COMMAND_MAP;
     private static final Map<String, Object> COMMANDS_MAP;
-    public static final String UNKNOWN_COMMAND_EMOTICON = "grey_question", EXCEPTION_FOR_METHOD = "exclamation";
+    private static final String UNKNOWN_COMMAND_EMOTICON = "grey_question", EXCEPTION_FOR_METHOD = "exclamation";
     private static final List<String> OPEN_EDIT_MESSAGES = new MemoryManagementService.ManagedList<>(30000);
     public static final AtomicReference<String> MENTION = new AtomicReference<>(), MENTION_NICK = new AtomicReference<>();
     static {

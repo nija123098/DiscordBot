@@ -55,7 +55,7 @@ public class AbstractConfig<V, T extends Configurable> implements Tagable {
      * The constructor to make a config instance.
      *
      * @param name the name of the config, spaces are not allowed.
-     * @param name the display name of the config, required
+     * @param displayName the display name of the config, required
      * @param botRole the minimum role allowed to change the value.
      * @param category the catagory to that the config is in.
      * @param defaultValue the function to get the default value for a given config.
