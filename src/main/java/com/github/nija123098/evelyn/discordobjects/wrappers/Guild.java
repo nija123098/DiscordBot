@@ -107,7 +107,7 @@ public class Guild implements Configurable {
     }
 
     public User getOwner() {
-        return User.getUser(guild().getOwner());
+        return ExceptionWrapper.wrap((ExceptionWrapper.Request<User>) () -> User.getUser(guild().getOwner()));
     }
 
     public String getIcon() {
