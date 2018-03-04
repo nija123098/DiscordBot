@@ -1,4 +1,4 @@
-package com.github.nija123098.evelyn.botmanagement;
+package com.github.nija123098.evelyn.information.stats;
 
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.annotations.Command;

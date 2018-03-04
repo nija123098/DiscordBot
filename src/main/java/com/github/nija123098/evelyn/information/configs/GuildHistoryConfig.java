@@ -37,9 +37,9 @@ public class GuildHistoryConfig extends AbstractConfig<Set<String>, Guild> {
         MessageMaker maker = new MessageMaker(Channel.getChannel(ConfigProvider.BOT_SETTINGS.guildLogChannel())).withColor(new Color(39, 209, 110));
         this.alterSetting(guild, strings -> strings.add("joined: " + System.currentTimeMillis()));
         maker.getTitle().appendRaw(guild.getName());
-        maker.withAuthor(owner).withAuthorIcon(owner.getAvatarURL());
+        maker.withAuthor(owner).withAuthorIcon("https://cdn.discordapp.com/attachments/355866939794391040/419876120775622666/green_arrow.png");
         maker.withThumb(guild.getIconURL().contains("null") ? "https://cdn.discordapp.com/attachments/398634800384311300/419641007811067909/discord_white.png" : guild.getIconURL());
-        maker.appendRaw("\u200b\nID: " + guild.getID() + "\nAge: " + Time.getAbbreviated(guild.getCreationDate()) + "\nUsers: " + guild.getUsers().size() + "\nTotal guilds: " + DiscordClient.getGuilds().size());
+        maker.appendRaw("\u200b\nID: " + guild.getID() + "\nAge: " + Time.getAbbreviated(System.currentTimeMillis() - guild.getCreationDate()) + "\nUsers: " + guild.getUsers().size() + "\nTotal guilds: " + DiscordClient.getGuilds().size());
         maker.withTimestamp(System.currentTimeMillis());
         List<User> bots = guild.getUsers().stream().filter(user -> user.isBot() && !user.equals(DiscordClient.getOurUser())).collect(Collectors.toList());
         if (bots.size() > 0) {
@@ -73,8 +73,8 @@ public class GuildHistoryConfig extends AbstractConfig<Set<String>, Guild> {
         MessageMaker maker = new MessageMaker(Channel.getChannel(ConfigProvider.BOT_SETTINGS.guildLogChannel())).withColor(new Color(255, 0 ,0));
         maker.getTitle().appendRaw(guild.getName());
         maker.withThumb(guild.getIconURL().contains("null") ? "https://cdn.discordapp.com/attachments/398634800384311300/419641007811067909/discord_white.png" : guild.getIconURL());
-        maker.withAuthor(owner).withAuthorIcon(owner.getAvatarURL());
-        maker.appendRaw("\u200b\nID: " + guild.getID() + "\nAge: " + Time.getAbbreviated(guild.getCreationDate()) + "\nUsers: " + guild.getUsers().size() + "\nTime in guild: " + timeInGuild + "\nTotal guilds: " + DiscordClient.getGuilds().size());
+        maker.withAuthor(owner).withAuthorIcon("https://cdn.discordapp.com/attachments/355866939794391040/419876122218725377/red_arrow.png");
+        maker.appendRaw("\u200b\nID: " + guild.getID() + "\nAge: " + Time.getAbbreviated(System.currentTimeMillis() - guild.getCreationDate()) + "\nUsers: " + guild.getUsers().size() + "\nTime in guild: " + timeInGuild + "\nTotal guilds: " + DiscordClient.getGuilds().size());
         maker.withTimestamp(System.currentTimeMillis());
         List<User> bots = guild.getUsers().stream().filter(User::isBot).collect(Collectors.toList());
         if (bots.size() > 0) {
