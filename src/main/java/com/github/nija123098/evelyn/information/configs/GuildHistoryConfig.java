@@ -12,10 +12,12 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordGuildJoin;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordGuildLeave;
 import com.github.nija123098.evelyn.util.Time;
+import sx.blah.discord.util.DiscordException;
 
 import java.awt.*;
 import java.util.HashSet;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -43,7 +45,9 @@ public class GuildHistoryConfig extends AbstractConfig<Set<String>, Guild> {
         if (bots.size() > 0) {
             StringBuilder botList = new StringBuilder();
             for (User user : bots) {
-                botList.append("```\n" + user.getNameAndDiscrim()).append("\nSince: ").append(Time.getAbbreviated(System.currentTimeMillis() - guild.getJoinTimeForUser(user))).append("\n```");
+                try {
+                    botList.append("```\n" + user.getNameAndDiscrim()).append("\nSince: ").append(Time.getAbbreviated(System.currentTimeMillis() - guild.getJoinTimeForUser(user))).append("\n```");
+                } catch (DiscordException ignored) {}
             }
             if (botList.toString().length() > 1000) {
                 maker.getNewFieldPart().withBoth("Bots", "" + bots.size());
@@ -58,7 +62,13 @@ public class GuildHistoryConfig extends AbstractConfig<Set<String>, Guild> {
     public void handle(DiscordGuildLeave leave) {
         Guild guild = leave.getGuild();
         User owner = guild.getOwner();
-        String timeInGuild = Time.getAbbreviated(System.currentTimeMillis() - (this.getValue(guild).iterator().next().substring(8).isEmpty() ? Long.parseLong(this.getValue(guild).iterator().next().substring(8)) : guild.getJoinTimeForUser(DiscordClient.getOurUser())));
+        long previous;
+        try {
+            previous = Long.parseLong(this.getValue(guild).iterator().next().substring(8));
+        } catch (NoSuchElementException e) {
+            previous = guild.getJoinTimeForUser(DiscordClient.getOurUser());
+        }
+        String timeInGuild = Time.getAbbreviated(System.currentTimeMillis() - previous);
         this.alterSetting(guild, strings -> strings.add("left: " + System.currentTimeMillis()));
         MessageMaker maker = new MessageMaker(Channel.getChannel(ConfigProvider.BOT_SETTINGS.guildLogChannel())).withColor(new Color(255, 0 ,0));
         maker.getTitle().appendRaw(guild.getName());
@@ -70,7 +80,9 @@ public class GuildHistoryConfig extends AbstractConfig<Set<String>, Guild> {
         if (bots.size() > 0) {
             StringBuilder botList = new StringBuilder();
             for (User user : bots) {
-                botList.append("```\n" + user.getNameAndDiscrim()).append("\nSince: ").append(Time.getAbbreviated(System.currentTimeMillis() - guild.getJoinTimeForUser(user))).append("\n```");
+                try {
+                    botList.append("```\n" + user.getNameAndDiscrim()).append("\nSince: ").append(Time.getAbbreviated(System.currentTimeMillis() - guild.getJoinTimeForUser(user))).append("\n```");
+                } catch (DiscordException ignored) {}
             }
             if (botList.toString().length() > 1000) {
                 maker.getNewFieldPart().withBoth("Bots", "" + bots.size());
