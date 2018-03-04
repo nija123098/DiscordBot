@@ -36,7 +36,7 @@ public class GuildHistoryConfig extends AbstractConfig<Set<String>, Guild> {
         this.alterSetting(guild, strings -> strings.add("joined: " + System.currentTimeMillis()));
         maker.getTitle().appendRaw(guild.getName());
         maker.withAuthor(owner).withAuthorIcon(owner.getAvatarURL());
-        maker.withThumb(guild.getIconURL().equals("https://cdn.discordapp.com/icons/214674233505087488/null.jpg") ? "https://cdn.discordapp.com/attachments/398634800384311300/419641007811067909/discord_white.png" : guild.getIconURL());
+        maker.withThumb(guild.getIconURL().contains("null") ? "https://cdn.discordapp.com/attachments/398634800384311300/419641007811067909/discord_white.png" : guild.getIconURL());
         maker.appendRaw("\u200b\nID: " + guild.getID() + "\nAge: " + Time.getAbbreviated(guild.getCreationDate()) + "\nUsers: " + guild.getUsers().size() + "\nTotal guilds: " + DiscordClient.getGuilds().size());
         maker.withTimestamp(System.currentTimeMillis());
         List<User> bots = guild.getUsers().stream().filter(user -> user.isBot() && !user.equals(DiscordClient.getOurUser())).collect(Collectors.toList());
@@ -45,7 +45,11 @@ public class GuildHistoryConfig extends AbstractConfig<Set<String>, Guild> {
             for (User user : bots) {
                 botList.append("```\n" + user.getNameAndDiscrim()).append("\nSince: ").append(Time.getAbbreviated(System.currentTimeMillis() - guild.getJoinTimeForUser(user))).append("\n```");
             }
-            maker.getNewFieldPart().withBoth("Bots", botList.toString());
+            if (botList.toString().length() > 1000) {
+                maker.getNewFieldPart().withBoth("Bots", "" + bots.size());
+            } else {
+                maker.getNewFieldPart().withBoth("Bots", botList.toString());
+            }
         }
         maker.send();
     }
@@ -58,17 +62,21 @@ public class GuildHistoryConfig extends AbstractConfig<Set<String>, Guild> {
         this.alterSetting(guild, strings -> strings.add("left: " + System.currentTimeMillis()));
         MessageMaker maker = new MessageMaker(Channel.getChannel(ConfigProvider.BOT_SETTINGS.guildLogChannel())).withColor(new Color(255, 0 ,0));
         maker.getTitle().appendRaw(guild.getName());
-        maker.withThumb(guild.getIconURL().equals("https://cdn.discordapp.com/icons/214674233505087488/null.jpg") ? "https://cdn.discordapp.com/attachments/398634800384311300/419641007811067909/discord_white.png" : guild.getIconURL());
+        maker.withThumb(guild.getIconURL().contains("null") ? "https://cdn.discordapp.com/attachments/398634800384311300/419641007811067909/discord_white.png" : guild.getIconURL());
         maker.withAuthor(owner).withAuthorIcon(owner.getAvatarURL());
         maker.appendRaw("\u200b\nID: " + guild.getID() + "\nAge: " + Time.getAbbreviated(guild.getCreationDate()) + "\nUsers: " + guild.getUsers().size() + "\nTime in guild: " + timeInGuild + "\nTotal guilds: " + DiscordClient.getGuilds().size());
         maker.withTimestamp(System.currentTimeMillis());
-        List<User> bots = guild.getUsers().stream().filter(user -> user.isBot() && !user.equals(DiscordClient.getOurUser())).collect(Collectors.toList());
+        List<User> bots = guild.getUsers().stream().filter(User::isBot).collect(Collectors.toList());
         if (bots.size() > 0) {
             StringBuilder botList = new StringBuilder();
             for (User user : bots) {
                 botList.append("```\n" + user.getNameAndDiscrim()).append("\nSince: ").append(Time.getAbbreviated(System.currentTimeMillis() - guild.getJoinTimeForUser(user))).append("\n```");
             }
-            maker.getNewFieldPart().withBoth("Bots", botList.toString());
+            if (botList.toString().length() > 1000) {
+                maker.getNewFieldPart().withBoth("Bots", "" + bots.size());
+            } else {
+                maker.getNewFieldPart().withBoth("Bots", botList.toString());
+            }
         }
         maker.send();
     }
