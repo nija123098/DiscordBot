@@ -146,7 +146,7 @@ public class GuildAudioManager extends AudioEventAdapter{
     private final Set<User> skipSet = ConcurrentHashMap.newKeySet();
     private final List<LangString> speeches = new CopyOnWriteArrayList<>();
     private final List<Track> queue = new CopyOnWriteArrayList<>();
-    private final List<LangString> interups = new CopyOnWriteArrayList<>();
+    private final List<LangString> interrupts = new CopyOnWriteArrayList<>();
     private Track current, paused, next;
     private long pausePosition;
     private boolean leaveAfterThis, loop, leaving, skipped, swapping, pause, destroyed;
@@ -172,7 +172,7 @@ public class GuildAudioManager extends AudioEventAdapter{
         }else{
             this.audioProvider.clearBuffer();
             this.clearQueue();
-            this.interups.clear();
+            this.interrupts.clear();
             this.speeches.clear();
             if (ConfigHandler.getSetting(GreetingsVoiceConfig.class, channel.getGuild())) this.interrupt(new LangString(true, "Goodbye"));
             if (this.current != null) this.skipTrack();
@@ -254,15 +254,16 @@ public class GuildAudioManager extends AudioEventAdapter{
             return;
         }
         if (this.paused != null){
-            this.interups.add(langString);
+            this.interrupts.add(langString);
             return;
         }
         this.pausePosition = this.currentTime();
         this.paused = this.current;
-        this.interups.add(langString);
+        this.interrupts.add(langString);
         this.lavaPlayer.stopTrack();
     }
     private void start(Track track, int position){
+        if (!track.isAvailable()) this.onFinish();
         this.skipped = false;
         this.current = track;
         this.skipSet.clear();
@@ -282,7 +283,7 @@ public class GuildAudioManager extends AudioEventAdapter{
                 CurrentCommand.command(this.getGuild(), maker, current);
                 maker.send();
                 this.currentDisplays.add(maker.sentMessage());
-                if (this.currentDisplays.size() > 2 && !this.currentDisplays.isEmpty()) this.currentDisplays.remove(0).delete();
+                if (this.currentDisplays.size() > 2) this.currentDisplays.remove(0).delete();
             }
         });
     }
@@ -318,8 +319,8 @@ public class GuildAudioManager extends AudioEventAdapter{
             return;
         }
         if (!this.skipped && !(this.current instanceof SpeechTrack)) ConfigHandler.changeSetting(PlayCountConfig.class, this.current, integer -> integer + validListeners(this.channel));
-        if (!this.interups.isEmpty()) {
-            this.start(new SpeechTrack(this.interups.remove(0), MessageMaker.getLang(null, this.channel)), 0);
+        if (!this.interrupts.isEmpty()) {
+            this.start(new SpeechTrack(this.interrupts.remove(0), MessageMaker.getLang(null, this.channel)), 0);
             return;
         }
         if (this.leaveAfterThis){
@@ -464,6 +465,7 @@ public class GuildAudioManager extends AudioEventAdapter{
     }
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
+        if (this.destroyed) return;
         this.onFinish();
     }
     @EventListener

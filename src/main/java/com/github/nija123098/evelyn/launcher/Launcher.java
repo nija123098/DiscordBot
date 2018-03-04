@@ -20,6 +20,7 @@ import com.github.nija123098.evelyn.util.ThreadProvider;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -170,7 +171,11 @@ public class Launcher {
         DiscordAdapter.initialize();// EVERYTHING
         IS_STARTING_UP.set(true);
         STARTUPS.forEach(Runnable::run);
-        ASYNC_STARTUPS.forEach(ThreadProvider::sub);
+        AtomicInteger asyncStartups = new AtomicInteger(ASYNC_STARTUPS.size());
+        ASYNC_STARTUPS.forEach(runnable -> ThreadProvider.sub(() -> {
+            runnable.run();
+            if (asyncStartups.decrementAndGet() <= 0) Log.log("All async start ups completed");
+        }));
         IS_READY.set(true);
         DiscordClient.changePresence(Presence.Status.ONLINE, Presence.Activity.PLAYING, "with users!");
         Log.log(LogColor.blue("Bot finished initializing.") + LogColor.yellow(" Burn the heretic. Kill the Mee6. Purge the unclean."));

@@ -29,7 +29,7 @@ public class StatsCommand extends AbstractCommand {
         maker.mustEmbed().getTitle().clear().appendRaw(EmoticonHelper.getChars("chart_with_upwards_trend",false) + " Evelyn Stats");
         maker.appendRaw(getTotalTable(s.startsWith("mini")));
     }
-    private String getTotalTable(boolean mini) {
+    static String getTotalTable(boolean mini) {
         List<List<String>> body = new ArrayList<>();
         int totalActiveVoice = 0;
         for (Shard shard : DiscordClient.getShards()) {

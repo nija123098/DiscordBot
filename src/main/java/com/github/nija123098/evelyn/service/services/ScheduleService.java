@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * @author nija123098
  * @since 1.0.0
  */
-public class ScheduleService extends AbstractService {
+public class ScheduleService extends AbstractService {// todo optimize
     private static final Map<Long, Set<ScheduledTask>> SERVICE_MAP = new HashMap<>();
     private final AtomicLong I = new AtomicLong(System.currentTimeMillis());
     public ScheduleService() {// this should be made a helper
@@ -35,7 +35,7 @@ public class ScheduleService extends AbstractService {
     @Override
     public void run() {
         if (I.get() > System.currentTimeMillis()) {
-            Care.lessSleep(0);
+            Care.lessSleep(5);
             return;
         }
         Set<ScheduledTask> tasks = SERVICE_MAP.remove(I.getAndIncrement());

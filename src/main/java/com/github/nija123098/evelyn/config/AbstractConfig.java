@@ -292,7 +292,7 @@ public class AbstractConfig<V, T extends Configurable> implements Tagable {
      * @return the value saved to the database.
      */
     private V saveValue(T configurable, V value) {
-        V current = this.grabValue(configurable), defaul = this.getDefault(configurable);
+        V current = this.getValue(configurable), defaul = this.getDefault(configurable);
         if (Objects.equals(value, defaul)) reset(configurable);
         else if (Objects.equals(current, defaul)) Database.insert("INSERT INTO " + this.getNameForType(configurable.getConfigLevel()) + " (`id`, `value`, `millis`) VALUES ('" + configurable.getID() + "','" + this.getSQLRepresentation(value) + "','" + System.currentTimeMillis() + "');");
         else Database.insert("UPDATE " + this.getNameForType(configurable.getConfigLevel()) + " SET millis = " + System.currentTimeMillis() + ", value = " + Database.quote(this.getSQLRepresentation(value)) + " WHERE id = " + Database.quote(configurable.getID()) + ";");
@@ -319,13 +319,13 @@ public class AbstractConfig<V, T extends Configurable> implements Tagable {
      * @return the config's value for the given {@link Configurable}.
      */
     public V getValue(T configurable){// slq here as well
-        V value;
-        if (this.cache == null) value = grabValue(configurable);
-        else{
-            value = this.cache.get(configurable);
-            if (value == null && !this.nullCache.contains(configurable)) value = grabValue(configurable);
+        if (this.cache == null) return grabValue(configurable);
+        V value = this.cache.get(configurable);
+        if (value == null && !this.nullCache.contains(configurable)) {
+            value = grabValue(configurable);
+            if (value == null) this.nullCache.add(configurable);
+            else this.cache.put(configurable, value);
         }
-        if (this.cache != null && value != null) return this.cache.computeIfAbsent(configurable, this::grabValue);
         return value;
     }
 

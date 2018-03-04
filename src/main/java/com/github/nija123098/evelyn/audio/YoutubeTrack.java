@@ -21,6 +21,7 @@ public class YoutubeTrack extends DownloadableTrack {
         registerTrackType(YoutubeTrack.class, YoutubeTrack::new, YoutubeTrack::new);
     }
     private transient String name;
+    private transient Boolean available;
     public YoutubeTrack(String id) {
         super(id);
         CALL_BUFFER.call(this::loadName);
@@ -30,7 +31,13 @@ public class YoutubeTrack extends DownloadableTrack {
         if (this.name == null){
             try {
                 String content = StringHelper.readAll("https://www.youtube.com/oembed?url=http%3A//youtube.com/watch%3Fv%3D" + this.getCode());
-                this.name = content.equals("Unauthorized") ? YTUtil.getVideoName(this.getCode()) : ((JSONObject) new JSONParser().parse(content)).get("title").toString();
+                if (content.equals("Not Found")) {
+                    this.available = false;
+                    this.name = "Not Available";
+                } else {
+                    this.name = content.equals("Unauthorized") ? YTUtil.getVideoName(this.getCode()) : ((JSONObject) new JSONParser().parse(content)).get("title").toString();
+                    this.available = false;
+                }
             } catch (ParseException | UnirestException e) {
                 Log.log("Exception getting name from Youtube track: " + this.getCode(), e);
             }
@@ -48,6 +55,13 @@ public class YoutubeTrack extends DownloadableTrack {
     public String getInfo() {
         return null;
     }
+
+    @Override
+    public boolean isAvailable() {
+        if (this.available == null) loadName();
+        return available;
+    }
+
     @Override
     public String getPreviewURL() {
         return "https://i3.ytimg.com/vi/" + this.getCode() + "/0.jpg";

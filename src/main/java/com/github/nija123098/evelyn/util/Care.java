@@ -1,7 +1,5 @@
 package com.github.nija123098.evelyn.util;
 
-import static java.lang.Thread.sleep;
-
 /**
  * @author nija123098
  * @since 1.0.0
@@ -20,7 +18,7 @@ public class Care {
     }
 
     public static void lessSleep(long millis) {
-        less(() -> sleep(millis));
+        less(() -> Thread.sleep(millis));
     }
 
     public static boolean lessBoolean(Boolean bool) {

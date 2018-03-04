@@ -82,12 +82,12 @@ public interface Configurable {
     /**
      * A set of registered objects that are queued to be labeled as existing to prevent registration duplication.
      */
-    Set<Configurable> REGISTERED = new HashSet<>();
+    Set<String> REGISTERED = new HashSet<>();
 
     /**
      * Registers this instance as having existed at one point.
      */
     default void registerExistence(){
-        if (REGISTERED.add(this)) Database.bufferCall(() -> ConfigHandler.setSetting(ConfigurableExistsConfig.class, this, true));
+        if (REGISTERED.add(this.getID())) Database.bufferCall(() -> ConfigHandler.setSetting(ConfigurableExistsConfig.class, this, true));
     }
 }

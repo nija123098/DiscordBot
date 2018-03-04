@@ -68,7 +68,7 @@ public abstract class Track implements Configurable {
     public static Track getTrack(String id){
         if (id == null) return null;
         String[] split = id.split("-");
-        Class<?> clazz = CLASS_MAP.get(split[0].toUpperCase());
+        Class<? extends Track> clazz = CLASS_MAP.get(split[0].toUpperCase());
         if (clazz == null) return null;
         Function<String, Track> function = ID_MAP.get(clazz);
         return function == null ? null : function.apply(id);
@@ -186,4 +186,13 @@ public abstract class Track implements Configurable {
      * @return the length in millis or null if the instance is a stream.
      */
     public abstract Long getLength();
+
+    /**
+     * Returns if the track is able to be played at this time.
+     *
+     * @return if the track is able to be played at this time.
+     */
+    public boolean isAvailable() {
+        return true;
+    }
 }

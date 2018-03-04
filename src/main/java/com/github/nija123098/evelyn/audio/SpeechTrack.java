@@ -1,6 +1,7 @@
 package com.github.nija123098.evelyn.audio;
 
 import com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
+import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
 import com.github.nija123098.evelyn.util.FormatHelper;
 import com.github.nija123098.evelyn.util.LangString;
 import com.github.nija123098.evelyn.util.SpeechHelper;
@@ -27,7 +28,7 @@ public class SpeechTrack extends Track {
     }
     @Override
     public String getPreviewURL() {
-        return null;
+        return DiscordClient.getOurUser().getAvatarURL();
     }
     @Override
     public String getInfo() {
