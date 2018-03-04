@@ -9,7 +9,6 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.Discord
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordUserJoin;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordUserLeave;
 import com.github.nija123098.evelyn.exception.ConfigurableConvertException;
-import com.github.nija123098.evelyn.exception.DevelopmentException;
 import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.perms.BotRole;
 
@@ -28,8 +27,9 @@ public class GuildUser implements Configurable {
     /**
      * The map containing guild user configurables.
      */
-    private static final Map<String, GuildUser> GUILD_USERS = new HashMap<>();
+    private static final Map<String, GuildUser> ID_CACHE = new HashMap<>();
     private static final Map<Guild, Integer> NEXT_USER_INTEGER = new ConcurrentHashMap<>();
+    private static final Map<Guild, Map<User, String>> GUILD_MAP_CACHE = new HashMap<>();
 
     static {
         EventDistributor.register(GuildUser.class);
@@ -59,14 +59,16 @@ public class GuildUser implements Configurable {
      * @return the guild user object for the guild and user.
      */
     public static GuildUser getGuildUser(String id){
-        if (id.startsWith("gu-")){
-            String[] split = id.substring(3).split("-id-");
-            Guild guild = Guild.getGuild(split[0]);
+        return ID_CACHE.computeIfAbsent(id, s -> {
+            if (!id.startsWith("gu-")) return null;
+            String[] split = id.split("-id-");
+            Guild guild = Guild.getGuild(split[0].substring(3));
             User user = User.getUser(split[1]);
             if (guild == null || user == null) return null;
-            return GUILD_USERS.computeIfAbsent(id, s -> new GuildUser(id));
-        }
-        return null;
+            GuildUser guildUser = new GuildUser(guild, user);
+            GUILD_MAP_CACHE.computeIfAbsent(guild, g -> new ConcurrentHashMap<>()).put(user, guildUser.getID());
+            return guildUser;
+        });
     }
 
     /**
@@ -77,7 +79,12 @@ public class GuildUser implements Configurable {
      * @return the guild user object for the guild and user.
      */
     public static GuildUser getGuildUser(Guild guild, User user){
-        return getGuildUser("gu-" + guild.getID() + "-id-" + user.getID());
+        if (user == null || guild == null) return null;
+        return ID_CACHE.get(GUILD_MAP_CACHE.computeIfAbsent(guild, g -> new ConcurrentHashMap<>()).computeIfAbsent(user, u -> {
+            GuildUser guildUser = new GuildUser(guild, u);
+            ID_CACHE.put(guildUser.getID(), guildUser);
+            return guildUser.getID();
+        }));
     }
 
     /**
@@ -98,10 +105,13 @@ public class GuildUser implements Configurable {
 
     private transient int number = -1;
     private String id;
+    private Guild guild;
+    private User user;
     protected GuildUser() {}
-    private GuildUser(String id) {
-        this.id = id;
-        if (this.getGuild() == null || this.getUser() == null) throw new DevelopmentException("Either the guild or user is null");
+    private GuildUser(Guild guild, User user) {
+        this.id = "gu-" + guild.getID() + "-id-" + user.getID();
+        this.guild = guild;
+        this.user = user;
         this.registerExistence();
     }
     @Override
@@ -153,8 +163,7 @@ public class GuildUser implements Configurable {
      * @return the guild which the guild user is a member of.
      */
     public Guild getGuild(){
-        String s = this.id.split("-id-")[0];
-        return Guild.getGuild(s.substring(3, s.length()));
+        return this.guild;
     }
 
     /**
@@ -163,6 +172,6 @@ public class GuildUser implements Configurable {
      * @return the user which is the member of a guild.
      */
     public User getUser(){
-        return User.getUser(this.id.split("-id-")[1]);
+        return this.user;
     }
 }

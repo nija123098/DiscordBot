@@ -26,6 +26,7 @@ public class MessageCountConfig extends AbstractConfig<Integer, GuildUser> {
     public void handle(DiscordMessageDelete event){
         if (event.getMessage() == null || event.getMessage().getChannel().isPrivate()) return;
         GuildUser guildUser = GuildUser.getGuildUser(event.getGuild(), event.getAuthor());
+        if (guildUser == null) return;
         FavorChangeEvent.process(guildUser, () -> this.changeSetting(guildUser, integer -> --integer));
     }
 }

@@ -17,6 +17,7 @@ public class Time {// TODO CLEAN
     private static final Map<Character, Long> TIME_SYMBOLS = new LinkedHashMap<>();
 
     static {
+        TIME_SYMBOLS.put('y', 31536000000L);
         TIME_SYMBOLS.put('w', 604800000L);
         TIME_SYMBOLS.put('d', 86400000L);
         TIME_SYMBOLS.put('h', 3600000L);
@@ -33,13 +34,13 @@ public class Time {// TODO CLEAN
     public Time(String s) {
         s = FormatHelper.removeChars(s.toLowerCase(), ' ');
         long val = 0;
-        String working = "";
+        StringBuilder working = new StringBuilder();
         for (int i = 0; i < s.length(); i++) {
             if (Character.isDigit(s.charAt(i))) {
-                working += s.charAt(i);
-            } else if (TIME_SYMBOLS.containsKey(s.charAt(i)) && !working.isEmpty()) {
-                val += Integer.parseInt(working) * TIME_SYMBOLS.get(s.charAt(i));
-                working = "";
+                working.append(s.charAt(i));
+            } else if (TIME_SYMBOLS.containsKey(s.charAt(i)) && (working.length() > 0)) {
+                val += Integer.parseInt(working.toString()) * TIME_SYMBOLS.get(s.charAt(i));
+                working = new StringBuilder();
             } else {
                 throw new ArgumentException("Empty option for time symbol");
             }

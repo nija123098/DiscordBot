@@ -379,7 +379,7 @@ public class CommandHandler {
      */
     @EventListener
     public static void handle(DiscordReactionEvent event){
-        if (!event.getUser().isBot() && Launcher.isReady() && (!event.getMessage().getAuthor().isBot() || event.getMessage().getAuthor().equals(DiscordClient.getOurUser()))){
+        if (!event.getUser().isBot() && Launcher.isReady() && event.getMessage() != null && (!event.getMessage().getAuthor().isBot() || event.getMessage().getAuthor().equals(DiscordClient.getOurUser()))){
             attemptInvocation(event.getMessage().getContent(), event.getUser(), event.getMessage(), event.getReaction());
         }
     }

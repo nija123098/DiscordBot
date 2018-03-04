@@ -30,7 +30,8 @@ public class GameRoleConfig extends AbstractConfig<Boolean, Role> {
     }
     public void check(User user, Presence presence){
         Role previous = PREVIOUS.get(user);
-        if (presence.getOptionalPlayingText().isPresent()) user.getGuilds().forEach(guild -> {
+        if (presence.getOptionalPlayingText().isPresent()) {
+            user.getGuilds().forEach(guild -> {
                 Role role = guild.getRoles().stream().filter(this::getValue).filter(r -> r.getName().equals(presence.getPlayingText())).findFirst().orElse(null);
                 if (Objects.equals(role, previous)) return;
                 if (previous != null) {
@@ -42,6 +43,6 @@ public class GameRoleConfig extends AbstractConfig<Boolean, Role> {
                     PREVIOUS.put(user, role);
                 }
             });
-        else if (previous != null) user.removeRole(previous);
+        } else if (previous != null && !previous.getName().equals(presence.getOptionalPlayingText().orElse(null))) user.removeRole(previous);
     }
 }

@@ -1,13 +1,7 @@
 package com.github.nija123098.evelyn.audio;
 
 import com.github.nija123098.evelyn.util.CallBuffer;
-import com.github.nija123098.evelyn.util.Log;
-import com.github.nija123098.evelyn.util.StringHelper;
 import com.github.nija123098.evelyn.util.YTUtil;
-import com.mashape.unirest.http.exceptions.UnirestException;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 /**
  * The track defining the audio portion of the video.
@@ -29,17 +23,10 @@ public class YoutubeTrack extends DownloadableTrack {
     protected YoutubeTrack() {}
     private void loadName() {
         if (this.name == null){
-            try {
-                String content = StringHelper.readAll("https://www.youtube.com/oembed?url=http%3A//youtube.com/watch%3Fv%3D" + this.getCode());
-                if (content.equals("Not Found")) {
-                    this.available = false;
-                    this.name = "Not Available";
-                } else {
-                    this.name = content.equals("Unauthorized") ? YTUtil.getVideoName(this.getCode()) : ((JSONObject) new JSONParser().parse(content)).get("title").toString();
-                    this.available = false;
-                }
-            } catch (ParseException | UnirestException e) {
-                Log.log("Exception getting name from Youtube track: " + this.getCode(), e);
+            this.name = YTUtil.getTrackName(this.getCode());
+            if (this.name == null) {
+                this.available = false;
+                this.name = "Not Available";
             }
         }
     }

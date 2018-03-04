@@ -12,6 +12,7 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.PlaylistItemListResponse;
 import com.google.api.services.youtube.model.SearchListResponse;
+import com.google.api.services.youtube.model.Video;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -49,10 +50,10 @@ public class YTUtil {
         });
     }
 
-    private static String getTrackName(String code) {
+    public static String getTrackName(String code) {
         try {
             String content = StringHelper.readAll("https://www.youtube.com/oembed?url=http%3A//youtube.com/watch%3Fv%3D" + code);
-            return content.equals("Unauthorized") ? getVideoName(code) : ((JSONObject) new JSONParser().parse(content)).get("title").toString();
+            return content.equals("Unauthorized") ? getVideoName(code) : content.equals("Not Found") ? null : ((JSONObject) new JSONParser().parse(content)).get("title").toString();
         } catch (ParseException | UnirestException e) {
             return null;
         }
@@ -162,7 +163,8 @@ public class YTUtil {
 
     public static String getVideoName(String code) {
         try {
-            return YOUTUBE.videos().list("snippet").setKey(getKey()).set("hl", "en").setId(code).execute().getItems().get(0).getSnippet().getTitle();
+            List<Video> list = YOUTUBE.videos().list("snippet").setKey(getKey()).set("hl", "en").setId(code).execute().getItems();
+            return list.isEmpty() ? null : list.get(0).getSnippet().getTitle();
         } catch (Exception e) {
             Log.log("Exception while getting video name from Youtube: " + code, e);
         }
