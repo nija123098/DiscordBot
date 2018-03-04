@@ -10,7 +10,6 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordMessageDelete;
 
 import java.awt.*;
-import java.util.Date;
 
 /**
  * @author nija123098
@@ -25,7 +24,8 @@ public class MessageDeleteLogConfig extends AbstractConfig<Channel, Guild> {
         Channel channel;
         if (delete.getMessage() == null || delete.getChannel().isPrivate() || delete.getMessage().getAuthor().isBot() || (channel = this.getValue(delete.getGuild())) == null) return;
         MessageMaker maker = new MessageMaker(channel).withColor(Color.GRAY).withAuthor(delete.getMessage().getAuthor()).append("Message deleted from ").appendRaw(delete.getAuthor().getDisplayName(delete.getGuild())).appendRaw(" ").append("in ").appendRaw(delete.getChannel().mention()).appendRaw("\n" + delete.getMessage().getMentionCleanedContent());
-        maker.getNote().appendRaw("ID: " + delete.getMessage().getID() + " | Time: " + new Date(System.currentTimeMillis()));
+        maker.getNote().appendRaw("ID: " + delete.getMessage().getID());
+        maker.withTimestamp(System.currentTimeMillis());
         Attachment attachment = delete.getMessage().getAttachments().stream().filter(att -> att.getUrl().endsWith("gif") || att.getUrl().endsWith("webv")).findFirst().orElse(null);
         if (attachment != null) maker.withImage(attachment.getUrl());
         maker.send();

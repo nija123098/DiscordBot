@@ -10,7 +10,6 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.Discord
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordUserLeave;
 
 import java.awt.*;
-import java.util.Date;
 
 /**
  * @author nija123098
@@ -27,7 +26,8 @@ public class JoinLeaveLogConfig extends AbstractConfig<Channel, Guild> {
         if ((channel = this.getValue(join.getGuild())) == null) return;
         MessageMaker maker = new MessageMaker(channel).withColor(Color.MAGENTA).appendRaw(join.getUser().getNameAndDiscrim());
         maker.getTitle().appendRaw("User joined");
-        maker.getFooter().appendRaw("ID: " + join.getUser().getID() + " | Time: " + new Date(System.currentTimeMillis()));
+        maker.getFooter().appendRaw("ID: " + join.getUser().getID());
+        maker.withTimestamp(System.currentTimeMillis());
         maker.send();
     }
     @EventListener// log rewrite soon
@@ -37,6 +37,7 @@ public class JoinLeaveLogConfig extends AbstractConfig<Channel, Guild> {
         MessageMaker maker = new MessageMaker(channel).withColor(Color.MAGENTA).appendRaw(leave.getUser().getNameAndDiscrim());
         maker.getTitle().appendRaw("User left");
         maker.getFooter().appendRaw("ID: " + leave.getUser().getID());
+        maker.withTimestamp(System.currentTimeMillis());
         maker.send();
     }
 }

@@ -5,6 +5,7 @@ import com.github.nija123098.evelyn.config.AbstractConfig;
 import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
+import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
@@ -35,13 +36,15 @@ public class GuildHistoryConfig extends AbstractConfig<Set<String>, Guild> {
         maker.getTitle().appendRaw(guild.getName());
         maker.withAuthor(guild.getOwner()).withAuthorIcon(guild.getOwner().getAvatarURL());
         maker.withThumb(guild.getIconURL().equals("https://cdn.discordapp.com/icons/214674233505087488/null.jpg") ? "https://cdn.discordapp.com/attachments/398634800384311300/419641007811067909/discord_white.png" : guild.getIconURL());
-        maker.appendRaw("\u200b\nID: " + guild.getID() + "\nUsers: " + guild.getUsers().size());
-        List<User> bots = guild.getUsers().stream().filter(User::isBot).collect(Collectors.toList());
-        StringBuilder botList = new StringBuilder();
-        for (User user : bots) {
-            botList.append("```\n" + user.getNameAndDiscrim()).append("\nSince: ").append(Time.getAbbreviated(System.currentTimeMillis() - guild.getJoinTimeForUser(user))).append("\n```");
+        maker.appendRaw("\u200b\nID: " + guild.getID() + "\nAge: " + Time.getAbbreviated(guild.getCreationDate()) + "\nUsers: " + guild.getUsers().size());
+        List<User> bots = guild.getUsers().stream().filter(user -> user.isBot() && !user.equals(DiscordClient.getOurUser())).collect(Collectors.toList());
+        if (bots.size() > 0) {
+            StringBuilder botList = new StringBuilder();
+            for (User user : bots) {
+                botList.append("```\n" + user.getNameAndDiscrim()).append("\nSince: ").append(Time.getAbbreviated(System.currentTimeMillis() - guild.getJoinTimeForUser(user))).append("\n```");
+            }
+            maker.getNewFieldPart().withBoth("Bots", botList.toString());
         }
-        maker.getNewFieldPart().withBoth("Bots", botList.toString());
         maker.send();
     }
 
@@ -54,13 +57,15 @@ public class GuildHistoryConfig extends AbstractConfig<Set<String>, Guild> {
         maker.getTitle().appendRaw(guild.getName());
         maker.withThumb(guild.getIconURL().equals("https://cdn.discordapp.com/icons/214674233505087488/null.jpg") ? "https://cdn.discordapp.com/attachments/398634800384311300/419641007811067909/discord_white.png" : guild.getIconURL());
         maker.withAuthor(guild.getOwner()).withAuthorIcon(guild.getOwner().getAvatarURL());
-        maker.appendRaw("\u200b\nID: " + guild.getID() + "\nUsers: " + guild.getUsers().size() + "\nTime in guild: " + timeInGuild);
-        List<User> bots = guild.getUsers().stream().filter(User::isBot).collect(Collectors.toList());
-        StringBuilder botList = new StringBuilder();
-        for (User user : bots) {
-            botList.append("```\n" + user.getNameAndDiscrim()).append("\nSince: ").append(Time.getAbbreviated(System.currentTimeMillis() - guild.getJoinTimeForUser(user))).append("\n```");
+        maker.appendRaw("\u200b\nID: " + guild.getID() + "\nAge: " + Time.getAbbreviated(guild.getCreationDate()) + "\nUsers: " + guild.getUsers().size() + "\nTime in guild: " + timeInGuild);
+        List<User> bots = guild.getUsers().stream().filter(user -> user.isBot() && !user.equals(DiscordClient.getOurUser())).collect(Collectors.toList());
+        if (bots.size() > 0) {
+            StringBuilder botList = new StringBuilder();
+            for (User user : bots) {
+                botList.append("```\n" + user.getNameAndDiscrim()).append("\nSince: ").append(Time.getAbbreviated(System.currentTimeMillis() - guild.getJoinTimeForUser(user))).append("\n```");
+            }
+            maker.getNewFieldPart().withBoth("Bots", botList.toString());
         }
-        maker.getNewFieldPart().withBoth("Bots", botList.toString());
         maker.send();
     }
 }

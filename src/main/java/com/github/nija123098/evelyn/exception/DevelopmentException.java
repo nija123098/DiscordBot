@@ -5,8 +5,6 @@ import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.util.FormatHelper;
 
-import java.util.Date;
-
 /**
  * The exception thrown when there is an internal
  * error that is the developer's fault.
@@ -36,6 +34,6 @@ public class DevelopmentException extends BotException {
 
     @Override
     public MessageMaker makeMessage(Channel channel) {
-        return super.makeMessage(channel).getFooter().append("Click " + FormatHelper.embedLink("here", ConfigProvider.URLS.discordInviteUrl()) + " to notify the developers.").getMaker().getTitle().clear().appendRaw("Development Exception").getMaker().getNote().appendRaw("Time: " + new Date(System.currentTimeMillis())).getMaker();
+        return super.makeMessage(channel).getFooter().append("Click " + FormatHelper.embedLink("here", ConfigProvider.URLS.discordInviteUrl()) + " to notify the developers.").getMaker().getTitle().clear().appendRaw("Development Exception").getMaker();
     }
 }

@@ -36,6 +36,6 @@ public class BotException extends RuntimeException {
      * @return the {@link MessageMaker} instance which can displays the exception.
      */
     public MessageMaker makeMessage(Channel channel){
-        return new MessageMaker(channel).maySend().withColor(Color.RED).getHeader().appendRaw(this.getMessage()).getMaker().getTitle().appendRaw(this.getClass().getSimpleName()).getMaker();
+        return new MessageMaker(channel).maySend().withColor(Color.RED).getHeader().appendRaw(this.getMessage()).getMaker().getTitle().appendRaw(this.getClass().getSimpleName()).getMaker().withTimestamp(System.currentTimeMillis());
     }
 }

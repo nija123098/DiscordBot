@@ -10,7 +10,6 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordMessageEditEvent;
 
 import java.awt.*;
-import java.util.Date;
 
 /**
  * @author Soarnir
@@ -29,7 +28,8 @@ public class MessageEditLogConfig extends AbstractConfig<Channel, Guild> {
         maker.append("Message from ").appendRaw(message.getAuthor().getDisplayName(message.getGuild())).appendRaw(" edited ").append("in ").appendRaw(message.getChannel().mention());
         maker.getNewFieldPart().withInline(false).withBoth("Previous", message.getOldMessageCleanedContent());
         maker.getNewFieldPart().withInline(false).withBoth("New", message.getNewMessageCleanedString());
-        maker.getNote().appendRaw("ID: " + message.getOldMessage().getID() + " | Time: " + new Date(System.currentTimeMillis()));
+        maker.getNote().appendRaw("ID: " + message.getOldMessage().getID());
+        maker.withTimestamp(System.currentTimeMillis());
         Attachment attachment = message.getOldMessage().getAttachments().stream().filter(att -> att.getUrl().endsWith("gif") || att.getUrl().endsWith("webv")).findFirst().orElse(null);
         if (attachment != null) maker.withImage(attachment.getUrl());
         maker.send();
