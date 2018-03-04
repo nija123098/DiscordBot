@@ -17,5 +17,6 @@ public interface BotSettings {
     String contributorSignRole();
     String supporterSignRole();
     String loggingChannel();
+    String guildLogChannel();
     String userAgent();
 }
