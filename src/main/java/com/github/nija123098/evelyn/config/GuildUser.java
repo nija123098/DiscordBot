@@ -38,12 +38,12 @@ public class GuildUser implements Configurable {
 
     @EventListener
     public static void handle(DiscordUserJoin join){
-        orderGuildUsers(join.getGuild());
         NEXT_USER_INTEGER.compute(join.getGuild(), (guild, integer) -> getGuildUser(join.getGuild(), join.getUser()).number = ++integer);
     }
 
     @EventListener
     public static void handle(DiscordUserLeave leave){
+        ID_CACHE.remove(GUILD_MAP_CACHE.computeIfAbsent(leave.getGuild(), g -> new ConcurrentHashMap<>()).remove(leave.getUser()));
         orderGuildUsers(leave.getGuild());
     }
 

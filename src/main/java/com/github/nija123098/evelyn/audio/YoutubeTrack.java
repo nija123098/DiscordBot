@@ -27,7 +27,7 @@ public class YoutubeTrack extends DownloadableTrack {
             if (this.name == null) {
                 this.available = false;
                 this.name = "Not Available";
-            }
+            } else available = true;
         }
     }
     @Override
