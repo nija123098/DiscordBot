@@ -15,9 +15,9 @@ import java.util.ArrayList;
  * @author Soarnir
  * @since 1.0.0
  */
-public class ClearRolesCommand extends AbstractCommand {
+public class RoleClearCommand extends AbstractCommand {
 
-    public ClearRolesCommand() {
+    public RoleClearCommand() {
         super(RoleCommand.class, "clear", "rclear", null, null, "Clear all roles from a user");
     }
 

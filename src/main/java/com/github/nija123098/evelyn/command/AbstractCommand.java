@@ -30,12 +30,10 @@ import com.github.nija123098.evelyn.tag.Tags;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
 import com.github.nija123098.evelyn.util.Log;
 
-import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
-import java.util.List;
 import java.util.stream.Stream;
 
 /**
@@ -515,7 +513,7 @@ public class AbstractCommand implements Tagable {
             if (this.shouldLog() && !message.getChannel().isPrivate()) {
                 Channel chan = ConfigHandler.getSetting(BotLogConfig.class, message.getGuild());
                 if (chan == null || !chan.canPost()) return;
-                new MessageMaker(chan).withAuthorIcon(user.getAvatarURL()).getAuthorName().appendRaw(message.getAuthor().getDisplayName(message.getGuild()) + (message.getAuthor().getNickname(message.getGuild()) == null ? "" : " AKA " + message.getAuthor().getNameAndDiscrim())).getMaker().append(message.getChannel().mention() + " - used command ***" + this.name + "***").appendRaw("\n" + message.getMentionCleanedContent()).getNote().appendRaw("ID: " + message.getID() + " | Time: " + new Date(System.currentTimeMillis())).getMaker().send();
+                new MessageMaker(chan).withAuthorIcon(user.getAvatarURL()).getAuthorName().appendRaw(message.getAuthor().getDisplayName(message.getGuild()) + (message.getAuthor().getNickname(message.getGuild()) == null ? "" : " AKA " + message.getAuthor().getNameAndDiscrim())).getMaker().append(message.getChannel().mention() + " - used command ***" + this.name + "***").appendRaw("\n" + message.getMentionCleanedContent()).getNote().appendRaw("ID: " + message.getID()).getMaker().withTimestamp(System.currentTimeMillis()).send();
             }
         }
     }
