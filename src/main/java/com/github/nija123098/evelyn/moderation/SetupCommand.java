@@ -29,7 +29,7 @@ public class SetupCommand extends AbstractCommand {
 
         maker.getTitle().appendRaw("Setup");
         maker.withColor(new Color(175, 30,5));
-        maker.appendRaw("3 channels will be created.\nbot_config\nbot_log\nmod_log\nThese will be setup to allow you access to them according to your highest role.\n");
+        maker.appendRaw("3 channels will be created.\nbot_console\nbot_log\nmod_log\nThese will be setup to allow you access to them according to your highest role.\n");
         maker.appendRaw(channel.getCategory() == null ? "These channels will be created at the top of your discord server, use this command in a category to create them there" : "These channels will be created in this server category, to create them outside, use this command in a channel which is not in a category.");
         maker.withAutoSend(false).mustEmbed();
 
@@ -54,7 +54,8 @@ public class SetupCommand extends AbstractCommand {
             MessageMaker maker2 = new MessageMaker(channel);
             String channelID, logChannelID, modLogChannelID;
 
-            Role userRole = user.getRolesForGuild(guild).get(0), botRole = null;
+            Role userRole, botRole = null, everyoneRole = guild.getEveryoneRole();
+            userRole = user.getRolesForGuild(guild).get(0);
             if (userRole == null) {
                 maker.appendRaw("You do not appear to have any roles, I need to be able to add one of your roles to the permissions of the channel.");
             }
@@ -78,7 +79,7 @@ public class SetupCommand extends AbstractCommand {
 
             if (channel.getCategory() != null) {
                 try {
-                    channelID = channel.getCategory().category().createChannel("bot_config").getStringID();
+                    channelID = channel.getCategory().category().createChannel("bot_console").getStringID();
                     logChannelID = channel.getCategory().category().createChannel("bot_log").getStringID();
                     modLogChannelID = channel.getCategory().category().createChannel("mod_log").getStringID();
                     guild.getChannelByID(channelID).changeTopic("For configuring all bot settings");
@@ -86,19 +87,20 @@ public class SetupCommand extends AbstractCommand {
                     guild.getChannelByID(modLogChannelID).changeTopic("For logging moderation actions");
                     guild.getChannelByID(channelID).overrideRolePermissions(botRole, fullPermissions, emptyPermissions);
                     guild.getChannelByID(channelID).overrideRolePermissions(userRole, fullPermissions, emptyPermissions);
-                    guild.getChannelByID(channelID).overrideRolePermissions(guild.getEveryoneRole(), emptyPermissions, everyonePermissions);
+                    guild.getChannelByID(channelID).overrideRolePermissions(everyoneRole, emptyPermissions, everyonePermissions);
                     guild.getChannelByID(logChannelID).overrideRolePermissions(botRole, fullPermissions, emptyPermissions);
                     guild.getChannelByID(logChannelID).overrideRolePermissions(userRole, fullPermissions, emptyPermissions);
-                    guild.getChannelByID(logChannelID).overrideRolePermissions(guild.getEveryoneRole(), emptyPermissions, everyonePermissions);
+                    guild.getChannelByID(logChannelID).overrideRolePermissions(everyoneRole, emptyPermissions, everyonePermissions);
                     guild.getChannelByID(modLogChannelID).overrideRolePermissions(botRole, fullPermissions, emptyPermissions);
                     guild.getChannelByID(modLogChannelID).overrideRolePermissions(userRole, fullPermissions, emptyPermissions);
-                    guild.getChannelByID(modLogChannelID).overrideRolePermissions(guild.getEveryoneRole(), emptyPermissions, everyonePermissions);
+                    guild.getChannelByID(modLogChannelID).overrideRolePermissions(everyoneRole, emptyPermissions, everyonePermissions);
 
                     ConfigHandler.setSetting(ModLogConfig.class, guild, guild.getChannelByID(modLogChannelID));
                     ConfigHandler.setSetting(BotLogConfig.class, guild, guild.getChannelByID(logChannelID));
                     ConfigHandler.setSetting(MessageDeleteLogConfig.class, guild, guild.getChannelByID(modLogChannelID));
                     ConfigHandler.setSetting(MessageEditLogConfig.class, guild, guild.getChannelByID(modLogChannelID));
                     ConfigHandler.setSetting(JoinLeaveLogConfig.class, guild, guild.getChannelByID(logChannelID));
+                    //ConfigHandler.setSetting(ServerLogConfig.class, guild, guild.getChannelByID(logChannelID));
 
                     maker2.appendRaw("it would appear that the channels were created successfully, well done");
                 } catch (MissingPermissionsException | PermissionsException e) {
@@ -106,7 +108,7 @@ public class SetupCommand extends AbstractCommand {
                 }
             } else {
                 try {
-                    channelID = guild.createChannel("bot_config").getID();
+                    channelID = guild.createChannel("bot_console").getID();
                     logChannelID = guild.createChannel("bot_log").getID();
                     modLogChannelID = guild.createChannel("mod_log").getID();
                     guild.getChannelByID(channelID).changeTopic("For configuring all bot settings");
@@ -127,6 +129,7 @@ public class SetupCommand extends AbstractCommand {
                     ConfigHandler.setSetting(MessageDeleteLogConfig.class, guild, guild.getChannelByID(modLogChannelID));
                     ConfigHandler.setSetting(MessageEditLogConfig.class, guild, guild.getChannelByID(modLogChannelID));
                     ConfigHandler.setSetting(JoinLeaveLogConfig.class, guild, guild.getChannelByID(logChannelID));
+                    //ConfigHandler.setSetting(ServerLogConfig.class, guild, guild.getChannelByID(logChannelID));
 
                     maker2.appendRaw("it would appear that the channels were created successfully, well done");
                 } catch (MissingPermissionsException | PermissionsException e) {
