@@ -60,7 +60,7 @@ public class SetupCommand extends AbstractCommand {
                 maker.appendRaw("You do not appear to have any roles, I need to be able to add one of your roles to the permissions of the channel.");
             }
             for (Role role : DiscordClient.getOurUser().getRolesForGuild(guild)) {
-                if (role.getName().equals("Evelyn Dev")) botRole = role;
+                if (role.getName().equals("Evelyn")) botRole = role;
             }
             EnumSet<DiscordPermission> fullPermissions = EnumSet.noneOf(DiscordPermission.class);
             EnumSet<DiscordPermission> emptyPermissions = EnumSet.noneOf(DiscordPermission.class);
