@@ -1,4 +1,4 @@
-package com.github.nija123098.evelyn.moderation;
+package com.github.nija123098.evelyn.moderation.streamer;
 
 import com.github.nija123098.evelyn.config.AbstractConfig;
 import com.github.nija123098.evelyn.config.ConfigCategory;
@@ -18,17 +18,17 @@ import java.util.Set;
  */
 public class StreamingAssignRoleConfig extends AbstractConfig<Role, Guild> {
     public StreamingAssignRoleConfig() {
-        super("streaming_role", "Streamer Role", ConfigCategory.MODERATION, (Role) null, "The role to assign a streaming user");
-        Launcher.registerAsyncStartup(() -> DiscordClient.getUsers().forEach(user -> check(user, null)));
+        super("streaming_role", "Streaming Role", ConfigCategory.MODERATION, (Role) null, "The role to assign a streaming user");
+        Launcher.registerAsyncStartup(() -> ConfigHandler.getNonDefaultSettings(StreamerConfig.class).keySet().forEach(user -> check(user, user.getPresence(), null)));
     }
 
     @EventListener
     public void handle(DiscordPresenceUpdate event) {
-        check(event.getUser(), event.getOldPresence());
+        check(event.getUser(), event.getNewPresence(), event.getOldPresence());
     }
 
-    private void check(User user, Presence oldPresence) {
-        if (user.getPresence().getOptionalStreamingUrl().isPresent()) {
+    private void check(User user, Presence newPresence, Presence oldPresence) {
+        if (newPresence.getOptionalStreamingUrl().isPresent()) {
             rolesForGuilds(user.getGuilds()).forEach(role -> {
                 try {
                     user.addRole(role);

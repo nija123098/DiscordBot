@@ -19,7 +19,7 @@ public class PlayTextOverrideCommand extends AbstractCommand {
     }
     @Command
     public void command(@Argument(optional = true, replacement = ContextType.NONE) Presence.Status stats, @Argument(optional = true, replacement = ContextType.NONE) Presence.Activity activity, @Argument String s){
-        DiscordAdapter.PLAY_TEXT_UPDATER.setSkipping(true);
+        DiscordAdapter.PLAY_TEXT_UPDATE.set(false);
         if (stats == null) stats = Presence.Status.ONLINE;
         if (activity == null) activity = Presence.Activity.PLAYING;
         DiscordClient.changePresence(stats, activity, s);

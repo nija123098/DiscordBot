@@ -1,5 +1,6 @@
 package com.github.nija123098.evelyn.discordobjects.wrappers;
 
+import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.config.ConfigLevel;
 import com.github.nija123098.evelyn.config.Configurable;
 import com.github.nija123098.evelyn.discordobjects.ExceptionWrapper;
@@ -7,9 +8,10 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventDistribut
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordUserJoin;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordUserLeave;
 import com.github.nija123098.evelyn.perms.BotRole;
-import com.github.nija123098.evelyn.service.services.MemoryManagementService;
+import com.github.nija123098.evelyn.util.CacheHelper;
 import com.github.nija123098.evelyn.util.FormatHelper;
 import com.github.nija123098.evelyn.util.Time;
+import com.google.common.cache.LoadingCache;
 import sx.blah.discord.handle.obj.IUser;
 
 import java.util.*;
@@ -23,19 +25,19 @@ import java.util.stream.Collectors;
  * @since 1.0.0
  */
 public class User implements Configurable {
-    private static final Map<String, User> MAP = new MemoryManagementService.ManagedMap<>(180000);
+    public static final LoadingCache<IUser, User> CACHE = CacheHelper.getLoadingCache(Runtime.getRuntime().availableProcessors() * 2, ConfigProvider.CACHE_SETTINGS.userSize(), 60_000, User::new);
     public static User getUser(String id){
         try {
-            IUser user = DiscordClient.getAny(client -> client.getUserByID(Long.parseLong(FormatHelper.filtering(id, Character::isLetterOrDigit))));
-            if (user == null) return null;
-            return MAP.computeIfAbsent(id, s -> new User(user));
+            IUser iUser = DiscordClient.getAny(client -> client.getUserByID(Long.parseLong(FormatHelper.filtering(id, Character::isLetterOrDigit))));;
+            if (iUser == null) return null;
+            return CACHE.getUnchecked(iUser);
         } catch (NumberFormatException e) {
             return null;
         }
     }
     public static User getUser(IUser user){
         if (user == null) return null;
-        return MAP.computeIfAbsent(user.getStringID(), s -> new User(user));
+        return CACHE.getUnchecked(user);
     }
     static List<User> getUsers(Collection<IUser> iUsers){
         List<User> users = new ArrayList<>(iUsers.size());
@@ -43,10 +45,8 @@ public class User implements Configurable {
         return users;
     }
     public static void update(IUser user){// hash is based on id, so no old channel is necessary
-        User u = MAP.get(user.getStringID());
-        if (u != null){
-            u.reference.set(user);
-        }
+        User u = CACHE.getIfPresent(user);
+        if (u != null) u.reference.set(user);
     }
     private transient final AtomicReference<IUser> reference;
     private String ID;

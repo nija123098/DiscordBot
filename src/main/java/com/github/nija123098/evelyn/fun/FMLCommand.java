@@ -8,8 +8,8 @@ import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.exception.ContextException;
 import com.github.nija123098.evelyn.exception.DevelopmentException;
-import com.github.nija123098.evelyn.service.services.ScheduleService;
 import com.github.nija123098.evelyn.util.FormatHelper;
+import com.github.nija123098.evelyn.util.ThreadHelper;
 import org.apache.commons.text.StringEscapeUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -18,6 +18,8 @@ import org.jsoup.nodes.Element;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 /**
@@ -25,6 +27,7 @@ import java.util.stream.Collectors;
  * @since 1.0.0
  */
 public class FMLCommand extends AbstractCommand {
+    private static final ExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadExecutor(r -> ThreadHelper.getDemonThreadSingle(r, "FML-Getter-Thread"));
     private final List<String> items = new ArrayList<>();
     public FMLCommand() {
         super("fml", ModuleLevel.FUN, "fmylife", null, "Gets a random entry from fmylife.com");
@@ -35,7 +38,7 @@ public class FMLCommand extends AbstractCommand {
         if (channel.isNSFW() || channel.isPrivate()) {
             throw new ContextException("This command needs to be used within an NSFW or private channel due to its possible content.");
         }
-        if (this.items.size() < 10) ScheduleService.schedule(5, this::getItems);
+        if (this.items.size() < 10) EXECUTOR_SERVICE.submit(this::getItems);
         if (this.items.isEmpty()) {
             maker.append("There are no more fmls at this time, please check back later");
             return;

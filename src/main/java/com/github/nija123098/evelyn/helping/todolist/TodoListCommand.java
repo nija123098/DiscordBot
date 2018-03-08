@@ -8,9 +8,12 @@ import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Message;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
-import com.github.nija123098.evelyn.service.services.ScheduleService;
+import com.github.nija123098.evelyn.util.ThreadHelper;
 
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -18,6 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 1.0.0
  */
 public class TodoListCommand extends AbstractCommand {
+    private static final ScheduledExecutorService SCHEDULED_EXECUTOR_SERVICE = Executors.newSingleThreadScheduledExecutor(r -> ThreadHelper.getDemonThreadSingle(r, "Todo-List-Thread"));
     public TodoListCommand() {
         super("todo", ModuleLevel.HELPER, null, null, "Helps you remember things!");
     }
@@ -36,7 +40,10 @@ public class TodoListCommand extends AbstractCommand {
         }
     }
     static void remind(long delay, User user, TodoItem todoItem){
-        ScheduleService.schedule(delay, () -> new MessageMaker(user).appendAlternate(true, "You put an item on your todo list for me to remind you of.\n", todoItem.getTodo()).send());
+        SCHEDULED_EXECUTOR_SERVICE.schedule(() -> {
+            new MessageMaker(user).appendAlternate(true, "You put an item on your todo list for me to remind you of.\n", todoItem.getTodo()).send();
+            ConfigHandler.alterSetting(TodoListConfig.class, user, todoItems -> todoItems.remove(todoItem));
+        }, delay, TimeUnit.MILLISECONDS);
     }
 
     @Override

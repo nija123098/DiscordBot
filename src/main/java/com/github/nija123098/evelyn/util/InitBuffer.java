@@ -7,7 +7,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import static com.github.nija123098.evelyn.util.Care.lessSleep;
+import static com.github.nija123098.evelyn.util.CareLess.lessSleep;
 
 /**
  * @author nija123098

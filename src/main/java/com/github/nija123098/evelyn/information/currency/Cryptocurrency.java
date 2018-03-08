@@ -2,7 +2,7 @@ package com.github.nija123098.evelyn.information.currency;
 
 import com.github.nija123098.evelyn.exception.ArgumentException;
 import com.github.nija123098.evelyn.exception.DevelopmentException;
-import com.github.nija123098.evelyn.service.services.MemoryManagementService;
+import com.github.nija123098.evelyn.util.CacheHelper;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mashape.unirest.http.Unirest;
@@ -46,7 +46,7 @@ public class Cryptocurrency {
     }
     private int id;
     private String name;
-    private final MemoryManagementService.ManagedReference<JsonObject> DATA = new MemoryManagementService.ManagedReference<>(60_000, () -> {
+    private final CacheHelper.RefrenceCache<JsonObject> DATA = new CacheHelper.RefrenceCache<>(60_000, () -> {
         try {
             return JSON_PARSER.parse(Unirest.get("https://www.cryptocompare.com/api/data/coinsnapshotfullbyid/?id="+this.id).asString().getBody()).getAsJsonObject().getAsJsonObject("Data").getAsJsonObject("General");
         } catch (UnirestException e) {

@@ -10,7 +10,7 @@ import com.github.nija123098.evelyn.botconfiguration.configinterfaces.urls.URLs;
  */
 public class ConfigProvider {
 
-    //Settings from botconfig.yaml
+    // Settings from botconfig.yaml
     public static final BotSettings BOT_SETTINGS = ConfigLoader.configurationProvider().bind("BotSettings", BotSettings.class);
     public static final UpdateScripts UPDATE_SCRIPTS = ConfigLoader.configurationProvider().bind("UpdateScripts", UpdateScripts.class);
     public static final DatabaseSettings DATABASE_SETTINGS = ConfigLoader.configurationProvider().bind("DatabaseSettings", DatabaseSettings.class);
@@ -20,9 +20,12 @@ public class ConfigProvider {
     public static final ResourceFiles RESOURCE_FILES = ConfigLoader.configurationProvider().bind("ResourceFiles", ResourceFiles.class);
     public static final ExecutableFiles EXECUTABLE_FILES = ConfigLoader.configurationProvider().bind("ExecutableFiles", ExecutableFiles.class);
 
-    //Settings from pastebinsettings.yaml
+    // Settings from cachesettings.yaml
+    public static final CacheSettings CACHE_SETTINGS = ConfigLoader.configurationProvider().bind("CacheSettings", CacheSettings.class);
+
+    // Settings from pastebinsettings.yaml
     public static final PasteBinSettings PASTE_BIN_SETTINGS = ConfigLoader.configurationProvider().bind("PasteBinSettings", PasteBinSettings.class);
 
-    //Settings from urls.yaml
+    // Settings from urls.yaml
     public static final URLs URLS = ConfigLoader.configurationProvider().bind("URLs", URLs.class);
 }

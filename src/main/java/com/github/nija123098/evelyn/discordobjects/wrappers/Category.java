@@ -1,10 +1,12 @@
 package com.github.nija123098.evelyn.discordobjects.wrappers;
 
+import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.config.ConfigLevel;
 import com.github.nija123098.evelyn.config.Configurable;
 import com.github.nija123098.evelyn.discordobjects.ExceptionWrapper;
 import com.github.nija123098.evelyn.perms.BotRole;
-import com.github.nija123098.evelyn.service.services.MemoryManagementService;
+import com.github.nija123098.evelyn.util.CacheHelper;
+import com.google.common.cache.LoadingCache;
 import sx.blah.discord.handle.obj.ICategory;
 
 import java.util.ArrayList;
@@ -18,29 +20,35 @@ import java.util.concurrent.atomic.AtomicReference;
  * @since 1.0.0
  */
 public class Category implements Configurable {
-    private static final Map<ICategory, Category> MAP = new MemoryManagementService.ManagedMap<>(150000);
+    private static final LoadingCache<ICategory, Category> CACHE = CacheHelper.getLoadingCache(4, ConfigProvider.CACHE_SETTINGS.categorySize(), 300_000, Category::new);
     public static Category getCategory(String id){
         try {
-            return getCategory((ICategory) DiscordClient.getAny(client -> client.getCategoryByID(Long.valueOf(id))));
+            ICategory iCategory = DiscordClient.getAny(client -> client.getCategoryByID(Long.valueOf(id)));
+            if (iCategory == null) return null;
+            return CACHE.getUnchecked(iCategory);
         } catch (NumberFormatException e) {
             return null;
         }
     }
     public static Category getCategory(ICategory iCategory){
         if (iCategory == null) return null;
-        return MAP.computeIfAbsent(iCategory, r -> new Category(iCategory));
+        return CACHE.getUnchecked(iCategory);
     }
     static List<Category> getCategories(List<ICategory> categories){
         List<Category> cats = new ArrayList<>(categories.size());
         categories.forEach(iMessage -> cats.add(getCategory(iMessage)));
         return cats;
     }
+    public static void update(ICategory newCategory) {
+        Category category = CACHE.getIfPresent(newCategory);
+        if (category != null) category.reference.set(newCategory);
+    }
     private final transient AtomicReference<ICategory> reference;
     private String ID;
     protected Category() {
         this.reference = new AtomicReference<>(DiscordClient.getAny(client -> client.getCategoryByID(Long.parseLong(ID))));
     }
-    Category(ICategory category) {
+    private Category(ICategory category) {
         this.reference = new AtomicReference<>(category);
         this.ID = category.getStringID();
         this.registerExistence();

@@ -8,14 +8,17 @@ import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
-import com.github.nija123098.evelyn.service.services.ScheduleService;
 import com.github.nija123098.evelyn.util.FormatHelper;
+import com.github.nija123098.evelyn.util.ThreadHelper;
 import com.google.gson.JsonObject;
 import org.apache.commons.lang3.tuple.MutablePair;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author nija123098
@@ -24,16 +27,17 @@ import java.util.List;
 public class CryptocurrencyCommand extends AbstractCommand {
     private static final List<MutablePair<String, String>> ORDER = new ArrayList<>();
     private static final String STATEMENT = "Trading should not be done using Evelyn and no responsibility is taken by the bot's developers for accuracy of information nor for trades done.";
+    private static final ScheduledExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadScheduledExecutor(r -> ThreadHelper.getDemonThreadSingle(r, "Crypto-Command-Thread"));
     static {
         for (int i = 0; i < 10; i++) ORDER.add(new MutablePair<>());
-        ScheduleService.scheduleRepeat(0, 300_000, () -> Cryptocurrency.COIN_LIST.get().getAsJsonObject().entrySet().forEach(entry -> {
+        EXECUTOR_SERVICE.scheduleAtFixedRate(() -> Cryptocurrency.COIN_LIST.get().getAsJsonObject().entrySet().forEach(entry -> {
             JsonObject object = entry.getValue().getAsJsonObject();
             int order = object.get("SortOrder").getAsInt();
             if (order > 10) return;
             MutablePair<String, String> value = ORDER.get(order - 1);
             value.setLeft(entry.getKey());
             value.setRight(object.get("CoinName").getAsString());
-        }));
+        }), 0, 5, TimeUnit.MINUTES);
     }
     public CryptocurrencyCommand() {
         super("cryptocurrency", ModuleLevel.INFO, "crypto", null, "Displays basic information on several cryptocurrencies");

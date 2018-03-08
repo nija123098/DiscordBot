@@ -9,7 +9,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.VoiceChannel;
 import java.util.List;
 
 import static com.github.nija123098.evelyn.config.ConfigHandler.getSetting;
-import static com.github.nija123098.evelyn.util.Care.lessSleep;
+import static com.github.nija123098.evelyn.util.CareLess.lessSleep;
 import static com.github.nija123098.evelyn.util.FormatHelper.getList;
 import static java.util.stream.Collectors.toList;
 

@@ -3,7 +3,7 @@ package com.github.nija123098.evelyn.information;
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
-import com.github.nija123098.evelyn.util.Care;
+import com.github.nija123098.evelyn.util.CareLess;
 
 /**
  * @author Soarnir
@@ -33,7 +33,7 @@ public class PingFancyCommand extends AbstractCommand {
             sum += lastResult;
             min = Math.min(min, lastResult);
             max = Math.max(max, lastResult);
-            Care.lessSleep(1_100L);
+            CareLess.lessSleep(1_100L);
             start = System.currentTimeMillis();
         }
         maker.appendRaw("Average ping is: " + (int)Math.ceil(sum/5f) + "ms (min: " + min + "ms, max: " + max + "ms)");

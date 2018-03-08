@@ -2,7 +2,8 @@ package com.github.nija123098.evelyn.moderation.gameroles;
 
 import com.github.nija123098.evelyn.config.AbstractConfig;
 import com.github.nija123098.evelyn.config.ConfigCategory;
-import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
+import com.github.nija123098.evelyn.config.ConfigHandler;
+import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Presence;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Role;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
@@ -10,39 +11,42 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordPresenceUpdate;
 import com.github.nija123098.evelyn.launcher.Launcher;
 
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author nija123098
  * @since 1.0.0
  */
 public class GameRoleConfig extends AbstractConfig<Boolean, Role> {
-    private static final Map<User, Role> PREVIOUS = new ConcurrentHashMap<>();
     public GameRoleConfig() {
         super("game_role", "", ConfigCategory.GAME_TEMPORARY_CHANNELS, false, "Automatically assigns the role to users playing the Role's title game");
-        Launcher.registerAsyncStartup(() -> DiscordClient.getUsers().forEach(user -> check(user, user.getPresence())));
+        Launcher.registerAsyncStartup(() -> ConfigHandler.getNonDefaultSettings(UserHasGameRoleConfig.class).keySet().forEach(user -> check(user, user.getPresence(), null)));
     }
     @EventListener
     public void handle(DiscordPresenceUpdate update){
-        check(update.getUser(), update.getNewPresence());
+        check(update.getUser(), update.getNewPresence(), update.getOldPresence());
     }
-    public void check(User user, Presence presence){
-        Role previous = PREVIOUS.get(user);
-        if (presence.getOptionalPlayingText().isPresent()) {
-            user.getGuilds().forEach(guild -> {
-                Role role = guild.getRoles().stream().filter(this::getValue).filter(r -> r.getName().equals(presence.getPlayingText())).findFirst().orElse(null);
-                if (Objects.equals(role, previous)) return;
-                if (previous != null) {
-                    user.removeRole(previous);
-                    PREVIOUS.remove(user);
-                }
-                if (role != null){
-                    user.addRole(role);
-                    PREVIOUS.put(user, role);
-                }
-            });
-        } else if (previous != null && !previous.getName().equals(presence.getOptionalPlayingText().orElse(null))) user.removeRole(previous);
+    public void check(User user, Presence presence, Presence oldPresence){
+        if (oldPresence != null && presence.getOptionalPlayingText().equals(oldPresence.getOptionalPlayingText())) return;
+        if (oldPresence != null) oldPresence.getOptionalStreamingUrl().ifPresent(playText -> rolesForGuilds(user.getGuilds()).forEach(role -> {
+            if (role.getName().equals(playText)) {
+                ConfigHandler.setSetting(UserHasGameRoleConfig.class, user, false);
+                user.addRole(role);
+            }
+        }));
+        presence.getOptionalPlayingText().ifPresent(playText -> rolesForGuilds(user.getGuilds()).forEach(role -> {
+            if (role.getName().equals(playText)) {
+                user.addRole(role);
+                ConfigHandler.setSetting(UserHasGameRoleConfig.class, user, true);
+            }
+        }));
+    }
+    private List<Role> rolesForGuilds(Set<Guild> guilds) {
+        List<Role> roles = new ArrayList<>(guilds.size());
+        guilds.forEach(guild -> roles.addAll(guild.getRoles().stream().filter(this::getValue).collect(Collectors.toList())));
+        return roles;
     }
 }

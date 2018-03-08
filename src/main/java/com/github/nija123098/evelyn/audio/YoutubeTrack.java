@@ -10,7 +10,7 @@ import com.github.nija123098.evelyn.util.YTUtil;
  * @since 1.0.0
  */
 public class YoutubeTrack extends DownloadableTrack {
-    private static final CallBuffer CALL_BUFFER = new CallBuffer(250);
+    private static final CallBuffer CALL_BUFFER = new CallBuffer("Youtube-Name-Resolution", 250);
     static {
         registerTrackType(YoutubeTrack.class, YoutubeTrack::new, YoutubeTrack::new);
     }

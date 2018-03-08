@@ -2,7 +2,6 @@ package com.github.nija123098.evelyn.discordobjects;
 
 import com.github.nija123098.evelyn.audio.SpeechParser;
 import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
-import com.github.nija123098.evelyn.util.Log;
 import com.github.nija123098.evelyn.chatbot.ChatBot;
 import com.github.nija123098.evelyn.command.CommandHandler;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
@@ -17,8 +16,6 @@ import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.moderation.DeletePinNotificationConfig;
 import com.github.nija123098.evelyn.moderation.messagefiltering.MessageMonitor;
 import com.github.nija123098.evelyn.perms.ContributorMonitor;
-import com.github.nija123098.evelyn.service.services.MemoryManagementService;
-import com.github.nija123098.evelyn.service.services.ScheduleService;
 import com.github.nija123098.evelyn.template.KeyPhrase;
 import com.github.nija123098.evelyn.template.Template;
 import com.github.nija123098.evelyn.template.TemplateHandler;
@@ -33,8 +30,8 @@ import sx.blah.discord.api.internal.DiscordEndpoints;
 import sx.blah.discord.api.internal.Requests;
 import sx.blah.discord.api.internal.json.responses.GatewayBotResponse;
 import sx.blah.discord.handle.impl.events.guild.GuildUpdateEvent;
+import sx.blah.discord.handle.impl.events.guild.category.CategoryUpdateEvent;
 import sx.blah.discord.handle.impl.events.guild.channel.ChannelUpdateEvent;
-import sx.blah.discord.handle.impl.events.guild.channel.message.MentionEvent;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageUpdateEvent;
 import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.ReactionEvent;
@@ -44,8 +41,6 @@ import sx.blah.discord.handle.impl.events.shard.ShardReadyEvent;
 import sx.blah.discord.handle.impl.events.user.UserUpdateEvent;
 import sx.blah.discord.handle.impl.obj.ReactionEmoji;
 import sx.blah.discord.handle.obj.ActivityType;
-import sx.blah.discord.handle.obj.IMessage;
-import sx.blah.discord.handle.obj.Permissions;
 import sx.blah.discord.handle.obj.StatusType;
 
 import java.io.File;
@@ -57,9 +52,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 /**
@@ -69,11 +65,13 @@ import java.util.stream.Collectors;
  * @since 1.0.0
  */
 public class DiscordAdapter {
+    private static final ScheduledExecutorService PLAY_TEXT_EXECUTOR = Executors.newSingleThreadScheduledExecutor(r -> ThreadHelper.getDemonThreadSingle(r, "Play-Text-Changer-Thread"));
     private static final Map<Class<? extends Event>, Constructor<? extends BotEvent>> EVENT_MAP;
-    private static final long PLAY_TEXT_SPEED = 60_000;
-    private static final List<Template> PREVIOUS_TEXTS = new MemoryManagementService.ManagedList<>(PLAY_TEXT_SPEED + 1000);// a second for execution time
-    private static final AtomicBoolean BOT_LAG_LOCKED = new AtomicBoolean();
-    public static final ScheduleService.ScheduledRepeatedTask PLAY_TEXT_UPDATER;
+    private static final long PLAY_TEXT_SPEED = 60_000, GUILD_SAVE_SPEED = 3_600_000;// 1 hour
+    private static final CacheHelper.ContainmentCache<Template> PREVIOUS_TEXTS = new CacheHelper.ContainmentCache<>(PLAY_TEXT_SPEED + 1000);// a second for execution time
+    private static final ScheduledExecutorService GUILD_SAVE_EXECUTOR = Executors.newSingleThreadScheduledExecutor(r -> ThreadHelper.getDemonThreadSingle(r, "Guild-Number-Save"));
+    public static final AtomicBoolean PLAY_TEXT_UPDATE = new AtomicBoolean();
+
     static {
         Set<Class<? extends BotEvent>> classes = new Reflections(Launcher.BASE_PACKAGE + ".discordobjects.wrappers.event.events").getSubTypesOf(BotEvent.class);
         classes.remove(DiscordMessageReceived.class);
@@ -90,7 +88,7 @@ public class DiscordAdapter {
         int i = 20 + 25 * DiscordClient.getShardCount();
         for (; i > -1; --i) {
             if (DiscordClient.isReady()) break;
-            Care.lessSleep(1000);
+            CareLess.lessSleep(1000);
         }
         if (i == 0) {
             Log.log("Could not load in time");
@@ -101,32 +99,20 @@ public class DiscordAdapter {
         SpeechParser.init();
         ContributorMonitor.init();
         Launcher.registerStartup(() -> {
-            DiscordClient.clients().forEach(client -> client.getDispatcher().registerListener(ThreadProvider.getExecutorService(), EventDistributor.class));
-            DiscordClient.clients().forEach(client -> client.getDispatcher().registerListener(ThreadProvider.getExecutorService(), DiscordAdapter.class));
+            DiscordClient.clients().forEach(client -> client.getDispatcher().registerListener(EventDistributor.class));
+            DiscordClient.clients().forEach(client -> client.getDispatcher().registerListener(DiscordAdapter.class));
             EventDistributor.register(ReactionBehavior.class);
             EventDistributor.register(MessageMonitor.class);
         });
-        if (!ConfigProvider.BOT_SETTINGS.ghostModeEnabled()) ScheduleService.scheduleRepeat(PLAY_TEXT_SPEED + 10_000, PLAY_TEXT_SPEED, () -> {
-            Template template = TemplateHandler.getTemplate(KeyPhrase.PLAY_TEXT, null, PREVIOUS_TEXTS);
+        if (!ConfigProvider.BOT_SETTINGS.ghostModeEnabled()) PLAY_TEXT_EXECUTOR.scheduleAtFixedRate(() -> {
+            if (!PLAY_TEXT_UPDATE.get()) return;
+            Template template = TemplateHandler.getTemplate(KeyPhrase.PLAY_TEXT, null, PREVIOUS_TEXTS.asArrayList());
             if (template == null){
                 TemplateHandler.addTemplate(KeyPhrase.PLAY_TEXT, null, "with nitroglycerine");
                 Log.log("Template KeyPhrase for " + KeyPhrase.PLAY_TEXT.name() + " has been added: \"with nitroglycerine\"");
             }
             if (template != null) DiscordClient.getShards().forEach(shard -> shard.changePresence(Presence.Status.ONLINE, Presence.Activity.PLAYING, template.interpret((User) null, shard, null, null, null, null)));
-        });
-        AtomicInteger count = new AtomicInteger();
-        PLAY_TEXT_UPDATER = ScheduleService.scheduleRepeat(5000, 5000, () -> {
-            if (!DiscordClient.isReady()) return;
-            AtomicLong responseTime = new AtomicLong();
-            DiscordClient.getShards().forEach(shard -> responseTime.addAndGet(shard.getResponseTime()));
-            boolean result = responseTime.get() / DiscordClient.getShardCount() > 2500;
-            if (result != BOT_LAG_LOCKED.get()){
-                if (count.incrementAndGet() >= 4){
-                    BOT_LAG_LOCKED.set(result);
-                    Log.log("Now " + (result ? "" : "un") + "locking bot due to lag - " + (responseTime.get() / DiscordClient.getShardCount()));
-                }
-            }else count.set(0);
-        });
+        }, PLAY_TEXT_SPEED + 10_000, PLAY_TEXT_SPEED, TimeUnit.MILLISECONDS);
         Path path = Paths.get(ConfigProvider.RESOURCE_FILES.timeStats());
         File file = path.toFile();
         if (!file.exists()) {
@@ -135,15 +121,15 @@ public class DiscordAdapter {
                 Log.log("Could not make a file for tracking guild count", e);
             }
         }
-        ScheduleService.scheduleRepeat(System.currentTimeMillis() % 86_400_000, 86_400_000, () -> {// 24 hours
+        GUILD_SAVE_EXECUTOR.scheduleAtFixedRate(() -> {
             long time = System.currentTimeMillis();
-            time -= time % 86_400_000;
-            while (!DiscordClient.isReady()) Care.lessSleep(1000);
+            time -= time % GUILD_SAVE_SPEED;
+            while (!DiscordClient.isReady()) CareLess.lessSleep(10_000);
             try{Files.write(path, Collections.singleton(time + " " + DiscordClient.getGuilds().size()), StandardOpenOption.APPEND);
             } catch (IOException e) {
                 Log.log("Could not save guild count", e);
             }
-        });
+        }, System.currentTimeMillis() % GUILD_SAVE_SPEED, GUILD_SAVE_SPEED, TimeUnit.MILLISECONDS);
     }
     /**
      * Forces the initialization of this class.
@@ -176,6 +162,10 @@ public class DiscordAdapter {
         Message.update(event.getNewMessage());
     }
     @EventSubscriber
+    public static void handle(CategoryUpdateEvent event){
+        Category.update(event.getNewCategory());
+    }
+    @EventSubscriber
     public static void handle(UserVoiceChannelMoveEvent event){
         EventDistributor.distribute(new DiscordVoiceLeave(event.getOldChannel(), event.getUser()));
         EventDistributor.distribute(new DiscordVoiceJoin(event.getNewChannel(), event.getUser()));
@@ -183,26 +173,6 @@ public class DiscordAdapter {
     @EventSubscriber
     public static void handle(ReactionEvent event){// it's cleaner than the alternative
         EventDistributor.distribute(new DiscordReactionEvent(event));
-    }
-
-    /**
-     * A {@link MemoryManagementService.ManagedList} for keeping track
-     * of the messages that contain a non-blanket mentions to the bot.
-     */
-    private static final List<IMessage> MENTIONED_MESSAGES = new MemoryManagementService.ManagedList<>(2_000);
-
-    /**
-     * Registers messages that contain non-blanket mentions
-     * of the bot and schedules an eye {@link Reaction} after 500 millis.
-     *
-     * @param event handles the Discord4J {@link MentionEvent} for tracking mentions.
-     */
-    @EventSubscriber
-    public static void handle(MentionEvent event){
-        if (event.getMessage().mentionsEveryone() || event.getMessage().mentionsHere() || !event.getChannel().getModifiedPermissions(DiscordClient.getOurUser().user()).contains(Permissions.ADD_REACTIONS)) return;
-        ScheduleService.schedule(1500, () -> {
-            if (MENTIONED_MESSAGES.contains(event.getMessage())) ExceptionWrapper.wrap(() -> event.getMessage().addReaction(ReactionEmoji.of(EmoticonHelper.getChars("eyes", false))));
-        });
     }
 
     /**
@@ -229,7 +199,9 @@ public class DiscordAdapter {
             } else isCommand = false;
         }
         receivedEvent.setCommand(isCommand);
-        if (!isCommand) MENTIONED_MESSAGES.add(receivedEvent.getMessage().message());
+        if (!isCommand && event.getMessage().getMentions().contains(DiscordClient.getOurUser().user())) {
+            ExceptionWrapper.wrap(() -> event.getMessage().addReaction(ReactionEmoji.of(EmoticonHelper.getChars("eyes", false))));
+        }// This does the :eyes: on mention now.
         EventDistributor.distribute(receivedEvent);
     }
 
@@ -240,7 +212,6 @@ public class DiscordAdapter {
      */
     @EventSubscriber
     public static void handle(Event event){
-        if (BOT_LAG_LOCKED.get()) return;
         Constructor<? extends BotEvent> constructor = EVENT_MAP.get(event.getClass());
         if (constructor != null) {
             try{EventDistributor.distribute(constructor.newInstance(event));

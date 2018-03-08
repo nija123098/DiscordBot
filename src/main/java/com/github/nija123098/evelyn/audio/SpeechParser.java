@@ -1,20 +1,23 @@
 package com.github.nija123098.evelyn.audio;
 
 import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
-import com.github.nija123098.evelyn.discordobjects.wrappers.*;
-import com.github.nija123098.evelyn.util.Log;
 import com.github.nija123098.evelyn.chatbot.ChatBot;
 import com.github.nija123098.evelyn.command.CommandHandler;
 import com.github.nija123098.evelyn.discordobjects.DiscordAdapter;
 import com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
+import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
+import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
+import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventDistributor;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordSpeakingEvent;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordVoiceJoin;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordVoiceLeave;
 import com.github.nija123098.evelyn.perms.BotRole;
-import com.github.nija123098.evelyn.service.services.ScheduleService;
-import com.github.nija123098.evelyn.util.*;
+import com.github.nija123098.evelyn.util.FileHelper;
+import com.github.nija123098.evelyn.util.InitBuffer;
+import com.github.nija123098.evelyn.util.Log;
+import com.github.nija123098.evelyn.util.ThreadHelper;
 import edu.cmu.sphinx.api.Configuration;
 import edu.cmu.sphinx.api.SpeechResult;
 import edu.cmu.sphinx.api.StreamSpeechRecognizer;
@@ -30,8 +33,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -52,6 +54,8 @@ import java.util.stream.Collectors;
  * @since 1.0.0
  */
 public class SpeechParser implements IAudioReceiver {
+    private static final ExecutorService PARSER_POOL = new ThreadPoolExecutor(0, 4, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<>(10), r -> ThreadHelper.getDemonThread(r, "Speech-Parser-Thread"));
+    private static final ScheduledExecutorService DELETE_POOL = new ScheduledThreadPoolExecutor(1, r -> ThreadHelper.getDemonThread(r, "Speech-Parser-Delete-Pool"));
     private static final Predicate<User> ALLOW_PARSER = u -> BotRole.SUPPORTER.hasRole(u, null);
     private static final InitBuffer<StreamSpeechRecognizer> SPEECH_RECOGNIZER_BUFFER;
     private static final Map<Guild, Map<User, SpeechParser>> PARSER_MAP;
@@ -99,7 +103,6 @@ public class SpeechParser implements IAudioReceiver {
     public synchronized void receive(byte[] audio, IUser user, char sequence, int timestamp) {
         if (this.lon) return;
         if (this.bytes.size() >= 1_000_000){
-            System.out.println("TOO LARGE");
             this.bytes.clear();
             this.lon = true;
             return;
@@ -118,7 +121,7 @@ public class SpeechParser implements IAudioReceiver {
         }
         if (this.bytes.size() > 100_000) {
             process(scan(alter(write(FileHelper.getTempFile("voiceparsing", "pcm")), this.audioManager.voiceChannel().getBitrate())));// this might need to be more condiment
-        } else System.out.println("TOO SMALL");
+        }
         this.bytes.clear();
     }
 
@@ -211,10 +214,10 @@ public class SpeechParser implements IAudioReceiver {
             } catch (IOException e) {
                 Log.log("Exception scanning file for voice data", e);
             }
-            ScheduleService.schedule(600_000, () -> {
+            DELETE_POOL.schedule(() -> {
                 try{Files.delete(file.toPath());
                 }catch(IOException e) {Log.log("Exception deleting voice data file", e);}
-            });
+            }, 10, TimeUnit.MINUTES);
         });
         return reference.get();
     }
@@ -232,7 +235,7 @@ public class SpeechParser implements IAudioReceiver {
     public static void handle(DiscordSpeakingEvent event){
         if (!PARSER_MAP.containsKey(event.getGuild())) return;
         SpeechParser parser = PARSER_MAP.computeIfAbsent(event.getGuild(), c -> new ConcurrentHashMap<>()).get(event.getUser());
-        if (parser != null && !event.isSpeaking()) ThreadProvider.sub(parser::onStop);
+        if (parser != null && !event.isSpeaking()) PARSER_POOL.submit(parser::onStop);
     }
     @EventListener
     public static void handle(DiscordVoiceJoin event){

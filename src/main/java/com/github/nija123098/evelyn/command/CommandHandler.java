@@ -16,7 +16,6 @@ import com.github.nija123098.evelyn.exception.BotException;
 import com.github.nija123098.evelyn.exception.DevelopmentException;
 import com.github.nija123098.evelyn.exception.GhostException;
 import com.github.nija123098.evelyn.launcher.Launcher;
-import com.github.nija123098.evelyn.service.services.MemoryManagementService;
 import com.github.nija123098.evelyn.template.CustomCommandHandler;
 import com.github.nija123098.evelyn.util.*;
 import javafx.util.Pair;
@@ -42,7 +41,7 @@ public class CommandHandler {
     private static final Map<String, AbstractCommand> EXACT_COMMAND_MAP;
     private static final Map<String, Object> COMMANDS_MAP;
     public static final String UNKNOWN_COMMAND_EMOTICON = "grey_question", EXCEPTION_FOR_METHOD = "exclamation";
-    private static final List<String> OPEN_EDIT_MESSAGES = new MemoryManagementService.ManagedList<>(30000);
+    private static final CacheHelper.ContainmentCache<String> OPEN_EDIT_MESSAGES = new CacheHelper.ContainmentCache<>(30000);
     public static final AtomicReference<String> MENTION = new AtomicReference<>(), MENTION_NICK = new AtomicReference<>();
     static {
         Map<Class<? extends AbstractCommand>, Set<AbstractCommand>> typeMap = new HashMap<>();
@@ -392,7 +391,7 @@ public class CommandHandler {
     @EventListener
     public static void handle(DiscordMessageEditEvent event){
         if (!event.getAuthor().isBot() && OPEN_EDIT_MESSAGES.contains(event.getOldMessage().getID())){
-            if (Care.lessBoolean(attemptInvocation(event.getOldMessage().getContent(), event.getAuthor(), event.getOldMessage(), null))){
+            if (CareLess.getBoolean(attemptInvocation(event.getOldMessage().getContent(), event.getAuthor(), event.getOldMessage(), null))){
                 OPEN_EDIT_MESSAGES.remove(event.getOldMessage().getID());
             }
         }

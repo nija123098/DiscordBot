@@ -14,6 +14,6 @@ public class PlayTextResumeCommand extends AbstractCommand {
     }
     @Command
     public void command(){
-        DiscordAdapter.PLAY_TEXT_UPDATER.setSkipping(false);
+        DiscordAdapter.PLAY_TEXT_UPDATE.set(true);
     }
 }

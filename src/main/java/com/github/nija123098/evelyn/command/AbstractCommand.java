@@ -23,10 +23,10 @@ import com.github.nija123098.evelyn.moderation.logging.BotLogConfig;
 import com.github.nija123098.evelyn.perms.BotRole;
 import com.github.nija123098.evelyn.perms.configs.specialperms.GuildSpecialPermsConfig;
 import com.github.nija123098.evelyn.perms.configs.specialperms.SpecialPermsContainer;
-import com.github.nija123098.evelyn.service.services.MemoryManagementService;
 import com.github.nija123098.evelyn.tag.Tag;
 import com.github.nija123098.evelyn.tag.Tagable;
 import com.github.nija123098.evelyn.tag.Tags;
+import com.github.nija123098.evelyn.util.CacheHelper;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
 import com.github.nija123098.evelyn.util.Log;
 
@@ -53,10 +53,10 @@ public class AbstractCommand implements Tagable {
     private Parameter[] parameters;
     private Set<String> emoticonAliases, allNames;
     private long globalUseTime, globalCoolDownTime;
-    private List<Guild> guildCoolDowns;
-    private List<Channel> channelCoolDowns;
-    private List<User> userCoolDowns;
-    private List<GuildUser> guildUserCoolDowns;
+    private CacheHelper.ContainmentCache<Guild> guildCoolDowns;
+    private CacheHelper.ContainmentCache<Channel> channelCoolDowns;
+    private CacheHelper.ContainmentCache<User> userCoolDowns;
+    private CacheHelper.ContainmentCache<GuildUser> guildUserCoolDowns;
     private Set<ContextRequirement> contextRequirements;
     private Set<AbstractCommand> subCommands;
     private List<Tag> tags;
@@ -185,19 +185,19 @@ public class AbstractCommand implements Tagable {
         this.globalCoolDownTime = this.getCoolDown(GlobalConfigurable.class);
         long persistence = this.getCoolDown(Guild.class);
         if (persistence != -1){
-            this.guildCoolDowns = new MemoryManagementService.ManagedList<>(persistence);
+            this.guildCoolDowns = new CacheHelper.ContainmentCache<>(persistence);
         }
         persistence = this.getCoolDown(Channel.class);
         if (persistence != -1){
-            this.channelCoolDowns = new MemoryManagementService.ManagedList<>(persistence);
+            this.channelCoolDowns = new CacheHelper.ContainmentCache<>(persistence);
         }
         persistence = this.getCoolDown(User.class);
         if (persistence != -1){
-            this.userCoolDowns = new MemoryManagementService.ManagedList<>(persistence);
+            this.userCoolDowns = new CacheHelper.ContainmentCache<>(persistence);
         }
         persistence = this.getCoolDown(GuildUser.class);
         if (persistence != -1){
-            this.guildUserCoolDowns = new MemoryManagementService.ManagedList<>(persistence);
+            this.guildUserCoolDowns = new CacheHelper.ContainmentCache<>(persistence);
         }
         EventDistributor.register(this);
         this.aAliases = null;

@@ -1,5 +1,6 @@
 package com.github.nija123098.evelyn.perms;
 
+import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.config.AbstractConfig;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.Configurable;
@@ -15,13 +16,13 @@ import com.github.nija123098.evelyn.exception.PermissionsException;
 import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.perms.configs.standard.GlobalBotRoleConfig;
 import com.github.nija123098.evelyn.perms.configs.standard.GuildBotRoleConfig;
-import com.github.nija123098.evelyn.service.services.ScheduleService;
+import com.github.nija123098.evelyn.util.CacheHelper;
+import com.google.common.cache.LoadingCache;
 
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiPredicate;
 import java.util.stream.Stream;
@@ -36,7 +37,7 @@ import java.util.stream.Stream;
  * @author nija123098
  * @since 1.0.0
  */
-public enum BotRole {
+public enum BotRole {// todo make more efficient
     BOT(true, (user, guild) -> user.isBot()),
     BANNED(true, true, false, WorkAroundReferences.B_A),
     USER(true, (user, guild) -> !BOT.hasRole(user, guild) && !BANNED.hasRole(user, guild)),
@@ -53,9 +54,12 @@ public enum BotRole {
         WorkAroundReferences.set();
     }
     private final Map<Object, Object> PERMISSIONS_CACHE = new HashMap<>();
+    private final LoadingCache<User, Boolean> userCache;
+    private final LoadingCache<User, LoadingCache<Guild, Boolean>> guildCache;
     private boolean isTrueRank, isGlobalFlag, isGuildFlag, guildImportant = this.name().startsWith("GUILD");
     private BiPredicate<User, Guild> detect, change;
     BotRole(boolean isTrueRank, BiPredicate<User, Guild> detect, BiPredicate<User, Guild> change) {
+        this();
         this.isTrueRank = isTrueRank;
         this.detect = detect;
         this.change = change;
@@ -64,11 +68,27 @@ public enum BotRole {
         this(isTrueRank, detect, (user, guild) -> false);
     }
     BotRole(boolean isTrueRank, boolean isGlobalFlag, boolean isGuildFlag, AtomicReference<BotRole> required) {
+        this();
         this.isTrueRank = isTrueRank;
         this.isGlobalFlag = isGlobalFlag;
         this.isGuildFlag = isGuildFlag;
         this.detect = (user, guild) -> (this.isGlobalFlag && ConfigHandler.getSetting(GlobalBotRoleConfig.class, user).contains(this)) || (this.isGuildFlag && guild != null && ConfigHandler.getSetting(GuildBotRoleConfig.class, GuildUser.getGuildUser(guild, user)).contains(this));
         this.change = (user, guild) -> required.get().hasRequiredRole(user, guild);// method reference doesn't work
+    }
+    BotRole() {
+        if (this.guildImportant) {
+            this.userCache = null;
+            this.guildCache = CacheHelper.getLoadingCache(Runtime.getRuntime().availableProcessors() * 4, ConfigProvider.CACHE_SETTINGS.userBotRoleSize(), 120_000, user -> CacheHelper.getLoadingCache(Runtime.getRuntime().availableProcessors(), 20, 120_000, guild -> {
+                for (int i = this.ordinal(); i < values().length; i++) if (values()[i].detect.test(user, guild)) return true;
+                return false;
+            }));
+        } else {
+            this.userCache = CacheHelper.getLoadingCache(Runtime.getRuntime().availableProcessors() * 4, 20, 300_000, user -> {
+                for (int i = this.ordinal(); i < values().length; i++) if (values()[i].detect.test(user, null)) return true;
+                return false;
+            });
+            this.guildCache = null;
+        }
     }
 
     /**
@@ -102,12 +122,7 @@ public enum BotRole {
      * @return if the user has the role or a higher true role.
      */
     public boolean hasRequiredRole(User user, Guild guild){
-        if (!this.isTrueRank) return this.detect.test(user, guild);
-        return (boolean) (this.guildImportant ? ((Map<Object, Object>) PERMISSIONS_CACHE.computeIfAbsent(guild, g -> new ConcurrentHashMap<>())) : PERMISSIONS_CACHE).computeIfAbsent(user, u -> {
-            ScheduleService.schedule(120_000, () -> (this.guildImportant ? (Map<Object, Object>) PERMISSIONS_CACHE.get(guild) : PERMISSIONS_CACHE).remove(user));
-            for (int i = this.ordinal(); i < values().length; i++) if (values()[i].detect.test(user, guild)) return true;
-            return false;
-        });
+        return this.isTrueRank ? this.guildImportant ? this.guildCache.getUnchecked(user).getUnchecked(guild) : this.userCache.getUnchecked(user) : this.detect.test(user, guild);
     }
 
     /**

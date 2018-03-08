@@ -17,17 +17,16 @@ import com.github.nija123098.evelyn.favor.configs.EarnRankConfig;
 import com.github.nija123098.evelyn.favor.configs.StackFavorRankConfig;
 import com.github.nija123098.evelyn.favor.configs.balencing.FavorRankEquationConfig;
 import com.github.nija123098.evelyn.helping.CalculateCommand;
-import com.github.nija123098.evelyn.service.services.ScheduleService;
+import com.github.nija123098.evelyn.util.CacheHelper;
 import com.github.nija123098.evelyn.util.ColorRange;
+import com.google.common.cache.Cache;
 import com.google.common.util.concurrent.AtomicDouble;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import sx.blah.discord.util.RoleBuilder;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -35,7 +34,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 1.0.0
  */
 public class RanksSetupCommand extends AbstractCommand {
-    static final Map<Guild, Runnable> TASK_MAP = new HashMap<>();
+    static final Cache<Guild, Runnable> TASK_CACHE = CacheHelper.getCache(4, 100, 300_000);
     public RanksSetupCommand() {
         super(RanksCommand.class, "setup", "setupranks, setup ranks", null, null, "Sets up the ranks for autoranking");
     }
@@ -60,9 +59,7 @@ public class RanksSetupCommand extends AbstractCommand {
                 "\nYou have 5 minutes to do `@Evelyn setupranks approve`" +
                 "\nYou must name these, it's not too hard.  (I'll change this soon)" +
                 "\nRanks will update for a user when their favor level changes, which happens fairly often.");
-        ScheduleService.ScheduledTask task = ScheduleService.schedule(300_000, () -> TASK_MAP.remove(guild));
-        TASK_MAP.put(guild, () -> {
-            task.cancel();
+        TASK_CACHE.put(guild, () -> {
             List<Runnable> roleMaking = new ArrayList<>(requirement.size());
             AtomicInteger i = new AtomicInteger();
             for (; i.get() < requirement.size(); i.incrementAndGet()) {
@@ -74,7 +71,7 @@ public class RanksSetupCommand extends AbstractCommand {
                     ConfigHandler.setSetting(EarnRankConfig.class, role, value);
                 });
             }
-            TASK_MAP.remove(guild);
+            TASK_CACHE.invalidate(guild);
             for (int j = roleMaking.size() - 1; j > -1; --j) roleMaking.get(j).run();
         });
     }

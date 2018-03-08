@@ -1,15 +1,14 @@
 package com.github.nija123098.evelyn.discordobjects.wrappers;
 
+import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.config.ConfigLevel;
 import com.github.nija123098.evelyn.config.Configurable;
 import com.github.nija123098.evelyn.config.GlobalConfigurable;
 import com.github.nija123098.evelyn.discordobjects.ExceptionWrapper;
 import com.github.nija123098.evelyn.exception.ConfigurableConvertException;
 import com.github.nija123098.evelyn.perms.BotRole;
-import com.github.nija123098.evelyn.service.services.MemoryManagementService;
-import com.github.nija123098.evelyn.util.FormatHelper;
-import com.github.nija123098.evelyn.util.GetterUtil;
-import com.github.nija123098.evelyn.util.Time;
+import com.github.nija123098.evelyn.util.*;
+import com.google.common.cache.LoadingCache;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IPrivateChannel;
 import sx.blah.discord.handle.obj.IVoiceChannel;
@@ -24,19 +23,19 @@ import java.util.concurrent.atomic.AtomicReference;
  * @since 1.0.0
  */
 public class Channel implements Configurable {
-    private static final Map<String, Channel> MAP = new MemoryManagementService.ManagedMap<>(180000);
+    private static final LoadingCache<IChannel, Channel> CACHE = CacheHelper.getLoadingCache(Runtime.getRuntime().availableProcessors() * 2, ConfigProvider.CACHE_SETTINGS.channelSize(), 300_000, channel -> channel.isPrivate() ? new DirectChannel((IPrivateChannel) channel) : channel instanceof IVoiceChannel ? new VoiceChannel((IVoiceChannel) channel) : new Channel(channel));
     public static Channel getChannel(String id){
-        String r = FormatHelper.filtering(id, Character::isLetterOrDigit);
         try {
-            Channel channel = getChannel((IChannel) GetterUtil.getAny(DiscordClient.clients(), f -> f.getChannelByID(Long.parseLong(r))));
-            return channel == null ? VoiceChannel.getVoiceChannel(r) : channel;
+            IChannel channel = GetterUtil.getAny(DiscordClient.clients(), f -> f.getChannelByID(Long.parseLong(FormatHelper.filtering(id, Character::isLetterOrDigit))));
+            if (channel == null) return null;
+            return CACHE.getUnchecked(channel);
         } catch (NumberFormatException e) {
             return null;
         }
     }
     public static Channel getChannel(IChannel channel){
         if (channel == null) return null;
-        return MAP.computeIfAbsent(channel.getStringID(), s -> channel.isPrivate() ? new DirectChannel((IPrivateChannel) channel) : channel instanceof IVoiceChannel ? new VoiceChannel((IVoiceChannel) channel) : new Channel(channel));
+        return CACHE.getUnchecked(channel);
     }
     static List<Channel> getChannels(List<IChannel> iChannels){
         List<Channel> channels = new ArrayList<>(iChannels.size());
@@ -44,10 +43,8 @@ public class Channel implements Configurable {
         return channels;
     }
     public static void update(IChannel channel){// should handle DirectChannel and VoiceChannel updates as well
-        Channel c = MAP.get(channel.getStringID());
-        if (c != null){
-            c.reference.set(channel);
-        }
+        Channel c = CACHE.getIfPresent(channel);
+        if (c != null) c.reference.set(channel);
     }
     final transient AtomicReference<IChannel> reference;
     private String ID;

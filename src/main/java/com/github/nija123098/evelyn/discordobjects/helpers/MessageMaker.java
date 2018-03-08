@@ -11,7 +11,6 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.*;
 import com.github.nija123098.evelyn.exception.DevelopmentException;
 import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.moderation.logging.VoiceCommandPrintChannelConfig;
-import com.github.nija123098.evelyn.service.services.ScheduleService;
 import com.github.nija123098.evelyn.util.*;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
@@ -25,6 +24,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -43,6 +45,7 @@ public class MessageMaker {
     static {
         Launcher.registerShutdown(ReactionBehavior::deregisterAll);
     }
+    private static final ScheduledExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadScheduledExecutor(r -> ThreadHelper.getDemonThreadSingle(r, "Message-Maker-Thread"));
     private static final Color DEFAULT_COLOR = new Color(116, 32, 196);
     private static final int CHAR_LIMIT = 2000;
     private static final int EMBED_LIMIT = 1000;
@@ -774,7 +777,7 @@ public class MessageMaker {
             this.message = ExceptionWrapper.wrap((ExceptionWrapper.Request<IMessage>) () -> this.builder.send());
             this.ourMessage = Message.getMessage(this.message);
             this.reactions.forEach(s -> ExceptionWrapper.wrap(() -> this.message.addReaction(ReactionEmoji.of(s))));
-            if (this.deleteDelay != null) ScheduleService.schedule(this.deleteDelay, () -> ExceptionWrapper.wrap(this.message::delete));
+            if (this.deleteDelay != null) EXECUTOR_SERVICE.schedule(() -> ExceptionWrapper.wrap(this.message::delete), this.deleteDelay, TimeUnit.MILLISECONDS);
         } else {
             if (this.embed == null) ExceptionWrapper.wrap(() -> this.message.edit(this.builder.getContent()));
             else ExceptionWrapper.wrap(() -> this.message.edit(this.embed.build()));

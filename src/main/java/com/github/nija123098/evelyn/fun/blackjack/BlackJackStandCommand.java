@@ -5,8 +5,12 @@ import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.fun.BlackJackCommand;
-import com.github.nija123098.evelyn.service.services.ScheduleService;
+import com.github.nija123098.evelyn.util.ThreadHelper;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -14,6 +18,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * @since 1.0.0
  */
 public class BlackJackStandCommand extends AbstractCommand {
+    private static final ScheduledExecutorService SCHEDULED_EXECUTOR_SERVICE = Executors.newSingleThreadScheduledExecutor(r -> ThreadHelper.getDemonThreadSingle(r, "Black-Jack-Stand-Thread"));
     public BlackJackStandCommand() {
         super(BlackJackCommand.class, "stand", "stand, stay", null, "stay", "Stands in a game of blackjack");
     }
@@ -24,18 +29,18 @@ public class BlackJackStandCommand extends AbstractCommand {
             maker.append("Start a game with ").appendRaw("__bj hit__");
             return;
         }
-        AtomicReference<ScheduleService.ScheduledTask> task = new AtomicReference<>();
-        task.set(ScheduleService.scheduleRepeat(10, 1_000, () -> {
+        AtomicReference<ScheduledFuture<?>> future = new AtomicReference<>();
+        future.set(SCHEDULED_EXECUTOR_SERVICE.schedule(() -> {
             int val = game.dealerHit();
             if (val > 21) {
-                task.get().cancel();
+                future.get().cancel(false);
                 maker.append("The Dealer has busted\n");
             }else if (game.dealerBlackJack()) {
-                task.get().cancel();
+                future.get().cancel(false);
                 maker.append("The Dealer has Black Jack\n");
             }
-            if (val > 16 && !task.get().isCanceled()) {
-                task.get().cancel();
+            if (val > 16 && !future.get().isCancelled()) {
+                future.get().cancel(false);
                 int pVal = game.playerValue();
                 if (val > pVal){
                     maker.append("You lose\n");
@@ -46,7 +51,7 @@ public class BlackJackStandCommand extends AbstractCommand {
                 }
             }
             maker.appendRaw(game.toString()).send();
-        }));
+        }, 1, TimeUnit.SECONDS));
         BlackJackGame.setGame(user, null);
     }
 }

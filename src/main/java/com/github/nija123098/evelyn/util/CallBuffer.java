@@ -1,7 +1,8 @@
 package com.github.nija123098.evelyn.util;
 
-import com.github.nija123098.evelyn.service.services.ScheduleService;
-
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -12,6 +13,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * @since 1.0.0
  */
 public class CallBuffer {
+    private final ScheduledExecutorService scheduledExecutorService;
     private final AtomicLong time = new AtomicLong(System.currentTimeMillis());
     private final long callDifference;
 
@@ -20,8 +22,13 @@ public class CallBuffer {
      *
      * @param callDifference the deference in
      */
-    public CallBuffer(long callDifference) {
+    public CallBuffer(String name, long callDifference) {
         this.callDifference = callDifference;
+        scheduledExecutorService = Executors.newSingleThreadScheduledExecutor(r -> {
+            Thread thread = new Thread(r, name + "-Call-Buffer-Thread");
+            thread.setDaemon(true);
+            return thread;
+        });
     }
 
     /**
@@ -30,6 +37,8 @@ public class CallBuffer {
      * @param runnable the thing to eventually run
      */
     public void call(Runnable runnable){
-        ScheduleService.schedule(this.time.getAndAdd(this.callDifference) - System.currentTimeMillis() + this.callDifference, runnable);
+        long val = this.time.get();
+        this.time.set(val > System.currentTimeMillis() ? val + this.callDifference : System.currentTimeMillis());
+        scheduledExecutorService.schedule(runnable, this.time.get(), TimeUnit.MILLISECONDS);
     }
 }

@@ -9,10 +9,8 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.VoiceChannel;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordVoiceJoin;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordVoiceLeave;
-import com.github.nija123098.evelyn.service.services.MemoryManagementService;
+import com.github.nija123098.evelyn.util.CacheHelper;
 import com.github.nija123098.evelyn.util.LangString;
-
-import java.util.List;
 
 import static com.github.nija123098.evelyn.config.ConfigCategory.GUILD_PERSONALIZATION;
 import static com.github.nija123098.evelyn.config.GuildUser.getGuildUser;
@@ -37,7 +35,7 @@ public class HeraldConfig extends AbstractConfig<Boolean, Guild> {
         herald(event.getChannel(), event.getUser(), false);
     }
 
-    private static final List<GuildUser> BUFFER = new MemoryManagementService.ManagedList<>(30_000);
+    private static final CacheHelper.ContainmentCache<GuildUser> BUFFER = new CacheHelper.ContainmentCache<>(30_000);
 
     private void herald(VoiceChannel channel, User user, boolean join) {
         if (getOurUser().equals(user)) return;

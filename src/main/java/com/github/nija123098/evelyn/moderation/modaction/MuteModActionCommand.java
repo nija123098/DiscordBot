@@ -14,18 +14,22 @@ import com.github.nija123098.evelyn.exception.ConfigurationException;
 import com.github.nija123098.evelyn.moderation.MuteRoleConfig;
 import com.github.nija123098.evelyn.moderation.modaction.support.AbstractModAction;
 import com.github.nija123098.evelyn.moderation.modaction.support.MuteActionConfig;
-import com.github.nija123098.evelyn.service.services.ScheduleService;
+import com.github.nija123098.evelyn.util.ThreadHelper;
 import com.github.nija123098.evelyn.util.Time;
 import javafx.util.Pair;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author nija123098
  * @since 1.0.0
  */
 public class MuteModActionCommand extends AbstractCommand {
+    private static final ScheduledExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadScheduledExecutor(r -> ThreadHelper.getDemonThreadSingle(r, "Mute-Action-Thread"));
     public MuteModActionCommand() {
         super(ModActionCommand.class, "mute", "mute", null, "m", "Mutes an annoying user for a specified amount of time or 1 hour by default");
     }
@@ -43,10 +47,10 @@ public class MuteModActionCommand extends AbstractCommand {
         roles.forEach(user::removeRole);
         user.addRole(ConfigHandler.getSetting(MuteRoleConfig.class, guild));
         ConfigHandler.changeSetting(MuteActionConfig.class, GuildUser.getGuildUser(guild, user), pair -> new Pair<>((pair == null ? 0 : pair.getKey() - current) + length + current, roles));
-        ScheduleService.schedule(length, () -> {
+        EXECUTOR_SERVICE.schedule(() -> {
             if (!(ConfigHandler.getSetting(MuteActionConfig.class, GuildUser.getGuildUser(guild, user)).getKey() + 10_000 > System.currentTimeMillis())) return;
             unmute(guild, user);
-        });
+        }, length, TimeUnit.MILLISECONDS);
     }
     public static void unmute(Guild guild, User user){
         ConfigHandler.alterSetting(MuteActionConfig.class, GuildUser.getGuildUser(guild, user), pair -> {

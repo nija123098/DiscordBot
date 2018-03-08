@@ -6,7 +6,7 @@ import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.launcher.Launcher;
-import com.github.nija123098.evelyn.service.services.ScheduleService;
+import com.github.nija123098.evelyn.util.CareLess;
 import com.github.nija123098.evelyn.util.ExecuteShellCommand;
 import com.github.nija123098.evelyn.util.PastebinUtil;
 import com.github.nija123098.evelyn.util.PlatformDetector;
@@ -41,8 +41,9 @@ public class UpdateBotCommand extends AbstractCommand {
             if (ExecuteShellCommand.getOutput().contains("BUILD SUCCESS")) {
                 maker.appendRaw("\n*Compilation Results:*\n" + PastebinUtil.postToPastebin("Compilation Results", ExecuteShellCommand.getOutput()) + "\n");
                 maker.append("\n**The bot will now restart to apply the updates.**").send();
-                ScheduleService.schedule(10000, () -> Launcher.shutdown(1, 0, false));
                 ExecuteShellCommand.commandToExecute(commandPrefix + ConfigProvider.UPDATE_SCRIPTS.updateScript());
+                CareLess.lessSleep(10_000);
+                Launcher.shutdown(1, 0, false);
             } else maker.appendRaw("\n**ERROR COMPILING BOT**. You can view the log here:\n" + PastebinUtil.postToPastebin("Compilation Error Log", ExecuteShellCommand.getOutput()));
         }
     }

@@ -20,11 +20,10 @@ import com.github.nija123098.evelyn.exception.ArgumentException;
 import com.github.nija123098.evelyn.exception.GhostException;
 import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.moderation.logging.MusicChannelConfig;
-import com.github.nija123098.evelyn.service.services.ScheduleService;
-import com.github.nija123098.evelyn.util.Care;
+import com.github.nija123098.evelyn.util.CallBuffer;
+import com.github.nija123098.evelyn.util.CareLess;
 import com.github.nija123098.evelyn.util.LangString;
 import com.github.nija123098.evelyn.util.Log;
-import com.github.nija123098.evelyn.util.ThreadProvider;
 import com.sedmelluq.discord.lavaplayer.player.AudioConfiguration;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
@@ -68,7 +67,8 @@ public class GuildAudioManager extends AudioEventAdapter{
         PLAYER_MANAGER.registerSourceManager(new LocalAudioSourceManager());
         AtomicInteger integer = new AtomicInteger();
         AbstractConfig<List<Track>, VoiceChannel> config = ConfigHandler.getConfig(PlayQueueConfig.class);
-        Launcher.registerStartup(() -> config.getNonDefaultSettings().forEach((channel, tracks) -> ScheduleService.schedule(integer.getAndIncrement() * 1000 + 5_000, () -> {
+        CallBuffer requestBuffer = new CallBuffer("Audio-Reconnect-Joiner", 1000);
+        Launcher.registerStartup(() -> config.getNonDefaultSettings().forEach((channel, tracks) -> requestBuffer.call(() -> {
             config.reset(channel);
             if (!hasValidListeners(channel)) return;
             GuildAudioManager manager = getManager(channel);
@@ -83,7 +83,7 @@ public class GuildAudioManager extends AudioEventAdapter{
                 config.setValue(guildAudioManager.channel, guildAudioManager.queue);
                 guildAudioManager.interrupt(bye);
             });
-            Care.lessSleep(5_000);
+            CareLess.lessSleep(5_000);
         });
         EventDistributor.register(GuildAudioManager.class);
     }
@@ -272,7 +272,7 @@ public class GuildAudioManager extends AudioEventAdapter{
         if (position != 0) this.lavaPlayer.getPlayingTrack().setPosition(position);
         this.lavaPlayer.setPaused(false);
         if (this.destroyed) throw new RuntimeException("Hey lava player, I destroyed you, NOW GO AWAY");
-        if (!this.loop) ThreadProvider.sub(() -> {
+        if (!this.loop) {
             Track current = this.currentTrack();
             if (current instanceof SpeechTrack) return;
             Channel channel = ConfigHandler.getSetting(MusicChannelConfig.class, this.getGuild());
@@ -285,7 +285,7 @@ public class GuildAudioManager extends AudioEventAdapter{
                 this.currentDisplays.add(maker.sentMessage());
                 if (this.currentDisplays.size() > 2) this.currentDisplays.remove(0).delete();
             }
-        });
+        }
     }
 
     /**
@@ -490,7 +490,7 @@ public class GuildAudioManager extends AudioEventAdapter{
                     if (this.frames.size() < BUFFER_SIZE){
                         AudioFrame frame = manager.lavaPlayer.provide();
                         this.frames.add(frame == null ? NULL : frame);
-                    }else Care.lessSleep(5);
+                    }else CareLess.lessSleep(5);
                 }
             });
             this.queueThread.setDaemon(true);

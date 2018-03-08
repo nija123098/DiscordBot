@@ -1,17 +1,18 @@
 package com.github.nija123098.evelyn.discordobjects.helpers;
 
+import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Message;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Reaction;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordReactionEvent;
-import com.github.nija123098.evelyn.service.services.ScheduleService;
-import org.apache.commons.lang3.tuple.MutablePair;
-import org.apache.commons.lang3.tuple.Pair;
+import com.github.nija123098.evelyn.util.CacheHelper;
+import com.google.common.cache.LoadingCache;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A utility class for preforming functions when specified reactions are called.
@@ -23,8 +24,7 @@ import java.util.Map;
 @FunctionalInterface
 public interface ReactionBehavior {
     void behave(boolean add, Reaction reaction, User user);
-    long PERSISTENCE = 120000;
-    Map<Message, Map<String, Pair<ReactionBehavior, ScheduleService.ScheduledTask>>> BEHAVIORS = new HashMap<>();
+    LoadingCache<Message, Map<String, ReactionBehavior>> CACHE = CacheHelper.getLoadingCache(Runtime.getRuntime().availableProcessors() * 2, ConfigProvider.CACHE_SETTINGS.reactionBehaviorSize(), 120_000, k -> new ConcurrentHashMap<>());
 
     /**
      * Registers a listener to preform a
@@ -36,7 +36,8 @@ public interface ReactionBehavior {
     static void registerListener(Message message, String emoticonName, ReactionBehavior behavior){
         if (message == null) return;
         message.addReactionByName(emoticonName);
-        BEHAVIORS.computeIfAbsent(message, m -> new HashMap<>()).computeIfAbsent(emoticonName, s -> new MutablePair<>(behavior, ScheduleService.schedule(PERSISTENCE, () -> deregisterListener(message, emoticonName))));
+        if (CACHE.getIfPresent(message) == null) CACHE.put(message, new HashMap<>());
+        CACHE.getUnchecked(message).putIfAbsent(emoticonName, behavior);
     }
 
     /**
@@ -48,10 +49,10 @@ public interface ReactionBehavior {
      */
     static void deregisterListener(Message message, String emoticonName){
         if (message == null) return;
-        Map<String, Pair<ReactionBehavior, ScheduleService.ScheduledTask>> map = BEHAVIORS.get(message);
+        Map<String, ReactionBehavior> map = CACHE.getIfPresent(message);
         if (map == null) return;
         message.removeReactionByName(emoticonName);
-        if (map.size() == 1) BEHAVIORS.remove(message);
+        if (map.size() == 1) CACHE.invalidate(message);
         else map.remove(emoticonName);
     }
 
@@ -59,8 +60,8 @@ public interface ReactionBehavior {
      * De-registers all {@link ReactionBehavior} listeners.
      */
     static void deregisterAll(){
-        Map<Message, Map<String, Pair<ReactionBehavior, ScheduleService.ScheduledTask>>> behaviors = new HashMap<>(BEHAVIORS);
-        BEHAVIORS.clear();
+        Map<Message, Map<String, ReactionBehavior>> behaviors = new HashMap<>(CACHE.asMap());
+        CACHE.invalidateAll();
         behaviors.forEach((message, map) -> map.keySet().forEach(message::removeReaction));
     }
 
@@ -72,11 +73,10 @@ public interface ReactionBehavior {
     @EventListener
     static void handle(DiscordReactionEvent reaction){
         if (reaction.getUser() == null || reaction.getUser().isBot() || !reaction.getMessage().getAuthor().equals(DiscordClient.getOurUser())) return;
-        Map<String, Pair<ReactionBehavior, ScheduleService.ScheduledTask>> map = BEHAVIORS.get(reaction.getMessage());
+        Map<String, ReactionBehavior> map = CACHE.getUnchecked(reaction.getMessage());
         if (map == null) return;
-        Pair<ReactionBehavior, ScheduleService.ScheduledTask> pair = map.get(reaction.getReaction().getName());
-        if (pair == null) return;
-        map.forEach((s, par) -> par.setValue(ScheduleService.schedule(PERSISTENCE, () -> deregisterListener(reaction.getMessage(), reaction.getReaction().getName()))).cancel());
-        pair.getLeft().behave(reaction.addingReaction(), reaction.getReaction(), reaction.getUser());
+        ReactionBehavior behavior = map.get(reaction.getReaction().getName());
+        if (behavior == null) return;
+        behavior.behave(reaction.addingReaction(), reaction.getReaction(), reaction.getUser());
     }
 }

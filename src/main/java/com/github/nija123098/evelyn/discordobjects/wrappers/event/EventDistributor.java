@@ -4,7 +4,7 @@ import com.github.nija123098.evelyn.exception.DevelopmentException;
 import com.github.nija123098.evelyn.exception.GhostException;
 import com.github.nija123098.evelyn.util.Log;
 import com.github.nija123098.evelyn.util.ReflectionHelper;
-import com.github.nija123098.evelyn.util.ThreadProvider;
+import com.github.nija123098.evelyn.util.ThreadHelper;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.*;
 import java.util.stream.Stream;
 
 /**
@@ -25,6 +25,7 @@ import java.util.stream.Stream;
 public class EventDistributor {
     private static final Map<Class<?>, Set<Listener>> LISTENER_MAP = new ConcurrentHashMap<>();
     private static final Map<Class<?>, List<Listener>> LISTENER_CASH = new ConcurrentHashMap<>();
+    private static final ExecutorService SCHEDULED_EXECUTOR_SERVICE = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors(), Runtime.getRuntime().availableProcessors() * 4, 2, TimeUnit.MINUTES, new LinkedBlockingQueue<>(400), r -> ThreadHelper.getDemonThread(r, "Event-Distributor-Thread"));
 
     /**
      * Registers a {@link Class} or {@link Object} listener
@@ -55,7 +56,7 @@ public class EventDistributor {
      * @param event the event to distribute.
      */
     public static void distribute(BotEvent event){
-        ThreadProvider.sub(() -> {
+        SCHEDULED_EXECUTOR_SERVICE.submit(() -> {
             try{
                 LISTENER_CASH.computeIfAbsent(event.getClass(), c -> {
                     List<Listener> listeners = new ArrayList<>();

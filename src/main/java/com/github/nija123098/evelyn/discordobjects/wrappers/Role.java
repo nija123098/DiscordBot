@@ -1,19 +1,20 @@
 package com.github.nija123098.evelyn.discordobjects.wrappers;
 
+import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.config.ConfigLevel;
 import com.github.nija123098.evelyn.config.Configurable;
 import com.github.nija123098.evelyn.discordobjects.ExceptionWrapper;
 import com.github.nija123098.evelyn.exception.ConfigurableConvertException;
 import com.github.nija123098.evelyn.perms.BotRole;
+import com.github.nija123098.evelyn.util.CacheHelper;
 import com.github.nija123098.evelyn.util.FormatHelper;
+import com.google.common.cache.LoadingCache;
 import sx.blah.discord.handle.obj.IRole;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -24,24 +25,27 @@ import java.util.stream.Collectors;
  * @since 1.0.0
  */
 public class Role implements Configurable {
-    private static final Map<String, Role> MAP = new ConcurrentHashMap<>();
+    private static final LoadingCache<IRole, Role> CACHE = CacheHelper.getLoadingCache(Runtime.getRuntime().availableProcessors() * 2, ConfigProvider.CACHE_SETTINGS.roleSize(), 120_000, Role::new);
     public static Role getRole(String id){
-        IRole role;
-        try{role = DiscordClient.getAny(client -> client.getRoleByID(Long.parseLong(FormatHelper.filtering(id, Character::isLetterOrDigit))));
-        }catch(NumberFormatException e){return null;}
-        if (role == null) return null;
-        return getRole(role);
+        try {
+            IRole iRole = DiscordClient.getAny(client -> client.getRoleByID(Long.parseLong(FormatHelper.filtering(id, Character::isLetterOrDigit))));
+            if (iRole == null) return null;
+            return CACHE.getUnchecked(iRole);
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
-    public static Role getRole(IRole role){
-        return MAP.computeIfAbsent(role.getStringID(), s -> new Role(role));
+    public static Role getRole(IRole iRole){
+        return CACHE.getUnchecked(iRole);
     }
     public static List<Role> getRoles(List<IRole> iRoles) {
         List<Role> roles = new ArrayList<>(iRoles.size());
         iRoles.forEach(iUser -> roles.add(getRole(iUser)));
         return roles;
     }
-    public static void update(IRole role){// hash is based on id, so no old channel is necessary
-        MAP.computeIfAbsent(role.getStringID(), s -> new Role(role)).reference.set(role);
+    public static void update(IRole iRole){// hash is based on id, so no old channel is necessary
+        Role r = CACHE.getIfPresent(iRole);
+        if (r != null) r.reference.set(iRole);
     }
     private transient AtomicReference<IRole> reference;
     private String ID;

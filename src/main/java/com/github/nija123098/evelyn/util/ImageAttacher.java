@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static com.github.nija123098.evelyn.discordobjects.wrappers.Channel.getChannel;
 import static com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient.getClientForShard;
 import static com.github.nija123098.evelyn.discordobjects.wrappers.event.EventDistributor.register;
-import static com.github.nija123098.evelyn.util.Care.lessSleep;
+import static com.github.nija123098.evelyn.util.CareLess.lessSleep;
 import static com.github.nija123098.evelyn.util.Log.log;
 
 /**

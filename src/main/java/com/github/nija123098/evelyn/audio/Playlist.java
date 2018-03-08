@@ -13,8 +13,9 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.exception.ArgumentException;
 import com.github.nija123098.evelyn.exception.DevelopmentException;
 import com.github.nija123098.evelyn.exception.PermissionsException;
+import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.perms.BotRole;
-import com.github.nija123098.evelyn.service.services.ScheduleService;
+import com.github.nija123098.evelyn.util.CareLess;
 import com.github.nija123098.evelyn.util.FormatHelper;
 import com.github.nija123098.evelyn.util.Rand;
 
@@ -38,7 +39,10 @@ public class Playlist implements Configurable {
     static final String GLOBAL_PLAYLIST_ID = "GLOBAL-PLAYLIST-ID";
     private static final Map<String, Playlist> MAP = new ConcurrentHashMap<>();
     static {
-        ScheduleService.schedule(1000, () -> MAP.put(GLOBAL_PLAYLIST_ID, GlobalPlaylist.GLOBAL_PLAYLIST));
+        Launcher.registerStartup(() -> {
+            CareLess.lessSleep(1000);
+            MAP.put(GLOBAL_PLAYLIST_ID, GlobalPlaylist.GLOBAL_PLAYLIST);
+        });
     }
     public static Playlist getPlaylist(User user, String name){
         if (name.isEmpty()) throw new ArgumentException("Your playlist must have a name");

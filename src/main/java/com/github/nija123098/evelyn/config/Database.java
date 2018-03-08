@@ -21,7 +21,7 @@ import java.sql.SQLException;
  * @since 1.0.0
  */
 public class Database {
-    private static final CallBuffer CALL_BUFFER = new CallBuffer(250);
+    private static final CallBuffer CALL_BUFFER = new CallBuffer("Database", 250);
     private static final Connection CONNECTION;
     private static final QueryRunner RUNNER;
     static {

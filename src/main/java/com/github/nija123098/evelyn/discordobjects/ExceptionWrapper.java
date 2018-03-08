@@ -2,7 +2,7 @@ package com.github.nija123098.evelyn.discordobjects;
 
 import com.github.nija123098.evelyn.exception.DException;
 import com.github.nija123098.evelyn.exception.PermissionsException;
-import com.github.nija123098.evelyn.util.Care;
+import com.github.nija123098.evelyn.util.CareLess;
 import sx.blah.discord.util.DiscordException;
 import sx.blah.discord.util.MissingPermissionsException;
 import sx.blah.discord.util.RateLimitException;
@@ -67,7 +67,7 @@ public class ExceptionWrapper {
             throw new PermissionsException(e);
         } catch (DiscordException e){
             if (e.getMessage().contains("cloudflare-nginx")) {
-                Care.lessSleep(250);
+                CareLess.lessSleep(250);
                 return innerWrap(request);
             }
             throw new DException(e);

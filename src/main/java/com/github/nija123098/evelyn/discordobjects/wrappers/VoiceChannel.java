@@ -1,7 +1,6 @@
 package com.github.nija123098.evelyn.discordobjects.wrappers;
 
 import com.github.nija123098.evelyn.discordobjects.ExceptionWrapper;
-import com.github.nija123098.evelyn.util.GetterUtil;
 import sx.blah.discord.handle.obj.IVoiceChannel;
 
 import java.util.ArrayList;
@@ -15,7 +14,7 @@ import java.util.List;
  */
 public class VoiceChannel extends Channel {
     static VoiceChannel getVoiceChannel(String id){// I have no clue how this hasn't thrown any NumberFormatExceptions so far
-        return getVoiceChannel((IVoiceChannel) GetterUtil.getAny(DiscordClient.clients(), f -> f.getVoiceChannelByID(Long.parseLong(id))));
+        return (VoiceChannel) Channel.getChannel(id);
     }
     public static VoiceChannel getVoiceChannel(IVoiceChannel channel){
         return (VoiceChannel) Channel.getChannel(channel);

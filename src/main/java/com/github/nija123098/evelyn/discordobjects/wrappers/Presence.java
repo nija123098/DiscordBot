@@ -1,11 +1,12 @@
 package com.github.nija123098.evelyn.discordobjects.wrappers;
 
-import com.github.nija123098.evelyn.service.services.MemoryManagementService;
+import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
+import com.github.nija123098.evelyn.util.CacheHelper;
+import com.google.common.cache.LoadingCache;
 import sx.blah.discord.handle.obj.ActivityType;
 import sx.blah.discord.handle.obj.IPresence;
 import sx.blah.discord.handle.obj.StatusType;
 
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -15,10 +16,10 @@ import java.util.Optional;
  * @since 1.0.0
  */
 public class Presence {
-    private static final Map<IPresence, Presence> MAP = new MemoryManagementService.ManagedMap<>(60000);
+    private static final LoadingCache<IPresence, Presence> MAP = CacheHelper.getLoadingCache(4, ConfigProvider.CACHE_SETTINGS.presenceSize(), 30_000, Presence::new);
     public static Presence getPresence(IPresence presence){
         if (presence == null) return null;
-        return MAP.computeIfAbsent(presence, p -> new Presence(presence));
+        return MAP.getUnchecked(presence);
     }
     private IPresence iPresence;
     private Presence(IPresence iPresence){

@@ -7,15 +7,15 @@ import com.github.nija123098.evelyn.discordobjects.ExceptionWrapper;
 import com.github.nija123098.evelyn.exception.ConfigurableConvertException;
 import com.github.nija123098.evelyn.exception.GhostException;
 import com.github.nija123098.evelyn.perms.BotRole;
-import com.github.nija123098.evelyn.service.services.MemoryManagementService;
+import com.github.nija123098.evelyn.util.CacheHelper;
 import com.github.nija123098.evelyn.util.Time;
+import com.google.common.cache.LoadingCache;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IRole;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -26,21 +26,19 @@ import java.util.stream.Collectors;
  * @since 1.0.0
  */
 public class Guild implements Configurable {
-    private static final Map<String, Guild> MAP = new MemoryManagementService.ManagedMap<>(180000);
+    private static final LoadingCache<IGuild, Guild> CACHE = CacheHelper.getLoadingCache(Runtime.getRuntime().availableProcessors() * 2, ConfigProvider.CACHE_SETTINGS.guildSize(), 600_000, iGuild -> new Guild(iGuild));
     public static Guild getGuild(String id){
         try {
             IGuild guild = DiscordClient.getAny(client -> client.getGuildByID(Long.parseLong(id)));
             if (guild == null) return null;
-            return MAP.computeIfAbsent(id, s -> new Guild(guild));
+            return CACHE.getUnchecked(guild);
         } catch (NumberFormatException e) {
             return null;
         }
     }
     public static Guild getGuild(IGuild guild){
-        if (guild == null){
-            return null;
-        }
-        return MAP.computeIfAbsent(guild.getStringID(), s -> new Guild(guild));
+        if (guild == null) return null;
+        return CACHE.getUnchecked(guild);
     }
     static List<Guild> getGuilds(List<IGuild> iGuilds){
         List<Guild> list = new ArrayList<>(iGuilds.size());
@@ -48,10 +46,8 @@ public class Guild implements Configurable {
         return list;
     }
     public static void update(IGuild guild){// hash is based on id, so no old channel is necessary
-        Guild g = MAP.get(guild.getStringID());
-        if (g != null){
-            g.reference.set(guild);
-        }
+        Guild g = CACHE.getIfPresent(guild);
+        if (g != null) g.reference.set(guild);
     }
     private String ID;
     private transient AtomicReference<IGuild> reference;

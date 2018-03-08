@@ -15,8 +15,11 @@ public class RanksSetupApproveCommand extends AbstractCommand {
     }
     @Command
     public void command(Guild guild, MessageMaker maker){
-        Runnable task = RanksSetupCommand.TASK_MAP.remove(guild);
-        if (task != null) task.run();
+        Runnable task = RanksSetupCommand.TASK_CACHE.getIfPresent(guild);
+        if (task != null) {
+            RanksSetupCommand.TASK_CACHE.invalidate(guild);
+            task.run();
+        }
         else maker.append("It seems this either timed out or was activated already");
     }
 }

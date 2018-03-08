@@ -5,7 +5,7 @@ import com.github.nija123098.evelyn.config.GuildUser;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Role;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.favor.FavorChangeEvent;
-import com.github.nija123098.evelyn.service.services.MemoryManagementService;
+import com.github.nija123098.evelyn.util.CacheHelper;
 import com.github.nija123098.evelyn.util.CallBuffer;
 import com.google.common.util.concurrent.AtomicDouble;
 
@@ -21,8 +21,8 @@ import static java.util.stream.Collectors.toSet;
  * @since 1.0.0
  */
 public class EarnRankConfig extends AbstractConfig<Float, Role> {
-    private static final CallBuffer CALL_BUFFER = new CallBuffer(500);
-    private static final Set<GuildUser> USERS = new MemoryManagementService.ManagedSet<>(300_000);// 5 min
+    private static final CallBuffer CALL_BUFFER = new CallBuffer("Earn-Rank", 500);
+    private static final CacheHelper.ContainmentCache<GuildUser> USERS = new CacheHelper.ContainmentCache<>(300_000);// 5 min
 
     public EarnRankConfig() {
         super("favor_requirement", "", FAVOR, (Float) null, "A map of roles earned by users due to their favor in a guild");

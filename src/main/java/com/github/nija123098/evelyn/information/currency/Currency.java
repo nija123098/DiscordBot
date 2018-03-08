@@ -1,8 +1,9 @@
 package com.github.nija123098.evelyn.information.currency;
 
 import com.github.nija123098.evelyn.exception.DevelopmentException;
-import com.github.nija123098.evelyn.service.services.MemoryManagementService;
+import com.github.nija123098.evelyn.util.CacheHelper;
 import com.github.nija123098.evelyn.util.FormatHelper;
+import com.google.common.cache.LoadingCache;
 import com.google.gson.JsonParser;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
@@ -56,7 +57,7 @@ public enum Currency {
         this.names.add(this.name());
         Collections.addAll(this.names, names);
     }
-    private Map<Currency, Double> conversion = new MemoryManagementService.ManagedMap<>(10_000);
+    private LoadingCache<Currency, Double> conversion = CacheHelper.getLoadingCache(4, 50, 10_000, currency -> getConversion(this.name(), currency.name()));
     private Function<Double, String> display;
     private List<String> names = new ArrayList<>(1);
     public String getDisplay(Double amount){
@@ -66,9 +67,9 @@ public enum Currency {
         return s;
     }
     public double getConversion(Currency other) {
-        Double value = other.conversion.get(this);
+        Double value = other.conversion.getUnchecked(this);
         if (value != null) return Math.pow(value, -1);
-        return this.conversion.computeIfAbsent(other, (o) -> getConversion(this.name(), other.name()));
+        return this.conversion.getUnchecked(other);
     }
     private static final Map<String, Currency> NAME_MAP = new HashMap<>();
     static {

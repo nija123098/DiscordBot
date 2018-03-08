@@ -5,7 +5,7 @@ import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.launcher.Launcher;
-import com.github.nija123098.evelyn.util.Care;
+import com.github.nija123098.evelyn.util.CareLess;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -28,7 +28,7 @@ public class SystemCommand extends AbstractCommand {
         long memoryLimit = runtime.maxMemory();
         long leastMemory = runtime.freeMemory(), freeMemory;
         for (int i = 0; i < 6_000; i++) {
-            Care.lessSleep(100);
+            CareLess.lessSleep(100);
             freeMemory = runtime.freeMemory();
             if (leastMemory < freeMemory) {
                 leastMemory = freeMemory;

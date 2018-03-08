@@ -1,14 +1,15 @@
 package com.github.nija123098.evelyn.discordobjects.wrappers;
 
+import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.discordobjects.ExceptionWrapper;
-import com.github.nija123098.evelyn.service.services.MemoryManagementService;
+import com.github.nija123098.evelyn.util.CacheHelper;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
+import com.google.common.cache.LoadingCache;
 import sx.blah.discord.handle.obj.IReaction;
 import sx.blah.discord.handle.obj.IUser;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Wraps a Discord4j {@link IReaction} object.
@@ -17,10 +18,10 @@ import java.util.Map;
  * @since 1.0.0
  */
 public class Reaction {// should not be saved
-    private static final Map<IReaction, Reaction> MAP = new MemoryManagementService.ManagedMap<>(150000);
+    private static final LoadingCache<IReaction, Reaction> CACHE = CacheHelper.getLoadingCache(Runtime.getRuntime().availableProcessors(), ConfigProvider.CACHE_SETTINGS.reactionSize(), 30_000, Reaction::new);
     public static Reaction getReaction(IReaction iReaction){
         if (iReaction == null) return null;
-        return MAP.computeIfAbsent(iReaction, r -> new Reaction(iReaction));
+        return CACHE.getUnchecked(iReaction);
     }
     static List<Reaction> getReactions(List<IReaction> reactions){
         List<Reaction> reacts = new ArrayList<>(reactions.size());

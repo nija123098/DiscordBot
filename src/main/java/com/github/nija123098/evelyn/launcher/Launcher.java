@@ -9,16 +9,13 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Presence;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.perms.BotRole;
 import com.github.nija123098.evelyn.service.ServiceHandler;
-import com.github.nija123098.evelyn.service.services.MemoryManagementService;
-import com.github.nija123098.evelyn.service.services.ScheduleService;
 import com.github.nija123098.evelyn.template.TemplateHandler;
-import com.github.nija123098.evelyn.util.Care;
-import com.github.nija123098.evelyn.util.Log;
-import com.github.nija123098.evelyn.util.LogColor;
-import com.github.nija123098.evelyn.util.ThreadProvider;
+import com.github.nija123098.evelyn.util.*;
+import org.eclipse.jetty.util.BlockingArrayQueue;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -36,12 +33,13 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Launcher {
     public static final String EVELYN_VERSION = "1.0.0";
     public static final String BASE_PACKAGE = "com.github.nija123098.evelyn";
-    private static final Set<User> SYSTEM_PERM_USERS = new MemoryManagementService.ManagedSet<>(300_000);// 5 min
+    private static final CacheHelper.ContainmentCache<User> SYSTEM_PERM_USERS = new CacheHelper.ContainmentCache<>(300_000);// 5 min
     private static final Set<Runnable> STARTUPS = new HashSet<>();
     private static final Set<Runnable> ASYNC_STARTUPS = new HashSet<>();
     private static final Set<Runnable> SHUTDOWNS = new HashSet<>();
     private static final AtomicBoolean IS_READY = new AtomicBoolean(), IS_STARTING_UP = new AtomicBoolean();
-    private static final AtomicReference<ScheduleService.ScheduledTask> SHUTDOWN_TASK = new AtomicReference<>();
+    private static final AtomicReference<ScheduledFuture<?>> SHUTDOWN_TASK = new AtomicReference<>();
+    private static final ScheduledExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadScheduledExecutor(r -> ThreadHelper.getDemonThreadSingle(r, "Shutdown-Thread"));
 
     /**
      * Registers a {@link Runnable} which will be run on startup
@@ -113,25 +111,31 @@ public class Launcher {
      * @param delay the amount of time before the shutdown begins.
      */
     public synchronized static void shutdown(Integer code, long delay, boolean firm){
-        ScheduleService.ScheduledTask task = SHUTDOWN_TASK.get();
+        ScheduledFuture<?> task = SHUTDOWN_TASK.get();
         if (task != null) {
             Log.log("Canceling a shutdown");
-            task.cancel();
+            if (!task.cancel(false)) {
+                Log.log("Too late");
+                return;
+            }
             if (code == null) SHUTDOWN_TASK.set(null);
-            DiscordAdapter.PLAY_TEXT_UPDATER.setSkipping(false);
+            DiscordAdapter.PLAY_TEXT_UPDATE.set(false);
         }
         if (code != null) {
-            DiscordAdapter.PLAY_TEXT_UPDATER.setSkipping(true);
+            DiscordAdapter.PLAY_TEXT_UPDATE.set(true);
             DiscordClient.changePresence(Presence.Status.DND, Presence.Activity.PLAYING, "with a quick restart!");
             Log.log("Scheduled shutdown with code: " + code);
-            SHUTDOWN_TASK.set(ScheduleService.schedule(delay, () -> {
+            Thread thread = new Thread(() -> {
+                CareLess.lessSleep(delay);
                 Log.log("Shutting down with code: " + code);
                 IS_READY.set(false);
                 SHUTDOWNS.forEach(Runnable::run);
                 DiscordClient.logout();
-                Care.lessSleep(2_000);
+                CareLess.lessSleep(2_000);
                 System.exit(code);
-            }));
+            });
+            thread.setDaemon(true);
+            thread.start();
         }
         if (firm) {
             Thread firmThread = new Thread(() -> {
@@ -171,10 +175,14 @@ public class Launcher {
         DiscordAdapter.initialize();// EVERYTHING
         IS_STARTING_UP.set(true);
         STARTUPS.forEach(Runnable::run);
-        AtomicInteger asyncStartups = new AtomicInteger(ASYNC_STARTUPS.size());
-        ASYNC_STARTUPS.forEach(runnable -> ThreadProvider.sub(() -> {
+        AtomicInteger asyncStartupCount = new AtomicInteger(ASYNC_STARTUPS.size());
+        ExecutorService executorService = new ThreadPoolExecutor(asyncStartupCount.get(), asyncStartupCount.get(), 0, TimeUnit.MILLISECONDS, new BlockingArrayQueue<>(asyncStartupCount.get()), r -> ThreadHelper.getDemonThread(r, "Async-Startup-Thread"));
+        ASYNC_STARTUPS.forEach(runnable -> executorService.submit(() -> {
             runnable.run();
-            if (asyncStartups.decrementAndGet() <= 0) Log.log("All async start ups completed");
+            if (asyncStartupCount.decrementAndGet() <= 0) {
+                Log.log("All async start ups completed");
+                executorService.shutdown();
+            }
         }));
         IS_READY.set(true);
         DiscordClient.changePresence(Presence.Status.ONLINE, Presence.Activity.PLAYING, "with users!");
