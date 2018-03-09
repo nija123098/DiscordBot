@@ -19,11 +19,11 @@ public class EmbedCommand extends AbstractCommand {
 
     //constructor
     public EmbedCommand() {
-        super("embed", ModuleLevel.BOT_ADMINISTRATIVE, null, null, "embeds the given string, must use the format in description.");
+        super("embed", ModuleLevel.BOT_ADMINISTRATIVE, null, null, "Embeds the given string, must use the format in description.");
     }
 
     @Command
-    public void embed(User user, @Argument String s, MessageMaker maker) {
+    public void embed(@Argument String s, MessageMaker maker) {
         //configure maker
         maker.withAutoSend(false);
         maker.mustEmbed();
