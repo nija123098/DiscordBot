@@ -22,7 +22,7 @@ public class StopAfterCommand extends AbstractCommand {
     @Command
     public void command(GuildAudioManager manager, VoiceChannel channel, MessageMaker maker, User user) {
         if (validListeners(channel) > 1 && !GUILD_TRUSTEE.hasRequiredRole(user, channel.getGuild())) {
-            maker.append("You can't make that decision for everyone!");
+            maker.append("You can't make that decision for everyone!").mustEmbed();
         } else manager.leaveAfterThis();
     }
 }

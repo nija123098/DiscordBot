@@ -50,7 +50,7 @@ public class PlayCommand extends AbstractCommand {
             }
         } catch (YTUtil.YoutubeSearchException e) {
             Log.log("Exception doing YouTube search", e);
-            maker.append("Something went wrong with YouTube searching, I'm going to start playing music like nothing happened");
+            maker.append("Something went wrong with YouTube searching, I'm going to start playing music like nothing happened").mustEmbed();
         }
         trackList.forEach(manager::queueTrack);
     }

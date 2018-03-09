@@ -4,6 +4,7 @@ import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
+import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 
 import java.util.Arrays;
@@ -20,9 +21,9 @@ public class BackCommand extends AbstractCommand {
         super(PresenceCommand.class, "back", "back, present", null, null, "Marks you as no longer afk");
     }
     @Command
-    public void command(MessageMaker maker, User user){
+    public void command(MessageMaker maker, User user, Guild guild){
         ConfigHandler.setSetting(SelfMarkedAwayConfig.class, user, false);
-        maker.append("Welcome back!");
+        maker.append("Welcome back " + user.getDisplayName(guild) + "!").mustEmbed();
     }
     private static final Set<String> NATURAL_TRIGGERS = new HashSet<>(Arrays.asList("back", "present", "i am back", "i'm back", "present", "back"));
     @Override

@@ -5,6 +5,7 @@ import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 import com.github.nija123098.evelyn.discordobjects.wrappers.VoiceChannel;
+import com.github.nija123098.evelyn.util.FormatHelper;
 
 import static com.github.nija123098.evelyn.command.ModuleLevel.MUSIC;
 
@@ -19,6 +20,7 @@ public class JoinCommand extends AbstractCommand {
 
     @Command
     public static void command(GuildAudioManager manager, VoiceChannel channel, MessageMaker maker) {
-        if (!manager.voiceChannel().equals(channel)) maker.append("Sorry, I am already in another channel");
+        maker.append("Joining " + FormatHelper.embedLink(manager.voiceChannel().channel().getName(), "")).mustEmbed();
+        if (!manager.voiceChannel().equals(channel)) maker.append("Sorry, I am already in another channel").mustEmbed();
     }
 }

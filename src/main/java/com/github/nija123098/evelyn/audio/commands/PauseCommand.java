@@ -2,6 +2,7 @@ package com.github.nija123098.evelyn.audio.commands;
 
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.annotations.Command;
+import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 
 import static com.github.nija123098.evelyn.command.ModuleLevel.MUSIC;
@@ -16,8 +17,14 @@ public class PauseCommand extends AbstractCommand {
     }
 
     @Command
-    public void command(GuildAudioManager manager) {
-        manager.pause(!manager.isPaused());
+    public void command(GuildAudioManager manager, MessageMaker maker) {
+        if (manager.isPaused()){
+            manager.pause(false);
+            maker.append("Track Unpaused.").mustEmbed();
+        } else {
+            manager.pause(true);
+            maker.append("Track Paused.").mustEmbed();
+        }
     }
 
     @Override
