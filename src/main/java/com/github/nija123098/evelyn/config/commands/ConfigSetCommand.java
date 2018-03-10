@@ -11,6 +11,7 @@ import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.*;
 import com.github.nija123098.evelyn.exception.ArgumentException;
 import com.github.nija123098.evelyn.exception.PermissionsException;
+import com.github.nija123098.evelyn.util.FormatHelper;
 
 import java.awt.*;
 
@@ -39,7 +40,7 @@ public class ConfigSetCommand extends AbstractCommand {
             if (config.getConfigLevel() != ConfigLevel.ALL) target = (T) target.convert(config.getConfigLevel().getType());
             target.checkPermissionToEdit(user, guild);// morph exception should throw before cast exception
             config.setExteriorValue(target, user, channel, guild, message, arg);
-            maker.appendRaw("Set " + config.getName() + " to " + config.getExteriorValue((T) (guild == null ? user : guild)));
+            maker.appendRaw("Set " + FormatHelper.embedLink(config.getDisplayName(), "") + " to " + config.getExteriorValue((T) (guild == null ? user : guild)));
         }
     }
 }

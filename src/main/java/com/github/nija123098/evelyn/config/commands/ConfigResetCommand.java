@@ -13,6 +13,7 @@ import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
+import com.github.nija123098.evelyn.util.FormatHelper;
 
 /**
  * @author nija123098
@@ -27,6 +28,6 @@ public class ConfigResetCommand extends AbstractCommand {
     public <V, T extends Configurable> void command(@Argument AbstractConfig<V, T> config, @Argument(optional = true) T target, String arg, @Context(softFail = true) Track track, @Context(softFail = true) Playlist playlist, User user, Channel channel, @Context(softFail = true) GuildUser guildUser, @Context(softFail = true) Guild guild, MessageMaker maker) {
         if (target == null) target = (T) (guild == null ? user : guild);
         config.reset(target);
-        maker.appendRaw(config.getName() + " has been reset.").mustEmbed();
+        maker.appendRaw(FormatHelper.embedLink(config.getDisplayName(), "") + " has been reset to default.").mustEmbed();
     }
 }

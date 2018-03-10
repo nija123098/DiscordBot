@@ -15,6 +15,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.exception.ArgumentException;
 import com.github.nija123098.evelyn.tag.Tag;
 import com.github.nija123098.evelyn.tag.Tags;
+import com.github.nija123098.evelyn.util.FormatHelper;
 
 /**
  * @author nija123098
@@ -32,6 +33,6 @@ public class ConfigGetCommand extends AbstractCommand {
         if (target == null) throw new ArgumentException("No context for " + config.getConfigLevel() + " was able to be gotten, check your spelling");
         else if (config.getConfigLevel() != ConfigLevel.ALL) target = (T) target.convert(config.getConfigLevel().getType());
         maker.mustEmbed();
-        maker.appendRaw(config.getName() + ": " + config.getExteriorValue(target));// morph exception should throw before cast exception
+        maker.appendRaw(FormatHelper.embedLink(config.getDisplayName(), "") + " is set to: " + config.getExteriorValue(target));// morph exception should throw before cast exception
     }
 }
