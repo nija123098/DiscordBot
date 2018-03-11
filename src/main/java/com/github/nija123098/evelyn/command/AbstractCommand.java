@@ -59,9 +59,10 @@ public class AbstractCommand implements Tagable {
     private CacheHelper.ContainmentCache<GuildUser> guildUserCoolDowns;
     private Set<ContextRequirement> contextRequirements;
     private Set<AbstractCommand> subCommands;
-    private List<Tag> tags;
+    private final List<Tag> tags;
     private boolean prefixRequired = true;
-    private boolean okOnSuccess = false;
+    private boolean okOnSuccess = true;
+    private boolean hasInLineTool = false;
 
     /**
      * The high constructor for a command which all other constructors call.
@@ -171,6 +172,7 @@ public class AbstractCommand implements Tagable {
                 this.contextRequirements.addAll(InvocationObjectGetter.getConvertRequirements(parameter.getType(), parameter.getAnnotation(Argument.class).replacement()));
             }
             if (parameter.getType().equals(MessageMaker.class) || parameter.getType().equals(GuildAudioManager.class)) this.okOnSuccess = false;
+            else if (parameter.getType().equals(InLineCommandTool.class)) this.hasInLineTool = true;
         }// makes it into a more efficient set
         this.contextRequirements = this.contextRequirements.isEmpty() ? Collections.emptySet() : EnumSet.copyOf(this.contextRequirements);
         this.subCommands = new HashSet<>();
@@ -567,7 +569,8 @@ public class AbstractCommand implements Tagable {
         }
         try {
             Object object = this.method.invoke(this, objects);
-            Stream.of(objects).filter(MessageMaker.class::isInstance).map(o -> ((MessageMaker) o)).forEach(o -> (this.getTags().isEmpty() ? o : o.withColor(this.getTags().get(0).getColor())).send(true));
+            if (!this.okOnSuccess) Stream.of(objects).filter(MessageMaker.class::isInstance).map(o -> ((MessageMaker) o)).forEach(o -> (this.getTags().isEmpty() ? o : o.withColor(this.getTags().get(0).getColor())).send(true));
+            if (this.hasInLineTool) Stream.of(objects).filter(InLineCommandTool.class::isInstance).map(o -> ((InLineCommandTool) o)).forEach(InLineCommandTool::release);
             return object;
         } catch (IllegalAccessException e) {
             Log.log("Malformed command: " + getName(), e);

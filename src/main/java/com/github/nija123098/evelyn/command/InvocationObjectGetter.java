@@ -98,6 +98,7 @@ public class InvocationObjectGetter {
         }, ContextRequirement.GUILD, ContextRequirement.USER);
         addContext(AbstractGame.class, ContextType.DEFAULT, (invoker, shard, channel, guild, message, reaction, args) -> GameHandler.getGame(guild, message.getAuthor()), ContextRequirement.GUILD, ContextRequirement.USER);
         addContext(ContextPack.class, ContextType.DEFAULT, ContextPack::new);
+        addContext(InLineCommandTool.class, ContextType.DEFAULT, (invoker, shard, channel, guild, message, reaction, args) -> new InLineCommandTool(new ContextPack(invoker, shard, channel, guild, message, reaction, args)));
         addContext(Float.class, ContextType.NONE, (invoker, shard, channel, guild, message, reaction, args) -> null);
         addContext(ZoneId.class, ContextType.DEFAULT, (invoker, shard, channel, guild, message, reaction, args) -> ZoneId.of("Etc/GMT+0"));
         addContext(Configurable.class, ContextType.DEFAULT, (user, shard, channel, guild, message, reaction, args) -> null);

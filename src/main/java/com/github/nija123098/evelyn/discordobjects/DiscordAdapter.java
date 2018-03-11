@@ -52,9 +52,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -65,6 +63,7 @@ import java.util.stream.Collectors;
  * @since 1.0.0
  */
 public class DiscordAdapter {
+    private static final ThreadPoolExecutor MESSAGE_PARSE_EXECUTOR = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors(), Runtime.getRuntime().availableProcessors() * 4, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<>(25), r -> ThreadHelper.getDemonThread(r, "Message-Parse"));
     private static final ScheduledExecutorService PLAY_TEXT_EXECUTOR = Executors.newSingleThreadScheduledExecutor(r -> ThreadHelper.getDemonThreadSingle(r, "Play-Text-Changer-Thread"));
     private static final Map<Class<? extends Event>, Constructor<? extends BotEvent>> EVENT_MAP;
     private static final long PLAY_TEXT_SPEED = 60_000, GUILD_SAVE_SPEED = 3_600_000;// 1 hour
@@ -184,25 +183,27 @@ public class DiscordAdapter {
      * @param event the Discord4J event to listen for.
      */
     @EventSubscriber
-    public static void handle(MessageReceivedEvent event) {
-        if (event.getAuthor().isBot() || !Launcher.isReady() || event.getMessage().getContent() == null) return;
-        if (event.getMessage().getContent().isEmpty()) DeletePinNotificationConfig.handle(new DiscordMessageReceived(event));
-        DiscordMessageReceived receivedEvent = new DiscordMessageReceived(event);
-        if (MessageMonitor.monitor(receivedEvent)) return;
-        Boolean isCommand = CommandHandler.handle(receivedEvent);
-        if (isCommand == null) {
-            String thought = receivedEvent.getMessage().getContent();
-            if (ChatBot.mayChat(receivedEvent.getChannel(), receivedEvent.getMessage().getContent())) {
-                new MessageMaker(receivedEvent.getChannel()).appendRaw(ChatBot.getChatBot(receivedEvent.getChannel()).think(thought)).send();
-                receivedEvent.setCommand(true);
-                isCommand = true;
-            } else isCommand = false;
-        }
-        receivedEvent.setCommand(isCommand);
-        if (!isCommand && event.getMessage().getMentions().contains(DiscordClient.getOurUser().user())) {
-            ExceptionWrapper.wrap(() -> event.getMessage().addReaction(ReactionEmoji.of(EmoticonHelper.getChars("eyes", false))));
-        }// This does the :eyes: on mention now.
-        EventDistributor.distribute(receivedEvent);
+    public static void handle(MessageReceivedEvent event){
+        MESSAGE_PARSE_EXECUTOR.execute(() -> {
+            if (event.getAuthor().isBot() || !Launcher.isReady() || event.getMessage().getContent() == null) return;
+            if (event.getMessage().getContent().isEmpty()) DeletePinNotificationConfig.handle(new DiscordMessageReceived(event));
+            DiscordMessageReceived receivedEvent = new DiscordMessageReceived(event);
+            if (MessageMonitor.monitor(receivedEvent)) return;
+            Boolean isCommand = CommandHandler.handle(receivedEvent);
+            if (isCommand == null){
+                String thought = receivedEvent.getMessage().getContent();
+                if (ChatBot.mayChat(receivedEvent.getChannel(), receivedEvent.getMessage().getContent())) {
+                    new MessageMaker(receivedEvent.getChannel()).appendRaw(ChatBot.getChatBot(receivedEvent.getChannel()).think(thought)).send();
+                    receivedEvent.setCommand(true);
+                    isCommand = true;
+                } else isCommand = false;
+            }
+            receivedEvent.setCommand(isCommand);
+            if (!isCommand && event.getMessage().getMentions().contains(DiscordClient.getOurUser().user())) {
+                ExceptionWrapper.wrap(() -> event.getMessage().addReaction(ReactionEmoji.of(EmoticonHelper.getChars("eyes", false))));
+            }// This does the :eyes: on mention now.
+            EventDistributor.distribute(receivedEvent);
+        });
     }
 
     /**
@@ -220,5 +221,14 @@ public class DiscordAdapter {
                 throw new RuntimeException("Improperly built BotEvent constructor", e);
             }
         }
+    }
+
+    public static void increaseParserPoolSize() {
+        MESSAGE_PARSE_EXECUTOR.setCorePoolSize(MESSAGE_PARSE_EXECUTOR.getCorePoolSize() + 1);
+        MESSAGE_PARSE_EXECUTOR.setMaximumPoolSize(MESSAGE_PARSE_EXECUTOR.getMaximumPoolSize() + 1);
+    }
+    public static void decreaseParserPoolSize() {
+        MESSAGE_PARSE_EXECUTOR.setCorePoolSize(MESSAGE_PARSE_EXECUTOR.getCorePoolSize() - 1);
+        MESSAGE_PARSE_EXECUTOR.setMaximumPoolSize(MESSAGE_PARSE_EXECUTOR.getMaximumPoolSize() - 1);
     }
 }
