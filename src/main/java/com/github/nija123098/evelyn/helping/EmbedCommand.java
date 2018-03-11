@@ -82,12 +82,12 @@ public class EmbedCommand extends AbstractCommand {
             } else if (s2[i].startsWith("c[[") || s2[i].startsWith(" c[[")) {
                 s2[i] = s2[i].replace("c[[", "");
                 s2[i] = s2[i].replaceAll(" ", "");
-                String[] rgb = s2[i].split(",,,");
+                String[] rgb = s2[i].split(",");
                 maker.withColor(new Color(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2])));
             } else if (s2[i].startsWith("r[[") || s2[i].startsWith(" r[[")) {
                 s2[i] = s2[i].replace("r[[", "");
                 s2[i] = s2[i].replaceAll(" ", "");
-                r = s2[i].split(",,,");
+                r = s2[i].split(",");
             }
         }
         maker.send();
@@ -108,6 +108,6 @@ public class EmbedCommand extends AbstractCommand {
 
         //command description:
         return
-                "#  Do not add \\n outside the brackets for an option\n\n#  You can use \"u200b\" to add a zero width character\n\n#  Format help:\n\n// t[[TITLE]]\n// m[[MESSAGE]]\n// foo[[FOOTER]]\n// n[[NOTE]]\n// nimg[[NOTE IMAGE]]\n// img[[IMAGE]]\n// a[[AUTHOR]]\n// aimg[[AUTHOR IMAGE]]\n// fp[[FIELD PART TITLE,,,TEXT]]\n// fpi[[INLINE FIELD PART TITLE,,,TEXT]]\n// thumb[[THUMBNAIL]]\n// c[[R,,,G,,,B]]\n// r[[EMOTE,,,EMOTE]]";
+                "#  Do not add \\n outside the brackets for an option\n\n#  You can use \"u200b\" to add a zero width character\n\n#  Format help:\n\n// t[[TITLE]]\n// m[[MESSAGE]]\n// foo[[FOOTER]]\n// n[[NOTE]]\n// nimg[[NOTE IMAGE]]\n// img[[IMAGE]]\n// a[[AUTHOR]]\n// aimg[[AUTHOR IMAGE]]\n// fp[[FIELD PART TITLE,,,TEXT]]\n// fpi[[INLINE FIELD PART TITLE,,,TEXT]]\n// thumb[[THUMBNAIL]]\n// c[[R,G,B]]\n// r[[EMOTE,EMOTE]]";
     }
 }

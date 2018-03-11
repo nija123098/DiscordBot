@@ -26,14 +26,14 @@ public class ConfigSetCommand extends AbstractCommand {
     @Command
     @ConfigurableTypeAddLocation("The array in the first line of the else statement must have a additional index, ordered by ordinal in ConfigLevel")
     public <V, T extends Configurable> void command(@Argument AbstractConfig<V, T> config, @Argument(optional = true) T target, String arg, @Context(softFail = true) Track track, @Context(softFail = true) Playlist playlist, User user, Channel channel, Message message, @Context(softFail = true) GuildUser guildUser, @Context(softFail = true) Guild guild, MessageMaker maker) {
-        maker.mustEmbed().withColor(new Color(116, 32, 196));
+        maker.mustEmbed();
         if (!config.requiredBotRole().hasRequiredRole(user, guild)) {
             throw new PermissionsException("You must be at least a " + config.requiredBotRole().name() + " to edit that config");
         }
         if (arg.isEmpty()) {
             if (target == null) throw new ArgumentException("Received to target value, if resetting the value was intended use the cfg reset command, if unsetting the config was intended use the cfg setnull command");
             ConfigHandler.setSetting((Class<? extends AbstractConfig<V, T>>) config.getClass(), (T) (guild == null ? user : guild),  (V) target.convert((Class<? extends Configurable>) config.getValueType()));
-            maker.appendRaw("Set " + config.getName() + " to " + config.getExteriorValue((T) (guild == null ? user : guild)));
+            maker.appendRaw("Set " + FormatHelper.embedLink(config.getDisplayName(), "") + " to " + config.getExteriorValue((T) (guild == null ? user : guild)));
         }else{
             if (target == null) target = (T) new Configurable[]{track, playlist, user, channel, channel.getCategory(), guildUser, target instanceof Role ? target : null, guild, GlobalConfigurable.GLOBAL, guild == null ? user : guild}[config.getConfigLevel().ordinal()];
             if (target == null) throw new ArgumentException("No context for " + config.getConfigLevel() + " was able to be gotten, check your spelling");
