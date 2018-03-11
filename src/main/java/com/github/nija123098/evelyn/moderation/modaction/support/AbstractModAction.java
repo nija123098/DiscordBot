@@ -22,12 +22,12 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AbstractModAction {
     private static final Map<Guild, Integer> OLDEST_CASE_MAP = new ConcurrentHashMap<>();
     private static final Map<GuildUser, Integer> LAST_CASE = new ConcurrentHashMap<>();
-    public static int lastCase(GuildUser user){
+    public static int lastCase(GuildUser user) {
         Integer i = LAST_CASE.get(user);
         if (i == null) throw new ArgumentException("There are no recent cases by you, please enter a case number");
         return i;
     }
-    public static void updateCase(Guild guild, int cas, String reason){
+    public static void updateCase(Guild guild, int cas, String reason) {
         AbstractModAction action = ConfigHandler.getSetting(ModActionConfig.class, guild).get(cas);
         if (action == null || OLDEST_CASE_MAP.getOrDefault(guild, Integer.MAX_VALUE) < cas) throw new ArgumentException("The entered case is too old to modify or doesn't exist (yet)");
         if (action.logMaker != null) action.update(reason);
@@ -49,7 +49,7 @@ public class AbstractModAction {
         this.invoker = invoker;
         Channel logChannel = ConfigHandler.getSetting(ModLogConfig.class, guild);
         int cas = CaseNumberConfig.incrament(guild);
-        if (logChannel != null){
+        if (logChannel != null) {
             this.logMaker = new MessageMaker(logChannel)
                     .withColor(level.color)
                     .getAuthorName().append(level.name()).getMaker()
@@ -63,7 +63,7 @@ public class AbstractModAction {
         OLDEST_CASE_MAP.putIfAbsent(guild, cas - 1);
         LAST_CASE.put(GuildUser.getGuildUser(guild, invoker), cas);
     }
-    private void update(String reason){
+    private void update(String reason) {
         this.logMaker.getHeader().clear().append(getLogText(this.offender, this.invoker, reason)).getMaker().send();
         this.warningMaker.getHeader().clear().append(getWarningText(level, reason)).getMaker().send();
     }
@@ -84,12 +84,12 @@ public class AbstractModAction {
             return this.description;
         }
     }
-    private static String getLogText(User offender, User invoker, String reason){
+    private static String getLogText(User offender, User invoker, String reason) {
         return "Offender: " + offender.getNameAndDiscrim() + " (" + offender.getID() + ")\n" +
                 "Reason: " + (reason == null ? "Not yet reported" : reason) + "\n" +
                 "Reporter: " + invoker.getNameAndDiscrim();
     }
-    private static String getWarningText(ModActionLevel level, String reason){
+    private static String getWarningText(ModActionLevel level, String reason) {
         return "You have been " + level.name() + (level.name().endsWith("E") ? "" : "E") + "D" + " for " + (reason == null ? "breaking server rules" : reason);
     }
 }

@@ -20,7 +20,7 @@ public class WarningsCommand extends AbstractCommand {
         super("warnings", ModuleLevel.ADMINISTRATIVE, null, null, "Lists the warnings a user has");
     }
     @Command
-    public void command(@Argument GuildUser user, MessageMaker maker){
+    public void command(@Argument GuildUser user, MessageMaker maker) {
         List<String> list = ConfigHandler.getSetting(WarningLogConfig.class, user);
         maker.withAuthor(user.getUser());
         if (list.isEmpty()) {

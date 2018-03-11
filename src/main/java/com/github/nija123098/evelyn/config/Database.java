@@ -59,7 +59,7 @@ public class Database {
     public static void init() {
     }
 
-    public static void bufferCall(Runnable runnable){
+    public static void bufferCall(Runnable runnable) {
         CALL_BUFFER.call(runnable);
     }
 
@@ -87,7 +87,7 @@ public class Database {
             throw new DevelopmentException("Could not insert: ERROR: " + e.getErrorCode() + " " + sql, e);
         }
     }
-    public static String quote(String id){
+    public static String quote(String id) {
         return Character.isDigit(id.charAt(0)) ? id : "'" + id + "'";
     }
 }

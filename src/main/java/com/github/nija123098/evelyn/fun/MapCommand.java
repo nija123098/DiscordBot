@@ -58,7 +58,7 @@ public class MapCommand extends AbstractCommand {
         registerColor(-4177792, "Sydney");
     }
 
-    private static void registerColor(int color, String...regionNames){
+    private static void registerColor(int color, String...regionNames) {
         for (String name : regionNames) REGION_MAP.put(name, color);
     }
 

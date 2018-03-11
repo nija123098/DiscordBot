@@ -15,8 +15,8 @@ public class ModActionCommand extends AbstractCommand {
         super("modaction", ModuleLevel.ADMINISTRATIVE, "ma, mod action", null, "Provides information on various disciplinary actions");
     }
     @Command
-    public void command(MessageMaker maker){
-        for (AbstractModAction.ModActionLevel action : AbstractModAction.ModActionLevel.values()){
+    public void command(MessageMaker maker) {
+        for (AbstractModAction.ModActionLevel action : AbstractModAction.ModActionLevel.values()) {
             maker.appendAlternate(true, action.name() + ": ", action.getDescription() + "\n");
         }
     }

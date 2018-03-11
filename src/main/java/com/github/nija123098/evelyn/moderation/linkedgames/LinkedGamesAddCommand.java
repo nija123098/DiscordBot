@@ -17,7 +17,7 @@ public class LinkedGamesAddCommand extends AbstractCommand {
         super(LinkedGamesCommand.class, "add", null, null, null, "Adds a game to the linked games list");
     }
     @Command
-    public void command(@Argument(info = "the game") String s, Guild guild){
+    public void command(@Argument(info = "the game") String s, Guild guild) {
         ConfigHandler.alterSetting(GuildLinkedGamesConfig.class, guild, strings -> {
             if (FormatHelper.reduce(strings).contains(FormatHelper.reduce(s))) throw new ArgumentException("That game is already linked though");
             strings.add(s);

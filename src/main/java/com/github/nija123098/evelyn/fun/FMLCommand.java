@@ -45,7 +45,7 @@ public class FMLCommand extends AbstractCommand {
         }
         maker.append(this.items.remove(0));
     }
-    private void getItems(){
+    private void getItems() {
         try {
             Document document = Jsoup.connect("http://fmylife.com/random").timeout(30_000).userAgent(ConfigProvider.BOT_SETTINGS.userAgent()).get();
             if (document != null) items.addAll(document.select("p.block a[href^=/article/]").stream().map(Element::text).map(String::trim).map(s -> FormatHelper.limitLength(s, 2000)).filter(s -> s.endsWith("FML")).map(StringEscapeUtils::unescapeHtml4).collect(Collectors.toSet()));

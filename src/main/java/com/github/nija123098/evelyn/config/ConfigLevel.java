@@ -48,34 +48,34 @@ public enum ConfigLevel {
         this.mayCache = mayCache;
         this.longID = longID;
     }
-    public Class<? extends Configurable> getType(){
+    public Class<? extends Configurable> getType() {
         return this.clazz;
     }
-    public Set<ConfigLevel> getAssignable(){
+    public Set<ConfigLevel> getAssignable() {
         return assignables;
     }
-    public boolean mayCache(){
+    public boolean mayCache() {
         return this.mayCache;
     }
-    public boolean isLongID(){
+    public boolean isLongID() {
         return this.longID;
     }
-    public boolean isAssignableFrom(ConfigLevel level){
+    public boolean isAssignableFrom(ConfigLevel level) {
         return this == ALL || this == level;
     }
-    public static void load(){
+    public static void load() {
         for (ConfigLevel configLevel : ConfigLevel.values()) for (ConfigLevel level : ConfigLevel.values()) if (configLevel.isAssignableFrom(level) && level != ALL) configLevel.assignables.add(level);
     }
-    public static ConfigLevel getLevel(Class<? extends Configurable> clazz){
-        for (ConfigLevel level : values()){
-            if (level.clazz.isAssignableFrom(clazz)){
+    public static ConfigLevel getLevel(Class<? extends Configurable> clazz) {
+        for (ConfigLevel level : values()) {
+            if (level.clazz.isAssignableFrom(clazz)) {
                 return level;
             }
         }
         throw new DevelopmentException("Class does not have a type: " + clazz.getName());
     }
     private static List<ConfigLevel> levels = Stream.of(values()).filter(configLevel -> configLevel != ALL).collect(Collectors.toList());
-    public static List<ConfigLevel> nonAllValues(){
+    public static List<ConfigLevel> nonAllValues() {
         return levels;
     }
 }

@@ -75,7 +75,7 @@ public class AbstractConfig<V, T extends Configurable> implements Tagable {
         if (!ObjectCloner.supports(this.valueType)) throw new DevelopmentException("Cloner does not support type: " + this.valueType.getName());
         this.normalViewing = TypeChanger.normalStorage(this.valueType);
         this.configLevel = ConfigLevel.getLevel((Class<T>) types[types.length - 1]);
-        if (this.configLevel.mayCache()){
+        if (this.configLevel.mayCache()) {
             this.cache = new ConcurrentHashMap<>();
             this.nullCache = new HashSet<>();
         }else {
@@ -123,7 +123,7 @@ public class AbstractConfig<V, T extends Configurable> implements Tagable {
      *
      * @return the short id of the config.
      */
-    public String getShortId(){
+    public String getShortId() {
         return this.shortId;
     }
 
@@ -168,7 +168,7 @@ public class AbstractConfig<V, T extends Configurable> implements Tagable {
      *
      * @return the default value of this config.
      */
-    public V getDefault(T t){
+    public V getDefault(T t) {
         return this.defaultValue.apply(t);
     }
 
@@ -177,7 +177,7 @@ public class AbstractConfig<V, T extends Configurable> implements Tagable {
      *
      * @return The {@link ConfigLevel} for this config.
      */
-    public ConfigLevel getConfigLevel(){
+    public ConfigLevel getConfigLevel() {
         return this.configLevel;
     }
 
@@ -187,7 +187,7 @@ public class AbstractConfig<V, T extends Configurable> implements Tagable {
      * @param level the config level.
      * @return the table name for this config and a config level.
      */
-    private String getNameForType(ConfigLevel level){
+    private String getNameForType(ConfigLevel level) {
         return this.name + "_" + level.name().toLowerCase();
     }
 
@@ -196,7 +196,7 @@ public class AbstractConfig<V, T extends Configurable> implements Tagable {
      *
      * @return The required bot role to edit this config.
      */
-    public BotRole getBotRole(){
+    public BotRole getBotRole() {
         return this.botRole;
     }
 
@@ -214,7 +214,7 @@ public class AbstractConfig<V, T extends Configurable> implements Tagable {
      *
      * @return if the config should be set after a default is gotten.
      */
-    protected boolean setDefault(){
+    protected boolean setDefault() {
         return false;
     }
 
@@ -223,7 +223,7 @@ public class AbstractConfig<V, T extends Configurable> implements Tagable {
      *
      * @return the value type for this config.
      */
-    public Class<V> getValueType(){
+    public Class<V> getValueType() {
         return this.valueType;
     }
 
@@ -234,7 +234,7 @@ public class AbstractConfig<V, T extends Configurable> implements Tagable {
      * @param configurable the configurable to get the last set age for.
      * @return the time the config was last set, give or take for caching or -1 if the value was default.
      */
-    public long getAge(Configurable configurable){
+    public long getAge(Configurable configurable) {
         return Database.select("SELECT * FROM " + this.getNameForType(configurable.getConfigLevel()) + " WHERE id = " + Database.quote(configurable.getID()), set -> {
             if (!set.next()) return -1L;
             return set.getLong(3);
@@ -242,7 +242,7 @@ public class AbstractConfig<V, T extends Configurable> implements Tagable {
     }
 
     @Deprecated
-    public V wrapTypeIn(String e, T configurable){
+    public V wrapTypeIn(String e, T configurable) {
         return TypeChanger.toObject(this.valueType, e);
     }
 
@@ -253,7 +253,7 @@ public class AbstractConfig<V, T extends Configurable> implements Tagable {
      * @param configurable the configurable being wrapped out.
      * @return the {@link String} representation of the value.
      */
-    public String wrapTypeOut(V v, T configurable){// configurable may be used in over ride methods
+    public String wrapTypeOut(V v, T configurable) {// configurable may be used in over ride methods
         return v instanceof Configurable ? v instanceof Channel && !(v instanceof VoiceChannel) ? ((Channel) v).mention() : ((Configurable) v).getName() : TypeChanger.toString(this.valueType, v);
     }
 
@@ -274,7 +274,7 @@ public class AbstractConfig<V, T extends Configurable> implements Tagable {
      * @param value the value to set the config to for the given configurable.
      * @return the value set to the config.
      */
-    public V setValue(T configurable, V value){
+    public V setValue(T configurable, V value) {
         if (!(value == null || this.valueType.isInstance(value))) throw new ArgumentException("Attempted passing incorrect type of argument");
         value = validateInput(configurable, value);
         if (this.cache != null) {
@@ -306,7 +306,7 @@ public class AbstractConfig<V, T extends Configurable> implements Tagable {
      *
      * @param configurable the configurable to reset the config value for.
      */
-    public void reset(T configurable){
+    public void reset(T configurable) {
         if (this.cache != null) {
             this.nullCache.remove(configurable);
             this.cache.remove(configurable);
@@ -320,7 +320,7 @@ public class AbstractConfig<V, T extends Configurable> implements Tagable {
      * @param configurable the configurable that the setting is being gotten for.
      * @return the config's value for the given {@link Configurable}.
      */
-    public V getValue(T configurable){// slq here as well
+    public V getValue(T configurable) {// slq here as well
         if (this.cache == null) return grabValue(configurable);
         V value = this.cache.get(configurable);
         if (value == null && !this.nullCache.contains(configurable)) {
@@ -337,7 +337,7 @@ public class AbstractConfig<V, T extends Configurable> implements Tagable {
      * @param configurable the {@link Configurable} that the setting is being gotten for.
      * @return the config's value for the given {@link Configurable}.
      */
-    private V grabValue(T configurable){
+    private V grabValue(T configurable) {
         try {
             return Database.select("SELECT * FROM " + this.getNameForType(configurable.getConfigLevel()) + " WHERE id = " + Database.quote(configurable.getID()), set -> {
                 try{set.next();
@@ -352,7 +352,7 @@ public class AbstractConfig<V, T extends Configurable> implements Tagable {
                     return this.getDefault(configurable);
                 }
             });
-        } catch (StreamException e){
+        } catch (StreamException e) {
             throw new DevelopmentException("Could not load config due to stream exception from " + this.getNameForType(configurable.getConfigLevel()) + " while loading " + configurable.getID() + "'s value", e);
         }
     }
@@ -453,11 +453,11 @@ public class AbstractConfig<V, T extends Configurable> implements Tagable {
      * @param clazz the class type to get configurables and values for.
      * @return a map representation of {@link Configurable}s and values for this config.
      */
-    public Map<T, V> getNonDefaultSettings(Class<? extends Configurable> clazz){
+    public Map<T, V> getNonDefaultSettings(Class<? extends Configurable> clazz) {
         return Database.select("SELECT * FROM " + this.getNameForType(ConfigLevel.getLevel(clazz)), set -> {
             Map<T, V> map = new HashMap<>();
             try {
-                while (set.next()){
+                while (set.next()) {
                     T t = (T) ConfigHandler.getConfigurable(set.getString(1));
                     if (t == null) continue;
                     map.put(t, TypeChanger.toObject(this.valueType, set.getString(2)));
@@ -469,12 +469,12 @@ public class AbstractConfig<V, T extends Configurable> implements Tagable {
         });
     }
 
-    private String getSQLRepresentation(V value){
+    private String getSQLRepresentation(V value) {
         if (this.valueType.equals(Boolean.class)) return (Boolean) value ? "1" : "0";
         return TypeChanger.toString(this.valueType, value);
     }
 
-    private String getSQLTableType(){
+    private String getSQLTableType() {
         if (this.valueType.equals(Long.class)) return "BIGINT";
         if (this.valueType.equals(Boolean.class)) return "BOOLEAN";
         if (this.valueType.equals(Float.class)) return "FLOAT";

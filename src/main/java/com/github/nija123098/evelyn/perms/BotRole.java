@@ -96,7 +96,7 @@ public enum BotRole {// todo make more efficient
      *
      * @return if the rank is set by a higher role
      */
-    public boolean isFlagRank(){
+    public boolean isFlagRank() {
         return this.isGlobalFlag || this.isGuildFlag;
     }
 
@@ -107,7 +107,7 @@ public enum BotRole {// todo make more efficient
      * @param guild the {@link Guild} context to infer if a {@link User} has a certain role.
      * @return if the user has the exact role.
      */
-    public boolean hasRole(User user, Guild guild){
+    public boolean hasRole(User user, Guild guild) {
         return this.detect.test(user, guild);
     }
 
@@ -121,7 +121,7 @@ public enum BotRole {// todo make more efficient
      * @param guild the {@link Guild} context to infer if a {@link User} has a certain role.
      * @return if the user has the role or a higher true role.
      */
-    public boolean hasRequiredRole(User user, Guild guild){
+    public boolean hasRequiredRole(User user, Guild guild) {
         return this.isTrueRank ? this.guildImportant ? this.guildCache.getUnchecked(user).getUnchecked(guild) : this.userCache.getUnchecked(user) : this.detect.test(user, guild);
     }
 
@@ -134,7 +134,7 @@ public enum BotRole {// todo make more efficient
      * @throws PermissionsException is thrown if the result of the
      * {@link BotRole#hasRequiredRole(User, Guild)} is false.
      */
-    public void checkRequiredRole(User user, Guild guild){
+    public void checkRequiredRole(User user, Guild guild) {
         if (!this.hasRequiredRole(user, guild)) throw new PermissionsException(this);
     }
 
@@ -146,10 +146,10 @@ public enum BotRole {// todo make more efficient
      * @param guild the {@link Guild} context to infer if a {@link User} has a certain role.
      * @return the set of roles a user has permissions as.
      */
-    public static EnumSet<BotRole> getSet(User user, Guild guild){
+    public static EnumSet<BotRole> getSet(User user, Guild guild) {
         EnumSet<BotRole> set = EnumSet.noneOf(BotRole.class);
-        for (BotRole role : values()){
-            if (role.hasRole(user, guild)){
+        for (BotRole role : values()) {
+            if (role.hasRole(user, guild)) {
                 set.add(role);
             }
         }
@@ -166,7 +166,7 @@ public enum BotRole {// todo make more efficient
      * @param setter the {@link User} who is modifying the roles.
      * @param guild the context in which the rank is being set.
      */
-    public static void setRole(BotRole role, boolean grant, User target, User setter, Guild guild){
+    public static void setRole(BotRole role, boolean grant, User target, User setter, Guild guild) {
         if (!role.isFlagRank()) throw new ArgumentException("You can not set non-flag roles though a bot");
         if (!role.change.test(setter, guild)) throw new PermissionsException("You can not change that role");
         setRole(role, grant, target, guild);
@@ -180,7 +180,7 @@ public enum BotRole {// todo make more efficient
      * @param target the {@link User} to effect {@link BotRole}s for.
      * @param guild the context in which the rank is being set.
      */
-    public static void setRole(BotRole role, boolean grant, User target, Guild guild){
+    public static void setRole(BotRole role, boolean grant, User target, Guild guild) {
         Class<? extends AbstractConfig<Set<BotRole>, ? extends Configurable>> config = role.isGlobalFlag ? GlobalBotRoleConfig.class : GuildBotRoleConfig.class;
         Configurable configurable = role.isGlobalFlag ? target : GuildUser.getGuildUser(guild, target);
         ConfigHandler.alterSetting((Class<? extends AbstractConfig<Set<BotRole>, Configurable>>) config, configurable, roles -> {

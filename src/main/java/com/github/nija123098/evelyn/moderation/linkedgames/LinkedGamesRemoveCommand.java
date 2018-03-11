@@ -16,7 +16,7 @@ public class LinkedGamesRemoveCommand extends AbstractCommand {
         super(LinkedGamesCommand.class, "remove", null, null, null, "Removes a game from the linked games list");
     }
     @Command
-    public void command(@Argument(info = "the game") String s, Guild guild){
+    public void command(@Argument(info = "the game") String s, Guild guild) {
         ConfigHandler.alterSetting(GuildLinkedGamesConfig.class, guild, strings -> {
             if (!strings.contains(s)) throw new ArgumentException("That game isn't linked though");
             strings.remove(s);
