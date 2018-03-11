@@ -17,10 +17,10 @@ public abstract class AbstractGame {
     private int teamTurn;
     private List<Team> teams;
     private transient Map<User, Team> userTeamMap;
-    public AbstractGame(List<Team> teams){
+    public AbstractGame(List<Team> teams) {
         this.teams = teams;
     }
-    private void ensureTeamsLoaded(){
+    private void ensureTeamsLoaded() {
         if (this.userTeamMap != null) return;
         this.userTeamMap = new HashMap<>();
         this.teams.forEach(team -> {
@@ -35,7 +35,7 @@ public abstract class AbstractGame {
      * @param user the user to get the team for.
      * @return the {@link Team} a user belongs to.
      */
-    protected Team getTeam(User user){
+    protected Team getTeam(User user) {
         this.ensureTeamsLoaded();
         return this.userTeamMap.get(user);
     }
@@ -47,7 +47,7 @@ public abstract class AbstractGame {
      * @param s the name of the {@link GameChoice} to chose.
      * @return the value of the team not voted 0 through 1.
      */
-    public Float chose(User user, String s){
+    public Float chose(User user, String s) {
         Team team = this.getTeam(user);
         if (this.teams.indexOf(team) != this.teamTurn) throw new ArgumentException("It isn't your turn yet");
         Float f = team.chose(user, s);

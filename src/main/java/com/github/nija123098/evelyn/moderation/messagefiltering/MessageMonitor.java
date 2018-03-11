@@ -55,8 +55,8 @@ public class MessageMonitor {
                         public void checkFilter(DiscordMessageReceived event) {
                             try {
                                 StringChecker.checkoutString(FormatHelper.filtering(event.getMessage().getContent(), Character::isLetterOrDigit).toLowerCase(), Arrays.asList(s.substring(type.name().length(), s.length()).split(",")), policy);
-                            } catch (MessageMonitoringException e){
-                                for (String word : FormatHelper.filtering(FormatHelper.reduceRepeats(event.getMessage().getContent().toLowerCase(), ' '), Character::isLetter).split(" ")){
+                            } catch (MessageMonitoringException e) {
+                                for (String word : FormatHelper.filtering(FormatHelper.reduceRepeats(event.getMessage().getContent().toLowerCase(), ' '), Character::isLetter).split(" ")) {
                                     if (!WORDS.contains(word) && !e.getBlocked().equals(word)) throw e;
                                 }
                             }
@@ -70,26 +70,26 @@ public class MessageMonitor {
             Log.log("Could not load language filtering", e);
         }
     }
-    public static boolean monitor(DiscordMessageReceived received){
+    public static boolean monitor(DiscordMessageReceived received) {
         if (received.getChannel().isPrivate() || received.getGuild().getUserSize() < ConfigProvider.BOT_SETTINGS.messageFilteringServerSize() || received.getChannel().isNSFW() || received.getMessage().getContent() == null || received.getMessage().getContent().isEmpty()) return false;
         try{CHANNEL_MAP.computeIfAbsent(received.getChannel(), MessageMonitor::calculate).forEach(filter -> filter.checkFilter(received));
-        } catch (MessageMonitoringException exception){
+        } catch (MessageMonitoringException exception) {
             new MessageMaker(received.getMessage()).withDM().append("Your message on ").appendRaw(received.getGuild().getName()).append(" in ").appendRaw(received.getChannel().mention()).append(" has been deleted.  Reason: " + exception.getMessage()).send();
             received.getMessage().delete();
             return true;
         }
         return false;
     }
-    private static Set<MessageFilter> calculate(Channel channel){
+    private static Set<MessageFilter> calculate(Channel channel) {
         Set<MessageMonitoringLevel> strings = ConfigHandler.getSetting(MessageMonitoringConfig.class, channel.getGuild());
         strings.addAll(ConfigHandler.getSetting(MessageMonitoringAdditionsConfig.class, channel));
         strings.removeAll(ConfigHandler.getSetting(MessageMonitoringExceptionsConfig.class, channel));
         return strings.stream().filter(strings::contains).map(FILTER_MAP::get).filter(Objects::nonNull).collect(Collectors.toSet());
     }
-    public static void recalculate(Channel channel){
+    public static void recalculate(Channel channel) {
         CHANNEL_MAP.put(channel, calculate(channel));
     }
-    public static Set<MessageMonitoringLevel> getLevels(Channel channel){
+    public static Set<MessageMonitoringLevel> getLevels(Channel channel) {
         return CHANNEL_MAP.computeIfAbsent(channel, MessageMonitor::calculate).stream().map(MessageFilter::getType).collect(Collectors.toSet());
     }
 }

@@ -52,7 +52,7 @@ public class StoriesCommand extends AbstractCommand {
         }
     }
     @Command
-    public void command(@Argument(optional = true, info = "story") String story, MessageMaker maker, VoiceChannel voiceChannel){
+    public void command(@Argument(optional = true, info = "story") String story, MessageMaker maker, VoiceChannel voiceChannel) {
         if (!story.isEmpty()) {
             String selected = StringHelper.getGoodMatch(reduce(story), REDUCED_LIST);
             if (selected == null) maker.append("I couldn't find that story");
@@ -69,7 +69,7 @@ public class StoriesCommand extends AbstractCommand {
             if (perPageCount.incrementAndGet() % 11 == 10) maker.guaranteeNewListPage();
         });
     }
-    private static String reduce(String s){
+    private static String reduce(String s) {
         return FormatHelper.filtering(s, Character::isLetter).toLowerCase();
     }
 }

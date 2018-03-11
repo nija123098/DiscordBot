@@ -47,7 +47,7 @@ public class SlotCommand extends AbstractCommand {// todo optimization and clean
         String currency_symbol = ConfigHandler.getSetting(CurrencySymbolConfig.class, guild);
 
         //bet not zero
-        if (bet < 1){
+        if (bet < 1) {
             throw new ArgumentException("You cannot bet less than `\u200B " + currency_symbol + " 1 \u200B` currency.");
         } else if (bet > 200) {
             throw new ArgumentException("You cannot bet more than `\u200b " + currency_symbol + " 200 \u200b` currency.");
@@ -80,11 +80,11 @@ public class SlotCommand extends AbstractCommand {// todo optimization and clean
         maker.send();
 
         //check for minimum bet
-        if (bet >= mBet){
+        if (bet >= mBet) {
 
             //check for jackpot
             int jackpotRoll = Rand.getRand(guild.getUserSize()*3);
-            if (jackpotRoll == 0 && guildJackpot != 0){
+            if (jackpotRoll == 0 && guildJackpot != 0) {
 
                 //refund bet and add jackpot
                 ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, userBalance + bet + guildJackpot);
@@ -169,11 +169,11 @@ public class SlotCommand extends AbstractCommand {// todo optimization and clean
             maker.send();
 
             //check for minimum bet
-            if (bet >= mBet){
+            if (bet >= mBet) {
 
                 //check for jackpot
                 int jackpotRoll = Rand.getRand(guild.getUserSize()*3);
-                if (jackpotRoll == 0 && r_guildJackpot != 0){
+                if (jackpotRoll == 0 && r_guildJackpot != 0) {
 
                     //refund bet and add jackpot
                     ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, r_userBalance + bet + r_guildJackpot);
@@ -246,7 +246,7 @@ public class SlotCommand extends AbstractCommand {// todo optimization and clean
     }
 
     @Override
-    public String getHelp(){
+    public String getHelp() {
 
         //command description:
         return
@@ -282,7 +282,7 @@ public class SlotCommand extends AbstractCommand {// todo optimization and clean
 
         //translate to emotes
         String[] translatedSlots = new String[9];
-        for (int i = 0; i < 9; i++){
+        for (int i = 0; i < 9; i++) {
             translatedSlots[i] = emotes[slots[i]];
         }
 
@@ -290,18 +290,18 @@ public class SlotCommand extends AbstractCommand {// todo optimization and clean
         return translatedSlots;
     }
 
-    private int calculateWin(int first, int second, int third){
+    private int calculateWin(int first, int second, int third) {
 
         //make the calculating array
         int[] array = {first, second, third};
 
         //calculate number of element 0 in emote array ("win condition")
         int count = 0;
-        for (int i = 0; i < 3; i++){
+        for (int i = 0; i < 3; i++) {
             if (array[i] == 0) count++;
         }
-        if (count > 0){
-            switch (count){
+        if (count > 0) {
+            switch (count) {
 
                 //if -1 return no win
                 case 1:
@@ -317,8 +317,8 @@ public class SlotCommand extends AbstractCommand {// todo optimization and clean
             }
         }
 
-        if (array[0] == array[1] && array[0] == array[2]){
-            switch (array[0]){
+        if (array[0] == array[1] && array[0] == array[2]) {
+            switch (array[0]) {
 
                 //return based on emotes array order, use this to adjust win multiplier
                 case 1:

@@ -25,10 +25,10 @@ public class CommandGroup {
     public AbstractCommand getCommand() {
         return this.command;
     }
-    public boolean isModuleGroup(){
+    public boolean isModuleGroup() {
         return this.command == null;
     }
-    public void act(Consumer<ModuleLevel> moduleLevelConsumer, Consumer<AbstractCommand> commandConsumer){
+    public void act(Consumer<ModuleLevel> moduleLevelConsumer, Consumer<AbstractCommand> commandConsumer) {
         if (this.command == null) moduleLevelConsumer.accept(this.moduleLevel);
         else commandConsumer.accept(this.command);
     }

@@ -22,7 +22,7 @@ public class YoutubeTrack extends DownloadableTrack {
     }
     protected YoutubeTrack() {}
     private void loadName() {
-        if (this.name == null){
+        if (this.name == null) {
             this.name = YTUtil.getTrackName(this.getCode());
             if (this.name == null) {
                 this.available = false;
@@ -54,10 +54,10 @@ public class YoutubeTrack extends DownloadableTrack {
         return "https://i3.ytimg.com/vi/" + this.getCode() + "/0.jpg";
     }
     @Override
-    public boolean download(){
+    public boolean download() {
         return this.isDownloaded() && (this.getLength() != Long.MAX_VALUE || this.getLength() == 0) && this.actualDownload();
     }
-    public void setName(String name){
+    public void setName(String name) {
         this.name = name;
     }
 }

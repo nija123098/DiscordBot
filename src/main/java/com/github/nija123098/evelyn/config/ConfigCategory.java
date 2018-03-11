@@ -55,7 +55,7 @@ public enum ConfigCategory {
     public ModuleLevel getLevel() {
         return this.level;
     }
-    public BotRole getBotRole(){
+    public BotRole getBotRole() {
         return botRole == null ? this.level.getDefaultRole() : this.botRole;
     }
     public Set<AbstractConfig<? extends Configurable, ?>> getConfigs() {
@@ -69,7 +69,7 @@ public enum ConfigCategory {
      *
      * @param abstractConfig the config to add to the category.
      */
-    public String addConfig(AbstractConfig<? extends Configurable, ?> abstractConfig){
+    public String addConfig(AbstractConfig<? extends Configurable, ?> abstractConfig) {
         this.configs.add(abstractConfig);
         return this.abbreviation + this.configs.size();
     }

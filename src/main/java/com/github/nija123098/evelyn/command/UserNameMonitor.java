@@ -25,28 +25,28 @@ public class UserNameMonitor {
         DiscordClient.getGuilds().forEach(UserNameMonitor::loadGuild);
     }
     @EventListener
-    public static void handle(DiscordGuildJoin join){
+    public static void handle(DiscordGuildJoin join) {
         loadGuild(join.getGuild());
     }
     @EventListener
-    public static void handle(DiscordUserJoin join){
+    public static void handle(DiscordUserJoin join) {
         Set<String> set = MAP.computeIfAbsent(join.getGuild(), guild -> ConcurrentHashMap.newKeySet());
         set.add(join.getUser().getName());
     }
     @EventListener
-    public static void handle(DiscordUserLeave leave){
+    public static void handle(DiscordUserLeave leave) {
         Set<String> set = MAP.computeIfAbsent(leave.getGuild(), guild -> ConcurrentHashMap.newKeySet());
         set.remove(leave.getUser().getName());
         String nick = leave.getUser().getNickname(leave.getGuild());
         if (nick != null) set.remove(nick);
     }
     @EventListener
-    public static void handler(DiscordNicknameChange change){
+    public static void handler(DiscordNicknameChange change) {
         Set<String> set = MAP.computeIfAbsent(change.getGuild(), guild -> ConcurrentHashMap.newKeySet());
         if (change.getNewUsername() != null) set.add(change.getNewUsername());
         if (change.getOldUsername() != null) set.remove(change.getOldUsername());
     }
-    private static void loadGuild(Guild guild){
+    private static void loadGuild(Guild guild) {
         Set<String> strings = ConcurrentHashMap.newKeySet();
         guild.getUsers().forEach(user -> {
             String name = user.getName();

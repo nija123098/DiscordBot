@@ -13,13 +13,13 @@ import java.util.List;
  * @since 1.0.0
  */
 public class DirectChannel extends Channel {
-    public static DirectChannel getDirectChannel(String id){
+    public static DirectChannel getDirectChannel(String id) {
         return (DirectChannel) getChannel(id);
     }
-    static DirectChannel getDirectChannel(IChannel channel){
+    static DirectChannel getDirectChannel(IChannel channel) {
         return (DirectChannel) getChannel(channel);
     }
-    static List<Channel> getChannels(List<IChannel> iChannels){
+    static List<Channel> getChannels(List<IChannel> iChannels) {
         List<Channel> channels = new ArrayList<>(iChannels.size());
         iChannels.forEach(iChannel -> channels.add(getChannel(iChannel)));
         return channels;
@@ -27,7 +27,7 @@ public class DirectChannel extends Channel {
     DirectChannel(IPrivateChannel channel) {
         super(channel);
     }
-    public IPrivateChannel channel(){
+    public IPrivateChannel channel() {
         return (IPrivateChannel) super.channel();
     }
     public User getRecipient() {

@@ -24,7 +24,7 @@ public class UserGuildsCommand extends AbstractCommand {
         super(UserCommand.class, "guilds", null, null, null, "Shows the guilds a user is currently in");
     }
     @Command
-    public void command(@Argument User user, MessageMaker maker){
+    public void command(@Argument User user, MessageMaker maker) {
         Set<Guild> guilds = user.getGuilds();
         List<List<String>> stats = new ArrayList<>(guilds.size());
         guilds.forEach(guild -> {

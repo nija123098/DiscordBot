@@ -19,7 +19,7 @@ public class CurrentBanCommand extends AbstractCommand {
         return BotRole.BOT_ADMIN;
     }
     @Command
-    public void command(Track track){
+    public void command(Track track) {
         BannedTrackConfig.ban(track);
     }
 }

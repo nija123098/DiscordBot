@@ -44,11 +44,11 @@ public class TypeChanger {
     private static final Map<Class<?>, Function<?, String>> TO_STRING = new HashMap<>();
     private static final Map<String, Function<String, ?>> FROM_STRING = new HashMap<>();
     private static final Map<Class<?>, Function<?, ?>> X_STREAM_OBJECT_ALTERING = new HashMap<>();
-    private static <T> void add(Class<T> clazz, Function<T, String> toString, Function<String, T> toType){
+    private static <T> void add(Class<T> clazz, Function<T, String> toString, Function<String, T> toType) {
         TO_STRING.put(clazz, toString);
         FROM_STRING.put(clazz.getName(), toType);
     }
-    private static <T> void add(Class<T> clazz, Function<String, T> toType){
+    private static <T> void add(Class<T> clazz, Function<String, T> toType) {
         add(clazz, Object::toString, toType);
     }
     static {
@@ -60,13 +60,13 @@ public class TypeChanger {
         add(Long.class, Long::parseLong);
         add(Class.class, s -> {
             try{return Class.forName(s);
-            } catch (ClassNotFoundException e){
+            } catch (ClassNotFoundException e) {
                 Log.log("Moved class!", e);
                 return null;
             }// Should not happen
         });
     }
-    private static <T> void alter(Class<T> clazz, Function<T, Object> function){
+    private static <T> void alter(Class<T> clazz, Function<T, Object> function) {
         X_STREAM_OBJECT_ALTERING.put(clazz, function);
     }
     static {
@@ -81,8 +81,8 @@ public class TypeChanger {
      * @param <T> the type.
      * @return a new comparable object.
      */
-    private static <T> Object alter(T o){
-        for (Class<?> clazz : ReflectionHelper.getAssignableTypes(o.getClass())){
+    private static <T> Object alter(T o) {
+        for (Class<?> clazz : ReflectionHelper.getAssignableTypes(o.getClass())) {
             Function<T, Object> function = (Function<T, Object>) X_STREAM_OBJECT_ALTERING.get(clazz);
             if (function != null) return function.apply(o);
         }
@@ -95,7 +95,7 @@ public class TypeChanger {
      * @param clazz the class type to check.
      * @return if the class type can be stored without using XStream.
      */
-    static boolean normalStorage(Class<?> clazz){
+    static boolean normalStorage(Class<?> clazz) {
         return clazz.isEnum() || clazz.equals(String.class) || !Collections.disjoint(TO_STRING.keySet(), ReflectionHelper.getAssignableTypes(clazz));
     }
 
@@ -107,13 +107,13 @@ public class TypeChanger {
      * @param o the object to get a {@link String} representation for.
      * @return the string representation of the object.
      */
-    public static String toString(Class<?> from, Object o){
+    public static String toString(Class<?> from, Object o) {
         if (o == null) return "null";
         if (from.isEnum()) return o.toString();
         if (EmoticonHelper.checkUnicode(o.toString())) return o.toString();
         if (from.equals(String.class)) return (String) o;
         AtomicReference<String> reference = new AtomicReference<>();
-        for (Class<?> clazz : ReflectionHelper.getAssignableTypes(from)){
+        for (Class<?> clazz : ReflectionHelper.getAssignableTypes(from)) {
             Function<Object, String> f = (Function<Object, String>) TO_STRING.get(clazz);
             if (f != null) return f.apply(o);
         }
@@ -130,7 +130,7 @@ public class TypeChanger {
      * @param <T> the type to change the representation to.
      * @return the {@link Object} the {@link String} representation equaled.
      */
-    public static <T> T toObject(Class<T> to, String s){
+    public static <T> T toObject(Class<T> to, String s) {
         if (s.equals("null")) return null;
         if (to.isEnum()) return (T) getEnum(to, s);
         if (to.equals(String.class)) return (T) s;
@@ -140,7 +140,7 @@ public class TypeChanger {
         }
         return (T) X_STREAM.fromXML(s);
     }
-    private static <T extends Enum<T>> Object getEnum(Class<?> clazz, String s){
+    private static <T extends Enum<T>> Object getEnum(Class<?> clazz, String s) {
         return Enum.valueOf((Class<T>) clazz, s);
     }
 
@@ -150,17 +150,17 @@ public class TypeChanger {
      * @param o the class instance to get implemented generic types for.
      * @return a array of implemented generic types.
      */
-    public static Class<?>[] getRawClasses(Class<?> o){
+    public static Class<?>[] getRawClasses(Class<?> o) {
         Type[] t = ((ParameterizedType) o.getGenericSuperclass()).getActualTypeArguments();
         boolean br = true;
-        while (true){
+        while (true) {
             for (int i = 0; i < t.length; i++) {
-                if (t[i] instanceof ParameterizedType){
+                if (t[i] instanceof ParameterizedType) {
                     t[i] = ((ParameterizedType) t[i]).getRawType();
                     br = false;
                 }
             }
-            if (br){
+            if (br) {
                 break;
             }
             br = true;

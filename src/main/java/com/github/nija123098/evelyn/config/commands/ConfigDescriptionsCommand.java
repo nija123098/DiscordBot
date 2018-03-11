@@ -21,9 +21,9 @@ public class ConfigDescriptionsCommand extends AbstractCommand {
         super(ConfigCommand.class, "descriptions", "cfginfo, cfgdesc", null, null, "Displays what a config does");
     }
     @Command
-    public <C extends Configurable> void command(@Argument(optional = true, replacement = ContextType.NONE, info = "the configurable to get descriptions for") C configurable, @Argument(optional = true, info = "the config to get descriptions of", replacement = ContextType.NONE) AbstractConfig<?, C> config, @Context(softFail = true) Guild guild, User user, MessageMaker maker){
+    public <C extends Configurable> void command(@Argument(optional = true, replacement = ContextType.NONE, info = "the configurable to get descriptions for") C configurable, @Argument(optional = true, info = "the config to get descriptions of", replacement = ContextType.NONE) AbstractConfig<?, C> config, @Context(softFail = true) Guild guild, User user, MessageMaker maker) {
         if (config == null && configurable == null) configurable = (C) (guild == null ? user : guild);
-        if (configurable != null){
+        if (configurable != null) {
             maker.getTitle().append("Config Descriptions for " + configurable.getName());
             ConfigHandler.getConfigs(configurable.getClass()).forEach(abstractConfig -> maker.getNewListPart().appendRaw("**" + abstractConfig.getName() + "**\n").append(abstractConfig.getDescription() + "\n"));
         }else{

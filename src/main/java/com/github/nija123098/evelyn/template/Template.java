@@ -30,7 +30,7 @@ public class Template {
     private String text;
     private CustomCommandDefinition definition;
     private transient CombinedArg arg;
-    public Template(String template, CustomCommandDefinition definition){
+    public Template(String template, CustomCommandDefinition definition) {
         this.text = template;
         this.definition = definition;
         this.precompileCheck();
@@ -39,10 +39,10 @@ public class Template {
     public Template() {
         this.ensureArgsInited();//XSTREAM just doesn't like calling this
     }
-    public CustomCommandDefinition getDefinition(){
+    public CustomCommandDefinition getDefinition() {
         return this.definition;
     }
-    public void precompileCheck(){
+    public void precompileCheck() {
         int leftBraceCount = 0, rightBraceCount = 0;
         for (int i = 0; i < this.text.length(); i++) {
             char c = this.text.charAt(i);
@@ -51,14 +51,14 @@ public class Template {
         }
         if (leftBraceCount != rightBraceCount) throw new ArgumentException("Brace count miss-match, make sure every function is closed");
     }
-    private void ensureArgsInited(){
+    private void ensureArgsInited() {
         if (this.arg != null) return;
         this.arg = new CombinedArg(getCalculatedArgs(TemplatePrepossessing.substitute(this.text), this.definition));
     }
-    public String interpret(ContextPack pack, Object...args){
+    public String interpret(ContextPack pack, Object...args) {
         return this.interpret(pack.getUser(), pack.getShard(), pack.getChannel(), pack.getGuild(), pack.getMessage(), pack.getReaction(), args);
     }
-    public String interpret(User user, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, Object...objects){
+    public String interpret(User user, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, Object...objects) {
         this.definition.checkArgTypes(objects);// if is for testing since in testing it will be null
         Object[] contexts = new Object[]{user, shard, channel, guild, message, reaction};
         Set<ContextRequirement> requirements = new HashSet<>(contexts.length + 2, 1);
@@ -106,7 +106,7 @@ public class Template {
     private static class GrantedArg extends Arg {
         private int i;
         private CustomCommandDefinition keyPhrase;
-        GrantedArg(int i, CustomCommandDefinition definition){
+        GrantedArg(int i, CustomCommandDefinition definition) {
             this.i = i;
             this.keyPhrase = definition;
         }
@@ -129,30 +129,30 @@ public class Template {
     private static class CalculatedArg extends Arg {
         private AbstractCommand command;
         private Arg[] args;
-        CalculatedArg(AbstractCommand command, String s, CustomCommandDefinition keyPhrase){
+        CalculatedArg(AbstractCommand command, String s, CustomCommandDefinition keyPhrase) {
             Set<ContextRequirement> requirements = command.getContextRequirements();
             requirements.remove(ContextRequirement.STRING);
             keyPhrase.checkContextRequirements(requirements);
             this.command = command;
-            if (!this.command.isTemplateCommand()){
+            if (!this.command.isTemplateCommand()) {
                 throw new ArgumentException("Command is not a valid template command: " + this.command.getName());
             }
             this.args = getCalculatedArgs(s, keyPhrase);
             int argTotal = 0;
-            for (Parameter parameter : command.getParameters()){
-                if (parameter.isAnnotationPresent(Argument.class)){
+            for (Parameter parameter : command.getParameters()) {
+                if (parameter.isAnnotationPresent(Argument.class)) {
                     ++argTotal;
                 }
             }
-            if (this.args.length > argTotal){
+            if (this.args.length > argTotal) {
                 throw new ArgumentException("Too many arguments for " + command.getName() + " expected arg count: " + argTotal);
             }
             int arg = 0;
             for (int i = 0; i < this.args.length; i++) {
-                if (command.getParameters()[i].isAnnotationPresent(Argument.class)){
+                if (command.getParameters()[i].isAnnotationPresent(Argument.class)) {
                     ++arg;
                 }else continue;
-                if (!command.getParameters()[i].getType().isAssignableFrom(this.args[i].getReturnType()) || command.getParameters()[i].getAnnotation(Argument.class).optional()){
+                if (!command.getParameters()[i].getType().isAssignableFrom(this.args[i].getReturnType()) || command.getParameters()[i].getAnnotation(Argument.class).optional()) {
                     throw new ArgumentException("Incorrect argument type for arg: " + arg + (this.args[i] instanceof CombinedArg ? "  Make sure you have argument splitters" : ""));
                 }
             }
@@ -196,7 +196,7 @@ public class Template {
             return String.class;
         }
     }
-    private static String toString(Object o){
+    private static String toString(Object o) {
         return o instanceof Configurable ? ((Configurable) o).getName() : String.valueOf(o);
     }
 
@@ -211,22 +211,22 @@ public class Template {
             this.template = template;
             this.commandDefinition = commandDefinition;
         }
-        void forEach(Iterator<Character> iterator){
+        void forEach(Iterator<Character> iterator) {
             char c = iterator.next();
-            if (ARGUMENT_SPLITTER == c){
+            if (ARGUMENT_SPLITTER == c) {
                 args.add(null);
             }
-            switch (c){
+            switch (c) {
                 case LEFT_BRACE:
                     String command = this.wordBuilder;
                     this.sectionBuilder = this.sectionBuilder.substring(0, this.sectionBuilder.length() - command.length());
                     endSection();
                     int left = 1;
                     String comArgs = "";
-                    while (true){
+                    while (true) {
                         c = iterator.next();
-                        if (RIGHT_BRACE == c){
-                            if (--left == 0){
+                        if (RIGHT_BRACE == c) {
+                            if (--left == 0) {
                                 break;
                             }
                         } else if (LEFT_BRACE == c) ++left;
@@ -239,7 +239,7 @@ public class Template {
                     endSection();
                     if (!iterator.hasNext()) throw new ArgumentException("Improperly formed argument, please follow every " + ARGUMENT_CHARACTER + " with a argument number");
                     try{args.add(new GrantedArg(Integer.parseInt(iterator.next() + ""), commandDefinition));
-                    } catch (NumberFormatException e){
+                    } catch (NumberFormatException e) {
                         throw new ArgumentException("Improperly formed argument, please follow every " + ARGUMENT_CHARACTER + " with a argument number", e);
                     }
                     return;
@@ -247,28 +247,28 @@ public class Template {
                     endSection();
                     args.add(null);
             }
-            if (c != ARGUMENT_SPLITTER){
+            if (c != ARGUMENT_SPLITTER) {
                 if (c == ' ') wordBuilder = ""; else wordBuilder += c;
                 sectionBuilder += c;
             }
         }
-        void endSection(){
+        void endSection() {
             if (!sectionBuilder.isEmpty()) args.add(new StaticArg(sectionBuilder));
             sectionBuilder = "";
             wordBuilder = "";
         }
-        Arg[] build(){
+        Arg[] build() {
             StringIterator iterator = new StringIterator(this.template);
-            while (iterator.hasNext()){
+            while (iterator.hasNext()) {
                 forEach(iterator);
             }
-            if (!sectionBuilder.equals("")){
+            if (!sectionBuilder.equals("")) {
                 args.add(new StaticArg(sectionBuilder));
             }
             final List<Arg> newArgs = new ArrayList<>(args.size()), temp = new ArrayList<>(3);
             args.add(null);
             args.forEach(arg -> {
-                if (arg == null){
+                if (arg == null) {
                     if (temp.size() == 1) newArgs.add(temp.get(0));
                     else if (!temp.isEmpty()) newArgs.add(new CombinedArg(temp));
                     temp.clear();
@@ -278,7 +278,7 @@ public class Template {
             return newArgs.toArray(new Arg[newArgs.size()]);
         }
     }
-    private static Arg[] getCalculatedArgs(String s, CustomCommandDefinition definition){
+    private static Arg[] getCalculatedArgs(String s, CustomCommandDefinition definition) {
         return new ArgBuilder(s, definition).build();
     }
 }

@@ -16,7 +16,7 @@ public class QueueRemoveCommand extends AbstractCommand {
         super(QueueCommand.class, "remove", null, null, null, "Removes a specific track from the queue");
     }
     @Command
-    public void command(@Argument Track track, GuildAudioManager manager, MessageMaker maker){
+    public void command(@Argument Track track, GuildAudioManager manager, MessageMaker maker) {
         if (manager.getQueue().remove(track)) maker.withOK();
         else maker.append("The queue didn't contain that track!");
     }

@@ -13,7 +13,7 @@ public class PingMeCommand extends AbstractCommand {
         super(PingCommand.class, "me", null, null, null, "Pings the user through DM");
     }
     @Command
-    public void command(MessageMaker helper){
+    public void command(MessageMaker helper) {
         helper.append("ping").mustEmbed().withDM();
     }
 }

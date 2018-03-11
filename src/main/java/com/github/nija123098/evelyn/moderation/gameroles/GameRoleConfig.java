@@ -26,10 +26,10 @@ public class GameRoleConfig extends AbstractConfig<Boolean, Role> {
         Launcher.registerAsyncStartup(() -> ConfigHandler.getNonDefaultSettings(UserHasGameRoleConfig.class).keySet().forEach(user -> check(user, user.getPresence(), null)));
     }
     @EventListener
-    public void handle(DiscordPresenceUpdate update){
+    public void handle(DiscordPresenceUpdate update) {
         check(update.getUser(), update.getNewPresence(), update.getOldPresence());
     }
-    public void check(User user, Presence presence, Presence oldPresence){
+    public void check(User user, Presence presence, Presence oldPresence) {
         if (oldPresence != null && presence.getOptionalPlayingText().equals(oldPresence.getOptionalPlayingText())) return;
         if (oldPresence != null) oldPresence.getOptionalStreamingUrl().ifPresent(playText -> rolesForGuilds(user.getGuilds()).forEach(role -> {
             if (role.getName().equals(playText)) {

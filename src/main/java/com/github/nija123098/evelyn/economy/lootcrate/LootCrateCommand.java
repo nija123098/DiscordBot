@@ -79,7 +79,7 @@ public class LootCrateCommand extends AbstractCommand {
                 //not enough funds
                 try {
                     maker.clearReactionBehaviors();
-                } catch (ConcurrentModificationException IGNORE){ }
+                } catch (ConcurrentModificationException IGNORE) { }
 
                 //print the error
                 maker.withColor(new Color(255, 183, 76));

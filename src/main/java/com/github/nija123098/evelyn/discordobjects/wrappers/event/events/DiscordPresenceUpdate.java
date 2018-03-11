@@ -14,13 +14,13 @@ public class DiscordPresenceUpdate implements BotEvent {
     public DiscordPresenceUpdate(PresenceUpdateEvent event) {
         this.event = event;
     }
-    public Presence getOldPresence(){
+    public Presence getOldPresence() {
         return Presence.getPresence(this.event.getOldPresence());
     }
-    public Presence getNewPresence(){
+    public Presence getNewPresence() {
         return Presence.getPresence(this.event.getNewPresence());
     }
-    public User getUser(){
+    public User getUser() {
         return User.getUser(this.event.getUser());
     }
 }

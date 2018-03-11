@@ -15,7 +15,7 @@ public class InterruptCommand extends AbstractCommand {
         super("int", ModuleLevel.FUN, null, null, "Interrups");
     }
     @Command
-    public void command(GuildAudioManager manager){
+    public void command(GuildAudioManager manager) {
         manager.interrupt(new LangString(false, "I am interrupting"));
     }
 }

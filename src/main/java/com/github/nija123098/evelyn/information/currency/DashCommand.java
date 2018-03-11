@@ -70,7 +70,7 @@ public class DashCommand extends AbstractCommand {
         super(CryptocurrencyCommand.class, "dash", "dash", null, null, "Shows information on the crypocurrency Dash");
     }
     @Command
-    public void command(MessageMaker maker, User user){
+    public void command(MessageMaker maker, User user) {
         Cryptocurrency dash = Cryptocurrency.getCryptocurrency("dash");
         maker.getNewFieldPart().withBoth("Masternodes", ONLINE_NODES.get() + " online of " + MASTERNODE_ARRAYS.get().size() + " " + String.valueOf(((double) ONLINE_NODES.get() / MASTERNODE_ARRAYS.get().size() * 100)).substring(0, 5) + "%");
         maker.getNewFieldPart().withBoth("24H Average Difficulty", FormatHelper.addComas(DIFFICULTY.get()));

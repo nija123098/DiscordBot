@@ -16,11 +16,11 @@ public class GuildLastCommandTimeConfig extends AbstractConfig<Long, Guild> {
         super("guild_last_command_time", "", ConfigCategory.STAT_TRACKING, -1L, "The last time the user used a command");
         CONFIG.set(this);
     }
-    public static void update(Guild guild){
+    public static void update(Guild guild) {
         CONFIG.get().setValue(guild, System.currentTimeMillis());
     }
 
-    public static long get(Guild guild){
+    public static long get(Guild guild) {
         return CONFIG.get().getValue(guild);
     }
 

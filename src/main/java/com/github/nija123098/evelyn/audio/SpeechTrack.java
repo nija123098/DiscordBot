@@ -18,7 +18,7 @@ import java.io.File;
  */
 public class SpeechTrack extends Track {
     private final File file;
-    public SpeechTrack(LangString langString, String lang){
+    public SpeechTrack(LangString langString, String lang) {
         super(FormatHelper.filtering(langString.asBuilt(), Character::isLetterOrDigit));
         this.file = SpeechHelper.getFile(langString, lang);
     }

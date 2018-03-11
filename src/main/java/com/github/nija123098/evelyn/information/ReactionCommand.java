@@ -18,7 +18,7 @@ public class ReactionCommand extends AbstractCommand {
         super("reaction", ModuleLevel.FUN, "react, re", null, "Shows the image form of an emoji, or takes the image form and converts it to text");
     }
     @Command
-    public void command(@Argument(info = "text") String s, MessageMaker maker){
+    public void command(@Argument(info = "text") String s, MessageMaker maker) {
         s = s.toLowerCase();
         ReactionEmoji emoji = EmoticonHelper.getReactionEmoji(s);
         String display;

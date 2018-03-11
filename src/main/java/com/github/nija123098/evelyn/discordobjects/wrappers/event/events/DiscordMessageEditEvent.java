@@ -16,10 +16,10 @@ public class DiscordMessageEditEvent implements BotEvent {
     public DiscordMessageEditEvent(MessageEditEvent event) {
         this.event = event;
     }
-    public Message getOldMessage(){
+    public Message getOldMessage() {
         return Message.getMessage(this.event.getOldMessage());
     }
-    public String getOldMessageCleanedContent(){
+    public String getOldMessageCleanedContent() {
         return Message.getCleanContent(this.event.getOldMessage());
     }
     public Message getNewMessage() {
@@ -28,13 +28,13 @@ public class DiscordMessageEditEvent implements BotEvent {
     public String getNewMessageCleanedString() {
         return Message.getCleanContent(this.event.getNewMessage());
     }
-    public User getAuthor(){
+    public User getAuthor() {
         return User.getUser(this.event.getAuthor());
     }
-    public Channel getChannel(){
+    public Channel getChannel() {
         return Channel.getChannel(this.event.getChannel());
     }
-    public Guild getGuild(){
+    public Guild getGuild() {
         return Guild.getGuild(this.event.getGuild());
     }
 }

@@ -16,7 +16,7 @@ public class RSSUnsubscribeAllCommand extends AbstractCommand {
         super(RSSUnsubscribeCommand.class, "all", null, null, null, "Unsubs all rss feeds");
     }
     @Command
-    public void command(Channel channel){
+    public void command(Channel channel) {
         ConfigHandler.setSetting(RSSSubscriptionsConfig.class, channel, new ArrayList<>(0));
     }
 }

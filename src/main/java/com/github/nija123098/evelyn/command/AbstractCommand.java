@@ -76,7 +76,7 @@ public class AbstractCommand implements Tagable {
      * @param relativeAliases the list of names which the super command's names are prefixed before separated by a comma and space.
      * @param help the help text for this command.
      */
-    public AbstractCommand(Class<? extends AbstractCommand> superCommand, String name, String absoluteAliases, String emoticonAliases, String relativeAliases, String help){
+    public AbstractCommand(Class<? extends AbstractCommand> superCommand, String name, String absoluteAliases, String emoticonAliases, String relativeAliases, String help) {
         this.superCommand = superCommand;
         this.name = name;
         this.aAliases = absoluteAliases;
@@ -97,7 +97,7 @@ public class AbstractCommand implements Tagable {
      * @param emoticonAliases the list of emoticon names separated by a comma and space.
      * @param help the help text for this command.
      */
-    public AbstractCommand(String name, ModuleLevel module, String absoluteAliases, String emoticonAliases, String help){
+    public AbstractCommand(String name, ModuleLevel module, String absoluteAliases, String emoticonAliases, String help) {
         this(null, name, absoluteAliases, emoticonAliases, null, help);
         this.module = module;
         this.name = name;
@@ -113,7 +113,7 @@ public class AbstractCommand implements Tagable {
      * @param emoticonAliases the list of emoticon names separated by a comma and space.
      * @param help the help text for this command.
      */
-    public AbstractCommand(String name, BotRole botRole, ModuleLevel module, String absoluteAliases, String emoticonAliases, String help){
+    public AbstractCommand(String name, BotRole botRole, ModuleLevel module, String absoluteAliases, String emoticonAliases, String help) {
         this(name, module, absoluteAliases, emoticonAliases, help);
         this.botRole = botRole;
     }
@@ -122,7 +122,7 @@ public class AbstractCommand implements Tagable {
      * Called once after all configs are initialized to link
      * super-commands and sub-commands called hierarchically.
      */
-    void load(){
+    void load() {
         AbstractCommand superCommand = getSuperCommand();
         this.allNames = new HashSet<>();
         if (superCommand != null) this.getSuperCommand().allNames.forEach(s -> this.allNames.add(s + " " + this.name));
@@ -132,10 +132,10 @@ public class AbstractCommand implements Tagable {
         this.botRole = getBotRole() == null ? (superCommand == null ? this.getModule().getDefaultRole() : superCommand.getBotRole()) : this.getBotRole();
         this.prefixRequired = superCommand == null ? this.prefixRequired : superCommand.prefixRequired();
         this.allNames.add(this.name);
-        if (aAliases != null){
+        if (aAliases != null) {
             Collections.addAll(this.allNames, aAliases.split(", "));
         }
-        if (eAliases != null){
+        if (eAliases != null) {
             String[] eAliases = this.eAliases.split(", ");
             this.emoticonAliases = new HashSet<>(eAliases.length);
             Collections.addAll(this.emoticonAliases, eAliases);
@@ -144,8 +144,8 @@ public class AbstractCommand implements Tagable {
         }
         this.allNames.addAll(this.emoticonAliases);
         this.emoticonAliases.stream().map(s -> EmoticonHelper.getChars(s, false)).forEach(this.allNames::add);
-        if (rAliases != null && superCommand != null){
-            for (String rel : rAliases.split(", ")){
+        if (rAliases != null && superCommand != null) {
+            for (String rel : rAliases.split(", ")) {
                 superCommand.getNames().forEach(s -> this.allNames.add(s + " " + rel));
             }
         }
@@ -155,11 +155,11 @@ public class AbstractCommand implements Tagable {
                 break;
             }
         }
-        if (this.method == null){
+        if (this.method == null) {
             throw new DevelopmentException("No method annotated " + Command.class.getSimpleName() + " in command: " + this.getClass().getName());
         }
         this.parameters = this.method.getParameters();
-        if (!this.isTemplateCommand()) for (Parameter parameter : this.parameters){
+        if (!this.isTemplateCommand()) for (Parameter parameter : this.parameters) {
             if (parameter.isAnnotationPresent(Argument.class)) InvocationObjectGetter.checkConvertType(parameter.getType());
             else if (parameter.isAnnotationPresent(Argument.class) || parameter.getAnnotations().length == 0) InvocationObjectGetter.checkContextType(parameter.getType());
         }
@@ -167,7 +167,7 @@ public class AbstractCommand implements Tagable {
         for (Parameter parameter : this.parameters) {
             if (parameter.getAnnotations().length == 0 || (parameter.isAnnotationPresent(Context.class) && !parameter.getAnnotation(Context.class).softFail())) {
                 this.contextRequirements.addAll(InvocationObjectGetter.getContextRequirements(parameter.getType(), parameter.isAnnotationPresent(Context.class) ? parameter.getAnnotation(Context.class).value() : ContextType.DEFAULT));
-            }else if (parameter.isAnnotationPresent(Argument.class) && !parameter.getAnnotation(Argument.class).optional() && !this.isTemplateCommand()){
+            }else if (parameter.isAnnotationPresent(Argument.class) && !parameter.getAnnotation(Argument.class).optional() && !this.isTemplateCommand()) {
                 this.contextRequirements.addAll(InvocationObjectGetter.getConvertRequirements(parameter.getType(), parameter.getAnnotation(Argument.class).replacement()));
             }
             if (parameter.getType().equals(MessageMaker.class) || parameter.getType().equals(GuildAudioManager.class)) this.okOnSuccess = false;
@@ -177,26 +177,26 @@ public class AbstractCommand implements Tagable {
         if (this.superCommand != null) this.getSuperCommand().subCommands.add(this);
         this.highCommand = this.getSuperCommand();
         if (this.highCommand == null) this.highCommand = this;
-        else while (true){
+        else while (true) {
             AbstractCommand command = this.highCommand.getSuperCommand();
             if (command == null) break;
             this.highCommand = command;
         }
         this.globalCoolDownTime = this.getCoolDown(GlobalConfigurable.class);
         long persistence = this.getCoolDown(Guild.class);
-        if (persistence != -1){
+        if (persistence != -1) {
             this.guildCoolDowns = new CacheHelper.ContainmentCache<>(persistence);
         }
         persistence = this.getCoolDown(Channel.class);
-        if (persistence != -1){
+        if (persistence != -1) {
             this.channelCoolDowns = new CacheHelper.ContainmentCache<>(persistence);
         }
         persistence = this.getCoolDown(User.class);
-        if (persistence != -1){
+        if (persistence != -1) {
             this.userCoolDowns = new CacheHelper.ContainmentCache<>(persistence);
         }
         persistence = this.getCoolDown(GuildUser.class);
-        if (persistence != -1){
+        if (persistence != -1) {
             this.guildUserCoolDowns = new CacheHelper.ContainmentCache<>(persistence);
         }
         EventDistributor.register(this);
@@ -210,7 +210,7 @@ public class AbstractCommand implements Tagable {
      *
      * @return if the command has been loaded.
      */
-    public boolean isLoaded(){
+    public boolean isLoaded() {
         return this.allNames != null;
     }
 
@@ -220,7 +220,7 @@ public class AbstractCommand implements Tagable {
      *
      * @return this command's super command.
      */
-    public AbstractCommand getSuperCommand(){
+    public AbstractCommand getSuperCommand() {
         return CommandHandler.getCommand(this.superCommand);
     }
 
@@ -229,7 +229,7 @@ public class AbstractCommand implements Tagable {
      *
      * @return the command's high command.
      */
-    public AbstractCommand getHighCommand(){
+    public AbstractCommand getHighCommand() {
         return this.highCommand;
     }
 
@@ -248,7 +248,7 @@ public class AbstractCommand implements Tagable {
      *
      * @return the type of the super command.
      */
-    public Class<? extends AbstractCommand> getSuperCommandType(){
+    public Class<? extends AbstractCommand> getSuperCommandType() {
         return this.superCommand;
     }
 
@@ -268,7 +268,7 @@ public class AbstractCommand implements Tagable {
      *
      * @return the name of the command.
      */
-    public String getName(){
+    public String getName() {
         return this.name;
     }
 
@@ -298,7 +298,7 @@ public class AbstractCommand implements Tagable {
      *
      * @return the module of which the command is part of.
      */
-    public ModuleLevel getModule(){
+    public ModuleLevel getModule() {
         return this.module;
     }
 
@@ -307,7 +307,7 @@ public class AbstractCommand implements Tagable {
      *
      * @return the required bot role to run this command.
      */
-    public BotRole getBotRole(){
+    public BotRole getBotRole() {
         return this.botRole;
     }
 
@@ -316,7 +316,7 @@ public class AbstractCommand implements Tagable {
      *
      * @return if the command is a template command.
      */
-    public boolean isTemplateCommand(){
+    public boolean isTemplateCommand() {
         return this.getClass().getPackage().getName().contains(".template.");
     }
 
@@ -325,7 +325,7 @@ public class AbstractCommand implements Tagable {
      *
      * @return the return type of the command.
      */
-    public Class<?> getReturnType(){
+    public Class<?> getReturnType() {
         return this.method.getReturnType();
     }
 
@@ -334,7 +334,7 @@ public class AbstractCommand implements Tagable {
      *
      * @return the Java reflection results for getting the parameters.
      */
-    public Parameter[] getParameters(){
+    public Parameter[] getParameters() {
         return this.parameters;
     }
 
@@ -343,7 +343,7 @@ public class AbstractCommand implements Tagable {
      *
      * @return gets the help text.
      */
-    public String getHelp(){
+    public String getHelp() {
         return this.help;
     }
 
@@ -352,7 +352,7 @@ public class AbstractCommand implements Tagable {
      *
      * @return a command's example.
      */
-    public String getExample(){
+    public String getExample() {
         return null;
     }
 
@@ -361,7 +361,7 @@ public class AbstractCommand implements Tagable {
      *
      * @return a string representing the sub-command's and this command's help text and usage.
      */
-    protected String getLocalUsages(){
+    protected String getLocalUsages() {
         StringBuilder builder = new StringBuilder("#  ").append(this.name).append(" ");
         Stream.of(this.parameters).filter(parameter -> parameter.isAnnotationPresent(Argument.class)).forEach(parameter -> {
             boolean optional = parameter.getAnnotation(Argument.class).optional();
@@ -380,7 +380,7 @@ public class AbstractCommand implements Tagable {
      *
      * @return gets the string usages of a command.
      */
-    public String getUsages(){
+    public String getUsages() {
         StringBuilder builder = new StringBuilder();
         builder.append(getLocalUsages()).append("\n");
         this.subCommands.forEach(command -> builder.append(command.getUsages()).append("\n"));
@@ -392,7 +392,7 @@ public class AbstractCommand implements Tagable {
      *
      * @return if a prefix is required for using this command.
      */
-    public boolean prefixRequired(){
+    public boolean prefixRequired() {
         return this.prefixRequired;
     }
 
@@ -401,7 +401,7 @@ public class AbstractCommand implements Tagable {
      *
      * @return a set of all sub-commands.
      */
-    public Set<AbstractCommand> getSubCommands(){
+    public Set<AbstractCommand> getSubCommands() {
         return this.subCommands;
     }
 
@@ -410,7 +410,7 @@ public class AbstractCommand implements Tagable {
      *
      * @return the set of words to naturally trigger the command.
      */
-    public Set<String> getNaturalTriggers(){
+    public Set<String> getNaturalTriggers() {
         return Collections.emptySet();
     }
 
@@ -419,7 +419,7 @@ public class AbstractCommand implements Tagable {
      *
      * @return if the bot responds to reactions for this command.
      */
-    public boolean useReactions(){
+    public boolean useReactions() {
         return false;
     }
 
@@ -442,14 +442,14 @@ public class AbstractCommand implements Tagable {
     public boolean hasPermission(User user, Channel channel) {
         Set<String> blocked = ConfigHandler.getSetting(DisabledCommandsConfig.class, GlobalConfigurable.GLOBAL);
         AbstractCommand command = this;
-        while (command != null){
+        while (command != null) {
             if (blocked.contains(command.getName())) return false;
             command = command.getSuperCommand();
         }
         boolean hasNormalPerm = this.botRole.hasRequiredRole(user, channel.getGuild());
-        if (!channel.isPrivate()){
+        if (!channel.isPrivate()) {
             SpecialPermsContainer container = ConfigHandler.getSetting(GuildSpecialPermsConfig.class, channel.getGuild());
-            if (container != null && BotRole.GUILD_TRUSTEE.hasRequiredRole(user, channel.getGuild())){
+            if (container != null && BotRole.GUILD_TRUSTEE.hasRequiredRole(user, channel.getGuild())) {
                 Boolean allow = container.getSpecialPermission(this, channel, user);
                 return allow == null ? hasNormalPerm : allow;
             }
@@ -464,20 +464,20 @@ public class AbstractCommand implements Tagable {
      * @param user the user checked for rate limiting.
      * @return if the command is not being rate limited.
      */
-    boolean checkCoolDown(Channel channel, User user){
-        if (this.globalUseTime != -1 && this.globalUseTime > System.currentTimeMillis()){
+    boolean checkCoolDown(Channel channel, User user) {
+        if (this.globalUseTime != -1 && this.globalUseTime > System.currentTimeMillis()) {
             return false;
         }
-        if (this.guildCoolDowns != null && !channel.isPrivate() && this.guildCoolDowns.contains(channel.getGuild())){
+        if (this.guildCoolDowns != null && !channel.isPrivate() && this.guildCoolDowns.contains(channel.getGuild())) {
             return false;
         }
-        if (this.channelCoolDowns != null && this.channelCoolDowns.contains(channel)){
+        if (this.channelCoolDowns != null && this.channelCoolDowns.contains(channel)) {
             return false;
         }
-        if (this.userCoolDowns != null && this.userCoolDowns.contains(user)){
+        if (this.userCoolDowns != null && this.userCoolDowns.contains(user)) {
             return false;
         }
-        if (this.guildUserCoolDowns != null && !channel.isPrivate() && this.guildUserCoolDowns.contains(GuildUser.getGuildUser(channel.getGuild(), user))){
+        if (this.guildUserCoolDowns != null && !channel.isPrivate() && this.guildUserCoolDowns.contains(GuildUser.getGuildUser(channel.getGuild(), user))) {
             return false;
         }
         return true;
@@ -489,26 +489,26 @@ public class AbstractCommand implements Tagable {
      * @param channel the channel checked for rate limiting.
      * @param user the user checked for rate limiting.
      */
-    public void invoked(Channel channel, User user, Message message){
-        if (this.globalUseTime != -1){
+    public void invoked(Channel channel, User user, Message message) {
+        if (this.globalUseTime != -1) {
             this.globalUseTime = System.currentTimeMillis() + this.globalCoolDownTime;
         }
-        if (this.guildCoolDowns != null && !channel.isPrivate()){
+        if (this.guildCoolDowns != null && !channel.isPrivate()) {
             this.guildCoolDowns.add(channel.getGuild());
         }
-        if (this.channelCoolDowns != null){
+        if (this.channelCoolDowns != null) {
             this.channelCoolDowns.add(channel);
         }
-        if (this.userCoolDowns != null){
+        if (this.userCoolDowns != null) {
             this.userCoolDowns.add(user);
         }
-        if (this.guildUserCoolDowns != null && !channel.isPrivate()){
+        if (this.guildUserCoolDowns != null && !channel.isPrivate()) {
             this.guildUserCoolDowns.add(GuildUser.getGuildUser(channel.getGuild(), user));
         }
         CommandsUsedCountConfig.increment(user);
         LastCommandTimeConfig.update(user);
         if (!channel.isPrivate()) GuildLastCommandTimeConfig.update(channel.getGuild());
-        if (message != null){
+        if (message != null) {
             if (this.okOnSuccess) message.addReactionByName("ok_hand");
             if (this.shouldLog() && !message.getChannel().isPrivate()) {
                 Channel chan = ConfigHandler.getSetting(BotLogConfig.class, message.getGuild());
@@ -525,7 +525,7 @@ public class AbstractCommand implements Tagable {
      * @param clazz the configurable type.
      * @return the cool down in millis dependent on the type.
      */
-    public long getCoolDown(Class<? extends Configurable> clazz){
+    public long getCoolDown(Class<? extends Configurable> clazz) {
         return -1;
     }
 
@@ -534,7 +534,7 @@ public class AbstractCommand implements Tagable {
      *
      * @return The context requirements for the command.
      */
-    public Set<ContextRequirement> getContextRequirements(){
+    public Set<ContextRequirement> getContextRequirements() {
         return this.contextRequirements;
     }
 
@@ -551,7 +551,7 @@ public class AbstractCommand implements Tagable {
      * @param args the user args for invocation.
      * @return if the command was successful.
      */
-    public Object invoke(User user, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, String args, Object...argOverrides){
+    public Object invoke(User user, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, String args, Object...argOverrides) {
         ProcessingHandler.startProcess(channel);
         Object[] contexts = new Object[]{user, shard, channel, guild, message, reaction, args};
         boolean[] overridden = new boolean[argOverrides.length];
@@ -589,7 +589,7 @@ public class AbstractCommand implements Tagable {
      * @param o the output of the command's invocation.
      * @return if the command succeeded determined by it's output.
      */
-    boolean interpretSuccess(Object o){
+    boolean interpretSuccess(Object o) {
         return !(o instanceof Boolean) || (boolean) o;
     }
 }

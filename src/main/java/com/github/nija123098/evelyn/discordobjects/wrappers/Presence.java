@@ -17,12 +17,12 @@ import java.util.Optional;
  */
 public class Presence {
     private static final LoadingCache<IPresence, Presence> MAP = CacheHelper.getLoadingCache(4, ConfigProvider.CACHE_SETTINGS.presenceSize(), 30_000, Presence::new);
-    public static Presence getPresence(IPresence presence){
+    public static Presence getPresence(IPresence presence) {
         if (presence == null) return null;
         return MAP.getUnchecked(presence);
     }
     private IPresence iPresence;
-    private Presence(IPresence iPresence){
+    private Presence(IPresence iPresence) {
         this.iPresence = iPresence;
     }
 
@@ -45,7 +45,7 @@ public class Presence {
         return iPresence.getText();
     }
 
-    public String getPlayingText(){
+    public String getPlayingText() {
         return iPresence.getText().orElse(null);
     }
 
@@ -53,7 +53,7 @@ public class Presence {
         return iPresence.getStreamingUrl();
     }
 
-    public String getStreamingUrl(){
+    public String getStreamingUrl() {
         return iPresence.getStreamingUrl().orElse(null);
     }
 
@@ -61,7 +61,7 @@ public class Presence {
         return get(iPresence.getStatus());
     }
 
-    public Activity getActivity(){
+    public Activity getActivity() {
         return get(iPresence.getActivity().orElse(null));
     }
 
@@ -80,7 +80,7 @@ public class Presence {
         INVISIBLE,
         OFFLINE,
         UNKNOWN,;
-        public StatusType convert(){
+        public StatusType convert() {
             return StatusType.values()[this.ordinal()];
         }
     }
@@ -89,7 +89,7 @@ public class Presence {
         STREAMING,// streaming ____
         LISTENING,// listening to ____
         WATCHING,;// watching ____
-        public ActivityType convert(){
+        public ActivityType convert() {
             return ActivityType.values()[this.ordinal()];
         }
     }

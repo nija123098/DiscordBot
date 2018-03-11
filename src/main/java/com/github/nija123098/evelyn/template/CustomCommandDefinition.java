@@ -27,29 +27,29 @@ public class CustomCommandDefinition {
         this.availableContext = EnumHelper.getSet(ContextRequirement.class, required);
         this.argTypes = argTypes;
     }
-    public Class<?>[] getArgTypes(){
+    public Class<?>[] getArgTypes() {
         return this.argTypes;
     }
     public Set<ContextRequirement> getAvailableContext() {
         return this.availableContext;
     }
-    public void checkArgTypes(Object...objects){
-        if (this.argTypes.length < objects.length){
+    public void checkArgTypes(Object...objects) {
+        if (this.argTypes.length < objects.length) {
             throw new ArgumentException("To many arguments for KeyPhrase: " + this.name);
         }
         for (int i = 0; i < objects.length; i++) {
-            if (objects[i] == null || !this.argTypes[i].isAssignableFrom(objects[i].getClass())){
+            if (objects[i] == null || !this.argTypes[i].isAssignableFrom(objects[i].getClass())) {
                 throw new ArgumentException("Argument type mismatch: index: " + i + " got: " + objects[i].getClass() + " for: " + this.argTypes[i]);
             }
         }
     }
-    public void checkContextRequirements(Set<ContextRequirement> requirements){
-        if (!this.availableContext.containsAll(requirements)){
+    public void checkContextRequirements(Set<ContextRequirement> requirements) {
+        if (!this.availableContext.containsAll(requirements)) {
             throw new ContextException("KeyPhrase only provides context: " + this.availableContext + " required " + requirements);
         }
     }
-    public void checkAvailableContext(Set<ContextRequirement> available){
-        if (!available.containsAll(this.availableContext)){
+    public void checkAvailableContext(Set<ContextRequirement> available) {
+        if (!available.containsAll(this.availableContext)) {
             throw new DevelopmentException("Template system attempted to be used without proper context, required: " + this.availableContext + " provided: " + available);
         }
     }

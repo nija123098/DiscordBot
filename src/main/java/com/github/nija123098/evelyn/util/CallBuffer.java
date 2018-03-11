@@ -36,7 +36,7 @@ public class CallBuffer {
      *
      * @param runnable the thing to eventually run
      */
-    public void call(Runnable runnable){
+    public void call(Runnable runnable) {
         long val = this.time.get();
         this.time.set(val > System.currentTimeMillis() ? val + this.callDifference : System.currentTimeMillis());
         scheduledExecutorService.schedule(runnable, this.time.get(), TimeUnit.MILLISECONDS);

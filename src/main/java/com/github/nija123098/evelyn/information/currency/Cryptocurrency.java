@@ -39,7 +39,7 @@ public class Cryptocurrency {
             throw new DevelopmentException("Could not coin list from cryptocompare.com", e);
         }
     }
-    public static Cryptocurrency getCryptocurrency(String identification){
+    public static Cryptocurrency getCryptocurrency(String identification) {
         identification = NAME_MAP.get(identification);
         if (identification == null) throw new ArgumentException("Could not find cryptocurrency from identifying string");
         return CRYPTOCURRENCY_MAP.computeIfAbsent(identification, Cryptocurrency::new);
@@ -53,38 +53,38 @@ public class Cryptocurrency {
             throw new DevelopmentException("Could not get up to date information on coin snapshot", e);
         }
     });
-    private Cryptocurrency(String name){
+    private Cryptocurrency(String name) {
         this.name = name;
         this.id = COIN_LIST.get().getAsJsonObject(this.name).get("Id").getAsInt();
     }
-    public long getBlockHeight(){
+    public long getBlockHeight() {
         return DATA.get().get("BlockNumber").getAsLong();
     }
-    public double getCoinsMinted(){
+    public double getCoinsMinted() {
         return DATA.get().get("TotalCoinsMined").getAsDouble();
     }
-    public long getPossibleCoins(){
+    public long getPossibleCoins() {
         return DATA.get().get("TotalCoinSupply").getAsLong();
     }
-    public double getPercentMinted(){
+    public double getPercentMinted() {
         return this.getCoinsMinted() / (double) this.getPossibleCoins();
     }
-    public String getImage(){
+    public String getImage() {
         return "https://www.cryptocompare.com" + DATA.get().get("ImageUrl").getAsString();
     }
-    public double getConversion(Currency currency){
+    public double getConversion(Currency currency) {
         return Currency.getConversion(this.name, currency.name());
     }
-    public long getHashesPerSecond(){
+    public long getHashesPerSecond() {
         return DATA.get().get("NetHashesPerSecond").getAsLong();
     }
     public String getName() {
         return this.name;
     }
-    public String getURL(){
+    public String getURL() {
         return DATA.get().get("AffiliateUrl").getAsString();
     }
-    public BigDecimal getMarketCap(Currency currency){
+    public BigDecimal getMarketCap(Currency currency) {
         return BigDecimal.valueOf(this.getConversion(currency)).multiply(BigDecimal.valueOf(this.getCoinsMinted()));
     }
 }

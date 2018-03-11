@@ -31,9 +31,9 @@ public class ConfigCommand extends AbstractCommand {
     }
 
     @Command
-    public <C extends Configurable> void command(@Argument(optional = true, info = "config/user/channel/role") C configurable, @Argument(optional = true, replacement = ContextType.NONE) ConfigCategory configCategory, @Argument(optional = true, replacement = ContextType.NONE) Integer page, @Argument String s, User user, @Context(softFail = true) Guild guild, MessageMaker maker, @Context(softFail = true) Message message){
+    public <C extends Configurable> void command(@Argument(optional = true, info = "config/user/channel/role") C configurable, @Argument(optional = true, replacement = ContextType.NONE) ConfigCategory configCategory, @Argument(optional = true, replacement = ContextType.NONE) Integer page, @Argument String s, User user, @Context(softFail = true) Guild guild, MessageMaker maker, @Context(softFail = true) Message message) {
         if (page != null) maker.withPageFromOne(page);
-        if (configurable != null || s == null || s.isEmpty()){
+        if (configurable != null || s == null || s.isEmpty()) {
             if (configurable == null) configurable = (C) (guild == null ? user : guild);
             C finalConfigurable = configurable;
             maker.getAuthorName().appendRaw(LanguageHelper.makePossessive(configurable.getName()) + " ").append(" Settings");
@@ -51,7 +51,7 @@ public class ConfigCommand extends AbstractCommand {
                         maker.getNewFieldPart().withInline(false).withBoth("\u200b", category.name());
                     }
                 }
-                if (category.getConfigs().stream().filter(AbstractConfig::isNormalViewing).filter(abstractConfig -> abstractConfig.getConfigLevel() == finalConfigurable.getConfigLevel() || abstractConfig.getConfigLevel() == ConfigLevel.ALL).filter(abstractConfig -> abstractConfig.getBotRole().hasRequiredRole(user, guild)).peek(config -> maker.getNewFieldPart().withBoth(config.getConfigCommandDisplay(), ConfigHandler.getExteriorSetting(config.getName(), finalConfigurable))).count() > 0){
+                if (category.getConfigs().stream().filter(AbstractConfig::isNormalViewing).filter(abstractConfig -> abstractConfig.getConfigLevel() == finalConfigurable.getConfigLevel() || abstractConfig.getConfigLevel() == ConfigLevel.ALL).filter(abstractConfig -> abstractConfig.getBotRole().hasRequiredRole(user, guild)).peek(config -> maker.getNewFieldPart().withBoth(config.getConfigCommandDisplay(), ConfigHandler.getExteriorSetting(config.getName(), finalConfigurable))).count() > 0) {
                     maker.guaranteeNewFieldPage();
                 }
             });

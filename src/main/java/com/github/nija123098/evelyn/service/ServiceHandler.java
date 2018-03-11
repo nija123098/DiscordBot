@@ -33,15 +33,15 @@ public class ServiceHandler {
             try {
                 AbstractService service = clazz.newInstance();
                 if (service.getDelayBetween() == -1) return;
-                if (service.mayBlock()){
+                if (service.mayBlock()) {
                     Thread thread = new Thread(() -> {
                         long time;
-                        while (true){
-                            if (service.shouldRun()){
+                        while (true) {
+                            if (service.shouldRun()) {
                                 time = System.currentTimeMillis();
                                 service.run();
                                 time = time + service.getDelayBetween() - System.currentTimeMillis();
-                                if (time > 0){
+                                if (time > 0) {
                                     try {
                                         Thread.sleep(time + 1);
                                     } catch (InterruptedException e) {
@@ -60,7 +60,7 @@ public class ServiceHandler {
                     thread.setDaemon(true);
                     Launcher.registerStartup(thread::start);
                 } else NORMAL_SERVICES.put(service, now + service.getDelayBetween());
-            } catch (Exception e){
+            } catch (Exception e) {
                 Log.log("Failed to init service: " + clazz.getSimpleName(), e);
             }
         });
@@ -68,7 +68,7 @@ public class ServiceHandler {
         Thread thread = new Thread(() -> {
             final AtomicLong delta = new AtomicLong(), least = new AtomicLong(Long.MAX_VALUE), current = new AtomicLong(System.currentTimeMillis());
             Set<AbstractService> toRun = new HashSet<>();
-            while (true){
+            while (true) {
                 toRun.clear();
                 current.set(System.currentTimeMillis());
                 least.set(Long.MAX_VALUE);
@@ -93,7 +93,7 @@ public class ServiceHandler {
     /**
      * Forces the initialization of this class.
      */
-    public static void initialize(){
+    public static void initialize() {
         Log.log(LogColor.blue("Service Handler initialized.") + LogColor.yellow(" The tertiary sector or service sector is the third of the four economic sectors of the four-sector theory."));
     }
 }

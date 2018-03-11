@@ -36,10 +36,10 @@ public class Log {
         }
         LOG_PATH = logPath;
     }
-    public static void log(String message){
+    public static void log(String message) {
         Discord4J.LOGGER.info(message);
     }
-    public static void log(String message, Throwable t){
+    public static void log(String message, Throwable t) {
         Discord4J.LOGGER.error(message, t);
     }
 }

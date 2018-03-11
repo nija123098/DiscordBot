@@ -27,7 +27,7 @@ public class RoleSubscriptionsConfig extends AbstractConfig<Map<Role, Long>, Gui
             this.getNonDefaultSettings().forEach((guildUser, map) -> map.forEach((role, expiration) -> scheduleRemoval(expiration - current, guildUser, role)));
         });
     }
-    public static void scheduleRemoval(long delay, GuildUser guildUser, Role role){
+    public static void scheduleRemoval(long delay, GuildUser guildUser, Role role) {
         EXECUTOR_SERVICE.schedule(() -> {
             if (ConfigHandler.getSetting(RoleSubscriptionsConfig.class, guildUser).get(role) > System.currentTimeMillis() + 10) return;
             guildUser.getUser().removeRole(role);

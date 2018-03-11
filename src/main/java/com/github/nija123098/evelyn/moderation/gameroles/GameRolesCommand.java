@@ -14,7 +14,7 @@ public class GameRolesCommand extends AbstractCommand {
         super("gameroles", ModuleLevel.ADMINISTRATIVE, null, null, "Manages gameroles for automatic adding a role when a user starts playing a game");
     }
     @Command
-    public void command(MessageMaker maker){
+    public void command(MessageMaker maker) {
         maker.append("Ping nija to collect your prize if you see this");
     }
 }

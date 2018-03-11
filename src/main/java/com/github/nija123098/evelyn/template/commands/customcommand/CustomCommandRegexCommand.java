@@ -17,13 +17,13 @@ public class CustomCommandRegexCommand extends AbstractCommand {
         super(CustomCommandCommand.class, "regex", null, null, null, "Adds a regex search to activate a command on text without a prefix");
     }
     @Command
-    public void command(Guild guild, String s){
+    public void command(Guild guild, String s) {
         int space = s.indexOf(" ");
         if (space == -1) throw new ArgumentException("Please use the following syntax: <name> <regex>");
         String name = s.substring(0, space).toLowerCase();
         String ragex = s.substring(space).trim();
         ConfigHandler.alterSetting(CustomCommandConfig.class, guild, commands -> {
-            for (CustomCommand command : commands){
+            for (CustomCommand command : commands) {
                 if (command.getName().equals(name)) {
                     command.setRagex(ragex);
                     return;

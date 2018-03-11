@@ -25,7 +25,7 @@ public class RanksForceUpdateCommand extends AbstractCommand  {
     }
 
     @Command
-    public void command(Guild guild){
+    public void command(Guild guild) {
         Set<Role> earnedRanks = guild.getRoles().stream().filter(role -> ConfigHandler.getSetting(EarnRankConfig.class, role) != null).collect(Collectors.toSet());
         Set<User> users = guild.getUsers().stream().filter(user -> !user.isBot()).collect(Collectors.toSet());
         Set<User> priorityUsers = users.stream().filter(user -> user.getPresence().getStatus() == Presence.Status.ONLINE).filter(user -> {

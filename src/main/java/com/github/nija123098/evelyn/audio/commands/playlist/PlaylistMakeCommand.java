@@ -25,7 +25,7 @@ public class PlaylistMakeCommand extends AbstractCommand {
         super(PlaylistCommand.class, "make", "create", null, null, "Makes a playlist");
     }
     @Command
-    public <T extends Configurable, V extends Set<String>> void command(@Argument(optional = true, info = "is server playlist", replacement = ContextType.NONE) Boolean guildPlaylist, @Argument(info = "name") String s, User user, Guild guild){
+    public <T extends Configurable, V extends Set<String>> void command(@Argument(optional = true, info = "is server playlist", replacement = ContextType.NONE) Boolean guildPlaylist, @Argument(info = "name") String s, User user, Guild guild) {
         if (guildPlaylist == null) guildPlaylist = false;
         if (s.isEmpty()) throw new ArgumentException("Your playlist must have a name");
         if (!s.equals(FormatHelper.filtering(s, Character::isLetter))) throw new ArgumentException("A playlist name must only contain letters");

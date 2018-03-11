@@ -22,7 +22,7 @@ public class TemporaryGameVoiceChannelConfig extends AbstractConfig<String, Voic
     }
     /*
     @EventListener
-    public void handle(DiscordPresenceUpdate update){
+    public void handle(DiscordPresenceUpdate update) {
         if (!update.getNewPresence().getOptionalPlayingText().isPresent() && !update.getOldPresence().getOptionalPlayingText().isPresent()) return;
         update.getUser().getGuilds().stream().map(GUILD_VOICE_CHANNEL_MAP::get).filter(channels -> !channels.isEmpty()).forEach(voiceChannels -> voiceChannels.forEach(voiceChannel -> {
             if (update.getNewPresence().getOptionalPlayingText().isPresent()) {

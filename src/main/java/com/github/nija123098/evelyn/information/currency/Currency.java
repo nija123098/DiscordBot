@@ -49,10 +49,10 @@ public enum Currency {
     BRL("R$"),
     PKR(),
     MXN("Mex$"),;
-    Currency(String...names){
+    Currency(String...names) {
         this((amount) -> FormatHelper.addComas(amount) + (names.length > 1 ? names[1] : " " + names[0]), names);
     }
-    Currency(Function<Double, String> display, String...names){
+    Currency(Function<Double, String> display, String...names) {
         this.display = display;
         this.names.add(this.name());
         Collections.addAll(this.names, names);
@@ -60,7 +60,7 @@ public enum Currency {
     private LoadingCache<Currency, Double> conversion = CacheHelper.getLoadingCache(4, 50, 10_000, currency -> getConversion(this.name(), currency.name()));
     private Function<Double, String> display;
     private List<String> names = new ArrayList<>(1);
-    public String getDisplay(Double amount){
+    public String getDisplay(Double amount) {
         String s = this.display.apply(amount);
         int index = s.indexOf(".");
         if (index != -1) s = s.substring(0, index + 2);
@@ -75,13 +75,13 @@ public enum Currency {
     static {
         Stream.of(Currency.values()).forEach(unit -> unit.names.forEach(name -> NAME_MAP.put(name, unit)));
     }
-    public static Currency getUnitForName(String name){
+    public static Currency getUnitForName(String name) {
         return NAME_MAP.get(name);
     }
     public static double getConversion(String from, String to) {
         try {
             return Double.parseDouble(new JsonParser().parse(Unirest.get("https://min-api.cryptocompare.com/data/price?fsym=" + from + "&tsyms=" + to).asString().getBody()).getAsJsonObject().get(to).getAsString());
-        } catch (UnirestException e){
+        } catch (UnirestException e) {
             throw new DevelopmentException(e);
         }
     }

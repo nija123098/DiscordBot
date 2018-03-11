@@ -12,7 +12,7 @@ public class ContextException extends UserIssueException {
     public ContextException() {
         super("You are not in the correct context to use this");
     }
-    public static void checkRequirement(Object requirement, ContextRequirement type){
+    public static void checkRequirement(Object requirement, ContextRequirement type) {
         if (requirement == null) throw new ContextException(type + ": " + type.getErrorMessage());
     }
     public ContextException(Class<?> clazz) {

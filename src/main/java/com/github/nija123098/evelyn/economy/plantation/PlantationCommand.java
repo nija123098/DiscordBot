@@ -343,7 +343,7 @@ public class PlantationCommand extends AbstractCommand {
                     }
                     minutes = timeUntil;
                     maker.appendRaw("you're already steeping a batch of cold brew coffee, wait " + hours + "h and " + minutes + "m until your cold brew is finished");
-                } else if ((ConfigHandler.getSetting(CurrentSteepedCoffeeBatchConfig.class, user) >= 1) && now.compareTo(then) > -1){
+                } else if ((ConfigHandler.getSetting(CurrentSteepedCoffeeBatchConfig.class, user) >= 1) && now.compareTo(then) > -1) {
                     maker.appendRaw("Your cold brew batch has finished steeping!\n" + "You made " + currentSteepedBatch + " cold brews!");
                     ConfigHandler.setSetting(CurrentSteepedCoffeeBatchConfig.class, user, 0);
                     ConfigHandler.setSetting(CurrentColdBrewConfig.class, user, (currentColdBrew + currentSteepedBatch));

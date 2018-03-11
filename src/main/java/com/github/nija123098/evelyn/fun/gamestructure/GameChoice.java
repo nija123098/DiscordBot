@@ -29,7 +29,7 @@ public class GameChoice {
      * @param team the team to get the possibility of choice for.
      * @return if the team is allowed to chose this option.
      */
-    public boolean mayChose(Team team){
+    public boolean mayChose(Team team) {
         return this.mayChose.test(team);
     }
 
@@ -38,7 +38,7 @@ public class GameChoice {
      *
      * @param team the team to preform the choice.
      */
-    void chose(Team team){
+    void chose(Team team) {
         this.choice.accept(team);
     }
 }

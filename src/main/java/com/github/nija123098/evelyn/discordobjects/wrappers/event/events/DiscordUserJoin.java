@@ -20,7 +20,7 @@ public class DiscordUserJoin implements BotEvent {
     public User getUser() {
         return User.getUser(this.event.getUser());
     }
-    public long getJoinTime(){
+    public long getJoinTime() {
         return this.event.getJoinTime().toEpochMilli();
     }
 }

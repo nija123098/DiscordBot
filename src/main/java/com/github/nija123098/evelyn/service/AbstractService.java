@@ -39,7 +39,7 @@ public abstract class AbstractService implements Runnable {
      * @return the delay between run calls,
      * including run invocation time.
      */
-    public long getDelayBetween(){
+    public long getDelayBetween() {
         return this.delayBetween;
     }
 
@@ -50,7 +50,7 @@ public abstract class AbstractService implements Runnable {
      *
      * @return if calling run may block.
      */
-    public boolean mayBlock(){
+    public boolean mayBlock() {
         return false;
     }
 
@@ -63,7 +63,7 @@ public abstract class AbstractService implements Runnable {
      * @return if the thread should run
      * the service.
      */
-    public boolean shouldRun(){
+    public boolean shouldRun() {
         return true;
     }
 }

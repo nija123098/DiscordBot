@@ -30,7 +30,7 @@ public class SteamCommand extends AbstractCommand {
         super("steam", ModuleLevel.INFO, "steam game", null, "Shows information on a steam product");
     }
     @Command
-    public void command(MessageMaker maker, @Argument String name, User user){
+    public void command(MessageMaker maker, @Argument String name, User user) {
         if (name.isEmpty()) throw new ArgumentException("Please give me the name of a game");
         try {
             SteamApp app = STEAM_API.retrieve(name);
@@ -48,7 +48,7 @@ public class SteamCommand extends AbstractCommand {
             app.getSupportedLanguages().forEach(s -> {
                 if (supported.get()) return;
                 s = s.toLowerCase();
-                if (s.contains("chinese")){
+                if (s.contains("chinese")) {
                     String[] nameFrags = s.split(" ");
                     s = nameFrags[1] + " " + nameFrags[0];
                 }

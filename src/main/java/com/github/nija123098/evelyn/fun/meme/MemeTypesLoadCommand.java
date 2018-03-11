@@ -12,7 +12,7 @@ public class MemeTypesLoadCommand extends AbstractCommand {
         super(MemeTypesCommand.class, "reload", "meme load, meme reload", null, "load", "Reloads meme types");
     }
     @Command
-    public void command(){
+    public void command() {
         MemeTypesCommand.loadMemeTypes();
     }
 }

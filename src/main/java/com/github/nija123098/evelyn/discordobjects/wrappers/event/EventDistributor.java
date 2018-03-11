@@ -35,16 +35,16 @@ public class EventDistributor {
      * @param o the thing to register.
      * @param <E> the type of event to register.
      */
-    public static <E extends BotEvent> void register(Object o){
+    public static <E extends BotEvent> void register(Object o) {
         Class<?> clazz = o instanceof Class ? (Class<?>) o : o.getClass();
         Stream.of(clazz.getMethods()).filter(method -> method.isAnnotationPresent(EventListener.class)).filter(method -> method.getParameterCount() == 1).filter(method -> BotEvent.class.isAssignableFrom(method.getParameterTypes()[0])).forEach(method -> {
             Class<E> peram = (Class<E>) method.getParameterTypes()[0];
             ReflectionHelper.getAssignableTypes(clazz).forEach(LISTENER_CASH::remove);
             LISTENER_CASH.remove(peram);
             Set<Listener> listeners = LISTENER_MAP.computeIfAbsent(peram, cl -> ConcurrentHashMap.newKeySet());
-            if (Modifier.isStatic(method.getModifiers())){
+            if (Modifier.isStatic(method.getModifiers())) {
                 listeners.add(new Listener<E>(method, null));
-            } else if (!(o instanceof Class)){
+            } else if (!(o instanceof Class)) {
                 listeners.add(new Listener<E>(method, o));
             } else throw new DevelopmentException("Unknown event listener type");// Check if the listener is static
         });
@@ -55,7 +55,7 @@ public class EventDistributor {
      *
      * @param event the event to distribute.
      */
-    public static void distribute(BotEvent event){
+    public static void distribute(BotEvent event) {
         SCHEDULED_EXECUTOR_SERVICE.submit(() -> {
             try{
                 LISTENER_CASH.computeIfAbsent(event.getClass(), c -> {
@@ -66,7 +66,7 @@ public class EventDistributor {
                     });
                     return listeners;
                 }).forEach(listener -> listener.handle(event));
-            } catch (Exception e){
+            } catch (Exception e) {
                 if (GhostException.isGhostCaused(e)) return;
                 throw e;
             }
@@ -79,7 +79,7 @@ public class EventDistributor {
             this.m = m;
             this.o = o;
         }
-        void handle(E event){
+        void handle(E event) {
             try {
                 this.m.invoke(this.o, event);
             } catch (IllegalAccessException e) {

@@ -20,7 +20,7 @@ public class DiscordUserLeave implements BotEvent {
     private User responsible;
     private Boolean kicked, banned;
     private UserLeaveEvent event;
-    public DiscordUserLeave(UserLeaveEvent event){
+    public DiscordUserLeave(UserLeaveEvent event) {
         this.event = event;
         EXECUTOR_SERVICE.schedule(() -> {
             this.kicked = !Guild.getGuild(this.event.getGuild()).guild().getAuditLog(ActionType.MEMBER_KICK).getEntriesByTarget(event.getUser().getLongID()).isEmpty();
@@ -30,22 +30,22 @@ public class DiscordUserLeave implements BotEvent {
             }
         }, 1, TimeUnit.SECONDS);
     }
-    public Guild getGuild(){
+    public Guild getGuild() {
         return Guild.getGuild(this.event.getGuild());
     }
-    public User getUser(){
+    public User getUser() {
         return User.getUser(this.event.getUser());
     }
-    public synchronized boolean wasKicked(){
+    public synchronized boolean wasKicked() {
         return kicked;
     }
-    public synchronized boolean wasBanned(){
+    public synchronized boolean wasBanned() {
         return this.banned;
     }
-    public synchronized User responsibleUser(){
+    public synchronized User responsibleUser() {
         return this.responsible;
     }
-    public boolean wasForced(){
+    public boolean wasForced() {
         return this.wasBanned() || this.wasKicked();
     }
 }

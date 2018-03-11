@@ -28,7 +28,7 @@ public class GetRoleCommand extends AbstractCommand {
         super("getrole", ModuleLevel.ECONOMY, "buyrole, roleme", null, "Allows the buying of roles with guild based money.");
     }
     @Command
-    public void command(@Argument(optional = true, replacement = ContextType.NONE) Role role, GuildUser guildUser, MessageMaker maker){
+    public void command(@Argument(optional = true, replacement = ContextType.NONE) Role role, GuildUser guildUser, MessageMaker maker) {
         if (role == null) {
             String icon = ConfigHandler.getSetting(CurrencySymbolConfig.class, guildUser.getGuild());
             List<String> list = guildUser.getGuild().getRoles().stream().map(role1 -> {

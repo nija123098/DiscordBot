@@ -19,12 +19,12 @@ public class GameStartCommand extends AbstractCommand {
         super(GameCommand.class, "start", null, null, null, "Starts a game of the specified type");
     }
     @Command
-    public static void command(@Argument Team red, @Argument Team blue, String name, Guild guild, MessageMaker maker){
+    public static void command(@Argument Team red, @Argument Team blue, String name, Guild guild, MessageMaker maker) {
         if (red.getUsers().equals(blue.getUsers())) throw new ArgumentException("You can't play against yourself, you can play against me though");
         Class<? extends AbstractGame> clazz = GameCommand.CLASS_MAP.get(FormatHelper.filtering(name, Character::isLetter).toLowerCase());
         if (clazz == null) throw new ArgumentException("That is not a game supported by this command");
         try {
-            if (red.isOurTeam()){
+            if (red.isOurTeam()) {
                 Team team = red;
                 red = blue;
                 blue = team;

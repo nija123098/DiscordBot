@@ -15,7 +15,7 @@ public class TodoRemoveCommand extends AbstractCommand {
         super(TodoListCommand.class, "remove", null, null, null, "Removes an item from your todo list");
     }
     @Command
-    public void command(User user, @Argument(info = "The todo number") Integer item){
+    public void command(User user, @Argument(info = "The todo number") Integer item) {
         ConfigHandler.alterSetting(TodoListConfig.class, user, todoItems -> todoItems.remove((int) item));
     }
 }

@@ -15,20 +15,20 @@ import java.util.Map;
  * @since 1.0.0
  */
 public class PermOverride {// no need to store this, it doesn't get used right now
-    static Map<User, PermOverride> getUserMap(LongMap<PermissionOverride> overrideMap){
+    static Map<User, PermOverride> getUserMap(LongMap<PermissionOverride> overrideMap) {
         HashMap<User, PermOverride> map = new HashMap<>(overrideMap.size());
         overrideMap.forEach((user, permOverride) -> map.put(User.getUser(String.valueOf(user)), get(permOverride)));
         return map;
     }
-    static Map<Role, PermOverride> getRoleMap(LongMap<PermissionOverride> overrideMap){
+    static Map<Role, PermOverride> getRoleMap(LongMap<PermissionOverride> overrideMap) {
         HashMap<Role, PermOverride> map = new HashMap<>(overrideMap.size());
         overrideMap.forEach((role, permOverride) -> map.put(Role.getRole(String.valueOf(role)), get(permOverride)));
         return map;
     }
-    static PermOverride get(EnumSet<Permissions> allow, EnumSet<Permissions> deny){
+    static PermOverride get(EnumSet<Permissions> allow, EnumSet<Permissions> deny) {
         return new PermOverride(allow, deny);
     }
-    static PermOverride get(PermissionOverride permissionOverride){
+    static PermOverride get(PermissionOverride permissionOverride) {
         return new PermOverride(permissionOverride.allow(), permissionOverride.deny());
     }
     private final EnumSet<Permissions> allow;

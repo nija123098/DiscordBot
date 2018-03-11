@@ -23,11 +23,11 @@ public class TemplateCommand extends AbstractCommand {
         super("template", ModuleLevel.ADMINISTRATIVE, null, null, "Displays the help for it's sub-commands");
     }
     @Command
-    public void command(MessageMaker maker, User user, Channel channel, Guild guild){
+    public void command(MessageMaker maker, User user, Channel channel, Guild guild) {
         HelpCommand.command(CommandHandler.getCommand(TemplateCommand.class), maker, user, channel, guild, null, "");
     }
-    public static void checkPerms(User user, Guild guild, KeyPhrase keyPhrase){
-        if (guild == null){
+    public static void checkPerms(User user, Guild guild, KeyPhrase keyPhrase) {
+        if (guild == null) {
             if (!BotRole.BOT_ADMIN.hasRequiredRole(user, null)) throw new PermissionsException("You must be a BOT_ADMIN to edit global templates, do this in a server to edit your templates");
         }else{
             if (!keyPhrase.getDefinition().getAvailableContext().contains(ContextRequirement.GUILD)) throw new PermissionsException("You can't edit that template here, it is a global template");

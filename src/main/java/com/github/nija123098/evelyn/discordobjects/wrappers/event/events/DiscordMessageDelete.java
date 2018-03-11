@@ -16,16 +16,16 @@ public class DiscordMessageDelete implements BotEvent {
     public DiscordMessageDelete(MessageDeleteEvent event) {
         this.event = event;
     }
-    public Message getMessage(){
+    public Message getMessage() {
         return Message.getMessage(this.event.getMessage());
     }
-    public User getAuthor(){
+    public User getAuthor() {
         return User.getUser(this.event.getAuthor());
     }
-    public Channel getChannel(){
+    public Channel getChannel() {
         return Channel.getChannel(this.event.getChannel());
     }
-    public Guild getGuild(){
+    public Guild getGuild() {
         return Guild.getGuild(this.event.getGuild());
     }
 }

@@ -13,7 +13,7 @@ public class PlayTextResumeCommand extends AbstractCommand {
         super(PlayTextOverrideCommand.class, "resume", null, null, null, "Resumes normal playtext display");
     }
     @Command
-    public void command(){
+    public void command() {
         DiscordAdapter.PLAY_TEXT_UPDATE.set(true);
     }
 }

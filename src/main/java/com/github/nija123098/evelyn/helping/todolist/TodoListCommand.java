@@ -26,8 +26,8 @@ public class TodoListCommand extends AbstractCommand {
         super("todo", ModuleLevel.HELPER, null, null, "Helps you remember things!");
     }
     @Command
-    public void command(User user, MessageMaker maker, String s, Message message){
-        if (s != null && !s.isEmpty()){
+    public void command(User user, MessageMaker maker, String s, Message message) {
+        if (s != null && !s.isEmpty()) {
             CommandHandler.attemptInvocation("todo add " + s, user, message, null);
             return;
         }
@@ -39,7 +39,7 @@ public class TodoListCommand extends AbstractCommand {
             items.forEach(todoItem -> maker.getNewListPart().append(integer + ". " + todoItem.getTodo() + "time until: " + todoItem.getScheduledTime()));
         }
     }
-    static void remind(long delay, User user, TodoItem todoItem){
+    static void remind(long delay, User user, TodoItem todoItem) {
         SCHEDULED_EXECUTOR_SERVICE.schedule(() -> {
             new MessageMaker(user).appendAlternate(true, "You put an item on your todo list for me to remind you of.\n", todoItem.getTodo()).send();
             ConfigHandler.alterSetting(TodoListConfig.class, user, todoItems -> todoItems.remove(todoItem));

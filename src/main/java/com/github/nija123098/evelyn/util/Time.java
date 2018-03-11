@@ -84,7 +84,7 @@ public class Time {// TODO CLEAN
         return Instant.ofEpochMilli(time).atZone(ZoneId.systemDefault()).toLocalDateTime();
     }
 
-    public static Instant toInstant(long time){
+    public static Instant toInstant(long time) {
         return Instant.ofEpochMilli(time);
     }
 

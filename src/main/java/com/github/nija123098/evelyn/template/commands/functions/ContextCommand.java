@@ -34,7 +34,7 @@ public class ContextCommand extends AbstractCommand {
         super("context", ModuleLevel.NONE, null, null, "Provides context for the current command");
     }
     @Command
-    public Object command(@Argument(info = "context name") String s, ContextPack pack){
+    public Object command(@Argument(info = "context name") String s, ContextPack pack) {
         Function<ContextPack, Object> supplier = SUPPLIER_MAP.get(s.toLowerCase());
         if (supplier == null) throw new ArgumentException("Invalid context, available: " + SUPPLIER_MAP.keySet());
         return supplier.apply(pack);

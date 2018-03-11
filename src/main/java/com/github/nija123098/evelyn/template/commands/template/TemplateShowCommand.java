@@ -23,7 +23,7 @@ public class TemplateShowCommand extends AbstractCommand {
         super(TemplateCommand.class, "show", null, null, null, "Shows registered templates for a KeyPhrase");
     }
     @Command
-    public void command(@Argument KeyPhrase keyPhrase, @Context(softFail = true) Guild guild, MessageMaker maker){
+    public void command(@Argument KeyPhrase keyPhrase, @Context(softFail = true) Guild guild, MessageMaker maker) {
         AtomicInteger integer = new AtomicInteger(-1);
         if (!keyPhrase.getDefinition().getAvailableContext().contains(ContextRequirement.GUILD)) guild = null;// lets all ignore the fact that I wrote the pagination code
         List<Template> templates = TemplateHandler.getTemplates(keyPhrase, guild);

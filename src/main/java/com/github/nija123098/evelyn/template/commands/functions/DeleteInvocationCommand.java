@@ -15,7 +15,7 @@ public class DeleteInvocationCommand extends AbstractCommand {
         super("delinvo", ModuleLevel.NONE, null, null, "Deletes the invoking message, is no source safe");
     }
     @Command
-    public void command(@Context(softFail = true) Message message){
+    public void command(@Context(softFail = true) Message message) {
         message.delete();
     }
 }

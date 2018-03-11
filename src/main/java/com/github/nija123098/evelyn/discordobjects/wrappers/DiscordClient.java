@@ -18,17 +18,17 @@ import java.util.function.Function;
 public class DiscordClient {
     private static List<IDiscordClient> clients;
     private static Map<Shard, IDiscordClient> clientMap;
-    public static void set(List<IDiscordClient> discordClients){
+    public static void set(List<IDiscordClient> discordClients) {
         clients = discordClients;
         clientMap = new HashMap<>(clients.size() + 1, 1);
     }
-    public static void load(){
+    public static void load() {
         clients.forEach(client -> clientMap.put(Shard.getShard(client.getShards().get(0)), client));
     }
-    public static List<IDiscordClient> clients(){
+    public static List<IDiscordClient> clients() {
         return clients;
     }
-    public static IDiscordClient getClientForShard(Shard shard){
+    public static IDiscordClient getClientForShard(Shard shard) {
         return clientMap.get(shard);
     }
     // WRAPPING METHODS
@@ -54,11 +54,11 @@ public class DiscordClient {
         clients.forEach(client -> ExceptionWrapper.wrap(() -> client.changeUsername(username)));
     }
 
-    public static void changePresence(String text, String stream){
+    public static void changePresence(String text, String stream) {
         clients().forEach(iDiscordClient -> ExceptionWrapper.wrap(() -> iDiscordClient.changeStreamingPresence(StatusType.ONLINE, text, stream)));
     }
 
-    public static void changePresence(Presence.Status status, Presence.Activity activity, String text){
+    public static void changePresence(Presence.Status status, Presence.Activity activity, String text) {
         clients().forEach(iDiscordClient -> ExceptionWrapper.wrap(() -> iDiscordClient.changePresence(status.convert(), activity.convert(), text)));
     }
 
@@ -77,7 +77,7 @@ public class DiscordClient {
         return User.getUser(clients.get(0).getOurUser());
     }
 
-    public static Guild getSupportServer(){
+    public static Guild getSupportServer() {
         return getGuildByID(ConfigProvider.BOT_SETTINGS.supportServerId());
     }
 
@@ -148,13 +148,13 @@ public class DiscordClient {
         return owner == null ? (owner = ExceptionWrapper.wrap((ExceptionWrapper.Request<User>) () -> User.getUser(clients.get(0).getApplicationOwner()))) : owner;
     }
 
-    public static <E> E getAny(Function<IDiscordClient, E> function){
+    public static <E> E getAny(Function<IDiscordClient, E> function) {
         E e;
         for (IDiscordClient f : clients) if ((e = function.apply(f)) != null) return e;
         return null;
     }
 
-    public static <E> List<E> getAll(Function<IDiscordClient, Collection<E>> function){
+    public static <E> List<E> getAll(Function<IDiscordClient, Collection<E>> function) {
         List<E> list = new ArrayList<>();
         clients().forEach(f -> list.addAll(function.apply(f)));
         return list;

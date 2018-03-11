@@ -16,16 +16,16 @@ public class DiscordVoiceMove  implements BotEvent {
     public DiscordVoiceMove(UserVoiceChannelMoveEvent event) {
         this.event = event;
     }
-    public User getUser(){
+    public User getUser() {
         return User.getUser(this.event.getUser());
     }
-    public VoiceChannel getNewChannel(){
+    public VoiceChannel getNewChannel() {
         return (VoiceChannel) Channel.getChannel(this.event.getNewChannel());
     }
-    public VoiceChannel getOldChannel(){
+    public VoiceChannel getOldChannel() {
         return (VoiceChannel) Channel.getChannel(this.event.getOldChannel());
     }
-    public Guild getGuild(){
+    public Guild getGuild() {
         return Guild.getGuild(this.event.getGuild());
     }
 }

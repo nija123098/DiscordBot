@@ -21,13 +21,13 @@ public class BackCommand extends AbstractCommand {
         super(PresenceCommand.class, "back", "back, present", null, null, "Marks you as no longer afk");
     }
     @Command
-    public void command(MessageMaker maker, User user, Guild guild){
+    public void command(MessageMaker maker, User user, Guild guild) {
         ConfigHandler.setSetting(SelfMarkedAwayConfig.class, user, false);
         maker.append("Welcome back " + user.getDisplayName(guild) + "!").mustEmbed();
     }
     private static final Set<String> NATURAL_TRIGGERS = new HashSet<>(Arrays.asList("back", "present", "i am back", "i'm back", "present", "back"));
     @Override
-    public Set<String> getNaturalTriggers(){
+    public Set<String> getNaturalTriggers() {
         return NATURAL_TRIGGERS;
     }
     @Override

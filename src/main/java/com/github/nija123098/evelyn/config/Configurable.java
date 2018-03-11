@@ -42,7 +42,7 @@ public interface Configurable {
     /**
      * The method to manage a configurable, called periodically
      */
-    default void manage(){}
+    default void manage() {}
 
     /**
      * Checks the permission to edit a config,
@@ -63,7 +63,7 @@ public interface Configurable {
      *
      * @return the governing object.
      */
-    default Configurable getGoverningObject(){
+    default Configurable getGoverningObject() {
         return GlobalConfigurable.GLOBAL;
     }
 
@@ -74,7 +74,7 @@ public interface Configurable {
      * @param <T> the class type.
      * @return the configurable this is converted to.
      */
-    default <T extends Configurable> Configurable convert(Class<T> t){
+    default <T extends Configurable> Configurable convert(Class<T> t) {
         if (t.equals(this.getClass())) return this;
         throw new ArgumentException("This configurable can not be morphed into that type of configurable: " + t.getName());
     }
@@ -87,7 +87,7 @@ public interface Configurable {
     /**
      * Registers this instance as having existed at one point.
      */
-    default void registerExistence(){
+    default void registerExistence() {
         if (REGISTERED.add(this.getID())) Database.bufferCall(() -> ConfigHandler.setSetting(ConfigurableExistsConfig.class, this, true));
     }
 }

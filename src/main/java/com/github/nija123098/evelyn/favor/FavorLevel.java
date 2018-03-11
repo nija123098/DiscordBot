@@ -42,15 +42,15 @@ public enum FavorLevel {
      * @param value the float value.
      * @return the favor level enum for the amount.
      */
-    static FavorLevel getFavorLevel(float value){
-        if (value < DISTRUSTED.amount){
+    static FavorLevel getFavorLevel(float value) {
+        if (value < DISTRUSTED.amount) {
             return DISTRUSTED;
         }
-        if (value >= PREFERRED.amount){
+        if (value >= PREFERRED.amount) {
             return PREFERRED;
         }
         for (int i = 0; i < values().length; i++) {
-            if (value < values()[i].amount){
+            if (value < values()[i].amount) {
                 return values()[i - 1];
             }
         }

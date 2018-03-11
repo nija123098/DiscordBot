@@ -50,7 +50,7 @@ public abstract class Track implements Configurable {
      * @param fromID the function to get an instance from a given ID.
      * @param <T> the type for the track implementation.
      */
-    static <T extends Track> void registerTrackType(Class<T> clazz, Function<String, Track> fromCode, Function<String, Track> fromID){
+    static <T extends Track> void registerTrackType(Class<T> clazz, Function<String, Track> fromCode, Function<String, Track> fromID) {
         CLASS_MAP.put(clazz.getSimpleName().toUpperCase(), clazz);
         CODE_MAP.put(clazz, fromCode);
         ID_MAP.put(clazz, fromID);
@@ -65,7 +65,7 @@ public abstract class Track implements Configurable {
      * @param id the ID of the track.
      * @return the track instance for the given ID.
      */
-    public static Track getTrack(String id){
+    public static Track getTrack(String id) {
         if (id == null) return null;
         String[] split = id.split("-");
         Class<? extends Track> clazz = CLASS_MAP.get(split[0].toUpperCase());
@@ -81,7 +81,7 @@ public abstract class Track implements Configurable {
      * @param code the platform's code for the track.
      * @return the instance of the track specified by track type and code.
      */
-    public static Track getTrack(Class<? extends Track> clazz, String code){
+    public static Track getTrack(Class<? extends Track> clazz, String code) {
         return CODE_MAP.get(clazz).apply(code);
     }
 
@@ -91,7 +91,7 @@ public abstract class Track implements Configurable {
      * @param s the id or the keywords to search on Youtube.
      * @return the best related track instance for the given string.
      */
-    public static List<Track> getTracks(String s){// may want to move
+    public static List<Track> getTracks(String s) {// may want to move
         Track track = getTrack(s);
         if (track != null) return Collections.singletonList(track);
         String code = YTUtil.extractVideoCode(s);
@@ -99,15 +99,15 @@ public abstract class Track implements Configurable {
             return Collections.singletonList(Track.getTrack(YoutubeTrack.class, code));
         }
         code = YTUtil.extractPlaylistCode(s);
-        if (code != null){
+        if (code != null) {
             return YTUtil.getTracksFromPlaylist(s);
         }
         List<Track> tracks = SCUtil.extractTracks(s);
-        if (tracks != null){
+        if (tracks != null) {
             return tracks;
         }
         code = TwitchUtil.extractCode(s);
-        //if (code != null){
+        //if (code != null) {
         //    return Collections.singletonList(Track.getTrack(TwitchTrack.class, code));
         //}
         return new ArrayList<>(1);
@@ -130,7 +130,7 @@ public abstract class Track implements Configurable {
      *
      * @return the instance ID without the type prefix.
      */
-    final String getSpecificID(){
+    final String getSpecificID() {
         return this.id.substring(this.id.split("-")[0].length() + 1);
     }
 
@@ -151,11 +151,11 @@ public abstract class Track implements Configurable {
         return ConfigLevel.TRACK;
     }
     @Override
-    public boolean equals(Object o){
+    public boolean equals(Object o) {
         return o instanceof Track && this.id.equals(((Track) o).id);
     }
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return this.id.hashCode();
     }
     @Override

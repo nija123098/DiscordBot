@@ -20,7 +20,7 @@ public class TemplateAddCommand extends AbstractCommand {
         super(TemplateCommand.class, "add", null, null, null, "Adds a template");
     }
     @Command
-    public void command(@Argument KeyPhrase keyPhrase, @Context(softFail = true) Guild guild, @Argument(info = "text") String s, User user, MessageMaker maker){
+    public void command(@Argument KeyPhrase keyPhrase, @Context(softFail = true) Guild guild, @Argument(info = "text") String s, User user, MessageMaker maker) {
         TemplateCommand.checkPerms(user, guild, keyPhrase);
         TemplateHandler.addTemplate(keyPhrase, guild, s);
         maker.appendRaw("You've added a template for the keyphrase successfully:\n" + s).mustEmbed();

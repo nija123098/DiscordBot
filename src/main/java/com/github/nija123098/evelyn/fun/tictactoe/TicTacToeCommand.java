@@ -19,7 +19,7 @@ public class TicTacToeCommand extends AbstractCommand {
         super("tictactoe", ModuleLevel.FUN, "ttt, tic tac toe", null, "Plays a game of tic tac toe");
     }
     @Command
-    public void command(AbstractGame game, @Argument Integer x, @Argument Integer y, User user, MessageMaker maker){
+    public void command(AbstractGame game, @Argument Integer x, @Argument Integer y, User user, MessageMaker maker) {
         if (game == null) throw new ArgumentException("You don't have a active game of tic tac toe right now, do @Evelyn game start tictactoe");
         if (!(game instanceof TicTacToe)) throw new ContextException("But you are already playing a " + game.getClass().getSimpleName() + " game though!");
         TicTacToe ticTacToe = ((TicTacToe) game);

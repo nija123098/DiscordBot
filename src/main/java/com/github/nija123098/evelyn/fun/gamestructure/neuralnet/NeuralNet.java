@@ -47,7 +47,7 @@ public class NeuralNet {
             }
         }
     }
-    private NeuralNet(NeuralNet other){
+    private NeuralNet(NeuralNet other) {
         this.inputNodes = other.inputNodes;
         this.outNodes = other.outNodes;
         this.hiddenLayers = other.hiddenLayers;
@@ -60,7 +60,7 @@ public class NeuralNet {
      *
      * @return a deep copy of the neural net isntance.
      */
-    public NeuralNet copy(){
+    public NeuralNet copy() {
         return new NeuralNet(this);
     }
 
@@ -68,7 +68,7 @@ public class NeuralNet {
      * Ensures that {@link NeuralNet#nodes} is initialized
      * which matches the structure of the {@link NeuralNet}.
      */
-    private void ensureLayerNodes(){
+    private void ensureLayerNodes() {
         if (this.nodes != null) return;
         this.nodes = new double[this.hiddenLayers + 2][];
         this.nodes[0] = new double[this.inputNodes];
@@ -85,7 +85,7 @@ public class NeuralNet {
      *
      * @param ratio the amount to vary alterations by.
      */
-    public void alter(double ratio){
+    public void alter(double ratio) {
         Random random = new Random();
         for (int i = 0; i < this.synapses.length; i++) {
             for (int j = 0; j < this.synapses[i].length; j++) {
@@ -103,7 +103,7 @@ public class NeuralNet {
      * @param input the values to set the input nodes to.
      * @return the value of the output nodes.
      */
-    public double[] compute(double[] input){
+    public double[] compute(double[] input) {
         this.ensureLayerNodes();
         this.nodes[0] = input;
         for (int i = 0; i < this.inputNodes; i++) {
@@ -131,7 +131,7 @@ public class NeuralNet {
         }
         return this.nodes[this.nodes.length - 1];
     }
-    public int incrementWin(){
+    public int incrementWin() {
         return ++this.winCount;
     }
     public int getWinCount() {

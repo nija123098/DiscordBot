@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class Category implements Configurable {
     private static final LoadingCache<ICategory, Category> CACHE = CacheHelper.getLoadingCache(4, ConfigProvider.CACHE_SETTINGS.categorySize(), 300_000, Category::new);
-    public static Category getCategory(String id){
+    public static Category getCategory(String id) {
         try {
             ICategory iCategory = DiscordClient.getAny(client -> client.getCategoryByID(Long.valueOf(id)));
             if (iCategory == null) return null;
@@ -30,11 +30,11 @@ public class Category implements Configurable {
             return null;
         }
     }
-    public static Category getCategory(ICategory iCategory){
+    public static Category getCategory(ICategory iCategory) {
         if (iCategory == null) return null;
         return CACHE.getUnchecked(iCategory);
     }
-    static List<Category> getCategories(List<ICategory> categories){
+    static List<Category> getCategories(List<ICategory> categories) {
         List<Category> cats = new ArrayList<>(categories.size());
         categories.forEach(iMessage -> cats.add(getCategory(iMessage)));
         return cats;
@@ -61,7 +61,7 @@ public class Category implements Configurable {
         return this.category().equals(other.category());
     }
 
-    public ICategory category(){
+    public ICategory category() {
         return this.reference.get();
     }
 

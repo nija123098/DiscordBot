@@ -59,10 +59,10 @@ public class ContextPack {
     public Reaction getReaction() {
         return this.reaction;
     }
-    public String getArgs(){
+    public String getArgs() {
         return this.args;
     }
-    public GuildUser getGuildUser(){
+    public GuildUser getGuildUser() {
         if (this.guild == null) throw new ContextException("A guild is not present in this context");
         return GuildUser.getGuildUser(this.guild, this.user);
     }

@@ -43,9 +43,9 @@ public class CryptocurrencyCommand extends AbstractCommand {
         super("cryptocurrency", ModuleLevel.INFO, "crypto", null, "Displays basic information on several cryptocurrencies");
     }
     @Command
-    public static void command(MessageMaker maker, User user, @Argument(optional = true, replacement = ContextType.NONE) Cryptocurrency cryptocurrency){
+    public static void command(MessageMaker maker, User user, @Argument(optional = true, replacement = ContextType.NONE) Cryptocurrency cryptocurrency) {
         Currency currency = ConfigHandler.getSetting(PreferredCurrencyConfig.class, user);
-        if (cryptocurrency == null){
+        if (cryptocurrency == null) {
             maker.getTitle().append("Cryptocurrency value");
             List<List<String>> table = new ArrayList<>();
             ORDER.forEach(triple -> table.add(Arrays.asList(triple.getLeft(), String.valueOf(Currency.getConversion(triple.getLeft(), currency.name())), triple.getRight())));

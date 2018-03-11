@@ -19,7 +19,7 @@ public class SystemCommand extends AbstractCommand {
         super("system", ModuleLevel.INFO, "sys", null, "Shows memory usage and Evelyn's version");
     }
     @Command
-    public void command(MessageMaker maker){
+    public void command(MessageMaker maker) {
         maker.append("Getting memory").send();
         maker.getHeader().clear();
         maker.mustEmbed();

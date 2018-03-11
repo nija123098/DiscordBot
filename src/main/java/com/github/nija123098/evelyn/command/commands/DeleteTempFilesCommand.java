@@ -15,7 +15,7 @@ public class DeleteTempFilesCommand extends AbstractCommand {
         super("deletetempfiles", BotRole.BOT_ADMIN, ModuleLevel.DEVELOPMENT, "dtf", null, "Clears temp files");
     }
     @Command
-    public void command(){
+    public void command() {
         FileHelper.clearTemps();
     }
 }

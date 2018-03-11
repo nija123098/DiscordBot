@@ -29,7 +29,7 @@ public class RSSMonitorService extends AbstractService {
         Launcher.registerShutdown(() -> ConfigHandler.setSetting(RSSLastCheckConfig.class, GlobalConfigurable.GLOBAL, LAST_UPDATED.values().stream().map(Date::getTime).reduce(Math::max).orElseGet(System::currentTimeMillis)));
     }// 5 min
     @Override
-    public boolean mayBlock(){
+    public boolean mayBlock() {
         return true;
     }
     @Override
@@ -41,13 +41,13 @@ public class RSSMonitorService extends AbstractService {
             if (!notes.isEmpty()) notes.forEach(note -> channels.forEach(note::send));
         });
     }
-    private static List<RSSNote> getRSSNode(String url){
+    private static List<RSSNote> getRSSNode(String url) {
         LAST_UPDATED.computeIfAbsent(url, s -> new Date());
         try {
             SyndFeed feed = new SyndFeedInput().build(new XmlReader(new URL(url)));
             if (feed.getEntries().isEmpty()) return Collections.emptyList();
             List<RSSNote> notes = new ArrayList<>();
-            for (SyndEntry entry : feed.getEntries()){
+            for (SyndEntry entry : feed.getEntries()) {
                 if (!entry.getPublishedDate().after(LAST_UPDATED.get(url))) break;
                 notes.add(new RSSNote(entry));
             }
@@ -62,7 +62,7 @@ public class RSSMonitorService extends AbstractService {
         private RSSNote(SyndEntry entry) {
             this.maker.appendRaw(SAT + entry.getTitle() + "\n" + entry.getLink());
         }
-        public void send(Channel channel){
+        public void send(Channel channel) {
             this.maker.withChannel(channel).clearMessage().send();
         }
     }

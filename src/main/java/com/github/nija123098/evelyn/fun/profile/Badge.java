@@ -27,7 +27,7 @@ public enum Badge {
     private static final int SPACING = 3;
     private Function<User, Integer> levelFunction;
     private List<BufferedImage> images = new ArrayList<>();
-    Badge(int max){
+    Badge(int max) {
         try{BufferedImage badge = ImageIO.read(new File(ConfigProvider.FOLDER_SETTINGS.badgeFolder() + this.name().toLowerCase() + ".png"));
             Font font = new Font("Times New Roman", Font.PLAIN, badge.getHeight() / 3 * 2);
             BufferedImage image;
@@ -47,7 +47,7 @@ public enum Badge {
                 graphics.drawString(test, SPACING * 2 + badge.getWidth(), SPACING);
                 this.images.add(image);
             }
-            if (this.images.isEmpty()){
+            if (this.images.isEmpty()) {
                 image = new BufferedImage(SPACING * 2 + badge.getWidth(), SPACING * 2 + badge.getHeight(), BufferedImage.TYPE_INT_ARGB);
                 graphics = image.createGraphics();
                 graphics.setColor(new Color(badge.getRGB(0, 0)));
@@ -68,7 +68,7 @@ public enum Badge {
         this(1);
         this.levelFunction = user -> levelFunction.apply(user) ? 1 : 0;
     }
-    public static Set<Pair<Badge, Integer>> getBadges(User user){
+    public static Set<Pair<Badge, Integer>> getBadges(User user) {
         Set<Pair<Badge, Integer>> set = new HashSet<>();
         int level;
         for (Badge badge : Badge.values()) {
@@ -77,7 +77,7 @@ public enum Badge {
         }
         return set;
     }
-    public static Set<BufferedImage> getBadgeImages(User user){
+    public static Set<BufferedImage> getBadgeImages(User user) {
         return getBadges(user).stream().map(pairs -> pairs.getKey().images.get(pairs.getValue())).collect(Collectors.toSet());
     }
 }

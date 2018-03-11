@@ -21,7 +21,7 @@ public class PingFancyCommand extends AbstractCommand {
         super(PingCommand.class, "fancy", null, null, null, "A fancy version of the ping command");
     }
     @Command
-    public void command(MessageMaker maker){
+    public void command(MessageMaker maker) {
         int lastResult;
         int sum = 0, min = 999, max = 0;
         long start = System.currentTimeMillis();

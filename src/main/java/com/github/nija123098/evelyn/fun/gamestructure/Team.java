@@ -39,7 +39,7 @@ public class Team {
      *
      * @param user the user to go solo.
      */
-    public Team(User user){
+    public Team(User user) {
         this(1F, user, null);
     }
 
@@ -50,16 +50,16 @@ public class Team {
      *                        The majority wins once enough users have voted.
      * @param role the {@link Role} to track all users as a member of the team.
      */
-    public Team(Float voteRequirement, Role role){
+    public Team(Float voteRequirement, Role role) {
         this(voteRequirement, null, role);
         if (role.getUsers().isEmpty()) throw new ContextException("There must be people on a team though");
     }
-    public void load(AbstractGame game){
+    public void load(AbstractGame game) {
         this.choiceMap = game.getChoices().stream().collect(Collectors.toMap(GameChoice::getName, Function.identity()));
     }
-    Float chose(User user, String choice){// don't use this to make decisions in command aliasing
+    Float chose(User user, String choice) {// don't use this to make decisions in command aliasing
         if (!this.choiceMap.containsKey(choice)) throw new ArgumentException("Invalid move: " + choice);
-        if (this.voteMap != null){
+        if (this.voteMap != null) {
             this.voteMap.put(user, choice);
             Map<String, Integer> map = new HashMap<>();
             this.voteMap.forEach((u, s) -> map.compute(s, (s1, integer) -> integer == null ? 1 : ++integer));
@@ -67,7 +67,7 @@ public class Team {
             Set<String> choices = new HashSet<>();
             map.forEach((s, votes) -> {
                 if (integer.get() == votes) choices.add(s);
-                else if (integer.get() < votes){
+                else if (integer.get() < votes) {
                     integer.set(votes);
                     choices.clear();
                 }
@@ -96,7 +96,7 @@ public class Team {
      *
      * @return the string representation of a mention to the team.
      */
-    public String mention(){
+    public String mention() {
         return this.user == null ? this.role.mention() : this.user.mention();
     }
 
@@ -109,7 +109,7 @@ public class Team {
      *
      * @return if the bot is the only team member on the instance team.
      */
-    public boolean isOurTeam(){
+    public boolean isOurTeam() {
         return DiscordClient.getOurUser().equals(this.user);
     }
 }

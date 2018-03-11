@@ -26,7 +26,7 @@ public class InfoCommand extends AbstractCommand {
         super("info", ModuleLevel.INFO, "about, information", null, "Gives some information about me");
     }
     @Command
-    public void command(MessageMaker maker, Guild guild){
+    public void command(MessageMaker maker, Guild guild) {
         if (totalCommands == -1) totalCommands = (int) CommandHandler.getCommands().stream().filter(AbstractCommand::isHighCommand).filter(o -> !o.isTemplateCommand()).count();
         maker.mustEmbed().withThumb(DiscordClient.getOurUser().getAvatarURL());
         maker.getTitle().clear().appendRaw(EmoticonHelper.getChars("bulb", false) + "INFO");

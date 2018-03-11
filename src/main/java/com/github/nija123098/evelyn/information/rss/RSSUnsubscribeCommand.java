@@ -20,9 +20,9 @@ public class RSSUnsubscribeCommand extends AbstractCommand {
         super(RSSCommand.class, "unsubscribe", "unsub", null, null, "Unsubs from an RSS feed");
     }
     @Command
-    public void command(@Argument(optional = true, replacement = ContextType.NONE) Integer integer, @Argument(optional = true) String s, Channel channel, MessageMaker maker){
+    public void command(@Argument(optional = true, replacement = ContextType.NONE) Integer integer, @Argument(optional = true) String s, Channel channel, MessageMaker maker) {
         List<String> subs = ConfigHandler.getSetting(RSSSubscriptionsConfig.class, channel);
-        if (integer == null){
+        if (integer == null) {
             if (!subs.remove(s)) maker.append("You were not subscribed to that.");
         } else {
             if (integer > subs.size()) throw new ArgumentException("You don't have that many subscriptions");

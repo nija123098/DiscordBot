@@ -15,7 +15,7 @@ public class IDCommand extends AbstractCommand {
         super("id", ModuleLevel.NONE, null, null, "Gets the id of a configurable");
     }
     @Command
-    public String command(@Argument Configurable configurable){
+    public String command(@Argument Configurable configurable) {
         return configurable.getID();
     }
 }

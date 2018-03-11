@@ -13,7 +13,7 @@ public enum ItemComponent {
     SPOON,
     BRIEFCASE,;
     private String icon;
-    ItemComponent(){
+    ItemComponent() {
         this.icon = EmoticonHelper.getChars(this.name().toLowerCase(), true);
     }
     ItemComponent(String icon) {

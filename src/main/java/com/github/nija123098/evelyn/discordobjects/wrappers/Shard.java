@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class Shard {
     private static final Map<Integer, Shard> MAP = new ConcurrentHashMap<>();// never clear
-    public static Shard getShard(int i){
+    public static Shard getShard(int i) {
         return getShard(DiscordClient.getAny(client -> {
             IShard shard = client.getShards().get(0);
             return shard.getInfo()[0] == i ? shard : null;
@@ -28,10 +28,10 @@ public class Shard {
     public static long getCount() {
         return MAP.size();
     }
-    static Shard getShard(IShard shard){
+    static Shard getShard(IShard shard) {
         return MAP.computeIfAbsent(shard.getInfo()[0], integer -> new Shard(shard));
     }
-    static List<Shard> getShards(List<IShard> iShards){
+    static List<Shard> getShards(List<IShard> iShards) {
         List<Shard> shards = new ArrayList<>(iShards.size());
         iShards.forEach(iShard -> shards.add(getShard(iShard)));
         return shards;
@@ -42,12 +42,12 @@ public class Shard {
         this.shard = new AtomicReference<>(shard);
     }
 
-    IShard shard(){
+    IShard shard() {
         return this.shard.get();
     }
 
     //WRAPPER METHODS
-    public int getID(){
+    public int getID() {
         return shard().getInfo()[0];
     }
 
@@ -65,7 +65,7 @@ public class Shard {
         return shard().isLoggedIn();
     }
 
-    public boolean isReady(){
+    public boolean isReady() {
         return shard().isReady();
     }
 
@@ -73,12 +73,12 @@ public class Shard {
         return shard().getResponseTime();
     }
 
-    public void changePresence(String text, String stream){
+    public void changePresence(String text, String stream) {
         if (ConfigProvider.BOT_SETTINGS.ghostModeEnabled()) return;
         ExceptionWrapper.wrap(() -> shard().changeStreamingPresence(StatusType.ONLINE, text, stream));
     }
 
-    public void changePresence(Presence.Status status, Presence.Activity activity, String text){
+    public void changePresence(Presence.Status status, Presence.Activity activity, String text) {
         if (ConfigProvider.BOT_SETTINGS.ghostModeEnabled()) return;
         ExceptionWrapper.wrap(() -> shard().changePresence(status.convert(), activity.convert(), text));
     }

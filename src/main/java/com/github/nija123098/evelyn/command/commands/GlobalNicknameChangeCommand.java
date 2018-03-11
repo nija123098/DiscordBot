@@ -18,7 +18,7 @@ public class GlobalNicknameChangeCommand extends AbstractCommand {
         super("globalnick", BotRole.BOT_ADMIN, ModuleLevel.BOT_ADMINISTRATIVE, null, null, "Changes the global nickname");
     }
     @Command
-    public void command(String arg){
+    public void command(String arg) {
         ConfigHandler.changeSetting(GlobalNicknameConfig.class, GlobalConfigurable.GLOBAL, global -> {
             DiscordClient.getGuilds().stream().filter(guild -> {
                 String display = DiscordClient.getOurUser().getDisplayName(guild);

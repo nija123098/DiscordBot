@@ -37,18 +37,18 @@ public class GuildUser implements Configurable {
     }
 
     @EventListener
-    public static void handle(DiscordUserJoin join){
+    public static void handle(DiscordUserJoin join) {
         NEXT_USER_INTEGER.compute(join.getGuild(), (guild, integer) -> getGuildUser(join.getGuild(), join.getUser()).number = ++integer);
     }
 
     @EventListener
-    public static void handle(DiscordUserLeave leave){
+    public static void handle(DiscordUserLeave leave) {
         ID_CACHE.remove(GUILD_MAP_CACHE.computeIfAbsent(leave.getGuild(), g -> new ConcurrentHashMap<>()).remove(leave.getUser()));
         orderGuildUsers(leave.getGuild());
     }
 
     @EventListener
-    public static void handle(DiscordGuildJoin join){
+    public static void handle(DiscordGuildJoin join) {
         orderGuildUsers(join.getGuild());
     }
 
@@ -58,7 +58,7 @@ public class GuildUser implements Configurable {
      * @param id the id of the guild user.
      * @return the guild user object for the guild and user.
      */
-    public static GuildUser getGuildUser(String id){
+    public static GuildUser getGuildUser(String id) {
         return ID_CACHE.computeIfAbsent(id, s -> {
             if (!id.startsWith("gu-")) return null;
             String[] split = id.split("-id-");
@@ -78,7 +78,7 @@ public class GuildUser implements Configurable {
      * @param user the user for the guild object.
      * @return the guild user object for the guild and user.
      */
-    public static GuildUser getGuildUser(Guild guild, User user){
+    public static GuildUser getGuildUser(Guild guild, User user) {
         if (user == null || guild == null) return null;
         return ID_CACHE.get(GUILD_MAP_CACHE.computeIfAbsent(guild, g -> new ConcurrentHashMap<>()).computeIfAbsent(user, u -> {
             GuildUser guildUser = new GuildUser(guild, u);
@@ -94,7 +94,7 @@ public class GuildUser implements Configurable {
      *
      * @param guild the guild to order {@link GuildUser}s for.
      */
-    private static void orderGuildUsers(Guild guild){
+    private static void orderGuildUsers(Guild guild) {
         Map<Long, GuildUser> map = new ConcurrentHashMap<>();
         guild.getUsers().forEach(user -> map.put(guild.getJoinTimeForUser(user), getGuildUser(guild, user)));
         Long[] longs = map.keySet().toArray(new Long[map.keySet().size()]);
@@ -135,14 +135,14 @@ public class GuildUser implements Configurable {
     public ConfigLevel getConfigLevel() {
         return ConfigLevel.GUILD_USER;
     }
-    public void checkPermissionToEdit(User user, Guild guild){
-        if (user.equals(this.getUser())){
+    public void checkPermissionToEdit(User user, Guild guild) {
+        if (user.equals(this.getUser())) {
             return;
         }
         BotRole.GUILD_TRUSTEE.checkRequiredRole(user, guild);
     }
     @Override
-    public Configurable getGoverningObject(){
+    public Configurable getGoverningObject() {
         return getGuild();
     }
     @Override
@@ -153,7 +153,7 @@ public class GuildUser implements Configurable {
         throw new ConfigurableConvertException(this.getClass(), t);
     }
     @Override
-    public boolean equals(Object o){
+    public boolean equals(Object o) {
         return Configurable.class.isInstance(o) && this.getID().equals(((Configurable) o).getID());
     }
 
@@ -162,7 +162,7 @@ public class GuildUser implements Configurable {
      *
      * @return the guild which the guild user is a member of.
      */
-    public Guild getGuild(){
+    public Guild getGuild() {
         return this.guild;
     }
 
@@ -171,7 +171,7 @@ public class GuildUser implements Configurable {
      *
      * @return the user which is the member of a guild.
      */
-    public User getUser(){
+    public User getUser() {
         return this.user;
     }
 }

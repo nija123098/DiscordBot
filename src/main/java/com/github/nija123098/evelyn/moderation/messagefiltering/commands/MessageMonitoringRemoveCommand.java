@@ -23,7 +23,7 @@ public class MessageMonitoringRemoveCommand extends AbstractCommand {
         super(MessageMonitoringCommand.class, "remove", null, null, null, "Removes a filtering level");
     }
     @Command
-    public void command(@Argument(optional = true, replacement = ContextType.NONE) Channel channel, Guild guild, @Argument MessageMonitoringLevel level, MessageMaker maker){
+    public void command(@Argument(optional = true, replacement = ContextType.NONE) Channel channel, Guild guild, @Argument MessageMonitoringLevel level, MessageMaker maker) {
         if (channel == null) ConfigHandler.alterSetting(MessageMonitoringConfig.class, guild, levels -> levels.remove(level));
         else {
             ConfigHandler.alterSetting(MessageMonitoringExceptionsConfig.class, channel, levels -> levels.add(level));

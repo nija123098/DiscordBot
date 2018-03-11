@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
  */
 public class User implements Configurable {
     public static final LoadingCache<IUser, User> CACHE = CacheHelper.getLoadingCache(Runtime.getRuntime().availableProcessors() * 2, ConfigProvider.CACHE_SETTINGS.userSize(), 60_000, User::new);
-    public static User getUser(String id){
+    public static User getUser(String id) {
         try {
             IUser iUser = DiscordClient.getAny(client -> client.getUserByID(Long.parseLong(FormatHelper.filtering(id, Character::isLetterOrDigit))));;
             if (iUser == null) return null;
@@ -35,16 +35,16 @@ public class User implements Configurable {
             return null;
         }
     }
-    public static User getUser(IUser user){
+    public static User getUser(IUser user) {
         if (user == null) return null;
         return CACHE.getUnchecked(user);
     }
-    static List<User> getUsers(Collection<IUser> iUsers){
+    static List<User> getUsers(Collection<IUser> iUsers) {
         List<User> users = new ArrayList<>(iUsers.size());
         iUsers.forEach(iUser -> users.add(getUser(iUser)));
         return users;
     }
-    public static void update(IUser user){// hash is based on id, so no old channel is necessary
+    public static void update(IUser user) {// hash is based on id, so no old channel is necessary
         User u = CACHE.getIfPresent(user);
         if (u != null) u.reference.set(user);
     }
@@ -58,7 +58,7 @@ public class User implements Configurable {
         this.ID = this.reference.get().getStringID();
         this.registerExistence();
     }
-    public IUser user(){
+    public IUser user() {
         return reference.get();
     }
     @Override
@@ -71,8 +71,8 @@ public class User implements Configurable {
     }
 
     @Override
-    public void checkPermissionToEdit(User user, Guild guild){
-        if (!this.equals(user)){
+    public void checkPermissionToEdit(User user, Guild guild) {
+        if (!this.equals(user)) {
             BotRole.BOT_ADMIN.checkRequiredRole(user, null);
         }
     }
@@ -83,7 +83,7 @@ public class User implements Configurable {
     }
 
     @Override
-    public boolean equals(Object o){
+    public boolean equals(Object o) {
         return o == this || o instanceof User && this.getID().equals(((User) o).getID());
     }
 
@@ -93,7 +93,7 @@ public class User implements Configurable {
 
     @Override
     public void manage() {// this should probably be more dependent on constants
-        /*if (ConfigHandler.getSetting(LastCurrencyUseConfig.class, this) > System.currentTimeMillis() - 86_400_000){
+        /*if (ConfigHandler.getSetting(LastCurrencyUseConfig.class, this) > System.currentTimeMillis() - 86_400_000) {
             ConfigHandler.setSetting(LastCurrencyUseConfig.class, this, 0L);
         }*/
     }
@@ -102,20 +102,20 @@ public class User implements Configurable {
         EventDistributor.register(User.class);
     }
     private transient Set<Guild> guilds;
-    public Set<Guild> getGuilds(){
+    public Set<Guild> getGuilds() {
         if (this.guilds == null) this.guilds = DiscordClient.getGuilds().stream().filter(guild -> guild.getUsers().contains(this)).collect(Collectors.toSet());
         return guilds;
     }
 
-    public static void handle(DiscordUserJoin join){
+    public static void handle(DiscordUserJoin join) {
         join.getUser().guilds.add(join.getGuild());
     }
 
-    public static void handle(DiscordUserLeave leave){
+    public static void handle(DiscordUserLeave leave) {
         leave.getUser().guilds.add(leave.getGuild());
     }
 
-    public String getNameAndDiscrim(){
+    public String getNameAndDiscrim() {
         return getName() + "#" + getDiscriminator();
     }
 
@@ -127,7 +127,7 @@ public class User implements Configurable {
         return user().getAvatarURL();
     }
 
-    public long getJoinDate(){
+    public long getJoinDate() {
         return Time.toMillis(this.user().getCreationDate());
     }
 
@@ -168,7 +168,7 @@ public class User implements Configurable {
         return user().isBot();
     }
 
-    public VoiceChannel getConnectedVoiceChannel(Guild guild){
+    public VoiceChannel getConnectedVoiceChannel(Guild guild) {
         return VoiceChannel.getVoiceChannel(this.user().getVoiceStateForGuild(guild.guild()).getChannel());
     }
 

@@ -36,7 +36,7 @@ public class BankCommand extends AbstractCommand {
     }
 
     @Command
-    public void command(Guild guild, User user, MessageMaker maker){
+    public void command(Guild guild, User user, MessageMaker maker) {
         String name = ConfigHandler.getSetting(CurrencyNameConfig.class, guild), symbol = ConfigHandler.getSetting(CurrencySymbolConfig.class, guild), booster = EmoticonHelper.getChars("rocket", false), claim = EmoticonHelper.getChars("inbox_tray", false);
         int totalClaim = 256, bonus = 0;
         /*
@@ -109,7 +109,7 @@ public class BankCommand extends AbstractCommand {
     private String claimBuilder(String time, String moneySymbol, int bonus, int streak, User user, Guild guild, boolean claim) {
         StringBuilder ret = new StringBuilder("```\n");
         Long eventStart = 0L, eventEnd = 0L;
-        if (ConfigHandler.getSetting(EventActiveConfig.class, GlobalConfigurable.GLOBAL)){
+        if (ConfigHandler.getSetting(EventActiveConfig.class, GlobalConfigurable.GLOBAL)) {
             eventStart = ConfigHandler.getSetting(EventStartConfig.class, GlobalConfigurable.GLOBAL);
             eventEnd = ConfigHandler.getSetting(EventEndConfig.class, GlobalConfigurable.GLOBAL);
         }

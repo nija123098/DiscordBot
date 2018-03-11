@@ -23,7 +23,7 @@ public class BankSendCommand extends AbstractCommand {
         super(BankCommand.class, "send", null, null, null, "Sends currency to another user, guild, or guild user");
     }
     @Command
-    public void command(@Argument User receiver, @Argument Integer currencyTransfer, User user, @Context(softFail = true) Guild guild, MessageMaker maker){
+    public void command(@Argument User receiver, @Argument Integer currencyTransfer, User user, @Context(softFail = true) Guild guild, MessageMaker maker) {
         String name = ConfigHandler.getSetting(CurrencyNameConfig.class, guild), symbol = ConfigHandler.getSetting(CurrencySymbolConfig.class, guild);
         int senderCurrency = ConfigHandler.getSetting(CurrentCurrencyConfig.class, user);
         int receiverCurrency = ConfigHandler.getSetting(CurrentCurrencyConfig.class, receiver);

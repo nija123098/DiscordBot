@@ -18,7 +18,7 @@ public class SupportCommand extends AbstractCommand {
         super("support", ModuleLevel.INFO, "discord", null, "Brings you to my support server");
     }
     @Command
-    public void command(MessageMaker maker){
+    public void command(MessageMaker maker) {
         maker.mustEmbed().withThumb(DiscordClient.getOurUser().getAvatarURL());
         maker.getTitle().clear().appendRaw(EmoticonHelper.getChars("tools",false) + " Evelyn Support");
         maker.appendRaw("If you want assistance or have questions or suggestions please join the Evelyn Discord server " + FormatHelper.embedLink("here", ConfigProvider.URLS.discordInviteUrl()) + ".");

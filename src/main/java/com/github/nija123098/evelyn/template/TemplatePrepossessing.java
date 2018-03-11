@@ -22,7 +22,7 @@ public class TemplatePrepossessing {
         add("shard", "function{context{shard}|getID}");
         add("user-number", "function{context{guilduser}|getJoinPosition}");
     }// todo programmatically determine some of these
-    private static void add(String name, String function){
+    private static void add(String name, String function) {
         REPLACEMENT_MAP.put("%" + name + "%", function);
     }
 
@@ -32,7 +32,7 @@ public class TemplatePrepossessing {
      * @param input the argument to add appropriate method calls instead of.
      * @return the compilable template.
      */
-    static String substitute(String input){
+    static String substitute(String input) {
         AtomicReference<String> reference = new AtomicReference<>(input);
         REPLACEMENT_MAP.forEach((s, s2) -> reference.updateAndGet(in -> in.replace(s, s2)));
         return reference.get();

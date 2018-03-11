@@ -17,7 +17,7 @@ public class RoleAdminCommand extends AbstractCommand {
         super("roleadmin", ModuleLevel.ADMINISTRATIVE, null, null, "Management of buy-able roles");
     }
     @Command
-    public void command(MessageMaker maker, Guild guild){
+    public void command(MessageMaker maker, Guild guild) {
 
         maker.append("This command is now deprecated, please use the config command to set this.\n");
         maker.appendAlternate(true, "For example this sets the `Noob` role as self assignable with `!getrole`.\n");

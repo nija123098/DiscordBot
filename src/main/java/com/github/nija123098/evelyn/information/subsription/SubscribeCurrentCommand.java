@@ -18,7 +18,7 @@ public class SubscribeCurrentCommand extends AbstractCommand {
         super(SubscribeCommand.class, "current", "subscriptions", null, null, "Shows the current subscriptions for the channel");
     }
     @Command
-    public static void command(Channel channel, MessageMaker maker){
+    public static void command(Channel channel, MessageMaker maker) {
         Set<SubscriptionLevel> levels = ConfigHandler.getSetting(SubscriptionsConfig.class, channel);
         if (levels.isEmpty()) maker.append("You are currently not subscribed to anything in this channel, use `@Evelyn subscribe info` to find possible subscriptions, or use @Evelyn rss");
         else {

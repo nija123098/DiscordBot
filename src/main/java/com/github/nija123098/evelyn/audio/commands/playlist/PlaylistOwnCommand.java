@@ -24,7 +24,7 @@ public class PlaylistOwnCommand extends AbstractCommand {
         super(PlaylistCommand.class, "own", null, null, null, "Lists the playlists a user or guild owns");
     }
     @Command
-    public <T extends Configurable> void command(@Argument(optional = true) User user, @Argument(optional = true, replacement = ContextType.NONE) Guild guild, MessageMaker maker){
+    public <T extends Configurable> void command(@Argument(optional = true) User user, @Argument(optional = true, replacement = ContextType.NONE) Guild guild, MessageMaker maker) {
         T target = (T) (guild != null ? guild : user);
         maker.append(target.getName() + " owns a playlist called " + FormatHelper.getList(new ArrayList<>(guild != null ? ConfigHandler.getSetting(GuildPlaylistsConfig.class, guild) : ConfigHandler.getSetting(UserPlaylistsConfig.class, user))));
     }

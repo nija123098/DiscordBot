@@ -24,13 +24,13 @@ public class FunctionCommand extends AbstractCommand {
         super("function", ModuleLevel.NONE, null, null, "Calls a function in the source code for a configurable");
     }
     @Command
-    public Object command(@Argument Object o, @Argument String s){
+    public Object command(@Argument Object o, @Argument String s) {
         Method method;
         try{method = o.getClass().getMethod(s);
-        }catch(NoSuchMethodException e){throw new ArgumentException(e);}
+        }catch(NoSuchMethodException e) {throw new ArgumentException(e);}
         boolean approved = false;
         if (Character.isLowerCase(method.getReturnType().getSimpleName().charAt(0))) approved = true;
-        else for (Class<?> clazz : ReflectionHelper.getAssignableTypes(method.getReturnType())) if (APPROVED_RETURNS.contains(clazz)){
+        else for (Class<?> clazz : ReflectionHelper.getAssignableTypes(method.getReturnType())) if (APPROVED_RETURNS.contains(clazz)) {
             approved = true;
             break;
         }

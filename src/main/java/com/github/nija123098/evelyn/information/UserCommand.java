@@ -29,7 +29,7 @@ public class UserCommand extends AbstractCommand {
         super("user", ModuleLevel.INFO, "whois, profile", null, "Shows information about the user");
     }
     @Command
-    public void command(@Argument(optional = true) User user, @Context(softFail = true) Guild guild, MessageMaker maker, User invoker){
+    public void command(@Argument(optional = true) User user, @Context(softFail = true) Guild guild, MessageMaker maker, User invoker) {
         maker.withThumb(user.getAvatarURL()).withColor(user);
         maker.getTitle().appendRaw(user.getName());
         maker.withColor(user.getAvatarURL());
@@ -52,7 +52,7 @@ public class UserCommand extends AbstractCommand {
         }
     }
 
-    private static void withText(MessageMaker maker, String key, String value){
+    private static void withText(MessageMaker maker, String key, String value) {
         maker.getNewFieldPart().withInline(true).getTitle().append(key).getFieldPart().getValue().append(value);
     }
 }

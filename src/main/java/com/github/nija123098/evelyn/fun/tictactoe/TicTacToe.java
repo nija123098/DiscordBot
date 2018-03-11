@@ -66,11 +66,11 @@ public class TicTacToe extends AbstractNeuralNetGame {
     }
     @Override
     public Team getWinner() {
-        if (++this.turn > 4 && !this.noCheck){
+        if (++this.turn > 4 && !this.noCheck) {
             this.noCheck = true;
             Boolean[][] originalGrid = this.grid;
             this.grid = ArrayUtils.fillNull(ArrayUtils.copy(originalGrid), true);
-            if (getWinner() == null){
+            if (getWinner() == null) {
                 this.grid = ArrayUtils.fillNull(ArrayUtils.copy(originalGrid), false);
                 if (this.getWinner() == null) {
                     this.grid = originalGrid;
@@ -108,7 +108,7 @@ public class TicTacToe extends AbstractNeuralNetGame {
         side = this.grid[0][0];
         fail = false;
         for (int i = 1; i < this.size; i++) {
-            if (this.grid[i][i] == null || this.grid[i][i] != side){
+            if (this.grid[i][i] == null || this.grid[i][i] != side) {
                 fail = true;
                 break;
             }
@@ -117,7 +117,7 @@ public class TicTacToe extends AbstractNeuralNetGame {
         side = this.grid[0][this.size - 1];
         fail = false;
         for (int i = 1; i < this.size; ++i) {
-            if (this.grid[i][this.size - i - 1] == null || this.grid[i][this.size - i - 1] != side){
+            if (this.grid[i][this.size - i - 1] == null || this.grid[i][this.size - i - 1] != side) {
                 fail = true;
                 break;
             }

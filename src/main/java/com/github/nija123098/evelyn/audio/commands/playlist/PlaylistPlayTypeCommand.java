@@ -20,7 +20,7 @@ public class PlaylistPlayTypeCommand extends AbstractCommand {
         super(PlaylistCommand.class, "playtype", null, null, null, "Shows or sets the play type of a playlist");
     }
     @Command
-    public void command(@Argument(optional = true, replacement = ContextType.NONE) Playlist.PlayType playType, @Argument Playlist playlist, MessageMaker maker){
+    public void command(@Argument(optional = true, replacement = ContextType.NONE) Playlist.PlayType playType, @Argument Playlist playlist, MessageMaker maker) {
         if (playType != null) ConfigHandler.setSetting(PlaylistPlayTypeConfig.class, playlist, playType);
         else playType = ConfigHandler.getSetting(PlaylistPlayTypeConfig.class, playlist);
         maker.append("Current setting is ").appendRaw(playType.name());

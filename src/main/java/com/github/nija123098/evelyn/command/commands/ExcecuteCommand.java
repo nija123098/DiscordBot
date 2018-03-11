@@ -17,7 +17,7 @@ public class ExcecuteCommand extends AbstractCommand {
         super("execute", ModuleLevel.DEVELOPMENT, null, null, "Executes stuff from the command line");
     }
     @Command
-    public void command(String args, MessageMaker maker){
+    public void command(String args, MessageMaker maker) {
         if (PlatformDetector.isWindows()) args = "cmd /c" + args;
         ExecuteShellCommand.commandToExecute(args);
         if (ExecuteShellCommand.getOutput().length() >= 2000) {

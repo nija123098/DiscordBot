@@ -26,7 +26,7 @@ public class ChannelAppender<E> extends UnsynchronizedAppenderBase<E> {
 
     @Override
     protected void append(E eventObject) {
-        if (Launcher.isReady()){
+        if (Launcher.isReady()) {
             if (CHANNEL.get() == null) {
                 CHANNEL.set(Channel.getChannel(ConfigProvider.BOT_SETTINGS.loggingChannel()).channel());
             }

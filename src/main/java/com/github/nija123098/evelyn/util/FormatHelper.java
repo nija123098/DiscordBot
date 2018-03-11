@@ -93,7 +93,7 @@ public class FormatHelper {
         return builder.append("```").toString();
     }
 
-    private static void formatContents(StringBuilder builder, List<Integer> widths, List<String> contents){
+    private static void formatContents(StringBuilder builder, List<Integer> widths, List<String> contents) {
         builder.append("| ");
         for (int i = 0; i < widths.size(); i++) {
             builder.append(contents.get(i)).append(repeat(' ', widths.get(i) - contents.get(i).length()));
@@ -111,7 +111,7 @@ public class FormatHelper {
         StringBuilder builder = new StringBuilder("```\n");
         AtomicInteger currentLength = new AtomicInteger();
         items.forEach(s -> {
-            if (currentLength.get() + s.length() > 64 && currentLength.get() != 0){
+            if (currentLength.get() + s.length() > 64 && currentLength.get() != 0) {
                 builder.append("\n");
                 currentLength.set(0);
             }
@@ -135,7 +135,7 @@ public class FormatHelper {
                 permissions.add("'" + permission.name().toLowerCase() + "'");
             } else if (permission.name().contains("KICK") || permission.name().contains("BAN") || permission.name().contains("MOVE") || permission.name().contains("DEAFEN") || permission.name().contains("MUTE") || permission.name().contains("LOG")) {
                 permissions.add('"' + permission.name().toLowerCase() + '"');
-            } else if (permission.name().contains("ADMINISTRATOR")){
+            } else if (permission.name().contains("ADMINISTRATOR")) {
                 permissions.add(" Administrator ");
             } else if (!simple) {
                 permissions.add(" " + permission.name().toLowerCase() + " ");
@@ -170,7 +170,7 @@ public class FormatHelper {
                 permissions.add("'" + permission.name().toLowerCase() + "'");
             } else if (permission.name().contains("KICK") || permission.name().contains("BAN") || permission.name().contains("MOVE") || permission.name().contains("DEAFEN") || permission.name().contains("MUTE")) {
                 permissions.add('"' + permission.name().toLowerCase() + '"');
-            } else if (permission.name().contains("ADMINISTRATOR")){
+            } else if (permission.name().contains("ADMINISTRATOR")) {
                 permissions.add(" Administrator ");
             } else {
                 permissions.add(" " + permission.name().toLowerCase() + " ");
@@ -311,7 +311,7 @@ public class FormatHelper {
         return builder.toString();
     }
 
-    public static String limitLength(String s,int length){
+    public static String limitLength(String s,int length) {
         return s.length() > length ? s.substring(0, length) : s;
     }
 }

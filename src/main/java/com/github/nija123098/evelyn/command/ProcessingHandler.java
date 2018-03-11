@@ -16,18 +16,18 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ProcessingHandler {
     private static final Map<Channel, Integer> PROCESSING_MAP = new ConcurrentHashMap<>();
-    public static synchronized void startProcess(Channel channel){
+    public static synchronized void startProcess(Channel channel) {
         if (!ConfigProvider.BOT_SETTINGS.typingEnabled()|| channel == null) return;
         if (PROCESSING_MAP.compute(channel, (c, integer) -> integer == null ? 1 : ++integer) == 1) channel.setTypingStatus(true);
     }
-    public static synchronized void endProcess(Channel channel){
+    public static synchronized void endProcess(Channel channel) {
         if (!ConfigProvider.BOT_SETTINGS.typingEnabled() || channel == null) return;
-        if (PROCESSING_MAP.getOrDefault(channel, 0) == 1){
+        if (PROCESSING_MAP.getOrDefault(channel, 0) == 1) {
             PROCESSING_MAP.remove(channel);
             channel.setTypingStatus(false);
         } else PROCESSING_MAP.compute(channel, (c, integer) -> integer == null ? null : --integer);
     }
-    public static void swapProcess(Channel origin, Channel destination){
+    public static void swapProcess(Channel origin, Channel destination) {
         if (!ConfigProvider.BOT_SETTINGS.typingEnabled()) return;
         if (origin.equals(destination)) return;
         startProcess(destination);

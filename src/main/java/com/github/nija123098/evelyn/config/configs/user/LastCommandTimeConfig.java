@@ -16,11 +16,11 @@ public class LastCommandTimeConfig extends AbstractConfig<Long, User> {
         super("last_command_time", "", ConfigCategory.STAT_TRACKING, -1L, "The last time the user used a command");
         CONFIG.set(this);
     }
-    public static void update(User user){
+    public static void update(User user) {
         CONFIG.get().setValue(user, System.currentTimeMillis());
     }
 
-    public static long get(User user){
+    public static long get(User user) {
         return CONFIG.get().getValue(user);
     }
 }

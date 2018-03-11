@@ -18,17 +18,17 @@ public class ChangeContextCommand extends AbstractCommand {
         super("changecontext", BotRole.BOT_ADMIN, ModuleLevel.NONE, null, null, "Changes the context of the command that follows.  End context deceleration with \"command\"");
     }
     @Command
-    public void command(@Context(softFail = true) String s, @Context(softFail = true) User user, @Context(softFail = true) Shard shard, @Context(softFail = true) Channel channel, @Context(softFail = true) Guild guild, @Context(softFail = true) Message message, @Context(softFail = true) Reaction reaction){
+    public void command(@Context(softFail = true) String s, @Context(softFail = true) User user, @Context(softFail = true) Shard shard, @Context(softFail = true) Channel channel, @Context(softFail = true) Guild guild, @Context(softFail = true) Message message, @Context(softFail = true) Reaction reaction) {
         Object[] contexts = new Object[]{user, shard, channel, guild, message, reaction};
         String next;
-        while (!(next = s.split(" ")[0]).equalsIgnoreCase("command")){
+        while (!(next = s.split(" ")[0]).equalsIgnoreCase("command")) {
             try {
                 ContextRequirement requirement = ContextRequirement.valueOf(next);
                 s = FormatHelper.trimFront(s.substring(next.length()));
                 Pair<?, Integer> pair = InvocationObjectGetter.convert(requirement.getType(), user, shard, channel, guild, message, reaction, s);
                 contexts[requirement.ordinal()] = pair.getKey();
                 s = s.substring(pair.getValue());
-            } catch (IllegalArgumentException e){
+            } catch (IllegalArgumentException e) {
                 throw new ArgumentException("Unrecognized context: " + next, e);
             }
             s = FormatHelper.trimFront(s);

@@ -26,7 +26,7 @@ public class ShutdownCommand extends AbstractCommand {
         super("reboot", ModuleLevel.BOT_ADMINISTRATIVE, "restart, shutdown, logout", null, "Restarts the bot");
     }
     @Command
-    public void command(@Argument(optional = true, replacement = ContextType.NONE) Integer val, String remaining, ContextPack pack){
+    public void command(@Argument(optional = true, replacement = ContextType.NONE) Integer val, String remaining, ContextPack pack) {
         remaining = remaining.toLowerCase();
         if (remaining.contains("now")) System.exit(val == null ? -1 : val);
         Template template = TemplateHandler.getTemplate(KeyPhrase.REBOOT_NOTIFICATION, null, Collections.emptyList());

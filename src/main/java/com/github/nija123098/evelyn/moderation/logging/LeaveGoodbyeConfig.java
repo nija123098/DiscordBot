@@ -22,7 +22,7 @@ public class LeaveGoodbyeConfig extends AbstractConfig<Channel, Guild> {
         super("leave_goodbye", "Goodbye Message", ConfigCategory.LOGGING, (Channel) null, "If the bot should wish farewell to a user when they leave");
     }
     @EventListener
-    public void handle(DiscordUserLeave leave){
+    public void handle(DiscordUserLeave leave) {
         Channel channel = this.getValue(leave.getGuild());
         if (channel == null) return;
         Template template = TemplateHandler.getTemplate(KeyPhrase.USER_LEAVE, leave.getGuild(), Collections.emptyList());

@@ -26,7 +26,7 @@ public class JoinWelcomeConfig extends AbstractConfig<Channel, Guild>{
         super("join_welcome", "Welcome Message", ConfigCategory.LOGGING, (Channel) null, "If the bot should welcome a user when they join");
     }
     @EventListener
-    public void handle(DiscordUserJoin leave){
+    public void handle(DiscordUserJoin leave) {
         Channel channel = this.getValue(leave.getGuild());
         if (channel == null) return;
         Template template = TemplateHandler.getTemplate(KeyPhrase.USER_JOIN, leave.getGuild(), Collections.emptyList());

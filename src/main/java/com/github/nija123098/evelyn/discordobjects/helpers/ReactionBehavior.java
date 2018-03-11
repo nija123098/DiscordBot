@@ -33,7 +33,7 @@ public interface ReactionBehavior {
      * @param emoticonName the {@link Reaction} to listen for specified by name.
      * @param behavior the behavior to preform.
      */
-    static void registerListener(Message message, String emoticonName, ReactionBehavior behavior){
+    static void registerListener(Message message, String emoticonName, ReactionBehavior behavior) {
         if (message == null) return;
         message.addReactionByName(emoticonName);
         if (CACHE.getIfPresent(message) == null) CACHE.put(message, new HashMap<>());
@@ -47,7 +47,7 @@ public interface ReactionBehavior {
      * @param message the message to deregister a reaction for.
      * @param emoticonName the {@link Reaction} to deregister a {@link ReactionBehavior} specified by name.
      */
-    static void deregisterListener(Message message, String emoticonName){
+    static void deregisterListener(Message message, String emoticonName) {
         if (message == null) return;
         Map<String, ReactionBehavior> map = CACHE.getIfPresent(message);
         if (map == null) return;
@@ -59,7 +59,7 @@ public interface ReactionBehavior {
     /**
      * De-registers all {@link ReactionBehavior} listeners.
      */
-    static void deregisterAll(){
+    static void deregisterAll() {
         Map<Message, Map<String, ReactionBehavior>> behaviors = new HashMap<>(CACHE.asMap());
         CACHE.invalidateAll();
         behaviors.forEach((message, map) -> map.keySet().forEach(message::removeReaction));
@@ -71,7 +71,7 @@ public interface ReactionBehavior {
      * @param reaction the event to listen to.
      */
     @EventListener
-    static void handle(DiscordReactionEvent reaction){
+    static void handle(DiscordReactionEvent reaction) {
         if (reaction.getUser() == null || reaction.getUser().isBot() || !reaction.getMessage().getAuthor().equals(DiscordClient.getOurUser())) return;
         Map<String, ReactionBehavior> map = CACHE.getUnchecked(reaction.getMessage());
         if (map == null) return;

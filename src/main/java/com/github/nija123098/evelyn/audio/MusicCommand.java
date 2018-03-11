@@ -23,7 +23,7 @@ public class MusicCommand extends AbstractCommand {
         super("music", ModuleLevel.MUSIC, null, null, "Shows music related settings");
     }
     @Command
-    public void command(MessageMaker maker, Guild guild){
+    public void command(MessageMaker maker, Guild guild) {
         maker.getTitle().append("Music Configuration");
         maker.append("These are music related configs, this is just an overview.\nTo play music do `@Evelyn play`");
         maker.getNewFieldPart().getTitle().append("volume").getFieldPart().getValue().appendRaw(ConfigHandler.getSetting(VolumeConfig.class, guild) + "%");

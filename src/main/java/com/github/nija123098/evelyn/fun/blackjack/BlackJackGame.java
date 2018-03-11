@@ -13,10 +13,10 @@ import java.util.Map;
  */
 public class BlackJackGame {
     private static final Map<Configurable, BlackJackGame> GAME_MAP = new HashMap<>();
-    public static synchronized BlackJackGame getGame(Configurable configurable){
+    public static synchronized BlackJackGame getGame(Configurable configurable) {
         return GAME_MAP.get(configurable);
     }
-    public static synchronized void setGame(Configurable configurable, BlackJackGame game){
+    public static synchronized void setGame(Configurable configurable, BlackJackGame game) {
         GAME_MAP.put(configurable, game);
     }
     private Configurable player;
@@ -27,37 +27,37 @@ public class BlackJackGame {
         this.dealerHand = deck.makeHand(1);
         this.playerHand = deck.makeHand(2);
     }
-    public int playerHit(){
+    public int playerHit() {
         this.playerHand.draw();
         return value(this.playerHand);
     }
-    public int dealerHit(){
+    public int dealerHit() {
         this.dealerHand.draw();
         return value(this.dealerHand);
     }
-    public int playerValue(){
+    public int playerValue() {
         return value(this.playerHand);
     }
     @Override
-    public String toString(){
+    public String toString() {
         return "Dealer's hand (" + value(this.dealerHand) + ")\n" + this.dealerHand.toString() + "\n\n" + LanguageHelper.makePossessive(this.player.getName()) + " hand (" + value(this.playerHand) + ")\n" + this.playerHand.toString();
     }
-    public boolean playerBlackJack(){
+    public boolean playerBlackJack() {
         return blackJack(this.playerHand);
     }
-    public boolean dealerBlackJack(){
+    public boolean dealerBlackJack() {
         return blackJack(this.dealerHand);
     }
-    public static int value(CardDeck.Hand hand){
+    public static int value(CardDeck.Hand hand) {
         return CardDeck.ValueRule.BLACK_JACK.value(hand);
     }
-    public static boolean blackJack(CardDeck.Hand hand){
+    public static boolean blackJack(CardDeck.Hand hand) {
         return hand.getHand().size() == 2 && (isJack(hand.getHand().get(0)) && isAce(hand.getHand().get(1)) || isJack(hand.getHand().get(1)) && isAce(hand.getHand().get(0)));
     }
-    private static boolean isJack(CardDeck.Card card){
+    private static boolean isJack(CardDeck.Card card) {
         return card.getNumber() == 11 && (card.getSuit().equals(CardDeck.Suit.CLUBS) || card.getSuit().equals(CardDeck.Suit.SPADES));
     }
-    private static boolean isAce(CardDeck.Card card){
+    private static boolean isAce(CardDeck.Card card) {
         return card.getNumber() == 14;
     }
 }

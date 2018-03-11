@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class Channel implements Configurable {
     private static final LoadingCache<IChannel, Channel> CACHE = CacheHelper.getLoadingCache(Runtime.getRuntime().availableProcessors() * 2, ConfigProvider.CACHE_SETTINGS.channelSize(), 300_000, channel -> channel.isPrivate() ? new DirectChannel((IPrivateChannel) channel) : channel instanceof IVoiceChannel ? new VoiceChannel((IVoiceChannel) channel) : new Channel(channel));
-    public static Channel getChannel(String id){
+    public static Channel getChannel(String id) {
         try {
             IChannel channel = GetterUtil.getAny(DiscordClient.clients(), f -> f.getChannelByID(Long.parseLong(FormatHelper.filtering(id, Character::isLetterOrDigit))));
             if (channel == null) return null;
@@ -33,16 +33,16 @@ public class Channel implements Configurable {
             return null;
         }
     }
-    public static Channel getChannel(IChannel channel){
+    public static Channel getChannel(IChannel channel) {
         if (channel == null) return null;
         return CACHE.getUnchecked(channel);
     }
-    static List<Channel> getChannels(List<IChannel> iChannels){
+    static List<Channel> getChannels(List<IChannel> iChannels) {
         List<Channel> channels = new ArrayList<>(iChannels.size());
         iChannels.forEach(iChannel -> channels.add(getChannel(iChannel)));
         return channels;
     }
-    public static void update(IChannel channel){// should handle DirectChannel and VoiceChannel updates as well
+    public static void update(IChannel channel) {// should handle DirectChannel and VoiceChannel updates as well
         Channel c = CACHE.getIfPresent(channel);
         if (c != null) c.reference.set(channel);
     }
@@ -56,7 +56,7 @@ public class Channel implements Configurable {
         this.ID = channel.getStringID();
         this.registerExistence();
     }
-    public IChannel channel(){
+    public IChannel channel() {
         return this.reference.get();
     }
     @Override
@@ -64,19 +64,19 @@ public class Channel implements Configurable {
         return channel().getStringID();
     }
     @Override
-    public void checkPermissionToEdit(User user, Guild guild){
+    public void checkPermissionToEdit(User user, Guild guild) {
         BotRole.GUILD_TRUSTEE.checkRequiredRole(user, guild);
     }
 
     @Override
-    public Configurable getGoverningObject(){
+    public Configurable getGoverningObject() {
         return isPrivate() ? GlobalConfigurable.GLOBAL : this.getGuild();
     }
 
     @Override
     public <T extends Configurable> Configurable convert(Class<T> t) {
         if (Channel.class.isAssignableFrom(t)) return this;
-        if (!this.isPrivate() && this.equals(this.getGuild().getGeneralChannel())){
+        if (!this.isPrivate() && this.equals(this.getGuild().getGeneralChannel())) {
             if (t.equals(Guild.class)) return this.getGuild();
             if (t.equals(Role.class)) return this.getGuild().getEveryoneRole();
         }
@@ -130,7 +130,7 @@ public class Channel implements Configurable {
         return channel().isPrivate();
     }
 
-    public boolean isNSFW(){
+    public boolean isNSFW() {
         return channel().isNSFW();
     }
 
@@ -218,15 +218,15 @@ public class Channel implements Configurable {
         return ExceptionWrapper.wrap((ExceptionWrapper.Request<List<Message>>) () -> Message.getMessages(channel().getPinnedMessages()));
     }
 
-    public List<Message> getMessages(){
+    public List<Message> getMessages() {
         return Message.getMessages(Arrays.asList(this.channel().getMessageHistoryTo(this.channel().getCreationDate()).asArray()));
     }
 
-    public List<Message> getMessages(int count){
+    public List<Message> getMessages(int count) {
         return Message.getMessages(channel().getMessageHistory(count));
     }
 
-    public List<Message> getMessagesTo(long date){
+    public List<Message> getMessagesTo(long date) {
         return Message.getMessages(channel().getMessageHistoryTo(Time.toInstant(date)));
     }
 
@@ -246,11 +246,11 @@ public class Channel implements Configurable {
         return Category.getCategory(channel().getCategory());
     }
 
-    public boolean canPost(User user){
+    public boolean canPost(User user) {
         return DiscordPermission.hasChannelPermissions(user, this, DiscordPermission.READ_MESSAGES, DiscordPermission.READ_MESSAGE_HISTORY, DiscordPermission.SEND_MESSAGES);
     }
 
-    public boolean canPost(){
+    public boolean canPost() {
         return DiscordPermission.hasChannelPermissions(DiscordClient.getOurUser(), this, DiscordPermission.READ_MESSAGES, DiscordPermission.READ_MESSAGE_HISTORY, DiscordPermission.SEND_MESSAGES);
     }
     public void changeCatagory(Category category) {

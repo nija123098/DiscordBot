@@ -45,12 +45,12 @@ public class TwitchTrack extends Track {
                 queue.add(user.getLogo());
             }
             @Override
-            public void onFailure(int i, String s, String s1){queue.add(null);}
+            public void onFailure(int i, String s, String s1) {queue.add(null);}
             @Override
             public void onFailure(Throwable throwable) {queue.add(null);}
         });
         try{return this.previewURL = queue.take();
-        }catch(InterruptedException ignored){}
+        }catch(InterruptedException ignored) {}
         return null;
     }
     private transient String info;
@@ -64,12 +64,12 @@ public class TwitchTrack extends Track {
                 queue.add(user.getBio());
             }
             @Override
-            public void onFailure(int i, String s, String s1){queue.add(null);}
+            public void onFailure(int i, String s, String s1) {queue.add(null);}
             @Override
             public void onFailure(Throwable throwable) {queue.add(null);}
         });
         try{return this.info = queue.take();
-        }catch(InterruptedException ignored){}
+        }catch(InterruptedException ignored) {}
         return null;
     }
     @Override

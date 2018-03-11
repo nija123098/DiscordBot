@@ -21,7 +21,7 @@ public enum SubscriptionLevel {
     public String getInfo() {
         return this.info;
     }
-    public void send(MessageMaker maker){
+    public void send(MessageMaker maker) {
         ConfigHandler.getNonDefaultSettings(SubscriptionsConfig.class).forEach((channel, subscriptionLevels) -> {
             if (subscriptionLevels.contains(this)) maker.clearMessage().withChannel(channel).send();
         });

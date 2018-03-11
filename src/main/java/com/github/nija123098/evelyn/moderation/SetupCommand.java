@@ -37,7 +37,7 @@ public class SetupCommand extends AbstractCommand {
             //remove reactions
             try {
                 maker.clearReactionBehaviors();
-            } catch (ConcurrentModificationException ignored){ }
+            } catch (ConcurrentModificationException ignored) { }
             maker.sentMessage().getReactions().forEach(reactions -> maker.sentMessage().removeReaction(reactions));
 
         }));

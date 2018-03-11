@@ -15,7 +15,7 @@ public class GameRolesAddCommand extends AbstractCommand {
         super(GameRolesCommand.class, "add", null, null, null, "Adds a role to the list of roles that will added to the user while they play a game");
     }
     @Command
-    public void command(@Argument Role role){
+    public void command(@Argument Role role) {
         ConfigHandler.setSetting(GameRoleConfig.class, role, true);
     }
 }

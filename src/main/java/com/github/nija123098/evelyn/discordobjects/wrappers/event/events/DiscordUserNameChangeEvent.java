@@ -13,7 +13,7 @@ public class DiscordUserNameChangeEvent implements BotEvent {
     private final String newName;
     private final String oldName;
     private final User user;
-    public DiscordUserNameChangeEvent(UserUpdateEvent event){
+    public DiscordUserNameChangeEvent(UserUpdateEvent event) {
         if (event.getNewUser().getName().equals(event.getOldUser().getName())) throw new InvalidEventException();
         this.newName = event.getNewUser().getName();
         this.oldName = event.getOldUser().getName();

@@ -19,7 +19,7 @@ public class WhoAreNotCommand extends AbstractCommand {
         super(WhoAreCommand.class, "not", "whoarenot, whoarnt", null, null, "Shows the users that do not have the given role");
     }
     @Command
-    public void command(@Argument Role role, Guild guild, MessageMaker maker){
+    public void command(@Argument Role role, Guild guild, MessageMaker maker) {
         List<User> users = guild.getUsers();
         users.removeAll(role.getUsers());
         maker.getTitle().appendRaw("Users without the " + role.getName() + " role");

@@ -25,7 +25,7 @@ public class MusicDownloadService extends AbstractService {
     private static final List<List<DownloadableTrack>> Q = new CopyOnWriteArrayList<>();
     private static final Map<DownloadableTrack, Integer> PRIORITY_MAP = new ConcurrentHashMap<>();
     private static final Map<DownloadableTrack, Set<Consumer<DownloadableTrack>>> CONSUMER_MAP = new ConcurrentHashMap<>();
-    private static DownloadableTrack getNext(){
+    private static DownloadableTrack getNext() {
         for (int i = Q.size() - 1; i > -1; --i) if (!Q.get(i).isEmpty()) return Q.get(i).remove(0);
         return null;
     }
@@ -33,10 +33,10 @@ public class MusicDownloadService extends AbstractService {
         super(-1);
         Runtime.getRuntime().addShutdownHook(new Thread(() -> DOWNLOADING.forEach(track -> track.file().delete())));
     }
-    public static boolean isDownloaded(DownloadableTrack track){
+    public static boolean isDownloaded(DownloadableTrack track) {
         return track.file().exists() && !DOWNLOADING.contains(track);
     }
-    public static void queueDownload(int priority, DownloadableTrack track, Consumer<DownloadableTrack> consumer){
+    public static void queueDownload(int priority, DownloadableTrack track, Consumer<DownloadableTrack> consumer) {
         if (consumer == null) consumer = NOTHING;
         if (isDownloaded(track)) {
             consumer.accept(track);
@@ -48,7 +48,7 @@ public class MusicDownloadService extends AbstractService {
         }
         CONSUMER_MAP.computeIfAbsent(track, t -> ConcurrentHashMap.newKeySet()).add(consumer);
         Integer originalPriority = PRIORITY_MAP.get(track);
-        if (originalPriority != null){
+        if (originalPriority != null) {
             if (originalPriority > priority) return;
             Q.get(originalPriority).remove(track);
         }
@@ -60,16 +60,16 @@ public class MusicDownloadService extends AbstractService {
             if (t == null) return;// should never happen
             DOWNLOADING.add(t);
             try{t.download();
-            } catch (Exception e){Log.log("Exception downloading song", e);}
+            } catch (Exception e) {Log.log("Exception downloading song", e);}
             DOWNLOADING.remove(t);
             CONSUMER_MAP.remove(t).forEach(c -> c.accept(track));
         });
     }
     @Override
-    public boolean mayBlock(){
+    public boolean mayBlock() {
         return true;
     }
-    private static void ensureQCapacity(int size){
+    private static void ensureQCapacity(int size) {
         while (size > Q.size() - 1) Q.add(new CopyOnWriteArrayList<>());
     }
     @Override

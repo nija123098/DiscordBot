@@ -31,7 +31,7 @@ public class TemplateHandler {
     /**
      * Forces the initialization of this class.
      */
-    public static void initialize(){
+    public static void initialize() {
         Log.log(LogColor.blue("Template Handler initialized.") + LogColor.yellow(" Jet fuel can't melt these steel beams."));
     }
 
@@ -43,7 +43,7 @@ public class TemplateHandler {
      * @param guild the {@link Guild} in the context of getting templates.
      * @return a list of {@link Template}s, default there are no {@link Guild} overrides.
      */
-    public static List<Template> getTemplates(KeyPhrase keyPhrase, Guild guild){
+    public static List<Template> getTemplates(KeyPhrase keyPhrase, Guild guild) {
         List<Template> templates = guild != null ? ConfigHandler.getSetting(GuildTemplatesConfig.class, guild).get(keyPhrase) : Collections.emptyList();
         if (templates == null || templates.isEmpty()) templates = ConfigHandler.getSetting(GlobalTemplateConfig.class, GlobalConfigurable.GLOBAL).get(keyPhrase);
         return templates == null || templates.isEmpty() ? Collections.emptyList() : templates;
@@ -59,9 +59,9 @@ public class TemplateHandler {
      * @return a list of {@link Template}s, default there are no {@link Guild} overrides,
      * not including the listed exemptions.
      */
-    public static Template getTemplate(KeyPhrase keyPhrase, Guild guild, List<Template> exemptions){
+    public static Template getTemplate(KeyPhrase keyPhrase, Guild guild, List<Template> exemptions) {
         List<Template> templates = getTemplates(keyPhrase, guild);
-        if (templates.isEmpty()){
+        if (templates.isEmpty()) {
             Log.log("No templates found for KeyPhrase: " + keyPhrase.name());
             return null;
         }// should not throw an exception since nothing failed
@@ -79,7 +79,7 @@ public class TemplateHandler {
      * @throws RuntimeException if the {@link Template} did not compile.
      * @return the compiled {@link Template}.
      */
-    public static Template addTemplate(KeyPhrase keyPhrase, Guild guild, String s){
+    public static Template addTemplate(KeyPhrase keyPhrase, Guild guild, String s) {
         Template template = new Template(s, keyPhrase.getDefinition());
         Consumer<Map<KeyPhrase, List<Template>>> consumer = v -> v.computeIfAbsent(keyPhrase, k -> new ArrayList<>()).add(template);
         if (guild == null) ConfigHandler.alterSetting(GlobalTemplateConfig.class, GlobalConfigurable.GLOBAL, consumer);
@@ -97,7 +97,7 @@ public class TemplateHandler {
      *        {@link GuildTemplatesConfig} or {@link GlobalTemplateConfig}.
      * @return the compiled {@link Template} that was removed.
      */
-    public static Template removeTemplate(KeyPhrase keyPhrase, Guild guild, int i){
+    public static Template removeTemplate(KeyPhrase keyPhrase, Guild guild, int i) {
         AtomicReference<Template> removed = new AtomicReference<>();
         Consumer<Map<KeyPhrase, List<Template>>> consumer = v -> v.compute(keyPhrase, (k, templates) -> {
             if (templates == null || templates.size() <= i) throw new ArgumentException("There is no template at that index");

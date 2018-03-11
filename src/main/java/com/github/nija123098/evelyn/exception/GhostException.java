@@ -10,9 +10,9 @@ package com.github.nija123098.evelyn.exception;
 public class GhostException extends BotException {
     public GhostException() {
     }
-    public static boolean isGhostCaused(Throwable throwable){
+    public static boolean isGhostCaused(Throwable throwable) {
         if (throwable.getClass().equals(GhostException.class)) return true;
-        while ((throwable = throwable.getCause()) != null){
+        while ((throwable = throwable.getCause()) != null) {
             if (throwable.getClass().equals(GhostException.class)) return true;
         }
         return false;

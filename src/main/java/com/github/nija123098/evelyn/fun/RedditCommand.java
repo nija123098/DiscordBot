@@ -32,7 +32,7 @@ public class RedditCommand extends AbstractCommand {
         List<Link> list = subReddit.getTop(50).stream().filter(link -> !link.getOver18()).collect(Collectors.toList());
         if (list.isEmpty()) throw new ArgumentException("That doesn't seem to be a valid subreddit");
         RedditLink redditLink;
-        while (!(redditLink = new RedditLink(Rand.getRand(list, false))).getLinkApproved() && redditLink.getLinkApproved() && redditLink.getFileURL().endsWith(".figv")){}
+        while (!(redditLink = new RedditLink(Rand.getRand(list, false))).getLinkApproved() && redditLink.getLinkApproved() && redditLink.getFileURL().endsWith(".figv")) {}
         if (redditLink.getContent() == null) {
             if (redditLink.getFileType() == null) maker.append(redditLink.getTitle()).appendRaw("\n" + redditLink.getPointerUrl());
             else maker.withImage(redditLink.getFileURL()).getTitle().append(redditLink.getTitle());

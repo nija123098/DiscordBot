@@ -24,7 +24,7 @@ public class GameCommand extends AbstractCommand {
         super("game", ModuleLevel.FUN, null, null, "Lists the games avalable which support team decisions");
     }
     @Command
-    public static void command(MessageMaker maker){
+    public static void command(MessageMaker maker) {
         maker.getTitle().append("Games with team support");
         CLASS_MAP.values().stream().filter(clazz -> !Modifier.isAbstract(clazz.getModifiers())).forEach(s -> maker.getNewListPart().appendRaw(s.getSimpleName()));
     }

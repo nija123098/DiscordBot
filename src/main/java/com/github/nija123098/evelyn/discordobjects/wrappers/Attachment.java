@@ -13,12 +13,12 @@ import java.util.Objects;
  * @since 1.0.0
  */
 public class Attachment {// probably don't want to store this at all
-    static List<Attachment> getAttachments(List<IMessage.Attachment> attachments){
+    static List<Attachment> getAttachments(List<IMessage.Attachment> attachments) {
         List<Attachment> attaches = new ArrayList<>();
         attachments.forEach(attachment -> attaches.add(getAttachment(attachment)));
         return attaches;
     }
-    private static Attachment getAttachment(IMessage.Attachment attachment){
+    private static Attachment getAttachment(IMessage.Attachment attachment) {
         return new Attachment(attachment);
     }
     private IMessage.Attachment attachment;
@@ -41,7 +41,7 @@ public class Attachment {// probably don't want to store this at all
         return this.attachment.getUrl();
     }
 
-    public boolean equals(Object o){
+    public boolean equals(Object o) {
         return o instanceof Attachment && Objects.equals(((Attachment) o).getId(), this.getId());
     }
 }

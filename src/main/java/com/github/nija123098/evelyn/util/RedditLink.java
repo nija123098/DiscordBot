@@ -33,10 +33,10 @@ public class RedditLink {
         if (this.content.isEmpty()) this.content = null;
         this.pointerUrl = link.getUrl();
         this.fileURL = !link.getUrl().contains("www.reddit.com") ? link.getUrl() : null;
-        if (this.fileURL != null){
+        if (this.fileURL != null) {
             LinkOrigin approved = LINK_ORIGINS.get(this.fileURL.split("/")[2]);
             this.linkApproved = approved != null;
-            if (this.linkApproved && approved.downloadSupported){
+            if (this.linkApproved && approved.downloadSupported) {
                 this.fileURL = approved.sourceFunction.apply(this.fileURL);
                 this.fileType = StringHelper.getFileType(this.fileURL);
             }
@@ -60,11 +60,11 @@ public class RedditLink {
     public String getPointerUrl() {
         return this.pointerUrl;
     }
-    public boolean getLinkApproved(){
+    public boolean getLinkApproved() {
         return this.linkApproved;
     }
     public File getFile() {
-        if (this.file == null && this.fileType != null){
+        if (this.file == null && this.fileType != null) {
             StringBuilder builder = new StringBuilder();
             new StringIterator(this.title).forEachRemaining(character -> builder.append(Character.isLetterOrDigit(character) ? character : '_'));
             this.file = FileHelper.getTempFile("redditimages", this.fileType, builder.toString(), file -> {
@@ -85,7 +85,7 @@ public class RedditLink {
         private String URL;
         private Function<String, String> sourceFunction;
         private boolean downloadSupported;
-        LinkOrigin(String URL){
+        LinkOrigin(String URL) {
             this.URL = URL;
             this.sourceFunction = String::toString;
             this.downloadSupported = false;

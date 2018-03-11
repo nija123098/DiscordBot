@@ -59,7 +59,7 @@ public class CommandHandler {
                 Log.log("Malformed root command: " + clazz.getName(), e);
             } catch (DevelopmentException e) {
                 Log.log("DevelopmentException while initializing command: " + clazz.getName(), e);
-            } catch (RuntimeException e){
+            } catch (RuntimeException e) {
                 Log.log("Exception while initializing command: " + clazz.getName(), e);
             }
             if (command == null || !clazz.isInstance(command)) {
@@ -113,7 +113,7 @@ public class CommandHandler {
      * @param typeMap the map sorted so the type of the super-command
      *                is the key and the value is a set of sub-command objects.
      */
-    private static void load(AbstractCommand superCommand, Map<Class<? extends AbstractCommand>, Set<AbstractCommand>> typeMap){
+    private static void load(AbstractCommand superCommand, Map<Class<? extends AbstractCommand>, Set<AbstractCommand>> typeMap) {
         superCommand.load();
         if (typeMap.containsKey(superCommand.getClass())) typeMap.get(superCommand.getClass()).forEach(command -> load(command, typeMap));
     }
@@ -121,7 +121,7 @@ public class CommandHandler {
     /**
      * Forces the initialization of this class.
      */
-    public static void initialize(){
+    public static void initialize() {
         Log.log(LogColor.blue("Command Handler initialized.") + LogColor.yellow(" Implementing communism."));
     }
 
@@ -130,7 +130,7 @@ public class CommandHandler {
      *
      * @return returns a set of all command instances.
      */
-    public static Set<? extends AbstractCommand> getCommands(){
+    public static Set<? extends AbstractCommand> getCommands() {
         return new HashSet<>(CLASS_MAP.values());
     }
 
@@ -140,7 +140,7 @@ public class CommandHandler {
      * @param commandType the command type.
      * @return the command singleton of the given type.
      */
-    public static AbstractCommand getCommand(Class<? extends AbstractCommand> commandType){
+    public static AbstractCommand getCommand(Class<? extends AbstractCommand> commandType) {
         return CLASS_MAP.get(commandType);
     }
 
@@ -150,7 +150,7 @@ public class CommandHandler {
      * @param reactionName the {@link Reaction} specified by name.
      * @return the abstract command whose ailiase is the reaction chars.
      */
-    public static AbstractCommand getReactionCommand(String reactionName){
+    public static AbstractCommand getReactionCommand(String reactionName) {
         return REACTION_COMMAND_MAP.get(EmoticonHelper.getChars(reactionName, false));
     }
 
@@ -160,7 +160,7 @@ public class CommandHandler {
      * @param name the exact name of the command.
      * @return the exactly specified command.
      */
-    public static AbstractCommand getCommand(String name){
+    public static AbstractCommand getCommand(String name) {
         return EXACT_COMMAND_MAP.get(name);
     }
 
@@ -171,7 +171,7 @@ public class CommandHandler {
      *           and command parameters from.
      * @return the command and parameters for that command.
      */
-    public static Pair<AbstractCommand, String> getMessageCommand(String in){// make return Pair<AbstractCommand, Integer>
+    public static Pair<AbstractCommand, String> getMessageCommand(String in) {// make return Pair<AbstractCommand, Integer>
         String[] strings = FormatHelper.reduceRepeats(in, ' ').split(" ");
         for (int i = 0; i < strings.length; i++) {
             strings[i] = strings[i].toLowerCase();
@@ -181,19 +181,19 @@ public class CommandHandler {
         Map<String, Object> map = COMMANDS_MAP;
         for (int i = 0; true; ++i) {
             AbstractCommand com = (AbstractCommand) map.get("");
-            if (com != null){
+            if (com != null) {
                 command = com;
                 index = i;
             }
-            if (i == strings.length){
+            if (i == strings.length) {
                 break;
             }
             map = (Map<String, Object>) map.get(strings[i]);
-            if (map == null){
+            if (map == null) {
                 break;
             }
         }
-        if (index == -1){
+        if (index == -1) {
             return null;
         }
         for (int i = 0; i < index; ++i) {
@@ -211,16 +211,16 @@ public class CommandHandler {
      * @param reaction the reaction that invoked this command, if applicable.
      * @return true if there is a command invoked, null if chat is invoked, false otherwise.
      */
-    public static Boolean attemptInvocation(String string, User user, Message message, Reaction reaction){
+    public static Boolean attemptInvocation(String string, User user, Message message, Reaction reaction) {
         if (reaction != null) string = string == null ? "" : string;
         else if ((string == null || string.isEmpty())) return false;
         boolean mayChat = false;
         AbstractCommand command;
-        if (message.getChannel().isPrivate()){
-            if (string.startsWith(MENTION_NICK.get())){
+        if (message.getChannel().isPrivate()) {
+            if (string.startsWith(MENTION_NICK.get())) {
                 mayChat = true;
                 string = string.substring(MENTION_NICK.get().length());
-            }else if (string.startsWith(MENTION.get())){
+            }else if (string.startsWith(MENTION.get())) {
                 mayChat = true;
                 string = string.substring(MENTION.get().length());
             } else {
@@ -237,21 +237,21 @@ public class CommandHandler {
             if (string.startsWith(pref)) string = string.substring(pref.length());
             else{
                 String split = string.split(" ")[0];
-                if ((command = REACTION_COMMAND_MAP.get(split)) != null){
+                if ((command = REACTION_COMMAND_MAP.get(split)) != null) {
                     Pair<AbstractCommand, String> pair = getMessageCommand(command.getName() + " " + FormatHelper.trimFront(string.substring(split.length())));
-                    if (pair != null){
+                    if (pair != null) {
                         command = pair.getKey();
                         string = pair.getValue();
                     }
                     try {
-                        if (command.hasPermission(user, message.getChannel()) && command.checkCoolDown(message.getChannel(), user) && command.interpretSuccess(command.invoke(user, message.getShard(), message.getChannel(), message.getGuild(), message, reaction, string))){
+                        if (command.hasPermission(user, message.getChannel()) && command.checkCoolDown(message.getChannel(), user) && command.interpretSuccess(command.invoke(user, message.getShard(), message.getChannel(), message.getGuild(), message, reaction, string))) {
                             command.invoked(message.getChannel(), user, message);
                             return true;
                         }
-                    }catch(Exception ignored){}
+                    }catch(Exception ignored) {}
                     return false;
                 }else if (string.toLowerCase().startsWith("@evelyn")) string = string.substring(6);
-                else if (DiscordClient.getOurUser().getNickname(message.getGuild()) != null && string.toLowerCase().startsWith("@" + DiscordClient.getOurUser().getNickname(message.getGuild()).toLowerCase())){
+                else if (DiscordClient.getOurUser().getNickname(message.getGuild()) != null && string.toLowerCase().startsWith("@" + DiscordClient.getOurUser().getNickname(message.getGuild()).toLowerCase())) {
                     string = string.substring(1 + DiscordClient.getOurUser().getNickname(message.getGuild()).length());
                 }else if (string.startsWith(MENTION.get())) {
                     string = string.substring(MENTION.get().length());
@@ -266,46 +266,46 @@ public class CommandHandler {
         if ((string.isEmpty() || !Character.isLetterOrDigit(string.charAt(0))) && reaction == null) return false;
         Pair<AbstractCommand, String> pair = reaction == null ? getMessageCommand(string) : ((command = getReactionCommand(reaction.getName())) == null ? null : new Pair<>(command, null));
         if (pair == null && REACTION_COMMAND_MAP.containsKey(string)) pair = new Pair<>(REACTION_COMMAND_MAP.get(string), "");
-        if (pair != null){
+        if (pair != null) {
             if (!pair.getKey().useReactions() && reaction != null) return false;
-            if (!message.getChannel().getModifiedPermissions(DiscordClient.getOurUser()).contains(DiscordPermission.SEND_MESSAGES) && NO_RESPONSE_LOCATION.computeIfAbsent(message.getChannel().getGuild(), guild -> new ConcurrentHashMap<>()).computeIfAbsent(message.getAuthor(), u -> new HashSet<>()).add(message.getChannel()) && !message.getChannel().isPrivate() && message.getGuild().getUsers().stream().filter(User::isBot).count() < 6){
+            if (!message.getChannel().getModifiedPermissions(DiscordClient.getOurUser()).contains(DiscordPermission.SEND_MESSAGES) && NO_RESPONSE_LOCATION.computeIfAbsent(message.getChannel().getGuild(), guild -> new ConcurrentHashMap<>()).computeIfAbsent(message.getAuthor(), u -> new HashSet<>()).add(message.getChannel()) && !message.getChannel().isPrivate() && message.getGuild().getUsers().stream().filter(User::isBot).count() < 6) {
                 new MessageMaker(message.getAuthor()).append("I can't send a command there and I won't tell you again!").send();
             }
             command = pair.getKey();
             Reaction r = message.getReactionByName(UNKNOWN_COMMAND_EMOTICON);
-            if (r != null){
+            if (r != null) {
                 message.removeReaction(r);
             }
-            if (!command.hasPermission(user, message.getChannel())){
-                if (reaction == null){
+            if (!command.hasPermission(user, message.getChannel())) {
+                if (reaction == null) {
                     new MessageMaker(user, message).append("You do not have permission to use that command here.").withDeleteDelay(3_000L).send();
                 }
                 return false;
             }
-            if (!command.checkCoolDown(message.getChannel(), user)){
-                if (reaction == null){
+            if (!command.checkCoolDown(message.getChannel(), user)) {
+                if (reaction == null) {
                     new MessageMaker(user, message).append("You can not use that command so soon.").send();
                 }
                 return false;
             }
             try {
                 boolean invoked = false;
-                if (command.interpretSuccess(command.invoke(user, message.getShard(), message.getChannel(), message.getGuild(), message, reaction, pair.getValue()))){
+                if (command.interpretSuccess(command.invoke(user, message.getShard(), message.getChannel(), message.getGuild(), message, reaction, pair.getValue()))) {
                     invoked = true;
                     command.invoked(message.getChannel(), user, message);
                 }
-                if (message.getReactionByName(EXCEPTION_FOR_METHOD) != null){
+                if (message.getReactionByName(EXCEPTION_FOR_METHOD) != null) {
                     message.removeReactionByName(EXCEPTION_FOR_METHOD);
                 }
                 return invoked;
-            } catch (BotException e){
+            } catch (BotException e) {
                 e.makeMessage(message.getChannel()).send();
                 message.addReactionByName(EXCEPTION_FOR_METHOD);
             } catch (Exception e) {
                 new DevelopmentException(e).makeMessage(message.getChannel()).send();
             }
         }else if (reaction == null && !message.getChannel().isPrivate() && CustomCommandHandler.handle(message.getGuild(), message.getAuthor(), message.getChannel().getShard(), message.getChannel(), message, string)) return true;
-        else if (reaction == null){
+        else if (reaction == null) {
             if (mayChat) return null;
             if (FormatHelper.filtering(string, Character::isLetter).isEmpty() || (!message.getChannel().isPrivate() && !ConfigHandler.getSetting(UnknownReactionConfig.class, message.getGuild()))) return false;
             message.addReactionByName(UNKNOWN_COMMAND_EMOTICON);
@@ -322,7 +322,7 @@ public class CommandHandler {
      * @param manager the audio manager that got the command.
      * @return if a command was invoked and succeeded.
      */
-    public static boolean attemptInvocation(String s, User user, GuildAudioManager manager){
+    public static boolean attemptInvocation(String s, User user, GuildAudioManager manager) {
         if (s == null || s.isEmpty()) return false;
         String prefix = ConfigHandler.getSetting(VoicePrefixConfig.class, user);
         boolean prefixFound = true;
@@ -333,20 +333,20 @@ public class CommandHandler {
         else {
             if (pair.getKey().prefixRequired() && !prefixFound) return false;
             VoiceChannel channel = manager.voiceChannel();
-            if (!pair.getKey().hasPermission(user, channel)){
+            if (!pair.getKey().hasPermission(user, channel)) {
                 manager.interrupt(new LangString(true, "You do not have permission to use that command"));
                 return false;
             }
-            if (!pair.getKey().checkCoolDown(channel, user)){
+            if (!pair.getKey().checkCoolDown(channel, user)) {
                 manager.interrupt(new LangString(true, "You can not use that command so soon"));
                 return false;
             }
             try {
-                if (pair.getKey().interpretSuccess(pair.getKey().invoke(user, manager.getGuild().getShard(), manager.voiceChannel(), manager.getGuild(), null, null, pair.getValue()))){
+                if (pair.getKey().interpretSuccess(pair.getKey().invoke(user, manager.getGuild().getShard(), manager.voiceChannel(), manager.getGuild(), null, null, pair.getValue()))) {
                     pair.getKey().invoked(channel, user, null);
                     return true;
                 }
-            } catch (BotException e){
+            } catch (BotException e) {
                 e.makeMessage(channel).send();
             } catch (Exception e) {
                 new DevelopmentException(e).makeMessage(channel).send();
@@ -363,9 +363,9 @@ public class CommandHandler {
      * {@link com.github.nija123098.evelyn.chatbot.ChatBot}
      * did not find the message acceptable, null otherwise.
      */
-    public static Boolean handle(DiscordMessageReceived event){
+    public static Boolean handle(DiscordMessageReceived event) {
         try{return attemptInvocation(event.getMessage().getContent(), event.getAuthor(), event.getMessage(), null);// new MessageMaker(event.getMessage()).append(ChatBot.getChatBot(event.getChannel()).think(event.getMessage().getContent())).send();
-        } catch (Exception e){
+        } catch (Exception e) {
             if (GhostException.isGhostCaused(e)) return true;
             throw e;
         }
@@ -377,8 +377,8 @@ public class CommandHandler {
      * @param event the monitored event.
      */
     @EventListener
-    public static void handle(DiscordReactionEvent event){
-        if (!event.getUser().isBot() && Launcher.isReady() && event.getMessage() != null && (!event.getMessage().getAuthor().isBot() || event.getMessage().getAuthor().equals(DiscordClient.getOurUser()))){
+    public static void handle(DiscordReactionEvent event) {
+        if (!event.getUser().isBot() && Launcher.isReady() && event.getMessage() != null && (!event.getMessage().getAuthor().isBot() || event.getMessage().getAuthor().equals(DiscordClient.getOurUser()))) {
             attemptInvocation(event.getMessage().getContent(), event.getUser(), event.getMessage(), event.getReaction());
         }
     }
@@ -389,9 +389,9 @@ public class CommandHandler {
      * @param event the monitored event.
      */
     @EventListener
-    public static void handle(DiscordMessageEditEvent event){
-        if (!event.getAuthor().isBot() && OPEN_EDIT_MESSAGES.contains(event.getOldMessage().getID())){
-            if (CareLess.getBoolean(attemptInvocation(event.getOldMessage().getContent(), event.getAuthor(), event.getOldMessage(), null))){
+    public static void handle(DiscordMessageEditEvent event) {
+        if (!event.getAuthor().isBot() && OPEN_EDIT_MESSAGES.contains(event.getOldMessage().getID())) {
+            if (CareLess.getBoolean(attemptInvocation(event.getOldMessage().getContent(), event.getAuthor(), event.getOldMessage(), null))) {
                 OPEN_EDIT_MESSAGES.remove(event.getOldMessage().getID());
             }
         }

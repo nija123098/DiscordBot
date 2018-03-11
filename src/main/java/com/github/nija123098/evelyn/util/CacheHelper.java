@@ -15,7 +15,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class CacheHelper {
-    public static <K, V> LoadingCache<K, V> getLoadingCache(int concurrency, int maxSize, long expireTime, Function<K, V> function){
+    public static <K, V> LoadingCache<K, V> getLoadingCache(int concurrency, int maxSize, long expireTime, Function<K, V> function) {
         return CacheBuilder.newBuilder().concurrencyLevel(50).maximumSize(maxSize).expireAfterAccess(expireTime, TimeUnit.MILLISECONDS).build(new CacheLoader<K, V>() {
             @Override
             public V load(K key) {
@@ -23,7 +23,7 @@ public class CacheHelper {
             }
         });
     }
-    public static <K, V> Cache<K, V> getCache(int concurrency, int maxSize, long expireTime){
+    public static <K, V> Cache<K, V> getCache(int concurrency, int maxSize, long expireTime) {
         return CacheBuilder.newBuilder().concurrencyLevel(concurrency).maximumSize(maxSize).expireAfterAccess(expireTime, TimeUnit.MILLISECONDS).build();
     }
     private static final ScheduledExecutorService REMOVAL_EXECUTOR = Executors.newSingleThreadScheduledExecutor(r -> ThreadHelper.getDemonThreadSingle(r, "Cache-Removal-Thread"));
@@ -52,7 +52,7 @@ public class CacheHelper {
             return new ArrayList<>(this.vMap.keySet()).iterator();
         }
 
-        public List<V> asArrayList(){
+        public List<V> asArrayList() {
             return new ArrayList<>();
         }
     }

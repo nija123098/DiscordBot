@@ -30,8 +30,8 @@ public class RentRoleCommand extends AbstractCommand {
         super("rentrole", ModuleLevel.ECONOMY, "subscriberole, subrole", null, "Rents a role from a server");
     }
     @Command
-    public void command(@Argument(optional = true, replacement = ContextType.NONE) Role role, @Argument Time time, GuildUser guildUser, MessageMaker maker){
-        if (role == null){
+    public void command(@Argument(optional = true, replacement = ContextType.NONE) Role role, @Argument Time time, GuildUser guildUser, MessageMaker maker) {
+        if (role == null) {
             String icon = ConfigHandler.getSetting(CurrencySymbolConfig.class, guildUser.getGuild());
             List<String> list = guildUser.getGuild().getRoles().stream().map(role1 -> {
                 Integer price = ConfigHandler.getSetting(RoleRentConfig.class, role1);

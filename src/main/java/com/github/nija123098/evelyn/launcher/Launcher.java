@@ -47,7 +47,7 @@ public class Launcher {
      *
      * @param runnable the {@link Runnable} to run on startup.
      */
-    public static void registerStartup(Runnable runnable){
+    public static void registerStartup(Runnable runnable) {
         if (IS_STARTING_UP.get()) runnable.run();
         else STARTUPS.add(runnable);
     }
@@ -58,7 +58,7 @@ public class Launcher {
      *
      * @param runnable the {@link Runnable} to run on startup.
      */
-    public static void registerAsyncStartup(Runnable runnable){
+    public static void registerAsyncStartup(Runnable runnable) {
         if (IS_STARTING_UP.get()) runnable.run();
         else ASYNC_STARTUPS.add(runnable);
     }
@@ -68,7 +68,7 @@ public class Launcher {
      *
      * @param runnable the {@link Runnable} to run on shutdown.
      */
-    public static void registerShutdown(Runnable runnable){
+    public static void registerShutdown(Runnable runnable) {
         SHUTDOWNS.add(runnable);
     }
 
@@ -77,7 +77,7 @@ public class Launcher {
      *
      * @return if the bot is ready to respond to commands.
      */
-    public static boolean isReady(){
+    public static boolean isReady() {
         return IS_READY.get();
     }
 
@@ -86,7 +86,7 @@ public class Launcher {
      *
      * @param user the user to give {@link BotRole#SYSTEM} permissions to.
      */
-    public static void grantSystemAccess(User user){
+    public static void grantSystemAccess(User user) {
         SYSTEM_PERM_USERS.add(user);
     }
 
@@ -96,7 +96,7 @@ public class Launcher {
      * @param user the user to check {@link BotRole#SYSTEM} permissions for.
      * @return if the specified {@link User} has {@link BotRole#SYSTEM} rights.
      */
-    public static boolean hasSystemAccess(User user){
+    public static boolean hasSystemAccess(User user) {
         return SYSTEM_PERM_USERS.contains(user);
     }
 
@@ -110,7 +110,7 @@ public class Launcher {
      * @param code the code to shutdown the JVM.
      * @param delay the amount of time before the shutdown begins.
      */
-    public synchronized static void shutdown(Integer code, long delay, boolean firm){
+    public synchronized static void shutdown(Integer code, long delay, boolean firm) {
         ScheduledFuture<?> task = SHUTDOWN_TASK.get();
         if (task != null) {
             Log.log("Canceling a shutdown");

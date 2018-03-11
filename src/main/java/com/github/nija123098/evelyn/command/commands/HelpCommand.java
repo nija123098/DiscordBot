@@ -34,7 +34,7 @@ public class HelpCommand extends AbstractCommand {
         super("help", ModuleLevel.INFO, null, null, "Gives information about a command");
     }
     @Command
-    public static void command(@Argument(optional = true, replacement = ContextType.NONE) AbstractCommand command, MessageMaker maker, User user, Channel channel, @Context(softFail = true) Guild guild, @Context(softFail = true) ModuleLevel levelSelection, String full){
+    public static void command(@Argument(optional = true, replacement = ContextType.NONE) AbstractCommand command, MessageMaker maker, User user, Channel channel, @Context(softFail = true) Guild guild, @Context(softFail = true) ModuleLevel levelSelection, String full) {
         if (command == null) {
             maker.mustEmbed();
             maker.getTitle().clear().appendRaw("I'll show you the following commands:\n");
@@ -43,7 +43,7 @@ public class HelpCommand extends AbstractCommand {
             else if (levelSelection == null) Stream.of(ModuleLevel.values()).filter(level -> level.getDefaultRole().hasRequiredRole(user, guild)).findFirst().ifPresent(levels::add);
             else levels.add(levelSelection);
             if (levels.isEmpty()) throw new DevelopmentException("Shouldn't be possible");
-            for (ModuleLevel level : levels){
+            for (ModuleLevel level : levels) {
                 if (level == ModuleLevel.NONE || !level.getDefaultRole().hasRequiredRole(user, guild)) continue;
                 List<AbstractCommand> commands = level.getCommands().stream().filter(AbstractCommand::isHighCommand).filter(c -> c.hasPermission(user, channel)).collect(Collectors.toList());
                 if (!commands.isEmpty()) {
@@ -78,12 +78,12 @@ public class HelpCommand extends AbstractCommand {
                 maker.appendRaw("\n" + (i == strings.length - 1 ? "\n" : ""));
             }
             maker.appendRaw("```\n");
-            if (command.getExample() != null){
+            if (command.getExample() != null) {
                 maker.appendRaw(EmoticonHelper.getChars("question", false) + "**").append(" Examples:").appendRaw("**\n```MD\n").append(command.getExample()).appendRaw("\n```\n");
             }
         }
     }
-    private static String normalizeUsages(String help){
+    private static String normalizeUsages(String help) {
         AtomicInteger distance = new AtomicInteger();
         Map<String, Integer> map = new HashMap<>();
         Stream.of(help.split("\n")).forEach(row -> {

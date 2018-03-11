@@ -27,7 +27,7 @@ public enum KeyPhrase {
     KeyPhrase(ContextRequirement[] availableContext, Class<?>...argTypes) {
         this.definition = new CustomCommandDefinition(this.name(), availableContext, argTypes);
     }
-    public CustomCommandDefinition getDefinition(){
+    public CustomCommandDefinition getDefinition() {
         return this.definition;
     }
 }

@@ -17,7 +17,7 @@ public class ModActionCaseCommand extends AbstractCommand {
         super(ModActionCommand.class, "case", "case", null, null, "Allows updating of cases for mod actions");
     }
     @Command
-    public void command(Guild guild, User user, @Argument(optional = true, info = "The case number") Integer integer, @Argument(info = "The reason") String reason){
+    public void command(Guild guild, User user, @Argument(optional = true, info = "The case number") Integer integer, @Argument(info = "The reason") String reason) {
         if (integer == null) integer = AbstractModAction.lastCase(GuildUser.getGuildUser(guild, user));
         AbstractModAction.updateCase(guild, integer, reason);
     }

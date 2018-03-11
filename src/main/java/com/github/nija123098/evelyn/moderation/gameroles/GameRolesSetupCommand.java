@@ -29,7 +29,7 @@ public class GameRolesSetupCommand extends AbstractCommand {
         super(GameRolesCommand.class, "setup", null, null, null, "Sets all roles that match in name with a verified name to be added to a user automatically when they are playing the game");
     }
     @Command
-    public void command(Guild guild){
+    public void command(Guild guild) {
         guild.getRoles().stream().filter(role -> VERIFIED_GAMES.contains(role.getName())).forEach(role -> ConfigHandler.setSetting(GameRoleConfig.class, role, true));
     }
 }

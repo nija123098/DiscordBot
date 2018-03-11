@@ -18,10 +18,10 @@ public class CustomCommandDeleteCommand extends AbstractCommand {
         super(CustomCommandCommand.class, "delete", null, null, "remove", "Deletes a command by name");
     }
     @Command
-    public void command(String s, Guild guild){
+    public void command(String s, Guild guild) {
         ConfigHandler.alterSetting(CustomCommandConfig.class, guild, customCommands -> {
-            for (CustomCommand command : customCommands){
-                if (command.getName().equals(s)){
+            for (CustomCommand command : customCommands) {
+                if (command.getName().equals(s)) {
                     customCommands.remove(command);
                     return;
                 }

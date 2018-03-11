@@ -20,7 +20,7 @@ public class PrefixCommand extends AbstractCommand {
         super("prefix", ModuleLevel.ADMINISTRATIVE, null, null, "Shows or changes the prefix for this guild.");
     }
     @Command
-    public void command(MessageMaker maker, Guild guild, User user, String s){
+    public void command(MessageMaker maker, Guild guild, User user, String s) {
         boolean newPrefix = false;
         if ((s != null && !s.isEmpty()) && BotRole.GUILD_TRUSTEE.hasRequiredRole(user, guild)) {
             ConfigHandler.setSetting(GuildPrefixConfig.class, guild, s);

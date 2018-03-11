@@ -18,7 +18,7 @@ public class OldUserNameConfig extends AbstractConfig<Set<String>, User> {
         super("old_name_config", "", ConfigCategory.STAT_TRACKING, new HashSet<>(0), "A list of old names used by a user");
     }
     @EventListener
-    public void handle(DiscordUserNameChangeEvent event){
+    public void handle(DiscordUserNameChangeEvent event) {
         this.alterSetting(event.getUser(), strings -> {
             strings.add(event.getOldName());
             strings.add(event.getNewName());

@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 1.0.0
  */
 public class GraphicsHelper {
-    public static void drawString(String text, int x, int y, Font font, Color color, Graphics2D graphics, boolean center){
+    public static void drawString(String text, int x, int y, Font font, Color color, Graphics2D graphics, boolean center) {
         Color oldColor = graphics.getColor();
         Font oldFont = graphics.getFont();
         graphics.setFont(font);
@@ -33,17 +33,17 @@ public class GraphicsHelper {
         graphics.setColor(oldColor);
         graphics.setFont(oldFont);
     }
-    public static void drawStringShallowShadow(String text, int x, int y, Font font, Color color, Graphics2D graphics, boolean center){
+    public static void drawStringShallowShadow(String text, int x, int y, Font font, Color color, Graphics2D graphics, boolean center) {
         drawString(text, x + 1, y, font, color, graphics, center);
         drawString(text, x - 1, y, font, color, graphics, center);
         drawString(text, x, y + 1, font, color, graphics, center);
         drawString(text, x, y - 1, font, color, graphics, center);
     }
-    public static List<String> splitForBox(String text, Graphics2D graphics, Font font, int boxSize){
+    public static List<String> splitForBox(String text, Graphics2D graphics, Font font, int boxSize) {
         List<String> words = new ArrayList<>(), split = new ArrayList<>(), line = new ArrayList<>();
         Collections.addAll(words, text.split(" "));
         String last = words.remove(0);
-        while (!words.isEmpty() || last != null){
+        while (!words.isEmpty() || last != null) {
             line.add(last);
             while (graphics.getFontMetrics(font).getStringBounds(Joiner.on(' ').join(line), graphics).getWidth() <= boxSize && !words.isEmpty()) line.add(words.remove(0));
             if (graphics.getFontMetrics(font).getStringBounds(Joiner.on(' ').join(line), graphics).getWidth() > boxSize) last = line.remove(line.size() - 1);
@@ -53,7 +53,7 @@ public class GraphicsHelper {
         }
         return split;
     }
-    public static void drawStringBox(String text, int x, int y, int leftExtension, int rightExtension, float clearExtension, Font font, Color color, Color fade, Graphics2D graphics, boolean center){
+    public static void drawStringBox(String text, int x, int y, int leftExtension, int rightExtension, float clearExtension, Font font, Color color, Color fade, Graphics2D graphics, boolean center) {
         clearExtension += 0.175;
         Rectangle2D bounds = graphics.getFontMetrics(font).getStringBounds(text, graphics);
         bounds.setRect((int) bounds.getX(), (int) bounds.getY(), (int) bounds.getWidth(), (int) bounds.getHeight());
@@ -74,7 +74,7 @@ public class GraphicsHelper {
         graphics.setFont(oldFont);
     }
     private static final Map<String, Color> URL_COLOR_MAP = new ConcurrentHashMap<>();
-    public static Color getColor(String url){
+    public static Color getColor(String url) {
         try {
             return URL_COLOR_MAP.computeIfAbsent(url, s -> {
                 try {
@@ -92,15 +92,15 @@ public class GraphicsHelper {
                     }
                     int pixels = image.getHeight() * image.getWidth();
                     return new Color(r / pixels, g / pixels, b / pixels);
-                } catch (Exception e){
+                } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
             });
-        } catch (RuntimeException e){
+        } catch (RuntimeException e) {
             return Color.BLACK;
         }
     }
-    public static Color getGradient(float grade, Color first, Color second){
+    public static Color getGradient(float grade, Color first, Color second) {
         return new Color((int) (first.getRed() * grade + second.getRed() * (1 - grade)), (int) (first.getGreen() * grade + second.getGreen() * (1 - grade)), (int) (first.getBlue() * grade + second.getBlue() * (1 - grade)), (int) (first.getAlpha() * grade + second.getAlpha() * (1 - grade)));
     }
 }

@@ -59,11 +59,11 @@ public class LangString {
         }
         return this;
     }
-    public LangString append(LangString langString){
+    public LangString append(LangString langString) {
         this.value.addAll(langString.value);
         return this;
     }
-    public boolean hasContents(){
+    public boolean hasContents() {
         return this.value.size() > 0;
     }
     public String translate(String lang) {
@@ -117,7 +117,7 @@ public class LangString {
      * @param content the content to translate.
      * @return the translated content.
      */
-    public static String translate(String lang, String content){
+    public static String translate(String lang, String content) {
         if (content.length() < 101) return preCall(lang, content);
         StringBuilder total = new StringBuilder((int) (content.length() * 1.5));
         StringBuilder building = new StringBuilder((int) (content.length() * 1.5));
@@ -125,7 +125,7 @@ public class LangString {
         for (int i = 0; i < split.length; i++) {
             if (building.length() == 0) {
                 total.append(preCall(lang, split[i]));
-            } else if (split[i].length() + building.length() > 100){
+            } else if (split[i].length() + building.length() > 100) {
                 --i;
                 total.append(preCall(lang, building.toString()));
                 building.delete(0, building.length());
@@ -158,13 +158,13 @@ public class LangString {
                     else break;
                 }
                 for (int j = contents[i].length() - 1; j > -1; --j) {
-                    if (contents[i].charAt(j) != ' '){
+                    if (contents[i].charAt(j) != ' ') {
                         break;
                     }
                     ++after;
                 }
                 building += FormatHelper.repeat(' ', before) + call(lang, contents[i].substring(before, contents[i].length() - after)) + FormatHelper.repeat(' ', after);
-                if (i != contents.length - 1 || nextLineLast){
+                if (i != contents.length - 1 || nextLineLast) {
                     building += "\n";
                 }
                 before = 0;
@@ -210,22 +210,22 @@ public class LangString {
             String[] strings = s.toLowerCase().split(" ");
             LANG_MAP.put(strings[0], strings[1]);
         });
-        }catch(IOException e){throw new DevelopmentException("Could not load supported languages", e);}
+        }catch(IOException e) {throw new DevelopmentException("Could not load supported languages", e);}
         REVERSE_MAP = new HashMap<>(LANG_MAP.size());
         LANG_MAP.forEach((s, s2) -> REVERSE_MAP.putIfAbsent(s2, s));
     }
-    public static boolean isLangCode(String code){
+    public static boolean isLangCode(String code) {
         return REVERSE_MAP.containsKey(code.toLowerCase());
     }
-    public static String getLangCode(String s){
+    public static String getLangCode(String s) {
         String code = LANG_MAP.get(s.toLowerCase());
         if (code == null) throw new ArgumentException("Invalid language: " + s);
         return code;
     }
-    public static boolean isLangName(String code){
+    public static boolean isLangName(String code) {
         return LANG_MAP.containsKey(code.toLowerCase());
     }
-    public static String getLangName(String code){
+    public static String getLangName(String code) {
         if (code == null) return "not set";
         String name = REVERSE_MAP.get(code.toLowerCase());
         if (name == null) throw new ArgumentException("Invalid language code, use ISO: " + code);

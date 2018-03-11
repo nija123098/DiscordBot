@@ -19,8 +19,8 @@ public class AutoMusicChannelConfig extends AbstractConfig<VoiceChannel, Guild> 
         super("auto_channel", "Auto Join Channel", ConfigCategory.MUSIC, (VoiceChannel) null, "Sets a channel where music starts playing on join");
     }
     @EventListener
-    public void listen(DiscordVoiceJoin event){
-        if (event.getChannel().equals(this.getValue(event.getGuild())) && event.getGuild().getConnectedVoiceChannel() == null){
+    public void listen(DiscordVoiceJoin event) {
+        if (event.getChannel().equals(this.getValue(event.getGuild())) && event.getGuild().getConnectedVoiceChannel() == null) {
             JoinCommand.command(GuildAudioManager.getManager(event.getChannel(), true), event.getChannel(), new MessageMaker(event.getChannel()));
         }
     }

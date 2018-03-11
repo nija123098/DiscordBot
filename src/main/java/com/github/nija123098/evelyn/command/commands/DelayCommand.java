@@ -27,7 +27,7 @@ public class DelayCommand extends AbstractCommand {
         super("delay", ModuleLevel.NONE, null, null, "Executes a command after a specified delay, this command does not detect exceptions in advance and my soft fail");
     }
     @Command
-    public void command(@Argument Time time, String s, User user, Message message, Reaction reaction){
+    public void command(@Argument Time time, String s, User user, Message message, Reaction reaction) {
         SCHEDULED_EXECUTOR_SERVICE.schedule(() -> {
             try {
                 CommandHandler.attemptInvocation(s, user, message, reaction);

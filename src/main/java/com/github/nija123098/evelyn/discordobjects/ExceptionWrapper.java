@@ -51,7 +51,7 @@ public class ExceptionWrapper {
         RequestBuffer.request(() -> {
             try {
                 objectReference.set(request.request());
-            } catch (RuntimeException e){
+            } catch (RuntimeException e) {
                 if (e instanceof RateLimitException) throw e;
                 exceptionReference.set(e);
             }
@@ -63,9 +63,9 @@ public class ExceptionWrapper {
                 if (exceptionReference.get() == null) return objectReference.get();
                 throw exceptionReference.get();
             }
-        } catch (MissingPermissionsException e){// return RequestBuffer.request((RequestBuffer.IRequest<E>) request::request).get();
+        } catch (MissingPermissionsException e) {// return RequestBuffer.request((RequestBuffer.IRequest<E>) request::request).get();
             throw new PermissionsException(e);
-        } catch (DiscordException e){
+        } catch (DiscordException e) {
             if (e.getMessage().contains("cloudflare-nginx")) {
                 CareLess.lessSleep(250);
                 return innerWrap(request);
@@ -79,7 +79,7 @@ public class ExceptionWrapper {
     }
     @FunctionalInterface
     public interface VoidRequest extends Request<Void>{
-        default Void request(){
+        default Void request() {
             doRequest();
             return null;
         }

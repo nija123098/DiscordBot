@@ -32,10 +32,10 @@ public class ObjectCloner {
         add(Pair.class, or -> new Pair(or.getKey(), or.getValue()));
         add(SpecialPermsContainer.class, SpecialPermsContainer::copy);
     }
-    private static <T> void add(Class<T> clazz, Function<T, T> function){
+    private static <T> void add(Class<T> clazz, Function<T, T> function) {
         MAP.put(clazz, (Function<Object, Object>) function);
     }
-    private static <T> void add(Class<T> clazz){
+    private static <T> void add(Class<T> clazz) {
         MAP.put(clazz, Function.identity());
     }
 
@@ -45,7 +45,7 @@ public class ObjectCloner {
      * @param c the class type for checking if cloning is supported.
      * @return if the {@link ObjectCloner} supports cloning the class type.
      */
-    static boolean supports(Class<?> c){
+    static boolean supports(Class<?> c) {
         if (c.isEnum()) return true;
         for (Class<?> clazz : ReflectionHelper.getAssignableTypes(c)) if (MAP.get(clazz) != null) return true;
         return false;
@@ -58,7 +58,7 @@ public class ObjectCloner {
      * @param <I> the type of the cloned object.
      * @return a shallow cloned instance of the input.
      */
-    static <I> I clone(I i){
+    static <I> I clone(I i) {
         if (i == null) return null;
         if (i.getClass().isEnum()) return i;
         for (Class<?> clazz : ReflectionHelper.getAssignableTypes(i.getClass())) {
@@ -67,12 +67,12 @@ public class ObjectCloner {
         }
         throw new DevelopmentException("Attempted to clone a object of non-supported type");
     }
-    private static <E> Set<E> getSet(Set<E> es){
+    private static <E> Set<E> getSet(Set<E> es) {
         Set<E> objects = new HashSet<>();
         objects.addAll(es);
         return objects;
     }
-    private static <E, F> Map<E, F> getMap(Map<E, F> es){
+    private static <E, F> Map<E, F> getMap(Map<E, F> es) {
         Map<E, F> objects = new HashMap<>();
         objects.putAll(es);
         return objects;

@@ -10,11 +10,11 @@ import java.util.stream.Collectors;
  */
 public class StringChecker {
     private static final Map<String, List<StringChecker>> CACHE = new HashMap<>();
-    private static StringChecker getCheckingString(String s, Consumer<String> catchPolicy){
+    private static StringChecker getCheckingString(String s, Consumer<String> catchPolicy) {
         List<StringChecker> list = CACHE.computeIfAbsent(s, s1 -> new ArrayList<>(2));
         return list.isEmpty() ? new StringChecker(s, catchPolicy) : list.remove(0).setCatchPolicy(catchPolicy);
     }
-    public static void checkoutString(String target, Collection<String> check, Consumer<String> catchPolicy){
+    public static void checkoutString(String target, Collection<String> check, Consumer<String> catchPolicy) {
         Set<StringChecker> stringCheckers = check.stream().map(s -> getCheckingString(s, catchPolicy)).collect(Collectors.toSet());
         new StringIterator(target).forEachRemaining(character -> stringCheckers.forEach(stringChecker -> stringChecker.check(character)));
         stringCheckers.forEach(StringChecker::done);
@@ -40,7 +40,7 @@ public class StringChecker {
     private void reset() {
         this.location = -1;
     }
-    private void done(){
+    private void done() {
         reset();
         this.catchPolicy = null;
         CACHE.get(this.check).add(this);

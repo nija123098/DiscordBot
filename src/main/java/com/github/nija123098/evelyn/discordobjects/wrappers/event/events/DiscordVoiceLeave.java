@@ -26,16 +26,16 @@ public class DiscordVoiceLeave implements BotEvent {
         this.user = User.getUser(user);
         this.unique = false;
     }
-    public User getUser(){
+    public User getUser() {
         return this.user;
     }
-    public VoiceChannel getChannel(){
+    public VoiceChannel getChannel() {
         return this.channel;
     }
-    public Guild getGuild(){
+    public Guild getGuild() {
         return this.channel.getGuild();
     }
-    public boolean isUnique(){
+    public boolean isUnique() {
         return this.unique;
     }
 }

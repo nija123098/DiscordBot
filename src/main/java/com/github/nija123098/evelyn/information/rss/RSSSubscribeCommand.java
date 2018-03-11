@@ -25,7 +25,7 @@ public class RSSSubscribeCommand extends AbstractCommand {
         super(RSSCommand.class, "subscribe", null, null, "sub", "Subscribes to an rss feed");
     }
     @Command
-    public void command(@Argument(info = "The rss to subscribe to") String arg, Channel channel, MessageMaker maker){
+    public void command(@Argument(info = "The rss to subscribe to") String arg, Channel channel, MessageMaker maker) {
         if (!NetworkHelper.isValid(arg)) throw new ArgumentException("That isn't a valid link");
         try{new SyndFeedInput().build(new XmlReader(new URL(arg)));
             ConfigHandler.alterSetting(RSSSubscriptionsConfig.class, channel, strings -> strings.add(arg));

@@ -18,7 +18,7 @@ public class RestrictCommand extends AbstractCommand {
         super("restrict", ModuleLevel.ADMINISTRATIVE, null, null, "Restricts the bot to a single text channel for command invocation");
     }
     @Command
-    public void command(@Argument(optional = true) Channel channel){
+    public void command(@Argument(optional = true) Channel channel) {
         ConfigHandler.changeSetting(GuildSpecialPermsConfig.class, channel.getGuild(), container -> {
             if (container == null) container = new SpecialPermsContainer(channel.getGuild());
             container.restrict(channel);

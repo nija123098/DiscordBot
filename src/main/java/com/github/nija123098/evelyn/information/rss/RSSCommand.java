@@ -19,9 +19,9 @@ public class RSSCommand extends AbstractCommand {
         super("rss", ModuleLevel.ADMINISTRATIVE, null, null, "Displays all current subscribed rss feeds");
     }
     @Command
-    public void command(Channel channel, MessageMaker maker){
+    public void command(Channel channel, MessageMaker maker) {
         List<String> subs = ConfigHandler.getSetting(RSSSubscriptionsConfig.class, channel);
-        if (subs.isEmpty()){
+        if (subs.isEmpty()) {
             maker.append("You aren't currently subscribed to any rss feeds.");
             return;
         }

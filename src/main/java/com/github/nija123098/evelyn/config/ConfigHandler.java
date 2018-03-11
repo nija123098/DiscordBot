@@ -379,9 +379,9 @@ public class ConfigHandler {
      * @param id the id of the configurable.
      * @return the configurable according to the id.
      */
-    public static Configurable getConfigurable(String id){
+    public static Configurable getConfigurable(String id) {
         Configurable c;
-        for (Function<String, ? extends Configurable> f : FUNCTION_MAP.values()){
+        for (Function<String, ? extends Configurable> f : FUNCTION_MAP.values()) {
             if ((c = f.apply(id)) != null) return c;
         }
         return null;// throw new ArgumentException("That ID matches no configurables");
@@ -400,10 +400,10 @@ public class ConfigHandler {
      * starting with the start index and ending
      * with the start index plus size.
      */
-    public static <T extends Configurable> List<T> getTypeInstances(Class<T> type, long start, int size){
+    public static <T extends Configurable> List<T> getTypeInstances(Class<T> type, long start, int size) {
         Function<String, T> function = getIDFunction(type);
         int typeCount = getTypeCount(type);
-        if (typeCount < (start + size)){
+        if (typeCount < (start + size)) {
             size = (int) (typeCount - start);
         }
         return getTypeIDs(type, start, size).stream().map(function).filter(Objects::nonNull).collect(Collectors.toList());
@@ -416,7 +416,7 @@ public class ConfigHandler {
      * @param <T> the type of configurable.
      * @return all instances of the configurable.
      */
-    public static <T extends Configurable> List<T> getTypeInstances(Class<T> type){
+    public static <T extends Configurable> List<T> getTypeInstances(Class<T> type) {
         return getTypeInstances(type, 0, getTypeCount(type));
     }
 
@@ -431,7 +431,7 @@ public class ConfigHandler {
      * type starting with the start index and
      * ending with the start index plus size.
      */
-    private static List<String> getTypeIDs(Class<? extends Configurable> type, long start, int size){
+    private static List<String> getTypeIDs(Class<? extends Configurable> type, long start, int size) {
         List<String> list = new ArrayList<>(size);
         AtomicLong s = new AtomicLong(start);
         getNonDefaultSettings(ConfigurableExistsConfig.class, type).forEach((configurable, aBoolean) -> {
@@ -447,7 +447,7 @@ public class ConfigHandler {
      * @param newID the id to move the config's values to.
      * @return the new Configurable instance.
      */
-    public static <T extends Configurable> T moveID(T oldConfig, String newID){// SQL
+    public static <T extends Configurable> T moveID(T oldConfig, String newID) {// SQL
         return ConfigHandler.getConfigurable((Class<T>) oldConfig.getClass(), newID);
     }
 }

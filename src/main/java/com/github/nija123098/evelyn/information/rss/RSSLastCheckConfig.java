@@ -15,7 +15,7 @@ public class RSSLastCheckConfig extends AbstractConfig<Long, GlobalConfigurable>
     public RSSLastCheckConfig() {
         super("rss_last_check", "", ConfigCategory.STAT_TRACKING, 0L, "The last rss check in millis");
     }
-    public static long getAndUpdate(){
+    public static long getAndUpdate() {
         AtomicLong val = new AtomicLong();
         ConfigHandler.changeSetting(RSSLastCheckConfig.class, GlobalConfigurable.GLOBAL, aLong -> {
             val.set(aLong);

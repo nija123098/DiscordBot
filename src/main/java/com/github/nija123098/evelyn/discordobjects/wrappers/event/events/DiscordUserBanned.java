@@ -14,10 +14,10 @@ public class DiscordUserBanned implements BotEvent {
     public DiscordUserBanned(UserBanEvent event) {
         this.event = event;
     }
-    public User getUser(){
+    public User getUser() {
         return User.getUser(this.event.getUser());
     }
-    public Guild getGuild(){
+    public Guild getGuild() {
         return Guild.getGuild(this.event.getGuild());
     }
 }

@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class Message {// should not be kept stored, too many are made
     private static final LoadingCache<IMessage, Message> CACHE = CacheHelper.getLoadingCache(Runtime.getRuntime().availableProcessors() * 4, ConfigProvider.CACHE_SETTINGS.messageSize(), 30_000, iMessage -> new Message(iMessage));
-    public static Message getMessage(String id){
+    public static Message getMessage(String id) {
         try{
             IMessage iMessage = DiscordClient.getAny(client -> client.getMessageByID(Long.parseLong(id)));
             if (iMessage == null) return null;
@@ -34,26 +34,26 @@ public class Message {// should not be kept stored, too many are made
             return null;
         }
     }
-    public static Message getMessage(IMessage iMessage){
+    public static Message getMessage(IMessage iMessage) {
         if (iMessage == null) return null;
         return CACHE.getUnchecked(iMessage);
     }
-    static List<Message> getMessages(List<IMessage> iMessages){
+    static List<Message> getMessages(List<IMessage> iMessages) {
         List<Message> messages = new ArrayList<>(iMessages.size());
         iMessages.forEach(iMessage -> messages.add(getMessage(iMessage)));
         return messages;
     }
-    static List<IMessage> getIMessages(List<Message> messages){
+    static List<IMessage> getIMessages(List<Message> messages) {
         List<IMessage> iMessages = new ArrayList<>(messages.size());
         messages.forEach(message -> iMessages.add(message.message()));
         return iMessages;
     }
-    public static void update(IMessage iMessage){
+    public static void update(IMessage iMessage) {
         Message message = CACHE.getIfPresent(iMessage);
         if (message != null) message.iMessage.set(iMessage);
     }
     private AtomicReference<IMessage> iMessage;
-    private Message(IMessage message){
+    private Message(IMessage message) {
         this.iMessage = new AtomicReference<>(message);
     }
     public IMessage message() {
@@ -74,7 +74,7 @@ public class Message {// should not be kept stored, too many are made
         return message().getContent();
     }
 
-    public static String getCleanContent(IMessage message){
+    public static String getCleanContent(IMessage message) {
         AtomicReference<String> reference = new AtomicReference<>(message.getContent());
         if (message.mentionsEveryone()) reference.getAndUpdate(s -> s.replace("@everyone", "***everyone***"));
         if (message.mentionsHere()) return reference.getAndUpdate(s -> s.replace("@here", "***here***"));
@@ -83,7 +83,7 @@ public class Message {// should not be kept stored, too many are made
         return reference.get();
     }
 
-    public String getMentionCleanedContent(){
+    public String getMentionCleanedContent() {
         return getCleanContent(this.iMessage.get());
     }
 
@@ -95,7 +95,7 @@ public class Message {// should not be kept stored, too many are made
         return User.getUser(message().getAuthor());
     }
 
-    public long getTime(){
+    public long getTime() {
         return Time.toMillis(message().getTimestamp());
     }
 
@@ -152,11 +152,11 @@ public class Message {// should not be kept stored, too many are made
         return Reaction.getReactions(message().getReactions());
     }
 
-    public Reaction getReaction(String unicode){
+    public Reaction getReaction(String unicode) {
         return Reaction.getReaction(this.message().getReactionByUnicode(unicode));
     }
 
-    public Reaction getReactionByName(String name){
+    public Reaction getReactionByName(String name) {
         return getReaction(EmoticonHelper.getChars(name, false));
     }
 
@@ -170,10 +170,10 @@ public class Message {// should not be kept stored, too many are made
         return addReaction(EmoticonHelper.getReactionEmoji(name));
     }
 
-    private Reaction addReaction(ReactionEmoji reactionEmoji){
+    private Reaction addReaction(ReactionEmoji reactionEmoji) {
         try {
             ExceptionWrapper.wrap(() -> this.message().addReaction(reactionEmoji));
-        } catch (PermissionsException ignored){}// scilent falior here is acceptable
+        } catch (PermissionsException ignored) {}// scilent falior here is acceptable
         return Reaction.getReaction(this.message().getReactionByEmoji(reactionEmoji));
     }
 

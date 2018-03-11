@@ -19,11 +19,11 @@ import java.util.List;
  */
 public class Reaction {// should not be saved
     private static final LoadingCache<IReaction, Reaction> CACHE = CacheHelper.getLoadingCache(Runtime.getRuntime().availableProcessors(), ConfigProvider.CACHE_SETTINGS.reactionSize(), 30_000, Reaction::new);
-    public static Reaction getReaction(IReaction iReaction){
+    public static Reaction getReaction(IReaction iReaction) {
         if (iReaction == null) return null;
         return CACHE.getUnchecked(iReaction);
     }
-    static List<Reaction> getReactions(List<IReaction> reactions){
+    static List<Reaction> getReactions(List<IReaction> reactions) {
         List<Reaction> reacts = new ArrayList<>(reactions.size());
         reactions.forEach(iMessage -> reacts.add(getReaction(iMessage)));
         return reacts;
@@ -50,7 +50,7 @@ public class Reaction {// should not be saved
         return reaction().hashCode();
     }
 
-    public Message getMessage(){
+    public Message getMessage() {
         return Message.getMessage(this.reaction.getMessage());
     }
 
@@ -74,7 +74,7 @@ public class Reaction {// should not be saved
         return reaction().getUserReacted(DiscordClient.getOurUser().user());
     }
 
-    public String getChars(){
+    public String getChars() {
         return reaction().getEmoji().getName();
     }
 

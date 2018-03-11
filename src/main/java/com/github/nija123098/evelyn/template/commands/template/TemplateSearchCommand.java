@@ -20,7 +20,7 @@ public class TemplateSearchCommand extends AbstractCommand {
         super(TemplateCommand.class, "search", null, null, null, "Searches for template key phrases closest to your input");
     }
     @Command
-    public void command(MessageMaker maker, String s){// won't use enum identification here due to requiring a broad search
+    public void command(MessageMaker maker, String s) {// won't use enum identification here due to requiring a broad search
         List<String> results = StringHelper.getGoodMatch(s, Stream.of(KeyPhrase.values()).map(KeyPhrase::name).collect(Collectors.toList()), LevenshteinDistance.getDefaultInstance()::apply, true, true);
         if (results.isEmpty()) {
             maker.append("I couldn't find anything matching that!  Your options are as follows:");

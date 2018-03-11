@@ -13,7 +13,7 @@ public class DiscordGuildJoin implements BotEvent {
     public DiscordGuildJoin(GuildCreateEvent event) {
         this.event = event;
     }
-    public Guild getGuild(){
+    public Guild getGuild() {
         return Guild.getGuild(this.event.getGuild());
     }
 }

@@ -16,7 +16,7 @@ public class TemplateListCommand extends AbstractCommand {
         super(TemplateCommand.class, "list", null, null, null, "Lists all template key phrases");
     }
     @Command
-    public static void command(MessageMaker maker){
+    public static void command(MessageMaker maker) {
         maker.getTitle().append("Template KeyPhrases");
         Stream.of(KeyPhrase.values()).forEach(keyPhrase -> maker.getNewListPart().appendRaw(keyPhrase.name()));
     }

@@ -18,15 +18,15 @@ public class DiscordUserRolesUpdateEvent implements BotEvent {
         this.event = event;
     }
 
-    public User getUser(){
+    public User getUser() {
         return User.getUser(this.event.getUser());
     }
 
-    public List<Role> oldRoles(){
+    public List<Role> oldRoles() {
         return Role.getRoles(this.event.getOldRoles());
     }
 
-    public List<Role> newRoles(){
+    public List<Role> newRoles() {
         return Role.getRoles(this.event.getNewRoles());
     }
 }

@@ -25,7 +25,7 @@ public class ServerCommand extends AbstractCommand {
         super("server", ModuleLevel.INFO, "guild", null, "Displays information about the server");
     }
     @Command
-    public void command(@Argument(optional = true) Guild guild, MessageMaker maker){
+    public void command(@Argument(optional = true) Guild guild, MessageMaker maker) {
         if (guild == null) throw new ContextException("You have to be in a server to use that command!");
         maker.withAuthorIcon(guild.getIconURL())
                 .getAuthorName().appendRaw(guild.getName()).getMaker()
@@ -42,7 +42,7 @@ public class ServerCommand extends AbstractCommand {
         withText(maker, "ID", guild.getID());
     }
 
-    private static void withText(MessageMaker maker, String key, String value){
+    private static void withText(MessageMaker maker, String key, String value) {
         maker.getNewFieldPart().withInline(true).getTitle().append(key).getFieldPart().getValue().append(value);
     }
 

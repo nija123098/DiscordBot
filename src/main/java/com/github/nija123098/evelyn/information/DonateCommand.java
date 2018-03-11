@@ -17,7 +17,7 @@ public class DonateCommand extends AbstractCommand {
         super("donate", ModuleLevel.INFO, "contribute", null, "Provides general info about how to contribute or donate to Evelyn");
     }
     @Command
-    public void command(MessageMaker maker){
+    public void command(MessageMaker maker) {
         maker.getTitle().append("Contributions!");
         maker.append("\u200B\n**Bugs?**\n" +
                 "Report them ").appendRaw(FormatHelper.embedLink("here", ConfigProvider.URLS.discordInviteUrl()) + "\n").append(

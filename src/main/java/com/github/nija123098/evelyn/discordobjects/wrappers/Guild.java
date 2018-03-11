@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  */
 public class Guild implements Configurable {
     private static final LoadingCache<IGuild, Guild> CACHE = CacheHelper.getLoadingCache(Runtime.getRuntime().availableProcessors() * 2, ConfigProvider.CACHE_SETTINGS.guildSize(), 600_000, iGuild -> new Guild(iGuild));
-    public static Guild getGuild(String id){
+    public static Guild getGuild(String id) {
         try {
             IGuild guild = DiscordClient.getAny(client -> client.getGuildByID(Long.parseLong(id)));
             if (guild == null) return null;
@@ -36,16 +36,16 @@ public class Guild implements Configurable {
             return null;
         }
     }
-    public static Guild getGuild(IGuild guild){
+    public static Guild getGuild(IGuild guild) {
         if (guild == null) return null;
         return CACHE.getUnchecked(guild);
     }
-    static List<Guild> getGuilds(List<IGuild> iGuilds){
+    static List<Guild> getGuilds(List<IGuild> iGuilds) {
         List<Guild> list = new ArrayList<>(iGuilds.size());
         iGuilds.forEach(guild -> list.add(getGuild(guild)));
         return list;
     }
-    public static void update(IGuild guild){// hash is based on id, so no old channel is necessary
+    public static void update(IGuild guild) {// hash is based on id, so no old channel is necessary
         Guild g = CACHE.getIfPresent(guild);
         if (g != null) g.reference.set(guild);
     }
@@ -59,7 +59,7 @@ public class Guild implements Configurable {
     public Guild() {
         this.reference = new AtomicReference<>(DiscordClient.getAny(client -> client.getGuildByID(Long.parseLong(this.ID))));
     }
-    public IGuild guild(){
+    public IGuild guild() {
         return this.reference == null ? (reference = new AtomicReference<>(DiscordClient.getAny(client -> client.getGuildByID(Long.parseLong(this.ID))))).get() : this.reference.get();
     }
     @Override
@@ -71,7 +71,7 @@ public class Guild implements Configurable {
         return guild().getStringID();
     }
 
-    public void checkPermissionToEdit(User user, Guild guild){
+    public void checkPermissionToEdit(User user, Guild guild) {
         BotRole.GUILD_TRUSTEE.checkRequiredRole(user, guild);
     }
 
@@ -126,7 +126,7 @@ public class Guild implements Configurable {
         return User.getUsers(guild().getUsers());
     }
 
-    public int getUserSize(){
+    public int getUserSize() {
         return guild().getUsers().size();
     }
 

@@ -19,7 +19,7 @@ public class DescriptionResetCommand extends AbstractCommand {
         super(DescriptionCommand.class, "reset", null, null, null, "Resets your own description of yourself");
     }
     @Command
-    public void command(@Argument(optional = true, info = "if resetting the server specific description") Boolean serverSpecific, User user, @Context(softFail = true) Guild guild){
+    public void command(@Argument(optional = true, info = "if resetting the server specific description") Boolean serverSpecific, User user, @Context(softFail = true) Guild guild) {
         if (serverSpecific == null || serverSpecific) {
             if (guild == null) throw new ContextException("You have to be in a server to reset server specific descriptions");
             ConfigHandler.reset(GuildUserDescriptionConfig.class, GuildUser.getGuildUser(guild, user));

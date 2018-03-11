@@ -29,7 +29,7 @@ public enum ContextRequirement {
     public String getErrorMessage() {
         return this.errorMessage;
     }
-    public Class<?> getType(){
+    public Class<?> getType() {
         return this.type;
     }
 }

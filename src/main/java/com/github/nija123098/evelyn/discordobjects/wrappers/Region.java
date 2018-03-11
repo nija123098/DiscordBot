@@ -16,14 +16,14 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class Region {
     private static final Map<String, Region> MAP = new ConcurrentHashMap<>(10);// never needs to be cleared
-    public static Region getRegion(String id){
+    public static Region getRegion(String id) {
         return getRegion((IRegion) DiscordClient.getAny(client -> client.getRegionByID(id)));
     }
-    static Region getRegion(IRegion region){
+    static Region getRegion(IRegion region) {
         if (region == null) return null;
         return MAP.computeIfAbsent(region.getID(), s -> new Region(region));
     }
-    static List<Region> getRegions(List<IRegion> iRegions){
+    static List<Region> getRegions(List<IRegion> iRegions) {
         List<Region> list = new ArrayList<>(iRegions.size());
         iRegions.forEach(iRegion -> list.add(getRegion(iRegion)));
         return list;
@@ -32,7 +32,7 @@ public class Region {
     private Region(IRegion region) {
         this.reference = new AtomicReference<>(region);
     }
-    IRegion region(){
+    IRegion region() {
         return this.reference.get();
     }
     public String getID() {

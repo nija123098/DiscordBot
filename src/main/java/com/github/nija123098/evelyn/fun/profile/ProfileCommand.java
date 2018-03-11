@@ -17,7 +17,7 @@ public abstract class ProfileCommand extends AbstractCommand {
         super("profile", ModuleLevel.FUN, null, null, "Shows info on a user");
     }
     @Command
-    public void command(@Argument(optional = true) User user, MessageMaker maker){
+    public void command(@Argument(optional = true) User user, MessageMaker maker) {
         maker.withFile(ProfileMaker.getProfileIcon(user));
     }
 }

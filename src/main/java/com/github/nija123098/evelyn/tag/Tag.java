@@ -12,7 +12,7 @@ public enum Tag {
     Tag(Color color) {
         this.color = color;
     }
-    private static void register(Tagable tagable){
+    private static void register(Tagable tagable) {
         tagable.getTags().forEach(tag -> tag.taged.add(tagable));
     }
 

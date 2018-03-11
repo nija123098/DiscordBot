@@ -20,7 +20,7 @@ public class RanksSetupDefaultCommand extends AbstractCommand {
         super(RanksSetupCommand.class, "default", null, null, null, "Sets up ranks only by time");
     }
     @Command
-    public void command(MessageMaker maker, Guild guild){
+    public void command(MessageMaker maker, Guild guild) {
         ConfigHandler.getConfigs().stream().filter(abstractConfig -> abstractConfig.getName().endsWith("favor_factor")).forEach(abstractConfig -> ((AbstractConfig<Float, Guild>) abstractConfig).setValue(guild, 0F));
         ConfigHandler.setSetting(TimeFavorFactorConfig.class, guild, .01F);
         RanksSetupCommand.command(maker, guild, true, new ColorRange(new Color(0x8500ff), Color.CYAN, Color.GREEN), "x^2.5");

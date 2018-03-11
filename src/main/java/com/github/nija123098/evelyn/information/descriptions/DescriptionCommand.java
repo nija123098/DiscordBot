@@ -20,9 +20,9 @@ public class DescriptionCommand extends AbstractCommand {
         super("description", ModuleLevel.INFO, null, null, "Shows the information a user set for his or her self");
     }
     @Command
-    public void command(@Argument User user, @Context(softFail = true) Guild guild, MessageMaker maker){
+    public void command(@Argument User user, @Context(softFail = true) Guild guild, MessageMaker maker) {
         String info;
-        if (guild == null || (info = ConfigHandler.getSetting(GuildUserDescriptionConfig.class, GuildUser.getGuildUser(guild, user))) == null){
+        if (guild == null || (info = ConfigHandler.getSetting(GuildUserDescriptionConfig.class, GuildUser.getGuildUser(guild, user))) == null) {
             info = ConfigHandler.getSetting(UserDescriptionConfig.class, user);
         }
         maker.append(info).withAuthorIcon(user.getAvatarURL()).getTitle().appendRaw(user.getDisplayName(guild));

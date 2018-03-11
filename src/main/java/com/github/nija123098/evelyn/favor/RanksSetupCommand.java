@@ -39,7 +39,7 @@ public class RanksSetupCommand extends AbstractCommand {
         super(RanksCommand.class, "setup", "setupranks, setup ranks", null, null, "Sets up the ranks for autoranking");
     }
     @Command
-    public static void command(MessageMaker maker, Guild guild, @Argument(optional = true, info = "raise above default roles", replacement = ContextType.NONE) Boolean raise, @Argument(optional = true, info = "the lowest color", replacement = ContextType.NONE) ColorRange colorRange, @Argument(info = "rank equation x == rank, y == favor required") String equation){
+    public static void command(MessageMaker maker, Guild guild, @Argument(optional = true, info = "raise above default roles", replacement = ContextType.NONE) Boolean raise, @Argument(optional = true, info = "the lowest color", replacement = ContextType.NONE) ColorRange colorRange, @Argument(info = "rank equation x == rank, y == favor required") String equation) {
         if (!DiscordClient.getOurUser().getPermissionsForGuild(guild).contains(DiscordPermission.MANAGE_ROLES)) throw new PermissionsException("I need to be able to manage roles for this");
         equation = ConfigHandler.setSetting(FavorRankEquationConfig.class, guild, equation);
         AtomicDouble greatest = new AtomicDouble(0);
@@ -49,7 +49,7 @@ public class RanksSetupCommand extends AbstractCommand {
         });
         Expression expression = new ExpressionBuilder(equation).operator(CalculateCommand.OPERATORS).variable("x").build();
         ArrayList<Float> requirement = new ArrayList<>(50);
-        while (true){
+        while (true) {
             if (requirement.size() > 50) throw new ArgumentException("That would make over 50 roles.  I'm not doing that by my self");
             float val = (float) expression.setVariable("x", requirement.size()).evaluate();
             if (val > greatest.get()) break;

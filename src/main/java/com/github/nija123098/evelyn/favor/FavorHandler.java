@@ -48,7 +48,7 @@ public class FavorHandler {
         });
         add(Track.class, track -> ConfigHandler.getSetting(PlayCountConfig.class, track).floatValue());
     }
-    private static <E extends Configurable> void add(Class<E> clazz, Function<E, Float> function){
+    private static <E extends Configurable> void add(Class<E> clazz, Function<E, Float> function) {
         TYPE_DERIVATIONS.put(ConfigLevel.getLevel(clazz), function);
     }
     /**
@@ -57,7 +57,7 @@ public class FavorHandler {
      * @param configurable the guild or user to get the favor amount for.
      * @return the favor amount.
      */
-    public static Float getFavorAmount(Configurable configurable){
+    public static Float getFavorAmount(Configurable configurable) {
         Function<Configurable, Float> function = (Function<Configurable, Float>) TYPE_DERIVATIONS.get(configurable.getConfigLevel());
         if (function == null) throw new DevelopmentException("Request for favor on type with no favor calculation available: " + configurable.getConfigLevel());
         return function.apply(configurable);
@@ -68,15 +68,15 @@ public class FavorHandler {
      * @param configurable the guild or user to get the favor level.
      * @return the corresponding favor enum.
      */
-    public static FavorLevel getFavorLevel(Configurable configurable){
+    public static FavorLevel getFavorLevel(Configurable configurable) {
         return FavorLevel.getFavorLevel(getFavorAmount(configurable));
     }
     static {
         EventDistributor.register(FavorHandler.class);
     }
     @EventListener
-    public static void handle(FavorLevelChangeEvent event){
-        if (event.getNewLevel() == FavorLevel.DISTRUSTED && event.getConfigurable() instanceof User){
+    public static void handle(FavorLevelChangeEvent event) {
+        if (event.getNewLevel() == FavorLevel.DISTRUSTED && event.getConfigurable() instanceof User) {
             BotRole.setRole(BotRole.BANNED, true, (User) event.getConfigurable(), null);
         }
     }

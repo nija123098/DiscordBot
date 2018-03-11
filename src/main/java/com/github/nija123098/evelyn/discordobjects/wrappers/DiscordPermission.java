@@ -43,22 +43,22 @@ public enum DiscordPermission {
     MANAGE_PERMISSIONS,
     MANAGE_WEBHOOKS,
     MANAGE_EMOJIS,;
-    public boolean hasPermission(User user, Guild guild){
+    public boolean hasPermission(User user, Guild guild) {
         return user.getPermissionsForGuild(guild).contains(this);
     }
-    public static boolean hasPermissions(User user, Guild guild, DiscordPermission...permissions){
+    public static boolean hasPermissions(User user, Guild guild, DiscordPermission...permissions) {
         return user.getPermissionsForGuild(guild).containsAll(Arrays.asList(permissions));
     }
-    public boolean hasChannelPermission(User user, Channel channel){
+    public boolean hasChannelPermission(User user, Channel channel) {
         return channel.getModifiedPermissions(user).contains(this);
     }
-    public static boolean hasChannelPermissions(User user, Channel channel, DiscordPermission...permissions){
+    public static boolean hasChannelPermissions(User user, Channel channel, DiscordPermission...permissions) {
         return channel.getModifiedPermissions(user).containsAll(Arrays.asList(permissions));
     }
-    public static DiscordPermission getDiscordPermissions(Permissions permissions){
+    public static DiscordPermission getDiscordPermissions(Permissions permissions) {
         return values()[permissions.ordinal()];
     }
-    public static EnumSet<DiscordPermission> getDiscordPermissions(Collection<Permissions> permissions){
+    public static EnumSet<DiscordPermission> getDiscordPermissions(Collection<Permissions> permissions) {
         EnumSet<DiscordPermission> list = EnumSet.noneOf(DiscordPermission.class);
         permissions.forEach(perm -> list.add(getDiscordPermissions(perm)));
         return list;
@@ -66,7 +66,7 @@ public enum DiscordPermission {
     public static Permissions getPermission(DiscordPermission permission) {
         return Permissions.values()[permission.ordinal()];
     }
-    public static EnumSet<Permissions> getPermissions(Collection<DiscordPermission> permissions){
+    public static EnumSet<Permissions> getPermissions(Collection<DiscordPermission> permissions) {
         EnumSet<Permissions> list = EnumSet.noneOf(Permissions.class);
         permissions.forEach(discordPermission -> list.add(getPermission(discordPermission)));
         return list;

@@ -9,7 +9,7 @@ import sx.blah.discord.util.DiscordException;
  * @since 1.0.0
  */
 public class DException extends RuntimeException {
-    public DException(DiscordException e){
+    public DException(DiscordException e) {
         super(e);
     }
 }

@@ -15,7 +15,7 @@ public class GameRolesRemoveCommand extends AbstractCommand {
         super(GameRolesCommand.class, "remove", null, null, null, "Removes a role to the list of roles that will added to the user while they play a game");
     }
     @Command
-    public void command(@Argument Role role){
+    public void command(@Argument Role role) {
         ConfigHandler.setSetting(GameRoleConfig.class, role, false);
     }
 }

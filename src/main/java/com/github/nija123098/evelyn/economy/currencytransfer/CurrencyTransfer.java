@@ -23,10 +23,10 @@ import java.util.stream.Stream;
  * @since 1.0.0
  */
 public class CurrencyTransfer {
-    public static void transact(Configurable firstParty, Configurable secondParty, int firstPartyMoney, int secondPartyMoney, String note){
+    public static void transact(Configurable firstParty, Configurable secondParty, int firstPartyMoney, int secondPartyMoney, String note) {
         transact(firstParty, secondParty, null, null, firstPartyMoney, secondPartyMoney, note);
     }
-    public static synchronized void transact(Configurable firstParty, Configurable secondParty, Map<ItemComponent, Integer> firstPartyComponents, Map<ItemComponent, Integer> secondPartyComponents, int firstPartyMoney, int secondPartyMoney, String note){
+    public static synchronized void transact(Configurable firstParty, Configurable secondParty, Map<ItemComponent, Integer> firstPartyComponents, Map<ItemComponent, Integer> secondPartyComponents, int firstPartyMoney, int secondPartyMoney, String note) {
         if (firstParty.equals(secondParty)) throw new ArgumentException("You can't send yourself money");
         if (!DiscordClient.getOurUser().equals(secondParty) && !firstParty.getGoverningObject().equals(secondParty.getGoverningObject())) throw new ArgumentException("You can't send global currency to guild currency and vice versa");
         if (firstPartyComponents == null) firstPartyComponents = Collections.emptyMap();
@@ -65,12 +65,12 @@ public class CurrencyTransfer {
             if (moneyMovements.size() > 15) moneyMovements.remove(0);
         });
     }
-    public static void transact(Guild guild, User user, Map<ItemComponent, Integer> firstPartyComponents, int firstPartyMoney, String note){
+    public static void transact(Guild guild, User user, Map<ItemComponent, Integer> firstPartyComponents, int firstPartyMoney, String note) {
         AtomicBoolean grant = new AtomicBoolean(firstPartyMoney > 0);
         if (grant.get() && firstPartyComponents != null) firstPartyComponents.forEach((itemComponent, integer) -> {
             if (grant.get() && integer != null) grant.set(integer > 0);
         });
-        if (guild != null && grant.get()){
+        if (guild != null && grant.get()) {
             transact(guild, DiscordClient.getOurUser(), firstPartyComponents, null, firstPartyMoney, 0, note + " tax");
             transact(GuildUser.getGuildUser(guild, user), DiscordClient.getOurUser(), firstPartyComponents, null, firstPartyMoney, 0, note + " in this server");
         }
@@ -89,7 +89,7 @@ public class CurrencyTransfer {
         this.note = note;
         Stream.of(ItemComponent.values()).forEach(itemComponent -> {
             int diff = this.firstPartyComponents.getOrDefault(itemComponent, 0) - this.secondPartyComponents.getOrDefault(itemComponent, 0);
-            if (diff == 0){
+            if (diff == 0) {
                 this.firstPartyComponents.remove(itemComponent);
                 this.secondPartyComponents.remove(itemComponent);
             }else{
@@ -109,10 +109,10 @@ public class CurrencyTransfer {
             this.secondPartyMoney = -diff;
         }
     }
-    private CurrencyTransfer getReverse(){
+    private CurrencyTransfer getReverse() {
         return new CurrencyTransfer(this.secondParty, this.firstParty, this.secondPartyComponents, this.firstPartyComponents, this.secondPartyMoney, this.firstPartyMoney, this.note);
     }
-    public Configurable getParty(boolean first){
+    public Configurable getParty(boolean first) {
         return first ? this.firstParty : this.secondParty;
     }
     public Configurable getFirstParty() {
@@ -121,16 +121,16 @@ public class CurrencyTransfer {
     public Configurable getSecondParty() {
         return this.secondParty;
     }
-    public Integer getComponent(boolean first, ItemComponent itemComponent){
+    public Integer getComponent(boolean first, ItemComponent itemComponent) {
         return this.getComponents(first).get(itemComponent);
     }
-    public Integer getFirstPartyComponet(ItemComponent itemComponent){
+    public Integer getFirstPartyComponet(ItemComponent itemComponent) {
         return this.firstPartyComponents.get(itemComponent);
     }
-    public Integer getSecondPartyComponet(ItemComponent itemComponent){
+    public Integer getSecondPartyComponet(ItemComponent itemComponent) {
         return this.secondPartyComponents.get(itemComponent);
     }
-    public Map<ItemComponent, Integer> getComponents(boolean first){
+    public Map<ItemComponent, Integer> getComponents(boolean first) {
         return first ? this.firstPartyComponents : this.secondPartyComponents;
     }
     public Map<ItemComponent, Integer> getFirstPartyComponents() {
@@ -139,7 +139,7 @@ public class CurrencyTransfer {
     public Map<ItemComponent, Integer> getSecondPartyComponents() {
         return this.secondPartyComponents;
     }
-    public float getMoney(boolean first){
+    public float getMoney(boolean first) {
         return first ? this.firstPartyMoney : this.secondPartyMoney;
     }
     public float getFirstPartyMoney() {

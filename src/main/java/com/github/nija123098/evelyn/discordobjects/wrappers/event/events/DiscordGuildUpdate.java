@@ -13,16 +13,16 @@ public class DiscordGuildUpdate implements BotEvent {
     public DiscordGuildUpdate(GuildUpdateEvent event) {
         this.event = event;
     }
-    public Guild getGuild(){
+    public Guild getGuild() {
         return Guild.getGuild(this.event.getGuild());
     }
-    public String oldName(){
+    public String oldName() {
         return this.event.getOldGuild().getName();
     }
-    public String newName(){
+    public String newName() {
         return this.event.getNewGuild().getName();
     }
-    public boolean nameChange(){
+    public boolean nameChange() {
         return !this.oldName().equals(this.newName());
     }
 }

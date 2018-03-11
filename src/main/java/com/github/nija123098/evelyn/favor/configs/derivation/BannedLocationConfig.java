@@ -21,11 +21,11 @@ public class BannedLocationConfig extends AbstractConfig<Set<Guild>, User> {
         super("banned_count", "", ConfigCategory.STAT_TRACKING, new HashSet<>(1, 1), "The number of bans a user has earned");
     }
     @EventListener
-    public void handle(DiscordUserBanned event){
+    public void handle(DiscordUserBanned event) {
         FavorChangeEvent.process(event.getUser(), () -> this.alterSetting(event.getUser(), guilds -> guilds.remove(event.getGuild())));
     }
     @EventListener
-    public void handle(DiscordUserPardoned event){
+    public void handle(DiscordUserPardoned event) {
         FavorChangeEvent.process(event.getUser(), () -> this.alterSetting(event.getUser(), guilds -> guilds.remove(event.getGuild())));
     }
 }

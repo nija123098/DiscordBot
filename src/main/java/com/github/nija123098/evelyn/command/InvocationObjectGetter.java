@@ -112,7 +112,7 @@ public class InvocationObjectGetter {
      * @param requirements enum representations of context requirements for requiring certain contexts in command invocation.
      * @param <T> the type of objects to return.
      */
-    private static <T> void addContext(Class<T> clazz, ContextType contextType, InvocationGetter<T> invocationGetter, ContextRequirement...requirements){
+    private static <T> void addContext(Class<T> clazz, ContextType contextType, InvocationGetter<T> invocationGetter, ContextRequirement...requirements) {
         Pair<InvocationGetter<?>, Set<ContextRequirement>> pair = new Pair<>(invocationGetter, EnumHelper.getSet(ContextRequirement.class, requirements));
         CONTEXT_MAP.computeIfAbsent(clazz, c -> {
             Map<ContextType, Pair<InvocationGetter<?>, Set<ContextRequirement>>> map = new HashMap<>(1);
@@ -122,7 +122,7 @@ public class InvocationObjectGetter {
         CONTEXT_MAP.get(clazz).put(contextType, pair);
     }
 
-    public static Set<ContextRequirement> getContextRequirements(Class<?> type, ContextType contextType){
+    public static Set<ContextRequirement> getContextRequirements(Class<?> type, ContextType contextType) {
         return CONTEXT_MAP.get(type).get(contextType).getValue();
     }
 
@@ -142,7 +142,7 @@ public class InvocationObjectGetter {
             String arg = args.split(" ")[0].replace("<#", "").replace(">", "");
             int length = (isMention ? 3 : 0) + arg.length();
             Channel target = Channel.getChannel(arg);
-            if (target != null){
+            if (target != null) {
                 return new Pair<>(target, length);
             }
             if (guild == null) throw new ContextException("You need to be in a guild to use that command");
@@ -166,7 +166,7 @@ public class InvocationObjectGetter {
             else users.addAll(guild.getUsersByName(match));
             if (users.size() > 1) throw new ArgumentException("There are too many users named that!");
             int length = 0;
-            if (match.contains(" ")){
+            if (match.contains(" ")) {
                 int matchSplitLength = match.split(" ").length;
                 String[] argsSplit = args.split(" ");
                 if (matchSplitLength >= argsSplit.length) length = args.length();
@@ -185,41 +185,41 @@ public class InvocationObjectGetter {
             if (args.startsWith("global")) return new Pair<>(GlobalPlaylist.GLOBAL_PLAYLIST, args.equalsIgnoreCase("global playlist") ? 15 : 6);
             String[] split = args.split(" ");
             Pair<User, Integer> p = null;
-            if (split.length > 1){
+            if (split.length > 1) {
                 try{p = InvocationObjectGetter.convert(User.class, user, null, null, guild, null, null, args);
-                } catch (ArgumentException ignored){}
+                } catch (ArgumentException ignored) {}
             }
             Pair<User, Integer> pair = p;
-            if (pair != null){
+            if (pair != null) {
                 user = pair.getKey();
                 args = args.substring(0, pair.getValue());
             }
             Pair<Guild, Integer> guildPair = null;
-            if (split.length > 1){
+            if (split.length > 1) {
                 try{guildPair = InvocationObjectGetter.convert(Guild.class, user, null, null, guild, null, null, args);
-                } catch (ArgumentException ignored){}
+                } catch (ArgumentException ignored) {}
             }
-            if (guildPair != null){
+            if (guildPair != null) {
                 guild = guildPair.getKey();
                 args = args.substring(0, guildPair.getValue());
             }
-            if (guild != null && (guildPair != null || split[0].equalsIgnoreCase("server") || split[0].equalsIgnoreCase("guild") || split[0].equalsIgnoreCase("s"))){
-                if (ConfigHandler.getSetting(GuildPlaylistsConfig.class, guild).contains(split[1])){
+            if (guild != null && (guildPair != null || split[0].equalsIgnoreCase("server") || split[0].equalsIgnoreCase("guild") || split[0].equalsIgnoreCase("s"))) {
+                if (ConfigHandler.getSetting(GuildPlaylistsConfig.class, guild).contains(split[1])) {
                     return new Pair<>(Playlist.getPlaylist(guild, split[1]), split[0].length() + 1 + split[1].length());
                 }
                 throw new ArgumentException("There is no server playlist by that name");
             }
             args = args.toLowerCase().split(" ")[0];
-            if (ConfigHandler.getSetting(UserPlaylistsConfig.class, user).contains(args)){
+            if (ConfigHandler.getSetting(UserPlaylistsConfig.class, user).contains(args)) {
                 return new Pair<>(Playlist.getPlaylist(user, args), (pair == null ? 0 : pair.getValue()) + args.length());
             }
-            if (ConfigHandler.getSetting(GuildPlaylistsConfig.class, guild).contains(args)){
+            if (ConfigHandler.getSetting(GuildPlaylistsConfig.class, guild).contains(args)) {
                 return new Pair<>(Playlist.getPlaylist(guild, args), args.length());
             }
             String ar = args;
             AtomicReference<Pair<Playlist, Integer>> reference = new AtomicReference<>();
             if (guild != null) guild.getUsers().forEach(u -> {
-                if (ConfigHandler.getSetting(UserPlaylistsConfig.class, u).contains(ar)){
+                if (ConfigHandler.getSetting(UserPlaylistsConfig.class, u).contains(ar)) {
                     if (reference.get() != null) throw new ArgumentException("Please specify a user, too many playlists are named that and owned by people in this server");
                     reference.set(new Pair<>(Playlist.getPlaylist(u, ar), (pair == null ? 0 : pair.getValue()) + ar.length()));
                 }
@@ -229,10 +229,10 @@ public class InvocationObjectGetter {
         addConverter(Guild.class, (user, shard, channel, guild, message, reaction, args) -> {
             Guild target = Guild.getGuild(args.split(" ")[0]);
             if (target != null) return new Pair<>(target, target.getID().length());
-            for (Guild g : DiscordClient.getGuilds()){
+            for (Guild g : DiscordClient.getGuilds()) {
                 String name = g.getName();
-                if (args.startsWith(name) && (args.length() == name.length() || args.charAt(name.length()) == ' ')){
-                    if (target != null){
+                if (args.startsWith(name) && (args.length() == name.length() || args.charAt(name.length()) == ' ')) {
+                    if (target != null) {
                         throw new ArgumentException("To many guilds are named that");
                     }
                     target = g;
@@ -243,7 +243,7 @@ public class InvocationObjectGetter {
         });
         addConverter(Shard.class, (user, shard, channel, guild, message, reaction, args) -> {
             String arg = args.split(" ")[0];
-            if (arg.toLowerCase().equals("this")){
+            if (arg.toLowerCase().equals("this")) {
                 return new Pair<>(shard, 4);
             }
             try {
@@ -251,7 +251,7 @@ public class InvocationObjectGetter {
                 Shard s = Shard.getShard(i);
                 if (s == null) throw new ArgumentException("That shard may not does not exist, try a " + (i < 0 ? "higher" : "lower") + " number");
                 return new Pair<>(s, arg.length());
-            } catch (Exception e){
+            } catch (Exception e) {
                 throw new ArgumentException("Not a valid shard ID");
             }
         });
@@ -267,8 +267,8 @@ public class InvocationObjectGetter {
             String arg = args.split(" ")[0];
             Region region = Region.getRegion(arg);
             if (region != null) return new Pair<>(region, arg.length());
-            for (Region r : DiscordClient.getRegions()){
-                if (args.startsWith(r.getName())){
+            for (Region r : DiscordClient.getRegions()) {
+                if (args.startsWith(r.getName())) {
                     return new Pair<>(r, r.getName().length());
                 }// Discord isn't trying to trick us
             }
@@ -280,8 +280,8 @@ public class InvocationObjectGetter {
             Role role = message.getGuild().getRoleByID(arg);
             if (role != null) return new Pair<>(role, arg.length());
             if (arg.toLowerCase().equals("everyone")) return new Pair<>(guild.getEveryoneRole(), 8);
-            for (Role r : message.getGuild().getRoles()){
-                if (args.toLowerCase().startsWith(r.getName().toLowerCase()) && (args.length() == arg.length() || args.charAt(arg.length()) == ' ')){
+            for (Role r : message.getGuild().getRoles()) {
+                if (args.toLowerCase().startsWith(r.getName().toLowerCase()) && (args.length() == arg.length() || args.charAt(arg.length()) == ' ')) {
                     if (role != null) throw new ArgumentException("To many roles named that, mention the role or provide an ID");
                     role = r;
                 }
@@ -302,7 +302,7 @@ public class InvocationObjectGetter {
                 String arg = args.split(" ")[0];
                 Float result = Float.parseFloat(arg);
                 return new Pair<>(result, arg.length());
-            } catch (Exception e){
+            } catch (Exception e) {
                 throw new ArgumentException("That is not a decimal number", e);
             }
         });
@@ -312,7 +312,7 @@ public class InvocationObjectGetter {
             CONVERTER_MAP.forEach((type, converter) -> {
                 if (!Configurable.class.isAssignableFrom(type) || Configurable.class.equals(type) || pair.get() != null) return;
                 try{pair.set((Pair<Configurable, Integer>) converter.getKey().getObject(user, shard, channel, guild, message, reaction, args));
-                } catch (Exception ignored){}
+                } catch (Exception ignored) {}
             });
             if (pair.get() == null) throw new ArgumentException("No configurable instance found");
             return pair.get();
@@ -331,11 +331,11 @@ public class InvocationObjectGetter {
             try {
                 Pair<ModuleLevel, Integer> pair = (Pair<ModuleLevel, Integer>) CONVERTER_MAP.get(ModuleLevel.class).getKey().getObject(invoker, shard, channel, guild, message, reaction, args);
                 return new Pair<>(new CommandGroup(pair.getKey()), pair.getValue());
-            } catch (ArgumentException ignored){}
+            } catch (ArgumentException ignored) {}
             try {
                 Pair<AbstractCommand, Integer> pair = (Pair<AbstractCommand, Integer>) CONVERTER_MAP.get(AbstractCommand.class).getKey().getObject(invoker, shard, channel, guild, message, reaction, args);
                 return new Pair<>(new CommandGroup(pair.getKey()), pair.getValue());
-            } catch (ArgumentException ignored){}
+            } catch (ArgumentException ignored) {}
             throw new ArgumentException("Please indicate a command or a module");
         });
         addConverter(Color.class, (invoker, shard, channel, guild, message, reaction, args) -> {
@@ -347,22 +347,22 @@ public class InvocationObjectGetter {
             try {
                 reserve = Integer.parseInt(strings[0].toUpperCase(), 16);
                 if (reserve > 255) return new Pair<>(new Color(reserve), strings[0].length());
-            } catch (Exception ignored){}
-            if (strings.length > 2){
+            } catch (Exception ignored) {}
+            if (strings.length > 2) {
                 try {
                     int[] vals = new int[3];
                     for (int i = 0; i < 3; i++) {
                         vals[i] = Integer.parseInt(strings[i]);
                     }
                     return new Pair<>(new Color(vals[0], vals[1], vals[2]), FormatHelper.lengthOf(strings, 3) + 2);
-                } catch (Exception ignored){}
+                } catch (Exception ignored) {}
                 try {
                     float[] vals = new float[3];
                     for (int i = 0; i < 3; i++) {
                         vals[i] = Float.parseFloat(strings[i]);
                     }
                     return new Pair<>(new Color(vals[0], vals[1], vals[2]), FormatHelper.lengthOf(strings, 3) + 2);
-                } catch (Exception ignored){}
+                } catch (Exception ignored) {}
             }
             if (reserve != null) return new Pair<>(new Color(reserve), strings[0].length());
             throw new ArgumentException("Could not find color: for hex: insert a # in front | for rgb place the numbers without commas: r g b | for integer place the integer");
@@ -382,11 +382,11 @@ public class InvocationObjectGetter {
         addConverter(Team.class, (invoker, shard, channel, guild, message, reaction, args) -> {
             Pair<User, Integer> userPair = null;
             try{userPair = convert(User.class, invoker, shard, channel, guild, message, reaction, args);
-            } catch (ArgumentException ignored){}
+            } catch (ArgumentException ignored) {}
             if (userPair != null) return new Pair<>(new Team(userPair.getKey()), userPair.getValue());
             Pair<Role, Integer> rolePair = null;
             try{rolePair = convert(Role.class, invoker, shard, channel, guild, message, reaction, args);
-            } catch (ArgumentException ignored){}
+            } catch (ArgumentException ignored) {}
             if (rolePair != null) return new Pair<>(new Team(.5F, rolePair.getKey()), rolePair.getValue());
             throw new ArgumentException("Please specify a team by role or user");
         });
@@ -394,7 +394,7 @@ public class InvocationObjectGetter {
             List<Color> colors = new ArrayList<>(4);
             Pair<Color, Integer> pair;
             int total = 0, skipAmount;
-            while (true){
+            while (true) {
                 pair = convert(Color.class, invoker, shard, channel, guild, message, reaction, args);
                 if (pair == null) return new Pair<>(new ColorRange(colors), total);
                 else {
@@ -448,13 +448,13 @@ public class InvocationObjectGetter {
      * @param requirements enum representations of context requirements for requiring certain contexts in command invocation.
      * @param <T> the type to return.
      */
-    private static <T> void addConverter(Class<T> clazz, ArgumentConverter<T> argumentConverter, ContextRequirement...requirements){
+    private static <T> void addConverter(Class<T> clazz, ArgumentConverter<T> argumentConverter, ContextRequirement...requirements) {
         EnumSet<ContextRequirement> req = EnumHelper.getSet(ContextRequirement.class, requirements);
         req.add(ContextRequirement.STRING);
         CONVERTER_MAP.put(clazz, new Pair<>(argumentConverter, req));
     }
 
-    public static Set<ContextRequirement> getConvertRequirements(Class<?> type, ContextType contextType){
+    public static Set<ContextRequirement> getConvertRequirements(Class<?> type, ContextType contextType) {
         return type.isEnum() ? Collections.emptySet() :  CONVERTER_MAP.get(type).getValue();
     }
 
@@ -476,13 +476,13 @@ public class InvocationObjectGetter {
      * @return A {@link Pair} whose key is the derived object and the
      * @throws ArgumentException for when no instace was able to be derived from the given object
      */
-    public static <T> Pair<T, Integer> convert(Class<T> clazz, User user, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, String args){
+    public static <T> Pair<T, Integer> convert(Class<T> clazz, User user, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, String args) {
         if (args.equalsIgnoreCase("null")) return new Pair<>(null, 4);
         if (clazz.isEnum()) return (Pair<T, Integer>) EnumHelper.getValue(clazz, args);
         return (Pair<T, Integer>) CONVERTER_MAP.get(clazz).getKey().getObject(user, shard, channel, guild, message, reaction, args);
     }
 
-    public static Set<Class<?>> getConversionTypes(){
+    public static Set<Class<?>> getConversionTypes() {
         return CONVERTER_MAP.keySet();
     }
 
@@ -500,7 +500,7 @@ public class InvocationObjectGetter {
     /**
      * Forces the initialization of this class.
      */
-    public static void initialize(){
+    public static void initialize() {
         Log.log(LogColor.blue("Invocation Object Getter initialized.") + LogColor.yellow(" Invoking dangerous rituals."));
     }
 
@@ -522,20 +522,20 @@ public class InvocationObjectGetter {
      * @param argOverride overrides for argument invocation.
      * @return an array of objects for command parameters for the command's invocation.
      */
-    public static Object[] replace(AbstractCommand command, Parameter[] parameters, Object[] objects, User user, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, String args, boolean[] argOverride){
+    public static Object[] replace(AbstractCommand command, Parameter[] parameters, Object[] objects, User user, Shard shard, Channel channel, Guild guild, Message message, Reaction reaction, String args, boolean[] argOverride) {
         int commandArgIndex = 0;
         for (int i = 0; i < parameters.length; i++) {
             try {
-                if (parameters[i].isAnnotationPresent(Context.class) || parameters[i].getAnnotations().length == 0){// null might be an instance of Context
+                if (parameters[i].isAnnotationPresent(Context.class) || parameters[i].getAnnotations().length == 0) {// null might be an instance of Context
                     try {
                         objects[i] = CONTEXT_MAP.get(parameters[i].getType()).get(parameters[i].getAnnotations().length == 0 ? ContextType.DEFAULT : parameters[i].getAnnotation(Context.class).value()).getKey().getObject(user, shard, channel, guild, message, reaction, args);
-                    } catch (Exception e){
-                        if (!(parameters[i].isAnnotationPresent(Context.class) && parameters[i].getAnnotation(Context.class).softFail())){
+                    } catch (Exception e) {
+                        if (!(parameters[i].isAnnotationPresent(Context.class) && parameters[i].getAnnotation(Context.class).softFail())) {
                             throw e;
                         }
                     }
-                }else if (parameters[i].isAnnotationPresent(Argument.class)){
-                    if (argOverride.length > i && argOverride[commandArgIndex++]){
+                }else if (parameters[i].isAnnotationPresent(Argument.class)) {
+                    if (argOverride.length > i && argOverride[commandArgIndex++]) {
                         continue;
                     }
                     Pair<Object, Integer> pair = convert((Class<Object>) parameters[i].getType(), user, shard, channel, guild, message, reaction, args);
@@ -544,14 +544,14 @@ public class InvocationObjectGetter {
                     if (subSize > args.length()) {
                         Log.log("Size of reduction is linger then args: " + subSize + " for " + args);
                         subSize = args.length();
-                    }else if (subSize < 0){
+                    }else if (subSize < 0) {
                         subSize = 0;
                         Log.log("Size of reduction is less than 0, " + subSize);
                     }
                     args = FormatHelper.trimFront(args.substring(subSize));
                 }
-            } catch (ArgumentException e){
-                if (parameters[i].isAnnotationPresent(Argument.class) && parameters[i].getAnnotation(Argument.class).optional()){
+            } catch (ArgumentException e) {
+                if (parameters[i].isAnnotationPresent(Argument.class) && parameters[i].getAnnotation(Argument.class).optional()) {
                     if (parameters[i].getAnnotation(Argument.class).replacement() != ContextType.NONE) checkContextType(parameters[i].getType());
                     objects[i] = parameters[i].getAnnotation(Argument.class).replacement() == ContextType.NONE ? null : CONTEXT_MAP.get(parameters[i].getType()).get(parameters[i].getAnnotation(Argument.class).replacement()).getKey().getObject(user, shard, channel, guild, message, reaction, args);
                     continue;
@@ -563,26 +563,26 @@ public class InvocationObjectGetter {
         return objects;
     }
 
-    public static void checkConvertType(Class<?> type){
+    public static void checkConvertType(Class<?> type) {
         if (type.isEnum()) return;
         for (Class<?> clazz : ReflectionHelper.getAssignableTypes(type)) if (CONVERTER_MAP.containsKey(clazz) && !clazz.isEnum()) return;
         throw new DevelopmentException("Can not convert objects of type: " + type.getSimpleName());
     }
 
-    public static void checkContextType(Class<?> type){
-        if (!CONTEXT_MAP.containsKey(type)){
+    public static void checkContextType(Class<?> type) {
+        if (!CONTEXT_MAP.containsKey(type)) {
             throw new DevelopmentException("Can not get context for objects of type: " + type.getSimpleName());
         }
     }
 
-    public static Object getTypeOf(Object...objects){
+    public static Object getTypeOf(Object...objects) {
         Map<Class<?>, Object> map = null;
-        for (Object o : objects){
-            if (map == null){
+        for (Object o : objects) {
+            if (map == null) {
                  map = new HashMap<>();
                  continue;
             }
-            if (o == null){
+            if (o == null) {
                 continue;
             }
             map.put(o.getClass(), o);

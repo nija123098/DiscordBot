@@ -18,7 +18,7 @@ public class BannedTrackConfig extends AbstractConfig<Boolean, Track> {
         super("banned_track", "", ConfigCategory.STAT_TRACKING, false, "If the track is banned from being played on the global playlist");
         CONFIG = this;
     }
-    public static void ban(Track track){
+    public static void ban(Track track) {
         CONFIG.setValue(track, true);
     }
 }

@@ -19,7 +19,7 @@ public class TemplateRemoveCommand extends AbstractCommand {
         super(TemplateCommand.class, "remove", null, null, null, "Removes a template based on index");
     }
     @Command
-    public void command(@Argument KeyPhrase keyPhrase, @Context(softFail = true) Guild guild, @Argument(info = "index") Integer i, User user){
+    public void command(@Argument KeyPhrase keyPhrase, @Context(softFail = true) Guild guild, @Argument(info = "index") Integer i, User user) {
         TemplateCommand.checkPerms(user, guild, keyPhrase);
         TemplateHandler.removeTemplate(keyPhrase, guild, i);
     }

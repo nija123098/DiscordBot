@@ -32,7 +32,7 @@ public class ProfileMaker {
         }
         ((ArrayList<Point>) CIRCLE).trimToSize();
     }
-    public static File getProfileIcon(User user){
+    public static File getProfileIcon(User user) {
         BufferedImage im = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = im.createGraphics();
         for (int i = 0; i < WIDTH; i++) {

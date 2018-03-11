@@ -46,15 +46,15 @@ public class ArgumentException extends UserIssueException {
         this.args = args;
     }
 
-    public void setImproperUsage(int parameter, Parameter[] args, AbstractCommand command){
+    public void setImproperUsage(int parameter, Parameter[] args, AbstractCommand command) {
         this.parameter = parameter;
         this.args = args;
         this.command = command;
     }
 
     @Override
-    public String getMessage(){
-        if (args == null){
+    public String getMessage() {
+        if (args == null) {
             return super.getMessage();
         }
         StringBuilder s = new StringBuilder("Argument " + (this.parameter + 1) + " - " + super.getMessage() + "\nExpected arguments:  ");

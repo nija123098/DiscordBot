@@ -13,7 +13,7 @@ public class DiscordTrackEnd implements BotEvent {
     public DiscordTrackEnd(TrackFinishEvent event) {
         this.event = event;
     }
-    public Guild getGuild(){
+    public Guild getGuild() {
         return Guild.getGuild(this.event.getPlayer().getGuild());
     }
 }

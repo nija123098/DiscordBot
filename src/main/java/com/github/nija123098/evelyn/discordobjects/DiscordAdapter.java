@@ -107,7 +107,7 @@ public class DiscordAdapter {
         if (!ConfigProvider.BOT_SETTINGS.ghostModeEnabled()) PLAY_TEXT_EXECUTOR.scheduleAtFixedRate(() -> {
             if (!PLAY_TEXT_UPDATE.get()) return;
             Template template = TemplateHandler.getTemplate(KeyPhrase.PLAY_TEXT, null, PREVIOUS_TEXTS.asArrayList());
-            if (template == null){
+            if (template == null) {
                 TemplateHandler.addTemplate(KeyPhrase.PLAY_TEXT, null, "with nitroglycerine");
                 Log.log("Template KeyPhrase for " + KeyPhrase.PLAY_TEXT.name() + " has been added: \"with nitroglycerine\"");
             }
@@ -134,44 +134,44 @@ public class DiscordAdapter {
     /**
      * Forces the initialization of this class.
      */
-    public static void initialize(){
+    public static void initialize() {
         Log.log(LogColor.blue("Discord Adapter initialized.") + LogColor.yellow(" Converting Discord to 240v."));
     }
     @EventSubscriber
-    public static void handle(ShardReadyEvent event){
+    public static void handle(ShardReadyEvent event) {
         event.getShard().changePresence(StatusType.IDLE, ActivityType.PLAYING, "with the loading screen!");
     }
     @EventSubscriber
-    public static void handle(UserUpdateEvent event){
+    public static void handle(UserUpdateEvent event) {
         User.update(event.getNewUser());
     }
     @EventSubscriber
-    public static void handle(GuildUpdateEvent event){
+    public static void handle(GuildUpdateEvent event) {
         Guild.update(event.getNewGuild());
     }
     @EventSubscriber
-    public static void handle(RoleUpdateEvent event){
+    public static void handle(RoleUpdateEvent event) {
         Role.update(event.getNewRole());
     }
     @EventSubscriber
-    public static void handle(ChannelUpdateEvent event){
+    public static void handle(ChannelUpdateEvent event) {
         Channel.update(event.getNewChannel());
     }
     @EventSubscriber
-    public static void handle(MessageUpdateEvent event){
+    public static void handle(MessageUpdateEvent event) {
         Message.update(event.getNewMessage());
     }
     @EventSubscriber
-    public static void handle(CategoryUpdateEvent event){
+    public static void handle(CategoryUpdateEvent event) {
         Category.update(event.getNewCategory());
     }
     @EventSubscriber
-    public static void handle(UserVoiceChannelMoveEvent event){
+    public static void handle(UserVoiceChannelMoveEvent event) {
         EventDistributor.distribute(new DiscordVoiceLeave(event.getOldChannel(), event.getUser()));
         EventDistributor.distribute(new DiscordVoiceJoin(event.getNewChannel(), event.getUser()));
     }
     @EventSubscriber
-    public static void handle(ReactionEvent event){// it's cleaner than the alternative
+    public static void handle(ReactionEvent event) {// it's cleaner than the alternative
         EventDistributor.distribute(new DiscordReactionEvent(event));
     }
 
@@ -184,13 +184,13 @@ public class DiscordAdapter {
      * @param event the Discord4J event to listen for.
      */
     @EventSubscriber
-    public static void handle(MessageReceivedEvent event){
+    public static void handle(MessageReceivedEvent event) {
         if (event.getAuthor().isBot() || !Launcher.isReady() || event.getMessage().getContent() == null) return;
         if (event.getMessage().getContent().isEmpty()) DeletePinNotificationConfig.handle(new DiscordMessageReceived(event));
         DiscordMessageReceived receivedEvent = new DiscordMessageReceived(event);
         if (MessageMonitor.monitor(receivedEvent)) return;
         Boolean isCommand = CommandHandler.handle(receivedEvent);
-        if (isCommand == null){
+        if (isCommand == null) {
             String thought = receivedEvent.getMessage().getContent();
             if (ChatBot.mayChat(receivedEvent.getChannel(), receivedEvent.getMessage().getContent())) {
                 new MessageMaker(receivedEvent.getChannel()).appendRaw(ChatBot.getChatBot(receivedEvent.getChannel()).think(thought)).send();
@@ -211,7 +211,7 @@ public class DiscordAdapter {
      * @param event the Discord4J {@link Event} to listen for.
      */
     @EventSubscriber
-    public static void handle(Event event){
+    public static void handle(Event event) {
         Constructor<? extends BotEvent> constructor = EVENT_MAP.get(event.getClass());
         if (constructor != null) {
             try{EventDistributor.distribute(constructor.newInstance(event));

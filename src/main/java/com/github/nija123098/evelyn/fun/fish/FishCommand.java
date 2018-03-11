@@ -80,7 +80,7 @@ public class FishCommand extends AbstractCommand {// TODO clean and optimize
         //add win
         String rewardAtPole;
         String rewardAtLoot;
-        if (eReward == - 1){
+        if (eReward == - 1) {
 
             //select trash from trash emotes
             int selectTrash = Rand.getRand(trashEmotes.length);
@@ -156,7 +156,7 @@ public class FishCommand extends AbstractCommand {// TODO clean and optimize
             //add win
             String r_rewardAtPole;
             String r_rewardAtLoot;
-            if (r_eReward == - 1){
+            if (r_eReward == - 1) {
 
                 //select trash from trash emotes
                 int selectTrash = Rand.getRand(trashEmotes.length);
@@ -206,7 +206,7 @@ public class FishCommand extends AbstractCommand {// TODO clean and optimize
 
     }
 
-    private int getReward(){
+    private int getReward() {
 
         //select reward from fishingEmotes
         int selectReward = Rand.getRand(fishingEmotes.length);
@@ -216,12 +216,12 @@ public class FishCommand extends AbstractCommand {// TODO clean and optimize
         reward = -1;
         int roll;
         int rewardToEmote = -1;
-        switch (selectReward){
+        switch (selectReward) {
 
             //roll for fish
             case 0:
                 roll = Rand.getRand(3);
-                if (roll == 0){
+                if (roll == 0) {
                     reward = 30;
                     rewardToEmote = 0;
                     break;
@@ -233,7 +233,7 @@ public class FishCommand extends AbstractCommand {// TODO clean and optimize
             //roll for tropical fish
             case 1:
                 roll = Rand.getRand(4);
-                if (roll == 0){
+                if (roll == 0) {
                     reward = 35;
                     rewardToEmote = 1;
                     break;
@@ -245,7 +245,7 @@ public class FishCommand extends AbstractCommand {// TODO clean and optimize
             //roll for blowfish
             case 2:
                 roll = Rand.getRand(5);
-                if (roll == 0){
+                if (roll == 0) {
                     reward = 40;
                     rewardToEmote = 2;
                     break;
@@ -257,7 +257,7 @@ public class FishCommand extends AbstractCommand {// TODO clean and optimize
             //roll for gift
             /*case 3:
                 roll = Rand.getRand(8);
-                if (roll == 0){
+                if (roll == 0) {
                     gift = true;
                     rewardToEmote = 3;
                     break;

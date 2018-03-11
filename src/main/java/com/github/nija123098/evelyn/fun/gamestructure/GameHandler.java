@@ -16,10 +16,10 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class GameHandler {
     private static final Map<Guild, Map<User, AbstractGame>> GAME_MAP = new ConcurrentHashMap<>();
-    public static void register(Guild guild, AbstractGame game){
+    public static void register(Guild guild, AbstractGame game) {
         game.getTeams().forEach(team -> team.getUsers().forEach(user -> GAME_MAP.computeIfAbsent(guild, c -> new ConcurrentHashMap<>()).put(user, game)));
     }
-    public static AbstractGame getGame(Guild guild, User user){
+    public static AbstractGame getGame(Guild guild, User user) {
         AbstractGame game = GAME_MAP.getOrDefault(guild, Collections.emptyMap()).get(user);
         if (game == null) throw new ContextException("You are not currently playing a game, to start do @Evelyn game start <gamename>");
         return game;

@@ -31,7 +31,7 @@ public class GamePlayHandler {
     static {
         new File(ConfigProvider.FOLDER_SETTINGS.neuralNetFolder()).mkdirs();
     }
-    static void decideGame(AbstractGame game){
+    static void decideGame(AbstractGame game) {
         Team team = game.getTeam(DiscordClient.getOurUser());
         if (game instanceof AbstractNeuralNetGame) {
             AbstractNeuralNetGame nGame = (AbstractNeuralNetGame) game;
@@ -49,7 +49,7 @@ public class GamePlayHandler {
             game.chose(DiscordClient.getOurUser(), Rand.getRand(list, false).getName());
         }
     }
-    static void reportWin(AbstractNeuralNetGame game){
+    static void reportWin(AbstractNeuralNetGame game) {
         NeuralNet net = GAME_NET_MAP.get(game);
         String gameNetName = getNeuralNetName(game);
         if (net.incrementWin() > LOADED_NEURAL_NETS.get(gameNetName).getWinCount()) {
@@ -60,20 +60,20 @@ public class GamePlayHandler {
             }
         }
     }
-    private static NeuralNet loadNet(AbstractNeuralNetGame game){
+    private static NeuralNet loadNet(AbstractNeuralNetGame game) {
         Path path = getNeuralNetPath(game);
         NeuralNet neuralNet;
-        if (!path.toFile().exists()){
+        if (!path.toFile().exists()) {
             neuralNet = new NeuralNet(game.getInputWidth(), game.getOutputWidth(), game.getHiddenLayerCount(), game.getHiddenLayerWidth());
         } else {// I'm tempted to inline this
             neuralNet = (NeuralNet) TypeChanger.getXStream().fromXML(path.toFile());
         }
         return neuralNet;
     }
-    private static String getNeuralNetName(AbstractNeuralNetGame game){
+    private static String getNeuralNetName(AbstractNeuralNetGame game) {
         return game.getName() + "-" + Joiner.on("-").join(new Integer[]{game.getInputWidth(), game.getOutputWidth(), game.getHiddenLayerWidth(), game.getHiddenLayerCount()}) + ".txt";
     }
-    private static Path getNeuralNetPath(AbstractNeuralNetGame game){
+    private static Path getNeuralNetPath(AbstractNeuralNetGame game) {
         return Paths.get(ConfigProvider.FOLDER_SETTINGS.neuralNetFolder(), getNeuralNetName(game));
     }
 }

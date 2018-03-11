@@ -44,18 +44,18 @@ public class Playlist implements Configurable {
             MAP.put(GLOBAL_PLAYLIST_ID, GlobalPlaylist.GLOBAL_PLAYLIST);
         });
     }
-    public static Playlist getPlaylist(User user, String name){
+    public static Playlist getPlaylist(User user, String name) {
         if (name.isEmpty()) throw new ArgumentException("Your playlist must have a name");
         String reduced = FormatHelper.filtering(name, Character::isLetter);
         if (!name.equals(reduced)) throw new ArgumentException("A playlist name must only contain letters");
         return ConfigHandler.getSetting(UserPlaylistsConfig.class, user).contains(name.toLowerCase()) ? MAP.computeIfAbsent("pl-u-" + user.getID() + "-" + name.toLowerCase(), Playlist::new) : null;
     }
-    public static Playlist getPlaylist(Guild guild, String name){
+    public static Playlist getPlaylist(Guild guild, String name) {
         if (name.isEmpty()) throw new ArgumentException("Your playlist must have a name");
         if (!name.equals(FormatHelper.filtering(name, Character::isLetter))) throw new ArgumentException("A playlist name must only contain letters");
         return ConfigHandler.getSetting(GuildPlaylistsConfig.class, guild).contains(name.toLowerCase()) ? MAP.computeIfAbsent("pl-g-" + guild.getID() + "-" + name.toLowerCase(), Playlist::new) : null;
     }
-    public static Playlist getPlaylist(String id){
+    public static Playlist getPlaylist(String id) {
         if (id == null || !id.startsWith("pl-")) return null;
         String[] split = id.split("-");
         if (split.length != 4) return null;
@@ -68,7 +68,7 @@ public class Playlist implements Configurable {
         this.id = id;
         this.registerExistence();
     }
-    Playlist(String id, boolean globalPlaylist){
+    Playlist(String id, boolean globalPlaylist) {
         this.id = id;
         if (!globalPlaylist) throw new DevelopmentException("WTF ARE YOU DOING?");
     }
@@ -83,18 +83,18 @@ public class Playlist implements Configurable {
     }
 
     @Override
-    public void checkPermissionToEdit(User user, Guild guild){
-        if (this.id.startsWith("pl-u-")){
+    public void checkPermissionToEdit(User user, Guild guild) {
+        if (this.id.startsWith("pl-u-")) {
             if (!this.getOwner().equals(user)) throw new PermissionsException("You don't own this playlist, " + ((User) this.getOwner()).getDisplayName(guild) + " does");
         }else if (!(BotRole.GUILD_TRUSTEE.hasRequiredRole(user, guild) && BotRole.GUILD_DJ.hasRole(user, guild))) throw new PermissionsException("You must at least be a trustee edit a server playlist");
     }
 
     @Override
-    public Configurable getGoverningObject(){
+    public Configurable getGoverningObject() {
         return getOwner();
     }
 
-    public String getName(){
+    public String getName() {
         return this.id.split("-")[3];
     }
 
@@ -102,11 +102,11 @@ public class Playlist implements Configurable {
         return this.id.startsWith("pl-u-") ? User.getUser(this.id.split("-")[2]) : Guild.getGuild(this.id.split("-")[2]);
     }
 
-    public Track getNext(Guild guild){
+    public Track getNext(Guild guild) {
         return ConfigHandler.getSetting(PlaylistPlayTypeConfig.class, this).decide.apply(this, guild);
     }
 
-    public int getSize(){
+    public int getSize() {
         return ConfigHandler.getSetting(PlaylistContentsConfig.class, this).size();
     }
 
@@ -114,7 +114,7 @@ public class Playlist implements Configurable {
     public enum PlayType {
         RANDOM((playlist, guild) -> {
             List<Track> list = ConfigHandler.getSetting(PlaylistContentsConfig.class, playlist);
-            switch (list.size()){
+            switch (list.size()) {
                 case 0:
                     return null;
                 case 1:
@@ -124,7 +124,7 @@ public class Playlist implements Configurable {
             }
         }), SEQUENTIAL((playlist, guild) -> {
             List<Track> list = ConfigHandler.getSetting(PlaylistContentsConfig.class, playlist);
-            switch (list.size()){
+            switch (list.size()) {
                 case 0:
                     return null;
                 case 1:

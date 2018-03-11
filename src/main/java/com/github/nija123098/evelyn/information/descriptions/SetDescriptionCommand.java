@@ -20,7 +20,7 @@ public class SetDescriptionCommand extends AbstractCommand {
         super(DescriptionCommand.class, "set", "setdescription", null, null, "Sets info about yourself");
     }
     @Command
-    public void command(@Argument(optional = true, replacement = ContextType.NONE, info = "server only") Boolean serverOnly, @Argument(info = "Your info") String info, @Context(softFail = true) Guild guild, User user){
+    public void command(@Argument(optional = true, replacement = ContextType.NONE, info = "server only") Boolean serverOnly, @Argument(info = "Your info") String info, @Context(softFail = true) Guild guild, User user) {
         if (serverOnly == null) serverOnly = false;
         if (serverOnly && guild == null) throw new ContextException("In order to set server only information you must be in a server");
         if (serverOnly) ConfigHandler.setSetting(GuildUserDescriptionConfig.class, GuildUser.getGuildUser(guild, user), info);

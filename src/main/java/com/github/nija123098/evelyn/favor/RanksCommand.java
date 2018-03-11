@@ -14,7 +14,7 @@ public class RanksCommand extends AbstractCommand {
         super("ranks", ModuleLevel.ADMINISTRATIVE, null, null, "Stuff");
     }
     @Command
-    public void command(MessageMaker maker){
+    public void command(MessageMaker maker) {
         maker.append("If you see this report it to nija for your prize.");
     }
 }

@@ -10,7 +10,7 @@ public class LootCrateEmotes {
 
     //constructor block
     private final String emote;
-    LootCrateEmotes(String emote){
+    LootCrateEmotes(String emote) {
         this.emote = emote;
     }
 

@@ -18,7 +18,7 @@ public class CapsFilter implements MessageFilter {
         if (content.length() < 100) return;
         int capsCount = 0;
         boolean skip = true;
-        for (char c : content.toCharArray()){
+        for (char c : content.toCharArray()) {
             if (skip) {
                 skip = false;
                 continue;

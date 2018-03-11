@@ -14,16 +14,16 @@ public class DiscordNicknameChange implements BotEvent {
     public DiscordNicknameChange(NicknameChangedEvent event) {
         this.event = event;
     }
-    public Guild getGuild(){
+    public Guild getGuild() {
         return Guild.getGuild(this.event.getGuild());
     }
-    public User getUser(){
+    public User getUser() {
         return User.getUser(this.event.getUser());
     }
-    public String getOldUsername(){
+    public String getOldUsername() {
         return this.event.getOldNickname().orElse(null);
     }
-    public String getNewUsername(){
+    public String getNewUsername() {
         return this.event.getNewNickname().orElse(null);
     }
 }

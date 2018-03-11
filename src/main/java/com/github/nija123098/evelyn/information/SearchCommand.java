@@ -21,11 +21,11 @@ public class SearchCommand extends AbstractCommand {
         super("search", ModuleLevel.INFO, "s, duck, duckduckgo", null, "Searches something using duckduckgo");
     }
     @Command
-    public void command(@Argument String search, MessageMaker maker){
+    public void command(@Argument String search, MessageMaker maker) {
         try {
             JSONObject result = (JSONObject) new JSONParser().parse(Unirest.get("https://api.duckduckgo.com/?q=" + StringEscapeUtils.escapeHtml4(search.toLowerCase().replace(" ", "+")) + "&format=json&pretty=1").asString().getBody());
             JSONArray array = ((JSONArray) (result).get("RelatedTopics"));
-            if (array.isEmpty()){
+            if (array.isEmpty()) {
                 maker.append("We didn't get any results for that.  Make sure it is spelled correctly!");
                 return;
             }

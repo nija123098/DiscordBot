@@ -18,8 +18,8 @@ public class GlobalDisableCommand extends AbstractCommand {
         super("globaldisable", ModuleLevel.BOT_ADMINISTRATIVE, "gdisable, gd", null, "Disables commands globally");
     }
     @Command
-    public void command(@Argument Boolean enable, @Argument AbstractCommand command, MessageMaker maker){
-        if (command.equals(this)){
+    public void command(@Argument Boolean enable, @Argument AbstractCommand command, MessageMaker maker) {
+        if (command.equals(this)) {
             maker.append("Ehe, so just because you are a " + this.getBotRole().name() + " you thought that I wouldn't have a check for your stupidity?");
             return;
         }

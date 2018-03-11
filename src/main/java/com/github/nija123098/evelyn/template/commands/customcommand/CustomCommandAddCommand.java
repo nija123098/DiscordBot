@@ -26,14 +26,14 @@ public class CustomCommandAddCommand extends AbstractCommand {
         super(CustomCommandCommand.class, "add", null, null, "make", "Adds a command, if adding arguments split them with a ;");
     }
     @Command
-    public void command(Guild guild, String s){
+    public void command(Guild guild, String s) {
         if (s == null || s.isEmpty()) throw new ArgumentException("Please use the format <name> <text>");
         String name = s.split(" ")[0];
         s = s.substring(name.length() + 1);
         String[] split = s.split(";");
         String template;
         Class<?>[] args;
-        if (split.length > 1){
+        if (split.length > 1) {
             template = s.substring(split[0].length() + 1);
             String[] argSplit = split[0].split(" ");
             args = new Class<?>[argSplit.length];

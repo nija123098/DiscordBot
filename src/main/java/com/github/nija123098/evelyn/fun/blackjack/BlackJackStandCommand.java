@@ -23,9 +23,9 @@ public class BlackJackStandCommand extends AbstractCommand {
         super(BlackJackCommand.class, "stand", "stand, stay", null, "stay", "Stands in a game of blackjack");
     }
     @Command
-    public void command(MessageMaker maker, User user){
+    public void command(MessageMaker maker, User user) {
         BlackJackGame game = BlackJackGame.getGame(user);
-        if (game == null){
+        if (game == null) {
             maker.append("Start a game with ").appendRaw("__bj hit__");
             return;
         }
@@ -42,9 +42,9 @@ public class BlackJackStandCommand extends AbstractCommand {
             if (val > 16 && !future.get().isCancelled()) {
                 future.get().cancel(false);
                 int pVal = game.playerValue();
-                if (val > pVal){
+                if (val > pVal) {
                     maker.append("You lose\n");
-                }else if (val == pVal){
+                }else if (val == pVal) {
                     maker.append("DRAW");
                 }else{
                     maker.forceCompile().append("You win\n");

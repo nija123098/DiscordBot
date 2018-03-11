@@ -35,7 +35,7 @@ public enum ModuleLevel {
     private final BotRole botRole;
     private final List<AbstractCommand> commands = new ArrayList<>();
     private final Color color;
-    void addCommand(AbstractCommand command){
+    void addCommand(AbstractCommand command) {
         this.commands.add(command);
     }
     ModuleLevel(Color color, String icon) {
@@ -50,10 +50,10 @@ public enum ModuleLevel {
     public String getIcon() {
         return this.icon;
     }
-    public String getIconName(){
+    public String getIconName() {
         return this.iconName;
     }
-    public BotRole getDefaultRole(){
+    public BotRole getDefaultRole() {
         return this.botRole;
     }
     public List<AbstractCommand> getCommands() {
@@ -62,7 +62,7 @@ public enum ModuleLevel {
     public Color getColor() {
         return this.color;
     }
-    public static List<ModuleLevel> getGeneralApproved(User user, Guild guild){
+    public static List<ModuleLevel> getGeneralApproved(User user, Guild guild) {
         return Stream.of(values()).filter(level -> level.getDefaultRole().hasRequiredRole(user, guild)).collect(Collectors.toList());
     }
 }

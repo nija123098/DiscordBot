@@ -17,7 +17,7 @@ public class TicTacToeStartCommand extends AbstractCommand {
         super(TicTacToeCommand.class, "start", null, null, null, "Starts a game of ttt");
     }
     @Command
-    public void command(@Argument Team red, @Argument Team blue, Guild guild, MessageMaker maker){
+    public void command(@Argument Team red, @Argument Team blue, Guild guild, MessageMaker maker) {
         GameStartCommand.command(red, blue, "tictactoe", guild, maker);
     }
 }

@@ -25,11 +25,11 @@ public class MessageMonitoringCommand extends AbstractCommand {
         super("messagemonitoring", ModuleLevel.ADMINISTRATIVE, "message monitoring", null, "Displays a list of monitoring in effect currently");
     }
     @Command
-    public static void command(@Argument(optional = true, replacement = ContextType.NONE) Channel channel, Guild guild, MessageMaker maker){
+    public static void command(@Argument(optional = true, replacement = ContextType.NONE) Channel channel, Guild guild, MessageMaker maker) {
         Set<MessageMonitoringLevel> levels = channel == null ? ConfigHandler.getSetting(MessageMonitoringConfig.class, guild) : MessageMonitor.getLevels(channel);
         if (levels.isEmpty()) maker.append("No monitoring is active here.  That's not very safe!");
         maker.getTitle().append("Message monitoring levels for " + (channel == null ? guild.getName() : channel.mention()));
-        for (MessageMonitoringLevel level : MessageMonitoringLevel.values()){
+        for (MessageMonitoringLevel level : MessageMonitoringLevel.values()) {
             maker.getNewFieldPart().getTitle().appendRaw(level.name()).getFieldPart().getValue().appendRaw(EmoticonHelper.getChars(levels.contains(level) ? "white_check_mark" : "x", false));
         }
     }

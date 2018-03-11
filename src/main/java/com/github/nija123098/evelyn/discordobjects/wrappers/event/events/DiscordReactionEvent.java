@@ -13,19 +13,19 @@ import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.Reactio
  */
 public class DiscordReactionEvent implements BotEvent {
     private ReactionEvent event;
-    public DiscordReactionEvent(ReactionEvent event){
+    public DiscordReactionEvent(ReactionEvent event) {
         this.event = event;
     }
-    public Reaction getReaction(){
+    public Reaction getReaction() {
         return Reaction.getReaction(this.event.getReaction());
     }
-    public User getUser(){
+    public User getUser() {
         return User.getUser(this.event.getUser());
     }
-    public Message getMessage(){
+    public Message getMessage() {
         return Message.getMessage(this.event.getMessage());
     }
-    public boolean addingReaction(){
+    public boolean addingReaction() {
         return this.event instanceof ReactionAddEvent;
     }
 }

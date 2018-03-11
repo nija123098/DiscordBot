@@ -25,7 +25,7 @@ public class StatsCommand extends AbstractCommand {
         super("stats", ModuleLevel.DEVELOPMENT, "guildstats", null, "Shows statistics about the overall bot");
     }
     @Command
-    public void command(MessageMaker maker, String s){
+    public void command(MessageMaker maker, String s) {
         maker.mustEmbed().getTitle().clear().appendRaw(EmoticonHelper.getChars("chart_with_upwards_trend",false) + " Evelyn Stats");
         maker.appendRaw(getTotalTable(s.startsWith("mini")));
     }

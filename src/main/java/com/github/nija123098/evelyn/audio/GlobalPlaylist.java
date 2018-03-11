@@ -57,7 +57,7 @@ public class GlobalPlaylist extends Playlist {
     }
     private static final List<Track> TRACKS = new CopyOnWriteArrayList<>();
     private static int size = Integer.MAX_VALUE;
-    private static void loadTracks(){
+    private static void loadTracks() {
         Map<Track, Double> map = new HashMap<>();
         List<Track> list = ConfigHandler.getTypeInstances(Track.class);
         list.stream().filter(track -> !ConfigHandler.getSetting(BannedTrackConfig.class, track)).forEach(track -> map.put(track, Math.log(Math.min(1, FavorHandler.getFavorAmount(track)))));

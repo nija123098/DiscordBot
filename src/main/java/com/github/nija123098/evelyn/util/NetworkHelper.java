@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class NetworkHelper {
     private static final UrlValidator VALIDATOR = new UrlValidator(new String[]{"http", "https"});
     private static final Map<String, Boolean> CACHE = new ConcurrentHashMap<>();
-    public static String stripProtocol(String s){
+    public static String stripProtocol(String s) {
         if (s.startsWith("http")) {
             s = s.substring(4);
             if (s.startsWith("s")) s = s.substring(1);
@@ -23,7 +23,7 @@ public class NetworkHelper {
         }
         return s;
     }
-    public static boolean isValid(String url){
+    public static boolean isValid(String url) {
         if (url.startsWith("http:")) url = "https" + url.substring(4, url.length());
         else if (!url.startsWith("http")) url = "https://" + url;
         String urlFinal = url;

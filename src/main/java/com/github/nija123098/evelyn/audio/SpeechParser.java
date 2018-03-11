@@ -60,7 +60,7 @@ public class SpeechParser implements IAudioReceiver {
     private static final InitBuffer<StreamSpeechRecognizer> SPEECH_RECOGNIZER_BUFFER;
     private static final Map<Guild, Map<User, SpeechParser>> PARSER_MAP;
     static {
-        if (ConfigProvider.BOT_SETTINGS.voiceCommandsEnabled()){
+        if (ConfigProvider.BOT_SETTINGS.voiceCommandsEnabled()) {
             PARSER_MAP = new ConcurrentHashMap<>();
             Configuration configuration = new Configuration();
             configuration.setAcousticModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us");
@@ -68,7 +68,7 @@ public class SpeechParser implements IAudioReceiver {
             configuration.setLanguageModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us.lm.bin");
             SPEECH_RECOGNIZER_BUFFER = new InitBuffer<>(2, () -> {
                 try{return new StreamSpeechRecognizer(configuration);
-                } catch (IOException e){
+                } catch (IOException e) {
                     Log.log("IOException while making speech recognizer instance", e);
                     return null;
                 }
@@ -79,7 +79,7 @@ public class SpeechParser implements IAudioReceiver {
             PARSER_MAP = null;
         }
     }
-    public static void init(){}
+    public static void init() {}
     private boolean lon;
     private final User user;
     private final GuildAudioManager audioManager;
@@ -102,7 +102,7 @@ public class SpeechParser implements IAudioReceiver {
     @Override
     public synchronized void receive(byte[] audio, IUser user, char sequence, int timestamp) {
         if (this.lon) return;
-        if (this.bytes.size() >= 1_000_000){
+        if (this.bytes.size() >= 1_000_000) {
             this.bytes.clear();
             this.lon = true;
             return;
@@ -114,7 +114,7 @@ public class SpeechParser implements IAudioReceiver {
     /**
      * Clears the user's data and attempts parsing if enough data was given.
      */
-    private synchronized void onStop(){
+    private synchronized void onStop() {
         if (this.lon) {
             this.lon = false;
             return;
@@ -128,7 +128,7 @@ public class SpeechParser implements IAudioReceiver {
     /**
      * De-registers the instance as a {@link IAudioReceiver}.
      */
-    private void close(){
+    private void close() {
         this.audioManager.getGuild().guild().getAudioManager().unsubscribeReceiver(this);
     }
 
@@ -138,7 +138,7 @@ public class SpeechParser implements IAudioReceiver {
      * @param file the file to write the current data to.
      * @return the input file.
      */
-    private File write(File file){
+    private File write(File file) {
         byte[] bytes = new byte[this.bytes.size()];
         for (int i = 0; i < this.bytes.size(); i++) {
             bytes[i] = this.bytes.get(i);
@@ -161,7 +161,7 @@ public class SpeechParser implements IAudioReceiver {
      * @param bitrate the bitrate of the incoming audio.
      * @return the input file.
      */
-    private static File alter(File file, int bitrate){
+    private static File alter(File file, int bitrate) {
         File ret = new File(file.getPath().replace(".pcm", ".wav"));
         if (ret.exists()) ret.delete();
         List<String> command = new ArrayList<>();
@@ -203,7 +203,7 @@ public class SpeechParser implements IAudioReceiver {
      * @param file the file to scan voice data for.
      * @return the {@link String} representation of what the user said.
      */
-    private static String scan(File file){
+    private static String scan(File file) {
         AtomicReference<String> reference = new AtomicReference<>();
         SPEECH_RECOGNIZER_BUFFER.borrow(recognizer -> {
             try {
@@ -221,7 +221,7 @@ public class SpeechParser implements IAudioReceiver {
         });
         return reference.get();
     }
-    private void process(String s){
+    private void process(String s) {
         if (s == null || s.isEmpty()) return;
         CommandHandler.attemptInvocation(s, this.user, this.audioManager);
     }
@@ -232,19 +232,19 @@ public class SpeechParser implements IAudioReceiver {
      * @param event the speaking detection event.
      */
     @EventListener
-    public static void handle(DiscordSpeakingEvent event){
+    public static void handle(DiscordSpeakingEvent event) {
         if (!PARSER_MAP.containsKey(event.getGuild())) return;
         SpeechParser parser = PARSER_MAP.computeIfAbsent(event.getGuild(), c -> new ConcurrentHashMap<>()).get(event.getUser());
         if (parser != null && !event.isSpeaking()) PARSER_POOL.submit(parser::onStop);
     }
     @EventListener
-    public static void handle(DiscordVoiceJoin event){
+    public static void handle(DiscordVoiceJoin event) {
         if (!event.getChannel().isConnected()) return;
-        if (DiscordClient.getOurUser().equals(event.getUser())){
+        if (DiscordClient.getOurUser().equals(event.getUser())) {
             if (GuildAudioManager.getManager(event.getChannel(), false) == null) return;
             boolean found = false;
-            for (User user : event.getChannel().getConnectedUsers()){// break as soon as match is found
-                if (!user.isBot() && ALLOW_PARSER.test(user)){
+            for (User user : event.getChannel().getConnectedUsers()) {// break as soon as match is found
+                if (!user.isBot() && ALLOW_PARSER.test(user)) {
                     found = true;
                     break;
                 }
@@ -257,14 +257,14 @@ public class SpeechParser implements IAudioReceiver {
             else if (BotRole.SUPPORTER.hasRole(event.getUser(), null)) register(event.getGuild(), event.getChannel().getConnectedUsers());
         }
     }
-    private static void register(Guild guild, List<User> users){
+    private static void register(Guild guild, List<User> users) {
         GuildAudioManager manager = GuildAudioManager.getManager(guild);
         PARSER_MAP.put(guild, users.stream().filter(user -> !user.isBot()).collect(Collectors.toMap(Function.identity(), o -> new SpeechParser(o, manager))));
     }
     @EventListener
-    public static void handle(DiscordVoiceLeave event){
+    public static void handle(DiscordVoiceLeave event) {
         if (!PARSER_MAP.containsKey(event.getGuild())) return;
-        if (DiscordClient.getOurUser().equals(event.getUser())){
+        if (DiscordClient.getOurUser().equals(event.getUser())) {
             PARSER_MAP.remove(event.getGuild()).values().forEach(SpeechParser::close);
         } else {
             if (event.getUser().isBot()) return;

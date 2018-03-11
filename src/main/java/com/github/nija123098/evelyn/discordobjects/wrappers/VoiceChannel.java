@@ -13,13 +13,13 @@ import java.util.List;
  * @since 1.0.0
  */
 public class VoiceChannel extends Channel {
-    static VoiceChannel getVoiceChannel(String id){// I have no clue how this hasn't thrown any NumberFormatExceptions so far
+    static VoiceChannel getVoiceChannel(String id) {// I have no clue how this hasn't thrown any NumberFormatExceptions so far
         return (VoiceChannel) Channel.getChannel(id);
     }
-    public static VoiceChannel getVoiceChannel(IVoiceChannel channel){
+    public static VoiceChannel getVoiceChannel(IVoiceChannel channel) {
         return (VoiceChannel) Channel.getChannel(channel);
     }
-    static List<VoiceChannel> getVoiceChannels(List<IVoiceChannel> iVoiceChannel){
+    static List<VoiceChannel> getVoiceChannels(List<IVoiceChannel> iVoiceChannel) {
         List<VoiceChannel> users = new ArrayList<>(iVoiceChannel.size());
         iVoiceChannel.forEach(iUser -> users.add(getVoiceChannel(iUser)));
         return users;
@@ -27,7 +27,7 @@ public class VoiceChannel extends Channel {
     VoiceChannel(IVoiceChannel channel) {
         super(channel);
     }
-    public IVoiceChannel channel(){
+    public IVoiceChannel channel() {
         return (IVoiceChannel) this.reference.get();
     }
     // THE FOLLOWING ARE WRAPPER METHODS

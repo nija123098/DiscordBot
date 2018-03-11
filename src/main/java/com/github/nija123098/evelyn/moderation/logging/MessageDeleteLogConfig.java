@@ -20,7 +20,7 @@ public class MessageDeleteLogConfig extends AbstractConfig<Channel, Guild> {
         super("message_delete_log", "Message Delete Log", ConfigCategory.LOGGING, (Channel) null, "The location logs should be made for messages that are deleted");
     }
     @EventListener
-    public void handle(DiscordMessageDelete delete){
+    public void handle(DiscordMessageDelete delete) {
         Channel channel;
         if (delete.getMessage() == null || delete.getChannel().isPrivate() || delete.getMessage().getAuthor().isBot() || (channel = this.getValue(delete.getGuild())) == null) return;
         MessageMaker maker = new MessageMaker(channel).withColor(Color.GRAY).withAuthor(delete.getMessage().getAuthor()).append("Message deleted from ").appendRaw(delete.getAuthor().getDisplayName(delete.getGuild())).appendRaw(" ").append("in ").appendRaw(delete.getChannel().mention()).appendRaw("\n" + delete.getMessage().getMentionCleanedContent());

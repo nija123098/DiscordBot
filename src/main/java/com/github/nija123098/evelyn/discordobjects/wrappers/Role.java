@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
  */
 public class Role implements Configurable {
     private static final LoadingCache<IRole, Role> CACHE = CacheHelper.getLoadingCache(Runtime.getRuntime().availableProcessors() * 2, ConfigProvider.CACHE_SETTINGS.roleSize(), 120_000, Role::new);
-    public static Role getRole(String id){
+    public static Role getRole(String id) {
         try {
             IRole iRole = DiscordClient.getAny(client -> client.getRoleByID(Long.parseLong(FormatHelper.filtering(id, Character::isLetterOrDigit))));
             if (iRole == null) return null;
@@ -35,7 +35,7 @@ public class Role implements Configurable {
             return null;
         }
     }
-    public static Role getRole(IRole iRole){
+    public static Role getRole(IRole iRole) {
         return CACHE.getUnchecked(iRole);
     }
     public static List<Role> getRoles(List<IRole> iRoles) {
@@ -43,7 +43,7 @@ public class Role implements Configurable {
         iRoles.forEach(iUser -> roles.add(getRole(iUser)));
         return roles;
     }
-    public static void update(IRole iRole){// hash is based on id, so no old channel is necessary
+    public static void update(IRole iRole) {// hash is based on id, so no old channel is necessary
         Role r = CACHE.getIfPresent(iRole);
         if (r != null) r.reference.set(iRole);
     }
@@ -57,7 +57,7 @@ public class Role implements Configurable {
         this.ID = role.getStringID();
         this.registerExistence();
     }
-    IRole role(){
+    IRole role() {
         if (this.reference == null) this.reference = new AtomicReference<>(DiscordClient.getAny(client -> client.getRoleByID(Long.parseLong(ID))));
         return this.reference.get();
     }
@@ -68,19 +68,19 @@ public class Role implements Configurable {
     }
 
     @Override
-    public void checkPermissionToEdit(User user, Guild guild){
+    public void checkPermissionToEdit(User user, Guild guild) {
         BotRole.GUILD_TRUSTEE.checkRequiredRole(user, guild);
     }
 
     @Override
-    public Configurable getGoverningObject(){
+    public Configurable getGoverningObject() {
         return getGuild();
     }
 
     @Override
     public <T extends Configurable> Configurable convert(Class<T> t) {
         if (t.equals(Role.class)) return this;
-        if (this.getGuild().getEveryoneRole().equals(this)){
+        if (this.getGuild().getEveryoneRole().equals(this)) {
             if (t.equals(Guild.class)) return this.getGuild();
             if (t.equals(Channel.class) && this.getGuild().getGeneralChannel() != null) return this.getGuild().getGeneralChannel();
         }
@@ -97,7 +97,7 @@ public class Role implements Configurable {
         return this.role().hashCode();
     }
 
-    public List<User> getUsers(){
+    public List<User> getUsers() {
         Guild guild = this.getGuild();
         return guild.getUsers().stream().filter(user -> user.getRolesForGuild(guild).contains(this)).collect(Collectors.toList());
     }

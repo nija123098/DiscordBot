@@ -23,7 +23,7 @@ public class CustomCommandCommand extends AbstractCommand {
     }
     Guild temp;
     @Command
-    public void command(MessageMaker maker, Guild guild){
+    public void command(MessageMaker maker, Guild guild) {
         temp = guild;
         Set<String> strings = CustomCommandHandler.getCustomCommandNames(guild);
         if (strings.isEmpty()) maker.append("You haven't set up any custom commands yet!");

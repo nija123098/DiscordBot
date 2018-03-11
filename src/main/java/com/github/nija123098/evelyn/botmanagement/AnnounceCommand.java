@@ -33,9 +33,9 @@ public class AnnounceCommand extends AbstractCommand {
         //configure maker
         maker.withAuthorIcon(DiscordClient.getOurUser().getAvatarURL()).getAuthorName().clear().appendRaw("Evelyn Announcement");
         String[] textWithoutUrl;
-        if (!message.getAttachments().isEmpty()){
+        if (!message.getAttachments().isEmpty()) {
             maker.withImage(message.getAttachments().get(0).getUrl());
-        } else if (text.contains("|")){
+        } else if (text.contains("|")) {
             textWithoutUrl = text.split("\\|",2);
             maker.withImage(textWithoutUrl[0]);
             text = textWithoutUrl[1];
@@ -48,7 +48,7 @@ public class AnnounceCommand extends AbstractCommand {
         text = text.replace("\\n","\n");
 
         //check if the text would use a field part
-        if (text.contains(";")){
+        if (text.contains(";")) {
             String[] textWithSplit = text.split(";",2);
             maker.forceCompile().getHeader().clear().appendRaw("\u200B");
             maker.forceCompile().getNewFieldPart().withBoth(textWithSplit[0],textWithSplit[1] + "\n\n- " + user.getName()).getValue().appendRaw("\n\nClick " + FormatHelper.embedLink("here", ConfigProvider.URLS.discordInviteUrl()) + " to join the support server.");
@@ -63,7 +63,7 @@ public class AnnounceCommand extends AbstractCommand {
             //remove reactions
             try {
                 maker.clearReactionBehaviors();
-            } catch (ConcurrentModificationException IGNORE){ }
+            } catch (ConcurrentModificationException IGNORE) { }
             maker.sentMessage().getReactions().forEach(reactions -> maker.sentMessage().removeReaction(reactions));
 
         }));
@@ -74,7 +74,7 @@ public class AnnounceCommand extends AbstractCommand {
             //remove reactions
             try {
                 maker.clearReactionBehaviors();
-            } catch (ConcurrentModificationException IGNORE){ }
+            } catch (ConcurrentModificationException IGNORE) { }
             maker.sentMessage().getReactions().forEach(reactions -> maker.sentMessage().removeReaction(reactions));
 
             //announce the message on all servers
@@ -84,7 +84,7 @@ public class AnnounceCommand extends AbstractCommand {
             MessageMaker maker2 = maker;
             maker2.withoutReactionBehavior("green_tick");
             for (Channel channel : channels) {
-                if (channel.canPost()){
+                if (channel.canPost()) {
                     maker2.forceCompile().withChannel(channel).send();
                     maker2.forceCompile().clearMessage();
                 }

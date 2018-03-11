@@ -29,13 +29,13 @@ public class SoundCloudTrack extends DownloadableTrack {
     public String getCode() {
         return toCode(getSpecificID());
     }
-    private static String toID(String s){
+    private static String toID(String s) {
         return s.replace("/", "_");
     }
-    public static String toCode(String s){
+    public static String toCode(String s) {
         return s.replace("_", "/");
     }
-    public String getPreferredType(){
+    public String getPreferredType() {
         return "mp3";
     }
 }

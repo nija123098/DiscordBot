@@ -15,11 +15,11 @@ public class SubscribeInfoCommand extends AbstractCommand {
         super(SubscribeCommand.class, "info", null, null, null, "Shows the current subscriptions for the channel");
     }
     @Command
-    public static void command(@Argument(optional = true, replacement = ContextType.NONE, info = "The subscription to get info for") SubscriptionLevel level, MessageMaker maker){
+    public static void command(@Argument(optional = true, replacement = ContextType.NONE, info = "The subscription to get info for") SubscriptionLevel level, MessageMaker maker) {
         if (level != null) maker.append("Info on ").appendRaw(level.name() + ":\n").append(level.getInfo());
         else {
             maker.getTitle().append("All Possible Subscriptions");
-            for (SubscriptionLevel l : SubscriptionLevel.values()){
+            for (SubscriptionLevel l : SubscriptionLevel.values()) {
                 maker.getNewListPart().appendRaw(l.name() + ": ").append(l.getInfo());
             }
         }

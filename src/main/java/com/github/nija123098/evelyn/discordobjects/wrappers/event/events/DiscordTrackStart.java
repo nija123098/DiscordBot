@@ -13,7 +13,7 @@ public class DiscordTrackStart implements BotEvent {
     public DiscordTrackStart(TrackStartEvent event) {
         this.event = event;
     }
-    public Guild getGuild(){
+    public Guild getGuild() {
         return Guild.getGuild(this.event.getPlayer().getGuild());
     }
 }
