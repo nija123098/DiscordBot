@@ -12,6 +12,7 @@ import com.github.nija123098.evelyn.economy.configs.CurrencyNameConfig;
 import com.github.nija123098.evelyn.economy.configs.CurrencySymbolConfig;
 import com.github.nija123098.evelyn.economy.configs.CurrentCurrencyConfig;
 import com.github.nija123098.evelyn.exception.ArgumentException;
+import com.github.nija123098.evelyn.util.FormatHelper;
 
 /**
  * @author Soarnir
@@ -31,6 +32,6 @@ public class BankSendCommand extends AbstractCommand {
         if (senderCurrency < currencyTransfer) throw new ArgumentException("You need `\u200b " + symbol + " " + (currencyTransfer - senderCurrency) + " \u200b` more to perform this transaction.");
         ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, (senderCurrency - currencyTransfer));
         ConfigHandler.setSetting(CurrentCurrencyConfig.class, receiver, (receiverCurrency + senderCurrency));
-        maker.appendRaw("You successfully sent `\u200b " + symbol + " " + currencyTransfer + " \u200b`  to " + receiver.getDisplayName(guild)).mustEmbed();
+        maker.appendRaw(FormatHelper.embedLink(user.getDisplayName(guild), "") + " successfully sent `\u200b " + symbol + " " + currencyTransfer + " \u200b`  to " + FormatHelper.embedLink(receiver.getDisplayName(guild), "")).mustEmbed();
     }
 }
