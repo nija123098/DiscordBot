@@ -16,7 +16,7 @@ public class BlackJackCommand extends AbstractCommand {
         super("blackjack", ModuleLevel.FUN, "bj", null, "Play a game of blackjack!");
     }
     @Command
-    public void command(MessageMaker maker, User user){
+    public void command(MessageMaker maker, User user) {
         BlackJackGame game = BlackJackGame.getGame(user);
         if (game == null) maker.append("You are not playing a game, to start use !blackjack hit");
         else maker.append("You are still in a game. To finish type *blackjack stand*").appendRaw("\n" + game.toString());

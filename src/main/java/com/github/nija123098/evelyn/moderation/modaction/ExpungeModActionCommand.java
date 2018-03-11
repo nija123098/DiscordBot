@@ -31,7 +31,7 @@ public class ExpungeModActionCommand extends AbstractCommand {
         super(ModActionCommand.class, "expunge", "expunge", null, "e", "Totally eradicates a user's history on a server");
     }
     @Command
-    public void command(Guild guild, User user, @Argument(info = "The user to be kicked") User target, @Argument(optional = true, info = "The reason") String reason){
+    public void command(Guild guild, User user, @Argument(info = "The user to be kicked") User target, @Argument(optional = true, info = "The reason") String reason) {
         guild.banUser(target, 7, reason);// 7 is the max
         new AbstractModAction(guild, AbstractModAction.ModActionLevel.EXPUNGE, target, user, reason);
         MessageMaker maker = new MessageMaker(user).getTitle().append("Name Removal").getMaker()
@@ -50,7 +50,7 @@ public class ExpungeModActionCommand extends AbstractCommand {
         computeRound(maker, nameSet.get(0), removes);
         AtomicInteger set = new AtomicInteger(0);
         maker.withReactionBehavior("ok_hand", (add, reaction, u) -> {
-            if (set.incrementAndGet() > setSize){
+            if (set.incrementAndGet() > setSize) {
                 maker.clearReactionBehaviors().withReactionBehavior("+1", (a, r, us) -> {
                     maker.clearReactionBehaviors().send();
                     long joinDate = GuildUserJoinTimeConfig.get(GuildUser.getGuildUser(guild, target));
@@ -76,10 +76,10 @@ public class ExpungeModActionCommand extends AbstractCommand {
         new MessageMaker(target).append("You were expunged from " + guild.getName() + (reason == null || reason.isEmpty() ? "" :  " for " + reason)).send();
     }
     @Override
-    public long getCoolDown(Class<? extends Configurable> clazz){
+    public long getCoolDown(Class<? extends Configurable> clazz) {
         return 604_800_000;// 7 days
     }
-    private static void computeRound(MessageMaker maker, List<String> names, Set<String> removes){
+    private static void computeRound(MessageMaker maker, List<String> names, Set<String> removes) {
         maker.clearReactionBehaviors();
         int code = 97;
         names.forEach(s -> maker.getNewFieldPart().getTitle().append(String.valueOf(code)).getFieldPart().getValue().append(s).getMaker().withReactionBehavior("regional_indicator_" + String.valueOf(code), (add, reaction, u) -> {

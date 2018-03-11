@@ -16,7 +16,7 @@ public class GrantSystemAccessCommand extends AbstractCommand {
         super("grant system access", BotRole.BOT_ADMIN, ModuleLevel.BOT_ADMINISTRATIVE, null, null, "Grants the user system access");
     }
     @Command
-    public void command(@Argument(optional = true) User user){
+    public void command(@Argument(optional = true) User user) {
         Launcher.grantSystemAccess(user);
     }
 }

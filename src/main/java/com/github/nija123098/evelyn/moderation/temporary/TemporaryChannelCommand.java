@@ -20,7 +20,7 @@ public class TemporaryChannelCommand extends AbstractCommand {
         super("tempchannel", ModuleLevel.ADMINISTRATIVE, "temporary channel, temporarychannel, tempc, tempchan", null, "Makes a temporary channel which is deleted when activity dwindles");
     }
     @Command
-    public static void command(@Argument(optional = true, replacement = ContextType.NONE, info = "if it's a text channel") Boolean textChannel, @Argument(info = "The time until expire", replacement = ContextType.NONE) Time time, @Argument(info = "name") String name, Guild guild){
+    public static void command(@Argument(optional = true, replacement = ContextType.NONE, info = "if it's a text channel") Boolean textChannel, @Argument(info = "The time until expire", replacement = ContextType.NONE) Time time, @Argument(info = "name") String name, Guild guild) {
         if (textChannel == null) textChannel = true;
         long schedule = time == null ? 30_000 + System.currentTimeMillis() : time.schedualed();
         Channel channel = textChannel ? guild.createChannel(name) : guild.createVoiceChannel(name);

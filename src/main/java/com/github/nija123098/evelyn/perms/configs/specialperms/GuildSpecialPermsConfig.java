@@ -19,7 +19,7 @@ public class GuildSpecialPermsConfig extends AbstractConfig<SpecialPermsContaine
         Launcher.registerStartup(() -> RESET_ENDING = DiscordClient.getOurUser().getID() + "> reset yesimsure");
     }
     @EventListener
-    public void handle(DiscordMessageReceived event){
+    public void handle(DiscordMessageReceived event) {
         if (!event.getChannel().isPrivate() && event.getMessage().getContent().endsWith(RESET_ENDING)) this.setValue(event.getGuild(), null);
     }
 }

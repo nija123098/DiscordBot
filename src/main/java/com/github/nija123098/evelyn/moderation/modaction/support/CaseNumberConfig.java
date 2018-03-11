@@ -15,7 +15,7 @@ public class CaseNumberConfig extends AbstractConfig<Integer, Guild> {
     public CaseNumberConfig() {
         super("case_number", "", ConfigCategory.STAT_TRACKING, 0, "The case number for moderation actions");
     }
-    public static int incrament(Guild guild){
+    public static int incrament(Guild guild) {
         AtomicInteger i = new AtomicInteger();
         ConfigHandler.changeSetting(CaseNumberConfig.class, guild, integer -> i.addAndGet(1));
         return i.get();

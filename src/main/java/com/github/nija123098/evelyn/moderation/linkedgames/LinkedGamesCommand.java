@@ -16,7 +16,7 @@ public class LinkedGamesCommand extends AbstractCommand {
         super("linkedgames", ModuleLevel.ADMINISTRATIVE, "linked games, lg", null, "Shows the linked games of your server");
     }
     @Command
-    public void command(MessageMaker maker, Guild guild){
+    public void command(MessageMaker maker, Guild guild) {
         maker.getTitle().append("Linked Games");
         ConfigHandler.getSetting(GuildLinkedGamesConfig.class, guild).forEach(s -> maker.getNewListPart().appendRaw(s));
     }
