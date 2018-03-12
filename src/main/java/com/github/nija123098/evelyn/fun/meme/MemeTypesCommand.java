@@ -4,7 +4,6 @@ import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
-import com.github.nija123098.evelyn.util.FormatHelper;
 import com.github.nija123098.evelyn.util.Log;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -52,6 +51,7 @@ public class MemeTypesCommand extends AbstractCommand {
                 }
             }
         } catch (IOException e) {
-            Log.log("Exception loading meme types", e);}
+            Log.log("Exception loading meme types", e);
+        }
     }
 }
