@@ -25,11 +25,15 @@ public class WhoAreCommand extends AbstractCommand {
     public void command(@Argument Role role, Guild guild, MessageMaker maker) {
         List<User> users = role.getUsers();
         maker.getTitle().appendRaw("Users with the " + role.getName() + " role");
-        maker.append("There " + (users.size() > 1 ? "are " + users.size() + " users" : "is 1 user") + " with that role").appendRaw("\n");
-        maker.withColor(role);
-        users.stream().map(user -> {
-            String nick = user.getNickname(guild);
-            return nick == null ? user.getNameAndDiscrim() : nick + " AKA " + user.getNameAndDiscrim();
-        }).forEach(s -> maker.getNewListPart().appendRaw(s));
+        if (users.size() > 0) {
+            maker.append("There " + (users.size() > 1 ? "are " + users.size() + " users" : "is 1 user") + " with that role").appendRaw("\n");
+            maker.withColor(role);
+            users.stream().map(user -> {
+                String nick = user.getNickname(guild);
+                return nick == null ? user.getNameAndDiscrim() : nick + " AKA " + user.getNameAndDiscrim();
+            }).forEach(s -> maker.getNewListPart().appendRaw(s));
+        } else {
+            maker.appendRaw("There are no users with that role");
+        }
     }
 }

@@ -30,8 +30,10 @@ public class MemeCommand extends AbstractCommand {
 
     @Command
     public void command(MessageMaker maker, String[] args) {
+        maker.mustEmbed();
         if (args.length == 0) {
-            maker.append("Do @Evelyn <meme type> [top text] | [bottom text]\n");
+            maker.getTitle().clear().appendRaw("Meme Types");
+            maker.getNote().clear().appendRaw("Do @Evelyn <meme type> [top text] | [bottom text]");
             MemeTypesCommand.command(maker);
             return;
         }
@@ -52,9 +54,11 @@ public class MemeCommand extends AbstractCommand {
             }
         }
         try {// let exceptions get thrown
-            BufferedImage image = read(get("https://memegen.link/" + type + "/" + encode(topText, "UTF-8") + "/" + encode(botText, "UTF-8") + ".jpg").asStringAsync().get().getRawBody());
-            maker.withFile(getTempFile("memes", "jpg", type + "_" + encode(topText, "UTF-8") + "_" + encode(botText, "UTF-8"), file -> write(image, "png", file)));
-        } catch (IOException | ExecutionException | InterruptedException e) {
+            //BufferedImage image = read(get("https://memegen.link/" + type + "/" + encode(topText, "UTF-8") + "/" + encode(botText, "UTF-8") + ".jpg").asStringAsync().get().getRawBody());
+            //maker.withFile(getTempFile("memes", "jpg", type + "_" + encode(topText, "UTF-8") + "_" + encode(botText, "UTF-8"), file -> write(image, "png", file)));
+            maker.withImage("https://memegen.link/" + type + "/" + encode(topText, "UTF-8") + "/" + encode(botText, "UTF-8") + ".jpg");
+
+        } catch (IOException/* | ExecutionException | InterruptedException*/ e) {
             throw new DevelopmentException("Our meme service is having trouble right now", e);
         }
     }

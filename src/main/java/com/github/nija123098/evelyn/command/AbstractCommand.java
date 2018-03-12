@@ -61,7 +61,7 @@ public class AbstractCommand implements Tagable {
     private Set<AbstractCommand> subCommands;
     private final List<Tag> tags;
     private boolean prefixRequired = true;
-    private boolean okOnSuccess = true;
+    private boolean okOnSuccess = false;
     private boolean hasInLineTool = false;
 
     /**

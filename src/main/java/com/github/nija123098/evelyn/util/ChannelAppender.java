@@ -30,7 +30,7 @@ public class ChannelAppender<E> extends UnsynchronizedAppenderBase<E> {
             if (CHANNEL.get() == null) {
                 CHANNEL.set(Channel.getChannel(ConfigProvider.BOT_SETTINGS.loggingChannel()).channel());
             }
-            ExceptionWrapper.wrap(() -> CHANNEL.get().sendMessage(FormatHelper.limitLength(this.layout.doLayout(eventObject), 2000)));
+            ExceptionWrapper.wrap(() -> CHANNEL.get().sendMessage("```prolog\n" + FormatHelper.limitLength(this.layout.doLayout(eventObject), 1983) + "```"));
         }
     }
 }
