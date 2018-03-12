@@ -39,7 +39,6 @@ public class Launcher {
     private static final Set<Runnable> SHUTDOWNS = new HashSet<>();
     private static final AtomicBoolean IS_READY = new AtomicBoolean(), IS_STARTING_UP = new AtomicBoolean();
     private static final AtomicReference<ScheduledFuture<?>> SHUTDOWN_TASK = new AtomicReference<>();
-    private static final ScheduledExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadScheduledExecutor(r -> ThreadHelper.getDemonThreadSingle(r, "Shutdown-Thread"));
 
     /**
      * Registers a {@link Runnable} which will be run on startup
@@ -172,6 +171,7 @@ public class Launcher {
         ConfigHandler.initialize();//  changing
         ServiceHandler.initialize();// this order
         CommandHandler.initialize();// could break
+        ShiftChangeManager.waitForPredecessorShutdown();
         DiscordAdapter.initialize();// EVERYTHING
         IS_STARTING_UP.set(true);
         STARTUPS.forEach(Runnable::run);

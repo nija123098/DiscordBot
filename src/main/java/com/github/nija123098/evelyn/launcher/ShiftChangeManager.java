@@ -4,55 +4,40 @@ import com.github.nija123098.evelyn.util.CareLess;
 import com.github.nija123098.evelyn.util.Log;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.net.ServerSocket;
-import java.nio.ByteBuffer;
-import java.nio.channels.SocketChannel;
-import java.util.concurrent.atomic.AtomicReference;
+import java.net.Socket;
 
 public class ShiftChangeManager {
     private static final Integer PORT = 13123;
-    private static final AtomicReference<ServerSocket> SERVER_SOCKET = new AtomicReference<>();
-    private static final AtomicReference<SocketChannel> CONNECTION = new AtomicReference<>();
-    private static void setupConnection() throws IOException {
-        if (CONNECTION.get() != null && CONNECTION.get().isConnected()) return;
-        CONNECTION.set(SocketChannel.open(InetSocketAddress.createUnresolved("127.0.0.1", PORT)));
-    }
-    static {
-        Thread allowBootUp = new Thread(() -> {
+    public static void waitForPredecessorShutdown() {
+        try {
+            Socket socket = new Socket("127.0.0.1", PORT);
             try {
-                setupConnection();
-                if (CONNECTION.get() != null) {
-                    CONNECTION.get().write(ByteBuffer.wrap(new byte[]{1}));
-                }
+                socket.getInputStream().read();
             } catch (IOException e) {
-
+                Log.log("Predecessor shut down, preceding with startup");
+            }
+        } catch (IOException e) {
+            Log.log("No predecessor found, booting up uninterrupted");
+        }
+        Thread allowBootUp = new Thread(() -> {
+            ServerSocket serverSocket;
+            try {
+                serverSocket = new ServerSocket(PORT);
+                Socket sock = null;
+                try {
+                    sock = serverSocket.accept();
+                } catch (IOException e) {
+                    Log.log("IOException reading predecessor detection socket", e);
+                }
+                Launcher.shutdown(0, 100, true);
+                CareLess.lessSleep(600_000L);
+                if (sock != null) CareLess.something(sock::close);// Should never be reached
+            } catch (IOException e) {
+                Log.log("Issue with", e);
             }
         });
-        Runtime.getRuntime().addShutdownHook(allowBootUp);
-    }
-    public static void waitForPredicesorShutdown() {
-        try {
-            setupConnection();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    public static boolean waitForReplacement(long timeout){
-        try {
-            setupConnection();
-            ByteBuffer byteBuffer = ByteBuffer.allocate(1);
-            int length;
-            while (true) {
-                length = CONNECTION.get().read(byteBuffer);
-                if (length != 0) return true;
-                timeout -= 500;
-                CareLess.lessSleep(500);
-            }
-        } catch (IOException e) {
-            Log.log("Unexpected read exception from ");
-            return false;
-        }
+        allowBootUp.setDaemon(false);
+        allowBootUp.start();
     }
 }
