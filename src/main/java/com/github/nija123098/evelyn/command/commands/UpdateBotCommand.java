@@ -17,34 +17,32 @@ import com.github.nija123098.evelyn.util.PlatformDetector;
  */
 public class UpdateBotCommand extends AbstractCommand {
     public UpdateBotCommand() {
-        super("updatebot", ModuleLevel.DEVELOPMENT, "update", null, "Updates bot to latest git version.");
+        super("updatebot", ModuleLevel.DEVELOPMENT, "update, upgrade", null, "Updates bot to latest git version.");
     }
     @Command
     public void command(MessageMaker maker) {
-        String commandPrefix = null;
-
-        if (PlatformDetector.isWindows()) {
-            commandPrefix = "";
-        } else if (PlatformDetector.isMac()) {
-            commandPrefix = "sh ";
-        } else if (PlatformDetector.isUnix()) {
-            commandPrefix = "./";
-        }
-
-        maker.append("The bot will now download, compile and update itself from the latest version on GitHub." + "\n").mustEmbed();
-        ExecuteShellCommand.commandToExecute(commandPrefix + ConfigProvider.UPDATE_SCRIPTS.pullScript());
-        if (ExecuteShellCommand.getOutput().contains("Already up-to-date.")) {
-            maker.appendRaw("\n**The bot is already at the latest version. Aborting update sequence.**");
+        maker.append("Please wait while getting updates from the GIT repository").send();
+        ExecuteShellCommand.commandToExecute("git pull " + ConfigProvider.UPDATE_SETTINGS.updateFolder());
+        if (ExecuteShellCommand.getOutput().contains("fatal: not a git repository"))
+        {
+            maker.append("Please check the settings in the config files. The currently set directory is not a valid git directory.").send();
         } else {
-            maker.appendRaw("\n*GIT Pull Results:*\n" + PastebinUtil.postToPastebin("Pull Results", ExecuteShellCommand.getOutput()) + "\n");
-            ExecuteShellCommand.commandToExecute(commandPrefix + ConfigProvider.UPDATE_SCRIPTS.buildScript());
+            if (ExecuteShellCommand.getOutput().contains("Already up-to-date")) {
+                maker.append("Your local repository is already up to date.");
+            }
+            maker.append("Please wait while the update is compiled.");
+            ExecuteShellCommand.commandToExecute("mvn " + ConfigProvider.UPDATE_SETTINGS.mvnArgs());
             if (ExecuteShellCommand.getOutput().contains("BUILD SUCCESS")) {
-                maker.appendRaw("\n*Compilation Results:*\n" + PastebinUtil.postToPastebin("Compilation Results", ExecuteShellCommand.getOutput()) + "\n");
-                maker.append("\n**The bot will now restart to apply the updates.**").send();
-                ExecuteShellCommand.commandToExecute(commandPrefix + ConfigProvider.UPDATE_SCRIPTS.updateScript());
-                CareLess.lessSleep(10_000);
-                Launcher.shutdown(1, 0, false);
-            } else maker.appendRaw("\n**ERROR COMPILING BOT**. You can view the log here:\n" + PastebinUtil.postToPastebin("Compilation Error Log", ExecuteShellCommand.getOutput()));
+                maker.appendRaw("The project was compiled successfully. Now starting the new bot.");
+            } else {
+                maker.appendRaw("**The update was unsuccessful. Please view the build results here:**" + PastebinUtil.postToPastebin("Maven Compile Log", ExecuteShellCommand.getOutput()));
+            }
+            if (PlatformDetector.isUnix() || PlatformDetector.isWindows()) {
+                ExecuteShellCommand.commandToExecute("cp " + ConfigProvider.UPDATE_SETTINGS.updateFolder() + "target/DiscordBot-1.0.0.jar " + ConfigProvider.BOT_SETTINGS.botFolder() + "Evelyn.jar");
+                ExecuteShellCommand.commandToExecute(ConfigProvider.BOT_SETTINGS.startCommand());
+            } else if (PlatformDetector.isMac()) {
+                maker.append("I am sorry, I do not know the commands needed to make this work for macOS computers. Please manually update the bot.");
+            }
         }
     }
 }

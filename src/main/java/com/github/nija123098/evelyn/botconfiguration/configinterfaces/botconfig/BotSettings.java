@@ -19,4 +19,6 @@ public interface BotSettings {
     String loggingChannel();
     String guildLogChannel();
     String userAgent();
+    String botFolder();
+    String startCommand();
 }
