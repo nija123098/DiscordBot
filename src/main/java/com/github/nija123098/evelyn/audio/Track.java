@@ -110,6 +110,8 @@ public abstract class Track implements Configurable {
         //if (code != null) {
         //    return Collections.singletonList(Track.getTrack(TwitchTrack.class, code));
         //}
+        Track t = YTUtil.getTrack(s);
+        if (t != null) return Collections.singletonList(t);
         return new ArrayList<>(1);
     }
     private String id;

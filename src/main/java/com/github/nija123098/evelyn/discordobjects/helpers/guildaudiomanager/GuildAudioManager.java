@@ -277,9 +277,9 @@ public class GuildAudioManager extends AudioEventAdapter{
             if (current instanceof SpeechTrack) return;
             Channel channel = ConfigHandler.getSetting(MusicChannelConfig.class, this.getGuild());
             if (channel == null) return;
-            MessageMaker maker = new MessageMaker(channel);
             if (this.leaving) this.currentDisplays.forEach(Message::delete);
-            else{
+            else if (this.current != null){
+                MessageMaker maker = new MessageMaker(channel);
                 CurrentCommand.command(this.getGuild(), maker, current);
                 maker.send();
                 this.currentDisplays.add(maker.sentMessage());

@@ -8,11 +8,12 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordReactionEvent;
 import com.github.nija123098.evelyn.util.CacheHelper;
-import com.google.common.cache.LoadingCache;
+import com.google.common.cache.Cache;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
 
 /**
  * A utility class for preforming functions when specified reactions are called.
@@ -24,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @FunctionalInterface
 public interface ReactionBehavior {
     void behave(boolean add, Reaction reaction, User user);
-    LoadingCache<Message, Map<String, ReactionBehavior>> CACHE = CacheHelper.getLoadingCache(Runtime.getRuntime().availableProcessors() * 2, ConfigProvider.CACHE_SETTINGS.reactionBehaviorSize(), 120_000, k -> new ConcurrentHashMap<>());
+    Cache<Message, Map<String, ReactionBehavior>> CACHE = CacheHelper.getCache(Runtime.getRuntime().availableProcessors() * 2, ConfigProvider.CACHE_SETTINGS.reactionBehaviorSize(), 120_000);
 
     /**
      * Registers a listener to preform a
@@ -37,7 +38,9 @@ public interface ReactionBehavior {
         if (message == null) return;
         message.addReactionByName(emoticonName);
         if (CACHE.getIfPresent(message) == null) CACHE.put(message, new HashMap<>());
-        CACHE.getUnchecked(message).putIfAbsent(emoticonName, behavior);
+        try {
+            CACHE.get(message, ConcurrentHashMap::new).putIfAbsent(emoticonName, behavior);
+        } catch (ExecutionException ignored) {}
     }
 
     /**
@@ -73,7 +76,7 @@ public interface ReactionBehavior {
     @EventListener
     static void handle(DiscordReactionEvent reaction) {
         if (reaction.getUser() == null || reaction.getUser().isBot() || !reaction.getMessage().getAuthor().equals(DiscordClient.getOurUser())) return;
-        Map<String, ReactionBehavior> map = CACHE.getUnchecked(reaction.getMessage());
+        Map<String, ReactionBehavior> map = CACHE.getIfPresent(reaction.getMessage());
         if (map == null) return;
         ReactionBehavior behavior = map.get(reaction.getReaction().getName());
         if (behavior == null) return;
