@@ -17,7 +17,9 @@ public class ReactionCountConfig extends AbstractConfig<Integer, GuildUser> {
     }
     @EventListener
     public void handle(DiscordReactionEvent event) {
-        if (event.getMessage() == null || event.getMessage().getChannel().isPrivate()) return;
+        if (event.getMessage() == null || event.getUser().isBot() || event.getMessage().getChannel().isPrivate()) return;
+        GuildUser guildUser = GuildUser.getGuildUser(event.getMessage().getGuild(), event.getMessage().getAuthor());
+        if (guildUser == null) return;// Some user was banned
         FavorChangeEvent.process(event.getUser(), () -> this.changeSetting(GuildUser.getGuildUser(event.getMessage().getGuild(), event.getMessage().getAuthor()), integer -> {
             if (integer == null) integer = 0;
             return integer + (event.addingReaction() ? 1 : -1);

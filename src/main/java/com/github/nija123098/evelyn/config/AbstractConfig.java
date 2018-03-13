@@ -275,7 +275,8 @@ public class AbstractConfig<V, T extends Configurable> implements Tagable {
      * @return the value set to the config.
      */
     public V setValue(T configurable, V value) {
-        if (!(value == null || this.valueType.isInstance(value))) throw new ArgumentException("Attempted passing incorrect type of argument");
+        if (configurable == null) throw new DevelopmentException("Attempted to reset value for null configurable");
+        if (!this.valueType.isInstance(value)) throw new ArgumentException("Attempted passing incorrect type of argument");
         value = validateInput(configurable, value);
         if (this.cache != null) {
             if (value == null) this.nullCache.add(configurable);
@@ -307,6 +308,7 @@ public class AbstractConfig<V, T extends Configurable> implements Tagable {
      * @param configurable the configurable to reset the config value for.
      */
     public void reset(T configurable) {
+        if (configurable == null) throw new DevelopmentException("Attempted to reset value for null configurable");
         if (this.cache != null) {
             this.nullCache.remove(configurable);
             this.cache.remove(configurable);
@@ -320,7 +322,8 @@ public class AbstractConfig<V, T extends Configurable> implements Tagable {
      * @param configurable the configurable that the setting is being gotten for.
      * @return the config's value for the given {@link Configurable}.
      */
-    public V getValue(T configurable) {// slq here as well
+    public V getValue(T configurable) {
+        if (configurable == null) throw new DevelopmentException("Attempted to get value for null configurable");
         if (this.cache == null) return grabValue(configurable);
         V value = this.cache.get(configurable);
         if (value == null && !this.nullCache.contains(configurable)) {
