@@ -16,16 +16,16 @@ public class ExecuteShellCommand {
     private static String output;
 
     public static void commandToExecute(String command, String filePath) {
-        Runtime rt = Runtime.getRuntime();
+        output = null;
         Process p;
-        if (filePath==null) { filePath = ConfigProvider.BOT_SETTINGS.botFolder(); }
         String line;
+        if (filePath == null) { filePath = ConfigProvider.BOT_SETTINGS.botFolder(); }
         try {
-            p = rt.exec(command, null, new File(filePath));
-            p.waitFor(2, TimeUnit.MINUTES);
+            p = Runtime.getRuntime().exec(command, null, new File(filePath));
+            p.waitFor(1, TimeUnit.MINUTES);
             BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
             StringBuilder builder = new StringBuilder();
-            while ((line = reader.readLine()) != null) {
+            while ((line = reader.readLine()) !=null) {
                 builder.append(line).append("\n");
             }
             output = builder.toString();
