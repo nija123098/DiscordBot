@@ -13,7 +13,6 @@ import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.perms.BotRole;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -27,9 +26,9 @@ public class GuildUser implements Configurable {
     /**
      * The map containing guild user configurables.
      */
-    private static final Map<String, GuildUser> ID_CACHE = new HashMap<>();
+    private static final Map<String, GuildUser> ID_CACHE = new ConcurrentHashMap<>();
     private static final Map<Guild, Integer> NEXT_USER_INTEGER = new ConcurrentHashMap<>();
-    private static final Map<Guild, Map<User, String>> GUILD_MAP_CACHE = new HashMap<>();
+    private static final Map<Guild, Map<User, String>> GUILD_MAP_CACHE = new ConcurrentHashMap<>();
 
     static {
         EventDistributor.register(GuildUser.class);
@@ -59,7 +58,7 @@ public class GuildUser implements Configurable {
      * @return the guild user object for the guild and user.
      */
     public static GuildUser getGuildUser(String id) {
-        return ID_CACHE.computeIfAbsent(id, s -> {
+        GuildUser ret = ID_CACHE.computeIfAbsent(id, s -> {
             if (!id.startsWith("gu-")) return null;
             String[] split = id.split("-id-");
             Guild guild = Guild.getGuild(split[0].substring(3));
@@ -69,6 +68,11 @@ public class GuildUser implements Configurable {
             GUILD_MAP_CACHE.computeIfAbsent(guild, g -> new ConcurrentHashMap<>()).put(user, guildUser.getID());
             return guildUser;
         });
+        if (ret != null && !ret.isValid()) {
+            ret.invalidate();
+            return null;
+        }
+        return ret;
     }
 
     /**
@@ -80,11 +84,16 @@ public class GuildUser implements Configurable {
      */
     public static GuildUser getGuildUser(Guild guild, User user) {
         if (user == null || guild == null) return null;
-        return ID_CACHE.get(GUILD_MAP_CACHE.computeIfAbsent(guild, g -> new ConcurrentHashMap<>()).computeIfAbsent(user, u -> {
+        GuildUser ret =  ID_CACHE.get(GUILD_MAP_CACHE.computeIfAbsent(guild, g -> new ConcurrentHashMap<>()).computeIfAbsent(user, u -> {
             GuildUser guildUser = new GuildUser(guild, u);
             ID_CACHE.put(guildUser.getID(), guildUser);
             return guildUser.getID();
         }));
+        if (ret != null && !ret.isValid()) {
+            ret.invalidate();
+            return null;
+        }
+        return ret;
     }
 
     /**
@@ -173,5 +182,28 @@ public class GuildUser implements Configurable {
      */
     public User getUser() {
         return this.user;
+    }
+
+    /**
+     * Checks if the instance is still valid.
+     * A instance is invalid if the guild no longer exists
+     * or if the user is no longer in the guild.
+     *
+     * @return if the instance is still valid.
+     */
+    public boolean isValid() {
+        return this.guild.guild().getUsers().contains(DiscordClient.getOurUser().user()) && this.guild.guild().getUsers().contains(this.user.user());
+    }
+
+    /**
+     * Removes this instance from the caches.
+     */
+    public void invalidate() {
+        Map<User, String> map = GUILD_MAP_CACHE.get(this.guild);
+        if (map != null) {
+            map.remove(this.user);
+            if (map.isEmpty()) GUILD_MAP_CACHE.remove(this.guild);
+        }
+        ID_CACHE.remove(this.getID());
     }
 }
