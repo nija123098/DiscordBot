@@ -746,7 +746,7 @@ public class MessageMaker {
     private void send(int page) {
         if (ConfigProvider.BOT_SETTINGS.ghostModeEnabled()) return;
         if (!this.maySend) {
-            if (this.origin != null) ExceptionWrapper.wrap(() -> this.origin.addReaction(ReactionEmoji.of("ok_hand")));
+            if (this.origin != null) ExceptionWrapper.wrap(() -> this.origin.addReaction(ReactionEmoji.of(EmoticonHelper.getEmoji("ok_hand"))));
             return;
         }
         if (!this.channel.getModifiedPermissions(DiscordClient.getOurUser()).contains(DiscordPermission.SEND_MESSAGES)) return;// only will effect emoticon commands, normal commands are already checked

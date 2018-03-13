@@ -25,7 +25,6 @@ import java.util.stream.Stream;
 public class EventDistributor {
     private static final Map<Class<?>, Set<Listener>> LISTENER_MAP = new ConcurrentHashMap<>();
     private static final Map<Class<?>, List<Listener>> LISTENER_CASH = new ConcurrentHashMap<>();
-    private static final ExecutorService SCHEDULED_EXECUTOR_SERVICE = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors(), Runtime.getRuntime().availableProcessors() * 4, 2, TimeUnit.MINUTES, new LinkedBlockingQueue<>(400), r -> ThreadHelper.getDemonThread(r, "Event-Distributor-Thread"));
 
     /**
      * Registers a {@link Class} or {@link Object} listener
@@ -56,38 +55,35 @@ public class EventDistributor {
      * @param event the event to distribute.
      */
     public static void distribute(BotEvent event) {
-        SCHEDULED_EXECUTOR_SERVICE.submit(() -> {
-            try{
-                LISTENER_CASH.computeIfAbsent(event.getClass(), c -> {
-                    List<Listener> listeners = new ArrayList<>();
-                    ReflectionHelper.getAssignableTypes(c).forEach(cl -> {
-                        Set<Listener> newListeners = LISTENER_MAP.get(cl);
-                        if (newListeners != null) listeners.addAll(newListeners);
-                    });
-                    return listeners;
-                }).forEach(listener -> listener.handle(event));
-            } catch (Exception e) {
-                if (GhostException.isGhostCaused(e)) return;
-                throw e;
-            }
-        });
+        LISTENER_CASH.computeIfAbsent(event.getClass(), c -> {
+            List<Listener> listeners = new ArrayList<>();
+            ReflectionHelper.getAssignableTypes(c).forEach(cl -> {
+                Set<Listener> newListeners = LISTENER_MAP.get(cl);
+                if (newListeners != null) listeners.addAll(newListeners);
+            });
+            return listeners;
+        }).forEach(listener -> listener.handle(event));
     }
     private static class Listener<E extends BotEvent> {
+        private final ExecutorService executorService;
         Method m;
         Object o;
         Listener(Method m, Object o) {
             this.m = m;
             this.o = o;
+            this.executorService = new ThreadPoolExecutor(1, 2, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<>(50), r -> ThreadHelper.getDemonThreadSingle(r, this.m.getName() + "-Listener-Thread"), (r, executor) -> Log.log("Event of type " + this.m.getParameterTypes()[0] + " rejected execution from " + this.m));
         }
         void handle(E event) {
-            try {
-                this.m.invoke(this.o, event);
-            } catch (IllegalAccessException e) {
-                Log.log("This should never happen", e);
-            } catch (InvocationTargetException e) {
-                if (GhostException.isGhostCaused(e.getCause())) return;
-                Log.log("Exception while distributing event: " + this.m.getDeclaringClass().getName() + "#" + this.m.getName() + " - " + e.getCause().getMessage(), e);
-            }
+            this.executorService.execute(() -> {
+                try {
+                    this.m.invoke(this.o, event);
+                } catch (IllegalAccessException e) {
+                    Log.log("This should never happen", e);
+                } catch (InvocationTargetException e) {
+                    if (GhostException.isGhostCaused(e.getCause())) return;
+                    Log.log("Exception while distributing event: " + this.m.getDeclaringClass().getName() + "#" + this.m.getName() + " - " + e.getCause().getMessage(), e);
+                }
+            });
         }
     }
 }

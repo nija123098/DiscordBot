@@ -171,6 +171,7 @@ public class Message {// should not be kept stored, too many are made
     }
 
     private Reaction addReaction(ReactionEmoji reactionEmoji) {
+        if (ConfigProvider.BOT_SETTINGS.ghostModeEnabled()) throw new GhostException();
         try {
             ExceptionWrapper.wrap(() -> this.message().addReaction(reactionEmoji));
         } catch (PermissionsException ignored) {}// scilent falior here is acceptable
@@ -179,14 +180,17 @@ public class Message {// should not be kept stored, too many are made
 
     public void removeReaction(Reaction reaction) {
         if (reaction == null) return;
+        if (ConfigProvider.BOT_SETTINGS.ghostModeEnabled()) throw new GhostException();
         ExceptionWrapper.wrap(() -> this.message().removeReaction(DiscordClient.getOurUser().user(), reaction.reaction()));
     }
 
     public void removeReaction(String s) {
+        if (ConfigProvider.BOT_SETTINGS.ghostModeEnabled()) throw new GhostException();
         removeReaction(getReaction(s));
     }
 
     public void removeReactionByName(String name) {
+        if (ConfigProvider.BOT_SETTINGS.ghostModeEnabled()) throw new GhostException();
         removeReaction(getReactionByName(name));
     }
 

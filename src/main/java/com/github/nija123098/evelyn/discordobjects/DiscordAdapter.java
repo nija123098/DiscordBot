@@ -38,6 +38,7 @@ import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.Reactio
 import sx.blah.discord.handle.impl.events.guild.role.RoleUpdateEvent;
 import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelMoveEvent;
 import sx.blah.discord.handle.impl.events.shard.ShardReadyEvent;
+import sx.blah.discord.handle.impl.events.user.PresenceUpdateEvent;
 import sx.blah.discord.handle.impl.events.user.UserUpdateEvent;
 import sx.blah.discord.handle.impl.obj.ReactionEmoji;
 import sx.blah.discord.handle.obj.ActivityType;
@@ -75,7 +76,7 @@ public class DiscordAdapter {
         Set<Class<? extends BotEvent>> classes = new Reflections(Launcher.BASE_PACKAGE + ".discordobjects.wrappers.event.events").getSubTypesOf(BotEvent.class);
         classes.remove(DiscordMessageReceived.class);
         EVENT_MAP = new HashMap<>(classes.size() + 2, 1);
-        classes.stream().filter(clazz -> !clazz.equals(DiscordMessageReceived.class)).filter(clazz -> !clazz.equals(DiscordUserLeave.class)).filter(clazz -> !clazz.isAssignableFrom(ReactionEvent.class)).map(clazz -> clazz.getConstructors()[0]).forEach(constructor -> EVENT_MAP.put((Class<? extends Event>) constructor.getParameterTypes()[0], (Constructor<? extends BotEvent>) constructor));
+        classes.stream().filter(clazz -> !clazz.isAssignableFrom(DiscordMessageReceived.class)).filter(clazz -> !clazz.isAssignableFrom(DiscordUserLeave.class)).filter(clazz -> !clazz.isAssignableFrom(ReactionEvent.class)).filter(clazz -> clazz.isAssignableFrom(PresenceUpdateEvent.class)).map(clazz -> clazz.getConstructors()[0]).forEach(constructor -> EVENT_MAP.put((Class<? extends Event>) constructor.getParameterTypes()[0], (Constructor<? extends BotEvent>) constructor));
         ClientBuilder builder = new ClientBuilder();
         builder.withToken(ConfigProvider.BOT_SETTINGS.botToken());
         builder.withMaximumDispatchThreads(2);
@@ -172,6 +173,10 @@ public class DiscordAdapter {
     @EventSubscriber
     public static void handle(ReactionEvent event) {// it's cleaner than the alternative
         EventDistributor.distribute(new DiscordReactionEvent(event));
+    }
+    @EventSubscriber
+    public static void handle(PresenceUpdateEvent event) {
+        if (!event.getUser().isBot()) EventDistributor.distribute(new DiscordPresenceUpdate(event));
     }
 
     /**
