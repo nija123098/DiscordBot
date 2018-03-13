@@ -31,7 +31,7 @@ public class UpdateBotCommand extends AbstractCommand {
                 maker.append("Your local repository is already up to date.");
             }
             maker.append("Please wait while the update is compiled.");
-            ExecuteShellCommand.commandToExecute("mvn " + ConfigProvider.UPDATE_SETTINGS.mvnArgs());
+            ExecuteShellCommand.commandToExecute("cd " + ConfigProvider.UPDATE_SETTINGS.updateFolder() + " && mvn " + ConfigProvider.UPDATE_SETTINGS.mvnArgs());
             if (ExecuteShellCommand.getOutput().contains("BUILD SUCCESS")) {
                 maker.appendRaw("The project was compiled successfully. Now starting the new bot.");
             } else {
