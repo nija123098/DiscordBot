@@ -5,8 +5,6 @@ import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
-import com.github.nija123098.evelyn.launcher.Launcher;
-import com.github.nija123098.evelyn.util.CareLess;
 import com.github.nija123098.evelyn.util.ExecuteShellCommand;
 import com.github.nija123098.evelyn.util.PastebinUtil;
 import com.github.nija123098.evelyn.util.PlatformDetector;
@@ -21,19 +19,21 @@ public class UpdateBotCommand extends AbstractCommand {
     }
     @Command
     public void command(MessageMaker maker) {
-        ExecuteShellCommand.commandToExecute("git -C " + ConfigProvider.UPDATE_SETTINGS.updateFolder() + " pull");
+        String mvnCommand = "cd " + ConfigProvider.UPDATE_SETTINGS.updateFolder() + " && mvn " + ConfigProvider.UPDATE_SETTINGS.mvnArgs();
+
+        ExecuteShellCommand.commandToExecute("git pull", ConfigProvider.UPDATE_SETTINGS.updateFolder());
         if (ExecuteShellCommand.getOutput().contains("fatal")) {
             maker.appendRaw("Please check the settings in the config files. There was an error in the update process:\n" + PastebinUtil.postToPastebin("Update Error", ExecuteShellCommand.getOutput()));
         } else if (ExecuteShellCommand.getOutput().contains("Already up-to-date")) {
             maker.append("The bot is already up to date. Aborting the update process");
         } else {
-            ExecuteShellCommand.commandToExecute("cd " + ConfigProvider.UPDATE_SETTINGS.updateFolder() + " && mvn " + ConfigProvider.UPDATE_SETTINGS.mvnArgs());
+            ExecuteShellCommand.commandToExecute("mvn " + ConfigProvider.UPDATE_SETTINGS.mvnArgs(), ConfigProvider.UPDATE_SETTINGS.updateFolder());
             if (!ExecuteShellCommand.getOutput().contains("BUILD SUCCESS")) {
                 maker.appendRaw("**The update was unsuccessful. Please view the build results here:**" + PastebinUtil.postToPastebin("Maven Compile Log", ExecuteShellCommand.getOutput()));
             }
             if (PlatformDetector.isUnix() || PlatformDetector.isWindows()) {
-                ExecuteShellCommand.commandToExecute("cp " + ConfigProvider.UPDATE_SETTINGS.updateFolder() + "target/DiscordBot-1.0.0.jar " + ConfigProvider.BOT_SETTINGS.botFolder() + "Evelyn.jar");
-                ExecuteShellCommand.commandToExecute(ConfigProvider.BOT_SETTINGS.startCommand());
+                ExecuteShellCommand.commandToExecute("cp " + ConfigProvider.UPDATE_SETTINGS.updateFolder() + "target/DiscordBot-1.0.0.jar " + ConfigProvider.BOT_SETTINGS.botFolder() + "Evelyn.jar", null);
+                ExecuteShellCommand.commandToExecute(ConfigProvider.BOT_SETTINGS.startCommand(), null);
                 maker.append("The bot has been updated. Please allow 1-2 minutes for changes to take effect.");
             } else if (PlatformDetector.isMac()) {
                 maker.append("I am sorry, I do not know the commands needed to make this work for macOS computers. Please manually update the bot.");

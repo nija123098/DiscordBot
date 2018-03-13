@@ -1,6 +1,7 @@
 package com.github.nija123098.evelyn.util;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.concurrent.TimeUnit;
@@ -10,17 +11,18 @@ import java.util.concurrent.TimeUnit;
  * @since 1.0.0
  */
 public class ExecuteShellCommand {
-    static String output;
+    private static String output;
 
-    public static void commandToExecute(String command) {
+    public static void commandToExecute(String command, String filePath) {
+        Runtime rt = Runtime.getRuntime();
         Process p;
         String line;
         try {
-            p = Runtime.getRuntime().exec(command);
-            p.waitFor(1, TimeUnit.MINUTES);
+            p = rt.exec(command, null, new File(filePath));
+            p.waitFor(2, TimeUnit.MINUTES);
             BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
             StringBuilder builder = new StringBuilder();
-            while ((line = reader.readLine()) !=null) {
+            while ((line = reader.readLine()) != null) {
                 builder.append(line).append("\n");
             }
             output = builder.toString();
