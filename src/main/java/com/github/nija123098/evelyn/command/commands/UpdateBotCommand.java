@@ -39,7 +39,7 @@ public class UpdateBotCommand extends AbstractCommand {
             }
             if (PlatformDetector.isUnix() || PlatformDetector.isWindows()) {
                 ExecuteShellCommand.commandToExecute("cp " + ConfigProvider.UPDATE_SETTINGS.updateFolder() + "target/DiscordBot-1.0.0.jar " + ConfigProvider.BOT_SETTINGS.botFolder() + "Evelyn.jar");
-                ExecuteShellCommand.commandToExecute(ConfigProvider.BOT_SETTINGS.startCommand());
+                ExecuteShellCommand.commandToExecute("cd " + ConfigProvider.BOT_SETTINGS.botFolder() + " && " + ConfigProvider.BOT_SETTINGS.startCommand());
             } else if (PlatformDetector.isMac()) {
                 maker.append("I am sorry, I do not know the commands needed to make this work for macOS computers. Please manually update the bot.");
             }

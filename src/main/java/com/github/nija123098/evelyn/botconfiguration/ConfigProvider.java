@@ -12,7 +12,7 @@ public class ConfigProvider {
 
     // Settings from botconfig.yaml
     public static final BotSettings BOT_SETTINGS = ConfigLoader.configurationProvider().bind("BotSettings", BotSettings.class);
-    public static final UpdateSettings UPDATE_SETTINGS = ConfigLoader.configurationProvider().bind("UpdateScripts", UpdateSettings.class);
+    public static final UpdateSettings UPDATE_SETTINGS = ConfigLoader.configurationProvider().bind("UpdateSettings", UpdateSettings.class);
     public static final DatabaseSettings DATABASE_SETTINGS = ConfigLoader.configurationProvider().bind("DatabaseSettings", DatabaseSettings.class);
     public static final AuthKeys AUTH_KEYS = ConfigLoader.configurationProvider().bind("AuthKeys", AuthKeys.class);
     public static final AudioSettings AUDIO_SETTINGS = ConfigLoader.configurationProvider().bind("AudioSettings", AudioSettings.class);
