@@ -43,7 +43,7 @@ public class HeraldConfig extends AbstractConfig<Boolean, Guild> {
         if (manager == null) return;
         GuildUser guildUser = getGuildUser(channel.getGuild(), user);
         if (!BUFFER.contains(guildUser))
-            manager.interrupt(new LangString(false, user.getDisplayName(channel.getGuild()) + " ").append(true, "has " + (join ? "joined" : "left") + " the channel"));
+            manager.interrupt(new LangString(false, user.getFriendlyDisplayName(channel.getGuild()) + " ").append(true, "has " + (join ? "joined" : "left") + " the channel"));
         BUFFER.add(guildUser);
     }
 

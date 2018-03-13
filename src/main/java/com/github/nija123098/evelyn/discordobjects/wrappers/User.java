@@ -10,6 +10,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.Discord
 import com.github.nija123098.evelyn.perms.BotRole;
 import com.github.nija123098.evelyn.util.CacheHelper;
 import com.github.nija123098.evelyn.util.FormatHelper;
+import com.github.nija123098.evelyn.util.StringHelper;
 import com.github.nija123098.evelyn.util.Time;
 import com.google.common.cache.LoadingCache;
 import sx.blah.discord.handle.obj.IUser;
@@ -118,6 +119,9 @@ public class User implements Configurable {
     public String getNameAndDiscrim() {
         return getName() + "#" + getDiscriminator();
     }
+    public String getFriendlyName() {
+        return StringHelper.makeUserFriendlyName(this.getName());
+    }
 
     public String getAvatar() {
         return user().getAvatar();
@@ -139,9 +143,17 @@ public class User implements Configurable {
         return guild == null ? user().getName() : user().getDisplayName(guild.guild());
     }
 
+    public String getFriendlyDisplayName(Guild guild) {
+        return StringHelper.makeUserFriendlyName(this.getDisplayName(guild));
+    }
+
     public String getNickname(Guild guild) {
         String nick = this.getDisplayName(guild);
         return this.getName().equals(nick) ? null : nick;
+    }
+
+    public String geFriendlyNickname(Guild guild) {
+        return StringHelper.makeUserFriendlyName(this.getNickname(guild));
     }
 
     public String mention() {

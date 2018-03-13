@@ -8,6 +8,7 @@ import org.apache.commons.text.similarity.LevenshteinDistance;
 
 import java.util.*;
 import java.util.function.BiFunction;
+import java.util.regex.Pattern;
 
 /**
  * @author nija123098
@@ -96,5 +97,40 @@ public class StringHelper {
             builder.append(splitter);
         }
         return builder.append(args[length]).toString();
+    }
+
+    public static String makeUserFriendlyName(String s) {
+        if (s.startsWith(Pattern.quote("["))) {// org filter
+            int tagSize = s.indexOf("]");
+            if (tagSize != -1 && tagSize < 6) {
+                s = s.substring(tagSize).trim();
+            }
+        }
+
+        int i;// x buffer filter
+        for (i = 0; i < s.length(); i++) {
+            if (Character.toLowerCase(s.charAt(i)) != 'x') break;
+        }
+        if (i != 0 && i < 4) {
+            boolean cancel = false;
+            for (int j = s.length() - i; j < s.length(); j++) {
+                if (Character.toLowerCase(s.charAt(j)) != 'x') {
+                    cancel = true;
+                    break;
+                }
+            }
+            if (!cancel) s = s.substring(i, s.length() - i);
+        }
+
+        if (s.toLowerCase().startsWith("the")) s = s.substring(3);// the filtering
+
+        // number filtering
+        for (i = s.length() - 1; i > -1; --i) {
+            if (Character.isLetter(s.charAt(i))) break;
+        }
+        String name = s.substring(0, i + 1);
+        if (name.isEmpty()) return s;
+
+        return FormatHelper.filtering(name.replace("_", " ").trim(), Character::isLetterOrDigit);
     }
 }
