@@ -25,7 +25,7 @@ public class UpdateBotCommand extends AbstractCommand {
         if (ExecuteShellCommand.getOutput().contains("fatal")) {
             maker.appendRaw("Please check the settings in the config files. There was an error in the update process:\n" + PastebinUtil.postToPastebin("Update Error", ExecuteShellCommand.getOutput()));
         } else if (ExecuteShellCommand.getOutput().contains("Already up-to-date")) {
-            maker.append("The bot is already at the current version. Aborting the update process");
+            maker.append("The bot is already up to date. Aborting the update process");
         } else {
             ExecuteShellCommand.commandToExecute("cd " + ConfigProvider.UPDATE_SETTINGS.updateFolder() + " && mvn " + ConfigProvider.UPDATE_SETTINGS.mvnArgs());
             if (!ExecuteShellCommand.getOutput().contains("BUILD SUCCESS")) {
