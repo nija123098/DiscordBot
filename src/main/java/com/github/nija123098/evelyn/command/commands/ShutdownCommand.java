@@ -1,5 +1,6 @@
 package com.github.nija123098.evelyn.command.commands;
 
+import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ContextPack;
 import com.github.nija123098.evelyn.command.ModuleLevel;
@@ -24,7 +25,7 @@ public class ShutdownCommand extends AbstractCommand {
     }
     @Command
     public void command(ContextPack pack, MessageMaker maker) {
-        maker.appendRaw("The bot will now shutdown.\n Please note that you will need to **Manually** start the bot again.");
+        maker.appendRaw("The bot will now shutdown.\n Please note that you will need to **Manually** start the bot again with the following command:\n```" + ConfigProvider.BOT_SETTINGS.startCommand() + "```");
         Template template = TemplateHandler.getTemplate(KeyPhrase.REBOOT_NOTIFICATION, null, Collections.emptyList());
         SubscriptionLevel.BOT_STATUS.send(new MessageMaker((Channel) null).append(template == null ? "I'm going to go reboot" : template.interpret(pack)));
         Launcher.shutdown(1, 0, false);
