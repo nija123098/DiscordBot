@@ -5,6 +5,9 @@ import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
+import com.github.nija123098.evelyn.util.EmoticonHelper;
+import com.github.nija123098.evelyn.util.Log;
+import sx.blah.discord.handle.impl.obj.ReactionEmoji;
 
 import java.awt.*;
 
@@ -13,28 +16,26 @@ import java.awt.*;
  * @since 1.0.0
  */
 public class EmbedCommand extends AbstractCommand {
-
-    //constructor
     public EmbedCommand() {
         super("embed", ModuleLevel.BOT_ADMINISTRATIVE, null, null, "Embeds the given string, must use the format in description.");
     }
 
     @Command
     public void embed(@Argument String s, MessageMaker maker) {
-        //configure maker
+        // configure maker
         maker.withAutoSend(false);
         maker.mustEmbed();
 
-        //account for special characters
+        // account for special characters
         s = s.replaceAll("u200b", "\u200B");
 
-        //split original string into embed fields
+        // split original string into embed fields
         String[] s2 = s.split("]]");
 
-        //initialize reaction array
+        // initialize reaction array
         String[] r = null;
 
-        //assign fields
+        // assign fields
         for (int i = 0; i < s2.length; i++){
             if (s2[i].startsWith("m[[") || s2[i].startsWith(" m[[")) {
                 s2[i] = s2[i].replace("m[[", "");
@@ -88,7 +89,7 @@ public class EmbedCommand extends AbstractCommand {
         }
         maker.send();
 
-        //add reactions for the sent message if available
+        // add reactions for the sent message if available
         if (r != null) {
             for (int i = 0; i < r.length; i++){
                 r[i] = r[i].replaceAll("<", "");
@@ -98,11 +99,11 @@ public class EmbedCommand extends AbstractCommand {
         }
     }
 
-    //help command override description
+    // help command override description
     @Override
     public String getHelp() {
 
-        //command description:
+        // command description:
         return
                 "#  Do not add \\n outside the brackets for an option\n\n#  You can use \"u200b\" to add a zero width character\n\n#  Format help:\n\n// t[[TITLE]]\n// m[[MESSAGE]]\n// foo[[FOOTER]]\n// n[[NOTE]]\n// nimg[[NOTE IMAGE]]\n// img[[IMAGE]]\n// a[[AUTHOR]]\n// aimg[[AUTHOR IMAGE]]\n// fp[[FIELD PART TITLE,,,TEXT]]\n// fpi[[INLINE FIELD PART TITLE,,,TEXT]]\n// thumb[[THUMBNAIL]]\n// c[[R,G,B]]\n// r[[EMOTE,EMOTE]]";
     }
