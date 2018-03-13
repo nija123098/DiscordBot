@@ -22,16 +22,16 @@ public class UpdateBotCommand extends AbstractCommand {
 
         ExecuteShellCommand.commandToExecute("git pull", ConfigProvider.UPDATE_SETTINGS.updateFolder());
         if (ExecuteShellCommand.getOutput().contains("Already up-to-date")) {
-            maker.append("The bot is already up to date. Aborting the update process");
+            maker.appendRaw("The bot is already up to date\n. *Aborting the update process*");
         } else {
             ExecuteShellCommand.commandToExecute("mvn " + ConfigProvider.UPDATE_SETTINGS.mvnArgs(), ConfigProvider.UPDATE_SETTINGS.updateFolder());
             if (ExecuteShellCommand.getOutput().contains("BUILD FAILED")) {
-                maker.appendRaw("**The update was unsuccessful. Please view the build results here:**" + PastebinUtil.postToPastebin("Maven Compile Log", ExecuteShellCommand.getOutput()));
+                maker.appendRaw("**The update was unsuccessful. Please view the build results here:**\n" + PastebinUtil.postToPastebin("Maven Compile Log", ExecuteShellCommand.getOutput()));
             } else {
                 if (PlatformDetector.isUnix() || PlatformDetector.isWindows()) {
                     ExecuteShellCommand.commandToExecute("cp " + ConfigProvider.UPDATE_SETTINGS.updateFolder() + "target/DiscordBot-1.0.0.jar " + ConfigProvider.BOT_SETTINGS.botFolder() + "Evelyn.jar", ConfigProvider.BOT_SETTINGS.botFolder());
                     ExecuteShellCommand.commandToExecute(ConfigProvider.BOT_SETTINGS.startCommand(), ConfigProvider.BOT_SETTINGS.botFolder());
-                    maker.append("The bot has been updated. Please allow 1-2 minutes for changes to take effect.");
+                    maker.append("The bot has been updated. Please allow 1-2 minutes for changes to take effect.\n");
                 } else if (PlatformDetector.isMac()) {
                     maker.append("I am sorry, I do not know the commands needed to make this work for macOS computers. Please manually update the bot.");
                 }
