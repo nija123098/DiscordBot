@@ -22,7 +22,7 @@ public class UpdateBotCommand extends AbstractCommand {
     @Command
     public void command(MessageMaker maker) {
         maker.append("Please wait while getting updates from the GIT repository").send();
-        ExecuteShellCommand.commandToExecute("git pull " + ConfigProvider.UPDATE_SETTINGS.updateFolder());
+        ExecuteShellCommand.commandToExecute("git -C " + ConfigProvider.UPDATE_SETTINGS.updateFolder() + " pull");
         if (ExecuteShellCommand.getOutput().contains("fatal: not a git repository"))
         {
             maker.append("Please check the settings in the config files. The currently set directory is not a valid git directory.").send();
