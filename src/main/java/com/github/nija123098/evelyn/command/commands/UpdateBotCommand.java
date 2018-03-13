@@ -22,8 +22,10 @@ public class UpdateBotCommand extends AbstractCommand {
     @Command
     public void command(MessageMaker maker) {
         ExecuteShellCommand.commandToExecute("git -C " + ConfigProvider.UPDATE_SETTINGS.updateFolder() + " pull");
-        if (!ExecuteShellCommand.getOutput().contains("Updating") || !ExecuteShellCommand.getOutput().contains("Already up-to-date") || ExecuteShellCommand.getOutput().contains("fatal")) {
-            maker.append("Please check the settings in the config files. There was an error in the update process:\n" + PastebinUtil.postToPastebin("Update Error", ExecuteShellCommand.getOutput())).send();
+        if (ExecuteShellCommand.getOutput().contains("fatal")) {
+            maker.appendRaw("Please check the settings in the config files. There was an error in the update process:\n" + PastebinUtil.postToPastebin("Update Error", ExecuteShellCommand.getOutput())).send();
+        } else if (ExecuteShellCommand.getOutput().contains("Already up-to-date")) {
+            maker.append("The bot is already current. Aborting update process").send();
         } else {
             ExecuteShellCommand.commandToExecute("cd " + ConfigProvider.UPDATE_SETTINGS.updateFolder() + " && mvn " + ConfigProvider.UPDATE_SETTINGS.mvnArgs());
             if (!ExecuteShellCommand.getOutput().contains("BUILD SUCCESS")) {
