@@ -23,20 +23,20 @@ public class UpdateBotCommand extends AbstractCommand {
     public void command(MessageMaker maker) {
         ExecuteShellCommand.commandToExecute("git -C " + ConfigProvider.UPDATE_SETTINGS.updateFolder() + " pull");
         if (ExecuteShellCommand.getOutput().contains("fatal")) {
-            maker.appendRaw("Please check the settings in the config files. There was an error in the update process:\n" + PastebinUtil.postToPastebin("Update Error", ExecuteShellCommand.getOutput())).send();
+            maker.appendRaw("Please check the settings in the config files. There was an error in the update process:\n" + PastebinUtil.postToPastebin("Update Error", ExecuteShellCommand.getOutput()));
         } else if (ExecuteShellCommand.getOutput().contains("Already up-to-date")) {
-            maker.append("The bot is already current. Aborting update process").send();
+            maker.append("The bot is already at the current version. Aborting the update process");
         } else {
             ExecuteShellCommand.commandToExecute("cd " + ConfigProvider.UPDATE_SETTINGS.updateFolder() + " && mvn " + ConfigProvider.UPDATE_SETTINGS.mvnArgs());
             if (!ExecuteShellCommand.getOutput().contains("BUILD SUCCESS")) {
-                maker.appendRaw("**The update was unsuccessful. Please view the build results here:**" + PastebinUtil.postToPastebin("Maven Compile Log", ExecuteShellCommand.getOutput())).send();
+                maker.appendRaw("**The update was unsuccessful. Please view the build results here:**" + PastebinUtil.postToPastebin("Maven Compile Log", ExecuteShellCommand.getOutput()));
             }
             if (PlatformDetector.isUnix() || PlatformDetector.isWindows()) {
                 ExecuteShellCommand.commandToExecute("cp " + ConfigProvider.UPDATE_SETTINGS.updateFolder() + "target/DiscordBot-1.0.0.jar " + ConfigProvider.BOT_SETTINGS.botFolder() + "Evelyn.jar");
                 ExecuteShellCommand.commandToExecute(ConfigProvider.BOT_SETTINGS.startCommand());
-                maker.append("The bot has been updated. Please allow 1-2 minutes for changes to take effect.").send();
+                maker.append("The bot has been updated. Please allow 1-2 minutes for changes to take effect.");
             } else if (PlatformDetector.isMac()) {
-                maker.append("I am sorry, I do not know the commands needed to make this work for macOS computers. Please manually update the bot.").send();
+                maker.append("I am sorry, I do not know the commands needed to make this work for macOS computers. Please manually update the bot.");
             }
         }
     }
