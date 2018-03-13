@@ -25,7 +25,7 @@ public class UpdateBotCommand extends AbstractCommand {
             maker.appendRaw("The bot is already up to date\n. *Aborting the update process*");
         } else {
             ExecuteShellCommand.commandToExecute("mvn " + ConfigProvider.UPDATE_SETTINGS.mvnArgs(), ConfigProvider.UPDATE_SETTINGS.updateFolder());
-            if (ExecuteShellCommand.getOutput().contains("BUILD FAILED")) {
+            if (ExecuteShellCommand.getOutput().contains("BUILD FAILURE")) {
                 maker.appendRaw("**The update was unsuccessful. Please view the build results here:**\n" + PastebinUtil.postToPastebin("Maven Compile Log", ExecuteShellCommand.getOutput()));
             } else {
                 if (PlatformDetector.isUnix() || PlatformDetector.isWindows()) {
