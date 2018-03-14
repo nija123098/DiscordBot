@@ -14,7 +14,7 @@ import static com.github.nija123098.evelyn.config.GuildUser.getGuildUser;
  */
 public class GuildUserJoinTimeConfig extends AbstractConfig<Long, GuildUser> {
     public GuildUserJoinTimeConfig() {
-        super("user_join_time", "", STAT_TRACKING, guildUser -> guildUser.getGuild().getJoinTimeForUser(guildUser.getUser()), "The first time a user joins a guild");
+        super("user_join_time", "", STAT_TRACKING, GuildUser::getJoinTime, "The first time a user joins a guild");
         config = this;
     }
 
@@ -23,7 +23,7 @@ public class GuildUserJoinTimeConfig extends AbstractConfig<Long, GuildUser> {
     public static long get(GuildUser guildUser) {
         Long aLong = config.getValue(guildUser);
         if (aLong == null) {
-            aLong = guildUser.getGuild().getJoinTimeForUser(guildUser.getUser());
+            aLong = guildUser.getJoinTime();
             config.setValue(guildUser, aLong);
         }
         return aLong;

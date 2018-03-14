@@ -317,7 +317,7 @@ public class Guild implements Configurable {
     }
 
     public long getJoinTimeForUser(User user) {
-        return Time.toMillis(guild().getJoinTimeForUser(user.user()));
+        return ExceptionWrapper.wrap((ExceptionWrapper.Request<Long>) () -> Time.toMillis(guild().getJoinTimeForUser(user.user())));
     }
 
     public Message getMessageByID(String s) {

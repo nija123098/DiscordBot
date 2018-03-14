@@ -5,16 +5,17 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventDistributor;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
-import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordGuildJoin;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordUserJoin;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordUserLeave;
 import com.github.nija123098.evelyn.exception.ConfigurableConvertException;
+import com.github.nija123098.evelyn.exception.DException;
 import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.perms.BotRole;
+import sx.blah.discord.handle.obj.IUser;
 
-import java.util.Arrays;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * The configurable for users in relation to a guild.
@@ -26,9 +27,9 @@ public class GuildUser implements Configurable {
     /**
      * The map containing guild user configurables.
      */
-    private static final Map<String, GuildUser> ID_CACHE = new ConcurrentHashMap<>();
-    private static final Map<Guild, Integer> NEXT_USER_INTEGER = new ConcurrentHashMap<>();
-    private static final Map<Guild, Map<User, String>> GUILD_MAP_CACHE = new ConcurrentHashMap<>();
+    private static final Map<String, GuildUser> ID_CACHE = new ConcurrentHashMap<>();// if these are changed to remove after an amount of time
+    private static final Map<Guild, Map<User, String>> GUILD_MAP_CACHE = new ConcurrentHashMap<>();// ordering will need to be redone.
+    private static final Set<Guild> ORDERED = new HashSet<>();
 
     static {
         EventDistributor.register(GuildUser.class);
@@ -37,18 +38,14 @@ public class GuildUser implements Configurable {
 
     @EventListener
     public static void handle(DiscordUserJoin join) {
-        NEXT_USER_INTEGER.compute(join.getGuild(), (guild, integer) -> getGuildUser(join.getGuild(), join.getUser()).number = ++integer);
+        if (!ORDERED.contains(join.getGuild())) return;
+        getGuildUser(join.getGuild(), join.getUser()).number = join.getGuild().getUserSize() - 1;
     }
 
     @EventListener
     public static void handle(DiscordUserLeave leave) {
-        ID_CACHE.remove(GUILD_MAP_CACHE.computeIfAbsent(leave.getGuild(), g -> new ConcurrentHashMap<>()).remove(leave.getUser()));
-        orderGuildUsers(leave.getGuild());
-    }
-
-    @EventListener
-    public static void handle(DiscordGuildJoin join) {
-        orderGuildUsers(join.getGuild());
+        ORDERED.remove(leave.getGuild());
+        new GuildUser(leave.getGuild(), leave.getUser()).invalidate();
     }
 
     /**
@@ -84,7 +81,7 @@ public class GuildUser implements Configurable {
      */
     public static GuildUser getGuildUser(Guild guild, User user) {
         if (user == null || guild == null) return null;
-        GuildUser ret =  ID_CACHE.get(GUILD_MAP_CACHE.computeIfAbsent(guild, g -> new ConcurrentHashMap<>()).computeIfAbsent(user, u -> {
+        GuildUser ret = ID_CACHE.get(GUILD_MAP_CACHE.computeIfAbsent(guild, g -> new ConcurrentHashMap<>()).computeIfAbsent(user, u -> {
             GuildUser guildUser = new GuildUser(guild, u);
             ID_CACHE.put(guildUser.getID(), guildUser);
             return guildUser.getID();
@@ -104,12 +101,14 @@ public class GuildUser implements Configurable {
      * @param guild the guild to order {@link GuildUser}s for.
      */
     private static void orderGuildUsers(Guild guild) {
-        Map<Long, GuildUser> map = new ConcurrentHashMap<>();
-        guild.getUsers().forEach(user -> map.put(guild.getJoinTimeForUser(user), getGuildUser(guild, user)));
-        Long[] longs = map.keySet().toArray(new Long[map.keySet().size()]);
-        Arrays.sort(longs);
-        for (int i = 0; i < longs.length; i++) map.get(longs[i]).number = i;
-        NEXT_USER_INTEGER.put(guild, longs.length - 1);
+        AtomicInteger atomicInteger = new AtomicInteger();
+        synchronized (GuildUser.class) {
+            guild.getUsers().stream().map(user -> GuildUser.getGuildUser(guild, user)).sorted((first, second) -> (int) (first.getJoinTime() - second.getJoinTime())).forEach(guildUser -> guildUser.number = atomicInteger.getAndIncrement());
+        }
+    }
+    private static void ensureOrdering(Guild guild) {
+        if (!ORDERED.add(guild)) return;
+        orderGuildUsers(guild);
     }
 
     private transient int number = -1;
@@ -134,7 +133,15 @@ public class GuildUser implements Configurable {
      * @return the position in which the user joined.
      */
     public int getJoinPosition() {
+        ensureOrdering(this.guild);
         return this.number;
+    }
+    public long getJoinTime() {
+        try {
+            return this.guild.getJoinTimeForUser(this.user);
+        } catch (DException e) {
+            return -1;
+        }
     }
     @Override
     public String getName() {
@@ -192,7 +199,8 @@ public class GuildUser implements Configurable {
      * @return if the instance is still valid.
      */
     public boolean isValid() {
-        return this.guild.guild().getUsers().contains(DiscordClient.getOurUser().user()) && this.guild.guild().getUsers().contains(this.user.user());
+        List<IUser> users = this.guild.guild().getUsers();
+        return users.contains(DiscordClient.getOurUser().user()) && users.contains(this.user.user());
     }
 
     /**

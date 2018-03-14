@@ -59,5 +59,6 @@ public class YoutubeTrack extends DownloadableTrack {
     }
     public void setName(String name) {
         this.name = name;
+        this.available = true;
     }
 }

@@ -38,7 +38,7 @@ public class FavorHandler {
             v += ConfigHandler.getSetting(ReactionFavorFactorConfig.class, guildUser.getGuild()) * ConfigHandler.getSetting(ReactionCountConfig.class, guildUser);
             v += ConfigHandler.getSetting(VoiceTimeFavorFactorConfig.class, guildUser.getGuild()) * ConfigHandler.getSetting(VoiceTimeConfig.class, guildUser);
             v += ConfigHandler.getSetting(GameTimeFavorFactorConfig.class, guildUser.getGuild()) * ConfigHandler.getSetting(PlayTimeFavorConfig.class, guildUser);
-            v += ConfigHandler.getSetting(TimeFavorFactorConfig.class, guildUser.getGuild()) * (System.currentTimeMillis() - guildUser.getGuild().getJoinTimeForUser(guildUser.getUser())) / 900000;
+            v += ConfigHandler.getSetting(TimeFavorFactorConfig.class, guildUser.getGuild()) * (System.currentTimeMillis() - guildUser.getJoinTime()) / 900000;
             return v;
         });
         add(User.class, user -> {

@@ -26,12 +26,12 @@ public class JoinWelcomeConfig extends AbstractConfig<Channel, Guild>{
         super("join_welcome", "Welcome Message", ConfigCategory.LOGGING, (Channel) null, "If the bot should welcome a user when they join");
     }
     @EventListener
-    public void handle(DiscordUserJoin leave) {
-        Channel channel = this.getValue(leave.getGuild());
+    public void handle(DiscordUserJoin join) {
+        Channel channel = this.getValue(join.getGuild());
         if (channel == null) return;
-        Template template = TemplateHandler.getTemplate(KeyPhrase.USER_JOIN, leave.getGuild(), Collections.emptyList());
+        Template template = TemplateHandler.getTemplate(KeyPhrase.USER_JOIN, join.getGuild(), Collections.emptyList());
         if (template == null) return;
-        GuildUser guildUser = GuildUser.getGuildUser(leave.getGuild(), leave.getUser());
-        new MessageMaker(channel).appendRaw(template.interpret(leave.getUser(), channel.getShard(), null, leave.getGuild(), null, null, ConfigHandler.getSetting(GuildUserJoinTimeConfig.class, guildUser) == leave.getGuild().getJoinTimeForUser(leave.getUser()), FavorHandler.getFavorAmount(leave.getUser()))).send();
+        GuildUser guildUser = GuildUser.getGuildUser(join.getGuild(), join.getUser());
+        new MessageMaker(channel).appendRaw(template.interpret(join.getUser(), channel.getShard(), null, join.getGuild(), null, null, ConfigHandler.getSetting(GuildUserJoinTimeConfig.class, guildUser) == guildUser.getJoinTime(), FavorHandler.getFavorAmount(join.getUser()))).send();
     }
 }
