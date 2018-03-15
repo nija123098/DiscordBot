@@ -7,7 +7,6 @@ import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.command.annotations.Context;
 import com.github.nija123098.evelyn.config.*;
-import com.github.nija123098.evelyn.config.configs.guild.GuildPrefixConfig;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Message;
@@ -15,7 +14,6 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.perms.BotRole;
 import com.github.nija123098.evelyn.tag.Tag;
 import com.github.nija123098.evelyn.tag.Tags;
-import com.github.nija123098.evelyn.util.FormatHelper;
 import com.github.nija123098.evelyn.util.LanguageHelper;
 
 import java.util.stream.Stream;
@@ -38,8 +36,8 @@ public class ConfigCommand extends AbstractCommand {
             C finalConfigurable = configurable;
             maker.getAuthorName().appendRaw(LanguageHelper.makePossessive(configurable.getName()) + " ").append(" Settings");
             if (configurable instanceof User || configurable instanceof Guild) maker.withAuthorIcon(configurable instanceof User ? ((User) configurable).getAvatarURL() : ((Guild) configurable).getIconURL());
-            //maker.getNote().append("To view " + (configurable instanceof User ? "server" : "user") + " settings use this command in a " + (configurable instanceof User ? "server" : "DM with me"));
-            maker.getNote().clear().append("To set a config use " + ConfigHandler.getSetting(GuildPrefixConfig.class, guild) + "set <SHORTNAME> <OPTION>");
+            maker.getNote().append("To view " + (configurable instanceof User ? "server" : "user") + " settings use this command in a " + (configurable instanceof User ? "server" : "DM with me"));
+            maker.getNote().append("\n To set a config use the set command");
             if (configCategory != null) configCategory.getConfigs().stream().filter(AbstractConfig::isNormalViewing).filter(abstractConfig -> abstractConfig.getConfigLevel() == finalConfigurable.getConfigLevel()).filter(abstractConfig -> abstractConfig.getBotRole().hasRequiredRole(user, guild)).forEach(abstractConfig -> maker.getNewFieldPart().withBoth(abstractConfig.getConfigCommandDisplay(), ConfigHandler.getExteriorSetting(abstractConfig.getName(), finalConfigurable)));
             else Stream.of(ConfigCategory.values()).filter(category -> category.getBotRole().hasRequiredRole(user, guild)).forEach(category -> {
                 if (finalConfigurable instanceof Guild) {

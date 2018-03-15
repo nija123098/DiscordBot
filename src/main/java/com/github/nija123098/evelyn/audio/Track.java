@@ -92,6 +92,7 @@ public abstract class Track implements Configurable {
      * @return the best related track instance for the given string.
      */
     public static List<Track> getTracks(String s) {// may want to move
+        if (s == null || s.isEmpty()) return Collections.emptyList();
         Track track = getTrack(s);
         if (track != null) return Collections.singletonList(track);
         String code = YTUtil.extractVideoCode(s);
@@ -110,7 +111,7 @@ public abstract class Track implements Configurable {
         //if (code != null) {
         //    return Collections.singletonList(Track.getTrack(TwitchTrack.class, code));
         //}
-        Track t = YTUtil.getTrack(s);
+        Track t = YTUtil.getTrack(s);// This should be ok
         if (t != null) return Collections.singletonList(t);
         return new ArrayList<>(1);
     }

@@ -74,6 +74,7 @@ public class DiscordAdapter {
     public static final AtomicBoolean PLAY_TEXT_UPDATE = new AtomicBoolean();
 
     static {
+        MessageMonitor.init();
         Set<Class<? extends BotEvent>> classes = new Reflections(Launcher.BASE_PACKAGE + ".discordobjects.wrappers.event.events").getSubTypesOf(BotEvent.class);
         classes.remove(DiscordMessageReceived.class);
         EVENT_MAP = new HashMap<>(classes.size() + 2, 1);

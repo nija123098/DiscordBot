@@ -70,6 +70,8 @@ public class MessageMonitor {
             Log.log("Could not load language filtering", e);
         }
     }
+    public static void init() {
+    }
     public static boolean monitor(DiscordMessageReceived received) {
         if (received.getChannel().isPrivate() || received.getGuild().getUserSize() < ConfigProvider.BOT_SETTINGS.messageFilteringServerSize() || received.getChannel().isNSFW() || received.getMessage().getContent() == null || received.getMessage().getContent().isEmpty()) return false;
         try{CHANNEL_MAP.computeIfAbsent(received.getChannel(), MessageMonitor::calculate).forEach(filter -> filter.checkFilter(received));
