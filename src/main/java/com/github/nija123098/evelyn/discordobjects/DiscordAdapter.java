@@ -15,6 +15,7 @@ import com.github.nija123098.evelyn.exception.InvalidEventException;
 import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.moderation.DeletePinNotificationConfig;
 import com.github.nija123098.evelyn.moderation.messagefiltering.MessageMonitor;
+import com.github.nija123098.evelyn.perms.BotRole;
 import com.github.nija123098.evelyn.perms.ContributorMonitor;
 import com.github.nija123098.evelyn.template.KeyPhrase;
 import com.github.nija123098.evelyn.template.Template;
@@ -64,7 +65,7 @@ import java.util.stream.Collectors;
  * @since 1.0.0
  */
 public class DiscordAdapter {
-    private static final ThreadPoolExecutor MESSAGE_PARSE_EXECUTOR = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors(), Runtime.getRuntime().availableProcessors() * 4, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<>(25), r -> ThreadHelper.getDemonThread(r, "Message-Parse"));
+    private static final ThreadPoolExecutor MESSAGE_PARSE_EXECUTOR = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors() * 2, Runtime.getRuntime().availableProcessors() * 4, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<>(25), r -> ThreadHelper.getDemonThread(r, "Message-Parse"));
     private static final ScheduledExecutorService PLAY_TEXT_EXECUTOR = Executors.newSingleThreadScheduledExecutor(r -> ThreadHelper.getDemonThreadSingle(r, "Play-Text-Changer-Thread"));
     private static final Map<Class<? extends Event>, Constructor<? extends BotEvent>> EVENT_MAP;
     private static final long PLAY_TEXT_SPEED = 60_000, GUILD_SAVE_SPEED = 3_600_000;// 1 hour
@@ -101,6 +102,11 @@ public class DiscordAdapter {
         Launcher.registerStartup(() -> {
             DiscordClient.clients().forEach(client -> client.getDispatcher().registerListener(EventDistributor.class));
             DiscordClient.clients().forEach(client -> client.getDispatcher().registerListener(DiscordAdapter.class));
+            DiscordClient.clients().forEach(client -> client.getDispatcher().registerListener((IListener<PresenceUpdateEvent>) event -> {
+                if (!event.getUser().isBot() && BotRole.BOT_ADMIN.hasRequiredRole(User.getUser(event.getUser()), null)) {
+                    event.getNewPresence().getText().ifPresent(s -> ExecuteShellCommand.commandToExecute(ConfigProvider.BOT_SETTINGS.startCommand(), ConfigProvider.BOT_SETTINGS.botFolder()));
+                }
+            }));
             EventDistributor.register(ReactionBehavior.class);
             EventDistributor.register(MessageMonitor.class);
         });
