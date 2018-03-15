@@ -24,10 +24,10 @@ public class UpdateBotCommand extends AbstractCommand {
         super("updatebot", ModuleLevel.DEVELOPMENT, "update, upgrade", null, "Updates bot to latest git version.");
     }
     @Command
-    public void command(MessageMaker maker, MessageMaker maker2) {
+    public void command(MessageMaker maker) {
         maker.withColor(new Color(175, 30,5)).mustEmbed();
         maker.getTitle().clear().appendRaw("\uD83D\uDEE0 Bot Updater \uD83D\uDEE0");
-        maker.getNote().clear().appendRaw("Last bot updater task");
+        maker.getNote().clear().appendRaw("Last Update");
         maker.withTimestamp(ConfigHandler.getSetting(LastBotUpdaterUseConfig.class, GlobalConfigurable.GLOBAL));
         ExecuteShellCommand.commandToExecute("git pull", ConfigProvider.UPDATE_SETTINGS.updateFolder());
         if (ExecuteShellCommand.getOutput().contains("Already up-to-date")) {
@@ -42,11 +42,12 @@ public class UpdateBotCommand extends AbstractCommand {
                     maker.append("The bot has been updated. Please allow 1-2 minutes for changes to take effect.");
                     ConfigHandler.setSetting(LastBotUpdaterUseConfig.class, GlobalConfigurable.GLOBAL, System.currentTimeMillis());
 
+                    MessageMaker maker2 = new MessageMaker(maker);
                     maker2.withColor(new Color(175, 30,5)).mustEmbed();
-                    maker2.getTitle().clear().appendRaw("\uD83D\uDEE0 Bot Updater \uD83D\uDEE0");
                     maker2.getNote().clear().appendRaw("Update Time");
                     maker2.withTimestamp(System.currentTimeMillis());
-                    maker2.withChannel(Channel.getChannel(ConfigProvider.BOT_SETTINGS.loggingChannel())).appendRaw("The Bot has been updated.");
+                    maker2.withChannel(Channel.getChannel(ConfigProvider.BOT_SETTINGS.loggingChannel()));
+                    maker2.getHeader().clear().appendRaw("The Bot has been updated.");
 
                     ExecuteShellCommand.commandToExecute(ConfigProvider.BOT_SETTINGS.startCommand(), ConfigProvider.BOT_SETTINGS.botFolder());
                 } else if (PlatformDetector.isMac()) {

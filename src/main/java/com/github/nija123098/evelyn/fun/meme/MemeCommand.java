@@ -2,7 +2,10 @@ package com.github.nija123098.evelyn.fun.meme;
 
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.annotations.Command;
+import com.github.nija123098.evelyn.config.ConfigHandler;
+import com.github.nija123098.evelyn.config.configs.guild.GuildPrefixConfig;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
+import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.exception.DevelopmentException;
 
 import java.awt.image.BufferedImage;
@@ -29,11 +32,11 @@ public class MemeCommand extends AbstractCommand {
     }
 
     @Command
-    public void command(MessageMaker maker, String[] args) {
+    public void command(MessageMaker maker, String[] args, Guild guild) {
         maker.mustEmbed();
         if (args.length == 0) {
             maker.getTitle().clear().appendRaw("Meme Types");
-            maker.getNote().clear().appendRaw("Do @Evelyn <meme type> [top text] | [bottom text]");
+            maker.getNote().clear().appendRaw("Use " + ConfigHandler.getSetting(GuildPrefixConfig.class, guild) + "meme <meme type> [top text] | [bottom text]");
             MemeTypesCommand.command(maker);
             return;
         }

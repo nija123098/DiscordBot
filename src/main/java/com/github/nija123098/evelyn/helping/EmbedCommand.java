@@ -1,10 +1,14 @@
 package com.github.nija123098.evelyn.helping;
 
 import com.github.nija123098.evelyn.command.AbstractCommand;
+import com.github.nija123098.evelyn.command.CommandHandler;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
+import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
+import com.github.nija123098.evelyn.discordobjects.wrappers.Message;
+import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
 import com.github.nija123098.evelyn.util.Log;
 import sx.blah.discord.handle.impl.obj.ReactionEmoji;
@@ -21,73 +25,111 @@ public class EmbedCommand extends AbstractCommand {
     }
 
     @Command
-    public void embed(@Argument String s, MessageMaker maker) {
+    public void embed(@Argument String s, MessageMaker maker, User user, Message msg) {
         // configure maker
         maker.withAutoSend(false);
         maker.mustEmbed();
 
-        // account for special characters
-        s = s.replaceAll("u200b", "\u200B");
+        //configure code message maker
+        MessageMaker code = new MessageMaker(maker);
+        code.getHeader().clear().appendRaw("```java\n");
+        boolean codeSend = false;
 
         // split original string into embed fields
+        s = s.replaceAll("]] ", "]]");
+        s = s.replace("\n", "\\n");
         String[] s2 = s.split("]]");
 
         // initialize reaction array
         String[] r = null;
 
         // assign fields
-        for (int i = 0; i < s2.length; i++){
+        for (int i = 0; i < s2.length; i++) {
             if (s2[i].startsWith("m[[") || s2[i].startsWith(" m[[")) {
                 s2[i] = s2[i].replace("m[[", "");
-                maker.getHeader().clear().append(s2[i]);
+                maker.getHeader().clear().append(translateSpecialCharacters(s2[i]));
+                code.getHeader().appendRaw("maker.getHeader().clear().append(\"" + cleanString(s2[i]) + "\");\n");
             } else if (s2[i].startsWith("t[[") || s2[i].startsWith(" t[[")) {
                 s2[i] = s2[i].replace("t[[", "");
-                maker.getTitle().clear().append(s2[i]);
+                maker.getTitle().clear().append(translateSpecialCharacters(s2[i]));
+                code.getHeader().appendRaw("maker.getTitle().clear().append(\"" + s2[i] + "\");\n");
             } else if (s2[i].startsWith("foo[[") || s2[i].startsWith(" foo[[")) {
                 s2[i] = s2[i].replace("foo[[", "");
-                maker.getFooter().clear().append(s2[i]);
+                maker.getFooter().clear().append(translateSpecialCharacters(s2[i]));
+                code.getHeader().appendRaw("maker.getFooter().clear().append(\"" + cleanString(s2[i]) + "\");\n");
             } else if (s2[i].startsWith("n[[") || s2[i].startsWith(" n[[")) {
                 s2[i] = s2[i].replace("n[[", "");
-                maker.getNote().clear().append(s2[i]);
+                maker.getNote().clear().append(translateSpecialCharacters(s2[i]));
+                code.getHeader().appendRaw("maker.getNote().clear().append(\"" + s2[i] + "\");\n");
             } else if (s2[i].startsWith("img[[") || s2[i].startsWith(" img[[")) {
                 s2[i] = s2[i].replace("img[[", "");
                 s2[i] = s2[i].replaceAll(" ", "");
                 maker.withImage(s2[i]);
+                code.getHeader().appendRaw("maker.withImage(\"" + s2[i] + "\");\n");
             } else if (s2[i].startsWith("nimg[[") || s2[i].startsWith(" nimg[[")) {
                 s2[i] = s2[i].replace("nimg[[", "");
                 s2[i] = s2[i].replaceAll(" ", "");
                 maker.withFooterIcon(s2[i]);
+                code.getHeader().appendRaw("maker.withFooterIcon(\"" + s2[i] + "\");\n");
             } else if (s2[i].startsWith("a[[") || s2[i].startsWith(" a[[")) {
                 s2[i] = s2[i].replace("a[[", "");
-                maker.getAuthorName().append(s2[i]);
+                maker.getAuthorName().append(translateSpecialCharacters(s2[i]));
+                code.getHeader().appendRaw("maker.getAuthorName().append(\"" + s2[i] + "\");\n");
             } else if (s2[i].startsWith("aimg[[") || s2[i].startsWith(" aimg[[")) {
                 s2[i] = s2[i].replace("aimg[[", "");
                 s2[i] = s2[i].replaceAll(" ", "");
                 maker.withAuthorIcon(s2[i]);
+                code.getHeader().appendRaw("maker.withAuthorIcon(\"" + s2[i] + "\");\n");
             } else if (s2[i].startsWith("fp[[") || s2[i].startsWith(" fp[[")) {
                 s2[i] = s2[i].replace("fp[[", "");
                 String[] sfp = s2[i].split(",,,");
-                maker.getNewFieldPart().withBoth(sfp[0], sfp[1]).withInline(false);
+                maker.getNewFieldPart().withBoth(translateSpecialCharacters(sfp[0]), translateSpecialCharacters(sfp[1])).withInline(false);
+                code.getHeader().appendRaw("maker.getNewFieldPart().withBoth(\"" + sfp[0] + "\", \"" + cleanString(sfp[1]) + "\").withInline(false);\n");
             } else if (s2[i].startsWith("fpi[[") || s2[i].startsWith(" fpi[[")) {
                 s2[i] = s2[i].replace("fpi[[", "");
                 String[] sfp = s2[i].split(",,,");
-                maker.getNewFieldPart().withBoth(sfp[0], sfp[1]).withInline(true);
+                maker.getNewFieldPart().withBoth(translateSpecialCharacters(sfp[0]), translateSpecialCharacters(sfp[1])).withInline(true);
+                code.getHeader().appendRaw("maker.getNewFieldPart().withBoth(\"" + sfp[0] + "\", \"" + cleanString(sfp[1]) + "\").withInline(true);\n");
             } else if (s2[i].startsWith("thumb[[") || s2[i].startsWith(" thumb[[")) {
                 s2[i] = s2[i].replace("thumb[[", "");
                 s2[i] = s2[i].replaceAll(" ", "");
                 maker.withThumb(s2[i]);
+                code.getHeader().appendRaw("maker.withThumb(\"" + s2[i] + "\");\n");
             } else if (s2[i].startsWith("c[[") || s2[i].startsWith(" c[[")) {
                 s2[i] = s2[i].replace("c[[", "");
                 s2[i] = s2[i].replaceAll(" ", "");
                 String[] rgb = s2[i].split(",");
                 maker.withColor(new Color(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2])));
+                code.getHeader().appendRaw("maker.withColor(new Color(" + rgb[0] + ", " + rgb[1] + ", " + rgb[2] + "));\n");
             } else if (s2[i].startsWith("r[[") || s2[i].startsWith(" r[[")) {
                 s2[i] = s2[i].replace("r[[", "");
                 s2[i] = s2[i].replaceAll(" ", "");
                 r = s2[i].split(",");
+            } else if (s2[i].startsWith("opt[[") || s2[i].startsWith(" opt[[")) {
+                s2[i] = s2[i].replace("opt[[", "");
+                s2[i] = s2[i].toLowerCase();
+                s2[i] = s2[i].replaceAll(" ", "");
+                String[] opt = s2[i].split(",");
+                for (int j = 0; j < opt.length; j++){
+                    if (opt[j].contains("userauthor")) {
+                        maker.withAuthor(user);
+                        code.getHeader().appendRaw("maker.withAuthor(user);\nmaker.withAuthorIcon(user.getAvatarURL());\n");
+                    } else if (opt[j].contains("timestamp")) {
+                        maker.withTimestamp(System.currentTimeMillis());
+                        code.getHeader().appendRaw("maker.withTimestamp(System.currentTimeMillis());\n");
+                    } else if (opt[j].contains("code")) {
+                        codeSend = true;
+                    } else if (opt[j].contains("deletecommand")) {
+                        msg.delete();
+                    }
+                }
             }
         }
         maker.send();
+        if (codeSend) {
+            code.getHeader().appendRaw("```");
+            code.send();
+        }
 
         // add reactions for the sent message if available
         if (r != null) {
@@ -99,12 +141,22 @@ public class EmbedCommand extends AbstractCommand {
         }
     }
 
-    // help command override description
+    // help command override
     @Override
     public String getHelp() {
 
         // command description:
-        return
-                "#  Do not add \\n outside the brackets for an option\n\n#  You can use \"u200b\" to add a zero width character\n\n#  Format help:\n\n// t[[TITLE]]\n// m[[MESSAGE]]\n// foo[[FOOTER]]\n// n[[NOTE]]\n// nimg[[NOTE IMAGE]]\n// img[[IMAGE]]\n// a[[AUTHOR]]\n// aimg[[AUTHOR IMAGE]]\n// fp[[FIELD PART TITLE,,,TEXT]]\n// fpi[[INLINE FIELD PART TITLE,,,TEXT]]\n// thumb[[THUMBNAIL]]\n// c[[R,G,B]]\n// r[[EMOTE,EMOTE]]";
+        return "#  Do not add a new line or \\n outside the brackets.\n\n#  Special character replacement:\n\n// \"\\u200b\": Zero width character.\n// \"\\n\": New line.\n\n#  Format help:\n\n// t[[TITLE]]\n// m[[MESSAGE]]\n// foo[[FOOTER]]\n// n[[NOTE]]\n// nimg[[NOTE IMAGE]]\n// img[[IMAGE]]\n// a[[AUTHOR]]\n// aimg[[AUTHOR IMAGE]]\n// fp[[FIELD PART TITLE,,,TEXT]]\n// fpi[[INLINE FIELD PART TITLE,,,TEXT]]\n// thumb[[THUMBNAIL]]\n// c[[R,G,B]]\n// r[[EMOTE,EMOTE]]\n// opt[[OPTION,OPTION]]\n\n#  Options:\n\n// \"userauthor\": Insert the user as the author.\n// \"timestamp\": Add timestamp.\n// \"code\": Post the raw code for the embed.\n// \"deletecommand\": Delete the user message.";
+    }
+
+    private String translateSpecialCharacters(String s) {
+        s = s.replace("\\u200b", "\u200b");
+        s = s.replace("\\n", "\n");
+        return s;
+    }
+
+    private String cleanString(String s) {
+        s = s.replace("```", "{CB}");
+        return s;
     }
 }
