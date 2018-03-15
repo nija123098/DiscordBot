@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class InLineCommandTool {
-    private static final int TIMEOUT = 300_000;
+    private static final long TIMEOUT = 300_000;
     private static final Map<Channel, Map<User, InLineCommandTool>> map = new ConcurrentHashMap<>();
     static {
         EventDistributor.register(InLineCommandTool.class);
@@ -30,14 +30,16 @@ public class InLineCommandTool {
         Map<User, InLineCommandTool> userMap = map.get(event.getChannel());
         if (userMap == null) return;
         InLineCommandTool tool = userMap.get(event.getAuthor());
-        if (tool != null) tool.handle(event.getMessage().getContent());
+        if (tool != null) tool.handle(event.getMessage());
     }
     private Thread thread;
     private ContextPack contextPack;
     private final AtomicReference<Class<?>> type = new AtomicReference<>();
     private final AtomicReference<Object> object = new AtomicReference<>();
     private final AtomicBoolean didFind = new AtomicBoolean(), allowDefault = new AtomicBoolean(), usingDefault = new AtomicBoolean();
-    private final MessageMaker messageMaker;
+    private MessageMaker messageMaker;
+    private MessageMaker issueMaker = null;
+    private boolean issue = false;
     public InLineCommandTool(ContextPack contextPack) {
         DiscordAdapter.increaseParserPoolSize();
         Map<User, InLineCommandTool> userMap = map.computeIfAbsent(contextPack.getChannel(), c -> new ConcurrentHashMap<>());
@@ -48,8 +50,10 @@ public class InLineCommandTool {
         this.messageMaker = new MessageMaker(this.contextPack.getUser(), this.contextPack.getMessage());
     }
 
-    public void handle(String message) {
+    public void handle(Message userMessage) {
+        String message = userMessage.getContent();
         if (message.equalsIgnoreCase("exit") || message.equalsIgnoreCase("e")) {
+            if (issueMaker != null) issueMaker.sentMessage().delete();
             this.release();
             throw new CommandExitException();
         }
@@ -59,27 +63,33 @@ public class InLineCommandTool {
             try {
                 this.object.set(InvocationObjectGetter.convert(this.type.get(), this.contextPack.getUser(), this.contextPack.getShard(), this.contextPack.getChannel(), this.contextPack.getGuild(), this.contextPack.getMessage(), this.contextPack.getReaction(), message).getKey());
                 this.didFind.set(true);
+                if (issue) issueMaker.sentMessage().delete();
+                userMessage.delete();
                 this.thread.interrupt();
             } catch (UserIssueException e) {
-                e.makeMessage(this.contextPack.getChannel()).append("\nPlease input a valid " + (this.type.get().isAnnotationPresent(LaymanName.class) ? this.type.get().getAnnotation(LaymanName.class).value() : this.type.get().getSimpleName()) + "\nType `exit` to exit the command process.").send();
+                if (issueMaker != null) issueMaker.sentMessage().delete();
+                issueMaker = e.makeMessage(this.contextPack.getChannel());
+                userMessage.delete();
+                issueMaker.append("\nPlease input a valid " + (this.type.get().isAnnotationPresent(LaymanName.class) ? this.type.get().getAnnotation(LaymanName.class).value() : this.type.get().getSimpleName()) + "\nType `exit` to exit the command process.").send();
+                issue = true;
             }
         }
     }
 
-    public <E> E requestValue(Class<E> e, String message) {
-        return this.requestValue(e, null, false, message);
+    public <E> E requestValue(Class<E> e, MessageMaker commandMaker) {
+        return this.requestValue(e, null, false, commandMaker);
     }
 
-    public <E> E requestValue(Class<E> e, E defaultValue, String message) {
-        return this.requestValue(e, defaultValue, true, message);
+    public <E> E requestValue(Class<E> e, E defaultValue, MessageMaker commandMaker) {
+        return this.requestValue(e, defaultValue, true, commandMaker);
     }
 
-    private <E> E requestValue(Class<E> e, E defaultValue, boolean allowDefaultValue, String message) {
+    private <E> E requestValue(Class<E> e, E defaultValue, boolean allowDefaultValue, MessageMaker commandMaker) {
         InvocationObjectGetter.checkConvertType(e);
         this.type.set(e);
         this.allowDefault.set(allowDefaultValue);
         this.usingDefault.set(false);
-        this.messageMaker.getHeader().clear().append(message);
+        this.messageMaker = commandMaker;
         this.messageMaker.send();
         try {
             Thread.sleep(TIMEOUT);
@@ -100,5 +110,9 @@ public class InLineCommandTool {
         if (message != null) message.delete();
         if (map.get(this.contextPack.getChannel()).size() == 1) map.remove(this.contextPack.getChannel());
         DiscordAdapter.decreaseParserPoolSize();
+    }
+
+    public MessageMaker getMaker() {
+        return this.messageMaker;
     }
 }
