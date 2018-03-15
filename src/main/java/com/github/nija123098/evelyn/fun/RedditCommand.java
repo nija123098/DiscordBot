@@ -1,5 +1,6 @@
 package com.github.nija123098.evelyn.fun;
 
+import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Command;
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
  */
 public class RedditCommand extends AbstractCommand {
     static {
-        RedditApi.getRedditInstance("Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36");
+        RedditApi.getRedditInstance(ConfigProvider.BOT_SETTINGS.userAgent());
     }
     public RedditCommand() {
         super("reddit", ModuleLevel.FUN, null, null, "Posts something from Reddit");

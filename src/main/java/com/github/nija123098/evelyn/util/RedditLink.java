@@ -1,5 +1,6 @@
 package com.github.nija123098.evelyn.util;
 
+import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import ga.dryco.redditjerk.implementation.RedditApi;
 import ga.dryco.redditjerk.wrappers.Link;
 import org.apache.commons.io.IOUtils;
@@ -19,7 +20,7 @@ import java.util.function.Function;
 public class RedditLink {
     private static final Map<String, LinkOrigin> LINK_ORIGINS;
     static {
-        RedditApi.getRedditInstance("Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36");
+        RedditApi.getRedditInstance(ConfigProvider.BOT_SETTINGS.userAgent());
         LINK_ORIGINS = new HashMap<>(LinkOrigin.values().length);
         for (LinkOrigin origin : LinkOrigin.values()) LINK_ORIGINS.put(origin.URL, origin);
     }//"imgur.com", "i.reddituploads.com", "youtube.com"

@@ -1,5 +1,6 @@
 package com.github.nija123098.evelyn.fun.profile;
 
+import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.util.FileHelper;
 import com.github.nija123098.evelyn.util.GraphicsHelper;
@@ -41,7 +42,7 @@ public class ProfileMaker {
         }
         return FileHelper.getTempFile("profile", "png", "profile-" + user.getID(), file -> {
             HttpURLConnection connection = ((HttpURLConnection) new URL(user.getAvatarURL().replace(".webp", ".png")).openConnection());
-            connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36");
+            connection.setRequestProperty("User-Agent", ConfigProvider.BOT_SETTINGS.userAgent());
             BufferedImage fullImage = ImageIO.read(connection.getInputStream());
             BufferedImage image = new BufferedImage(PROFILE_SIZE, PROFILE_SIZE, BufferedImage.TYPE_INT_ARGB);
             image.createGraphics().drawImage(fullImage, AffineTransform.getScaleInstance(PROFILE_SIZE / (double) fullImage.getWidth(), PROFILE_SIZE / (double) fullImage.getHeight()), null);

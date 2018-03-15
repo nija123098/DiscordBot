@@ -33,7 +33,7 @@ public class StoriesCommand extends AbstractCommand {
         super("stories", ModuleLevel.FUN, "story", null, "Shows a list of bed time stories or reads one to you, from tonightsbedtimestory.com");
         try {
             if (ConfigProvider.BOT_SETTINGS.testModeEnabled()) return;
-            Jsoup.connect("http://www.tonightsbedtimestory.com/stories/").userAgent("Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36")
+            Jsoup.connect("http://www.tonightsbedtimestory.com/stories/").userAgent(ConfigProvider.BOT_SETTINGS.userAgent())
                     .get().body().getElementsByAttributeValue("class", "post").forEach(element -> {
                 String text = element.text();
                 STORY_TITLES.add(text);
@@ -41,7 +41,7 @@ public class StoriesCommand extends AbstractCommand {
                 REDUCED_LIST.add(reduced);
                 String link = element.html().substring(13);
                 try {
-                    STORY_MAP.put(reduced, Jsoup.connect(link.substring(0, link.indexOf("\""))).userAgent("Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36")
+                    STORY_MAP.put(reduced, Jsoup.connect(link.substring(0, link.indexOf("\""))).userAgent(ConfigProvider.BOT_SETTINGS.userAgent())
                             .get().body().getElementsByAttributeValue("class", "body").text());
                 } catch (IOException e) {
                     throw new DevelopmentException("Could not load bedtime story " + text, e);

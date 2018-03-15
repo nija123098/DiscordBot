@@ -9,11 +9,13 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.Discord
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordUserLeave;
 import com.github.nija123098.evelyn.exception.ConfigurableConvertException;
 import com.github.nija123098.evelyn.exception.DException;
-import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.perms.BotRole;
 import sx.blah.discord.handle.obj.IUser;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -33,7 +35,6 @@ public class GuildUser implements Configurable {
 
     static {
         EventDistributor.register(GuildUser.class);
-        Launcher.registerStartup(() -> DiscordClient.getGuilds().forEach(GuildUser::orderGuildUsers));
     }
 
     @EventListener
@@ -102,9 +103,7 @@ public class GuildUser implements Configurable {
      */
     private static void orderGuildUsers(Guild guild) {
         AtomicInteger atomicInteger = new AtomicInteger();
-        synchronized (GuildUser.class) {
-            guild.getUsers().stream().map(user -> GuildUser.getGuildUser(guild, user)).sorted((first, second) -> (int) (first.getJoinTime() - second.getJoinTime())).forEach(guildUser -> guildUser.number = atomicInteger.getAndIncrement());
-        }
+        guild.getUsers().stream().map(user -> GuildUser.getGuildUser(guild, user)).sorted((first, second) -> (int) (first.getJoinTime() - second.getJoinTime())).filter(GuildUser::isValid).forEach(guildUser -> guildUser.number = atomicInteger.getAndIncrement());
     }
     private static void ensureOrdering(Guild guild) {
         if (!ORDERED.add(guild)) return;

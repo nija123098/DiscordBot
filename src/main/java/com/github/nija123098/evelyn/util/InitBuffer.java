@@ -19,16 +19,19 @@ public class InitBuffer<E> {
 
     public InitBuffer(int bufferSize, Supplier<E> supplier) {
         this.buffer = new ArrayBlockingQueue<>(bufferSize);
-        this.thread = new Thread(() -> {
-            while (this.buffer.size() < bufferSize) this.buffer.offer(supplier.get());
-            lessSleep(1000);
-        }, "InitBufferThread-" + this.hashCode());
+        this.thread = ThreadHelper.getDemonThread(() -> {
+            while (true) {
+                while (this.buffer.size() < bufferSize) this.buffer.offer(supplier.get());
+                lessSleep(10_000);
+            }
+        }, "Init-Buffer");
         this.thread.setDaemon(true);
         this.thread.start();
     }
 
     public E get() {
         try {
+            this.thread.interrupt();
             return this.buffer.take();
         } catch (InterruptedException e) {
             throw new DevelopmentException(e);
