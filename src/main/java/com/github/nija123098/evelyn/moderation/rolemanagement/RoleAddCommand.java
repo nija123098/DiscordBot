@@ -10,6 +10,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Role;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.exception.PermissionsException;
 import com.github.nija123098.evelyn.util.FormatHelper;
+import com.github.nija123098.evelyn.util.Log;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,11 +22,11 @@ import java.util.stream.Collectors;
 public class RoleAddCommand extends AbstractCommand {
 
     public RoleAddCommand() {
-        super(RoleCommand.class, "add", "radd", null, null, "Give a user a role");
+        super(RoleCommand.class, "add", "radd", null, null, "Give a user or all users with a role a role");
     }
 
     @Command
-    public void command(@Argument Role role, @Argument(optional = true, replacement = ContextType.NONE) User user, @Argument(optional = true) Role targetRole, Guild guild, MessageMaker maker) {
+    public void command(@Argument Role role, @Argument(optional = true, replacement = ContextType.NONE) User user, @Argument(optional = true, replacement = ContextType.NONE) Role targetRole, Guild guild, MessageMaker maker) {
         maker.mustEmbed();
         if (user != null) {
             try {
@@ -42,6 +43,8 @@ public class RoleAddCommand extends AbstractCommand {
             } catch (PermissionsException e) {
                 throw new PermissionsException("I could not add the " + FormatHelper.embedLink(role.getName(),"") + " role to the users with the " + FormatHelper.embedLink(targetRole.getName(),"") + " role, check your discord permissions to ensure my role is higher than the role I'm trying to add.");
             }
+        } else {
+            maker.appendRaw("I found no user or role to apply the new role to.");
         }
     }
 }

@@ -25,7 +25,7 @@ public class RoleRemoveCommand extends AbstractCommand {
     }
 
     @Command
-    public void command(@Argument Role role, @Argument(optional = true, replacement = ContextType.NONE) User user, @Argument(optional = true) Role targetRole, Guild guild, MessageMaker maker) {
+    public void command(@Argument Role role, @Argument(optional = true, replacement = ContextType.NONE) User user, @Argument(optional = true, replacement = ContextType.NONE) Role targetRole, Guild guild, MessageMaker maker) {
         maker.mustEmbed();
         if (user != null) {
             try {
@@ -42,6 +42,8 @@ public class RoleRemoveCommand extends AbstractCommand {
             } catch (PermissionsException e) {
                 throw new PermissionsException("I could not remove the " + FormatHelper.embedLink(role.getName(),"") + " role from the users with the " + FormatHelper.embedLink(targetRole.getName(),"") + " role, check your discord permissions to ensure my role is higher than the role I'm trying to remove.");
             }
+        } else {
+            maker.appendRaw("I found no user or role to remove the role from.");
         }
     }
 }

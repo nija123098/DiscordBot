@@ -2,8 +2,6 @@ package com.github.nija123098.evelyn.information.stats;
 
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.annotations.Command;
-import com.github.nija123098.evelyn.command.configs.CommandsUsedCountConfig;
-import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.Database;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
@@ -36,11 +34,11 @@ public class TopFiveCommandsCommand extends AbstractCommand {
     }
 
     private Map<User, Integer> getStats() {
-        return Database.select("SELECT * FROM commands_used_count_user ORDER BY value", set -> {
+        return Database.select("SELECT * FROM commands_used_count_user ORDER BY VALUE DESC", set -> {
             Map<User, Integer> temp = new ConcurrentHashMap<>();
             for (int i = 1; i < 6; i++) {
                 set.next();
-                temp.put(User.getUser(set.getString(1)), set.getInt(2));
+                temp.put((User.getUser(set.getString(1)) != null ? (User.getUser(set.getString(1))) : DiscordClient.getOurUser()), set.getInt(2));
             }
             return temp;
         });
