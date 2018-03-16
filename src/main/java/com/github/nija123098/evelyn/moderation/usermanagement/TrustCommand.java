@@ -8,7 +8,6 @@ import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.perms.BotRole;
-import com.github.nija123098.evelyn.perms.commands.BotRoleCommand;
 
 import static com.github.nija123098.evelyn.perms.BotRole.setRole;
 
@@ -19,18 +18,20 @@ import static com.github.nija123098.evelyn.perms.BotRole.setRole;
 public class TrustCommand extends AbstractCommand {
 
     public TrustCommand() {
-        super("trust", ModuleLevel.ADMINISTRATIVE, null, null, "trust ");
+        super("trust", ModuleLevel.ADMINISTRATIVE, null, null, "trust a ");
     }
 
     @Command
     public void command(User setter, @Argument User user, Guild guild, MessageMaker maker) {
+        maker.mustEmbed();
         if (BotRole.getSet(user, guild).contains(BotRole.GUILD_TRUSTEE)) {
             setRole(BotRole.GUILD_TRUSTEE, false, user, setter, guild);
-            BotRoleCommand.command(user, guild, maker, false);
+            maker.getTitle().appendRaw("Guild Trustee Removed");
+            maker.appendRaw(user.mention() + " is no longer trusted");
         } else {
             setRole(BotRole.GUILD_TRUSTEE, true, user, setter, guild);
-            BotRoleCommand.command(user, guild, maker, true);
+            maker.getTitle().appendRaw("New Guild Trustee");
+            maker.appendRaw(user.mention() + " is now trusted");
         }
-
     }
 }

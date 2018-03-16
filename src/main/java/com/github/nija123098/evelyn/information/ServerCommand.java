@@ -26,10 +26,13 @@ public class ServerCommand extends AbstractCommand {
     }
     @Command
     public void command(@Argument(optional = true) Guild guild, MessageMaker maker) {
+        String discord_white = "https://cdn.discordapp.com/attachments/398634800384311300/419641007811067909/discord_white.png";
         if (guild == null) throw new ContextException("You have to be in a server to use that command!");
-        maker.withAuthorIcon(guild.getIconURL())
-                .getAuthorName().appendRaw(guild.getName()).getMaker()
-                .withThumb(guild.getIconURL()).withColor(guild.getIconURL());
+        if (guild.getIconURL().contains("null")) {
+            maker.withAuthorIcon(discord_white).getAuthorName().appendRaw(guild.getName()).getMaker().withThumb(discord_white).withColor(discord_white);
+        } else {
+            maker.withAuthorIcon(guild.getIconURL()).getAuthorName().appendRaw(guild.getName()).getMaker().withThumb(guild.getIconURL()).withColor(guild.getIconURL());
+        }
         List<User> users = guild.getUsers();
         withText(maker, "Users", users.stream().filter(user -> user.getPresence().getStatus() != Presence.Status.OFFLINE).count() + " online\n" + (users.size() - users.stream().filter(User::isBot).count()) + " total");
         withText(maker, "Bots", users.stream().filter(User::isBot).count() + "");

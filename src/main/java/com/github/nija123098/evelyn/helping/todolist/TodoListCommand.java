@@ -41,7 +41,7 @@ public class TodoListCommand extends AbstractCommand {
     }
     static void remind(long delay, User user, TodoItem todoItem) {
         SCHEDULED_EXECUTOR_SERVICE.schedule(() -> {
-            new MessageMaker(user).appendAlternate(true, "You put an item on your todo list for me to remind you of.\n", todoItem.getTodo()).send();
+            new MessageMaker(user).mustEmbed().getTitle().appendRaw("What todo").getMaker().getNewFieldPart().withBoth("\u200b", "\nHere's what you told me to remind you of:\n" + todoItem.getTodo()).getMessageProducer().send();
             ConfigHandler.alterSetting(TodoListConfig.class, user, todoItems -> todoItems.remove(todoItem));
         }, delay, TimeUnit.MILLISECONDS);
     }
