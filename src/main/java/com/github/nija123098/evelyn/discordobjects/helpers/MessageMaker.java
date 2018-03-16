@@ -704,6 +704,11 @@ public class MessageMaker {
         return Message.getMessage(this.message);
     }
 
+    public MessageMaker setMessage(Message message) {
+        this.message = message.message();
+        return this;
+    }
+
     /**
      * Gets the string representations of {@link Reaction}s which have associated {@link ReactionBehavior}s.
      *

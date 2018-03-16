@@ -24,7 +24,7 @@ public class CallBuffer {
      */
     public CallBuffer(String name, long callDifference) {
         this.callDifference = callDifference;
-        scheduledExecutorService = Executors.newSingleThreadScheduledExecutor(r -> {
+        this.scheduledExecutorService = Executors.newSingleThreadScheduledExecutor(r -> {
             Thread thread = new Thread(r, name + "-Call-Buffer-Thread");
             thread.setDaemon(true);
             return thread;
@@ -39,6 +39,6 @@ public class CallBuffer {
     public void call(Runnable runnable) {
         long val = this.time.get();
         this.time.set(val > System.currentTimeMillis() ? val + this.callDifference : System.currentTimeMillis());
-        scheduledExecutorService.schedule(runnable, this.time.get(), TimeUnit.MILLISECONDS);
+        this.scheduledExecutorService.schedule(runnable, this.time.get() - System.currentTimeMillis(), TimeUnit.MILLISECONDS);
     }
 }

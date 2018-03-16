@@ -1,6 +1,5 @@
 package com.github.nija123098.evelyn.command;
 
-import com.github.nija123098.evelyn.command.annotations.LaymanName;
 import com.github.nija123098.evelyn.discordobjects.DiscordAdapter;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
@@ -13,6 +12,7 @@ import com.github.nija123098.evelyn.exception.ArgumentException;
 import com.github.nija123098.evelyn.exception.CommandExitException;
 import com.github.nija123098.evelyn.exception.DevelopmentException;
 import com.github.nija123098.evelyn.exception.UserIssueException;
+import com.github.nija123098.evelyn.util.CareLess;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -38,8 +38,6 @@ public class InLineCommandTool {
     private final AtomicReference<Object> object = new AtomicReference<>();
     private final AtomicBoolean didFind = new AtomicBoolean(), allowDefault = new AtomicBoolean(), usingDefault = new AtomicBoolean();
     private MessageMaker messageMaker;
-    private MessageMaker issueMaker = null;
-    private boolean issue = false;
     public InLineCommandTool(ContextPack contextPack) {
         DiscordAdapter.increaseParserPoolSize();
         Map<User, InLineCommandTool> userMap = map.computeIfAbsent(contextPack.getChannel(), c -> new ConcurrentHashMap<>());
@@ -51,46 +49,43 @@ public class InLineCommandTool {
     }
 
     public void handle(Message userMessage) {
-        String message = userMessage.getContent();
-        if (message.equalsIgnoreCase("exit") || message.equalsIgnoreCase("e")) {
-            if (issueMaker != null) issueMaker.sentMessage().delete();
+        String content = userMessage.getContent();
+        if (content.equalsIgnoreCase("exit") || content.equalsIgnoreCase("e")) {
             this.release();
             throw new CommandExitException();
         }
-        if (checkDefaultRequest(message)) {
+        if (checkDefaultRequest(content)) {
             this.usingDefault.set(true);
+            this.thread.interrupt();
         } else {
             try {
-                this.object.set(InvocationObjectGetter.convert(this.type.get(), this.contextPack.getUser(), this.contextPack.getShard(), this.contextPack.getChannel(), this.contextPack.getGuild(), this.contextPack.getMessage(), this.contextPack.getReaction(), message).getKey());
+                this.object.set(InvocationObjectGetter.convert(this.type.get(), this.contextPack.getUser(), this.contextPack.getShard(), this.contextPack.getChannel(), this.contextPack.getGuild(), this.contextPack.getMessage(), this.contextPack.getReaction(), content).getKey());
                 this.didFind.set(true);
-                if (issue) issueMaker.sentMessage().delete();
                 userMessage.delete();
                 this.thread.interrupt();
             } catch (UserIssueException e) {
-                if (issueMaker != null) issueMaker.sentMessage().delete();
-                issueMaker = e.makeMessage(this.contextPack.getChannel());
                 userMessage.delete();
-                issueMaker.append("\nPlease input a valid " + (this.type.get().isAnnotationPresent(LaymanName.class) ? this.type.get().getAnnotation(LaymanName.class).value() : this.type.get().getSimpleName()) + "\nType `exit` to exit the command process.").send();
-                issue = true;
+                e.makeMessage(this.contextPack.getChannel()).setMessage(this.messageMaker.sentMessage()).send();
+                CareLess.lessSleep(5_000);
+                this.messageMaker.forceCompile().send();
             }
         }
     }
 
-    public <E> E requestValue(Class<E> e, MessageMaker commandMaker) {
-        return this.requestValue(e, null, false, commandMaker);
+    public <E> E requestValue(Class<E> e, String s) {
+        return this.requestValue(e, null, false, s);
     }
 
-    public <E> E requestValue(Class<E> e, E defaultValue, MessageMaker commandMaker) {
-        return this.requestValue(e, defaultValue, true, commandMaker);
+    public <E> E requestValue(Class<E> e, E defaultValue, String s) {
+        return this.requestValue(e, defaultValue, true, s);
     }
 
-    private <E> E requestValue(Class<E> e, E defaultValue, boolean allowDefaultValue, MessageMaker commandMaker) {
+    private <E> E requestValue(Class<E> e, E defaultValue, boolean allowDefaultValue, String text) {
         InvocationObjectGetter.checkConvertType(e);
+        this.messageMaker.forceCompile().getHeader().clear().append(text).getMaker().send();
         this.type.set(e);
         this.allowDefault.set(allowDefaultValue);
         this.usingDefault.set(false);
-        this.messageMaker = commandMaker;
-        this.messageMaker.send();
         try {
             Thread.sleep(TIMEOUT);
             throw new ArgumentException("Timeout");

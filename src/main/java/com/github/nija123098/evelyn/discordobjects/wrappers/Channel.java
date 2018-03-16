@@ -26,8 +26,13 @@ public class Channel implements Configurable {
     private static final LoadingCache<IChannel, Channel> CACHE = CacheHelper.getLoadingCache(Runtime.getRuntime().availableProcessors() * 2, ConfigProvider.CACHE_SETTINGS.channelSize(), 300_000, channel -> channel.isPrivate() ? new DirectChannel((IPrivateChannel) channel) : channel instanceof IVoiceChannel ? new VoiceChannel((IVoiceChannel) channel) : new Channel(channel));
     public static Channel getChannel(String id) {
         try {
-            IChannel channel = GetterUtil.getAny(DiscordClient.clients(), f -> f.getChannelByID(Long.parseLong(FormatHelper.filtering(id, Character::isLetterOrDigit))));
-            if (channel == null) return null;
+            Long longId = Long.parseLong(FormatHelper.filtering(id, Character::isLetterOrDigit));
+            IChannel channel = GetterUtil.getAny(DiscordClient.clients(), f -> f.getChannelByID(longId));
+            if (channel == null) {
+                channel = GetterUtil.getAny(DiscordClient.clients(), f -> f.getVoiceChannelByID(longId));
+                if (channel == null) return null;
+                return VoiceChannel.getVoiceChannel((IVoiceChannel) channel);
+            }
             return CACHE.getUnchecked(channel);
         } catch (NumberFormatException e) {
             return null;

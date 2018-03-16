@@ -461,7 +461,7 @@ public class AbstractConfig<V, T extends Configurable> implements Tagable {
             Map<T, V> map = new HashMap<>();
             try {
                 while (set.next()) {
-                    T t = (T) ConfigHandler.getConfigurable(set.getString(1));
+                    T t = (T) ConfigHandler.getConfigurable(set.getString(1)).convert(clazz);
                     if (t == null) continue;
                     map.put(t, TypeChanger.toObject(this.valueType, set.getString(2)));
                 }

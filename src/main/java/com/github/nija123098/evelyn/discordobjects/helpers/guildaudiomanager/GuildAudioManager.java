@@ -20,7 +20,6 @@ import com.github.nija123098.evelyn.exception.ArgumentException;
 import com.github.nija123098.evelyn.exception.GhostException;
 import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.moderation.logging.MusicChannelConfig;
-import com.github.nija123098.evelyn.util.CallBuffer;
 import com.github.nija123098.evelyn.util.CareLess;
 import com.github.nija123098.evelyn.util.LangString;
 import com.github.nija123098.evelyn.util.Log;
@@ -38,16 +37,12 @@ import sx.blah.discord.handle.audio.AudioEncodingType;
 import sx.blah.discord.handle.audio.IAudioProvider;
 import sx.blah.discord.handle.obj.IVoiceState;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -65,25 +60,40 @@ public class GuildAudioManager extends AudioEventAdapter{
         PLAYER_MANAGER.registerSourceManager(new YoutubeAudioSourceManager(false));
         PLAYER_MANAGER.registerSourceManager(new SoundCloudAudioSourceManager(false));
         PLAYER_MANAGER.registerSourceManager(new LocalAudioSourceManager());
-        AtomicInteger integer = new AtomicInteger();
-        AbstractConfig<List<Track>, VoiceChannel> config = ConfigHandler.getConfig(PlayQueueConfig.class);
-        CallBuffer requestBuffer = new CallBuffer("Audio-Reconnect-Joiner", 1000);
-        Launcher.registerStartup(() -> config.getNonDefaultSettings().forEach((channel, tracks) -> requestBuffer.call(() -> {
-            config.reset(channel);
+        AbstractConfig<List<Track>, VoiceChannel> queueConfig = ConfigHandler.getConfig(RebootPlayQueueConfig.class);
+        AbstractConfig<VoiceChannel, Guild> presenceConfig = ConfigHandler.getConfig(RebootInVoiceChannelConfig.class);
+        Launcher.registerAsyncStartup(() -> presenceConfig.getNonDefaultSettings().forEach((guild, channel) -> {
+            presenceConfig.reset(guild);
+            List<Track> tracks = queueConfig.getValue(channel);
+            queueConfig.reset(channel);
             if (!hasValidListeners(channel)) return;
             GuildAudioManager manager = getManager(channel);
-            manager.queueTrack(tracks.remove(0));
-            manager.queue.addAll(tracks);
-        })));
+            if (tracks == null || tracks.isEmpty()) manager.queueSpeech(new LangString(true, "I am back, just as I promised"));
+            else {
+                tracks = new LinkedList<>(tracks);
+                manager.queueTrack(tracks.remove(0));
+                manager.queue.addAll(tracks);
+            }
+            CareLess.lessSleep(1_000);
+        }));
         PLAYER_MANAGER.getConfiguration().setOpusEncodingQuality(AudioConfiguration.OPUS_QUALITY_MAX);
         PLAYER_MANAGER.getConfiguration().setResamplingQuality(AudioConfiguration.ResamplingQuality.HIGH);
-        LangString bye = new LangString(true, "I have to go restart, I will be back soon.");
+        LangString bye = new LangString(true, "I have to go restart, I will be back in a moment.");
         Launcher.registerShutdown(() -> {
             MAP.forEach((s, guildAudioManager) -> {
-                config.setValue(guildAudioManager.channel, guildAudioManager.queue);
+                presenceConfig.setValue(guildAudioManager.getGuild(), guildAudioManager.channel);
+                if (guildAudioManager.current != null) {
+                    if (guildAudioManager.queue.isEmpty()) queueConfig.setValue(guildAudioManager.channel, Collections.singletonList(guildAudioManager.current));
+                    else {
+                        List<Track> tracks = new ArrayList<>();
+                        tracks.add(guildAudioManager.current);
+                        tracks.addAll(guildAudioManager.queue);
+                        queueConfig.setValue(guildAudioManager.channel, tracks);
+                    }
+                }
                 guildAudioManager.interrupt(bye);
             });
-            CareLess.lessSleep(5_000);
+            CareLess.lessSleep(5_000);// For the completion of saying bye
         });
         EventDistributor.register(GuildAudioManager.class);
     }

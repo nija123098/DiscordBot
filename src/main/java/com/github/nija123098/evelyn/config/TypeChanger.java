@@ -1,5 +1,6 @@
 package com.github.nija123098.evelyn.config;
 
+import com.github.nija123098.evelyn.discordobjects.wrappers.Message;
 import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
 import com.github.nija123098.evelyn.util.LanguageHelper;
@@ -56,6 +57,7 @@ public class TypeChanger {
         add(Boolean.class, LanguageHelper::getBoolean);
         add(Integer.class, LanguageHelper::getInteger);
         add(Configurable.class, Configurable::getID, ConfigHandler::getConfigurable);
+        add(Message.class, Message::getID, Message::getMessage);
         add(File.class, File::new);
         add(Long.class, Long::parseLong);
         add(Class.class, s -> {

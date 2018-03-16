@@ -105,7 +105,9 @@ public class DiscordAdapter {
             DiscordClient.clients().forEach(client -> client.getDispatcher().registerListener(DiscordAdapter.class));
             DiscordClient.clients().forEach(client -> client.getDispatcher().registerListener((IListener<PresenceUpdateEvent>) event -> {
                 if (!event.getUser().isBot() && BotRole.BOT_ADMIN.hasRequiredRole(User.getUser(event.getUser()), null)) {
-                    event.getNewPresence().getText().ifPresent(s -> ExecuteShellCommand.commandToExecute(ConfigProvider.BOT_SETTINGS.startCommand(), ConfigProvider.BOT_SETTINGS.botFolder()));
+                    event.getNewPresence().getText().ifPresent(s -> {
+                        if (s.equalsIgnoreCase("evelyn reboot")) ExecuteShellCommand.commandToExecute(ConfigProvider.BOT_SETTINGS.startCommand(), ConfigProvider.BOT_SETTINGS.botFolder());
+                    });
                 }
             }));
             EventDistributor.register(ReactionBehavior.class);

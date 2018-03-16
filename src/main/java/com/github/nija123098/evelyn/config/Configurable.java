@@ -75,7 +75,7 @@ public interface Configurable {
      * @return the configurable this is converted to.
      */
     default <T extends Configurable> Configurable convert(Class<T> t) {
-        if (t.equals(this.getClass())) return this;
+        if (t.isAssignableFrom(this.getClass())) return this;
         throw new ArgumentException("This configurable can not be morphed into that type of configurable: " + t.getName());
     }
 
