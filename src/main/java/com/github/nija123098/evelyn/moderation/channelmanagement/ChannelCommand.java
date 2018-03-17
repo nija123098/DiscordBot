@@ -40,8 +40,8 @@ public class ChannelCommand extends AbstractCommand {
             }
         } else {
             maker.getTitle().appendRaw(channel.getName());
-            maker.getNewListPart().appendRaw("\u200b");
-            maker.getNewFieldPart().withInline(true).withBoth("Topic", (channel.getTopic() != null ? channel.getTopic() : "none"));
+            maker.appendRaw("\u200b");
+            maker.getNewFieldPart().withInline(true).withBoth("Topic", ((channel.getTopic() == null || channel.getTopic().isEmpty()) ? "none" : channel.getTopic()));
             if (channel.getCategory() != null)maker.getNewFieldPart().withInline(true).withBoth("Category", channel.getCategory().getName());
             maker.getNewFieldPart().withInline(true).withBoth("ID", channel.getID());
             maker.getNewFieldPart().withInline(true).withBoth("NSFW", "" + channel.isNSFW());

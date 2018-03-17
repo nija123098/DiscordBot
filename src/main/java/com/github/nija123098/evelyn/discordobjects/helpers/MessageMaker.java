@@ -988,7 +988,7 @@ public class MessageMaker {
          *
          * @return maker instance this {@link FieldPart} came from.
          */
-        public MessageMaker getMessageProducer() {
+        public MessageMaker getMaker() {
             return this.maker;
         }
     }

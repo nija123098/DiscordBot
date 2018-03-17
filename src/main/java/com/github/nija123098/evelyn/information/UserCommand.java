@@ -1,5 +1,6 @@
 package com.github.nija123098.evelyn.information;
 
+import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Argument;
@@ -30,7 +31,12 @@ public class UserCommand extends AbstractCommand {
     }
     @Command
     public void command(@Argument(optional = true) User user, @Context(softFail = true) Guild guild, MessageMaker maker, User invoker) {
-        maker.withThumb(user.getAvatarURL()).withColor(user);
+        String discord_white = ConfigProvider.URLS.discordWhitePng();
+        if (user.getAvatarURL().contains("null")) {
+            maker.withThumb(discord_white).withColor(discord_white);
+        } else {
+            maker.withThumb(user.getAvatarURL()).withColor(user);
+        }
         maker.getTitle().appendRaw(user.getName());
         maker.withColor(user.getAvatarURL());
         if (guild != null) {

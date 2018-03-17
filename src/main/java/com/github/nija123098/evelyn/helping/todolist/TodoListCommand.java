@@ -9,6 +9,7 @@ import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Message;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.util.ThreadHelper;
+import com.github.nija123098.evelyn.util.Time;
 
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -41,7 +42,7 @@ public class TodoListCommand extends AbstractCommand {
     }
     static void remind(long delay, User user, TodoItem todoItem) {
         SCHEDULED_EXECUTOR_SERVICE.schedule(() -> {
-            new MessageMaker(user).mustEmbed().getTitle().appendRaw("What todo").getMaker().getNewFieldPart().withBoth("\u200b", "\nHere's what you told me to remind you of:\n" + todoItem.getTodo()).getMessageProducer().send();
+            new MessageMaker(user).mustEmbed().getTitle().appendRaw("Todo list").getMaker().getNewFieldPart().withBoth("\u200b", todoItem.getTodo()).getMaker().getNote().appendRaw("Reminder set: " + Time.getAbbreviated(delay) + " ago").getMaker().send();
             ConfigHandler.alterSetting(TodoListConfig.class, user, todoItems -> todoItems.remove(todoItem));
         }, delay, TimeUnit.MILLISECONDS);
     }
