@@ -12,4 +12,10 @@ public interface URLs {
     String bankGif();
     String announceThumb();
     String donateUrl();
+    String bugThumb();
+    String feedbackThumb();
+    String startupGif();
+    String discordWhitePng();
+    String greenArrowPng();
+    String redArrowPng();
 }

@@ -10,6 +10,6 @@ import com.github.nija123098.evelyn.config.GuildUser;
  */
 public class LastEmbedMillisConfig extends AbstractConfig<Long, GuildUser> {
     public LastEmbedMillisConfig() {
-        super("last_embed_millis", "", ConfigCategory.STAT_TRACKING, 0L , "the millis of the last config sent by embed command");
+        super("last_embed_millis", "", ConfigCategory.STAT_TRACKING, 0L , "the millis of the last embed sent by embed command");
     }
 }

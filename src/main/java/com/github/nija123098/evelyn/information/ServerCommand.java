@@ -1,5 +1,6 @@
 package com.github.nija123098.evelyn.information;
 
+import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Argument;
@@ -26,7 +27,7 @@ public class ServerCommand extends AbstractCommand {
     }
     @Command
     public void command(@Argument(optional = true) Guild guild, MessageMaker maker) {
-        String discord_white = "https://cdn.discordapp.com/attachments/398634800384311300/419641007811067909/discord_white.png";
+        String discord_white = ConfigProvider.URLS.discordWhitePng();
         if (guild == null) throw new ContextException("You have to be in a server to use that command!");
         if (guild.getIconURL().contains("null")) {
             maker.withAuthorIcon(discord_white).getAuthorName().appendRaw(guild.getName()).getMaker().withThumb(discord_white).withColor(discord_white);

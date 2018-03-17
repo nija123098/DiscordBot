@@ -43,11 +43,12 @@ public class UpdateBotCommand extends AbstractCommand {
                     ConfigHandler.setSetting(LastBotUpdaterUseConfig.class, GlobalConfigurable.GLOBAL, System.currentTimeMillis());
 
                     MessageMaker maker2 = new MessageMaker(maker);
-                    maker2.withColor(new Color(175, 30,5)).mustEmbed();
+                    maker2.withColor(new Color(175, 30,5)).mustEmbed().withAutoSend(false);
                     maker2.getNote().clear().appendRaw("Update Time");
                     maker2.withTimestamp(System.currentTimeMillis());
                     maker2.withChannel(Channel.getChannel(ConfigProvider.BOT_SETTINGS.loggingChannel()));
                     maker2.getHeader().clear().appendRaw("The Bot has been updated.");
+                    maker2.send();
 
                     ExecuteShellCommand.commandToExecute(ConfigProvider.BOT_SETTINGS.startCommand(), ConfigProvider.BOT_SETTINGS.botFolder());
                 } else if (PlatformDetector.isMac()) {

@@ -21,4 +21,6 @@ public interface BotSettings {
     String userAgent();
     String botFolder();
     String startCommand();
+    String bugChannel();
+    String feedbackChannel();
 }

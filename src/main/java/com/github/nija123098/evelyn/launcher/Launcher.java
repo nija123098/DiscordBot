@@ -1,9 +1,12 @@
 package com.github.nija123098.evelyn.launcher;
 
+import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.command.CommandHandler;
 import com.github.nija123098.evelyn.command.InvocationObjectGetter;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.discordobjects.DiscordAdapter;
+import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
+import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Presence;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
@@ -11,8 +14,12 @@ import com.github.nija123098.evelyn.perms.BotRole;
 import com.github.nija123098.evelyn.service.ServiceHandler;
 import com.github.nija123098.evelyn.template.TemplateHandler;
 import com.github.nija123098.evelyn.util.*;
+import org.apache.commons.io.FileUtils;
 import org.eclipse.jetty.util.BlockingArrayQueue;
 
+import java.awt.*;
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -190,5 +197,20 @@ public class Launcher {
         IS_READY.set(true);
         DiscordClient.changePresence(Presence.Status.ONLINE, Presence.Activity.PLAYING, "with users!");
         Log.log(LogColor.blue("Bot finished initializing.") + LogColor.yellow(" Burn the heretic. Kill the Mee6. Purge the unclean."));
+
+        //post message in logging channel
+        MessageMaker maker = new MessageMaker(Channel.getChannel(ConfigProvider.BOT_SETTINGS.loggingChannel()));
+        maker.withColor(new Color(175, 30,5)).mustEmbed();
+        String slog = null;
+        try {
+            slog = FileUtils.readFileToString(Log.LOG_PATH.toFile(), Charset.defaultCharset());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        maker.getHeader().clear().append("Startup Log:\n" + PastebinUtil.postToPastebin("Startup Log", slog));
+        maker.getTitle().clear().append("⚠ Evelyn Started ⚠");
+        maker.withTimestamp(System.currentTimeMillis());
+        maker.withImage(ConfigProvider.URLS.startupGif());
+        maker.send();
     }
 }
