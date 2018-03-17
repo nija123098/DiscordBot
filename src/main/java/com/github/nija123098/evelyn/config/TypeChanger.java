@@ -1,6 +1,7 @@
 package com.github.nija123098.evelyn.config;
 
 import com.github.nija123098.evelyn.discordobjects.wrappers.Message;
+import com.github.nija123098.evelyn.exception.DevelopmentException;
 import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
 import com.github.nija123098.evelyn.util.LanguageHelper;
@@ -120,7 +121,11 @@ public class TypeChanger {
             if (f != null) return f.apply(o);
         }
         if (reference.get() != null) return reference.get();
-        return X_STREAM.toXML(alter(o)).replace("\n", "");
+        try {
+            return X_STREAM.toXML(alter(o)).replace("\n", "");
+        } catch (Exception e) {
+            throw new DevelopmentException("Unable to convert type " + from.getSimpleName() + " to String for object: " + o);
+        }
     }
 
     /**
@@ -140,7 +145,11 @@ public class TypeChanger {
             Function<String, Object> f = (Function<String, Object>) FROM_STRING.get(clazz.getName());
             if (f != null) return (T) f.apply(s);
         }
-        return (T) X_STREAM.fromXML(s);
+        try {
+            return (T) X_STREAM.fromXML(s);
+        } catch (Exception e) {
+            throw new DevelopmentException("Unable to convert String to type " + to.getSimpleName() + " for object: " + s);
+        }
     }
     private static <T extends Enum<T>> Object getEnum(Class<?> clazz, String s) {
         return Enum.valueOf((Class<T>) clazz, s);

@@ -32,7 +32,6 @@ public class FavorHandler {
     private static final Map<ConfigLevel, Function<? extends Configurable, Float>> TYPE_DERIVATIONS = new HashMap<>();
     static {
         add(GuildUser.class, guildUser -> {
-            if (ConfigHandler.getSetting(BannedLocationConfig.class, guildUser.getUser()).contains(guildUser.getGuild())) return -5000F;
             float v = ConfigHandler.getSetting(MessageFavorFactorConfig.class, guildUser.getGuild()) * ConfigHandler.getSetting(MessageCountConfig.class, guildUser);
             v += ConfigHandler.getSetting(ReputationFavorFactorConfig.class, guildUser.getGuild()) * ConfigHandler.getSetting(GuildUserReputationConfig.class, guildUser);
             v += ConfigHandler.getSetting(ReactionFavorFactorConfig.class, guildUser.getGuild()) * ConfigHandler.getSetting(ReactionCountConfig.class, guildUser);
