@@ -1,5 +1,6 @@
 package com.github.nija123098.evelyn.config;
 
+import com.github.nija123098.evelyn.discordobjects.wrappers.Message;
 import com.github.nija123098.evelyn.exception.DevelopmentException;
 import com.github.nija123098.evelyn.perms.configs.specialperms.SpecialPermsContainer;
 import com.github.nija123098.evelyn.util.ReflectionHelper;
@@ -26,6 +27,7 @@ public class ObjectCloner {
         add(File.class);
         add(String.class);
         add(Configurable.class);
+        add(Message.class);
         add(List.class, CopyOnWriteArrayList::new);
         add(Set.class, ObjectCloner::getSet);
         add(Map.class, ObjectCloner::getMap);

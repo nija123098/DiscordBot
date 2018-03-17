@@ -8,19 +8,13 @@ import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.exception.DevelopmentException;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.concurrent.ExecutionException;
 
 import static com.github.nija123098.evelyn.command.ModuleLevel.FUN;
 import static com.github.nija123098.evelyn.fun.meme.MemeTypesCommand.MEME_TYPES;
-import static com.github.nija123098.evelyn.util.FileHelper.getTempFile;
 import static com.google.common.base.Joiner.on;
-import static com.mashape.unirest.http.Unirest.get;
 import static java.net.URLEncoder.encode;
 import static java.util.Arrays.copyOfRange;
-import static javax.imageio.ImageIO.read;
-import static javax.imageio.ImageIO.write;
 
 /**
  * @author nija123098

@@ -7,8 +7,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.github.nija123098.evelyn.botconfiguration.ConfigProvider.FOLDER_SETTINGS;
 import static com.github.nija123098.evelyn.botconfiguration.ConfigProvider.EXECUTABLE_FILES;
+import static com.github.nija123098.evelyn.botconfiguration.ConfigProvider.FOLDER_SETTINGS;
 import static com.github.nija123098.evelyn.util.Log.log;
 import static com.github.nija123098.evelyn.util.NetworkHelper.isValid;
 import static java.util.concurrent.TimeUnit.MINUTES;

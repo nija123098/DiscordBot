@@ -1,17 +1,13 @@
-package com.github.nija123098.evelyn.helping;
+package com.github.nija123098.evelyn.helping.embed;
 
 import com.github.nija123098.evelyn.command.AbstractCommand;
-import com.github.nija123098.evelyn.command.CommandHandler;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
+import com.github.nija123098.evelyn.config.ConfigHandler;
+import com.github.nija123098.evelyn.config.GuildUser;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
-import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Message;
-import com.github.nija123098.evelyn.discordobjects.wrappers.User;
-import com.github.nija123098.evelyn.util.EmoticonHelper;
-import com.github.nija123098.evelyn.util.Log;
-import sx.blah.discord.handle.impl.obj.ReactionEmoji;
 
 import java.awt.*;
 
@@ -25,25 +21,25 @@ public class EmbedCommand extends AbstractCommand {
     }
 
     @Command
-    public void embed(@Argument String s, MessageMaker maker, User user, Message msg) {
-        // configure maker
+    public void embed(@Argument String s, MessageMaker maker, GuildUser guser, Message msg) {
+        //configure maker
         maker.withAutoSend(false);
         maker.mustEmbed();
 
         //configure code message maker
         MessageMaker code = new MessageMaker(maker);
-        code.getHeader().clear().appendRaw("```java\n");
+        code.getHeader().clear().appendRaw("```css\n");
         boolean codeSend = false;
 
-        // split original string into embed fields
+        //split original string into embed fields
         s = s.replaceAll("]] ", "]]");
         s = s.replace("\n", "\\n");
         String[] s2 = s.split("]]");
 
-        // initialize reaction array
+        //initialize reaction array
         String[] r = null;
 
-        // assign fields
+        //assign fields
         for (int i = 0; i < s2.length; i++) {
             if (s2[i].startsWith("m[[") || s2[i].startsWith(" m[[")) {
                 s2[i] = s2[i].replace("m[[", "");
@@ -112,7 +108,7 @@ public class EmbedCommand extends AbstractCommand {
                 String[] opt = s2[i].split(",");
                 for (int j = 0; j < opt.length; j++){
                     if (opt[j].contains("userauthor")) {
-                        maker.withAuthor(user);
+                        maker.withAuthor(guser.getUser());
                         code.getHeader().appendRaw("maker.withAuthor(user);\nmaker.withAuthorIcon(user.getAvatarURL());\n");
                     } else if (opt[j].contains("timestamp")) {
                         maker.withTimestamp(System.currentTimeMillis());
@@ -121,17 +117,25 @@ public class EmbedCommand extends AbstractCommand {
                         codeSend = true;
                     } else if (opt[j].contains("deletecommand")) {
                         msg.delete();
+                    } else if (opt[j].contains("editorigin")) {
+                        if (ConfigHandler.getSetting(LastEmbedConfig.class, guser) != null) {
+                            if ((System.currentTimeMillis() - ConfigHandler.getSetting(LastEmbedMillisConfig.class, guser))/60_000L < 15) {
+                                maker.setMessage(ConfigHandler.getSetting(LastEmbedConfig.class, guser));
+                            }
+                        }
                     }
                 }
             }
         }
         maker.send();
+        ConfigHandler.setSetting(LastEmbedConfig.class, guser, maker.sentMessage());
+        ConfigHandler.setSetting(LastEmbedMillisConfig.class, guser, System.currentTimeMillis());
         if (codeSend) {
             code.getHeader().appendRaw("```");
             code.send();
         }
 
-        // add reactions for the sent message if available
+        //add reactions for the sent message if available
         if (r != null) {
             for (int i = 0; i < r.length; i++){
                 r[i] = r[i].replaceAll("<", "");
@@ -141,12 +145,12 @@ public class EmbedCommand extends AbstractCommand {
         }
     }
 
-    // help command override
+    //help command override
     @Override
     public String getHelp() {
 
-        // command description:
-        return "#  Do not add a new line or \\n outside the brackets.\n\n#  Special character replacement:\n\n// \"\\u200b\": Zero width character.\n// \"\\n\": New line.\n\n#  Format help:\n\n// t[[TITLE]]\n// m[[MESSAGE]]\n// foo[[FOOTER]]\n// n[[NOTE]]\n// nimg[[NOTE IMAGE]]\n// img[[IMAGE]]\n// a[[AUTHOR]]\n// aimg[[AUTHOR IMAGE]]\n// fp[[FIELD PART TITLE,,,TEXT]]\n// fpi[[INLINE FIELD PART TITLE,,,TEXT]]\n// thumb[[THUMBNAIL]]\n// c[[R,G,B]]\n// r[[EMOTE,EMOTE]]\n// opt[[OPTION,OPTION]]\n\n#  Options:\n\n// \"userauthor\": Insert the user as the author.\n// \"timestamp\": Add timestamp.\n// \"code\": Post the raw code for the embed.\n// \"deletecommand\": Delete the user message.";
+        //command description:
+        return "#  Do not add a new line or \\n outside the brackets.\n\n#  Special character replacement:\n\n// \"\\u200b\": Zero width character.\n// \"\\n\": New line.\n\n#  Format help:\n\n// t[[TITLE]]\n// m[[MESSAGE]]\n// foo[[FOOTER]]\n// n[[NOTE]]\n// nimg[[NOTE IMAGE]]\n// img[[IMAGE]]\n// a[[AUTHOR]]\n// aimg[[AUTHOR IMAGE]]\n// fp[[FIELD PART TITLE,,,TEXT]]\n// fpi[[INLINE FIELD PART TITLE,,,TEXT]]\n// thumb[[THUMBNAIL]]\n// c[[R,G,B]]\n// r[[EMOTE,EMOTE]]\n// opt[[OPTION,OPTION]]\n\n#  Options:\n\n// \"userauthor\": Insert the user as the author.\n// \"timestamp\": Add timestamp.\n// \"code\": Post the raw code for the embed.\n// \"deletecommand\": Delete the user message.\n// \"editorigin\": Edit the embed instead.";
     }
 
     private String translateSpecialCharacters(String s) {

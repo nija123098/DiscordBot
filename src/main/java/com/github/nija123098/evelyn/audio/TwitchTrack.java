@@ -1,14 +1,5 @@
 package com.github.nija123098.evelyn.audio;
 
-import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
-import com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
-
-import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.track.AudioReference;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-
-import java.util.concurrent.LinkedBlockingQueue;
-
 /**
  * Track for defencing a Twitch stream.
  * The track's audio will defined as the

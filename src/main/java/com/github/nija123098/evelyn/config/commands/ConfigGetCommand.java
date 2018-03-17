@@ -13,11 +13,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Role;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.exception.ArgumentException;
-import com.github.nija123098.evelyn.tag.Tag;
-import com.github.nija123098.evelyn.tag.Tags;
 import com.github.nija123098.evelyn.util.FormatHelper;
-
-import java.awt.*;
 
 /**
  * @author nija123098

@@ -22,6 +22,6 @@ public class BotRoleSetCommand extends AbstractCommand {
     @Command
     public void command(User setter, @Argument User user, @Argument Boolean add, @Argument BotRole role, Guild guild, MessageMaker maker) {
         setRole(role, add, user, setter, guild);
-        BotRoleCommand.command(user, guild, maker, null);
+        BotRoleCommand.command(user, guild, maker);
     }
 }
