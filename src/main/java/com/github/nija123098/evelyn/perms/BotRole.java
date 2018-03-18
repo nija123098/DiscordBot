@@ -122,7 +122,7 @@ public enum BotRole {// todo make more efficient
      * @return if the user has the role or a higher true role.
      */
     public boolean hasRequiredRole(User user, Guild guild) {
-        return this.isTrueRank ? this.guildImportant ? this.guildCache.getUnchecked(user).getUnchecked(guild) : this.userCache.getUnchecked(user) : this.detect.test(user, guild);
+        return this.isTrueRank ? this.guildImportant ? guild != null && this.guildCache.getUnchecked(user).getUnchecked(guild) : this.userCache.getUnchecked(user) : this.detect.test(user, guild);
     }
 
     /**

@@ -14,10 +14,8 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Shard;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
 import com.github.nija123098.evelyn.util.FormatHelper;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.function.Function;
 
 /**
  * @author nija123098
@@ -36,14 +34,21 @@ public class StatsCommand extends AbstractCommand {
 
     static String getTotalTable(boolean mini) {
         List<List<String>> body = new ArrayList<>();
-        int ignoredUsers = ConfigHandler.getSetting(GuildIgnoreConfig.class, GlobalConfigurable.GLOBAL).stream().mapToInt(Guild::getUserSize).sum();
-        int totalActiveVoice = 0;
+        List<Guild> ignored = ConfigHandler.getSetting(GuildIgnoreConfig.class, GlobalConfigurable.GLOBAL);
+        int totalActiveVoice = 0, activeVoice;
         for (Shard shard : DiscordClient.getShards()) {
             List<Guild> guilds = shard.getGuilds();
-            int activeVoice = (int) shard.getGuilds().stream().map(GuildAudioManager::getManager).filter(Objects::nonNull).count();
+            guilds.removeAll(ignored);
+            activeVoice = (int) shard.getGuilds().stream().map(GuildAudioManager::getManager).filter(Objects::nonNull).count();
             totalActiveVoice += activeVoice;
-            body.add(Arrays.asList(Integer.toString(shard.getID()), Integer.toString(guilds.size()), Integer.toString(shard.getUsers().size() - ignoredUsers), Integer.toString(shard.getChannels().size()), Integer.toString(shard.getVoiceChannels().size()), Integer.toString(activeVoice)));
+            body.add(Arrays.asList(Integer.toString(shard.getID()), Integer.toString(guilds.size()), Integer.toString(count(guilds, Guild::getUsers)), Integer.toString(countUnique(guilds, Guild::getChannels)), Integer.toString(countUnique(guilds, Guild::getVoiceChannels)), Integer.toString(activeVoice)));
         }
         return FormatHelper.makeAsciiTable(mini ? Arrays.asList("G", "U", "T", "V", "DJ") : Arrays.asList("Shard", "Guilds", "Users", "Text", "Voice", "DJ"), body, DiscordClient.getShards().size() == 1 ? null : Arrays.asList("TOTAL", Integer.toString(DiscordClient.getGuilds().size()), Integer.toString(DiscordClient.getUsers().size()), Integer.toString(DiscordClient.getChannels().size()), Integer.toString(DiscordClient.getVoiceChannels().size()), Integer.toString(totalActiveVoice)));
+    }
+    private static <E> int count(List<E> es, Function<E, List<?>> function) {
+        return es.stream().map(function).collect(HashSet::new, AbstractCollection::addAll, AbstractCollection::addAll).size();
+    }
+    private static <E> int countUnique(List<E> es, Function<E, List<?>> function) {
+        return es.stream().map(e -> function.apply(e).size()).reduce((integer, integer2) -> integer + integer2).orElse(0);
     }
 }

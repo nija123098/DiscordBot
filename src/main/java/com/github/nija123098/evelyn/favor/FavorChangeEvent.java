@@ -2,9 +2,7 @@ package com.github.nija123098.evelyn.favor;
 
 import com.github.nija123098.evelyn.config.Configurable;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.BotEvent;
-
-import static com.github.nija123098.evelyn.discordobjects.wrappers.event.EventDistributor.distribute;
-import static com.github.nija123098.evelyn.favor.FavorHandler.getFavorAmount;
+import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventDistributor;
 
 /**
  * @author nija123098
@@ -12,16 +10,16 @@ import static com.github.nija123098.evelyn.favor.FavorHandler.getFavorAmount;
  */
 public class FavorChangeEvent implements BotEvent {
     public static void process(Configurable configurable, Runnable runnable) {
-        float amount = getFavorAmount(configurable);
+        float amount = FavorHandler.getFavorAmount(configurable);
         runnable.run();
-        distribute(new FavorChangeEvent(configurable, amount, getFavorAmount(configurable)));
+        EventDistributor.distribute(new FavorChangeEvent(configurable, amount, FavorHandler.getFavorAmount(configurable)));
     }
 
     private Configurable configurable;
     private float oldLevel;
     private float newLevel;
 
-    private FavorChangeEvent(Configurable configurable, float oldLevel, float newLevel) {
+    public FavorChangeEvent(Configurable configurable, float oldLevel, float newLevel) {
         this.configurable = configurable;
         this.oldLevel = oldLevel;
         this.newLevel = newLevel;
