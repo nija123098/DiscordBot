@@ -19,8 +19,6 @@ import com.github.nija123098.evelyn.economy.plantation.configs.CurrentRoastedBea
 import com.github.nija123098.evelyn.exception.ArgumentException;
 import com.github.nija123098.evelyn.fun.slot.SlotJackpotConfig;
 
-import java.util.Objects;
-
 /**
  * @author Dxeo
  * @since 1.0.0
@@ -43,17 +41,13 @@ public class CurrencyTreeSetCommand extends AbstractCommand {
             throw new ArgumentException("You cannot set less than 0 currency");
         }
 
-        //if no type default to currency
-        if (Objects.equals(type, "")) {
-            type = "currency";
-        }
-
         //set amount according to currency type
-        //REMEMBER TO ADD TYPES TO THE HELP DESCRIPTION
+        // TODO ADD TYPES TO THE HELP DESCRIPTION
         switch (type.toLowerCase()) {
 
             //set currency
             case "currency":
+            case "":
                 ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, amount);
                 maker.appendRaw(user.getDisplayName(guild) + "'s Currency balance has been set to: `\u200B " + ConfigHandler.getSetting(CurrencySymbolConfig.class, guild) + " " + amount + " \u200B`");
                 maker.send();

@@ -35,15 +35,7 @@ public class BankCommand extends AbstractCommand {
     @Command
     public void command(Guild guild, User user, MessageMaker maker) {
         String name = ConfigHandler.getSetting(CurrencyNameConfig.class, guild), symbol = ConfigHandler.getSetting(CurrencySymbolConfig.class, guild), booster = EmoticonHelper.getChars("rocket", false), claim = EmoticonHelper.getChars("inbox_tray", false);
-        int totalClaim = 256, bonus = 0;
-        /*
-         * Check for old money timer in database or if empty
-         */
-        if (ConfigHandler.getSetting(LastCurrencyUseConfig.class, user).equals(0L) || ConfigHandler.getSetting(LastCurrencyUseConfig.class, user) == null) {
-            //ConfigHandler.setSetting(LastCurrencyUseConfig.class, user, System.currentTimeMillis());
-            maker.appendRaw("Hi " + user.getDisplayName(guild) + ", I recently switched to a new currency format! You can now claim the value in full after midnight UTC every day\nYou keep all your current " + name + " and as consolation for all the trouble you get a bonus `\u200b " + symbol + " 1000 \u200b`\n\n");
-            bonus = ConfigHandler.getSetting(CurrencyBonusConfig.class, GlobalConfigurable.GLOBAL);
-        }
+        int totalClaim = 256;
 
         /*
          * Get most variables and check how many days it's been since last claim
@@ -79,8 +71,8 @@ public class BankCommand extends AbstractCommand {
          * Check if user is able to claim their cookies
          */
         if ((currentMillis / day) != (last / day)) {
-            maker.appendRaw(claimBuilder((Time.getAbbreviated(day - (currentMillis % day))), symbol, bonus, streak, user, guild, true)).mustEmbed();
-            ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, (currentMoney + totalClaim + bonus));
+            maker.appendRaw(claimBuilder((Time.getAbbreviated(day - (currentMillis % day))), symbol, streak, user, guild, true)).mustEmbed();
+            ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, (currentMoney + totalClaim));
             ConfigHandler.setSetting(LastCurrencyUseConfig.class, user, currentMillis);
             if (streak < 8) ConfigHandler.setSetting(CurrentCurrencyStreakConfig.class, user, (streak + 1));
         } else {
@@ -98,11 +90,11 @@ public class BankCommand extends AbstractCommand {
                 maker.withImage(ConfigProvider.URLS.bankGif());
                 return;
             }
-            maker.appendRaw(claimBuilder((Time.getAbbreviated(day - (currentMillis % day))), symbol, bonus, streak, user, guild, false)).mustEmbed();
+            maker.appendRaw(claimBuilder((Time.getAbbreviated(day - (currentMillis % day))), symbol, streak, user, guild, false)).mustEmbed();
         }
     }
 
-    private String claimBuilder(String time, String moneySymbol, int bonus, int streak, User user, Guild guild, boolean claim) {
+    private String claimBuilder(String time, String moneySymbol, int streak, User user, Guild guild, boolean claim) {
         StringBuilder ret = new StringBuilder("```\n");
         Long eventStart = 0L, eventEnd = 0L;
         if (ConfigHandler.getSetting(EventActiveConfig.class, GlobalConfigurable.GLOBAL)) {
@@ -114,14 +106,13 @@ public class BankCommand extends AbstractCommand {
         if (claim) {
             ret.append(" Claim: " + moneySymbol + " +256\n");
             ret.append(" Heat:  " + moneySymbol + " +" + (streak * 8) + " (" + streak + " \uD83D\uDCC6)\n");
-            if (bonus > 0) ret.append(" Bonus: " + moneySymbol + " +" + bonus + "\n");
             if (ConfigHandler.getSetting(EventActiveConfig.class, GlobalConfigurable.GLOBAL)) ret.append(" Event: " + moneySymbol + " +" + ConfigHandler.getSetting(EventBonusConfig.class, GlobalConfigurable.GLOBAL) + " [" + ConfigHandler.getSetting(EventNameConfig.class, GlobalConfigurable.GLOBAL) + ", " + eventStart + " to " + eventEnd + "]\n");
         } else {
             ret.append(" Claim: \u23f0 " + time + "\n");
         }
         ret.append("════════════════════════════════════════\n");
         if (claim) {
-            ret.append(" Funds: " + moneySymbol + " " + (ConfigHandler.getSetting(CurrentCurrencyConfig.class, user) + bonus + (streak * 8) + 256) + "  Heat:  \uD83D\uDCC6 " + (streak + (streak == 8 ? 0 : 1)) + "/8\n");
+            ret.append(" Funds: " + moneySymbol + " " + (ConfigHandler.getSetting(CurrentCurrencyConfig.class, user) + (streak * 8) + 256) + "  Heat:  \uD83D\uDCC6 " + (streak + (streak == 8 ? 0 : 1)) + "/8\n");
         } else {
             ret.append(" Funds: " + moneySymbol + " " + ConfigHandler.getSetting(CurrentCurrencyConfig.class, user) + "  Heat:  \uD83D\uDCC6 " + streak + "/8\n");
         }

@@ -33,12 +33,14 @@ public class CurrencyTreeCommand extends AbstractCommand {// todo clean and opti
     }
 
     @Command
-    public void command(MessageMaker maker, Guild guild, @Argument Integer amount, @Argument(optional = true, info = "user to set amount for") User user, @Argument(optional = true, info = "currency type") String type) {
+    public static void command(MessageMaker maker, Guild guild, @Argument Integer amount, @Argument(optional = true, info = "user to set amount for") User user, @Argument(optional = true, info = "currency type") String type) {
 
         //configure message maker
-        maker.mustEmbed();
-        maker.withAutoSend(false);
-        maker.withImage(ConfigProvider.URLS.currencytreeGif());
+        if (maker != null) {
+            maker.mustEmbed();
+            maker.withAutoSend(false);
+            maker.withImage(ConfigProvider.URLS.currencytreeGif());
+        }
 
         //check for valid amount
         if (amount < 0) {
@@ -51,49 +53,43 @@ public class CurrencyTreeCommand extends AbstractCommand {// todo clean and opti
         }
 
         //set amount according to currency type
-        //REMEMBER TO ADD TYPES TO THE HELP DESCRIPTION
         switch (type.toLowerCase()) {
 
             //set currency
             case "currency":
                 ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, amount + ConfigHandler.getSetting(CurrentCurrencyConfig.class, user));
-                maker.appendRaw(user.getDisplayName(guild) + "'s Currency balance has been incremented by: `\u200B " + ConfigHandler.getSetting(CurrencySymbolConfig.class, guild) + " " + amount + " \u200B`");
-                maker.send();
+                if (maker != null) maker.appendRaw(user.getDisplayName(guild) + "'s Currency balance has been incremented by: `\u200B " + ConfigHandler.getSetting(CurrencySymbolConfig.class, guild) + " " + amount + " \u200B`");
                 break;
 
             //set loot crates
             case "lootcrate":
                 ConfigHandler.setSetting(LootCrateConfig.class, user, amount + ConfigHandler.getSetting(LootCrateConfig.class, user));
-                maker.appendRaw(user.getDisplayName(guild) + "'s Lootcrate balance has been incremented by: `\u200B " + LootCrateEmotes.CRATE + " " + amount + " \u200B`");
-                maker.send();
+                if (maker != null) maker.appendRaw(user.getDisplayName(guild) + "'s Lootcrate balance has been incremented by: `\u200B " + LootCrateEmotes.CRATE + " " + amount + " \u200B`");
                 break;
 
             //set the jackpot for a guild the command is used in
             case "jackpot":
+                if (guild == null) throw new ArgumentException("You can not use this without a guild context");
                 ConfigHandler.setSetting(SlotJackpotConfig.class, guild, amount + ConfigHandler.getSetting(SlotJackpotConfig.class, guild));
-                maker.appendRaw(guild.getName() + "'s Jackpot balance has been incremented by: `\u200B " + ConfigHandler.getSetting(CurrencySymbolConfig.class, guild) + " " + amount + " \u200B`");
-                maker.send();
+                if (maker != null) maker.appendRaw(guild.getName() + "'s Jackpot balance has been incremented by: `\u200B " + ConfigHandler.getSetting(CurrencySymbolConfig.class, guild) + " " + amount + " \u200B`");
                 break;
 
             //set coffee beans
             case "beans":
                 ConfigHandler.setSetting(CurrentBeansConfig.class, user, amount + ConfigHandler.getSetting(CurrentBeansConfig.class, user));
-                maker.appendRaw(user.getDisplayName(guild) + "'s coffee beans have been incremented by: " + CoffeeEmotes.BEANS + " `\u200B " + amount + " \u200B`");
-                maker.send();
+                if (maker != null) maker.appendRaw(user.getDisplayName(guild) + "'s coffee beans have been incremented by: " + CoffeeEmotes.BEANS + " `\u200B " + amount + " \u200B`");
                 break;
 
             //set roasted beans
             case "roasted":
                 ConfigHandler.setSetting(CurrentRoastedBeansConfig.class, user, amount + ConfigHandler.getSetting(CurrentRoastedBeansConfig.class, user));
-                maker.appendRaw(user.getDisplayName(guild) + "'s roasted beans have been incremented by: " + CoffeeEmotes.ROASTBEANS + " `\u200B " + amount + " \u200B`");
-                maker.send();
+                if (maker != null) maker.appendRaw(user.getDisplayName(guild) + "'s roasted beans have been incremented by: " + CoffeeEmotes.ROASTBEANS + " `\u200B " + amount + " \u200B`");
                 break;
 
             //set coffee grounds
             case "grounds":
                 ConfigHandler.setSetting(CurrentGroundsConfig.class, user, amount + ConfigHandler.getSetting(CurrentGroundsConfig.class, user));
-                maker.appendRaw(user.getDisplayName(guild) + "'s coffee grounds have been incremented by: " + CoffeeEmotes.GROUNDS + " `\u200B " + amount + " \u200B`");
-                maker.send();
+                if (maker != null) maker.appendRaw(user.getDisplayName(guild) + "'s coffee grounds have been incremented by: " + CoffeeEmotes.GROUNDS + " `\u200B " + amount + " \u200B`");
                 break;
 
 
