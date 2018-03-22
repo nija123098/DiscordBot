@@ -12,10 +12,7 @@ import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
-import com.github.nija123098.evelyn.economy.configs.CurrencyNameConfig;
-import com.github.nija123098.evelyn.economy.configs.CurrencySymbolConfig;
-import com.github.nija123098.evelyn.economy.configs.CurrentCurrencyConfig;
-import com.github.nija123098.evelyn.economy.configs.CurrentCurrencyStreakConfig;
+import com.github.nija123098.evelyn.economy.configs.*;
 import com.github.nija123098.evelyn.economy.event.configs.*;
 import com.github.nija123098.evelyn.tag.Tag;
 import com.github.nija123098.evelyn.tag.Tags;
@@ -45,8 +42,7 @@ public class BankCommand extends AbstractCommand {
         if (ConfigHandler.getSetting(LastCurrencyUseConfig.class, user).equals(0L) || ConfigHandler.getSetting(LastCurrencyUseConfig.class, user) == null) {
             //ConfigHandler.setSetting(LastCurrencyUseConfig.class, user, System.currentTimeMillis());
             maker.appendRaw("Hi " + user.getDisplayName(guild) + ", I recently switched to a new currency format! You can now claim the value in full after midnight UTC every day\nYou keep all your current " + name + " and as consolation for all the trouble you get a bonus `\u200b " + symbol + " 1000 \u200b`\n\n");
-            bonus = 1000;
-            totalClaim += 1000;
+            bonus = ConfigHandler.getSetting(CurrencyBonusConfig.class, GlobalConfigurable.GLOBAL);
         }
 
         /*
@@ -84,7 +80,7 @@ public class BankCommand extends AbstractCommand {
          */
         if ((currentMillis / day) != (last / day)) {
             maker.appendRaw(claimBuilder((Time.getAbbreviated(day - (currentMillis % day))), symbol, bonus, streak, user, guild, true)).mustEmbed();
-            ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, (currentMoney + totalClaim));
+            ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, (currentMoney + totalClaim + bonus));
             ConfigHandler.setSetting(LastCurrencyUseConfig.class, user, currentMillis);
             if (streak < 8) ConfigHandler.setSetting(CurrentCurrencyStreakConfig.class, user, (streak + 1));
         } else {
@@ -125,7 +121,7 @@ public class BankCommand extends AbstractCommand {
         }
         ret.append("════════════════════════════════════════\n");
         if (claim) {
-            ret.append(" Funds: " + moneySymbol + " " + (ConfigHandler.getSetting(CurrentCurrencyConfig.class, user) + bonus + (streak * 8) + 256) + "  Daily: \uD83D\uDCC6 " + (streak + (streak == 8 ? 0 : 1)) + "/8\n");
+            ret.append(" Funds: " + moneySymbol + " " + (ConfigHandler.getSetting(CurrentCurrencyConfig.class, user) + bonus + (streak * 8) + 256) + "  Heat:  \uD83D\uDCC6 " + (streak + (streak == 8 ? 0 : 1)) + "/8\n");
         } else {
             ret.append(" Funds: " + moneySymbol + " " + ConfigHandler.getSetting(CurrentCurrencyConfig.class, user) + "  Heat:  \uD83D\uDCC6 " + streak + "/8\n");
         }
