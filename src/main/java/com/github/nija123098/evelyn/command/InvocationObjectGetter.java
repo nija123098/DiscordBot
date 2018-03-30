@@ -311,10 +311,16 @@ public class InvocationObjectGetter {
         addConverter(Configurable.class, (user, shard, channel, guild, message, reaction, args) -> {
             AtomicReference<Pair<Configurable, Integer>> pair = new AtomicReference<>();
             CONVERTER_MAP.forEach((type, converter) -> {
-                if (!Configurable.class.isAssignableFrom(type) || Configurable.class.equals(type) || pair.get() != null) return;
+                if (!Configurable.class.isAssignableFrom(type) || Configurable.class.equals(type) || Track.class.isAssignableFrom(type) || pair.get() != null) return;
                 try{pair.set((Pair<Configurable, Integer>) converter.getKey().getObject(user, shard, channel, guild, message, reaction, args));
                 } catch (Exception ignored) {}
             });
+            if (pair.get() == null) {
+                int pos = args.indexOf(' ');
+                String arg = pos == -1 ? args : args.substring(0, pos);
+                List<Track> tracks = Track.getTracks(arg, false);
+                if (!tracks.isEmpty()) pair.set(new Pair<>(tracks.get(0), pos));
+            }
             if (pair.get() == null) throw new ArgumentException("No configurable instance found");
             return pair.get();
         });
@@ -340,19 +346,17 @@ public class InvocationObjectGetter {
             throw new ArgumentException("Please indicate a command or a module");
         });
         addConverter(Color.class, (invoker, shard, channel, guild, message, reaction, args) -> {
+            if (args.isEmpty()) throw new ArgumentException("No value indicated for color");
             String[] strings = args.split(" ");
             try{return new Pair<>((Color) Color.class.getField(strings[0].toUpperCase()).get(null), strings[0].length());
             }catch(IllegalAccessException | NoSuchFieldException ignored) {}
-            if (args.startsWith("#")) return new Pair<>(new Color(Integer.parseInt(strings[0].substring(1), 16), false), 7);
-            Integer reserve = null;
-            try {
-                reserve = Integer.parseInt(strings[0].toUpperCase(), 16);
-                if (reserve > 255) return new Pair<>(new Color(reserve), strings[0].length());
-            } catch (Exception ignored) {}
-            if (strings.length > 2) {
-                try {
-                    int[] vals = new int[3];
-                    for (int i = 0; i < 3; i++) {
+            boolean hex = false;
+            if (args.startsWith("#") || args.startsWith("0x")) {
+                hex = true;
+            } else if (strings.length > 2) {
+                try {// though this is resource intensive it is much more readable than a highly optimized version
+                    int[] vals = new int[3];// Color conversion is not used enough to justify making this hard to read
+                    for (int i = 0; i < 3; i++) {// due it this being an open source project.
                         vals[i] = Integer.parseInt(strings[i]);
                     }
                     return new Pair<>(new Color(vals[0], vals[1], vals[2]), FormatHelper.lengthOf(strings, 3) + 2);
@@ -365,8 +369,12 @@ public class InvocationObjectGetter {
                     return new Pair<>(new Color(vals[0], vals[1], vals[2]), FormatHelper.lengthOf(strings, 3) + 2);
                 } catch (Exception ignored) {}
             }
-            if (reserve != null) return new Pair<>(new Color(reserve), strings[0].length());
-            throw new ArgumentException("Could not find color: for hex: insert a # in front | for rgb place the numbers without commas: r g b | for integer place the integer");
+            try {
+                return new Pair<>(new Color(Integer.parseInt(strings[0].substring(1), hex || (!strings[0].startsWith("-") && strings[0].matches("[0-9a-fA-F]+")) ? 16 : 10), false), 7);
+            } catch (NumberFormatException e) {
+                if (hex) throw new ArgumentException("Invalid hex value for color");
+                else throw new ArgumentException("Could not find color: for hex: insert a # in front | for rgb place the numbers without commas: r g b | for integer place the integer");
+            }
         });
         addConverter(Long.class, (invoker, shard, channel, guild, message, reaction, args) -> {
             String[] strings = args.split(" ");
@@ -376,7 +384,7 @@ public class InvocationObjectGetter {
             } catch (NumberFormatException e) {throw new ArgumentException(e);}
         });
         addConverter(Track.class, (invoker, shard, channel, guild, message, reaction, args) -> {
-            List<Track> tracks = Track.getTracks(args);
+            List<Track> tracks = Track.getTracks(args, true);
             if (tracks.isEmpty()) throw new ArgumentException("No tracks found");
             return new Pair<>(tracks.get(0), args.length());// dangerous
         });

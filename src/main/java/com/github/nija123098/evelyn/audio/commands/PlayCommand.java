@@ -30,7 +30,7 @@ public class PlayCommand extends AbstractCommand {
 
     @Command
     public void command(GuildAudioManager manager, @Argument(info = "a song name or url") String s, User user, MessageMaker maker) {
-        List<Track> trackList = Track.getTracks(s);
+        List<Track> trackList = Track.getTracks(s, true);
         try {
             if (trackList.isEmpty() && !(s == null || s.isEmpty())) {
                 Track t = Track.getTrack(s);
