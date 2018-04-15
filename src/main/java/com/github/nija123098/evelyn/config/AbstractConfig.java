@@ -10,14 +10,16 @@ import com.github.nija123098.evelyn.perms.BotRole;
 import com.github.nija123098.evelyn.tag.Tag;
 import com.github.nija123098.evelyn.tag.Tagable;
 import com.github.nija123098.evelyn.tag.Tags;
+import com.github.nija123098.evelyn.util.CacheHelper;
 import com.github.nija123098.evelyn.util.Log;
+import com.google.common.cache.LoadingCache;
 import com.thoughtworks.xstream.io.StreamException;
 
 import java.lang.reflect.Type;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -38,8 +40,8 @@ public class AbstractConfig<V, T extends Configurable> implements Tagable {
     private final ConfigCategory category;
     private final Class<V> valueType;
     private final boolean normalViewing;
-    private final Map<T, V> cache;
-    private final Set<T> nullCache;
+    private final LoadingCache<T, V> cache;
+    private final CacheHelper.ContainmentCache<T> nullCache;
     private final List<Tag> tags;
     public AbstractConfig(String name, String displayName, ConfigCategory category, V defaultValue, String description) {
         this(name, displayName, category, v -> defaultValue, description);
@@ -76,8 +78,8 @@ public class AbstractConfig<V, T extends Configurable> implements Tagable {
         this.normalViewing = TypeChanger.normalStorage(this.valueType);
         this.configLevel = ConfigLevel.getLevel((Class<T>) types[types.length - 1]);
         if (this.configLevel.mayCache()) {
-            this.cache = new ConcurrentHashMap<>();
-            this.nullCache = new HashSet<>();
+            this.cache = CacheHelper.getLoadingCache(4, 200, 60_000, this::grabValue);// todo set time and size based on type/config
+            this.nullCache = new CacheHelper.ContainmentCache<>(300_000);// uses much less ram
         }else {
             this.cache = null;
             this.nullCache = null;
@@ -228,6 +230,15 @@ public class AbstractConfig<V, T extends Configurable> implements Tagable {
     }
 
     /**
+     * Gets the {@link ConfigCategory} for this config.
+     *
+     * @return the {@link ConfigCategory} for this config.
+     */
+    public ConfigCategory getCategory() {
+        return category;
+    }
+
+    /**
      * Gets the time the config was last set, give or
      * take for caching or -1 if the value was default.
      *
@@ -311,7 +322,7 @@ public class AbstractConfig<V, T extends Configurable> implements Tagable {
         if (configurable == null) throw new DevelopmentException("Attempted to reset value for null configurable");
         if (this.cache != null) {
             this.nullCache.remove(configurable);
-            this.cache.remove(configurable);
+            this.cache.invalidate(configurable);
         }
         Database.query("DELETE FROM " + this.getNameForType(configurable.getConfigLevel()) + " WHERE id = " + Database.quote(configurable.getID()));
     }
@@ -325,7 +336,7 @@ public class AbstractConfig<V, T extends Configurable> implements Tagable {
     public V getValue(T configurable) {
         if (configurable == null) throw new DevelopmentException("Attempted to get value for null configurable");
         if (this.cache == null) return grabValue(configurable);
-        V value = this.cache.get(configurable);
+        V value = this.cache.getIfPresent(configurable);
         if (value == null && !this.nullCache.contains(configurable)) {
             value = grabValue(configurable);
             if (value == null) this.nullCache.add(configurable);
@@ -344,12 +355,7 @@ public class AbstractConfig<V, T extends Configurable> implements Tagable {
         try {
             return Database.select("SELECT * FROM " + this.getNameForType(configurable.getConfigLevel()) + " WHERE id = " + Database.quote(configurable.getID()), set -> {
                 try{set.next();
-                    if (Configurable.class.isAssignableFrom(this.valueType)) return (V) ConfigHandler.getConfigurable(this.configLevel.getType(), set.getString(2));
-                    if (this.valueType.equals(Long.class)) return (V) Long.valueOf(set.getLong(2));
-                    if (this.valueType.equals(Boolean.class)) return (V) Boolean.valueOf(set.getBoolean(2));
-                    if (this.valueType.equals(Float.class)) return (V) Float.valueOf(set.getFloat(2));
-                    if (this.valueType.equals(Integer.class)) return (V) Integer.valueOf(set.getInt(2));
-                    return TypeChanger.toObject(this.valueType, set.getString(2));
+                    return parseValue(set);
                 } catch (SQLException e) {
                     if (!e.getMessage().equals("Current position is after the last row")) Log.log("Exception while getting value", e);
                     return this.getDefault(configurable);
@@ -358,6 +364,15 @@ public class AbstractConfig<V, T extends Configurable> implements Tagable {
         } catch (StreamException e) {
             throw new DevelopmentException("Could not load config due to stream exception from " + this.getNameForType(configurable.getConfigLevel()) + " while loading " + configurable.getID() + "'s value", e);
         }
+    }
+
+    private V parseValue(ResultSet set) throws SQLException {
+        if (Configurable.class.isAssignableFrom(this.valueType)) return (V) ConfigHandler.getConfigurable(this.configLevel.getType(), set.getString(2));
+        if (this.valueType.equals(Long.class)) return (V) Long.valueOf(set.getLong(2));
+        if (this.valueType.equals(Boolean.class)) return (V) Boolean.valueOf(set.getBoolean(2));
+        if (this.valueType.equals(Float.class)) return (V) Float.valueOf(set.getFloat(2));
+        if (this.valueType.equals(Integer.class)) return (V) Integer.valueOf(set.getInt(2));
+        return TypeChanger.toObject(this.valueType, set.getString(2));
     }
 
     /**
@@ -446,7 +461,7 @@ public class AbstractConfig<V, T extends Configurable> implements Tagable {
      * @return a map representation of {@link Configurable}s and values for this config.
      */
     public Map<T, V> getNonDefaultSettings() {
-        return getNonDefaultSettings(this.getConfigLevel().getType());
+        return this.getNonDefaultSettings(this.getConfigLevel().getType());
     }
 
     /**
@@ -458,17 +473,34 @@ public class AbstractConfig<V, T extends Configurable> implements Tagable {
      */
     public Map<T, V> getNonDefaultSettings(Class<? extends Configurable> clazz) {
         return Database.select("SELECT * FROM " + this.getNameForType(ConfigLevel.getLevel(clazz)), set -> {
-            Map<T, V> map = new HashMap<>();
-            try {
-                while (set.next()) {
-                    T t = (T) ConfigHandler.getConfigurable(set.getString(1)).convert(clazz);
-                    if (t == null) continue;
+            Map<T, V> map = new HashMap<>(set.getFetchSize());
+            V val;
+            while (set.next()) {
+                T t = (T) ConfigHandler.getConfigurable(set.getString(1)).convert(clazz);
+                if (t == null) continue;// skip if it no longer exists within the scope of the bot
+                if (this.cache != null) {
+                    if (this.nullCache.contains(t)) map.put(t, null);
+                    else {
+                        try {
+                            val = this.cache.get(t, () -> {
+                                try {
+                                    return parseValue(set);
+                                } catch (SQLException e) {
+                                    throw new DevelopmentException("Exception getting non-default setting values for " + this.name + " for configurable " + t.getID(), e);
+                                }
+                            });
+                            if (val != null) this.cache.put(t, val);
+                            else this.nullCache.add(t);
+                            map.put(t, val);
+                        } catch (ExecutionException | DevelopmentException ignored) {}
+                    }
+                } else try {
                     map.put(t, TypeChanger.toObject(this.valueType, set.getString(2)));
+                } catch (SQLException e) {
+                    Log.log("Exception getting non-default setting values for " + this.name, e);
                 }
-            } catch (SQLException e) {
-                Log.log("Exception getting non-default setting values, got " + map.size(), e);
             }
-            return map;// used for foreach, needn't be optimized
+            return map;
         });
     }
 

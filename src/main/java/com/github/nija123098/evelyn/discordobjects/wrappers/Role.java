@@ -6,9 +6,8 @@ import com.github.nija123098.evelyn.config.Configurable;
 import com.github.nija123098.evelyn.discordobjects.ExceptionWrapper;
 import com.github.nija123098.evelyn.exception.ConfigurableConvertException;
 import com.github.nija123098.evelyn.perms.BotRole;
-import com.github.nija123098.evelyn.util.CacheHelper;
+import com.github.nija123098.evelyn.util.ConcurrentLoadingHashMap;
 import com.github.nija123098.evelyn.util.FormatHelper;
-import com.google.common.cache.LoadingCache;
 import sx.blah.discord.handle.obj.IRole;
 
 import java.awt.*;
@@ -25,18 +24,18 @@ import java.util.stream.Collectors;
  * @since 1.0.0
  */
 public class Role implements Configurable {
-    private static final LoadingCache<IRole, Role> CACHE = CacheHelper.getLoadingCache(Runtime.getRuntime().availableProcessors() * 2, ConfigProvider.CACHE_SETTINGS.roleSize(), 120_000, Role::new);
+    private static final ConcurrentLoadingHashMap<IRole, Role> CACHE = new ConcurrentLoadingHashMap<>(ConfigProvider.CACHE_SETTINGS.roleSize(), Role::new);
     public static Role getRole(String id) {
         try {
             IRole iRole = DiscordClient.getAny(client -> client.getRoleByID(Long.parseLong(FormatHelper.filtering(id, Character::isLetterOrDigit))));
             if (iRole == null) return null;
-            return CACHE.getUnchecked(iRole);
+            return CACHE.get(iRole);
         } catch (NumberFormatException e) {
             return null;
         }
     }
     public static Role getRole(IRole iRole) {
-        return CACHE.getUnchecked(iRole);
+        return CACHE.get(iRole);
     }
     public static List<Role> getRoles(List<IRole> iRoles) {
         List<Role> roles = new ArrayList<>(iRoles.size());

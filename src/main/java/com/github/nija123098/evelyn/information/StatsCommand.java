@@ -4,8 +4,7 @@ import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.config.ConfigHandler;
-import com.github.nija123098.evelyn.config.GlobalConfigurable;
-import com.github.nija123098.evelyn.config.configs.guild.GuildIgnoreConfig;
+import com.github.nija123098.evelyn.config.configs.guild.GuildIgnoredConfig;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
@@ -34,7 +33,7 @@ public class StatsCommand extends AbstractCommand {
 
     static String getTotalTable(boolean mini) {
         List<List<String>> body = new ArrayList<>();
-        List<Guild> ignored = ConfigHandler.getSetting(GuildIgnoreConfig.class, GlobalConfigurable.GLOBAL);
+        Set<Guild> ignored = ConfigHandler.getNonDefaultSettings(GuildIgnoredConfig.class).keySet();
         int totalActiveVoice = 0, activeVoice;
         for (Shard shard : DiscordClient.getShards()) {
             List<Guild> guilds = shard.getGuilds();

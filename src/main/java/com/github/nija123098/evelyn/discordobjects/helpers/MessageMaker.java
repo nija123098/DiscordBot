@@ -750,7 +750,7 @@ public class MessageMaker {
      * @param page the page to sent.
      */
     private void send(int page) {
-        if (ConfigProvider.BOT_SETTINGS.ghostModeEnabled()) return;
+        if (ConfigProvider.BOT_SETTINGS.ghostModeEnabled() && !DiscordClient.getApplicationOwner().equals(this.user)) return;
         if (!this.maySend) {
             if (this.origin != null && this.origin.getChannel().getModifiedPermissions(DiscordClient.getOurUser().user()).contains(Permissions.ADD_REACTIONS)) ExceptionWrapper.wrap(() -> this.origin.addReaction(ReactionEmoji.of(EmoticonHelper.getChars("ok_hand", false))));
             return;

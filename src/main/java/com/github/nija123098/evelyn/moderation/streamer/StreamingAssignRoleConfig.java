@@ -3,7 +3,12 @@ package com.github.nija123098.evelyn.moderation.streamer;
 import com.github.nija123098.evelyn.config.AbstractConfig;
 import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.config.ConfigHandler;
-import com.github.nija123098.evelyn.discordobjects.wrappers.*;
+import com.github.nija123098.evelyn.discordobjects.DiscordAdapter;
+import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
+import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
+import com.github.nija123098.evelyn.discordobjects.wrappers.Presence;
+import com.github.nija123098.evelyn.discordobjects.wrappers.Role;
+import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordPresenceUpdate;
 import com.github.nija123098.evelyn.exception.ArgumentException;
@@ -20,6 +25,7 @@ public class StreamingAssignRoleConfig extends AbstractConfig<Role, Guild> {
     public StreamingAssignRoleConfig() {
         super("streaming_role", "Streaming Role", ConfigCategory.MODERATION, (Role) null, "The role to assign a streaming user");
         Launcher.registerAsyncStartup(() -> ConfigHandler.getNonDefaultSettings(StreamerConfig.class).keySet().forEach(user -> check(user, user.getPresence(), null)));
+        Launcher.registerStartup(() -> this.getNonDefaultSettings().keySet().forEach(DiscordAdapter::managePresences));
     }
 
     @EventListener

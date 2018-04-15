@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * @since 1.0.0
  */
 public class Region {
-    private static final Map<String, Region> MAP = new ConcurrentHashMap<>(10);// never needs to be cleared
+    private static final Map<String, Region> MAP = new ConcurrentHashMap<>(15);// never needs to be cleared
     public static Region getRegion(String id) {
         return getRegion((IRegion) DiscordClient.getAny(client -> client.getRegionByID(id)));
     }

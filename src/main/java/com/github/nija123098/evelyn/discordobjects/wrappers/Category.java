@@ -5,8 +5,7 @@ import com.github.nija123098.evelyn.config.ConfigLevel;
 import com.github.nija123098.evelyn.config.Configurable;
 import com.github.nija123098.evelyn.discordobjects.ExceptionWrapper;
 import com.github.nija123098.evelyn.perms.BotRole;
-import com.github.nija123098.evelyn.util.CacheHelper;
-import com.google.common.cache.LoadingCache;
+import com.github.nija123098.evelyn.util.ConcurrentLoadingHashMap;
 import sx.blah.discord.handle.obj.ICategory;
 
 import java.util.ArrayList;
@@ -20,19 +19,19 @@ import java.util.concurrent.atomic.AtomicReference;
  * @since 1.0.0
  */
 public class Category implements Configurable {
-    private static final LoadingCache<ICategory, Category> CACHE = CacheHelper.getLoadingCache(4, ConfigProvider.CACHE_SETTINGS.categorySize(), 300_000, Category::new);
-    public static Category getCategory(String id) {
+    private static final ConcurrentLoadingHashMap<ICategory, Category> CACHE = new ConcurrentLoadingHashMap<>(ConfigProvider.CACHE_SETTINGS.categorySize(), Category::new);
+    public static Category getCategory(String id) {//                  Ignore this waring
         try {
             ICategory iCategory = DiscordClient.getAny(client -> client.getCategoryByID(Long.valueOf(id)));
             if (iCategory == null) return null;
-            return CACHE.getUnchecked(iCategory);
+            return CACHE.get(iCategory);
         } catch (NumberFormatException e) {
             return null;
         }
     }
     public static Category getCategory(ICategory iCategory) {
         if (iCategory == null) return null;
-        return CACHE.getUnchecked(iCategory);
+        return CACHE.get(iCategory);
     }
     static List<Category> getCategories(List<ICategory> categories) {
         List<Category> cats = new ArrayList<>(categories.size());

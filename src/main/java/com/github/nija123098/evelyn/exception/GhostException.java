@@ -11,9 +11,9 @@ public class GhostException extends BotException {
     public GhostException() {
     }
     public static boolean isGhostCaused(Throwable throwable) {
-        if (throwable.getClass().equals(GhostException.class)) return true;
+        if (GhostException.class.isAssignableFrom(throwable.getClass())) return true;
         while ((throwable = throwable.getCause()) != null) {
-            if (throwable.getClass().equals(GhostException.class)) return true;
+            if (GhostException.class.isAssignableFrom(throwable.getClass())) return true;
         }
         return false;
     }

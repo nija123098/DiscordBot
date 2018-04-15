@@ -4,6 +4,8 @@ import com.github.nija123098.evelyn.audio.SpeechParser;
 import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.chatbot.ChatBot;
 import com.github.nija123098.evelyn.command.CommandHandler;
+import com.github.nija123098.evelyn.config.ConfigHandler;
+import com.github.nija123098.evelyn.config.configs.guild.GuildIgnoredConfig;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.helpers.ReactionBehavior;
 import com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
@@ -36,6 +38,7 @@ import sx.blah.discord.handle.impl.events.guild.channel.ChannelUpdateEvent;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageUpdateEvent;
 import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.ReactionEvent;
+import sx.blah.discord.handle.impl.events.guild.member.UserLeaveEvent;
 import sx.blah.discord.handle.impl.events.guild.role.RoleUpdateEvent;
 import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelMoveEvent;
 import sx.blah.discord.handle.impl.events.shard.ShardReadyEvent;
@@ -43,6 +46,7 @@ import sx.blah.discord.handle.impl.events.user.PresenceUpdateEvent;
 import sx.blah.discord.handle.impl.events.user.UserUpdateEvent;
 import sx.blah.discord.handle.impl.obj.ReactionEmoji;
 import sx.blah.discord.handle.obj.ActivityType;
+import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.handle.obj.StatusType;
 
 import java.io.File;
@@ -65,7 +69,7 @@ import java.util.stream.Collectors;
  * @since 1.0.0
  */
 public class DiscordAdapter {
-    private static final ThreadPoolExecutor MESSAGE_PARSE_EXECUTOR = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors() * 2, Runtime.getRuntime().availableProcessors() * 4, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<>(25), r -> ThreadHelper.getDemonThread(r, "Message-Parse"));
+    private static final ThreadPoolExecutor MESSAGE_PARSE_EXECUTOR = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors(), Runtime.getRuntime().availableProcessors() * 2, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<>(25), r -> ThreadHelper.getDemonThread(r, "Message-Parse"));
     private static final ScheduledExecutorService PLAY_TEXT_EXECUTOR = Executors.newSingleThreadScheduledExecutor(r -> ThreadHelper.getDemonThreadSingle(r, "Play-Text-Changer-Thread"));
     private static final Map<Class<? extends Event>, Constructor<? extends BotEvent>> EVENT_MAP;
     private static final long PLAY_TEXT_SPEED = 60_000, GUILD_SAVE_SPEED = 3_600_000;// 1 hour
@@ -78,10 +82,12 @@ public class DiscordAdapter {
         Set<Class<? extends BotEvent>> classes = new Reflections(Launcher.BASE_PACKAGE + ".discordobjects.wrappers.event.events").getSubTypesOf(BotEvent.class);
         classes.remove(DiscordMessageReceived.class);
         EVENT_MAP = new HashMap<>(classes.size() + 2, 1);
-        classes.stream().filter(clazz -> !clazz.isAssignableFrom(DiscordMessageReceived.class)).filter(clazz -> !clazz.isAssignableFrom(DiscordUserLeave.class)).filter(clazz -> !clazz.isAssignableFrom(ReactionEvent.class)).filter(clazz -> !clazz.isAssignableFrom(PresenceUpdateEvent.class)).map(clazz -> clazz.getConstructors()[0]).forEach(constructor -> EVENT_MAP.put((Class<? extends Event>) constructor.getParameterTypes()[0], (Constructor<? extends BotEvent>) constructor));
+        classes.stream().filter(clazz -> !clazz.isAssignableFrom(DiscordMessageReceived.class)).filter(clazz -> !clazz.isAssignableFrom(DiscordUserLeave.class)).filter(clazz -> !clazz.isAssignableFrom(DiscordReactionEvent.class)).filter(clazz -> !clazz.isAssignableFrom(DiscordPresenceUpdate.class)).map(clazz -> clazz.getConstructors()[0]).forEach(constructor -> EVENT_MAP.put((Class<? extends Event>) constructor.getParameterTypes()[0], (Constructor<? extends BotEvent>) constructor));
         ClientBuilder builder = new ClientBuilder();
         builder.withToken(ConfigProvider.BOT_SETTINGS.botToken());
+        builder.withMinimumDispatchThreads(1);
         builder.withMaximumDispatchThreads(2);
+        builder.withIdleDispatchThreadTimeout(1, TimeUnit.MINUTES);
         builder.registerListener((IListener<ShardReadyEvent>) event -> event.getShard().changePresence(StatusType.IDLE, ActivityType.WATCHING, "the login screen!"));
         int total = Requests.GENERAL_REQUESTS.GET.makeRequest(DiscordEndpoints.GATEWAY + "/bot", GatewayBotResponse.class, new BasicNameValuePair("Authorization", "Bot " + ConfigProvider.BOT_SETTINGS.botToken()), new BasicNameValuePair("Content-Type", "application/json")).shards;
         List<Integer> list = new ArrayList<>(total);
@@ -183,9 +189,22 @@ public class DiscordAdapter {
     public static void handle(ReactionEvent event) {// it's cleaner than the alternative
         EventDistributor.distribute(new DiscordReactionEvent(event));
     }
+
+
+    private static final Map<IUser, Boolean> MANAGE_PRESENCE_CACHE = new ConcurrentHashMap<>();
+    private static boolean shouldManagePresence(IUser iUser) {
+        return !iUser.isBot() && User.getUser(iUser).getGuilds().stream().anyMatch(guild -> !ConfigHandler.getSetting(GuildIgnoredConfig.class, guild));
+    }
+    public static void managePresences(Guild guild) {// added for efficiency when guilds are known to be managed
+        guild.getUsers().stream().filter(user -> !user.isBot()).map(User::user).forEach(iUser -> MANAGE_PRESENCE_CACHE.put(iUser, true));
+    }
+    @EventSubscriber
+    private static void handle(UserLeaveEvent event) {
+        if (MANAGE_PRESENCE_CACHE.get(event.getUser()) == Boolean.TRUE && !ConfigHandler.getSetting(GuildIgnoredConfig.class, Guild.getGuild(event.getGuild()))) MANAGE_PRESENCE_CACHE.remove(event.getUser());
+    }
     @EventSubscriber
     public static void handle(PresenceUpdateEvent event) {
-        if (!event.getUser().isBot()) EventDistributor.distribute(new DiscordPresenceUpdate(event));
+        if (MANAGE_PRESENCE_CACHE.computeIfAbsent(event.getUser(), DiscordAdapter::shouldManagePresence)) EventDistributor.distribute(new DiscordPresenceUpdate(event));
     }
 
     /**

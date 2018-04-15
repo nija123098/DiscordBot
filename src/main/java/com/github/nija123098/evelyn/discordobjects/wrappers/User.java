@@ -8,11 +8,10 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventDistribut
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordUserJoin;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordUserLeave;
 import com.github.nija123098.evelyn.perms.BotRole;
-import com.github.nija123098.evelyn.util.CacheHelper;
+import com.github.nija123098.evelyn.util.ConcurrentLoadingHashMap;
 import com.github.nija123098.evelyn.util.FormatHelper;
 import com.github.nija123098.evelyn.util.StringHelper;
 import com.github.nija123098.evelyn.util.Time;
-import com.google.common.cache.LoadingCache;
 import sx.blah.discord.handle.obj.IUser;
 
 import java.util.*;
@@ -26,19 +25,19 @@ import java.util.stream.Collectors;
  * @since 1.0.0
  */
 public class User implements Configurable {
-    public static final LoadingCache<IUser, User> CACHE = CacheHelper.getLoadingCache(Runtime.getRuntime().availableProcessors() * 2, ConfigProvider.CACHE_SETTINGS.userSize(), 60_000, User::new);
+    public static final ConcurrentLoadingHashMap<IUser, User> CACHE = new ConcurrentLoadingHashMap<>(ConfigProvider.CACHE_SETTINGS.userSize(), User::new);
     public static User getUser(String id) {
         try {
             IUser iUser = DiscordClient.getAny(client -> client.getUserByID(Long.parseLong(FormatHelper.filtering(id, Character::isLetterOrDigit))));;
             if (iUser == null) return null;
-            return CACHE.getUnchecked(iUser);
+            return CACHE.get(iUser);
         } catch (NumberFormatException e) {
             return null;
         }
     }
     public static User getUser(IUser user) {
         if (user == null) return null;
-        return CACHE.getUnchecked(user);
+        return CACHE.get(user);
     }
     static List<User> getUsers(Collection<IUser> iUsers) {
         List<User> users = new ArrayList<>(iUsers.size());
@@ -109,11 +108,11 @@ public class User implements Configurable {
     }
 
     public static void handle(DiscordUserJoin join) {
-        join.getUser().guilds.add(join.getGuild());
+        if (join.getUser().guilds != null) join.getUser().guilds.add(join.getGuild());
     }
 
     public static void handle(DiscordUserLeave leave) {
-        leave.getUser().guilds.add(leave.getGuild());
+        if (leave.getUser().guilds != null) leave.getUser().guilds.add(leave.getGuild());
     }
 
     public String getNameAndDiscrim() {

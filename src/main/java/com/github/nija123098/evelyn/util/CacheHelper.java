@@ -16,7 +16,7 @@ import java.util.function.Supplier;
 
 public class CacheHelper {
     public static <K, V> LoadingCache<K, V> getLoadingCache(int concurrency, int maxSize, long expireTime, Function<K, V> function) {
-        return CacheBuilder.newBuilder().concurrencyLevel(50).maximumSize(maxSize).expireAfterAccess(expireTime, TimeUnit.MILLISECONDS).build(new CacheLoader<K, V>() {
+        return CacheBuilder.newBuilder().concurrencyLevel(concurrency).maximumSize(maxSize).expireAfterAccess(expireTime, TimeUnit.MILLISECONDS).build(new CacheLoader<K, V>() {
             @Override
             public V load(K key) {
                 return function.apply(key);
@@ -49,11 +49,11 @@ public class CacheHelper {
 
         @Override
         public Iterator<V> iterator() {
-            return new ArrayList<>(this.vMap.keySet()).iterator();
+            return this.asArrayList().iterator();
         }
 
         public List<V> asArrayList() {
-            return new ArrayList<>();
+            return new ArrayList<>(this.vMap.keySet());
         }
     }
     public static class RefrenceCache <V> {// null not supported

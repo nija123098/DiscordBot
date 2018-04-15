@@ -7,9 +7,8 @@ import com.github.nija123098.evelyn.discordobjects.ExceptionWrapper;
 import com.github.nija123098.evelyn.exception.ConfigurableConvertException;
 import com.github.nija123098.evelyn.exception.GhostException;
 import com.github.nija123098.evelyn.perms.BotRole;
-import com.github.nija123098.evelyn.util.CacheHelper;
+import com.github.nija123098.evelyn.util.ConcurrentLoadingHashMap;
 import com.github.nija123098.evelyn.util.Time;
-import com.google.common.cache.LoadingCache;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IRole;
 
@@ -26,19 +25,19 @@ import java.util.stream.Collectors;
  * @since 1.0.0
  */
 public class Guild implements Configurable {
-    private static final LoadingCache<IGuild, Guild> CACHE = CacheHelper.getLoadingCache(Runtime.getRuntime().availableProcessors() * 2, ConfigProvider.CACHE_SETTINGS.guildSize(), 600_000, iGuild -> new Guild(iGuild));
-    public static Guild getGuild(String id) {
+    private static final ConcurrentLoadingHashMap<IGuild, Guild> CACHE = new ConcurrentLoadingHashMap<>(ConfigProvider.CACHE_SETTINGS.guildSize(), Guild::new);
+    public static Guild getGuild(String id) {//                  Ignore this warning
         try {
             IGuild guild = DiscordClient.getAny(client -> client.getGuildByID(Long.parseLong(id)));
             if (guild == null) return null;
-            return CACHE.getUnchecked(guild);
+            return CACHE.get(guild);
         } catch (NumberFormatException e) {
             return null;
         }
     }
     public static Guild getGuild(IGuild guild) {
         if (guild == null) return null;
-        return CACHE.getUnchecked(guild);
+        return CACHE.get(guild);
     }
     static List<Guild> getGuilds(List<IGuild> iGuilds) {
         List<Guild> list = new ArrayList<>(iGuilds.size());

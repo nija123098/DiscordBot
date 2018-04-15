@@ -29,6 +29,7 @@ public class Shard {
         return MAP.size();
     }
     static Shard getShard(IShard shard) {
+        if (shard == null) return null;
         return MAP.computeIfAbsent(shard.getInfo()[0], integer -> new Shard(shard));
     }
     static List<Shard> getShards(List<IShard> iShards) {

@@ -8,7 +8,6 @@ import sx.blah.discord.util.MissingPermissionsException;
 import sx.blah.discord.util.RateLimitException;
 import sx.blah.discord.util.RequestBuffer;
 
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -45,32 +44,38 @@ public class ExceptionWrapper {
      * @return the value returned by the request.
      */
     private static <E> E innerWrap(Request<E> request) {
-        AtomicBoolean complete = new AtomicBoolean();
-        AtomicReference<E> objectReference = new AtomicReference<>();
-        AtomicReference<RuntimeException> exceptionReference = new AtomicReference<>();
-        RequestBuffer.request(() -> {
-            try {
-                objectReference.set(request.request());
-            } catch (RuntimeException e) {
-                if (e instanceof RateLimitException) throw e;
-                exceptionReference.set(e);
-            }
-            complete.set(true);
-        }).get();
         try {
-            while (true) {
-                if (!complete.get()) continue;
-                if (exceptionReference.get() == null) return objectReference.get();
-                throw exceptionReference.get();
+            return request.request();// initial attempt
+        } catch (MissingPermissionsException p) {
+            throw new PermissionsException(p);
+        } catch (Exception ex) {
+            Thread waiter = Thread.currentThread();
+            AtomicReference<E> objectReference = new AtomicReference<>();
+            AtomicReference<RuntimeException> exceptionReference = new AtomicReference<>();
+            CareLess.lessSleep(100);
+            RequestBuffer.request(() -> {// initial attempt failed likely due to rate limiting, retrying.
+                try {
+                    objectReference.set(request.request());
+                } catch (RuntimeException e) {
+                    if (e instanceof RateLimitException) throw e;
+                    exceptionReference.set(e);
+                }
+                waiter.interrupt();
+            }).get();
+            try {
+                Thread.sleep(Integer.MAX_VALUE);// sleep until interrupted on success
+            } catch (InterruptedException ignored) {}// took long enough
+            if (exceptionReference.get() == null) return objectReference.get();
+            if (MissingPermissionsException.class.isAssignableFrom(exceptionReference.get().getClass())) {// handle cases where wrapping is necessary
+                throw new PermissionsException((MissingPermissionsException) exceptionReference.get());
+            } else if (DiscordException.class.isAssignableFrom(exceptionReference.get().getClass())) {
+                if (exceptionReference.get().getMessage().contains("cloudflare-nginx")) {
+                    CareLess.lessSleep(250);
+                    return innerWrap(request);
+                }
+                throw new DException((DiscordException) exceptionReference.get());
             }
-        } catch (MissingPermissionsException e) {// return RequestBuffer.request((RequestBuffer.IRequest<E>) request::request).get();
-            throw new PermissionsException(e);
-        } catch (DiscordException e) {
-            if (e.getMessage().contains("cloudflare-nginx")) {
-                CareLess.lessSleep(250);
-                return innerWrap(request);
-            }
-            throw new DException(e);
+            throw exceptionReference.get();
         }
     }
     @FunctionalInterface

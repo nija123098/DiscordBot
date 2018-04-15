@@ -27,7 +27,6 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -185,12 +184,12 @@ public class Launcher {
         DiscordAdapter.initialize();// EVERYTHING
         IS_STARTING_UP.set(true);
         STARTUPS.forEach(Runnable::run);
-        AtomicInteger asyncStartupCount = new AtomicInteger(ASYNC_STARTUPS.size());
-        ExecutorService executorService = new ThreadPoolExecutor(asyncStartupCount.get(), asyncStartupCount.get(), 0, TimeUnit.MILLISECONDS, new BlockingArrayQueue<>(asyncStartupCount.get()), r -> ThreadHelper.getDemonThread(r, "Async-Startup-Thread"));
+        ExecutorService executorService = new ThreadPoolExecutor(0, ASYNC_STARTUPS.size(), 0, TimeUnit.MILLISECONDS, new BlockingArrayQueue<>(ASYNC_STARTUPS.size()), r -> ThreadHelper.getDemonThread(r, "Async-Startup-Thread"));
         ASYNC_STARTUPS.forEach(runnable -> executorService.submit(() -> {
             runnable.run();
-            if (asyncStartupCount.decrementAndGet() <= 0) {
-                Log.log("All async start ups completed");
+            ASYNC_STARTUPS.remove(runnable);
+            if (ASYNC_STARTUPS.isEmpty()) {
+                Log.log("All async start ups completed", new RuntimeException("DONE ALL ASYNC"));
                 executorService.shutdown();
             }
         }));

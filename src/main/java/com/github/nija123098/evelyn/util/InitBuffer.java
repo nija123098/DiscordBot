@@ -7,8 +7,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import static com.github.nija123098.evelyn.util.CareLess.lessSleep;
-
 /**
  * @author nija123098
  * @since 1.0.0
@@ -22,7 +20,7 @@ public class InitBuffer<E> {
         this.thread = ThreadHelper.getDemonThread(() -> {
             while (true) {
                 while (this.buffer.size() < bufferSize) this.buffer.offer(supplier.get());
-                lessSleep(10_000);
+                CareLess.lessSleep(Integer.MAX_VALUE);
             }
         }, "Init-Buffer");
         this.thread.setDaemon(true);

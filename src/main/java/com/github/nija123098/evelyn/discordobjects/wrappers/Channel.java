@@ -7,11 +7,10 @@ import com.github.nija123098.evelyn.config.GlobalConfigurable;
 import com.github.nija123098.evelyn.discordobjects.ExceptionWrapper;
 import com.github.nija123098.evelyn.exception.ConfigurableConvertException;
 import com.github.nija123098.evelyn.perms.BotRole;
-import com.github.nija123098.evelyn.util.CacheHelper;
+import com.github.nija123098.evelyn.util.ConcurrentLoadingHashMap;
 import com.github.nija123098.evelyn.util.FormatHelper;
 import com.github.nija123098.evelyn.util.GetterUtil;
 import com.github.nija123098.evelyn.util.Time;
-import com.google.common.cache.LoadingCache;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IPrivateChannel;
 import sx.blah.discord.handle.obj.IVoiceChannel;
@@ -26,8 +25,8 @@ import java.util.concurrent.atomic.AtomicReference;
  * @since 1.0.0
  */
 public class Channel implements Configurable {
-    private static final LoadingCache<IChannel, Channel> CACHE = CacheHelper.getLoadingCache(Runtime.getRuntime().availableProcessors() * 2, ConfigProvider.CACHE_SETTINGS.channelSize(), 300_000, channel -> channel.isPrivate() ? new DirectChannel((IPrivateChannel) channel) : channel instanceof IVoiceChannel ? new VoiceChannel((IVoiceChannel) channel) : new Channel(channel));
-    public static Channel getChannel(String id) {
+    private static final ConcurrentLoadingHashMap<IChannel, Channel> CACHE = new ConcurrentLoadingHashMap<>(ConfigProvider.CACHE_SETTINGS.channelSize(), channel -> channel.isPrivate() ? new DirectChannel((IPrivateChannel) channel) : channel instanceof IVoiceChannel ? new VoiceChannel((IVoiceChannel) channel) : new Channel(channel));
+    public static Channel getChannel(String id) {//                  Ignore this warning
         try {
             Long longId = Long.parseLong(FormatHelper.filtering(id, Character::isLetterOrDigit));
             IChannel channel = GetterUtil.getAny(DiscordClient.clients(), f -> f.getChannelByID(longId));
@@ -36,14 +35,14 @@ public class Channel implements Configurable {
                 if (channel == null) return null;
                 return VoiceChannel.getVoiceChannel((IVoiceChannel) channel);
             }
-            return CACHE.getUnchecked(channel);
+            return CACHE.get(channel);
         } catch (NumberFormatException e) {
             return null;
         }
     }
     public static Channel getChannel(IChannel channel) {
         if (channel == null) return null;
-        return CACHE.getUnchecked(channel);
+        return CACHE.get(channel);
     }
     static List<Channel> getChannels(List<IChannel> iChannels) {
         List<Channel> channels = new ArrayList<>(iChannels.size());

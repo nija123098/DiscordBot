@@ -71,7 +71,7 @@ public class EventDistributor {
         Listener(Method m, Object o) {
             this.m = m;
             this.o = o;
-            this.executorService = new ThreadPoolExecutor(1, 2, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<>(50), r -> ThreadHelper.getDemonThreadSingle(r, this.m.getName() + "-Listener-Thread"), (r, executor) -> Log.log("Event of type " + this.m.getParameterTypes()[0] + " rejected execution from " + this.m));
+            this.executorService = new ThreadPoolExecutor(1, 2, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<>(50), r -> ThreadHelper.getDemonThreadSingle(r, this.m.getDeclaringClass().getSimpleName() + "#" + this.m.getName() + "-Listener-Thread"), (r, executor) -> Log.log("Event of type " + this.m.getParameterTypes()[0].getSimpleName() + " rejected from " + this.m.getDeclaringClass().getSimpleName() + "#" + this.m.getName()));
         }
         void handle(E event) {
             this.executorService.execute(() -> {
@@ -81,7 +81,7 @@ public class EventDistributor {
                     Log.log("This should never happen", e);
                 } catch (InvocationTargetException e) {
                     if (GhostException.isGhostCaused(e.getCause())) return;
-                    Log.log("Exception while distributing event of type " + e.getClass().getSimpleName() + " to: " + this.m.getDeclaringClass().getName() + "#" + this.m.getName() + " - " + e.getCause().getMessage(), e);
+                    Log.log("Exception while distributing event of type " + event.getClass().getSimpleName() + " to: " + this.m.getDeclaringClass().getName() + "#" + this.m.getName() + " - " + e.getCause().getMessage(), e);
                 }
             });
         }

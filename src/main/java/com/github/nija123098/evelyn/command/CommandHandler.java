@@ -272,7 +272,7 @@ public class CommandHandler {
         if (pair != null) {
             if (!pair.getKey().useReactions() && reaction != null) return false;
             if (!message.getChannel().getModifiedPermissions(DiscordClient.getOurUser()).contains(DiscordPermission.SEND_MESSAGES) && NO_RESPONSE_LOCATION.computeIfAbsent(message.getChannel().getGuild(), guild -> new ConcurrentHashMap<>()).computeIfAbsent(message.getAuthor(), u -> new HashSet<>()).add(message.getChannel()) && !message.getChannel().isPrivate() && message.getGuild().getUsers().stream().filter(User::isBot).count() < 6) {
-                new MessageMaker(message.getAuthor()).append("I can't send a command there and I won't tell you again!").send();
+                new MessageMaker(message.getAuthor()).append("I can't send a command there because I don't have permission to and I won't tell you again!").send();
             }
             command = pair.getKey();
             Reaction r = message.getReactionByName(UNKNOWN_COMMAND_EMOTICON);
