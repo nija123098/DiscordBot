@@ -475,9 +475,17 @@ public class AbstractConfig<V, T extends Configurable> implements Tagable {
         return Database.select("SELECT * FROM " + this.getNameForType(ConfigLevel.getLevel(clazz)), set -> {
             Map<T, V> map = new HashMap<>(set.getFetchSize());
             V val;
+            Configurable c;
             while (set.next()) {
-                T t = (T) ConfigHandler.getConfigurable(set.getString(1)).convert(clazz);
-                if (t == null) continue;// skip if it no longer exists within the scope of the bot
+                c = ConfigHandler.getConfigurable(set.getString(1));
+                if (c == null) continue;// skip if it no longer exists within the scope of the bot
+                T t;
+                try {
+                    t = (T) c.convert(clazz);
+                } catch (ArgumentException e) {
+                    Log.log("While getting defaults a conversion to type " + clazz.getSimpleName() + " for " + c.getID() + " could not be found");
+                    continue;
+                }
                 if (this.cache != null) {
                     if (this.nullCache.contains(t)) map.put(t, null);
                     else {
