@@ -30,8 +30,9 @@ public class BankSendCommand extends AbstractCommand {
         if (currencyTransfer < 0) throw new ArgumentException("You can't take " + name + " from other users without their consent.");
         if (currencyTransfer == 0) throw new ArgumentException("You can't send them nothing.");
         if (senderCurrency < currencyTransfer) throw new ArgumentException("You need `\u200b " + symbol + " " + (currencyTransfer - senderCurrency) + " \u200b` more to perform this transaction.");
+        if (receiver.equals(user)) throw new ArgumentException("You can't send yourself " + name + ", silly.");
         ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, (senderCurrency - currencyTransfer));
-        ConfigHandler.setSetting(CurrentCurrencyConfig.class, receiver, (receiverCurrency + senderCurrency));
+        ConfigHandler.setSetting(CurrentCurrencyConfig.class, receiver, (receiverCurrency + currencyTransfer));
         maker.appendRaw(FormatHelper.embedLink(user.getDisplayName(guild), "") + " successfully sent `\u200b " + symbol + " " + currencyTransfer + " \u200b`  to " + FormatHelper.embedLink(receiver.getDisplayName(guild), "")).mustEmbed();
     }
 }

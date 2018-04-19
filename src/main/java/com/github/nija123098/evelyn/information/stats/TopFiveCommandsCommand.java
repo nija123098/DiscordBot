@@ -29,7 +29,7 @@ public class TopFiveCommandsCommand extends AbstractCommand {
         maker.mustEmbed();
         maker.getTitle().appendRaw("Top 5 Users: Commands");
         for (int i = 0; i < 5; i++) {
-            maker.getNewFieldPart().withInline(false).withBoth(list.get(i).getKey().getNameAndDiscrim(),list.get(i).getValue() + " commands");
+            maker.getNewListPart().appendRaw(list.get(i).getKey().getNameAndDiscrim() + " | " + list.get(i).getKey().getID() + "\n" + list.get(i).getValue() + " commands");
         }
     }
 

@@ -29,7 +29,7 @@ public class TopFiveCookiesCommand extends AbstractCommand {
         maker.mustEmbed();
         maker.getTitle().appendRaw("Top 5 Users: Cookies");
         for (int i = 0; i < 5; i++) {
-            maker.getNewFieldPart().withInline(false).withBoth(list.get(i).getKey().getNameAndDiscrim(),list.get(i).getValue() + " cookies");
+            maker.getNewListPart().appendRaw(list.get(i).getKey().getNameAndDiscrim() + " | " + list.get(i).getKey().getID() + "\n" + list.get(i).getValue() + " cookies");
         }
     }
 
