@@ -41,7 +41,7 @@ public class BankCommand extends AbstractCommand {
          */
         if (ConfigHandler.getSetting(LastCurrencyUseConfig.class, user).equals(0L) || ConfigHandler.getSetting(LastCurrencyUseConfig.class, user) == null) {
             //ConfigHandler.setSetting(LastCurrencyUseConfig.class, user, System.currentTimeMillis());
-            maker.appendRaw("Hi " + user.getDisplayName(guild) + ", I recently switched to a new currency format! You can now claim the value in full after midnight UTC every day\nYou keep all your current " + name + " and as consolation for all the trouble you get a bonus `\u200b " + symbol + " 1000 \u200b`\n\n");
+            //maker.appendRaw("Hi " + user.getDisplayName(guild) + ", I recently switched to a new currency format! You can now claim the value in full after midnight UTC every day\nYou keep all your current " + name + " and as consolation for all the trouble you get a bonus `\u200b " + symbol + " 1000 \u200b`\n\n");
             bonus = ConfigHandler.getSetting(CurrencyBonusConfig.class, GlobalConfigurable.GLOBAL);
         }
 
