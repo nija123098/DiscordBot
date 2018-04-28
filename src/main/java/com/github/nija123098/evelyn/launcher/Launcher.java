@@ -189,7 +189,7 @@ public class Launcher {
             runnable.run();
             ASYNC_STARTUPS.remove(runnable);
             if (ASYNC_STARTUPS.isEmpty()) {
-                Log.log("All async start ups completed", new RuntimeException("DONE ALL ASYNC"));
+                Log.log("All async start ups completed");
                 executorService.shutdown();
             }
         }));

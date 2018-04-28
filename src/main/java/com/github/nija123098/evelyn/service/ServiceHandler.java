@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * @since 1.0.0
  * @see AbstractService
  */
-public class ServiceHandler {
+public class ServiceHandler {// todo replace with executors in AbstractService
     private static final Map<AbstractService, Long> NORMAL_SERVICES;
     static {
         Set<Class<? extends AbstractService>> classes = new Reflections(Launcher.BASE_PACKAGE).getSubTypesOf(AbstractService.class);
@@ -39,7 +39,11 @@ public class ServiceHandler {
                         while (true) {
                             if (service.shouldRun()) {
                                 time = System.currentTimeMillis();
-                                service.run();
+                                try {
+                                    service.run();
+                                } catch (Throwable t) {
+                                    Log.log("Throwable on executing " + service.getClass().getSimpleName());
+                                }
                                 time = time + service.getDelayBetween() - System.currentTimeMillis();
                                 if (time > 0) {
                                     try {
