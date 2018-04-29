@@ -1,16 +1,28 @@
 package com.github.nija123098.evelyn.helping.embed;
 
+import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.config.ConfigHandler;
-import com.github.nija123098.evelyn.config.GuildUser;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
+import com.github.nija123098.evelyn.discordobjects.wrappers.Category;
+import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Message;
+import com.github.nija123098.evelyn.discordobjects.wrappers.User;
+import com.github.nija123098.evelyn.util.CacheHelper;
 import com.github.nija123098.evelyn.util.Log;
+import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
+import javafx.util.Pair;
+import sx.blah.discord.handle.obj.ICategory;
 
 import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.function.Consumer;
 
 /**
  * @author Dxeo
@@ -21,8 +33,10 @@ public class EmbedCommand extends AbstractCommand {
         super("embed", ModuleLevel.BOT_ADMINISTRATIVE, null, null, "Embeds the given string, must use the format in description.");
     }
 
+    //private static final LoadingCache<User, Map<Channel, Pair<Message, Message>>> EMBED_CACHE = CacheHelper.getLoadingCache(4, 20, 60_000L, );
+
     @Command
-    public void embed(@Argument String s, MessageMaker maker, GuildUser guser, Message msg) {
+    public void embed(@Argument String s, MessageMaker maker, Channel channel , User user, Message msg) {
         //configure maker
         maker.withAutoSend(false);
         maker.mustEmbed();
@@ -47,106 +61,103 @@ public class EmbedCommand extends AbstractCommand {
         String cAuth = null;
 
         //assign fields
-        for (int i = 0; i < s2.length; i++) {
-            if (s2[i].startsWith("m[[") || s2[i].startsWith(" m[[")) {
-                s2[i] = s2[i].replace("m[[", "");
-                maker.getHeader().clear().append(translateSpecialCharacters(s2[i]));
-                code.getHeader().appendRaw("maker.getHeader().clear().append(\"" + cleanString(s2[i]) + "\");\n");
-            } else if (s2[i].startsWith("t[[") || s2[i].startsWith(" t[[")) {
-                s2[i] = s2[i].replace("t[[", "");
-                maker.getTitle().clear().append(translateSpecialCharacters(s2[i]));
-                code.getHeader().appendRaw("maker.getTitle().clear().append(\"" + s2[i] + "\");\n");
-            } else if (s2[i].startsWith("foo[[") || s2[i].startsWith(" foo[[")) {
-                s2[i] = s2[i].replace("foo[[", "");
-                maker.getFooter().clear().append(translateSpecialCharacters(s2[i]));
-                code.getHeader().appendRaw("maker.getFooter().clear().append(\"" + cleanString(s2[i]) + "\");\n");
-            } else if (s2[i].startsWith("n[[") || s2[i].startsWith(" n[[")) {
-                s2[i] = s2[i].replace("n[[", "");
-                maker.getNote().clear().append(translateSpecialCharacters(s2[i]));
-                code.getHeader().appendRaw("maker.getNote().clear().append(\"" + s2[i] + "\");\n");
-            } else if (s2[i].startsWith("img[[") || s2[i].startsWith(" img[[")) {
-                s2[i] = s2[i].replace("img[[", "");
-                s2[i] = s2[i].replaceAll(" ", "");
-                maker.withImage(s2[i]);
-                cImg = s2[i];
-                code.getHeader().appendRaw("maker.withImage(\"" + s2[i] + "\");\n");
-            } else if (s2[i].startsWith("nimg[[") || s2[i].startsWith(" nimg[[")) {
-                s2[i] = s2[i].replace("nimg[[", "");
-                s2[i] = s2[i].replaceAll(" ", "");
-                maker.withFooterIcon(s2[i]);
-                cNote = s2[i];
-                code.getHeader().appendRaw("maker.withFooterIcon(\"" + s2[i] + "\");\n");
-            } else if (s2[i].startsWith("a[[") || s2[i].startsWith(" a[[")) {
-                s2[i] = s2[i].replace("a[[", "");
-                maker.getAuthorName().append(translateSpecialCharacters(s2[i]));
-                code.getHeader().appendRaw("maker.getAuthorName().append(\"" + s2[i] + "\");\n");
-            } else if (s2[i].startsWith("aimg[[") || s2[i].startsWith(" aimg[[")) {
-                s2[i] = s2[i].replace("aimg[[", "");
-                s2[i] = s2[i].replaceAll(" ", "");
-                maker.withAuthorIcon(s2[i]);
-                cAuth = s2[i];
-                code.getHeader().appendRaw("maker.withAuthorIcon(\"" + s2[i] + "\");\n");
-            } else if (s2[i].startsWith("fp[[") || s2[i].startsWith(" fp[[")) {
-                s2[i] = s2[i].replace("fp[[", "");
-                String[] sfp = s2[i].split(",,,");
+        for (String str: s2) {
+            if (str.startsWith("m[[") || str.startsWith(" m[[")) {
+                str = str.replace("m[[", "");
+                maker.getHeader().clear().append(translateSpecialCharacters(str));
+                code.getHeader().appendRaw("maker.getHeader().clear().append(\"" + cleanString(str) + "\");\n");
+            } else if (str.startsWith("t[[") || str.startsWith(" t[[")) {
+                str = str.replace("t[[", "");
+                maker.getTitle().clear().append(translateSpecialCharacters(str));
+                code.getHeader().appendRaw("maker.getTitle().clear().append(\"" + str + "\");\n");
+            } else if (str.startsWith("foo[[") || str.startsWith(" foo[[")) {
+                str = str.replace("foo[[", "");
+                maker.getFooter().clear().append(translateSpecialCharacters(str));
+                code.getHeader().appendRaw("maker.getFooter().clear().append(\"" + cleanString(str) + "\");\n");
+            } else if (str.startsWith("n[[") || str.startsWith(" n[[")) {
+                str = str.replace("n[[", "");
+                maker.getNote().clear().append(translateSpecialCharacters(str));
+                code.getHeader().appendRaw("maker.getNote().clear().append(\"" + str + "\");\n");
+            } else if (str.startsWith("img[[") || str.startsWith(" img[[")) {
+                str = str.replace("img[[", "");
+                str = str.replaceAll(" ", "");
+                maker.withImage(str);
+                cImg = str;
+                code.getHeader().appendRaw("maker.withImage(\"" + str + "\");\n");
+            } else if (str.startsWith("nimg[[") || str.startsWith(" nimg[[")) {
+                str = str.replace("nimg[[", "");
+                str = str.replaceAll(" ", "");
+                maker.withFooterIcon(str);
+                cNote = str;
+                code.getHeader().appendRaw("maker.withFooterIcon(\"" + str + "\");\n");
+            } else if (str.startsWith("a[[") || str.startsWith(" a[[")) {
+                str = str.replace("a[[", "");
+                maker.getAuthorName().append(translateSpecialCharacters(str));
+                code.getHeader().appendRaw("maker.getAuthorName().append(\"" + str + "\");\n");
+            } else if (str.startsWith("aimg[[") || str.startsWith(" aimg[[")) {
+                str = str.replace("aimg[[", "");
+                str = str.replaceAll(" ", "");
+                maker.withAuthorIcon(str);
+                cAuth = str;
+                code.getHeader().appendRaw("maker.withAuthorIcon(\"" + str + "\");\n");
+            } else if (str.startsWith("fp[[") || str.startsWith(" fp[[")) {
+                str = str.replace("fp[[", "");
+                String[] sfp = str.split(",,,");
                 maker.getNewFieldPart().withBoth(translateSpecialCharacters(sfp[0]), translateSpecialCharacters(sfp[1])).withInline(false);
                 code.getHeader().appendRaw("maker.getNewFieldPart().withBoth(\"" + sfp[0] + "\", \"" + cleanString(sfp[1]) + "\").withInline(false);\n");
-            } else if (s2[i].startsWith("fpi[[") || s2[i].startsWith(" fpi[[")) {
-                s2[i] = s2[i].replace("fpi[[", "");
-                String[] sfp = s2[i].split(",,,");
+            } else if (str.startsWith("fpi[[") || str.startsWith(" fpi[[")) {
+                str = str.replace("fpi[[", "");
+                String[] sfp = str.split(",,,");
                 maker.getNewFieldPart().withBoth(translateSpecialCharacters(sfp[0]), translateSpecialCharacters(sfp[1])).withInline(true);
                 code.getHeader().appendRaw("maker.getNewFieldPart().withBoth(\"" + sfp[0] + "\", \"" + cleanString(sfp[1]) + "\").withInline(true);\n");
-            } else if (s2[i].startsWith("thumb[[") || s2[i].startsWith(" thumb[[")) {
-                s2[i] = s2[i].replace("thumb[[", "");
-                s2[i] = s2[i].replaceAll(" ", "");
-                maker.withThumb(s2[i]);
-                cThumb = s2[i];
-                code.getHeader().appendRaw("maker.withThumb(\"" + s2[i] + "\");\n");
-            } else if (s2[i].startsWith("c[[") || s2[i].startsWith(" c[[")) {
-                s2[i] = s2[i].replace("c[[", "");
-                s2[i] = s2[i].replaceAll(" ", "");
-                String[] rgb = s2[i].split(",");
+            } else if (str.startsWith("thumb[[") || str.startsWith(" thumb[[")) {
+                str = str.replace("thumb[[", "");
+                str = str.replaceAll(" ", "");
+                maker.withThumb(str);
+                cThumb = str;
+                code.getHeader().appendRaw("maker.withThumb(\"" + str + "\");\n");
+            } else if (str.startsWith("c[[") || str.startsWith(" c[[")) {
+                str = str.replace("c[[", "");
+                str = str.replaceAll(" ", "");
+                String[] rgb = str.split(",");
                 maker.withColor(new Color(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2])));
                 code.getHeader().appendRaw("maker.withColor(new Color(" + rgb[0] + ", " + rgb[1] + ", " + rgb[2] + "));\n");
-            } else if (s2[i].startsWith("r[[") || s2[i].startsWith(" r[[")) {
-                s2[i] = s2[i].replace("r[[", "");
-                s2[i] = s2[i].replaceAll(" ", "");
-                r = s2[i].split(",");
-            } else if (s2[i].startsWith("opt[[") || s2[i].startsWith(" opt[[")) {
-                s2[i] = s2[i].replace("opt[[", "");
-                s2[i] = s2[i].toLowerCase();
-                s2[i] = s2[i].replaceAll(" ", "");
-                String[] opt = s2[i].split(",");
-                for (int j = 0; j < opt.length; j++){
-                    if (opt[j].contains("userauthor")) {
-                        maker.withAuthor(guser.getUser());
+            } else if (str.startsWith("r[[") || str.startsWith(" r[[")) {
+                str = str.replace("r[[", "");
+                str = str.replaceAll(" ", "");
+                r = str.split(",");
+            } else if (str.startsWith("opt[[") || str.startsWith(" opt[[")) {
+                str = str.replace("opt[[", "");
+                str = str.toLowerCase();
+                str = str.replaceAll(" ", "");
+                String[] opt = str.split(",");
+                for (String stro:opt){
+                    if (stro.contains("userauthor")) {
+                        maker.withAuthor(user);
                         code.getHeader().appendRaw("maker.withAuthor(user);\nmaker.withAuthorIcon(user.getAvatarURL());\n");
-                    } else if (opt[j].contains("timestamp")) {
+                    } else if (stro.contains("timestamp")) {
                         maker.withTimestamp(System.currentTimeMillis());
                         code.getHeader().appendRaw("maker.withTimestamp(System.currentTimeMillis());\n");
-                    } else if (opt[j].contains("code")) {
+                    } else if (stro.contains("code")) {
                         codeSend = true;
-                    } else if (opt[j].contains("deletecommand")) {
+                    } else if (stro.contains("deletecommand")) {
                         msg.delete();
-                    } else if (opt[j].contains("editorigin")) {
-                        if (ConfigHandler.getSetting(LastEmbedConfig.class, guser) != null) {
-                            if ((System.currentTimeMillis() - ConfigHandler.getSetting(LastEmbedMillisConfig.class, guser))/60_000L < 15) {
-                                maker.setMessage(ConfigHandler.getSetting(LastEmbedConfig.class, guser));
-                            }
-                        }
-                    } else if (opt[j].contains("usercolor")) {
-                        maker.withColor(guser.getUser());
+                    } else if (stro.contains("editorigin")) {
+                        //maker.setMessage(EMBED_CACHE.getUnchecked(user).get(channel).getKey());
+                       //code.setMessage(EMBED_CACHE.getUnchecked(user).get(channel).getValue());
+                    } else if (stro.contains("usercolor")) {
+                        maker.withColor(user);
                         code.getHeader().appendRaw("maker.withColor(user);\n");
-                    } else if (opt[j].contains("thumbcolor")) {
+                    } else if (stro.contains("thumbcolor")) {
                         maker.withColor(cThumb);
                         code.getHeader().appendRaw("maker.withColor(\"" + cThumb + "\");\n");
-                    } else if (opt[j].contains("imgcolor")) {
+                    } else if (stro.contains("imgcolor")) {
                         maker.withColor(cImg);
                         code.getHeader().appendRaw("maker.withColor(\"" + cImg + "\");\n");
-                    } else if (opt[j].contains("authcolor")) {
+                    } else if (stro.contains("authcolor")) {
                         maker.withColor(cAuth);
                         code.getHeader().appendRaw("maker.withColor(\"" + cAuth + "\");\n");
-                    } else if (opt[j].contains("notecolor")) {
+                    } else if (stro.contains("notecolor")) {
                         maker.withColor(cNote);
                         code.getHeader().appendRaw("maker.withColor(\"" + cNote + "\");\n");
                     }
@@ -154,19 +165,21 @@ public class EmbedCommand extends AbstractCommand {
             }
         }
         maker.send();
-        ConfigHandler.setSetting(LastEmbedConfig.class, guser, maker.sentMessage());
-        ConfigHandler.setSetting(LastEmbedMillisConfig.class, guser, System.currentTimeMillis());
         if (codeSend) {
             code.getHeader().appendRaw("```");
             code.send();
         }
+            //EMBED_CACHE.getUnchecked(user).put(channel, new Pair<>(maker.sentMessage(), code.sentMessage()));
+//        } else {
+//            EMBED_CACHE.getUnchecked(user).put(channel, new Pair<>(maker.sentMessage(), null));
+//        }
 
         //add reactions for the sent message if available
         if (r != null) {
-            for (int i = 0; i < r.length; i++){
-                r[i] = r[i].replaceAll("<", "");
-                r[i] = r[i].replaceAll(">", "");
-                maker.sentMessage().addReaction(r[i]);
+            for (String rstr:r){
+                rstr = rstr.replaceAll("<", "");
+                rstr = rstr.replaceAll(">", "");
+                maker.sentMessage().addReaction(rstr);
             }
         }
     }

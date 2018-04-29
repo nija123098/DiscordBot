@@ -18,4 +18,5 @@ public interface URLs {
     String discordWhitePng();
     String greenArrowPng();
     String redArrowPng();
+    String rewardThumb();
 }

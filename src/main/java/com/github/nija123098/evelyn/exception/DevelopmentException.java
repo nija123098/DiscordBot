@@ -34,6 +34,6 @@ public class DevelopmentException extends BotException {
 
     @Override
     public MessageMaker makeMessage(Channel channel) {
-        return super.makeMessage(channel).getFooter().append("Click " + FormatHelper.embedLink("here", ConfigProvider.URLS.discordInviteUrl()) + " to notify the developers.").getMaker().getTitle().clear().appendRaw("Development Exception").getMaker();
+        return super.makeMessage(channel).getFooter().append("Click " + FormatHelper.embedLink("here", ConfigProvider.URLS.discordInviteUrl()) + " to notify the developers.\nOr use `@Evelyn send` to send a bug report.").getMaker().getTitle().clear().appendRaw("Development Exception").getMaker();
     }
 }
