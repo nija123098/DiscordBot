@@ -25,7 +25,7 @@ import java.util.concurrent.ExecutionException;
 @FunctionalInterface
 public interface ReactionBehavior {
     void behave(boolean add, Reaction reaction, User user);
-    Cache<Message, Map<String, ReactionBehavior>> CACHE = CacheHelper.getCache(Runtime.getRuntime().availableProcessors() * 2, ConfigProvider.CACHE_SETTINGS.reactionBehaviorSize(), 120_000);
+    Cache<Message, Map<String, ReactionBehavior>> CACHE = CacheHelper.getCache(Runtime.getRuntime().availableProcessors() * 6, ConfigProvider.CACHE_SETTINGS.reactionBehaviorSize(), 120_000);
 
     /**
      * Registers a listener to preform a

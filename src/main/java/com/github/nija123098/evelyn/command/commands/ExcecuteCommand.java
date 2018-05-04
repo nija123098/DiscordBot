@@ -20,9 +20,9 @@ public class ExcecuteCommand extends AbstractCommand {
     @Command
     public void command(String args, MessageMaker maker) {
         if (PlatformDetector.isWindows()) args = "cmd /c" + args;
-        ExecuteShellCommand.commandToExecute(args, ConfigProvider.BOT_SETTINGS.botFolder());
-        if (ExecuteShellCommand.getOutput().length() >= 2000) {
-            maker.append("Command Output:\n").appendRaw(PastebinUtil.postToPastebin("Command Output", ExecuteShellCommand.getOutput()));
-        } else maker.append("Command Output:\n```").appendRaw(ExecuteShellCommand.getOutput()).appendRaw("```");
+        String out = ExecuteShellCommand.commandToExecute(args, ConfigProvider.BOT_SETTINGS.botFolder());
+        if (out.length() >= 2000) {
+            maker.append("Command Output:\n").appendRaw(PastebinUtil.postToPastebin("Command Output", out));
+        } else maker.append("Command Output:\n```").appendRaw(out).appendRaw("```");
     }
 }

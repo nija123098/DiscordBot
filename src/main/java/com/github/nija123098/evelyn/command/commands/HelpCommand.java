@@ -31,7 +31,7 @@ import java.util.stream.Stream;
 @Tags(value = {Tag.HELPFUL})
 public class HelpCommand extends AbstractCommand {
     public HelpCommand() {
-        super("help", ModuleLevel.INFO, null, null, "Gives information about a command");
+        super("help", ModuleLevel.INFO, "commands", null, "Gives information about a command");
     }
     @Command
     public static void command(@Argument(optional = true, replacement = ContextType.NONE) AbstractCommand command, MessageMaker maker, User user, Channel channel, @Context(softFail = true) Guild guild, @Context(softFail = true) ModuleLevel levelSelection, String full) {

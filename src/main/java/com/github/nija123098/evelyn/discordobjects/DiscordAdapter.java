@@ -232,7 +232,7 @@ public class DiscordAdapter {
                 } else isCommand = false;
             }
             receivedEvent.setCommand(isCommand);
-            if (!isCommand && event.getMessage().getMentions().contains(DiscordClient.getOurUser().user())) {
+            if (!isCommand && event.getMessage().getMentions().contains(DiscordClient.getOurUser().user()) && !event.getMessage().mentionsEveryone() && !event.getMessage().mentionsHere()) {
                 ExceptionWrapper.wrap(() -> event.getMessage().addReaction(ReactionEmoji.of(EmoticonHelper.getChars("eyes", false))));
             }// This does the :eyes: on mention now.
             EventDistributor.distribute(receivedEvent);

@@ -29,13 +29,13 @@ public class UpdateBotCommand extends AbstractCommand {
         maker.getTitle().clear().appendRaw("\uD83D\uDEE0 Bot Updater \uD83D\uDEE0");
         maker.getNote().clear().appendRaw("Last Update");
         maker.withTimestamp(ConfigHandler.getSetting(LastBotUpdaterUseConfig.class, GlobalConfigurable.GLOBAL));
-        ExecuteShellCommand.commandToExecute("git pull", ConfigProvider.UPDATE_SETTINGS.updateFolder());
-        if (ExecuteShellCommand.getOutput().contains("Already up-to-date")) {
+        String out = ExecuteShellCommand.commandToExecute("git pull", ConfigProvider.UPDATE_SETTINGS.updateFolder());
+        if (out.contains("Already up-to-date")) {
             maker.appendRaw("The bot is already up to date.\nAborting the update process.");
         } else {
-            ExecuteShellCommand.commandToExecute("mvn " + ConfigProvider.UPDATE_SETTINGS.mvnArgs(), ConfigProvider.UPDATE_SETTINGS.updateFolder());
-            if (ExecuteShellCommand.getOutput().contains("BUILD FAILURE")) {
-                maker.appendRaw("**The update was unsuccessful. Please view the build results here:**\n" + PastebinUtil.postToPastebin("Maven Compile Log", ExecuteShellCommand.getOutput()));
+            out = ExecuteShellCommand.commandToExecute("mvn " + ConfigProvider.UPDATE_SETTINGS.mvnArgs(), ConfigProvider.UPDATE_SETTINGS.updateFolder());
+            if (out.contains("BUILD FAILURE")) {
+                maker.appendRaw("**The update was unsuccessful. Please view the build results here:**\n" + PastebinUtil.postToPastebin("Maven Compile Log", out));
             } else {
                 if (PlatformDetector.isUnix() || PlatformDetector.isWindows()) {
                     ExecuteShellCommand.commandToExecute("cp " + ConfigProvider.UPDATE_SETTINGS.updateFolder() + "target/DiscordBot-1.0.0.jar " + ConfigProvider.BOT_SETTINGS.botFolder() + "Evelyn.jar", ConfigProvider.BOT_SETTINGS.botFolder());

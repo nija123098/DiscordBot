@@ -32,9 +32,7 @@ public class FavorHandler {
     private static final Map<ConfigLevel, Function<? extends Configurable, Float>> TYPE_DERIVATIONS = new HashMap<>();
     static {
         add(GuildUser.class, guildUser -> {
-            float v = ConfigHandler.getSetting(MessageFavorFactorConfig.class, guildUser.getGuild()) * ConfigHandler.getSetting(MessageCountConfig.class, guildUser);
-            v += ConfigHandler.getSetting(ReputationFavorFactorConfig.class, guildUser.getGuild()) * ConfigHandler.getSetting(GuildUserReputationConfig.class, guildUser);
-            v += ConfigHandler.getSetting(ReactionFavorFactorConfig.class, guildUser.getGuild()) * ConfigHandler.getSetting(ReactionCountConfig.class, guildUser);
+            float v = ConfigHandler.getSetting(ReputationFavorFactorConfig.class, guildUser.getGuild()) * ConfigHandler.getSetting(GuildUserReputationConfig.class, guildUser);
             v += ConfigHandler.getSetting(VoiceTimeFavorFactorConfig.class, guildUser.getGuild()) * ConfigHandler.getSetting(VoiceTimeConfig.class, guildUser);
             v += ConfigHandler.getSetting(GameTimeFavorFactorConfig.class, guildUser.getGuild()) * ConfigHandler.getSetting(PlayTimeFavorConfig.class, guildUser);
             v += ConfigHandler.getSetting(TimeFavorFactorConfig.class, guildUser.getGuild()) * (System.currentTimeMillis() - guildUser.getJoinTime()) / 900000;

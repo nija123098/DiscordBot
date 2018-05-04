@@ -25,7 +25,7 @@ public class RestartCommand extends AbstractCommand {
     }
     @Command
     public static void command(ContextPack pack, MessageMaker maker) {
-        maker.appendRaw("The bot will now restart with the following command:\n ```" + ConfigProvider.BOT_SETTINGS.startCommand() + "```");
+        maker.appendRaw("The bot will now restart with the following command:\n```" + ConfigProvider.BOT_SETTINGS.startCommand() + "```");
         Template template = TemplateHandler.getTemplate(KeyPhrase.REBOOT_NOTIFICATION, null, Collections.emptyList());
         SubscriptionLevel.BOT_STATUS.send(new MessageMaker((Channel) null).append(template == null ? "I'm going to go reboot" : template.interpret(pack)));
         ExecuteShellCommand.commandToExecute(ConfigProvider.BOT_SETTINGS.startCommand(), ConfigProvider.BOT_SETTINGS.botFolder());

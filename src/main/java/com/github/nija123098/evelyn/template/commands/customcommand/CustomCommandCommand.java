@@ -21,10 +21,8 @@ public class CustomCommandCommand extends AbstractCommand {
     public CustomCommandCommand() {
         super("customcommand", ModuleLevel.ADMINISTRATIVE, "command", null, "Shows a list of existing custom commands");
     }
-    Guild temp;
     @Command
     public void command(MessageMaker maker, Guild guild) {
-        temp = guild;
         Set<String> strings = CustomCommandHandler.getCustomCommandNames(guild);
         if (strings.isEmpty()) maker.append("You haven't set up any custom commands yet!");
         else{
@@ -35,6 +33,6 @@ public class CustomCommandCommand extends AbstractCommand {
 
     @Override
     public String getExample() {
-        return "#  customcommand add rickroll https://youtu.be/dQw4w9WgXcQ // Creates a custom command called `rickroll`, use " + ConfigHandler.getSetting(GuildPrefixConfig.class, temp);
+        return "#  customcommand add rickroll https://youtu.be/dQw4w9WgXcQ // Creates a custom command called `rickroll` which posts `https://youtu.be/dQw4w9WgXcQ` when invoked.";
     }
 }

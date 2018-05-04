@@ -69,6 +69,10 @@ public class InvocationObjectGetter {
         addContext(Guild.class, ContextType.LOCATION, (user, shard, channel, guild, message, reaction, args) -> guild, ContextRequirement.GUILD);
         addContext(GuildUser.class, ContextType.INVOKER, (user, shard, channel, guild, message, reaction, args) -> GuildUser.getGuildUser(guild, user), ContextRequirement.GUILD, ContextRequirement.USER);
         addContext(Channel.class, ContextType.LOCATION, (user, shard, channel, guild, message, reaction, args) -> channel, ContextRequirement.CHANNEL);
+        addContext(Category.class, ContextType.LOCATION, (invoker, shard, channel, guild, message, reaction, args) -> {
+            if (channel.getCategory() == null) throw new ContextException("You are not using a channel in a category");
+            return channel.getCategory();
+        });
         addContext(Presence.class, ContextType.INVOKER, (user, shard, channel, guild, message, reaction, args) -> user.getPresence(), ContextRequirement.USER);
         addContext(String.class, ContextType.ARGS, (user, shard, channel, guild, message, reaction, args) -> args, ContextRequirement.STRING);
         String[] EMPTY_STRING_ARRAY = new String[0];
@@ -256,6 +260,17 @@ public class InvocationObjectGetter {
                 throw new ArgumentException("Not a valid shard ID");
             }
         });
+        addConverter(Category.class, (invoker, shard, channel, guild, message, reaction, args) -> {
+            Category category = Category.getCategory(args.split(" ")[0]);
+            if (category != null) return new Pair<>(category, category.getID().length());
+            String match = StringHelper.getGoodMatch(args, guild.getCategories().stream().map(Category::getName).collect(Collectors.toList()));
+            if (match != null) {
+                List<Category> categories = guild.getCategoriesByName(match);
+                if (categories.size() > 1) throw new ArgumentException("Too many category go by that name, please specify using an ID");
+                return new Pair<>(categories.get(0), categories.get(0).getName().length());
+            }
+            throw new ArgumentException("Could not find a category by that name or ID");
+        }, ContextRequirement.GUILD);
         addConverter(Message.class, (user, shard, channel, guild, message, reaction, args) -> {
             if (args.startsWith("this")) return new Pair<>(message, 4);
             String arg = args.split(" ")[0];

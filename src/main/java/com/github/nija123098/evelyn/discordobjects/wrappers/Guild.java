@@ -334,4 +334,10 @@ public class Guild implements Configurable {
     public List<Category> getCategories() {
         return Category.getCategories(this.guild().getCategories());
     }
+    public Category getCategory(String id) {
+        return Category.getCategory(this.guild().getCategoryByID(Long.parseLong(id)));
+    }
+    public List<Category> getCategoriesByName(String name) {
+        return Category.getCategories(this.guild().getCategoriesByName(name));
+    }
 }

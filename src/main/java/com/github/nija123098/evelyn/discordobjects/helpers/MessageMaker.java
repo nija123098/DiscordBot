@@ -12,6 +12,7 @@ import com.github.nija123098.evelyn.exception.DevelopmentException;
 import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.moderation.logging.VoiceCommandPrintChannelConfig;
 import com.github.nija123098.evelyn.util.*;
+import com.sun.javafx.tk.PermissionHelper;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 import sx.blah.discord.handle.impl.obj.ReactionEmoji;
@@ -19,6 +20,7 @@ import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.Permissions;
 import sx.blah.discord.util.EmbedBuilder;
 import sx.blah.discord.util.MessageBuilder;
+import sx.blah.discord.util.PermissionUtils;
 
 import java.awt.*;
 import java.io.File;
@@ -782,7 +784,11 @@ public class MessageMaker {
             this.builder.withChannel(this.channel.channel());
             this.message = ExceptionWrapper.wrap((ExceptionWrapper.Request<IMessage>) () -> this.builder.send());
             this.ourMessage = Message.getMessage(this.message);
-            this.reactions.forEach(s -> ExceptionWrapper.wrap(() -> this.message.addReaction(ReactionEmoji.of(s))));
+            if (PermissionUtils.hasPermissions(this.builder.getChannel(), DiscordClient.getOurUser().user(), Permissions.ADD_REACTIONS)) {
+                this.reactions.forEach(s -> ExceptionWrapper.wrap(() -> this.message.addReaction(ReactionEmoji.of(s))));
+            } else {
+                new MessageMaker(this.channel).append("You must allow me to use reactions to work properly!").send();
+            }
             if (this.deleteDelay != null) EXECUTOR_SERVICE.schedule(() -> ExceptionWrapper.wrap(this.message::delete), this.deleteDelay, TimeUnit.MILLISECONDS);
         } else {
             if (this.embed == null) ExceptionWrapper.wrap(() -> this.message.edit(this.builder.getContent()));

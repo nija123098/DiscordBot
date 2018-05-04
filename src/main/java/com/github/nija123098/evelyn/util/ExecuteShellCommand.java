@@ -1,11 +1,10 @@
 package com.github.nija123098.evelyn.util;
 
 import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
+import com.github.nija123098.evelyn.exception.DevelopmentException;
+import org.apache.commons.io.IOUtils;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -13,28 +12,18 @@ import java.util.concurrent.TimeUnit;
  * @since 1.0.0
  */
 public class ExecuteShellCommand {
-    private static String output;
 
-    public static void commandToExecute(String command, String filePath) {
-        output = null;
+    public static String commandToExecute(String command, String filePath) {
         Process p;
-        String line;
-        if (filePath == null) { filePath = ConfigProvider.BOT_SETTINGS.botFolder(); }
+        if (filePath == null) filePath = ConfigProvider.BOT_SETTINGS.botFolder();
         try {
             p = Runtime.getRuntime().exec(command, null, new File(filePath));
             p.waitFor(1, TimeUnit.MINUTES);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            StringBuilder builder = new StringBuilder();
-            while ((line = reader.readLine()) !=null) {
-                builder.append(line).append("\n");
-            }
-            output = builder.toString();
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            IOUtils.copy(p.getInputStream(), stream);
+            return stream.toString();
         } catch (InterruptedException | IOException e) {
-            e.printStackTrace();
+            throw new DevelopmentException("Exception executing command", e);
         }
-    }
-
-    public static String getOutput() {
-        return output;
     }
 }
