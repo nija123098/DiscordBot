@@ -528,6 +528,7 @@ public class AbstractCommand implements Tagable {
      * @return the cool down in millis dependent on the type.
      */
     public long getCoolDown(Class<? extends Configurable> clazz) {
+        if (clazz.equals(User.class)) return 200;
         return -1;
     }
 

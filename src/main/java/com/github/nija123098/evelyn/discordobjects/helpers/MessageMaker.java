@@ -12,7 +12,6 @@ import com.github.nija123098.evelyn.exception.DevelopmentException;
 import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.moderation.logging.VoiceCommandPrintChannelConfig;
 import com.github.nija123098.evelyn.util.*;
-import com.sun.javafx.tk.PermissionHelper;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 import sx.blah.discord.handle.impl.obj.ReactionEmoji;

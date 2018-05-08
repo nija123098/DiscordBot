@@ -218,7 +218,7 @@ public class InvocationObjectGetter {
             if (ConfigHandler.getSetting(UserPlaylistsConfig.class, user).contains(args)) {
                 return new Pair<>(Playlist.getPlaylist(user, args), (pair == null ? 0 : pair.getValue()) + args.length());
             }
-            if (ConfigHandler.getSetting(GuildPlaylistsConfig.class, guild).contains(args)) {
+            if (guild != null && ConfigHandler.getSetting(GuildPlaylistsConfig.class, guild).contains(args)) {
                 return new Pair<>(Playlist.getPlaylist(guild, args), args.length());
             }
             String ar = args;
