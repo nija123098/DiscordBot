@@ -65,6 +65,7 @@ public class ConfigHandler {
         add(Playlist.class, Playlist::getPlaylist);
         add(User.class, User::getUser);
         add(Channel.class, Channel::getChannel);
+        add(VoiceChannel.class, VoiceChannel::getVoiceChannel);
         add(Category.class, Category::getCategory);
         add(GuildUser.class, GuildUser::getGuildUser);
         add(Role.class, Role::getRole);

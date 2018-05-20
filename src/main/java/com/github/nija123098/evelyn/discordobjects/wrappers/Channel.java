@@ -27,9 +27,13 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Channel implements Configurable {
     private static final ConcurrentLoadingHashMap<IChannel, Channel> CACHE = new ConcurrentLoadingHashMap<>(ConfigProvider.CACHE_SETTINGS.channelSize(), channel -> channel.isPrivate() ? new DirectChannel((IPrivateChannel) channel) : channel instanceof IVoiceChannel ? new VoiceChannel((IVoiceChannel) channel) : new Channel(channel));
     public static Channel getChannel(String id) {//                  Ignore this warning
+        return getChannel(id, false);
+    }
+    static Channel getChannel(String id, boolean definiteVoice) {
         try {
             Long longId = Long.parseLong(FormatHelper.filtering(id, Character::isLetterOrDigit));
-            IChannel channel = GetterUtil.getAny(DiscordClient.clients(), f -> f.getChannelByID(longId));
+            IChannel channel = null;
+            if (!definiteVoice) channel = GetterUtil.getAny(DiscordClient.clients(), f -> f.getChannelByID(longId));
             if (channel == null) {
                 channel = GetterUtil.getAny(DiscordClient.clients(), f -> f.getVoiceChannelByID(longId));
                 if (channel == null) return null;

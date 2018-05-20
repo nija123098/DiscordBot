@@ -45,13 +45,13 @@
         <dependency>
             <groupId>com.github.austinv11</groupId>
             <artifactId>Discord4j</artifactId>
-            <version>fe1cdae</version>
+            <version>be2318c</version>
             <classifier>shaded</classifier>
         </dependency>
         <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
-            <version>0.9.10</version>
+            <version>0.9.11</version>
         </dependency>
         <dependency>
             <groupId>com.thoughtworks.xstream</groupId>
@@ -76,12 +76,12 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.8.0</version>
+            <version>2.8.4</version>
         </dependency>
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>1.10.1</version>
+            <version>1.11.3</version>
         </dependency>
         <dependency>
             <groupId>com.mashape.unirest</groupId>
@@ -103,11 +103,6 @@
             <artifactId>steam-api</artifactId>
             <version>77b445d4da</version>
         </dependency>
-        <dependency>
-            <groupId>ca.pjer</groupId>
-            <artifactId>chatter-bot-api</artifactId>
-            <version>2.0.1</version>
-        </dependency>
         <dependency><!-- https://mvnrepository.com/artifact/org.apache.commons/com.springsource.org.apache.commons.validator -->
             <groupId>org.apache.commons</groupId>
             <artifactId>com.springsource.org.apache.commons.validator</artifactId>
@@ -116,12 +111,12 @@
         <dependency>
             <groupId>com.google.apis</groupId>
             <artifactId>google-api-services-youtube</artifactId>
-            <version>v3-rev184-1.22.0</version>
+            <version>v3-rev198-1.23.0</version>
         </dependency>
         <dependency>
             <groupId>com.sedmelluq</groupId>
             <artifactId>lavaplayer</artifactId>
-            <version>1.2.56</version>
+            <version>1.2.63</version>
         </dependency>
         <dependency>
             <groupId>com.github.rometools</groupId>
@@ -136,12 +131,12 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.45</version>
+            <version>8.0.11</version>
         </dependency>
         <dependency>
             <groupId>com.github.cmusphinx</groupId>
             <artifactId>sphinx4</artifactId>
-            <version>c59a4b0be3</version>
+            <version>44a5c08</version>
         </dependency>
         <!-- <dependency>
             <groupId>com.github.nija123098</groupId>
@@ -156,22 +151,22 @@
         <dependency><!-- https://mvnrepository.com/artifact/commons-dbutils/commons-dbutils -->
             <groupId>commons-dbutils</groupId>
             <artifactId>commons-dbutils</artifactId>
-            <version>1.6</version>
+            <version>1.7</version>
         </dependency>
         <dependency><!-- https://mvnrepository.com/artifact/com.zaxxer/HikariCP -->
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
-            <version>2.6.3</version>
+            <version>3.1.0</version>
         </dependency>
         <dependency><!-- https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client -->
             <groupId>org.mariadb.jdbc</groupId>
             <artifactId>mariadb-java-client</artifactId>
-            <version>2.2.0</version>
+            <version>2.2.4</version>
         </dependency>
         <dependency>
             <groupId>net.swisstech</groupId>
             <artifactId>bitly-api-client</artifactId>
-            <version>0.8.0</version>
+            <version>0.8.0</version><!-- or v0.8.0 -->
         </dependency>
         <dependency><!--https://mvnrepository.com/artifact/ch.qos.logback/logback-classic-->
             <groupId>ch.qos.logback</groupId>
@@ -181,12 +176,12 @@
         <dependency><!-- https://mvnrepository.com/artifact/org.apache.commons/commons-text -->
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-text</artifactId>
-            <version>1.2</version>
+            <version>1.3</version>
         </dependency>
         <dependency>
             <groupId>com.github.kennedyoliveira</groupId>
             <artifactId>pastebin4j</artifactId>
-            <version>1.2.1</version>
+            <version>1.2.1</version><!-- or v1.2.1 -->
         </dependency>
     </dependencies>
 

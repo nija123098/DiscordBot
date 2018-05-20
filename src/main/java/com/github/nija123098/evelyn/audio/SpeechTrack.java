@@ -42,4 +42,8 @@ public class SpeechTrack extends Track {
     public Long getLength() {
         return 0L;// it's close enough
     }
+    @Override
+    public boolean isSignificant() {
+        return false;
+    }
 }

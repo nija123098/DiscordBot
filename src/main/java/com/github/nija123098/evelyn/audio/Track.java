@@ -200,4 +200,14 @@ public abstract class Track implements Configurable {
     public boolean isAvailable() {
         return true;
     }
+
+    /**
+     * If the track is significant.
+     * Significance is gaged by if a user would care about it not playing.
+     *
+     * @return if the track is significant.
+     */
+    public boolean isSignificant() {
+        return true;
+    }
 }

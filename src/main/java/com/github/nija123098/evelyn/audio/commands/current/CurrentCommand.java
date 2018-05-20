@@ -50,7 +50,7 @@ public class CurrentCommand extends AbstractCommand {
         maker.withThumb(track.getPreviewURL());
         maker.withReaction("track_next");
         maker.withReaction("pause_button");
-        if (manager.voiceChannel().getConnectedUsers().stream().filter(user -> BOT_ADMIN.hasRequiredRole(user, null)).count() != 0)
+        if (manager.voiceChannel().getConnectedUsers().stream().anyMatch(user -> BOT_ADMIN.hasRequiredRole(user, null)))
             maker.withReaction("no_entry_sign");
         Long length = track.getLength();
         if (length != null) maker.getNewFieldPart().withBoth("Duration", getAbbreviatedMusic(length, time));

@@ -10,10 +10,7 @@ import com.github.nija123098.evelyn.perms.BotRole;
 import com.github.nija123098.evelyn.tag.Tag;
 import com.github.nija123098.evelyn.tag.Tagable;
 import com.github.nija123098.evelyn.tag.Tags;
-import com.github.nija123098.evelyn.util.CacheHelper;
-import com.github.nija123098.evelyn.util.ConcurrentLoadingHashMap;
 import com.github.nija123098.evelyn.util.Log;
-import com.google.common.cache.LoadingCache;
 import com.thoughtworks.xstream.io.StreamException;
 
 import java.lang.reflect.Type;
@@ -21,7 +18,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -369,7 +365,7 @@ public class AbstractConfig<V, T extends Configurable> implements Tagable {
     }
 
     private V parseValue(ResultSet set) throws SQLException {
-        if (Configurable.class.isAssignableFrom(this.valueType)) return (V) ConfigHandler.getConfigurable(this.configLevel.getType(), set.getString(2));
+        if (Configurable.class.isAssignableFrom(this.valueType)) return (V) ConfigHandler.getConfigurable((Class<? extends Configurable>) this.valueType, set.getString(2));
         if (this.valueType.equals(Long.class)) return (V) Long.valueOf(set.getLong(2));
         if (this.valueType.equals(Boolean.class)) return (V) Boolean.valueOf(set.getBoolean(2));
         if (this.valueType.equals(Float.class)) return (V) Float.valueOf(set.getFloat(2));

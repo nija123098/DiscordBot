@@ -4,9 +4,10 @@ import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.exception.DevelopmentException;
 import com.github.nija123098.evelyn.util.CallBuffer;
 import com.github.nija123098.evelyn.util.Log;
-import com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource;
+import com.mysql.cj.jdbc.MysqlConnectionPoolDataSource;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import javolution.text.CharSet;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
 
@@ -38,8 +39,8 @@ public class Database {
             dataSource.setServerName(serverIP);
             dataSource.setPort(serverPort);
             dataSource.setDatabaseName(dbName);
-            dataSource.setZeroDateTimeBehavior("convertToNull");
-            dataSource.setUseUnicode(true);
+            dataSource.setZeroDateTimeBehavior("CONVERT_TO_NULL");
+            dataSource.setCharacterEncoding("UTF-8"); // dataSource.setUseUnicode(true);
             dataSource.setGenerateSimpleParameterMetadata(true);
             c = dataSource.getConnection();
         } catch (SQLException e) {

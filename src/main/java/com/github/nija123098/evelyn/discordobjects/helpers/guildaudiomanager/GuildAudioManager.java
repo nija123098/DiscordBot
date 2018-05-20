@@ -64,6 +64,10 @@ public class GuildAudioManager extends AudioEventAdapter{
         AbstractConfig<VoiceChannel, Guild> presenceConfig = ConfigHandler.getConfig(RebootInVoiceChannelConfig.class);
         Launcher.registerAsyncStartup(() -> presenceConfig.getNonDefaultSettings().forEach((guild, channel) -> {
             presenceConfig.reset(guild);
+            if (channel == null) {
+                Log.log("Channel skipped due to being null for rejoin in " + guild.getName() + " " + guild.getID());
+                return;
+            }
             List<Track> tracks = queueConfig.getValue(channel);
             queueConfig.reset(channel);
             if (!hasValidListeners(channel)) return;
@@ -80,19 +84,7 @@ public class GuildAudioManager extends AudioEventAdapter{
         PLAYER_MANAGER.getConfiguration().setResamplingQuality(AudioConfiguration.ResamplingQuality.HIGH);
         LangString bye = new LangString(true, "I have to go restart, I will be back in a moment.");
         Launcher.registerShutdown(() -> {
-            MAP.forEach((s, guildAudioManager) -> {
-                presenceConfig.setValue(guildAudioManager.getGuild(), guildAudioManager.channel);
-                if (guildAudioManager.current != null) {
-                    if (guildAudioManager.queue.isEmpty()) queueConfig.setValue(guildAudioManager.channel, Collections.singletonList(guildAudioManager.current));
-                    else {
-                        List<Track> tracks = new ArrayList<>();
-                        tracks.add(guildAudioManager.current);
-                        tracks.addAll(guildAudioManager.queue);
-                        queueConfig.setValue(guildAudioManager.channel, tracks);
-                    }
-                }
-                guildAudioManager.interrupt(bye);
-            });
+            MAP.values().forEach(guildAudioManager -> guildAudioManager.interrupt(bye));
             CareLess.lessSleep(5_000);// For the completion of saying bye
         });
         EventDistributor.register(GuildAudioManager.class);
@@ -169,8 +161,11 @@ public class GuildAudioManager extends AudioEventAdapter{
         this.setVolume(ConfigHandler.getSetting(VolumeConfig.class, channel.getGuild()));
         this.channel.join();
         if (ConfigHandler.getSetting(GreetingsVoiceConfig.class, channel.getGuild())) this.start(new SpeechTrack(new LangString(true, "Hello"), MessageMaker.getLang(null, this.channel)), 0);
+        ConfigHandler.setSetting(RebootInVoiceChannelConfig.class, this.getGuild(), this.channel);
     }
     public void leave() {
+        ConfigHandler.reset(RebootInVoiceChannelConfig.class, this.getGuild());
+        ConfigHandler.reset(RebootPlayQueueConfig.class, this.channel);
         if (this.leaving || !hasValidListeners(this.channel) || ConfigHandler.getSetting(GreetingsVoiceConfig.class, channel.getGuild())) {
             this.leaving = true;
             MAP.remove(this.channel.getGuild().getID());
@@ -272,8 +267,10 @@ public class GuildAudioManager extends AudioEventAdapter{
         this.interrupts.add(langString);
         this.lavaPlayer.stopTrack();
     }
+
     private void start(Track track, int position) {
         if (!track.isAvailable()) this.onFinish();
+        if (!this.loop) this.updateTrackBack(track);
         this.skipped = false;
         this.current = track;
         this.skipSet.clear();
@@ -288,7 +285,7 @@ public class GuildAudioManager extends AudioEventAdapter{
             Channel channel = ConfigHandler.getSetting(MusicChannelConfig.class, this.getGuild());
             if (channel == null) return;
             if (this.leaving) this.currentDisplays.forEach(Message::delete);
-            else if (this.current != null){
+            else if (track.isSignificant()){
                 MessageMaker maker = new MessageMaker(channel);
                 CurrentCommand.command(this.getGuild(), maker, current);
                 maker.send();
@@ -364,6 +361,18 @@ public class GuildAudioManager extends AudioEventAdapter{
         if (this.next != null) return this.next;
         if (!ConfigHandler.getSetting(QueueTrackOnlyConfig.class, this.channel.getGuild())) return (this.next = ConfigHandler.getSetting(GuildActivePlaylistConfig.class, this.channel.getGuild()).getNext(this.channel.getGuild()));
         return this.next;
+    }
+
+    /**
+     * Updates the DB backing of the track.
+     */
+    private void updateTrackBack(Track up){
+        List<Track> tracks = new ArrayList<>();
+        if (shouldBack(up)) tracks.add(up);
+        this.queue.forEach(track -> {
+            if (shouldBack(track)) tracks.add(track);
+        });
+        ConfigHandler.setSetting(RebootPlayQueueConfig.class, this.channel, tracks);
     }
 
     /**
@@ -549,5 +558,8 @@ public class GuildAudioManager extends AudioEventAdapter{
     }
     public static boolean hasValidListeners(VoiceChannel channel) {
         return validListeners(channel) > 0;
+    }
+    private static boolean shouldBack(Track track){
+        return track != null && track.isSignificant();
     }
 }

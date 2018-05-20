@@ -2,7 +2,11 @@ package com.github.nija123098.evelyn.moderation.logging;
 
 import com.github.nija123098.evelyn.config.AbstractConfig;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
+import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
+import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordPermission;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
+
+import java.util.EnumSet;
 
 import static com.github.nija123098.evelyn.config.ConfigCategory.LOGGING;
 import static com.github.nija123098.evelyn.config.ConfigHandler.getSetting;
@@ -15,8 +19,10 @@ import static com.github.nija123098.evelyn.util.FormatHelper.filtering;
 public class BotChannelConfig extends AbstractConfig<Channel, Guild> {
     public BotChannelConfig() {
         super("bot_channel", "Bot Channel", LOGGING, guild -> guild.getChannels().stream().filter(channel -> {
+            EnumSet<DiscordPermission> permissions = channel.getModifiedPermissions(DiscordClient.getOurUser());
+            if (!permissions.contains(DiscordPermission.SEND_MESSAGES) || !permissions.contains(DiscordPermission.READ_MESSAGES)) return false;
             String name = filtering(channel.getName(), Character::isLetter).toLowerCase();
-            return name.contains("bot") || name.contains("spam") || name.contains("command") || name.contains("music") || name.contains("testing");
+            return name.contains("bot") || name.contains("spam") || name.contains("command") || name.contains("music") || name.contains("test");
         }).findFirst().orElse(null), "Channel where the bot's output goes to");
     }
 
