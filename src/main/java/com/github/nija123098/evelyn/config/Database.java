@@ -7,7 +7,6 @@ import com.github.nija123098.evelyn.util.Log;
 import com.mysql.cj.jdbc.MysqlConnectionPoolDataSource;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import javolution.text.CharSet;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
 
@@ -41,6 +40,7 @@ public class Database {
             dataSource.setDatabaseName(dbName);
             dataSource.setZeroDateTimeBehavior("CONVERT_TO_NULL");
             dataSource.setCharacterEncoding("UTF-8"); // dataSource.setUseUnicode(true);
+            dataSource.setServerTimezone("UTC");
             dataSource.setGenerateSimpleParameterMetadata(true);
             c = dataSource.getConnection();
         } catch (SQLException e) {

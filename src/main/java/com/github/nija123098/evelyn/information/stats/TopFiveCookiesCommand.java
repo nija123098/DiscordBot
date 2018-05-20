@@ -8,7 +8,6 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -38,6 +37,7 @@ public class TopFiveCookiesCommand extends AbstractCommand {
             Map<User, Integer> temp = new HashMap<>();
             for (int i = 1; i < 6; i++) {
                 set.next();
+                if (Objects.equals(User.getUser(set.getString(1)), DiscordClient.getOurUser())) set.next();
                 temp.put((User.getUser(set.getString(1)) != null ? (User.getUser(set.getString(1))) : DiscordClient.getOurUser()), set.getInt(2));
             }
             return temp;
