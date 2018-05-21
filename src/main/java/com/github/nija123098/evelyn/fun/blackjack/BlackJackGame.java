@@ -19,13 +19,15 @@ public class BlackJackGame {
     public static synchronized void setGame(Configurable configurable, BlackJackGame game) {
         GAME_MAP.put(configurable, game);
     }
+    private int bet;
     private Configurable player;
     private CardDeck.Hand dealerHand, playerHand;
-    public BlackJackGame(Configurable player) {
+    public BlackJackGame(Configurable player, int bet) {
         this.player = player;
         CardDeck deck = new CardDeck();
         this.dealerHand = deck.makeHand(1);
         this.playerHand = deck.makeHand(2);
+        this.bet = bet;
     }
     public int playerHit() {
         this.playerHand.draw();
@@ -59,5 +61,9 @@ public class BlackJackGame {
     }
     private static boolean isAce(CardDeck.Card card) {
         return card.getNumber() == 14;
+    }
+
+    public int betAmount() {
+        return this.bet;
     }
 }

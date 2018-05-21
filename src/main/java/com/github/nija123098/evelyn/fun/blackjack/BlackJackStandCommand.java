@@ -2,8 +2,10 @@ package com.github.nija123098.evelyn.fun.blackjack;
 
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.annotations.Command;
+import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
+import com.github.nija123098.evelyn.economy.configs.CurrentCurrencyConfig;
 import com.github.nija123098.evelyn.fun.BlackJackCommand;
 import com.github.nija123098.evelyn.util.ThreadHelper;
 
@@ -30,28 +32,33 @@ public class BlackJackStandCommand extends AbstractCommand {
             return;
         }
         AtomicReference<ScheduledFuture<?>> future = new AtomicReference<>();
-        future.set(SCHEDULED_EXECUTOR_SERVICE.schedule(() -> {
+        future.set(SCHEDULED_EXECUTOR_SERVICE.scheduleAtFixedRate(() -> {
+            maker.forceCompile().getHeader().clear();
             int val = game.dealerHit();
             if (val > 21) {
                 future.get().cancel(false);
                 maker.append("The Dealer has busted\n");
+                ConfigHandler.changeSetting(CurrentCurrencyConfig.class, user, v -> v - game.betAmount());
             }else if (game.dealerBlackJack()) {
                 future.get().cancel(false);
                 maker.append("The Dealer has Black Jack\n");
+                ConfigHandler.changeSetting(CurrentCurrencyConfig.class, user, v -> v - game.betAmount());
             }
             if (val > 16 && !future.get().isCancelled()) {
                 future.get().cancel(false);
                 int pVal = game.playerValue();
                 if (val > pVal) {
                     maker.append("You lose\n");
+                    ConfigHandler.changeSetting(CurrentCurrencyConfig.class, user, v -> v - game.betAmount());
                 }else if (val == pVal) {
                     maker.append("DRAW");
                 }else{
-                    maker.forceCompile().append("You win\n");
+                    maker.append("You win\n");
+                    ConfigHandler.changeSetting(CurrentCurrencyConfig.class, user, v -> v + game.betAmount());
                 }
             }
             maker.appendRaw(game.toString()).send();
-        }, 1, TimeUnit.SECONDS));
+        }, 1, 1, TimeUnit.SECONDS));
         BlackJackGame.setGame(user, null);
     }
 }
