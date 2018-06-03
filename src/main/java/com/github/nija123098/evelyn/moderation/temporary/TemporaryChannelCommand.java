@@ -25,7 +25,7 @@ public class TemporaryChannelCommand extends AbstractCommand {
         long schedule = time == null ? 30_000 + System.currentTimeMillis() : time.schedualed();
         Channel channel = textChannel ? guild.createChannel(name) : guild.createVoiceChannel(name);
         Category category = ConfigHandler.getSetting(TemporaryChannelCategoryConfig.class, guild);
-        if (category != null) channel.changeCatagory(category);
+        if (category != null) channel.changeCategory(category);
         ConfigHandler.setSetting(TemporaryChannelConfig.class, channel, schedule);
     }
 }

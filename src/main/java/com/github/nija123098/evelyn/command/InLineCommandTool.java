@@ -97,7 +97,7 @@ public class InLineCommandTool {
     }
 
     private boolean checkDefaultRequest(String message){
-        return message.equals("d") || message.toLowerCase().equals("default");
+        return message.equalsIgnoreCase("d") || message.equalsIgnoreCase("default");
     }
 
     public void release(){

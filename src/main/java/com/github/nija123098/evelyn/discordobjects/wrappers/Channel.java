@@ -264,7 +264,7 @@ public class Channel implements Configurable {
     public boolean canPost() {
         return DiscordPermission.hasChannelPermissions(DiscordClient.getOurUser(), this, DiscordPermission.READ_MESSAGES, DiscordPermission.READ_MESSAGE_HISTORY, DiscordPermission.SEND_MESSAGES);
     }
-    public void changeCatagory(Category category) {
+    public void changeCategory(Category category) {
         ExceptionWrapper.wrap(() -> this.channel().changeCategory(category.category()));
     }
 }

@@ -35,7 +35,7 @@ public class PlayCommand extends AbstractCommand {
             if (trackList.isEmpty() && !(s == null || s.isEmpty())) {
                 Track t = Track.getTrack(s);
                 if (t == null) throw new ArgumentException("I couldn't find a track for that");
-                if (!t.isAvailable()) throw new ArgumentException("That track is no longer available");
+                if (!t.isAvailable()) throw new ArgumentException("That track is no longer available, likely due to copyright claim");
                 maker.withDeleteDelay(10_000L).appendRaw(t.getName());
                 trackList.add(t);
                 Track track = PREVIOUS_MAP.get(user);

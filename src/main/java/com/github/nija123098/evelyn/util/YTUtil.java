@@ -19,13 +19,20 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author nija123098
@@ -135,7 +142,7 @@ public class YTUtil {
             searchResponse.getItems().forEach((sr) -> {
                 YoutubeTrack track = (YoutubeTrack) Track.getTrack(YoutubeTrack.class, sr.getId().getVideoId());
                 track.setName(sr.getSnippet().getTitle());
-                tracks.add(track);
+                if (track.isAvailable()) tracks.add(track);
             });
             CACHE.put(reduction, tracks);
         }
@@ -188,6 +195,17 @@ public class YTUtil {
     public static class YoutubeSearchException extends BotException {
         private YoutubeSearchException(Throwable cause) {
             super(cause);
+        }
+    }
+
+    public static boolean isAvailable(String youtubeId) {
+        try {
+            List<Video> videos = YOUTUBE.videos().list("snippet,contentDetails").setKey(getKey()).set("hl", "en").setId(youtubeId).execute().getItems();
+            if (videos.isEmpty()) return false;
+            Video video = videos.get(0);
+            return video.getContentDetails().getCountryRestriction() == null && video.getContentDetails().getRegionRestriction() == null;
+        } catch (IOException e) {
+            return false;
         }
     }
 }

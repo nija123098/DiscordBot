@@ -32,6 +32,7 @@ public class Time {// TODO CLEAN
     }
 
     public Time(String s) {
+        if (s.trim().isEmpty()) throw new ArgumentException("No arguments provided for time");
         s = FormatHelper.removeChars(s.toLowerCase(), ' ');
         long val = 0;
         StringBuilder working = new StringBuilder();

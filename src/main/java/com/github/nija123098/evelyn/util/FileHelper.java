@@ -19,7 +19,16 @@ public class FileHelper {
     private static final Set<File> FILES = ConcurrentHashMap.newKeySet();
     private static final AtomicInteger UNIQUE_INTEGER = new AtomicInteger();
     public static File getTempFile(String cat, String end) {
-        return getTempFile(cat, end, "gen" + UNIQUE_INTEGER.incrementAndGet(), file -> {});
+        File file = getTempFile(cat, end, "gen" + UNIQUE_INTEGER.incrementAndGet(), f -> {});
+        if (file.exists()) {
+            file.delete();
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                Log.log("Unable to make new temp file, this may lead to more fails", e);
+            }
+        }
+        return file;
     }
     public static File getTempFile(String cat, String end, String snowflake) {
         return getTempFile(cat,  end, snowflake, file -> {});

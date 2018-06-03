@@ -10,7 +10,7 @@ import com.github.nija123098.evelyn.util.YTUtil;
  * @since 1.0.0
  */
 public class YoutubeTrack extends DownloadableTrack {
-    private static final CallBuffer CALL_BUFFER = new CallBuffer("Youtube-Name-Resolution", 250);
+    private static final CallBuffer CALL_BUFFER = new CallBuffer("Youtube-Name-Resolver", 250);
     static {
         registerTrackType(YoutubeTrack.class, YoutubeTrack::new, YoutubeTrack::new);
     }
@@ -18,7 +18,7 @@ public class YoutubeTrack extends DownloadableTrack {
     private transient Boolean available;
     public YoutubeTrack(String id) {
         super(id);
-        CALL_BUFFER.call(this::loadName);
+        CALL_BUFFER.call(this::isAvailable);
     }
     protected YoutubeTrack() {}
     private void loadName() {
@@ -27,7 +27,7 @@ public class YoutubeTrack extends DownloadableTrack {
             if (this.name == null) {
                 this.available = false;
                 this.name = "Not Available";
-            } else available = true;
+            }
         }
     }
     @Override
@@ -43,9 +43,16 @@ public class YoutubeTrack extends DownloadableTrack {
         return null;
     }
 
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
+
     @Override
     public boolean isAvailable() {
-        if (this.available == null) loadName();
+        loadName();
+        if (this.available == null || this.available) {// recheck to make sure it does not become unavailable
+            this.available = YTUtil.isAvailable(this.getCode());
+        }
         return available;
     }
 
