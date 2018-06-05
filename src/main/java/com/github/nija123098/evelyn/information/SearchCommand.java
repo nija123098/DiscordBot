@@ -6,6 +6,7 @@ import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.exception.DevelopmentException;
+import com.github.nija123098.evelyn.util.Log;
 import com.mashape.unirest.http.Unirest;
 import org.apache.commons.text.StringEscapeUtils;
 import org.json.simple.JSONArray;
@@ -29,14 +30,20 @@ public class SearchCommand extends AbstractCommand {
                 maker.append("We didn't get any results for that.  Make sure it is spelled correctly!");
                 return;
             }
-            JSONObject topic = ((JSONObject) array.get(0));
+            JSONObject topic = (JSONObject) array.get(0);
             maker.getTitle().appendRaw(result.get("Heading").toString());
-            maker.append(topic.get("Text").toString());
+            JSONObject imageURLObject = (JSONObject) topic.get("Icon");
+            if (imageURLObject != null) {
+                String imageURL = imageURLObject.get("URL").toString();
+                if (imageURL != null) {
+                    maker.withThumb(imageURL);
+                    maker.withColor(imageURL);
+                }
+            }
+            maker.appendRaw(topic.get("Text").toString().replace("...", "."));
             maker.withUrl(topic.get("FirstURL").toString());
-            String imageURL = ((JSONObject) topic.get("Icon")).get("URL").toString();
-            maker.withImage(imageURL);
-            maker.withColor(imageURL);
         } catch (Exception e) {
+            Log.log("Exception while searching " + search);
             throw new DevelopmentException("Sorry, duckduckgo seems to be having issue right now", e);
         }
     }

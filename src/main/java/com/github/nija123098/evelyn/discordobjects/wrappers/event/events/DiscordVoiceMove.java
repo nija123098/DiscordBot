@@ -11,7 +11,7 @@ import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelMoveE
  * @author nija123098
  * @since 1.0.0
  */
-public class DiscordVoiceMove  implements BotEvent {
+public class DiscordVoiceMove implements BotEvent {
     private UserVoiceChannelMoveEvent event;
     public DiscordVoiceMove(UserVoiceChannelMoveEvent event) {
         this.event = event;

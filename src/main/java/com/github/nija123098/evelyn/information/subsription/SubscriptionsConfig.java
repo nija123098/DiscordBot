@@ -1,9 +1,8 @@
-package com.github.nija123098.evelyn.information.configs;
+package com.github.nija123098.evelyn.information.subsription;
 
 import com.github.nija123098.evelyn.config.AbstractConfig;
 import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
-import com.github.nija123098.evelyn.information.subsription.SubscriptionLevel;
 
 import java.util.HashSet;
 import java.util.Set;

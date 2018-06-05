@@ -138,6 +138,7 @@ public class Launcher {
                 Log.log("Shutting down with code: " + code);
                 IS_READY.set(false);
                 SHUTDOWNS.forEach(Runnable::run);
+                Log.log("Shutdowns complete");
                 DiscordClient.logout();
                 CareLess.lessSleep(2_000);
                 System.exit(code);

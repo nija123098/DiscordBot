@@ -3,7 +3,6 @@ package com.github.nija123098.evelyn.information.subsription;
 import com.github.nija123098.evelyn.command.annotations.LaymanName;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
-import com.github.nija123098.evelyn.information.configs.SubscriptionsConfig;
 
 /**
  * @author nija123098

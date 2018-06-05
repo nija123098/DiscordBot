@@ -49,7 +49,6 @@ public class ExceptionWrapper {
         } catch (MissingPermissionsException p) {
             throw new PermissionsException(p);
         } catch (Exception ex) {
-            Thread waiter = Thread.currentThread();
             AtomicReference<E> objectReference = new AtomicReference<>();
             AtomicReference<RuntimeException> exceptionReference = new AtomicReference<>();
             CareLess.lessSleep(100);
@@ -60,11 +59,15 @@ public class ExceptionWrapper {
                     if (e instanceof RateLimitException) throw e;
                     exceptionReference.set(e);
                 }
-                waiter.interrupt();
+                synchronized (request) {
+                    request.notify();
+                }
             }).get();
             try {
-                Thread.sleep(Integer.MAX_VALUE);// sleep until interrupted on success
-            } catch (InterruptedException ignored) {}// took long enough
+                synchronized (request) {
+                    Thread.currentThread().wait();
+                }
+            } catch (InterruptedException | IllegalMonitorStateException ignored) {}// took long enough
             if (exceptionReference.get() == null) return objectReference.get();
             if (MissingPermissionsException.class.isAssignableFrom(exceptionReference.get().getClass())) {// handle cases where wrapping is necessary
                 throw new PermissionsException((MissingPermissionsException) exceptionReference.get());

@@ -41,11 +41,13 @@ import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.Reactio
 import sx.blah.discord.handle.impl.events.guild.member.UserLeaveEvent;
 import sx.blah.discord.handle.impl.events.guild.role.RoleUpdateEvent;
 import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelMoveEvent;
+import sx.blah.discord.handle.impl.events.shard.ReconnectSuccessEvent;
 import sx.blah.discord.handle.impl.events.shard.ShardReadyEvent;
 import sx.blah.discord.handle.impl.events.user.PresenceUpdateEvent;
 import sx.blah.discord.handle.impl.events.user.UserUpdateEvent;
 import sx.blah.discord.handle.impl.obj.ReactionEmoji;
 import sx.blah.discord.handle.obj.ActivityType;
+import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.handle.obj.StatusType;
 
@@ -69,7 +71,9 @@ import java.util.stream.Collectors;
  * @since 1.0.0
  */
 public class DiscordAdapter {
-    private static final ThreadPoolExecutor MESSAGE_PARSE_EXECUTOR = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors(), Runtime.getRuntime().availableProcessors() * 2, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<>(25), r -> ThreadHelper.getDemonThread(r, "Message-Parse"));
+    private static final int MIN_MESSAGE_PARSE_THREADS = Runtime.getRuntime().availableProcessors();
+    private static final ThreadPoolExecutor MESSAGE_PARSE_EXECUTOR = new ThreadPoolExecutor(MIN_MESSAGE_PARSE_THREADS, MIN_MESSAGE_PARSE_THREADS * 2, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<>(), r -> ThreadHelper.getDemonThread(r, "Message-Parse"));
+    private static final Map<IMessage, Future<?>> MESSAGE_PARSE_FUTURES = new HashMap<>();
     private static final ScheduledExecutorService PLAY_TEXT_EXECUTOR = Executors.newSingleThreadScheduledExecutor(r -> ThreadHelper.getDemonThreadSingle(r, "Play-Text-Changer-Thread"));
     private static final Map<Class<? extends Event>, Constructor<? extends BotEvent>> EVENT_MAP;
     private static final long PLAY_TEXT_SPEED = 60_000, GUILD_SAVE_SPEED = 3_600_000;// 1 hour
@@ -87,6 +91,7 @@ public class DiscordAdapter {
         builder.withToken(ConfigProvider.BOT_SETTINGS.botToken());
         builder.withMinimumDispatchThreads(1);
         builder.withMaximumDispatchThreads(2);
+        builder.setMaxReconnectAttempts(Integer.MAX_VALUE);
         builder.withIdleDispatchThreadTimeout(1, TimeUnit.MINUTES);
         builder.registerListener((IListener<ShardReadyEvent>) event -> event.getShard().changePresence(StatusType.IDLE, ActivityType.WATCHING, "the login screen!"));
         int total = Requests.GENERAL_REQUESTS.GET.makeRequest(DiscordEndpoints.GATEWAY + "/bot", GatewayBotResponse.class, new BasicNameValuePair("Authorization", "Bot " + ConfigProvider.BOT_SETTINGS.botToken()), new BasicNameValuePair("Content-Type", "application/json")).shards;
@@ -157,6 +162,10 @@ public class DiscordAdapter {
         event.getShard().changePresence(StatusType.IDLE, ActivityType.PLAYING, "with the loading screen!");
     }
     @EventSubscriber
+    public static void handle(ReconnectSuccessEvent event) {
+        DiscordClient.changePresence(Presence.Status.ONLINE, Presence.Activity.PLAYING, "with users!");
+    }
+    @EventSubscriber
     public static void handle(UserUpdateEvent event) {
         User.update(event.getNewUser());
     }
@@ -217,8 +226,8 @@ public class DiscordAdapter {
      */
     @EventSubscriber
     public static void handle(MessageReceivedEvent event){
-        MESSAGE_PARSE_EXECUTOR.execute(() -> {
-            if (event.getAuthor().isBot() || !Launcher.isReady() || event.getMessage().getContent() == null) return;
+        if (event.getAuthor().isBot() || !Launcher.isReady() || event.getMessage().getContent() == null) return;
+        MESSAGE_PARSE_FUTURES.put(event.getMessage(), MESSAGE_PARSE_EXECUTOR.submit(() -> {
             if (event.getMessage().getContent().isEmpty()) DeletePinNotificationConfig.handle(new DiscordMessageReceived(event));
             DiscordMessageReceived receivedEvent = new DiscordMessageReceived(event);
             if (MessageMonitor.monitor(receivedEvent)) return;
@@ -236,7 +245,15 @@ public class DiscordAdapter {
                 ExceptionWrapper.wrap(() -> event.getMessage().addReaction(ReactionEmoji.of(EmoticonHelper.getChars("eyes", false))));
             }// This does the :eyes: on mention now.
             EventDistributor.distribute(receivedEvent);
-        });
+            MESSAGE_PARSE_FUTURES.remove(event.getMessage());
+            if (MESSAGE_PARSE_FUTURES.size() > MIN_MESSAGE_PARSE_THREADS) {
+                new HashMap<>(MESSAGE_PARSE_FUTURES).forEach((iMessage, future) -> {
+                    if (System.currentTimeMillis() - iMessage.getCreationDate().toEpochMilli() < 5_000) {
+                        future.cancel(true);
+                    }
+                });
+            }
+        }));
     }
 
     /**

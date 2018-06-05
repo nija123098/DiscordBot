@@ -1,6 +1,7 @@
 package com.github.nija123098.evelyn.util;
 
 import com.darkprograms.speech.synthesiser.Synthesiser;
+import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.exception.DevelopmentException;
 import org.apache.commons.io.IOUtils;
 
@@ -12,12 +13,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import static com.github.nija123098.evelyn.botconfiguration.ConfigProvider.EXECUTABLE_FILES;
-import static com.github.nija123098.evelyn.util.FileHelper.getTempFile;
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static java.util.regex.Pattern.quote;
-import static org.apache.commons.io.IOUtils.copy;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 /**
  * @author nija123098
@@ -30,11 +27,15 @@ public class SpeechHelper {
 
     public static File getFile(LangString string, String lang) {
         String content = string.translate(lang);
+        if (content.isEmpty()) {
+            content = "I didn't say anything";
+            Log.log("Empty string attempted to be audio synthesized");
+        }
         return MAP.computeIfAbsent(lang, s -> new HashMap<>()).computeIfAbsent(content, s -> {
             if (s.length() < 101) return getFile(string.translate(lang), lang);
             File file = null;
             String total = "";
-            String[] split = s.split(quote(". "));
+            String[] split = s.split(Pattern.quote(". "));
             if (split.length == 1) return getFile(GIBBERISH.translate(lang), lang);
             for (int i = 0; i < split.length; i++) {
                 if (split[i].length() + total.length() > 100) {
@@ -49,9 +50,9 @@ public class SpeechHelper {
 
     private static File getFile(String content, String lang) {
         try {
-            File file = getTempFile("speech", "mp3");
+            File file = FileHelper.getTempFile("speech", "mp3");
             SYNTHESISER.setLanguage(lang);
-            copy(SYNTHESISER.getMP3Data(content), new FileOutputStream(file));
+            IOUtils.copy(SYNTHESISER.getMP3Data(content), new FileOutputStream(file));
             MAP.get(lang).put(content, file);
             return file;
         } catch (IOException e) {
@@ -61,9 +62,9 @@ public class SpeechHelper {
 
     private static File merge(File first, File second) {
         if (first == null) return second;
-        File to = getTempFile("speech", "mp3");
+        File to = FileHelper.getTempFile("speech", "mp3");
         List<String> arguments = new ArrayList<>();
-        arguments.add(EXECUTABLE_FILES.ffmPeg());
+        arguments.add(ConfigProvider.EXECUTABLE_FILES.ffmPeg());
         arguments.add("-i");
         arguments.add("\"concat:" + first.getPath() + "|" + second.getPath() + "\"");
         arguments.add("-acodec");
@@ -73,7 +74,7 @@ public class SpeechHelper {
             Process process = new ProcessBuilder(arguments).start();
             IOUtils.copy(process.getInputStream(), System.out);
             IOUtils.copy(process.getErrorStream(), System.err);
-            process.waitFor(10, SECONDS);
+            process.waitFor(10, TimeUnit.SECONDS);
             return to;
         } catch (IOException | InterruptedException e) {
             throw new DevelopmentException("Exception while merging audio files", e);

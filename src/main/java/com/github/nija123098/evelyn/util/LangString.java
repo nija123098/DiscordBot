@@ -70,7 +70,8 @@ public class LangString {
         return this.translated.computeIfAbsent(lang, s -> {
             final StringBuilder builder = new StringBuilder();
             this.value.forEach(pair -> builder.append(pair.getKey() ? translate(lang, pair.getValue()) : pair.getValue()));
-            return builder.toString().replace("\n", NEW_LINE);
+            String val = builder.toString().replace("\n", NEW_LINE);
+            return val.isEmpty() ? this.asBuilt() : val;
         });
     }
 

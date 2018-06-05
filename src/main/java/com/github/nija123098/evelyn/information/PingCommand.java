@@ -20,6 +20,10 @@ public class PingCommand extends AbstractCommand {
     public void command(MessageMaker helper, Message message) {
         helper.mustEmbed().appendRaw(EmoticonHelper.getChars("outbox_tray", false) + " ").append("Checking ping").send();
         Message response = helper.sentMessage();
+        if (response == null) {
+            Log.log("Unable to send response, message attempted to be sent but failed for ping");
+            return;
+        }
         long time = response.getTime() - message.getTime();
         Log.log("Ping is " + time);
         helper.forceCompile().getHeader().clear();
