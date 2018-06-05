@@ -14,7 +14,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 public class SendDMCommand extends AbstractCommand {
 
     public SendDMCommand() {
-        super("senddm", ModuleLevel.BOT_ADMINISTRATIVE, null, null, "send a user a DM via Evelyn");
+        super("senddm", ModuleLevel.BOT_ADMINISTRATIVE, "dm", null, "send a user a DM via Evelyn");
     }
 
     @Command

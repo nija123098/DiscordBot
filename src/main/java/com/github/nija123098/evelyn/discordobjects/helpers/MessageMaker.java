@@ -9,6 +9,7 @@ import com.github.nija123098.evelyn.discordobjects.ExceptionWrapper;
 import com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 import com.github.nija123098.evelyn.discordobjects.wrappers.*;
 import com.github.nija123098.evelyn.exception.DevelopmentException;
+import com.github.nija123098.evelyn.exception.UserIssueException;
 import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.moderation.logging.VoiceCommandPrintChannelConfig;
 import com.github.nija123098.evelyn.util.*;
@@ -634,6 +635,7 @@ public class MessageMaker {
      * @return the instance.
      */
     public MessageMaker withFile(File file) {
+        if (file.length() > 50_000_000) throw new UserIssueException("File is too big to attach");
         this.file = file;
         return this.appendRaw("");
     }

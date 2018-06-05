@@ -8,8 +8,8 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.User;
  * @author Soarnir
  * @since 1.0.0
  */
-public class CoffeeBrewedConfig extends AbstractConfig<String, User> {
-    public CoffeeBrewedConfig() {
-        super("coffee_brewed", "", ConfigCategory.STAT_TRACKING, "", "String Instant of when the coffee was brewed");
+public class CoffeeBrewedConfig extends AbstractConfig<Long, User> {
+    public CoffeeBrewedConfig() {// 0 represents being a poor soul without coffee
+        super("coffee_brewed", "", ConfigCategory.STAT_TRACKING, 0L, "Epoch of when the coffee was brewed");
     }
 }

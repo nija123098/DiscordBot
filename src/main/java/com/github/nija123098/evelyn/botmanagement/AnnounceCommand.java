@@ -12,6 +12,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Message;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.moderation.logging.BotChannelConfig;
+import com.github.nija123098.evelyn.util.CareLess;
 import com.github.nija123098.evelyn.util.FormatHelper;
 
 import java.awt.*;
@@ -20,7 +21,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * @author nija123098
+ * @author Dxeo
  * @since 1.0.0
  */
 public class AnnounceCommand extends AbstractCommand {
@@ -29,8 +30,7 @@ public class AnnounceCommand extends AbstractCommand {
     }
     @Command
     public void command(@Argument(info = "The stuff to say") String text, MessageMaker maker, User user, Message message) {
-
-        //configure maker
+        // configure maker
         maker.withAuthorIcon(DiscordClient.getOurUser().getAvatarURL()).getAuthorName().clear().appendRaw("Evelyn Announcement");
         String[] textWithoutUrl;
         if (!message.getAttachments().isEmpty()) {
@@ -44,10 +44,10 @@ public class AnnounceCommand extends AbstractCommand {
         maker.withColor(new Color(175, 30,5));
         maker.withAutoSend(false).mustEmbed();
 
-        //format text to use \n
+        // format text to use \n
         text = text.replace("\\n","\n");
 
-        //check if the text would use a field part
+        // check if the text would use a field part
         if (text.contains(";")) {
             String[] textWithSplit = text.split(";",2);
             maker.forceCompile().getHeader().clear().appendRaw("\u200B");
@@ -57,61 +57,50 @@ public class AnnounceCommand extends AbstractCommand {
             maker.forceCompile().getHeader().clear().appendRaw("\u200B\n" + text + "\n\n- " + user.getName());
         }
 
-        //confirm message with user
-        //if no send
+        // confirm message with user
+        // denied
         maker.withReactionBehavior("red_tick", ((add, reaction, u) -> {
-            //remove reactions
+            // remove reactions
             try {
                 maker.clearReactionBehaviors();
-            } catch (ConcurrentModificationException IGNORE) { }
+            } catch (ConcurrentModificationException ignored) { }
             maker.sentMessage().getReactions().forEach(reactions -> maker.sentMessage().removeReaction(reactions));
-
         }));
 
-        //if send
+        // confirmed
         maker.withReactionBehavior("green_tick", ((add, reaction, u) -> {
 
-            //remove reactions
+            // remove reactions
             try {
                 maker.clearReactionBehaviors();
-            } catch (ConcurrentModificationException IGNORE) { }
+            } catch (ConcurrentModificationException ignored) { }
             maker.sentMessage().getReactions().forEach(reactions -> maker.sentMessage().removeReaction(reactions));
 
-            //announce the message on all servers
-            Set<Channel> channels = DiscordClient.getGuilds().stream().map((guild -> ConfigHandler.getSetting(BotChannelConfig.class, guild))).collect(Collectors.toSet());
+            // send message to all servers
+            Set<Channel> channels = DiscordClient.getGuilds().stream().map((guild -> ConfigHandler.getSetting(BotChannelConfig.class, guild))).filter(Channel::canPost).collect(Collectors.toSet());
             channels.remove(null);
+            new MessageMaker(message.getChannel()).append("Sending announcement to " + channels.size() + " guilds").send();
             maker.clearMessage();
-            MessageMaker maker2 = maker;
-            maker2.withoutReactionBehavior("green_tick");
+            maker.withoutReactionBehavior("green_tick");
             for (Channel channel : channels) {
-                if (channel.canPost()) {
-                    maker2.forceCompile().withChannel(channel).send();
-                    maker2.forceCompile().clearMessage();
-                }
+                CareLess.lessSleep(105);// respect the rate limit
+                maker.forceCompile().withChannel(channel).send();
+                maker.forceCompile().clearMessage();
             }
         }));
         maker.forceCompile().send();
-
     }
 
-    //help command override usages
     @Override
     public String getUsages() {
-
-        //command usage:
-        return
-                "#  announce <text> // Send <text> to all servers\n" +
+        return "#  announce <text> // Send <text> to all servers\n" +
                 "#  announce <title;text> // Send <title;text> to all servers\n" +
                 "#  announce <url[SPACE]|title;text> // Send <title;text> with image to all servers";
     }
 
-    //help command override description
     @Override
     public String getHelp() {
-
-        //command description:
-        return
-                "#  Attaching an image to the command message will include it in the announcement\n\n#  Format Help:\n// \\n: Go to next line\n// [text](link): Add a link to a piece of text\n// *text*: Italics\n// **text**: Bold\n// __text__: Underline\n// ~~text~~: Strikethrough";
+        return "#  Attaching an image to the command message will include it in the announcement\n\n#  Format Help:\n// \\n: Go to next line\n// [text](link): Add a link to a piece of text\n// *text*: Italics\n// **text**: Bold\n// __text__: Underline\n// ~~text~~: Strikethrough";
     }
 
 }
