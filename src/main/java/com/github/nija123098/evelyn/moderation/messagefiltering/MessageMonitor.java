@@ -4,6 +4,7 @@ import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
+import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordMessageReceived;
 import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.moderation.messagefiltering.configs.MessageMonitoringAdditionsConfig;
@@ -28,7 +29,7 @@ import java.util.stream.Collectors;
  * @since 1.0.0
  */
 public class MessageMonitor {
-    private static final Map<MessageMonitoringLevel, MessageFilter> FILTER_MAP = new HashMap<>();
+    private static final Map<MessageMonitoringLevel, MessageFilter> FILTER_MAP = new HashMap<>(MessageMonitoringLevel.values().length + 1, 1);
     private static final Map<Channel, Set<MessageFilter>> CHANNEL_MAP = new HashMap<>();
     private static final Set<String> WORDS = new HashSet<>();
     static {
@@ -42,7 +43,7 @@ public class MessageMonitor {
                 MessageFilter filter = clazz.newInstance();
                 FILTER_MAP.put(filter.getType(), filter);
             } catch (InstantiationException | IllegalAccessException e) {
-                Log.log("Exception lading new MessageFilter", e);
+                Log.log("Exception loading new MessageFilter", e);
             }
         });
         try {
@@ -91,6 +92,9 @@ public class MessageMonitor {
     }
     public static void recalculate(Channel channel) {
         CHANNEL_MAP.put(channel, calculate(channel));
+    }
+    public static void recalculate(Guild guild) {// in reality just allow recalculation as necessary
+        guild.getChannels().forEach(CHANNEL_MAP::remove);
     }
     public static Set<MessageMonitoringLevel> getLevels(Channel channel) {
         return CHANNEL_MAP.computeIfAbsent(channel, MessageMonitor::calculate).stream().map(MessageFilter::getType).collect(Collectors.toSet());

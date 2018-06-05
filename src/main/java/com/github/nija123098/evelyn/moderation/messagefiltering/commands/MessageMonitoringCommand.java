@@ -22,7 +22,7 @@ import java.util.Set;
  */
 public class MessageMonitoringCommand extends AbstractCommand {
     public MessageMonitoringCommand() {
-        super("messagemonitoring", ModuleLevel.ADMINISTRATIVE, "message monitoring", null, "Displays a list of monitoring in effect currently");
+        super("messagemonitoring", ModuleLevel.ADMINISTRATIVE, "message monitoring, mm", null, "Displays a list of monitoring in effect currently");
     }
     @Command
     public static void command(@Argument(optional = true, replacement = ContextType.NONE) Channel channel, Guild guild, MessageMaker maker) {

@@ -14,5 +14,6 @@ public enum MessageMonitoringLevel {
     WHITE_SPACE,
     EXCESSIVE_CAPITALS,
     EXCESSIVE_PINGING,
-    SPAM,;
+    SPAM,
+    URL,;
 }

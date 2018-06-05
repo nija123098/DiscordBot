@@ -9,9 +9,9 @@ import com.github.nija123098.evelyn.exception.BotException;
 public class MessageMonitoringException extends BotException {
     private String blocked;
     public MessageMonitoringException(String message) {
-        this(message, message);
+        super(message);
     }
-    public MessageMonitoringException(String message, String blocked) {
+    MessageMonitoringException(String message, String blocked) {
         super(message);
         this.blocked = blocked;
     }

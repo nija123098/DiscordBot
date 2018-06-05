@@ -183,6 +183,11 @@
             <artifactId>pastebin4j</artifactId>
             <version>1.2.1</version><!-- or v1.2.1 -->
         </dependency>
+        <dependency>
+            <groupId>com.github.linkedin</groupId>
+            <artifactId>URL-Detector</artifactId>
+            <version>a8dec18cd7</version>
+        </dependency>
     </dependencies>
 
     <build>

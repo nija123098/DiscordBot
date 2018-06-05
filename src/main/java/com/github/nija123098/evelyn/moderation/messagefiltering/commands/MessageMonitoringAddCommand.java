@@ -20,7 +20,7 @@ import com.github.nija123098.evelyn.moderation.messagefiltering.configs.MessageM
  */
 public class MessageMonitoringAddCommand extends AbstractCommand {
     public MessageMonitoringAddCommand() {
-        super(MessageMonitoringCommand.class, "add", null, null, null, "Adds a filtering level");
+        super(MessageMonitoringCommand.class, "add", null, null, "a", "Adds a filtering level");
     }
     @Command
     public void command(@Argument(optional = true, replacement = ContextType.NONE) Channel channel, Guild guild, @Argument MessageMonitoringLevel level, MessageMaker maker) {
