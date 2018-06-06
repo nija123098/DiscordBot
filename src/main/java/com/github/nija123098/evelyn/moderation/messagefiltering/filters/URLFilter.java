@@ -29,7 +29,7 @@ public class URLFilter implements MessageFilter {
             for (String path : WHITELIST.getValue(event.getGuild())) {
                 if (compose.startsWith(path)) return;
             }
-            throw new MessageMonitoringException("Illegal URL: " + url);
+            throw new MessageMonitoringException("Illegal URL: " + url, true);
         });
     }
 

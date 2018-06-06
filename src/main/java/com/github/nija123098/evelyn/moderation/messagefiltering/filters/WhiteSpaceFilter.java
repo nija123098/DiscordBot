@@ -16,7 +16,7 @@ public class WhiteSpaceFilter implements MessageFilter {
     @Override
     public void checkFilter(DiscordMessageReceived event) {
         String content = event.getMessage().getContent();
-        if (Stream.of(content.split("")).map(s -> s.indexOf(0)).filter(Character::isWhitespace).count() / (float) content.length() >= ALLOWED) throw new MessageMonitoringException("Too much white space");
+        if (Stream.of(content.split("")).map(s -> s.indexOf(0)).filter(Character::isWhitespace).count() / (float) content.length() >= ALLOWED) throw new MessageMonitoringException("Too much white space", true);
     }
     @Override
     public MessageMonitoringLevel getType() {

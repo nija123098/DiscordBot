@@ -135,11 +135,13 @@ public class AbstractCommand implements Tagable {
         this.allNames.add(this.name);
         if (aAliases != null) {
             Collections.addAll(this.allNames, aAliases.split(", "));
+            if (this.allNames.remove("")) Log.log("Extra coma in " + this.getClass().getName());
         }
         if (eAliases != null) {
             String[] eAliases = this.eAliases.split(", ");
             this.emoticonAliases = new HashSet<>(eAliases.length);
             Collections.addAll(this.emoticonAliases, eAliases);
+            if (this.emoticonAliases.remove("")) Log.log("Extra coma in " + this.getClass().getName());
         }else{
             this.emoticonAliases = new HashSet<>(0);
         }
@@ -147,7 +149,8 @@ public class AbstractCommand implements Tagable {
         this.emoticonAliases.stream().map(s -> EmoticonHelper.getChars(s, false)).forEach(this.allNames::add);
         if (rAliases != null && superCommand != null) {
             for (String rel : rAliases.split(", ")) {
-                superCommand.getNames().forEach(s -> this.allNames.add(s + " " + rel));
+                if (rel.isEmpty()) Log.log("Extra coma in " + this.getClass().getName());
+                else superCommand.getNames().forEach(s -> this.allNames.add(s + " " + rel));
             }
         }
         for (Method m : this.getClass().getMethods()) {

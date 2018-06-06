@@ -7,6 +7,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordMessageReceived;
 import com.github.nija123098.evelyn.launcher.Launcher;
+import com.github.nija123098.evelyn.moderation.logging.ModLogConfig;
 import com.github.nija123098.evelyn.moderation.messagefiltering.configs.MessageMonitoringAdditionsConfig;
 import com.github.nija123098.evelyn.moderation.messagefiltering.configs.MessageMonitoringConfig;
 import com.github.nija123098.evelyn.moderation.messagefiltering.configs.MessageMonitoringExceptionsConfig;
@@ -16,6 +17,7 @@ import com.github.nija123098.evelyn.util.Log;
 import com.github.nija123098.evelyn.util.StringChecker;
 import org.reflections.Reflections;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -29,6 +31,7 @@ import java.util.stream.Collectors;
  * @since 1.0.0
  */
 public class MessageMonitor {
+    private static final Color LOG_COLOR = new Color(0, 206, 209);
     private static final Map<MessageMonitoringLevel, MessageFilter> FILTER_MAP = new HashMap<>(MessageMonitoringLevel.values().length + 1, 1);
     private static final Map<Channel, Set<MessageFilter>> CHANNEL_MAP = new HashMap<>();
     private static final Set<String> WORDS = new HashSet<>();
@@ -78,8 +81,10 @@ public class MessageMonitor {
         if (received.getChannel().isPrivate() || received.getGuild().getUserSize() < ConfigProvider.BOT_SETTINGS.messageFilteringServerSize() || received.getChannel().isNSFW() || received.getMessage().getContent() == null || received.getMessage().getContent().isEmpty() || BotRole.GUILD_TRUSTEE.hasRequiredRole(received.getAuthor(), received.getGuild())) return false;
         try{CHANNEL_MAP.computeIfAbsent(received.getChannel(), MessageMonitor::calculate).forEach(filter -> filter.checkFilter(received));
         } catch (MessageMonitoringException exception) {
-            new MessageMaker(received.getMessage()).withDM().append("Your message on ").appendRaw(received.getGuild().getName()).append(" in ").appendRaw(received.getChannel().mention()).append(" has been deleted.  Reason: " + exception.getMessage()).send();
-            received.getMessage().delete();
+            new MessageMaker(received.getMessage()).withDM().append("Your message on ").appendRaw(received.getGuild().getName()).append(" in ").appendRaw(received.getChannel().mention()).append(" has been deleted.  Reason: " + exception.getMessage() + "\nMessage: " + received.getMessage().getContent()).send();
+            Channel channel = ConfigHandler.getSetting(ModLogConfig.class, received.getGuild());
+            if (channel != null) new MessageMaker(channel).withColor(LOG_COLOR).append("Message violated message monitoring rule: " + exception.getMessage() + "\n" + received.getMessage().getContent()).getTitle().append("Message Monitoring Violation").getMaker().send();
+            if (exception.deleteMessage()) received.getMessage().delete();
             return true;
         }
         return false;

@@ -8,15 +8,21 @@ import com.github.nija123098.evelyn.exception.BotException;
  */
 public class MessageMonitoringException extends BotException {
     private String blocked;
-    public MessageMonitoringException(String message) {
+    private boolean deleteMessage;
+    public MessageMonitoringException(String message, boolean deleteMessage) {
         super(message);
+        this.deleteMessage = deleteMessage;
     }
     MessageMonitoringException(String message, String blocked) {
-        super(message);
+        this(message, true);
         this.blocked = blocked;
     }
 
     public String getBlocked() {
         return this.blocked;
+    }
+
+    public boolean deleteMessage() {
+        return this.deleteMessage;
     }
 }

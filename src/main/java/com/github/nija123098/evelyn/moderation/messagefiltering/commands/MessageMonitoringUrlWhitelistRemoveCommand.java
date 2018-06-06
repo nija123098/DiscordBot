@@ -20,7 +20,7 @@ public class MessageMonitoringUrlWhitelistRemoveCommand extends AbstractCommand 
     }
     @Command
     public void command(Guild guild, Channel channel, @Argument String domain, MessageMaker maker) {
-        ConfigHandler.alterSetting(MessageMonitoringUrlWhitelist.class, guild, urls -> urls.remove(domain));
+        ConfigHandler.alterSetting(MessageMonitoringUrlWhitelist.class, guild, urls -> urls.remove(domain.toLowerCase()));
         MessageMonitor.recalculate(guild);
         MessageMonitoringUrlWhitelistCommand.command(maker, channel, null);
     }

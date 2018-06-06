@@ -6,12 +6,6 @@ import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.command.annotations.Context;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
-import com.github.nija123098.evelyn.discordobjects.wrappers.User;
-import com.github.nija123098.evelyn.util.FormatHelper;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * @author Soarnir
@@ -25,19 +19,7 @@ public class BanListCommand extends AbstractCommand {
 
     @Command
     public void command(@Context(softFail = true) Guild guild, MessageMaker maker) {
-        int userCounter = 1;
-        maker.getTitle().appendRaw(guild.getName() + " | " + guild.getBannedUsers().size() + " banned users");
-        maker.getNewListPart().appendRaw("\u200b");
-        List<List<String>> body = new ArrayList<>();
-        for (User user : guild.getBannedUsers()) {
-            body.add(Arrays.asList(user.getNameAndDiscrim(), user.getID()));
-            if (userCounter == 15) {
-                maker.getNewFieldPart().withBoth("\u200b", (FormatHelper.makeAsciiTable(Arrays.asList("User", "ID"), body, null)));
-                maker.guaranteeNewFieldPage();
-                userCounter = 0;
-                body.clear();
-            }
-            userCounter++;
-        }
+        maker.getTitle().appendRaw("Banned Users");
+        guild.getBannedUsers().forEach(user -> maker.getNewListPart().append(user.getNameAndDiscrim() + " " + user.getID()));
     }
 }

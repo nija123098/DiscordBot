@@ -4,6 +4,7 @@ import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
+import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.launcher.Launcher;
 
@@ -16,7 +17,8 @@ public class GrantSystemAccessCommand extends AbstractCommand {
         super("grant system access", BotRole.BOT_ADMIN, ModuleLevel.BOT_ADMINISTRATIVE, null, null, "Grants the user system access");
     }
     @Command
-    public void command(@Argument(optional = true) User user) {
+    public void command(@Argument(optional = true) User user, MessageMaker maker) {
         Launcher.grantSystemAccess(user);
+        maker.append("Granted " + user.mention() + " system access!");
     }
 }

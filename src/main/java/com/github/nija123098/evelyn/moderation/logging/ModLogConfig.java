@@ -1,11 +1,10 @@
 package com.github.nija123098.evelyn.moderation.logging;
 
 import com.github.nija123098.evelyn.config.AbstractConfig;
+import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
-
-import static com.github.nija123098.evelyn.config.ConfigCategory.LOGGING;
-import static com.github.nija123098.evelyn.util.FormatHelper.filtering;
+import com.github.nija123098.evelyn.util.FormatHelper;
 
 /**
  * @author nija123098
@@ -13,6 +12,6 @@ import static com.github.nija123098.evelyn.util.FormatHelper.filtering;
  */
 public class ModLogConfig extends AbstractConfig<Channel, Guild> {
     public ModLogConfig() {
-        super("mod_log", "Mod Log", LOGGING, guild -> guild.getChannels().stream().filter(channel -> filtering(channel.getName().toLowerCase(), Character::isLetter).contains("modlog")).findFirst().orElse(null), "The channel log of moderator actions");
+        super("mod_log", "Mod Log", ConfigCategory.LOGGING, guild -> guild.getChannels().stream().filter(channel -> FormatHelper.filtering(channel.getName().toLowerCase(), Character::isLetter).contains("modlog")).filter(Channel::canPost).findFirst().orElse(null), "The channel log of moderator actions");
     }
 }

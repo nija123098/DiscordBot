@@ -21,7 +21,7 @@ public class SpamFilter extends AbstractService implements MessageFilter {
     }
     @Override
     public void checkFilter(DiscordMessageReceived event) {
-        if (MAP.compute(event.getAuthor(), (user, integer) -> integer == null ? 1 : ++integer) > 3) throw new MessageMonitoringException("Too much spam");
+        if (MAP.compute(event.getAuthor(), (user, integer) -> integer == null ? 1 : ++integer) > 3) throw new MessageMonitoringException("Too much spam", true);
     }
     @Override
     public void run() {

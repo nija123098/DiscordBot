@@ -54,7 +54,7 @@ public class FakeDangerFilter implements MessageFilter {
         StringChecker.checkoutString(reduced, DANGER_COMPONENTS.keySet(), policy);
         if (score.get() / reduced.length() >= REQUIREMENT) {
             Log.log("Identified fake danger message score: " + score.get() + " content: " + event.getMessage().getContent());
-            throw new MessageMonitoringException("Fake danger identified.  Do not spread these.");
+            throw new MessageMonitoringException("Fake danger identified.  Do not spread these.", true);
         }
     }
     @Override

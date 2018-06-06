@@ -27,7 +27,7 @@ public class PingFilter implements MessageFilter {
         if (!(event.getMessage().getMentions().stream().anyMatch(user -> !user.isBot()) || event.getMessage().mentionsEveryone() || event.getMessage().mentionsHere())) return;
         GuildUser guildUser = GuildUser.getGuildUser(event.getGuild(), event.getAuthor());
         int pings = PING_COUNT_MAP.compute(guildUser, (gu, integer) -> integer == null ? 1 : ++integer);
-        if (pings > MAX_PINGS_ALLOWED) throw new MessageMonitoringException("Too many mentions in too short a period");
+        if (pings > MAX_PINGS_ALLOWED) throw new MessageMonitoringException("Too many mentions in too short a period", false);
         if (pings == 1) {
             final AtomicReference<ScheduledFuture<?>> reference = new AtomicReference<>();
             reference.set(COUNT_REDUCTION_EXECUTOR.scheduleAtFixedRate(() -> {

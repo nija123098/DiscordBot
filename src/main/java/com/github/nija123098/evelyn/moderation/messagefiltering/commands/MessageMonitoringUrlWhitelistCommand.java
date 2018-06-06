@@ -18,7 +18,7 @@ import com.github.nija123098.evelyn.moderation.messagefiltering.configs.MessageM
  */
 public class MessageMonitoringUrlWhitelistCommand extends AbstractCommand {
     public MessageMonitoringUrlWhitelistCommand() {
-        super("urlwhitelist", ModuleLevel.ADMINISTRATIVE, "mmurlwl, urlwhite, linkwhitelist, , linkwhite", null, "Displays a list of monitoring in effect currently");
+        super("urlwhitelist", ModuleLevel.ADMINISTRATIVE, "mmurlwl, urlwhite, linkwhitelist, linkwhite", null, "Displays a list of monitoring in effect currently");
     }
     @Command
     public static void command(MessageMaker maker, Channel channel, String in) {
