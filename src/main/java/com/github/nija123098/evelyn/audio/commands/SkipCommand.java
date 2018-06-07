@@ -40,9 +40,9 @@ public class SkipCommand extends AbstractCommand {
         int required = getSetting(SkipPercentConfig.class, manager.voiceChannel().getGuild());
         if (percent >= required) {
             int size = manager.skipTrack();
-            if (size > 0) maker.append("There are " + size + " more songs").mustEmbed();
-            else maker.append("There are no more songs to play from the queue").mustEmbed();
-        } else maker.append((percent - required) + "% is required to skip this track").mustEmbed();
+            if (size > 0) maker.append("There are " + size + " more songs");
+            else maker.append("There are no more songs to play from the queue");
+        } else maker.append((percent - required) + "% is required to skip this track");
         maker.withDeleteDelay(10_000L);
     }
 

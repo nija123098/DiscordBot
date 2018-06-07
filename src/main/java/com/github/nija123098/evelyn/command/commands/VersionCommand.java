@@ -23,7 +23,7 @@ public class VersionCommand extends AbstractCommand {
     @Command
     public void command(MessageMaker maker) {
         String out = ExecuteShellCommand.commandToExecute("git rev-parse --short HEAD", ConfigProvider.UPDATE_SETTINGS.updateFolder());
-        maker.withColor(new Color(175, 30,5)).mustEmbed();
+        maker.withColor(new Color(175, 30,5));
         maker.getTitle().clear().appendRaw("\uD83D\uDEE0 Bot Version \uD83D\uDEE0");
         maker.getNote().clear().appendRaw("Last Update");
         maker.withTimestamp(ConfigHandler.getSetting(LastBotUpdaterUseConfig.class, GlobalConfigurable.GLOBAL));

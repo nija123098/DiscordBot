@@ -37,7 +37,6 @@ public class CurrencyTreeCommand extends AbstractCommand {// todo clean and opti
 
         //configure message maker
         if (maker != null) {
-            maker.mustEmbed();
             maker.withAutoSend(false);
             maker.withImage(ConfigProvider.URLS.currencytreeGif());
         }

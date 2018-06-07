@@ -10,7 +10,6 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Role;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.exception.PermissionsException;
 import com.github.nija123098.evelyn.util.FormatHelper;
-import com.github.nija123098.evelyn.util.Log;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,11 +26,10 @@ public class RoleAddCommand extends AbstractCommand {
 
     @Command
     public void command(@Argument Role role, @Argument(optional = true, replacement = ContextType.NONE) User user, @Argument(optional = true, replacement = ContextType.NONE) Role targetRole, Guild guild, MessageMaker maker) {
-        maker.mustEmbed();
         if (user != null) {
             try {
                 user.addRole(role);
-                maker.appendRaw("Successfully added the " + FormatHelper.embedLink(role.getName(),"") + " role to " + user.getDisplayName(guild));
+                maker.appendRaw("Successfully added the ").appendEmbedLink(role.getName(),"").append(" role to ").appendRaw(user.getDisplayName(guild));
             } catch (PermissionsException e) {
                 throw new PermissionsException("I could not add the " + FormatHelper.embedLink(role.getName(),"") + " role to " + user.getDisplayName(guild) + ", check your discord permissions to ensure my role is higher than the role I'm trying to add.");
             }
@@ -39,7 +37,7 @@ public class RoleAddCommand extends AbstractCommand {
             List<User> users = targetRole.getUsers().stream().filter(user1 -> user1.getRolesForGuild(guild).contains(targetRole)).collect(Collectors.toList());
             try {
                 users.forEach(user1 -> user1.addRole(role));
-                maker.appendRaw("Successfully added the " + FormatHelper.embedLink(role.getName(), "") + " role to the users with the " + FormatHelper.embedLink(targetRole.getName(),"") + " role");
+                maker.appendRaw("Successfully added the ").appendEmbedLink(role.getName(), "").append(" role to the users with the ").appendEmbedLink(targetRole.getName(),"").append(" role");
             } catch (PermissionsException e) {
                 throw new PermissionsException("I could not add the " + FormatHelper.embedLink(role.getName(),"") + " role to the users with the " + FormatHelper.embedLink(targetRole.getName(),"") + " role, check your discord permissions to ensure my role is higher than the role I'm trying to add.");
             }

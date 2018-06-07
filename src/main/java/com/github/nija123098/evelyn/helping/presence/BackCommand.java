@@ -23,7 +23,7 @@ public class BackCommand extends AbstractCommand {
     @Command
     public void command(MessageMaker maker, User user, Guild guild) {
         ConfigHandler.setSetting(SelfMarkedAwayConfig.class, user, false);
-        maker.append("Welcome back " + user.getDisplayName(guild) + "!").mustEmbed();
+        maker.append("Welcome back " + user.getDisplayName(guild) + "!");
     }
     private static final Set<String> NATURAL_TRIGGERS = new HashSet<>(Arrays.asList("back", "present", "i am back", "i'm back", "present", "back"));
     @Override

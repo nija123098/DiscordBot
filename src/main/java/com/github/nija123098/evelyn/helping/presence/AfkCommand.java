@@ -22,7 +22,7 @@ public class AfkCommand extends AbstractCommand {
     @Command
     public void command(User user, MessageMaker maker, Guild guild) {
         ConfigHandler.setSetting(SelfMarkedAwayConfig.class, user, false);
-        maker.append(user.getDisplayName(guild) + " is now AFK.").mustEmbed();
+        maker.append(user.getDisplayName(guild) + " is now AFK.");
     }
     private static final Set<String> NATURAL_TRIGGERS = new HashSet<>(Arrays.asList("afk", "brb", "ill be right back", "i will be right back"));
     @Override

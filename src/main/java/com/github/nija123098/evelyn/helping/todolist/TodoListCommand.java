@@ -42,7 +42,7 @@ public class TodoListCommand extends AbstractCommand {
     }
     static void remind(long delay, User user, TodoItem todoItem) {
         SCHEDULED_EXECUTOR_SERVICE.schedule(() -> {
-            new MessageMaker(user).mustEmbed().getTitle().appendRaw("Todo list").getMaker().getNewFieldPart().withBoth("\u200b", todoItem.getTodo()).getMaker().getNote().appendRaw("Reminder set: " + Time.getAbbreviated(delay) + " ago").getMaker().send();
+            new MessageMaker(user).getTitle().appendRaw("Todo list").getMaker().getNewFieldPart().withBoth("\u200b", todoItem.getTodo()).getMaker().getNote().appendRaw("Reminder set: " + Time.getAbbreviated(delay) + " ago").getMaker().send();
             ConfigHandler.alterSetting(TodoListConfig.class, user, todoItems -> todoItems.remove(todoItem));
         }, delay, TimeUnit.MILLISECONDS);
     }

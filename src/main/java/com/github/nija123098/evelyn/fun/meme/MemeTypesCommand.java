@@ -28,8 +28,10 @@ public class MemeTypesCommand extends AbstractCommand {
     }
     @Command
     public static void command(MessageMaker maker) {
-        maker.mustEmbed();
-        if (MEME_TYPES.isEmpty()) loadMemeTypes();
+        if (MEME_TYPES.isEmpty()) {
+            maker.append("Meme types are not loaded yet, they will be in a couple seconds");
+            loadMemeTypes();
+        }
         ArrayList<String> memes = new ArrayList<>(MEME_TYPES);
         Collections.sort(memes);
         int count = 0;

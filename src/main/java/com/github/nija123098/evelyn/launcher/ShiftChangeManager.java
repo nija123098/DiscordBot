@@ -31,12 +31,13 @@ public class ShiftChangeManager {
                     Log.log("IOException reading predecessor detection socket", e);
                 }
                 Launcher.shutdown(0, 1_000, true);
-                CareLess.lessSleep(600_000L);// should be shut down by the time this ends
+                CareLess.lessSleep(10_000);
+                System.exit(0);
                 if (sock != null) CareLess.something(sock::close);// Should never be reached
             } catch (IOException e) {
                 Log.log("Issue with shift change", e);
             }
-        });
+        }, "Shift-Change-Monitor-Thread");
         allowBootUp.setDaemon(false);
         allowBootUp.start();
     }

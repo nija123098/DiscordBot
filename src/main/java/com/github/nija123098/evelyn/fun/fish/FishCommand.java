@@ -55,7 +55,7 @@ public class FishCommand extends AbstractCommand {// TODO clean and optimize
         userBalance -= cost;
 
         //configure message maker
-        maker.mustEmbed().withAutoSend(false).withColor(new Color(54, 57, 62));
+        maker.withAutoSend(false).withColor(new Color(54, 57, 62));
 
         //print the first frame
         maker.appendRaw("```\uD83C\uDFA3 @" + user.getDisplayName(guild) + " \uD83C\uDFA3\n");
@@ -130,7 +130,6 @@ public class FishCommand extends AbstractCommand {// TODO clean and optimize
 
             //configure message maker
             maker.withAutoSend(false);
-            maker.mustEmbed();
             maker.getHeader().clear();
 
             //print the first frame

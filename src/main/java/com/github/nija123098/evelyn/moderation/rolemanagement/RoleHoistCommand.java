@@ -19,7 +19,6 @@ public class RoleHoistCommand extends AbstractCommand {
 
     @Command
     public void command(@Argument Role role, MessageMaker maker) {
-        maker.mustEmbed();
         try {
             role.changeHoist(!role.isHoisted());
             if (role.isHoisted()) {

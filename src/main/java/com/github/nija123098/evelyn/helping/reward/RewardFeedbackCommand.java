@@ -3,18 +3,15 @@ package com.github.nija123098.evelyn.helping.reward;
 import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ContextType;
-import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.GlobalConfigurable;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
-import com.github.nija123098.evelyn.discordobjects.wrappers.Message;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.economy.configs.CurrencySymbolConfig;
 import com.github.nija123098.evelyn.economy.configs.CurrentCurrencyConfig;
-import com.github.nija123098.evelyn.util.Log;
 
 import java.awt.*;
 
@@ -29,7 +26,7 @@ public class RewardFeedbackCommand extends AbstractCommand {
 
     @Command
     public void feedback(MessageMaker maker, Channel channel, @Argument User user, @Argument Integer amount, @Argument(optional = true, replacement = ContextType.NONE) String s) {
-        MessageMaker maker2 = new MessageMaker(channel).mustEmbed();
+        MessageMaker maker2 = new MessageMaker(channel);
         maker.withChannel(user.getOrCreatePMChannel());
         maker.withColor(new Color(175, 30, 5));
         maker.getTitle().clear().append("🎁 Evelyn Reward");

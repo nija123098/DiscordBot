@@ -23,7 +23,7 @@ public class TemplateAddCommand extends AbstractCommand {
     public void command(@Argument KeyPhrase keyPhrase, @Context(softFail = true) Guild guild, @Argument(info = "text") String s, User user, MessageMaker maker) {
         TemplateCommand.checkPerms(user, guild, keyPhrase);
         TemplateHandler.addTemplate(keyPhrase, guild, s);
-        maker.appendRaw("You've added a template for the keyphrase successfully:\n" + s).mustEmbed();
+        maker.appendRaw("You've added a template for the keyphrase successfully:\n" + s);
     }
     @Override
     public BotRole getBotRole() {

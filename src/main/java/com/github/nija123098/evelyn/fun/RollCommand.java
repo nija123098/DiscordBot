@@ -46,7 +46,7 @@ public class RollCommand extends AbstractCommand {
             }
         } else if (arg.isEmpty()) {
             value = Rand.getRand(6) + 1;
-            maker.append("Rolling 1 [6] sided " + EmoticonHelper.getChars("game_die", false) + " | Rolled: " + value).mustEmbed();
+            maker.append("Rolling 1 [6] sided " + EmoticonHelper.getChars("game_die", false) + " | Rolled: " + value);
         } else {
             int max_dice = 144, min_sides = 2;
             for(int i = 0; i < res.length; i++) {

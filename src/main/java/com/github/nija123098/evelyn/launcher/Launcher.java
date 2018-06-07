@@ -200,7 +200,7 @@ public class Launcher {
 
         //post message in logging channel
         MessageMaker maker = new MessageMaker(Channel.getChannel(ConfigProvider.BOT_SETTINGS.loggingChannel()));
-        maker.withColor(new Color(175, 30,5)).mustEmbed();
+        maker.withColor(new Color(175, 30,5));
         String slog = null;
         try {
             slog = FileUtils.readFileToString(Log.LOG_PATH.toFile(), Charset.defaultCharset());

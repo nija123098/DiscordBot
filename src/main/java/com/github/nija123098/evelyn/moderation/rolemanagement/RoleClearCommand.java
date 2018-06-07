@@ -23,7 +23,6 @@ public class RoleClearCommand extends AbstractCommand {
 
     @Command
     public void command(@Argument User user, Guild guild, MessageMaker maker) {
-        maker.mustEmbed();
         ArrayList<String> failedRoles = new ArrayList<>();
         for (Role role : user.getRolesForGuild(guild)) {
             try {
@@ -34,10 +33,10 @@ public class RoleClearCommand extends AbstractCommand {
         }
         if (failedRoles.size() > 0) {
             StringBuilder builder = new StringBuilder();
-            failedRoles.forEach(role ->  builder.append("`" + role + "`\n"));
+            failedRoles.forEach(role -> builder.append("`").append(role).append("`\n"));
             throw new PermissionsException("I could not remove the following roles from " + user.getDisplayName(guild) + ":\n" + builder.toString() + "\ncheck your discord permissions to ensure my role is higher than the role I'm trying to remove.");
         } else {
-            maker.appendRaw("successfully removed all roles from " + user.getDisplayName(guild));
+            maker.append("Successfully removed all roles from ").appendRaw(user.getDisplayName(guild));
         }
     }
 }

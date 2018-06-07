@@ -79,7 +79,7 @@ public class BankCommand extends AbstractCommand {
          * Check if user is able to claim their cookies
          */
         if ((currentMillis / day) != (last / day)) {
-            maker.appendRaw(claimBuilder((Time.getAbbreviated(day - (currentMillis % day))), symbol, bonus, streak, user, guild, true)).mustEmbed();
+            maker.appendRaw(claimBuilder((Time.getAbbreviated(day - (currentMillis % day))), symbol, bonus, streak, user, guild, true));
             ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, (currentMoney + totalClaim + bonus));
             ConfigHandler.setSetting(LastCurrencyUseConfig.class, user, currentMillis);
             if (streak < 8) ConfigHandler.setSetting(CurrentCurrencyStreakConfig.class, user, (streak + 1));
@@ -98,7 +98,7 @@ public class BankCommand extends AbstractCommand {
                 maker.withImage(ConfigProvider.URLS.bankGif());
                 return;
             }
-            maker.appendRaw(claimBuilder((Time.getAbbreviated(day - (currentMillis % day))), symbol, bonus, streak, user, guild, false)).mustEmbed();
+            maker.appendRaw(claimBuilder((Time.getAbbreviated(day - (currentMillis % day))), symbol, bonus, streak, user, guild, false));
         }
     }
 

@@ -13,7 +13,6 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Message;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.moderation.logging.BotChannelConfig;
 import com.github.nija123098.evelyn.util.CareLess;
-import com.github.nija123098.evelyn.util.FormatHelper;
 
 import java.awt.*;
 import java.util.ConcurrentModificationException;
@@ -42,7 +41,7 @@ public class AnnounceCommand extends AbstractCommand {
         }
         maker.withThumb(ConfigProvider.URLS.announceThumb());
         maker.withColor(new Color(175, 30,5));
-        maker.withAutoSend(false).mustEmbed();
+        maker.withAutoSend(false);
 
         // format text to use \n
         text = text.replace("\\n","\n");
@@ -51,9 +50,9 @@ public class AnnounceCommand extends AbstractCommand {
         if (text.contains(";")) {
             String[] textWithSplit = text.split(";",2);
             maker.forceCompile().getHeader().clear().appendRaw("\u200B");
-            maker.forceCompile().getNewFieldPart().withBoth(textWithSplit[0],textWithSplit[1] + "\n\n- " + user.getName()).getValue().appendRaw("\n\nClick " + FormatHelper.embedLink("here", ConfigProvider.URLS.discordInviteUrl()) + " to join the support server.");
+            maker.forceCompile().getNewFieldPart().withBoth(textWithSplit[0], textWithSplit[1] + "\n\n- " + user.getName()).getValue().appendRaw("\n\nClick ").appendEmbedLink("here", ConfigProvider.URLS.discordInviteUrl()).append(" to join the support server.");
         }else {
-            maker.forceCompile().getFooter().clear().appendRaw("Click " + FormatHelper.embedLink("here", ConfigProvider.URLS.discordInviteUrl()) + " to join the support server.");
+            maker.forceCompile().getFooter().clear().appendRaw("Click ").appendEmbedLink("here", ConfigProvider.URLS.discordInviteUrl()).append(" to join the support server.");
             maker.forceCompile().getHeader().clear().appendRaw("\u200B\n" + text + "\n\n- " + user.getName());
         }
 

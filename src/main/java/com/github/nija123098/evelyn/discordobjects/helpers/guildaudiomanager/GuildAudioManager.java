@@ -33,6 +33,7 @@ import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
+import com.sedmelluq.discord.lavaplayer.track.playback.ImmutableAudioFrame;
 import sx.blah.discord.handle.audio.AudioEncodingType;
 import sx.blah.discord.handle.audio.IAudioProvider;
 import sx.blah.discord.handle.obj.IVoiceState;
@@ -498,7 +499,7 @@ public class GuildAudioManager extends AudioEventAdapter{
         manager.skipSet.remove(event.getUser());
         manager.checkSkip();
     }
-    private static final AudioFrame NULL = new AudioFrame(0, null, 0, null);
+    private static final AudioFrame NULL = new ImmutableAudioFrame(0, new byte[0], 0, null);
     public class AudioProvider implements IAudioProvider {
         private final BlockingQueue<AudioFrame> frames = new LinkedBlockingQueue<>(BUFFER_SIZE);
         private final Thread queueThread;
@@ -523,7 +524,7 @@ public class GuildAudioManager extends AudioEventAdapter{
         public byte[] provide() {
             try {
                 if (!isReady()) return null;// This is redundant, but Lavaplayer doesn't always work well either.
-                return frames.take().data;
+                return frames.take().getData();
             } catch (InterruptedException e) {
                 Log.log("Interrupted taking frame, ending song", e);
                 return null;

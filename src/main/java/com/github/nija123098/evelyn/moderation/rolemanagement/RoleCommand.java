@@ -28,7 +28,6 @@ public class RoleCommand extends AbstractCommand {
     @Command
     public void command(@Argument(optional = true, replacement = ContextType.NONE) Role role, MessageMaker maker, Guild guild) {
         String prefix = ConfigHandler.getSetting(GuildPrefixConfig.class, guild);
-        maker.mustEmbed();
         if (role == null) {
             if (DiscordClient.getOurUser().getPermissionsForGuild(guild).contains(DiscordPermission.MANAGE_ROLES)) {
                 maker.getTitle().appendRaw("I can perform the following changes to roles in this server:");

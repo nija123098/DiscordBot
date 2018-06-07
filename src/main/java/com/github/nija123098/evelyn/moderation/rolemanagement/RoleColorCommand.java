@@ -21,7 +21,6 @@ public class RoleColorCommand extends AbstractCommand {
 
     @Command
     public void command(@Argument Role role, @Argument(info = "RGB/HEX") Color color, MessageMaker maker) {
-        maker.mustEmbed();
         try {
             role.changeColor(color);
             maker.appendRaw("Changed the colour of `" + role.getName() + "`");

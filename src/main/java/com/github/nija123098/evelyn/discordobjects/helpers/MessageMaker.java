@@ -68,8 +68,8 @@ public class MessageMaker {
     private Message ourMessage;
     private final Set<String> reactions = new HashSet<>(1);
     private Long deleteDelay;
-    private File file;
-    private boolean okHand, maySend, mustEmbed, forceCompile, compiled, colored, messageError, autoSend = true, translate;
+    private File file;//                        by default embed
+    private boolean okHand, maySend, mustEmbed, shouldEmbed = true, forceCompile, compiled, colored, messageError, autoSend = true, translate;
 
     /**
      * Builds the message maker and sets it up.
@@ -157,18 +157,18 @@ public class MessageMaker {
      *
      * @return the instance.
      */
-    public MessageMaker mustEmbed() {
-        return this.mustEmbed(true);
+    public MessageMaker shouldEmbed() {
+        return this.shouldEmbed(true);
     }
 
     /**
-     * Sets if the embeding of the building message should be forced to embed.
+     * Sets if the embeding of the building message should be embed, and only does not in case of missing permissions.
      *
-     * @param mustEmbed if the building message should be forced to embed.
+     * @param shouldEmbed if the building message should be embed.
      * @return the instance.
      */
-    public MessageMaker mustEmbed(boolean mustEmbed) {
-        this.mustEmbed = mustEmbed;
+    public MessageMaker shouldEmbed(boolean shouldEmbed) {
+        this.shouldEmbed = shouldEmbed;
         return this;
     }
 
@@ -494,6 +494,19 @@ public class MessageMaker {
         this.header.append(!raw, s);
         return this;
     }
+
+    /**
+     * Appends raw contents of the instance.
+     *
+     * @param name the name the link should appear as.
+     * @param link the link to embed.
+     * @return the instance.
+     */
+    public MessageMaker appendEmbedLink(String name, String link) {
+        this.header.appendEmbedLink(name, link);
+        return this;
+    }
+
     // embed methods
 
     /**
@@ -767,7 +780,7 @@ public class MessageMaker {
             }
         }
         if (this.origin != null && this.okHand) ExceptionWrapper.wrap(() -> null);
-        this.compile();// page must be 0 if fieldIndices is null, which indicates no pages, I think.  It's been a while.
+        if (!this.compile()) return;// page must be 0 if fieldIndices is null, which indicates no pages, I think.  It's been a while.
         if (this.embed != null) {
             if (page < 0 || page >= this.fieldIndices.length) throw new DevelopmentException("Attempted to get a page that doesn't exit");
             this.embed.clearFields().withDesc((this.header.langString.translate(this.lang, this.translate) + "\n\n" + (page >= textVals.length ? "" : textVals[page]) + "\n\n" + this.footer.langString.translate(lang, this.translate)).replace("\n\n\n\n", "\n\n"));
@@ -819,16 +832,24 @@ public class MessageMaker {
 
     /**
      * Compiles how the building message should be sent.
+     * Stop sending if compile failed, warning message has already been sent.
+     *
+     * @return if compile failed.
      */
-    private void compile() {
-        if (this.compiled && !this.forceCompile) return;
+    private boolean compile() {
+        if (this.compiled && !this.forceCompile) return true;
         this.compiled = true;
         if (!this.colored) this.withColor(DEFAULT_COLOR);
         if (this.lang == null) this.lang = getLang(this.user, this.channel);
         this.translate = this.translate || !this.lang.equals("en");
+        boolean embedLinks = PermissionUtils.hasPermissions(this.channel.channel(), DiscordClient.getOurUser().user(), Permissions.EMBED_LINKS), couldNormalize = this.couldNormalize();
+        if (!embedLinks && !this.couldNormalize()) {
+            this.channel.channel().sendMessage("I can not display this message unless I am allowed to use embed links.");
+            return false;
+        }
         // message
-        if (this.couldNormalize()) this.asNormalMessage();
-        else if (this.channel instanceof VoiceChannel) this.channel = ConfigHandler.getSetting(VoiceCommandPrintChannelConfig.class, this.channel.getGuild());
+        if (this.channel instanceof VoiceChannel) this.channel = ConfigHandler.getSetting(VoiceCommandPrintChannelConfig.class, this.channel.getGuild());
+        else if (couldNormalize && !this.shouldEmbed) this.asNormalMessage();
         if (this.embed == null) this.builder.withContent(this.header.langString.translate(this.lang, translate));
         else {// embed
             this.embed.withAuthorName(authorName.langString.translate(lang, this.translate));
@@ -920,6 +941,7 @@ public class MessageMaker {
                 this.embed.withFooterText(generateNote(this.currentPage.get()));
             }
         }
+        return true;
     }
 
     /**
@@ -978,7 +1000,7 @@ public class MessageMaker {
         }
 
         /**
-         * Sets the raw content of the {@link FieldPart}.
+         * Appends raw content of the instance.
          *
          * @param title the raw title content.
          * @param value teh raw value content.
@@ -1075,6 +1097,21 @@ public class MessageMaker {
             this.appended = true;
             this.maker.maySend();
             this.langString.append(langString);
+            return this;
+        }
+
+        /**
+         * Appends raw contents of the instance.
+         *
+         * @param name the name the link should appear as.
+         * @param link the link to embed.
+         * @return the instance.
+         */
+        public TextPart appendEmbedLink(String name, String link) {
+            this.maker.shouldEmbed = true;
+            this.appended = true;
+            this.maker.maySend();
+            this.langString.appendRaw(FormatHelper.embedLink(name, link));
             return this;
         }
 

@@ -22,7 +22,6 @@ public class SetBonusCommand extends AbstractCommand {
     @Command
     public void command(@Argument Integer integer, MessageMaker maker) {
         ConfigHandler.setSetting(CurrencyBonusConfig.class, GlobalConfigurable.GLOBAL, integer);
-        maker.mustEmbed();
         maker.getTitle().appendRaw("Bonus set");
         maker.appendRaw("\u200b\nSet bonus to `" + integer + "`");
     }

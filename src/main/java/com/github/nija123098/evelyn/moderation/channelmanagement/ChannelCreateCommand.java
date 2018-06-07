@@ -21,7 +21,7 @@ public class ChannelCreateCommand extends AbstractCommand {
 
     @Command
     public void command(@Argument String channelName, Channel channel, Guild guild, MessageMaker maker) {
-        maker.mustEmbed().getTitle().appendRaw("Channel creation");
+        maker.getTitle().appendRaw("Channel creation");
         channelName = channelName.replace(' ', '_');
         if (channelName.matches("^[a-zA-Z0-9_ ]+$")) {
             if (channel.getCategory() != null) {

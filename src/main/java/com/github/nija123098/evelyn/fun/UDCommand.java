@@ -6,7 +6,6 @@ import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
-import com.github.nija123098.evelyn.util.FormatHelper;
 import com.github.nija123098.evelyn.util.Log;
 import org.apache.commons.text.StringEscapeUtils;
 import org.json.simple.JSONArray;
@@ -43,7 +42,7 @@ public class UDCommand extends AbstractCommand {
             String link = BASE_LINK + URLEncoder.encode(arg, "UTF-8");
             if (listObject.isEmpty()) {
                 maker.getTitle().append("There is no definition for that term!");
-                maker.append(FormatHelper.embedLink("You could go define it!", link));
+                maker.appendEmbedLink("You could go define it!", link);
                 return;
             }
             AtomicInteger integer = new AtomicInteger();

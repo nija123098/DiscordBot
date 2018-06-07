@@ -46,7 +46,7 @@ public class Cryptocurrency {
     }
     private int id;
     private String name;
-    private final CacheHelper.RefrenceCache<JsonObject> DATA = new CacheHelper.RefrenceCache<>(60_000, () -> {
+    private final CacheHelper.ReferenceCache<JsonObject> DATA = new CacheHelper.ReferenceCache<>(60_000, () -> {
         try {
             return JSON_PARSER.parse(Unirest.get("https://www.cryptocompare.com/api/data/coinsnapshotfullbyid/?id="+this.id).asString().getBody()).getAsJsonObject().getAsJsonObject("Data").getAsJsonObject("General");
         } catch (UnirestException e) {

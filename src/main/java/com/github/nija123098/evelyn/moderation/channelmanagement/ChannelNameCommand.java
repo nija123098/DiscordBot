@@ -18,8 +18,7 @@ public class ChannelNameCommand extends AbstractCommand {
     }
 
     @Command
-    public void command(@Argument(optional = true) Channel channel, @Argument String newName, Channel invokeChannel, MessageMaker maker) {
-        maker.mustEmbed();
+    public void command(@Argument(optional = true) Channel channel, @Argument String newName, MessageMaker maker) {
         maker.getTitle().appendRaw("Channel Name Change");
         maker.getHeader().appendRaw("\u200b");
         try {
@@ -32,18 +31,8 @@ public class ChannelNameCommand extends AbstractCommand {
                 } else {
                     maker.appendRaw("No change performed, names were the same");
                 }
-            } else {
-                String previous = invokeChannel.getName();
-                if (!previous.equals(newName.replace(' ', '_'))) {
-                    invokeChannel.changeName(newName.replace(' ', '_'));
-                    maker.getNewFieldPart().withInline(false).withBoth("Previous", String.valueOf(previous));
-                    maker.getNewFieldPart().withInline(false).withBoth("New", invokeChannel.mention());
-                } else {
-                    maker.appendRaw("No change performed, names were the same");
-                }
             }
         } catch (PermissionsException e) {
-            assert channel != null;
             throw new PermissionsException("I could not rename the `" + channel.getName() + "` channel, check your discord permissions to ensure I have permission to edit that channel.");
         }
 

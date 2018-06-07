@@ -19,7 +19,7 @@ public class StatsDetailedCommand extends AbstractCommand {
 
     @Command
     public void command(MessageMaker maker, String s) {
-        maker.mustEmbed().getTitle().clear().appendRaw(EmoticonHelper.getChars("chart_with_upwards_trend",false) + " Evelyn Stats");
+        maker.getTitle().clear().appendRaw(EmoticonHelper.getChars("chart_with_upwards_trend",false) + " Evelyn Stats");
         maker.appendRaw(StatsCommand.getTotalTable(s.startsWith("mini")));
         long aMonthAgo = System.currentTimeMillis() - 2_592_000_000L, aWeekAgo = System.currentTimeMillis() - 604_800_000, oneDayAgo = System.currentTimeMillis() - 86_400_000;
         maker.appendRaw("\nActive Guilds: " + getGuildActiveStats(aMonthAgo));

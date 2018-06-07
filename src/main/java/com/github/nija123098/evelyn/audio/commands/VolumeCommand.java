@@ -22,12 +22,11 @@ public class VolumeCommand extends AbstractCommand {
 
     @Command// manager for requirement
     public void command(GuildAudioManager manager, Guild guild, @Argument(optional = true, replacement = NONE) Integer value, MessageMaker maker) {
-        if (value == null) maker.append(manager.getVolume() + "").appendRaw("%").mustEmbed();
+        if (value == null) maker.append(manager.getVolume() + "").appendRaw("%");
         else {
             value = value < 0 ? manager.getVolume() + value : value;
             if (value < 1 || value > 101) throw new ArgumentException("You can't set the volume to " + value);
             manager.setVolume(value);
-
         }
     }
 }

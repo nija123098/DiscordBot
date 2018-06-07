@@ -26,7 +26,7 @@ public class ReactionCommand extends AbstractCommand {
             display = EmoticonHelper.getName(s);
             if (display == null) throw new ArgumentException("Please specify a reaction by name or symbol");
         }else display = emoji.toString().replace("<", "<:");// this is a patch for D4J
-        maker.mustEmbed().appendRaw("Result: " + display);
+        maker.appendRaw("Result: " + display);
     }
 
     @Override

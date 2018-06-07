@@ -13,7 +13,6 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.tag.Tag;
 import com.github.nija123098.evelyn.tag.Tags;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
-import com.github.nija123098.evelyn.util.FormatHelper;
 
 /**
  * @author nija123098
@@ -28,15 +27,15 @@ public class InfoCommand extends AbstractCommand {
     @Command
     public void command(MessageMaker maker, Guild guild) {
         if (totalCommands == -1) totalCommands = (int) CommandHandler.getCommands().stream().filter(AbstractCommand::isHighCommand).filter(o -> !o.isTemplateCommand()).count();
-        maker.mustEmbed().withThumb(DiscordClient.getOurUser().getAvatarURL());
+        maker.withThumb(DiscordClient.getOurUser().getAvatarURL());
         maker.getTitle().clear().appendRaw(EmoticonHelper.getChars("bulb", false) + "INFO");
-        maker.appendRaw("\u200B\nI am Evelyn, a music playing auto moderation bot!\n" +
+        maker.appendRaw("\u200B\n").append("I am Evelyn, a music playing auto moderation bot!\n" +
                 "\n" +
-                "Type " + FormatHelper.embedLink("@Evelyn help","") + " to see a list of commands. In total there are " + FormatHelper.embedLink(String.valueOf(totalCommands),"") + " unique commands I can perform.\n" +
+                "Type ").appendEmbedLink("@Evelyn help", "").append(" to see a list of commands. In total there are ").appendEmbedLink(String.valueOf(totalCommands),"").append(" unique commands I can perform.\n" +
                 "\n" +
-                "For help about a command type " + FormatHelper.embedLink(ConfigHandler.getSetting(GuildPrefixConfig.class, guild) + "help <command>\n","") +
-                "For example: `" + ConfigHandler.getSetting(GuildPrefixConfig.class, guild) + "help ping` to see what you can do with the ping command.\n" +
+                "For help about a command type ").appendEmbedLink(ConfigHandler.getSetting(GuildPrefixConfig.class, guild) + "help <command>\n", "").append(
+                "For example: `").appendRaw(ConfigHandler.getSetting(GuildPrefixConfig.class, guild) + "help ping`").append(" to see what you can do with the ping command.\n" +
                 "\n" +
-                "If you want assistance, to share your thoughts, or to contribute, you should join my Discord server " + FormatHelper.embedLink("here", ConfigProvider.URLS.discordInviteUrl()) + ".");
+                "If you want assistance, to share your thoughts, or to contribute, you should join my Discord server ").appendEmbedLink("here", ConfigProvider.URLS.discordInviteUrl()).appendRaw(".");
     }
 }

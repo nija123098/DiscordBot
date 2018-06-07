@@ -21,12 +21,11 @@ public class PauseCommand extends AbstractCommand {
 
     @Command
     public void command(GuildAudioManager manager, MessageMaker maker) {
+        manager.pause(!manager.isPaused());
         if (manager.isPaused()) {
-            manager.pause(false);
-            maker.append("Track Unpaused.").mustEmbed();
+            maker.append("Track Paused.");
         } else {
-            manager.pause(true);
-            maker.append("Track Paused.").mustEmbed();
+            maker.append("Track Unpaused.");
         }
     }
 

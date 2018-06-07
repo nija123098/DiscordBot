@@ -36,7 +36,6 @@ public class HelpCommand extends AbstractCommand {
     @Command
     public static void command(@Argument(optional = true, replacement = ContextType.NONE) AbstractCommand command, MessageMaker maker, User user, Channel channel, @Context(softFail = true) Guild guild, @Context(softFail = true) ModuleLevel levelSelection, String full) {
         if (command == null) {
-            maker.mustEmbed();
             maker.getTitle().clear().appendRaw("I'll show you the following commands:\n");
             List<ModuleLevel> levels = new ArrayList<>();
             if (full.toLowerCase().contains("full")) Collections.addAll(levels, ModuleLevel.values());
@@ -61,7 +60,6 @@ public class HelpCommand extends AbstractCommand {
                 maker.send();
             }));
         } else {
-            maker.mustEmbed();
             maker.getNote().clear().appendRaw("<> indicates an argument, [] indicates an optional argument.  Do not use <> or [] in a command.");
             command = command.getHighCommand();
             maker.getTitle().clear().appendRaw(EmoticonHelper.getChars("bulb", false) + command.getName().toUpperCase());

@@ -1,4 +1,4 @@
-package com.github.nija123098.evelyn.moderation.usermanagement;
+package com.github.nija123098.evelyn.moderation;
 
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
@@ -23,7 +23,6 @@ public class TrustCommand extends AbstractCommand {
 
     @Command
     public void command(User setter, @Argument User user, Guild guild, MessageMaker maker) {
-        maker.mustEmbed();
         if (BotRole.getSet(user, guild).contains(BotRole.GUILD_TRUSTEE)) {
             setRole(BotRole.GUILD_TRUSTEE, false, user, setter, guild);
             maker.getTitle().appendRaw("Guild Trustee Removed");

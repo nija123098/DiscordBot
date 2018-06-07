@@ -7,7 +7,6 @@ import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
-import com.github.nija123098.evelyn.util.FormatHelper;
 
 /**
  * @author nija123098
@@ -19,8 +18,8 @@ public class SupportCommand extends AbstractCommand {
     }
     @Command
     public void command(MessageMaker maker) {
-        maker.mustEmbed().withThumb(DiscordClient.getOurUser().getAvatarURL());
+        maker.withThumb(DiscordClient.getOurUser().getAvatarURL());
         maker.getTitle().clear().appendRaw(EmoticonHelper.getChars("tools",false) + " Evelyn Support");
-        maker.appendRaw("If you want assistance or have questions or suggestions please join the Evelyn Discord server " + FormatHelper.embedLink("here", ConfigProvider.URLS.discordInviteUrl()) + ".");
+        maker.appendRaw("If you want assistance or have questions or suggestions please join the Evelyn Discord server ").appendEmbedLink("here", ConfigProvider.URLS.discordInviteUrl()).appendRaw(".");
     }
 }

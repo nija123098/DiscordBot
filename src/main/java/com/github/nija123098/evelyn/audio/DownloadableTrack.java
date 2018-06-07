@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -59,6 +60,7 @@ public abstract class DownloadableTrack extends Track {
         int playTimes = ConfigHandler.getSetting(PlayCountConfig.class, this);
         if (playTimes >= ConfigProvider.AUDIO_SETTINGS.requiredPlaysToDownload() && ConfigProvider.AUDIO_SETTINGS.requiredPlaysToDownload() != -1) MusicDownloadService.queueDownload(playTimes == 0 ? 0 : (int) Math.log(playTimes), this, manager == null ? null : downloadableTrack -> manager.swap(this));
         BlockingQueue<AudioTrack> queue = new LinkedBlockingQueue<>(1);
+        AtomicReference<FriendlyException> exceptionReference = new AtomicReference<>();
         GuildAudioManager.PLAYER_MANAGER.loadItem(this.getSource(), new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack track) {
@@ -66,11 +68,13 @@ public abstract class DownloadableTrack extends Track {
             }
             @Override public void playlistLoaded(AudioPlaylist playlist) {}
             @Override public void noMatches() {}
-            @Override public void loadFailed(FriendlyException exception) {}
+            @Override public void loadFailed(FriendlyException exception) {
+                exceptionReference.set(exception);
+            }
         });
         try{return queue.take();
         } catch (InterruptedException e) {
-            Log.log("Exception loading AudioTrack for " + this.getID(), e);
+            Log.log("Exception loading AudioTrack for " + this.getID(), exceptionReference.get() == null ? e : exceptionReference.get());
         }
         return null;
     }

@@ -20,7 +20,6 @@ public class StarBoardLevelCommand extends AbstractCommand {
     @Command
     public void command(@Argument StarLevel level, @Argument Integer integer, Guild guild, MessageMaker maker) {
         alterSetting(StarLevelRequirementConfig.class, guild, map -> map.put(level, integer));
-        maker.mustEmbed();
         maker.appendRaw("Made " + level + " require `" + integer + "` star reactions to display.");
     }
 }

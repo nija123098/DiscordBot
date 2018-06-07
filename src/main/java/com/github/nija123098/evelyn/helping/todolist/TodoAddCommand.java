@@ -22,7 +22,6 @@ public class TodoAddCommand extends AbstractCommand {
         TodoItem todoItem = new TodoItem(time == null ? null : time.schedualed(), arg);
         if (time != null) TodoListCommand.remind(time.timeUntil(), user, todoItem);
         ConfigHandler.alterSetting(TodoListConfig.class, user, todoItems -> todoItems.add(todoItem));
-        maker.mustEmbed();
         maker.getTitle().appendRaw("Todo list");
         maker.appendRaw("I will remind you to " + arg + " in " + Time.getAbbreviated(time.timeUntil() + 1000L));
     }

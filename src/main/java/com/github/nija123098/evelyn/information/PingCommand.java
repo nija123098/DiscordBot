@@ -17,8 +17,8 @@ public class PingCommand extends AbstractCommand {
         super("ping", ModuleLevel.INFO, null, "ping_pong", "Checks if the bot is responding");
     }
     @Command
-    public void command(MessageMaker helper, Message message) {
-        helper.mustEmbed().appendRaw(EmoticonHelper.getChars("outbox_tray", false) + " ").append("Checking ping").send();
+    public static void command(MessageMaker helper, Message message) {
+        helper.appendRaw(EmoticonHelper.getChars("outbox_tray", false) + " ").append("Checking ping").send();
         Message response = helper.sentMessage();
         if (response == null) {
             Log.log("Unable to send response, message attempted to be sent but failed for ping");

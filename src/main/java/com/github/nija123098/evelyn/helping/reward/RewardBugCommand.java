@@ -21,12 +21,12 @@ import java.awt.*;
  */
 public class RewardBugCommand extends AbstractCommand {
     public RewardBugCommand() {
-        super(RewardCommand.class,"bug", null, null, "b", "Reward a user for reporting a bug.");
+        super(RewardCommand.class, "bug", null, null, "b", "Reward a user for reporting a bug.");
     }
 
     @Command
     public void bug(MessageMaker maker, Channel channel, @Argument User user, @Argument Integer amount, @Argument(optional = true, replacement = ContextType.NONE) String s) {
-        MessageMaker maker2 = new MessageMaker(channel).mustEmbed();
+        MessageMaker maker2 = new MessageMaker(channel);
         maker.withChannel(user.getOrCreatePMChannel());
         maker.withColor(new Color(175, 30, 5));
         maker.getTitle().clear().append("🎁 Evelyn Reward");

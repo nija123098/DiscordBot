@@ -18,7 +18,6 @@ public class ShardCommand extends AbstractCommand {
     }
     @Command
     public void command(Shard shard, @Argument(optional = true, replacement = ContextType.NONE) Long lon, MessageMaker maker) {
-        maker.mustEmbed();
         maker.append("You are on shard " + (lon == null ? shard.getID() : (lon >> 22) % Shard.getCount()));
     }
 }

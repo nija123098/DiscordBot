@@ -22,7 +22,7 @@ public class RoleRenameCommand extends AbstractCommand {
         try {
             String previous = role.getName();
             role.changeName(newName);
-            maker.mustEmbed().appendRaw("Successfully renamed the role `" + previous + "` to `" + role.getName() + "`");
+            maker.appendRaw("Successfully renamed the role `" + previous + "` to `" + role.getName() + "`");
         } catch (PermissionsException e) {
             throw new PermissionsException("I could not rename the `" + role.getName() + "` role, check your discord permissions to ensure my role is higher than the role I'm trying to rename");
         }

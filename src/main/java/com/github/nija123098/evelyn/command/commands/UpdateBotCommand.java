@@ -25,7 +25,7 @@ public class UpdateBotCommand extends AbstractCommand {
     }
     @Command
     public void command(MessageMaker maker) {
-        maker.withColor(new Color(175, 30,5)).mustEmbed();
+        maker.withColor(new Color(175, 30,5));
         maker.getTitle().clear().appendRaw("\uD83D\uDEE0 Bot Updater \uD83D\uDEE0");
         maker.getNote().clear().appendRaw("Last Update");
         maker.withTimestamp(ConfigHandler.getSetting(LastBotUpdaterUseConfig.class, GlobalConfigurable.GLOBAL));
@@ -43,7 +43,7 @@ public class UpdateBotCommand extends AbstractCommand {
                     ConfigHandler.setSetting(LastBotUpdaterUseConfig.class, GlobalConfigurable.GLOBAL, System.currentTimeMillis());
 
                     MessageMaker maker2 = new MessageMaker(maker);
-                    maker2.withColor(new Color(175, 30,5)).mustEmbed().withAutoSend(false);
+                    maker2.withColor(new Color(175, 30,5)).withAutoSend(false);
                     maker2.getNote().clear().appendRaw("Update Time");
                     maker2.withTimestamp(System.currentTimeMillis());
                     maker2.withChannel(Channel.getChannel(ConfigProvider.BOT_SETTINGS.loggingChannel()));

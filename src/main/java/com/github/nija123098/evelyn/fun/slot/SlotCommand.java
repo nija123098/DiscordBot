@@ -67,7 +67,7 @@ public class SlotCommand extends AbstractCommand {// todo optimization and clean
         userBalance -= bet;
 
         //configure message maker
-        maker.mustEmbed().withAutoSend(false).withColor(new Color(54, 57, 62));
+        maker.withAutoSend(false).withColor(new Color(54, 57, 62));
 
         //print the first frame
         maker.appendRaw("```\uD83C\uDFB0 @" + user.getDisplayName(guild) + " \uD83C\uDFB0\n");
@@ -155,7 +155,6 @@ public class SlotCommand extends AbstractCommand {// todo optimization and clean
 
             //configure message maker
             maker.withAutoSend(false);
-            maker.mustEmbed();
             maker.getHeader().clear();
 
             //print the first frame

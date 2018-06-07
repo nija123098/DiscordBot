@@ -13,7 +13,6 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Role;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.exception.ArgumentException;
-import com.github.nija123098.evelyn.util.FormatHelper;
 
 /**
  * @author nija123098
@@ -29,7 +28,6 @@ public class ConfigGetCommand extends AbstractCommand {
         target = (T) new Configurable[]{track, playlist, user, channel, channel.getCategory(), guildUser, target instanceof Role ? target : null, guild, GlobalConfigurable.GLOBAL, target != null ? target : guild == null ? user : guild}[config.getConfigLevel().ordinal()];
         if (target == null) throw new ArgumentException("No context for " + config.getConfigLevel() + " was able to be gotten, check your spelling");
         else if (config.getConfigLevel() != ConfigLevel.ALL) target = (T) target.convert(config.getConfigLevel().getType());
-        maker.mustEmbed();
-        maker.appendRaw(FormatHelper.embedLink(config.getDisplayName(), "") + " is set to " + config.getExteriorValue(target));// morph exception should throw before cast exception
+        maker.appendEmbedLink(config.getDisplayName(), "").append(" is set to ").appendRaw(config.getExteriorValue(target));// morph exception should throw before cast exception
     }
 }

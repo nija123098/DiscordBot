@@ -22,7 +22,6 @@ public class UserPermissionsCommand extends AbstractCommand {
 
     @Command
     public void command(@Argument User user, Guild guild, MessageMaker maker) {
-        maker.mustEmbed();
         try {
             maker.getTitle().appendRaw(user.getDisplayName(guild));
             maker.getNewFieldPart().withBoth("User ID", user.getID());

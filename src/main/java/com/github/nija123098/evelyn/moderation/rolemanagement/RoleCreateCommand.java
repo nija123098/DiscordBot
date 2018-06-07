@@ -20,10 +20,10 @@ public class RoleCreateCommand extends AbstractCommand {
 
     @Command
     public void command(@Argument String name, Guild guild, MessageMaker maker) {
-        maker.mustEmbed().getTitle().appendRaw("Role creation");
+        maker.getTitle().appendRaw("Role creation");
         try {
             guild.createRole().changeName(name);
-            maker.appendRaw("Successfully created the role " + FormatHelper.embedLink(name, ""));
+            maker.appendRaw("Successfully created the role ").appendEmbedLink(name, "");
         } catch (PermissionsException e) {
             throw new PermissionsException("I could not create the " + FormatHelper.embedLink(name, "") + " role, check your discord permissions to ensure I have permission to manage roles.");
         }

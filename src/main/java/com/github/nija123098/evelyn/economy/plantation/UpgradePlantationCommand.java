@@ -31,8 +31,6 @@ public class UpgradePlantationCommand extends AbstractCommand {
         int currency = ConfigHandler.getSetting(CurrentCurrencyConfig.class, user);
         int maxLevel = ConfigHandler.getSetting(CurrentHouseUpgradesConfig.class, user);
 
-        maker.mustEmbed();
-
         switch (arg.toLowerCase()) {
             case "house":
                 maker.getTitle().appendRaw("House");
@@ -54,7 +52,7 @@ public class UpgradePlantationCommand extends AbstractCommand {
                     maker.appendRaw("You've reached the maximum house level");
                 } else {
                     int houseUpgradeCost = Integer.valueOf(Long.toString(Math.round(Math.pow(Double.parseDouble(String.valueOf(10 + ConfigHandler.getSetting(CurrentHouseUpgradesConfig.class, user))), 3))));
-                    maker.appendRaw("\nCurrent level: " + FormatHelper.embedLink(String.valueOf(ConfigHandler.getSetting(CurrentHouseUpgradesConfig.class, user)), ""));
+                    maker.appendRaw("\nCurrent level: ").appendEmbedLink(String.valueOf(ConfigHandler.getSetting(CurrentHouseUpgradesConfig.class, user)), "");
                     maker.appendRaw("\nUpgrade cost: `\u200b " + symbol + " " +  houseUpgradeCost + " \u200b`");
                     maker.appendRaw("\nCurrent Funds: `\u200b " + symbol + " " +  currency + " \u200b`");
                     maker.withReactionBehavior("red_tick", ((add, reaction, u) -> {
@@ -93,7 +91,7 @@ public class UpgradePlantationCommand extends AbstractCommand {
                                     maker.withThumb("https://cdn.discordapp.com/attachments/374538747229896704/385399928249122816/house_with_garden.png");
                                     break;
                             }
-                            maker.appendRaw("Now level: " + FormatHelper.embedLink(String.valueOf(++houseUpgrades), "") + "\n\nFunds: `\u200b " + symbol + " " + (currencyTemp - houseUpgradeCost) + " \u200b`");
+                            maker.appendRaw("Now level: ").appendEmbedLink(String.valueOf(++houseUpgrades), "").appendRaw("\n\nFunds: `\u200b " + symbol + " " + (currencyTemp - houseUpgradeCost) + " \u200b`");
                             ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, (currencyTemp - houseUpgradeCost));
                             ConfigHandler.setSetting(CurrentHouseUpgradesConfig.class, user, houseUpgrades);
                         }
@@ -111,7 +109,7 @@ public class UpgradePlantationCommand extends AbstractCommand {
                     maker.appendRaw("You've reached the maximum field size for your plantation, you can't fit any more coffee plants here");
                 } else {
                     int harvestUpgradeCost = Integer.valueOf(Long.toString(Math.round(Math.pow(Double.parseDouble(String.valueOf(10 + ConfigHandler.getSetting(CurrentHarvestUpgradesConfig.class, user))), 3))));
-                    maker.appendRaw("\nCurrent level: " + FormatHelper.embedLink(String.valueOf(ConfigHandler.getSetting(CurrentHarvestUpgradesConfig.class, user)), ""));
+                    maker.appendRaw("\nCurrent level: ").appendEmbedLink(String.valueOf(ConfigHandler.getSetting(CurrentHarvestUpgradesConfig.class, user)), "");
                     maker.appendRaw("\nUpgrade cost: `\u200b " + symbol + " " +  harvestUpgradeCost + " \u200b`");
                     maker.appendRaw("\nCurrent Funds: `\u200b " + symbol + " " +  currency + " \u200b`");
                     maker.withReactionBehavior("red_tick", ((add, reaction, u) -> {
@@ -138,7 +136,7 @@ public class UpgradePlantationCommand extends AbstractCommand {
                         if (currencyTemp < harvestUpgradeCost) {
                             maker.appendRaw("You need `\u200b " + symbol + " " + (harvestUpgradeCost - currencyTemp) + " \u200b` more to buy this upgrade");
                         } else {
-                            maker.appendRaw("Now level: " + FormatHelper.embedLink(String.valueOf(++harvestUpgrades), "") + "\n\nFunds: `\u200b " + symbol + " " + (currencyTemp - harvestUpgradeCost) + " \u200b`");
+                            maker.appendRaw("Now level: ").appendEmbedLink(String.valueOf(++harvestUpgrades), "").appendRaw("\n\nFunds: `\u200b " + symbol + " " + (currencyTemp - harvestUpgradeCost) + " \u200b`");
                             ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, (currencyTemp - harvestUpgradeCost));
                             ConfigHandler.setSetting(CurrentHarvestUpgradesConfig.class, user, harvestUpgrades);
                         }
@@ -157,7 +155,7 @@ public class UpgradePlantationCommand extends AbstractCommand {
                     maker.appendRaw("you've reached the max level possible, your roaster is at its highest level");
                 } else {
                     int roasterUpgradeCost = Integer.valueOf(Long.toString(Math.round(Math.pow(Double.parseDouble(String.valueOf(10 + ConfigHandler.getSetting(CurrentRoasterUpgradesConfig.class, user))), 3))));
-                    maker.appendRaw("\nCurrent level: " + FormatHelper.embedLink(String.valueOf(ConfigHandler.getSetting(CurrentRoasterUpgradesConfig.class, user)), ""));
+                    maker.appendRaw("\nCurrent level: ").appendEmbedLink(String.valueOf(ConfigHandler.getSetting(CurrentRoasterUpgradesConfig.class, user)), "");
                     maker.appendRaw("\nUpgrade cost: `\u200b " + symbol + " " + roasterUpgradeCost + " \u200b`");
                     maker.appendRaw("\nCurrent Funds: `\u200b " + symbol + " " + currency + " \u200b`");
                     maker.withReactionBehavior("red_tick", ((add, reaction, u) -> {
@@ -185,7 +183,7 @@ public class UpgradePlantationCommand extends AbstractCommand {
                         if (currency < roasterUpgradeCost) {
                             maker.appendRaw("You need `\u200b " + symbol + " " + (roasterUpgradeCost - currency) + " \u200b` more to buy this upgrade");
                         } else {
-                            maker.appendRaw("Now level: " + FormatHelper.embedLink(String.valueOf(++roasterUpgrades), "") + "\n\nFunds: `\u200b " + symbol + " " + (currency - roasterUpgradeCost) + " \u200b`");
+                            maker.appendRaw("Now level: ").appendEmbedLink(String.valueOf(++roasterUpgrades), "").appendRaw("\n\nFunds: `\u200b " + symbol + " " + (currency - roasterUpgradeCost) + " \u200b`");
                             ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, (currency - roasterUpgradeCost));
                             ConfigHandler.setSetting(CurrentRoasterUpgradesConfig.class, user, roasterUpgrades);
                         }
@@ -204,7 +202,7 @@ public class UpgradePlantationCommand extends AbstractCommand {
                     maker.appendRaw("you've reached the max level possible, your grinder is at its highest level");
                 } else {
                     int grinderUpgradeCost = Integer.valueOf(Long.toString(Math.round(Math.pow(Double.parseDouble(String.valueOf(10 + ConfigHandler.getSetting(CurrentGrinderUpgradesConfig.class, user))), 3))));
-                    maker.appendRaw("\nCurrent level: " + FormatHelper.embedLink(String.valueOf(ConfigHandler.getSetting(CurrentGrinderUpgradesConfig.class, user)), ""));
+                    maker.appendRaw("\nCurrent level: ").appendEmbedLink(String.valueOf(ConfigHandler.getSetting(CurrentGrinderUpgradesConfig.class, user)), "");
                     maker.appendRaw("\nUpgrade cost: `\u200b " + symbol + " " + grinderUpgradeCost + " \u200b`");
                     maker.appendRaw("\nCurrent Funds: `\u200b " + symbol + " " + currency + " \u200b`");
                     maker.withReactionBehavior("red_tick", ((add, reaction, u) -> {
@@ -233,7 +231,7 @@ public class UpgradePlantationCommand extends AbstractCommand {
                         if (currencyTemp < grinderUpgradeCost) {
                             maker.appendRaw("You need `\u200b " + symbol + " " + (grinderUpgradeCost - currencyTemp) + " \u200b` more to buy this upgrade");
                         } else {
-                            maker.appendRaw("Now level: " + FormatHelper.embedLink(String.valueOf(++grinderUpgrades), "") + "\n\nFunds: `\u200b " + symbol + " " + (currencyTemp - grinderUpgradeCost) + " \u200b`");
+                            maker.appendRaw("Now level: ").appendEmbedLink(String.valueOf(++grinderUpgrades), "").appendRaw("\n\nFunds: `\u200b " + symbol + " " + (currencyTemp - grinderUpgradeCost) + " \u200b`");
                             ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, (currencyTemp - grinderUpgradeCost));
                             ConfigHandler.setSetting(CurrentGrinderUpgradesConfig.class, user, grinderUpgrades);
                         }
@@ -252,7 +250,7 @@ public class UpgradePlantationCommand extends AbstractCommand {
                     maker.appendRaw("you've reached the max level possible, your brewer is at its highest level");
                 } else {
                     int brewerUpgradeCost = Integer.valueOf(Long.toString(Math.round(Math.pow(Double.parseDouble(String.valueOf(10 + ConfigHandler.getSetting(CurrentBrewerUpgradesConfig.class, user))), 3))));
-                    maker.appendRaw("\nCurrent level: " + FormatHelper.embedLink(String.valueOf(ConfigHandler.getSetting(CurrentBrewerUpgradesConfig.class, user)), ""));
+                    maker.appendRaw("\nCurrent level: ").appendEmbedLink(String.valueOf(ConfigHandler.getSetting(CurrentBrewerUpgradesConfig.class, user)), "");
                     maker.appendRaw("\nUpgrade cost: `\u200b " + symbol + " " + brewerUpgradeCost + " \u200b`");
                     maker.appendRaw("\nCurrent Funds: `\u200b " + symbol + " " + currency + " \u200b`");
                     maker.withReactionBehavior("red_tick", ((add, reaction, u) -> {
@@ -280,7 +278,7 @@ public class UpgradePlantationCommand extends AbstractCommand {
                         if (currencyTemp < brewerUpgradeCost) {
                             maker.appendRaw("You need `\u200b " + symbol + " " + (brewerUpgradeCost - currencyTemp) + " \u200b` more to buy this upgrade");
                         } else {
-                            maker.appendRaw("Now level: " + FormatHelper.embedLink(String.valueOf(++brewerUpgrades), "") + "\n\nFunds: `\u200b " + symbol + " " + (currencyTemp - brewerUpgradeCost) + " \u200b`");
+                            maker.appendRaw("Now level: ").appendEmbedLink(String.valueOf(++brewerUpgrades), "").appendRaw("\n\nFunds: `\u200b " + symbol + " " + (currencyTemp - brewerUpgradeCost) + " \u200b`");
                             ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, (currencyTemp - brewerUpgradeCost));
                             ConfigHandler.setSetting(CurrentBrewerUpgradesConfig.class, user, brewerUpgrades);
                         }
@@ -299,7 +297,7 @@ public class UpgradePlantationCommand extends AbstractCommand {
                     maker.appendRaw("you've reached the max level possible, your steeper is at its highest level");
                 } else {
                     int steeperUpgradeCost = Integer.valueOf(Long.toString(Math.round(Math.pow(Double.parseDouble(String.valueOf(10 + ConfigHandler.getSetting(CurrentSteeperUpgradesConfig.class, user))), 3))));
-                    maker.appendRaw("\nCurrent level: " + FormatHelper.embedLink(String.valueOf(ConfigHandler.getSetting(CurrentSteeperUpgradesConfig.class, user)), ""));
+                    maker.appendRaw("\nCurrent level: ").appendEmbedLink(String.valueOf(ConfigHandler.getSetting(CurrentSteeperUpgradesConfig.class, user)), "");
                     maker.appendRaw("\nUpgrade cost: `\u200b " + symbol + " " + steeperUpgradeCost + " \u200b`");
                     maker.appendRaw("\nCurrent Funds: `\u200b " + symbol + " " + currency + " \u200b`");
                     maker.withReactionBehavior("red_tick", ((add, reaction, u) -> {
@@ -327,7 +325,7 @@ public class UpgradePlantationCommand extends AbstractCommand {
                         if (currencyTemp < steeperUpgradeCost) {
                             maker.appendRaw("You need `\u200b " + symbol + " " + (steeperUpgradeCost - currencyTemp) + " \u200b` more to buy this upgrade");
                         } else {
-                            maker.appendRaw("Now level: " + FormatHelper.embedLink(String.valueOf(++steeperUpgrades), "") + "\n\nFunds: `\u200b " + symbol + " " + (currencyTemp - steeperUpgradeCost) + " \u200b`");
+                            maker.appendRaw("Now level: ").appendEmbedLink(String.valueOf(++steeperUpgrades), "").appendRaw("\n\nFunds: `\u200b " + symbol + " " + (currencyTemp - steeperUpgradeCost) + " \u200b`");
                             ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, (currencyTemp - steeperUpgradeCost));
                             ConfigHandler.setSetting(CurrentSteeperUpgradesConfig.class, user, steeperUpgrades);
                         }

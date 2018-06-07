@@ -5,11 +5,14 @@ import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.Configurable;
 import com.github.nija123098.evelyn.config.GuildUser;
+import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Presence;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Role;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.favor.configs.EarnRankConfig;
+import com.github.nija123098.evelyn.util.CareLess;
+import com.github.nija123098.evelyn.util.Time;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -20,12 +23,14 @@ import java.util.stream.Stream;
  * @since 1.0.0
  */
 public class RanksForceUpdateCommand extends AbstractCommand  {
+    private static final int PER_USER_DELAY = 100;
     public RanksForceUpdateCommand() {
         super(RanksCommand.class, "forceupdate", null, null, null, "Forces all ranks on a server to update");
     }
 
     @Command
-    public void command(Guild guild) {
+    public void command(Guild guild, MessageMaker messageMaker) {
+        messageMaker.append("Starting force update, it will take " + Time.getAbbreviated(guild.getUsers().size() * PER_USER_DELAY));
         Set<Role> earnedRanks = guild.getRoles().stream().filter(role -> ConfigHandler.getSetting(EarnRankConfig.class, role) != null).collect(Collectors.toSet());
         Set<User> users = guild.getUsers().stream().filter(user -> !user.isBot()).collect(Collectors.toSet());
         Set<User> priorityUsers = users.stream().filter(user -> user.getPresence().getStatus() == Presence.Status.ONLINE).filter(user -> {
@@ -33,7 +38,10 @@ public class RanksForceUpdateCommand extends AbstractCommand  {
             return false;
         }).collect(Collectors.toSet());
         users.removeAll(priorityUsers);
-        Stream.concat(priorityUsers.stream(), users.stream()).map(user -> GuildUser.getGuildUser(guild, user)).forEach(guildUser -> FavorChangeEvent.process(guildUser, () -> {}));
+        Stream.concat(priorityUsers.stream(), users.stream()).map(user -> GuildUser.getGuildUser(guild, user)).forEach(guildUser -> {
+            CareLess.lessSleep(PER_USER_DELAY);
+            FavorChangeEvent.process(guildUser, () -> {});
+        });
     }
 
     @Override

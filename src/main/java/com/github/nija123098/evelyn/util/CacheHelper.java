@@ -56,8 +56,8 @@ public class CacheHelper {
             return new ArrayList<>(this.vMap.keySet());
         }
     }
-    public static class RefrenceCache <V> {// null not supported
-        public RefrenceCache(long delay, Supplier<V> supplier) {
+    public static class ReferenceCache<V> {// null not supported
+        public ReferenceCache(long delay, Supplier<V> supplier) {
             this.delay = delay;
             this.supplier = supplier;
         }

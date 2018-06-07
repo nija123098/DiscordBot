@@ -26,14 +26,14 @@ import java.util.concurrent.atomic.AtomicLong;
 public class DashCommand extends AbstractCommand {
     private static final Color COLOR = new Color(0x0074B6);
     private static final JsonParser JSON_PARSER = new JsonParser();
-    private static final CacheHelper.RefrenceCache<JsonArray> MASTERNODE_ARRAYS = new CacheHelper.RefrenceCache<>(1_200_000, () -> {
+    private static final CacheHelper.ReferenceCache<JsonArray> MASTERNODE_ARRAYS = new CacheHelper.ReferenceCache<>(1_200_000, () -> {
         try {
             return JSON_PARSER.parse(Unirest.get("https://www.dashninja.pl/api/masternodes?testnet=0&balance=1").asString().getBody()).getAsJsonObject().getAsJsonArray("data");
         } catch (UnirestException e) {
             throw new DevelopmentException("Could not get up to date information on Dash.", e);
         }
     });
-    private static final CacheHelper.RefrenceCache<Double> DASH_IN_MASTER_NODES = new CacheHelper.RefrenceCache<>(1_200_000, () -> {
+    private static final CacheHelper.ReferenceCache<Double> DASH_IN_MASTER_NODES = new CacheHelper.ReferenceCache<>(1_200_000, () -> {
         AtomicDouble dashInNodes = new AtomicDouble();
         MASTERNODE_ARRAYS.get().forEach(jsonElement -> {
             JsonElement jsonObject = jsonElement.getAsJsonObject().get("Balance");// sometimes this returns a primitive of "false"
@@ -41,27 +41,27 @@ public class DashCommand extends AbstractCommand {
         });
         return dashInNodes.get();
     });
-    private static final CacheHelper.RefrenceCache<Integer> ONLINE_NODES = new CacheHelper.RefrenceCache<>(20_000, () -> {
+    private static final CacheHelper.ReferenceCache<Integer> ONLINE_NODES = new CacheHelper.ReferenceCache<>(20_000, () -> {
         AtomicInteger integer = new AtomicInteger();
         MASTERNODE_ARRAYS.get().forEach(jsonElement -> {
             if (jsonElement.getAsJsonObject().get("ActiveCount").getAsInt() > jsonElement.getAsJsonObject().get("InactiveCount").getAsInt()) integer.incrementAndGet();
         });
         return integer.get();
     });
-    private static final CacheHelper.RefrenceCache<JsonArray> BLOCK_DATA = new CacheHelper.RefrenceCache<>(600_000, () -> {
+    private static final CacheHelper.ReferenceCache<JsonArray> BLOCK_DATA = new CacheHelper.ReferenceCache<>(600_000, () -> {
         try {
             return JSON_PARSER.parse(Unirest.get("https://www.dashninja.pl/api/blocks?testnet=0").asString().getBody()).getAsJsonObject().getAsJsonObject("data").getAsJsonArray("blocks");
         } catch (UnirestException e) {
             throw new DevelopmentException("Could not get up to date information on Dash.", e);
         }
     });
-    private static final CacheHelper.RefrenceCache<Long> DIFFICULTY = new CacheHelper.RefrenceCache<>(600_000, () -> {
+    private static final CacheHelper.ReferenceCache<Long> DIFFICULTY = new CacheHelper.ReferenceCache<>(600_000, () -> {
         AtomicLong value = new AtomicLong();
         double factor = 1D / BLOCK_DATA.get().size();
         BLOCK_DATA.get().forEach(jsonElement -> value.addAndGet((long) (jsonElement.getAsJsonObject().get("BlockTime").getAsLong() * factor)));
         return value.get();
     });
-    private static final CacheHelper.RefrenceCache<Double> PAYOUT_AVERAGE = new CacheHelper.RefrenceCache<>(600_000, () -> {
+    private static final CacheHelper.ReferenceCache<Double> PAYOUT_AVERAGE = new CacheHelper.ReferenceCache<>(600_000, () -> {
         AtomicDouble value = new AtomicDouble();
         BLOCK_DATA.get().forEach(jsonElement -> value.addAndGet(jsonElement.getAsJsonObject().get("BlockMNValue").getAsDouble()));
         return value.get();

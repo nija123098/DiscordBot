@@ -1,45 +1,31 @@
 package com.github.nija123098.evelyn.helping.embed;
 
-import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
-import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
-import com.github.nija123098.evelyn.discordobjects.wrappers.Category;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Message;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
-import com.github.nija123098.evelyn.util.CacheHelper;
-import com.github.nija123098.evelyn.util.Log;
-import com.google.common.cache.Cache;
-import com.google.common.cache.LoadingCache;
-import javafx.util.Pair;
-import sx.blah.discord.handle.obj.ICategory;
 
 import java.awt.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.function.Consumer;
 
 /**
  * @author Dxeo
  * @since 1.0.0
  */
 public class EmbedCommand extends AbstractCommand {
+    // private static final LoadingCache<User, Map<Channel, Pair<Message, Message>>> EMBED_CACHE = CacheHelper.getLoadingCache(4, 20, 60_000L, );
+
     public EmbedCommand() {
         super("embed", ModuleLevel.BOT_ADMINISTRATIVE, null, null, "Embeds the given string, must use the format in description.");
     }
 
-    //private static final LoadingCache<User, Map<Channel, Pair<Message, Message>>> EMBED_CACHE = CacheHelper.getLoadingCache(4, 20, 60_000L, );
-
     @Command
-    public void embed(@Argument String s, MessageMaker maker, Channel channel , User user, Message msg) {
+    public void embed(@Argument String s, MessageMaker maker, Channel channel, User user, Message msg) {
         //configure maker
         maker.withAutoSend(false);
-        maker.mustEmbed();
 
         //configure code message maker
         MessageMaker code = new MessageMaker(maker);
@@ -184,11 +170,8 @@ public class EmbedCommand extends AbstractCommand {
         }
     }
 
-    //help command override
     @Override
     public String getHelp() {
-
-        //command description:
         return "#  Do not add a new line or \\n outside the brackets.\n\n#  Special character replacement:\n\n// \"\\u200b\": Zero width character.\n// \"\\n\": New line.\n\n#  Format help:\n\n// t[[TITLE]]\n// m[[MESSAGE]]\n// foo[[FOOTER]]\n// n[[NOTE]]\n// nimg[[NOTE IMAGE]]\n// img[[IMAGE]]\n// a[[AUTHOR]]\n// aimg[[AUTHOR IMAGE]]\n// fp[[FIELD PART TITLE,,,TEXT]]\n// fpi[[INLINE FIELD PART TITLE,,,TEXT]]\n// thumb[[THUMBNAIL]]\n// c[[R,G,B]]\n// r[[EMOTE,EMOTE]]\n// opt[[OPTION,OPTION]]\n\n#  Options:\n\n// \"userauthor\": Insert the user as the author.\n// \"timestamp\": Add timestamp.\n// \"code\": Post the raw code for the embed.\n// \"deletecommand\": Delete the user message.\n// \"editorigin\": Edit the embed instead.\n// \"usercolor\": Use user color as embed color.\n// \"thumbcolor\": Use thumbnail color as embed color.\n// \"authcolor\": Use author image color as embed color.\n// \"imgcolor\": Use image color as embed color.\n// \"notecolor\": Use note image color as embed color.";
     }
 

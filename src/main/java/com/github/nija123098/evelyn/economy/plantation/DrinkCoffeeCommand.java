@@ -23,7 +23,6 @@ public class DrinkCoffeeCommand extends AbstractCommand {
     @Command
     public void command(Guild guild, User user, MessageMaker maker) {
         String coffeeQuality = "tasting like nothing.";
-        maker.mustEmbed();
         if (ConfigHandler.getSetting(CoffeeBrewedConfig.class, user) != 0) {
             switch (ConfigHandler.getSetting(CurrentBrewerUpgradesConfig.class, user)) {
                 case 1:

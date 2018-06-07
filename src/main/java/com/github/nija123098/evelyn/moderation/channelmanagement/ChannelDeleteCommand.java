@@ -21,7 +21,6 @@ public class ChannelDeleteCommand extends AbstractCommand {
 
     @Command
     public void command(@Argument Channel channel, MessageMaker maker, Channel invokeChannel) {
-        maker.mustEmbed();
         maker.getTitle().appendRaw("Channel Deletion");
         maker.appendRaw("The " + channel.mention() + " channel will be deleted, this is an irreversible action and all messages in this channel will be deleted, use at your own risk");
 

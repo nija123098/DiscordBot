@@ -21,9 +21,9 @@ public class StopCommand extends AbstractCommand {
     @Command
     public void command(Guild guild, MessageMaker maker) {
         GuildAudioManager manager = getManager(guild);
-        if (manager == null) maker.append("But I'm not even in a channel with you").mustEmbed();
+        if (manager == null) maker.append("But I'm not even in a channel with you");
         else {
-            maker.append("Stopping Track.").mustEmbed();
+            maker.append("Stopping Track.");
             manager.leave();
         }
     }

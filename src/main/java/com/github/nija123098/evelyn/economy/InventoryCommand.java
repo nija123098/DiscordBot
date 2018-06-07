@@ -24,7 +24,7 @@ public class InventoryCommand extends AbstractCommand {
         /*
         //configure maker
         maker.withAutoSend(false);
-        maker.mustEmbed();
+        maker.shouldEmbed();
         maker.withColor(new Color(54,57,62));
 
         //construct inventory to send

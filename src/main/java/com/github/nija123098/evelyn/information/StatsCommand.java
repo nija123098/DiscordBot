@@ -27,7 +27,7 @@ public class StatsCommand extends AbstractCommand {
 
     @Command
     public void command(MessageMaker maker, String s) {
-        maker.mustEmbed().getTitle().clear().appendRaw(EmoticonHelper.getChars("chart_with_upwards_trend",false) + " Evelyn Stats");
+        maker.getTitle().clear().appendRaw(EmoticonHelper.getChars("chart_with_upwards_trend", false) + " Evelyn Stats");
         maker.appendRaw(getTotalTable(s.startsWith("mini")));
     }
 

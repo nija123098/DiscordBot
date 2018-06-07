@@ -20,7 +20,6 @@ public class SystemCommand extends AbstractCommand {
     public void command(MessageMaker maker) {
         maker.append("Getting memory").send();
         maker.getHeader().clear();
-        maker.mustEmbed();
         maker.getTitle().clear().appendRaw("Evelyn Version: " + Launcher.EVELYN_VERSION + "\n");
         Runtime runtime = Runtime.getRuntime();
         long memoryLimit = runtime.maxMemory();

@@ -32,7 +32,6 @@ public class CurrencyTreeSetCommand extends AbstractCommand {
     public void command(MessageMaker maker, Guild guild, @Argument Integer amount, @Argument(optional = true, info = "user to set amount for") User user, @Argument(optional = true, info = "currency type") String type) {
 
         //configure message maker
-        maker.mustEmbed();
         maker.withAutoSend(false);
         maker.withImage(ConfigProvider.URLS.currencytreeGif());
 

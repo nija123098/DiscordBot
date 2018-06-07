@@ -20,7 +20,6 @@ public class SendDMCommand extends AbstractCommand {
     @Command
     public void command(@Argument User user, @Argument String message) {
         MessageMaker maker = new MessageMaker(user.getOrCreatePMChannel());
-        maker.mustEmbed();
         maker.getTitle().appendRaw("A message from my developers");
         maker.appendRaw(message);
     }

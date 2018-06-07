@@ -56,7 +56,7 @@ public class AbstractModAction {
                     .withAuthorIcon(offender.getAvatarURL());
             this.logMaker.getNote().append("case " + cas + " | Time: " + new Date(System.currentTimeMillis()));
             this.logMaker.send();
-            this.warningMaker = new MessageMaker(offender).mustEmbed().withColor(Color.RED);
+            this.warningMaker = new MessageMaker(offender).withColor(Color.RED);
             this.update(reason);
         }
         ConfigHandler.alterSetting(ModActionConfig.class, guild, map -> map.put(cas, this));

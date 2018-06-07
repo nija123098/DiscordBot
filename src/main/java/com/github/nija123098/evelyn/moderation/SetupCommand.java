@@ -31,7 +31,7 @@ public class SetupCommand extends AbstractCommand {
         maker.withColor(new Color(175, 30,5));
         maker.appendRaw("3 channels will be created.\nbot_console\nbot_log\nmod_log\nThese will be setup to allow you access to them according to your highest role.\n");
         maker.appendRaw(channel.getCategory() == null ? "These channels will be created at the top of your discord server, use this command in a category to create them there" : "These channels will be created in this server category, to create them outside, use this command in a channel which is not in a category.");
-        maker.withAutoSend(false).mustEmbed();
+        maker.withAutoSend(false);
 
         maker.withReactionBehavior("red_tick", ((add, reaction, u) -> {
             //remove reactions

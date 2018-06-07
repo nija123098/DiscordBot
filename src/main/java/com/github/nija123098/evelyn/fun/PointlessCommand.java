@@ -8,7 +8,6 @@ import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.economy.configs.CurrentCurrencyConfig;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
-import com.github.nija123098.evelyn.util.FormatHelper;
 
 /**
  * @author Soarnir
@@ -30,7 +29,7 @@ public class PointlessCommand extends AbstractCommand {
                 currencyLost = currencyLost + 1;
                 if (currencyLost >= 10) {
                     currencyLost = 0;
-                    new MessageMaker(user).mustEmbed().appendRaw(FormatHelper.embedLink("you may need help", "http://www.smartrecovery.org/addiction/gambling_addiction.html")).withDM().send();
+                    new MessageMaker(user).appendEmbedLink("you may need help", "http://www.smartrecovery.org/addiction/gambling_addiction.html").withDM().send();
                 }
                 ConfigHandler.setSetting(CurrentCurrencyConfig.class, user, (currency - 1));
             }

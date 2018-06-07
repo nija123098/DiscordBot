@@ -23,7 +23,6 @@ public class RoleDeleteCommand extends AbstractCommand {
     @Command
     public void command(@Argument Role role, MessageMaker maker, Channel invokeChannel) {
 
-        maker.mustEmbed();
         maker.getTitle().appendRaw("Role Deletion");
         maker.appendRaw("The `" + role.getName() + "` role will be deleted, this is an irreversible action and all permissions associated with the role will be deleted, use at your own risk");
 
@@ -50,7 +49,7 @@ public class RoleDeleteCommand extends AbstractCommand {
             try {
                 String roleName = role.getName();
                 role.delete();
-                maker.mustEmbed().appendRaw(roleName + " deleted successfully");
+                maker.appendRaw(roleName + " deleted successfully");
             } catch (PermissionsException e) {
                 maker2.appendRaw("I couldn't delete the `" + role.getName() + "` role, check your discord permissions to ensure my role is higher than the role I'm trying to delete.");
             }
