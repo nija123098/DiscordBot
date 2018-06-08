@@ -23,7 +23,7 @@ public class ExecuteShellCommand {
             IOUtils.copy(p.getInputStream(), stream);
             return stream.toString();
         } catch (InterruptedException | IOException e) {
-            throw new DevelopmentException("Exception executing command", e);
+            throw new DevelopmentException("Exception executing command: " + command, e);
         }
     }
 }

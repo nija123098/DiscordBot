@@ -6,6 +6,7 @@ import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
+import com.github.nija123098.evelyn.util.EmoticonHelper;
 import com.github.nija123098.evelyn.util.YTUtil;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public class PlaySearchListCommand extends AbstractCommand {
         maker.append("Use reactions to indicate which song you would like to play!");
         List<YoutubeTrack> tracks = YTUtil.getTrack(search, 4);
         for (int i = 0; i < tracks.size(); i++) {
-            maker.getNewListPart().appendEmbedLink(tracks.get(i).getName(), tracks.get(i).getSource());
+            maker.getNewListPart().appendRaw(EmoticonHelper.getChars(NAMES[i], false) + "  ").appendEmbedLink(tracks.get(i).getName(), tracks.get(i).getSource());
             int finalI = i;
             maker.withPublicReactionBehavior(NAMES[i], (add, reaction, user) -> {
                 audioManager.queueTrack(tracks.get(finalI));

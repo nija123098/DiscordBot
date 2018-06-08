@@ -582,6 +582,7 @@ public class AbstractCommand implements Tagable {
             if (e.getCause() instanceof BotException) {
                 ((BotException) e.getCause()).makeMessage(message.getChannel()).send();
                 if (reaction != null) message.addReactionByName(CommandHandler.EXCEPTION_FOR_METHOD);
+                Log.log("Excepting executing command " + this.getName(), e);
             }
             else if (e.getCause() instanceof DevelopmentException) Log.log("Exception during method execution: " + getName(), e);
             else new DevelopmentException(e.getCause()).makeMessage(message.getChannel()).send();
