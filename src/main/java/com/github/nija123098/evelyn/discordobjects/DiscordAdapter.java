@@ -248,7 +248,7 @@ public class DiscordAdapter {
             MESSAGE_PARSE_FUTURES.remove(event.getMessage());
             if (MESSAGE_PARSE_FUTURES.size() > MIN_MESSAGE_PARSE_THREADS) {
                 new HashMap<>(MESSAGE_PARSE_FUTURES).forEach((iMessage, future) -> {
-                    if (System.currentTimeMillis() - iMessage.getCreationDate().toEpochMilli() < 5_000) {
+                    if (System.currentTimeMillis() - iMessage.getCreationDate().toEpochMilli() < 330_000) {
                         future.cancel(true);
                     }
                 });

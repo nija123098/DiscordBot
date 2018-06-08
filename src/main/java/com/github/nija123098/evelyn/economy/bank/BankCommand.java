@@ -1,6 +1,5 @@
 package com.github.nija123098.evelyn.economy.bank;
 
-import com.github.nija123098.evelyn.audio.Track;
 import com.github.nija123098.evelyn.audio.YoutubeTrack;
 import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.command.AbstractCommand;
@@ -18,9 +17,6 @@ import com.github.nija123098.evelyn.tag.Tag;
 import com.github.nija123098.evelyn.tag.Tags;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
 import com.github.nija123098.evelyn.util.Time;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Soarnir
@@ -86,14 +82,8 @@ public class BankCommand extends AbstractCommand {
         } else {
             if ((day - (currentMillis % day)) < 60000L) {
                 GuildAudioManager manager = GuildAudioManager.getManager(guild);
-                if (manager != null) {
-                    List<Track> previousTracks = new ArrayList<>();
-                    previousTracks.add(manager.currentTrack());
-                    previousTracks.addAll(manager.getQueue());
-                    manager.clearQueue();
+                if (manager != null && manager.currentTrack() == null) {
                     manager.queueTrack(new YoutubeTrack("9jK-NcRmVcw"));
-                    manager.skipTrack();
-                    previousTracks.forEach(manager::queueTrack);
                 }
                 maker.withImage(ConfigProvider.URLS.bankGif());
                 return;

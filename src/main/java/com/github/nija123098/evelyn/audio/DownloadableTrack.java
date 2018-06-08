@@ -7,6 +7,7 @@ import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 import com.github.nija123098.evelyn.util.Log;
+import com.github.nija123098.evelyn.util.ThreadHelper;
 import com.github.nija123098.evelyn.util.YTDLHelper;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.source.local.LocalAudioSourceManager;
@@ -61,6 +62,7 @@ public abstract class DownloadableTrack extends Track {
         if (playTimes >= ConfigProvider.AUDIO_SETTINGS.requiredPlaysToDownload() && ConfigProvider.AUDIO_SETTINGS.requiredPlaysToDownload() != -1) MusicDownloadService.queueDownload(playTimes == 0 ? 0 : (int) Math.log(playTimes), this, manager == null ? null : downloadableTrack -> manager.swap(this));
         BlockingQueue<AudioTrack> queue = new LinkedBlockingQueue<>(1);
         AtomicReference<FriendlyException> exceptionReference = new AtomicReference<>();
+        ThreadHelper.enableInterruptLogging(Thread.currentThread());
         GuildAudioManager.PLAYER_MANAGER.loadItem(this.getSource(), new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack track) {
@@ -72,7 +74,9 @@ public abstract class DownloadableTrack extends Track {
                 exceptionReference.set(exception);
             }
         });
-        try{return queue.take();
+        try{AudioTrack audioTrack = queue.take();
+            if (this.length == null) this.length = audioTrack.getDuration();
+            return audioTrack;
         } catch (InterruptedException e) {
             Log.log("Exception loading AudioTrack for " + this.getID(), exceptionReference.get() == null ? e : exceptionReference.get());
         }
@@ -106,6 +110,6 @@ public abstract class DownloadableTrack extends Track {
     }
     @Override
     public Long getLength() {
-        return this.length == null ? (this.length = this.getAudioTrack(null).getDuration()) : this.length;
+        return this.length == null ? this.getAudioTrack(null).getDuration() : this.length;
     }
 }

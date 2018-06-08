@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class TopCookiesCommand extends AbstractCommand {
 
     public TopCookiesCommand() {
-        super(TopStatsCommand.class,"cookies", null, null, null, "gets the top five cookie collectors");
+        super(TopStatsCommand.class, "cookies", null, null, null, "gets the top five cookie collectors");
     }
 
     @Command

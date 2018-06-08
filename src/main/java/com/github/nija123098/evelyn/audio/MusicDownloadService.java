@@ -16,7 +16,7 @@ import java.util.function.Consumer;
  */
 public class MusicDownloadService extends AbstractService {
     private static final ThreadPoolExecutor POOL_EXECUTOR = new ThreadPoolExecutor(1, ConfigProvider.AUDIO_SETTINGS.musicDownloadThreads(), 10, TimeUnit.SECONDS, new ArrayBlockingQueue<>(10), r -> {
-        Thread t = new Thread(r);
+        Thread t = new Thread(r, "Music Download Thread");
         t.setDaemon(true);
         return t;
     }, (r, executor) -> Log.log("Music download queue exceeded"));

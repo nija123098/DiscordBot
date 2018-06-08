@@ -71,7 +71,7 @@ public class EventDistributor {
         Listener(Method m, Object o) {
             this.m = m;
             this.o = o;
-            this.executorService = new ThreadPoolExecutor(1, 2, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<>(50), r -> ThreadHelper.getDemonThreadSingle(r, this.m.getDeclaringClass().getSimpleName() + "#" + this.m.getName() + "-Listener-Thread"), (r, executor) -> Log.log("Event of type " + this.m.getParameterTypes()[0].getSimpleName() + " rejected from " + this.m.getDeclaringClass().getSimpleName() + "#" + this.m.getName()));
+            this.executorService = new ThreadPoolExecutor(1, 2, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<>(50), r -> ThreadHelper.getDemonThreadSingle(r, this.m.getDeclaringClass().getSimpleName() + "#" + this.m.getName() + "-Listener-Thread"), (r, executor) -> Log.log("Event of type " + this.m.getParameterTypes()[0].getSimpleName() + " rejected from " + this.m.getDeclaringClass().getSimpleName() + "#" + this.m.getName(), new Exception()));
         }
         void handle(E event) {
             this.executorService.execute(() -> {

@@ -225,6 +225,7 @@ public class GuildAudioManager extends AudioEventAdapter{
     public void queueTrack(Track track) {
         if (track == null) this.current = null;
         else {
+            if (!track.isAvailable()) throw new ArgumentException("That track is no longer available, likely due to copyright claim");
             if (this.current == null) this.start(track, 0);
             else this.queue.add(track);
         }
