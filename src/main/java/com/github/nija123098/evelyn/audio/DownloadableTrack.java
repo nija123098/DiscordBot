@@ -76,6 +76,7 @@ public abstract class DownloadableTrack extends Track {
         });
         try{AudioTrack audioTrack = queue.take();
             if (this.length == null) this.length = audioTrack.getDuration();
+            ThreadHelper.disableInterruptLogging(Thread.currentThread());
             return audioTrack;
         } catch (InterruptedException e) {
             Log.log("Exception loading AudioTrack for " + this.getID(), exceptionReference.get() == null ? e : exceptionReference.get());
