@@ -14,7 +14,7 @@ public class RanksSetupApproveCommand extends AbstractCommand {
         super(RanksSetupCommand.class, "approve", null, null, null, "Cancels the setupranks command");
     }
     @Command
-    public void command(Guild guild, MessageMaker maker) {
+    public static void command(Guild guild, MessageMaker maker) {
         Runnable task = RanksSetupCommand.TASK_CACHE.getIfPresent(guild);
         if (task != null) {
             RanksSetupCommand.TASK_CACHE.invalidate(guild);

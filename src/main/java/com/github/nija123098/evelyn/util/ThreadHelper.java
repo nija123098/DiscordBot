@@ -1,5 +1,6 @@
 package com.github.nija123098.evelyn.util;
 
+import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import sun.nio.ch.Interruptible;
 
 import java.lang.reflect.Field;
@@ -27,6 +28,7 @@ public class ThreadHelper {
     private static final Set<Thread> SETUP_THREADS = new HashSet<>();
     private static final Set<Thread> ENABLED_THREADS = new HashSet<>();
     public static void enableInterruptLogging(Thread thread) {
+        if (!ConfigProvider.BOT_SETTINGS.interruptLogging()) return;
         if (!SETUP_THREADS.contains(thread)) {
             try {// did someone request a horrible hack?
                 Method blockedOn = Thread.class.getDeclaredMethod("blockedOn", Interruptible.class);
@@ -47,6 +49,7 @@ public class ThreadHelper {
         ENABLED_THREADS.add(thread);
     }
     public static void disableInterruptLogging(Thread thread) {
+        if (!ConfigProvider.BOT_SETTINGS.interruptLogging()) return;
         ENABLED_THREADS.remove(thread);
     }
     private static class LoggingInterruptible implements Interruptible {

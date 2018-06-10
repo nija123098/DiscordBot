@@ -22,4 +22,5 @@ public interface BotSettings {
     String botFolder();
     String startCommand();
     String feedbackChannel();
+    Boolean interruptLogging();
 }

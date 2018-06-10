@@ -8,20 +8,20 @@ import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.moderation.messagefiltering.MessageMonitor;
-import com.github.nija123098.evelyn.moderation.messagefiltering.configs.MessageMonitoringUrlWhitelist;
+import com.github.nija123098.evelyn.moderation.messagefiltering.configs.MessageMonitoringUrlBlacklist;
 
 /**
  * @author nija123098
  * @since 1.0.0
  */
-public class MessageMonitoringUrlWhitelistRemoveCommand extends AbstractCommand {
-    public MessageMonitoringUrlWhitelistRemoveCommand() {
-        super(MessageMonitoringUrlWhitelistCommand.class, "remove", null, null, "r", "Removes a filtering level");
+public class MessageMonitoringUrlBlacklistAddCommand extends AbstractCommand {
+    public MessageMonitoringUrlBlacklistAddCommand() {
+        super(MessageMonitoringUrlBlacklistCommand.class, "add", null, null, "a", "Adds a filtering level");
     }
     @Command
-    public void command(Guild guild, Channel channel, @Argument String domain, MessageMaker maker) {
-        ConfigHandler.alterSetting(MessageMonitoringUrlWhitelist.class, guild, urls -> urls.remove(domain.toLowerCase()));
+    public static void command(Guild guild, Channel channel, @Argument String domain, MessageMaker maker) {
+        ConfigHandler.alterSetting(MessageMonitoringUrlBlacklist.class, guild, urls -> urls.add(domain.toLowerCase()));
         MessageMonitor.recalculate(guild);
-        MessageMonitoringUrlWhitelistCommand.command(guild, channel, null, maker);
+        MessageMonitoringUrlBlacklistCommand.command(guild, channel, null, maker);
     }
 }

@@ -15,5 +15,6 @@ public enum MessageMonitoringLevel {
     EXCESSIVE_CAPITALS,
     EXCESSIVE_PINGING,
     SPAM,
-    URL,;
+    URL,
+    INVITE,;
 }

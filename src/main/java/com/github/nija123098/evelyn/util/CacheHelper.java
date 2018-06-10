@@ -11,6 +11,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -23,8 +24,8 @@ public class CacheHelper {
             }
         });
     }
-    public static <K, V> Cache<K, V> getCache(int concurrency, int maxSize, long expireTime) {
-        return CacheBuilder.newBuilder().concurrencyLevel(concurrency).maximumSize(maxSize).expireAfterAccess(expireTime, TimeUnit.MILLISECONDS).build();
+    public static <K, V> Cache<K, V> getCache(int concurrency, int maxSize, long expireTime, BiConsumer<K, V> removalListener) {
+        return CacheBuilder.newBuilder().concurrencyLevel(concurrency).maximumSize(maxSize).expireAfterAccess(expireTime, TimeUnit.MILLISECONDS).removalListener(removalNotification -> removalListener.accept((K) removalNotification.getKey(), (V) removalNotification.getValue())).build();
     }
     private static final ScheduledExecutorService REMOVAL_EXECUTOR = Executors.newSingleThreadScheduledExecutor(r -> ThreadHelper.getDemonThreadSingle(r, "Cache-Removal-Thread"));
     public static class ContainmentCache<V> implements Iterable<V> {

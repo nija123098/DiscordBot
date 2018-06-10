@@ -19,9 +19,9 @@ public class MessageMonitoringUrlWhitelistAddCommand extends AbstractCommand {
         super(MessageMonitoringUrlWhitelistCommand.class, "add", null, null, "a", "Adds a filtering level");
     }
     @Command
-    public void command(Guild guild, Channel channel, @Argument String domain, MessageMaker maker) {
+    public static void command(Guild guild, Channel channel, @Argument String domain, MessageMaker maker) {
         ConfigHandler.alterSetting(MessageMonitoringUrlWhitelist.class, guild, urls -> urls.add(domain.toLowerCase()));
         MessageMonitor.recalculate(guild);
-        MessageMonitoringUrlWhitelistCommand.command(maker, channel, null);
+        MessageMonitoringUrlWhitelistCommand.command(guild, channel, null, maker);
     }
 }

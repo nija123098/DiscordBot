@@ -17,7 +17,7 @@ import com.github.nija123098.evelyn.util.Log;
 import com.github.nija123098.evelyn.util.StringChecker;
 import org.reflections.Reflections;
 
-import java.awt.Color;
+import java.awt.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -81,13 +81,16 @@ public class MessageMonitor {
         if (received.getChannel().isPrivate() || received.getGuild().getUserSize() < ConfigProvider.BOT_SETTINGS.messageFilteringServerSize() || received.getChannel().isNSFW() || received.getMessage().getContent() == null || received.getMessage().getContent().isEmpty() || BotRole.GUILD_TRUSTEE.hasRequiredRole(received.getAuthor(), received.getGuild())) return false;
         try{CHANNEL_MAP.computeIfAbsent(received.getChannel(), MessageMonitor::calculate).forEach(filter -> filter.checkFilter(received));
         } catch (MessageMonitoringException exception) {
-            new MessageMaker(received.getMessage()).withDM().append("Your message on ").appendRaw(received.getGuild().getName()).append(" in ").appendRaw(received.getChannel().mention()).append(" has been deleted.  Reason: " + exception.getMessage() + "\nMessage: " + received.getMessage().getContent()).send();
-            Channel channel = ConfigHandler.getSetting(ModLogConfig.class, received.getGuild());
-            if (channel != null) new MessageMaker(channel).withColor(LOG_COLOR).append("Message violated message monitoring rule: " + exception.getMessage() + "\n" + received.getMessage().getContent()).getTitle().append("Message Monitoring Violation").getMaker().send();
-            if (exception.deleteMessage()) received.getMessage().delete();
+            moderate(received, exception);
             return true;
         }
         return false;
+    }
+    public static void moderate(DiscordMessageReceived received, MessageMonitoringException exception) {
+        new MessageMaker(received.getMessage()).withDM().append("Your message on ").appendRaw(received.getGuild().getName()).append(" in ").appendRaw(received.getChannel().mention()).append(" has been deleted.  Reason: " + exception.getMessage() + "\nMessage: " + received.getMessage().getContent()).send();
+        Channel channel = ConfigHandler.getSetting(ModLogConfig.class, received.getGuild());
+        if (channel != null) new MessageMaker(channel).withColor(LOG_COLOR).append("Message violated message monitoring rule: " + exception.getMessage() + "\n" + received.getMessage().getContent()).getTitle().append("Message Monitoring Violation").getMaker().send();
+        if (exception.deleteMessage()) received.getMessage().delete();
     }
     private static Set<MessageFilter> calculate(Channel channel) {
         Set<MessageMonitoringLevel> strings = ConfigHandler.getSetting(MessageMonitoringConfig.class, channel.getGuild());

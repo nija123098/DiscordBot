@@ -25,7 +25,9 @@ import java.util.concurrent.ExecutionException;
 @FunctionalInterface
 public interface ReactionBehavior {
     void behave(boolean add, Reaction reaction, User user);
-    Cache<Message, Map<String, ReactionBehavior>> CACHE = CacheHelper.getCache(Runtime.getRuntime().availableProcessors() * 6, ConfigProvider.CACHE_SETTINGS.reactionBehaviorSize(), 120_000);
+    Cache<Message, Map<String, ReactionBehavior>> CACHE = CacheHelper.getCache(Runtime.getRuntime().availableProcessors() * 6, ConfigProvider.CACHE_SETTINGS.reactionBehaviorSize(), 120_000, (message, stringReactionBehaviorMap) -> {
+        deregisterListeners(message);
+    });
 
     /**
      * Registers a listener to preform a
@@ -60,12 +62,23 @@ public interface ReactionBehavior {
     }
 
     /**
+     * De-registers all listeners for the specified {@link Message}.
+     *
+     * @param message the message to deregister a reaction for.
+     */
+    static void deregisterListeners(Message message) {
+        if (message == null) return;
+        Map<String, ReactionBehavior> map = CACHE.getIfPresent(message);
+        if (map == null) return;
+        CACHE.invalidate(message);
+        new HashMap<>(map).forEach((s, reactionBehavior) -> message.removeReactionByName(s));
+    }
+
+    /**
      * De-registers all {@link ReactionBehavior} listeners.
      */
     static void deregisterAll() {
-        Map<Message, Map<String, ReactionBehavior>> behaviors = new HashMap<>(CACHE.asMap());
-        CACHE.invalidateAll();
-        behaviors.forEach((message, map) -> map.keySet().forEach(message::removeReaction));
+        CACHE.invalidateAll();// ejection does the deciphering
     }
 
     /**

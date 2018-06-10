@@ -34,7 +34,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 1.0.0
  */
 public class RanksSetupCommand extends AbstractCommand {
-    static final Cache<Guild, Runnable> TASK_CACHE = CacheHelper.getCache(4, 100, 300_000);
+    static final Cache<Guild, Runnable> TASK_CACHE = CacheHelper.getCache(4, 100, 300_000, (guild, runnable) -> {});
     public RanksSetupCommand() {
         super(RanksCommand.class, "setup", "setupranks, setup ranks", null, null, "Sets up the ranks for autoranking");
     }
@@ -74,5 +74,6 @@ public class RanksSetupCommand extends AbstractCommand {
             TASK_CACHE.invalidate(guild);
             for (int j = roleMaking.size() - 1; j > -1; --j) roleMaking.get(j).run();
         });
+        maker.withReactionBehavior("ballot_box_with_check", (add, reaction, user) -> RanksSetupApproveCommand.command(guild, new MessageMaker(maker)));
     }
 }
