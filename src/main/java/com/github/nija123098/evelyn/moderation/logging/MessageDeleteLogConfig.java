@@ -19,7 +19,7 @@ public class MessageDeleteLogConfig extends AbstractConfig<Channel, Guild> {
     public MessageDeleteLogConfig() {
         super("message_delete_log", "Message Delete Log", ConfigCategory.LOGGING, (Channel) null, "The location logs should be made for messages that are deleted");
     }
-    @EventListener
+    @EventListener(queueSize = 150)
     public void handle(DiscordMessageDelete delete) {
         Channel channel;
         if (delete.getMessage() == null || delete.getChannel().isPrivate() || delete.getMessage().getAuthor().isBot() || (channel = this.getValue(delete.getGuild())) == null) return;

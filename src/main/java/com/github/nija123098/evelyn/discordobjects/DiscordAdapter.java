@@ -226,7 +226,7 @@ public class DiscordAdapter {
      */
     @EventSubscriber
     public static void handle(MessageReceivedEvent event){
-        if (event.getAuthor().isBot() || !Launcher.isReady() || event.getMessage().getContent() == null) return;
+        if (!Launcher.isReady() || event.getMessage().getContent() == null || (event.getAuthor().isBot() && event.getAuthor().getLongID() != ConfigProvider.BOT_SETTINGS.managementBot())) return;
         MESSAGE_PARSE_FUTURES.put(event.getMessage(), MESSAGE_PARSE_EXECUTOR.submit(() -> {
             if (event.getMessage().getContent().isEmpty()) DeletePinNotificationConfig.handle(new DiscordMessageReceived(event));
             DiscordMessageReceived receivedEvent = new DiscordMessageReceived(event);

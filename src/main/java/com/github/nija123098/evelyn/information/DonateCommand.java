@@ -20,7 +20,7 @@ public class DonateCommand extends AbstractCommand {
         maker.getTitle().append("Contributions!");
         maker.append("\u200B\n**Bugs?**\n" +
                 "Report them ").appendEmbedLink("here", ConfigProvider.URLS.discordInviteUrl()).append(
-                "\n\n" +
+                "\n" +
                 "**Want to contribute or give feedback?**\n" +
                 "Feel free to join ").appendEmbedLink("here", ConfigProvider.URLS.discordInviteUrl()).append("\n" +
                 "**Want to donate?**\n" +

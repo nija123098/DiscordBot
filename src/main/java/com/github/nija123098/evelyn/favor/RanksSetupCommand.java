@@ -17,9 +17,8 @@ import com.github.nija123098.evelyn.favor.configs.EarnRankConfig;
 import com.github.nija123098.evelyn.favor.configs.StackFavorRankConfig;
 import com.github.nija123098.evelyn.favor.configs.balencing.FavorRankEquationConfig;
 import com.github.nija123098.evelyn.helping.CalculateCommand;
-import com.github.nija123098.evelyn.util.CacheHelper;
+import com.github.nija123098.evelyn.util.Cache;
 import com.github.nija123098.evelyn.util.ColorRange;
-import com.google.common.cache.Cache;
 import com.google.common.util.concurrent.AtomicDouble;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
@@ -34,7 +33,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 1.0.0
  */
 public class RanksSetupCommand extends AbstractCommand {
-    static final Cache<Guild, Runnable> TASK_CACHE = CacheHelper.getCache(4, 100, 300_000, (guild, runnable) -> {});
+    static final Cache<Guild, Runnable> TASK_CACHE = new Cache<>(4, 300_000, null);
     public RanksSetupCommand() {
         super(RanksCommand.class, "setup", "setupranks, setup ranks", null, null, "Sets up the ranks for autoranking");
     }
@@ -71,7 +70,7 @@ public class RanksSetupCommand extends AbstractCommand {
                     ConfigHandler.setSetting(EarnRankConfig.class, role, value);
                 });
             }
-            TASK_CACHE.invalidate(guild);
+            TASK_CACHE.remove(guild);
             for (int j = roleMaking.size() - 1; j > -1; --j) roleMaking.get(j).run();
         });
         maker.withReactionBehavior("ballot_box_with_check", (add, reaction, user) -> RanksSetupApproveCommand.command(guild, new MessageMaker(maker)));

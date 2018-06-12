@@ -6,6 +6,8 @@ import com.github.nija123098.evelyn.audio.configs.track.TrackTypeConfig;
 import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
+import com.github.nija123098.evelyn.exception.DevelopmentException;
+import com.github.nija123098.evelyn.util.CareLess;
 import com.github.nija123098.evelyn.util.Log;
 import com.github.nija123098.evelyn.util.ThreadHelper;
 import com.github.nija123098.evelyn.util.YTDLHelper;
@@ -20,8 +22,6 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -60,24 +60,37 @@ public abstract class DownloadableTrack extends Track {
         if (this.isDownloaded()) return makeAudioTrack(file());
         int playTimes = ConfigHandler.getSetting(PlayCountConfig.class, this);
         if (playTimes >= ConfigProvider.AUDIO_SETTINGS.requiredPlaysToDownload() && ConfigProvider.AUDIO_SETTINGS.requiredPlaysToDownload() != -1) MusicDownloadService.queueDownload(playTimes == 0 ? 0 : (int) Math.log(playTimes), this, manager == null ? null : downloadableTrack -> manager.swap(this));
-        BlockingQueue<AudioTrack> queue = new LinkedBlockingQueue<>(1);
+        Object lock = new Object();
+        AtomicReference<AudioTrack> reference = new AtomicReference<>();
         AtomicReference<FriendlyException> exceptionReference = new AtomicReference<>();
         ThreadHelper.enableInterruptLogging(Thread.currentThread());
         GuildAudioManager.PLAYER_MANAGER.loadItem(this.getSource(), new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack track) {
-                queue.add(track);
+                reference.set(track);
+                CareLess.lessSleep(20);// allow locking time
+                synchronized (lock) {
+                    lock.notifyAll();
+                }
             }
             @Override public void playlistLoaded(AudioPlaylist playlist) {}
             @Override public void noMatches() {}
             @Override public void loadFailed(FriendlyException exception) {
                 exceptionReference.set(exception);
+                CareLess.lessSleep(20);// allow locking time
+                synchronized (lock) {
+                    lock.notifyAll();
+                }
             }
         });
-        try{AudioTrack audioTrack = queue.take();
-            if (this.length == null) this.length = audioTrack.getDuration();
+        try{
+            synchronized (lock) {
+                lock.wait();
+            }
+            if (exceptionReference.get() != null) throw new DevelopmentException("Exception loading track", exceptionReference.get());
+            if (this.length == null) this.length = reference.get().getDuration();
             ThreadHelper.disableInterruptLogging(Thread.currentThread());
-            return audioTrack;
+            return reference.get();
         } catch (InterruptedException e) {
             Log.log("Exception loading AudioTrack for " + this.getID(), exceptionReference.get() == null ? e : exceptionReference.get());
         }

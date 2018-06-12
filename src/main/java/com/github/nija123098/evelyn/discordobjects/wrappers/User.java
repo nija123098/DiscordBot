@@ -208,4 +208,8 @@ public class User implements Configurable {
         if (!role.getUsers().contains(this)) return;
         ExceptionWrapper.wrap(() -> user().removeRole(role.role()));
     }
+
+    public long getLongID() {
+        return user().getLongID();
+    }
 }

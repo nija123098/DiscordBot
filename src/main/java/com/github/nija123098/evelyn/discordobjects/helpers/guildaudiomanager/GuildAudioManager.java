@@ -23,6 +23,7 @@ import com.github.nija123098.evelyn.moderation.logging.MusicChannelConfig;
 import com.github.nija123098.evelyn.util.CareLess;
 import com.github.nija123098.evelyn.util.LangString;
 import com.github.nija123098.evelyn.util.Log;
+import com.github.nija123098.evelyn.util.ThreadHelper;
 import com.sedmelluq.discord.lavaplayer.player.AudioConfiguration;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
@@ -239,6 +240,7 @@ public class GuildAudioManager extends AudioEventAdapter{
      */
     public void swap(Track track) {
         if (!track.equals(this.currentTrack())) return;
+        Log.log("Swapping track " + track.getID() + " in " + this.channel.getID());
         AudioTrack audioTrack = track.getAudioTrack(null);
         this.lavaPlayer.setPaused(true);
         this.swapping = true;
@@ -506,15 +508,14 @@ public class GuildAudioManager extends AudioEventAdapter{
         private final Thread queueThread;
         private final AtomicBoolean run = new AtomicBoolean(true);
         private AudioProvider(GuildAudioManager manager) {
-            this.queueThread = new Thread(() -> {
+            this.queueThread = ThreadHelper.getDemonThread(() -> {
                 while (run.get()) {
                     if (this.frames.size() < BUFFER_SIZE) {
                         AudioFrame frame = manager.lavaPlayer.provide();
                         this.frames.add(frame == null ? NULL : frame);
-                    }else CareLess.lessSleep(5);
+                    } else CareLess.lessSleep(10);
                 }
-            });
-            this.queueThread.setDaemon(true);
+            }, "Audio-Provider-Buffer-" + manager.channel.getID());
             this.queueThread.start();
         }
         @Override

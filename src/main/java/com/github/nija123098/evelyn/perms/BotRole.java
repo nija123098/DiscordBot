@@ -16,11 +16,9 @@ import com.github.nija123098.evelyn.exception.PermissionsException;
 import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.perms.configs.standard.GlobalBotRoleConfig;
 import com.github.nija123098.evelyn.perms.configs.standard.GuildBotRoleConfig;
-import com.github.nija123098.evelyn.util.CacheHelper;
-import com.google.common.cache.LoadingCache;
+import com.github.nija123098.evelyn.util.Cache;
 
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
@@ -53,9 +51,8 @@ public enum BotRole {// todo make more efficient
     static {
         WorkAroundReferences.set();
     }
-    private final Map<Object, Object> PERMISSIONS_CACHE = new HashMap<>();
-    private final LoadingCache<User, Boolean> userCache;
-    private final LoadingCache<User, LoadingCache<Guild, Boolean>> guildCache;
+    private final Map<User, Boolean> userCache;
+    private final Map<User, Cache<Guild, Boolean>> guildCache;
     private boolean isTrueRank, isGlobalFlag, isGuildFlag, guildImportant = this.name().startsWith("GUILD");
     private BiPredicate<User, Guild> detect, change;
     BotRole(boolean isTrueRank, BiPredicate<User, Guild> detect, BiPredicate<User, Guild> change) {
@@ -78,12 +75,12 @@ public enum BotRole {// todo make more efficient
     BotRole() {
         if (this.guildImportant) {
             this.userCache = null;
-            this.guildCache = CacheHelper.getLoadingCache(Runtime.getRuntime().availableProcessors() * 4, ConfigProvider.CACHE_SETTINGS.userBotRoleSize(), 120_000, user -> CacheHelper.getLoadingCache(Runtime.getRuntime().availableProcessors(), 20, 120_000, guild -> {
+            this.guildCache = new Cache<>(ConfigProvider.CACHE_SETTINGS.userBotRoleSize(), 120_000, user -> new Cache<>(20, 120_000, guild -> {
                 for (int i = this.ordinal(); i < values().length; i++) if (values()[i].detect.test(user, guild)) return true;
                 return false;
             }));
         } else {
-            this.userCache = CacheHelper.getLoadingCache(Runtime.getRuntime().availableProcessors() * 4, 20, 300_000, user -> {
+            this.userCache = new Cache<>(20, 300_000, user -> {
                 for (int i = this.ordinal(); i < values().length; i++) if (values()[i].detect.test(user, null)) return true;
                 return false;
             });
@@ -122,7 +119,7 @@ public enum BotRole {// todo make more efficient
      * @return if the user has the role or a higher true role.
      */
     public boolean hasRequiredRole(User user, Guild guild) {
-        return this.isTrueRank ? this.guildImportant ? guild != null && this.guildCache.getUnchecked(user).getUnchecked(guild) : this.userCache.getUnchecked(user) : this.detect.test(user, guild);
+        return this.isTrueRank ? this.guildImportant ? guild != null && this.guildCache.get(user).get(guild) : this.userCache.get(user) : this.detect.test(user, guild);
     }
 
     /**
@@ -186,8 +183,8 @@ public enum BotRole {// todo make more efficient
         ConfigHandler.alterSetting((Class<? extends AbstractConfig<Set<BotRole>, Configurable>>) config, configurable, roles -> {
             if (grant) roles.add(role);
             else roles.remove(role);
-        });
-        Stream.of(values()).forEach(botRole -> botRole.PERMISSIONS_CACHE.clear());
+        });//                      Different stream methods
+        (role.isTrueRank ? Stream.of(values()) : Stream.of(role)).forEach(botRole -> (botRole.guildImportant ? botRole.guildCache : botRole.userCache).clear());
         EventDistributor.distribute(new BotRoleChangeEvent(grant, role, target, guild));
     }
 }

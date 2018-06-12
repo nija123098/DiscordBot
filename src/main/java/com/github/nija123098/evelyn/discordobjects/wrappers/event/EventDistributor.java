@@ -9,10 +9,7 @@ import com.github.nija123098.evelyn.util.ThreadHelper;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Stream;
 
@@ -64,6 +61,7 @@ public class EventDistributor {
             return listeners;
         }).forEach(listener -> listener.handle(event));
     }
+
     private static class Listener<E extends BotEvent> {
         private final ExecutorService executorService;
         Method m;
@@ -71,7 +69,8 @@ public class EventDistributor {
         Listener(Method m, Object o) {
             this.m = m;
             this.o = o;
-            this.executorService = new ThreadPoolExecutor(1, 2, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<>(50), r -> ThreadHelper.getDemonThreadSingle(r, this.m.getDeclaringClass().getSimpleName() + "#" + this.m.getName() + "-Listener-Thread"), (r, executor) -> Log.log("Event of type " + this.m.getParameterTypes()[0].getSimpleName() + " rejected from " + this.m.getDeclaringClass().getSimpleName() + "#" + this.m.getName(), new Exception()));
+            EventListener eventListener = m.getAnnotation(EventListener.class);
+            this.executorService = new ThreadPoolExecutor(eventListener.minThreads(), eventListener.maxThreads(), 1, TimeUnit.MINUTES, new LinkedBlockingQueue<>(eventListener.queueSize()), r -> ThreadHelper.getDemonThreadSingle(r, this.m.getDeclaringClass().getSimpleName() + "#" + this.m.getName() + "-Listener-Thread"), (r, executor) -> Log.log("Event of type " + this.m.getParameterTypes()[0].getSimpleName() + " rejected from " + this.m.getDeclaringClass().getSimpleName() + "#" + this.m.getName(), new Exception()));
         }
         void handle(E event) {
             this.executorService.execute(() -> {

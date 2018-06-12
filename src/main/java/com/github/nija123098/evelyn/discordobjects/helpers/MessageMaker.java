@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -63,7 +64,7 @@ public class MessageMaker {
     private User user;
     private Channel channel;
     private AtomicInteger currentPage = new AtomicInteger();
-    private Map<String, ReactionBehavior> reactionBehaviors = new LinkedHashMap<>();
+    private Map<String, ReactionBehavior> reactionBehaviors = new ConcurrentHashMap<>();
     private IMessage message, origin;
     private Message ourMessage;
     private final Set<String> reactions = new HashSet<>(1);
@@ -104,7 +105,7 @@ public class MessageMaker {
     public MessageMaker(User user) {
         this(user, user.getOrCreatePMChannel(), null);
     }
-    public MessageMaker(MessageMaker maker) {
+    public MessageMaker(MessageMaker maker) {// does not copy
         this(maker.user, maker.channel, Message.getMessage(maker.origin));
     }
     // setup methods
@@ -244,7 +245,7 @@ public class MessageMaker {
      * @return the instance
      */
     public MessageMaker clearReactionBehaviors() {
-        this.getReactionBehaved().forEach(this::withoutReactionBehavior);
+        this.getReactionBehaved().clear();
         return this;
     }
 

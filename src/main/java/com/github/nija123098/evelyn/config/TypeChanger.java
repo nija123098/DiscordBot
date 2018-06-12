@@ -8,6 +8,7 @@ import com.github.nija123098.evelyn.util.LanguageHelper;
 import com.github.nija123098.evelyn.util.Log;
 import com.github.nija123098.evelyn.util.ReflectionHelper;
 import com.thoughtworks.xstream.XStream;
+import javafx.util.Pair;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 
@@ -42,6 +43,7 @@ public class TypeChanger {
             if (previous.getInterfaces().length == 1) return previous.getInterfaces()[0];
             else return previous;
         }).collect(Collectors.toSet()).forEach(X_STREAM::allowTypeHierarchy);// set reduces repeat
+        X_STREAM.allowTypes(new Class[]{Pair.class});
     }
     private static final Map<Class<?>, Function<?, String>> TO_STRING = new HashMap<>();
     private static final Map<String, Function<String, ?>> FROM_STRING = new HashMap<>();
@@ -148,7 +150,7 @@ public class TypeChanger {
         try {
             return (T) X_STREAM.fromXML(s);
         } catch (Exception e) {
-            throw new DevelopmentException("Unable to convert String to type " + to.getSimpleName() + " for object: " + s);
+            throw new DevelopmentException("Unable to convert String to type " + to.getSimpleName() + " for object: " + s, e);
         }
     }
     private static <T extends Enum<T>> Object getEnum(Class<?> clazz, String s) {

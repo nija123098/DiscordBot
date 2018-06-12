@@ -18,8 +18,12 @@ public class PlaySearchListCommand extends AbstractCommand {
     }
     @Command
     public void command(@Argument String search, GuildAudioManager audioManager, MessageMaker maker) {
-        maker.append("Use reactions to indicate which song you would like to play!");
         List<YoutubeTrack> tracks = YTUtil.getTrack(search, 4);
+        if (tracks.isEmpty()) {
+            maker.append("No tracks match that.");
+            return;
+        }
+        maker.append("Use reactions to indicate which song you would like to play!");
         for (int i = 0; i < tracks.size(); i++) {
             maker.getNewListPart().appendRaw(EmoticonHelper.getChars(NAMES[i], false) + "  ").appendEmbedLink(tracks.get(i).getName(), tracks.get(i).getSource());
             int finalI = i;

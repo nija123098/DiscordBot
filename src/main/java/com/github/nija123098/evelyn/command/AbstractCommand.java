@@ -29,6 +29,7 @@ import com.github.nija123098.evelyn.tag.Tags;
 import com.github.nija123098.evelyn.util.CacheHelper;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
 import com.github.nija123098.evelyn.util.Log;
+import org.omg.CORBA.UserException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -582,10 +583,8 @@ public class AbstractCommand implements Tagable {
             if (e.getCause() instanceof BotException) {
                 ((BotException) e.getCause()).makeMessage(message.getChannel()).send();
                 if (reaction != null) message.addReactionByName(CommandHandler.EXCEPTION_FOR_METHOD);
-                Log.log("Excepting executing command " + this.getName(), e);
-            }
-            else if (e.getCause() instanceof DevelopmentException) Log.log("Exception during method execution: " + getName(), e);
-            else new DevelopmentException(e.getCause()).makeMessage(message.getChannel()).send();
+                if (!(e.getCause() instanceof UserException)) Log.log("Excepting executing command " + this.getName(), e);
+            } else new DevelopmentException(e.getCause()).makeMessage(message.getChannel()).send();
         }
         ProcessingHandler.endProcess(channel);
         return false;

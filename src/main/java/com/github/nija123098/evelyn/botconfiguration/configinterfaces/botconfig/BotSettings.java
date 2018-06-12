@@ -23,4 +23,5 @@ public interface BotSettings {
     String startCommand();
     String feedbackChannel();
     Boolean interruptLogging();
+    Long managementBot();
 }

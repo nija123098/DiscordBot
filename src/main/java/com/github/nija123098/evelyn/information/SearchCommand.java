@@ -23,7 +23,8 @@ public class SearchCommand extends AbstractCommand {
     }
     @Command
     public void command(@Argument String search, MessageMaker maker) {
-        try {
+        if (search.isEmpty()) maker.append("Please add what you would like to search as an argument.  For example @Evelyn search AI overlord");
+        else try {
             JSONObject result = (JSONObject) new JSONParser().parse(Unirest.get("https://api.duckduckgo.com/?q=" + StringEscapeUtils.escapeHtml4(search.toLowerCase().replace(" ", "+")) + "&format=json&pretty=1").asString().getBody());
             JSONArray array = ((JSONArray) (result).get("RelatedTopics"));
             if (array.isEmpty()) {

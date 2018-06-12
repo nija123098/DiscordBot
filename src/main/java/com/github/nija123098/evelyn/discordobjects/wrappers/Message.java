@@ -4,10 +4,9 @@ import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.discordobjects.ExceptionWrapper;
 import com.github.nija123098.evelyn.exception.GhostException;
 import com.github.nija123098.evelyn.exception.PermissionsException;
-import com.github.nija123098.evelyn.util.CacheHelper;
+import com.github.nija123098.evelyn.util.Cache;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
 import com.github.nija123098.evelyn.util.Time;
-import com.google.common.cache.LoadingCache;
 import sx.blah.discord.handle.impl.obj.ReactionEmoji;
 import sx.blah.discord.handle.obj.IMessage;
 
@@ -24,19 +23,19 @@ import java.util.concurrent.atomic.AtomicReference;
  * @since 1.0.0
  */
 public class Message {// should not be kept stored, too many are made
-    private static final LoadingCache<IMessage, Message> CACHE = CacheHelper.getLoadingCache(Runtime.getRuntime().availableProcessors() * 4, ConfigProvider.CACHE_SETTINGS.messageSize(), 30_000, iMessage -> new Message(iMessage));
+    private static final Cache<IMessage, Message> CACHE = new Cache<>(ConfigProvider.CACHE_SETTINGS.messageSize(), 30_000, Message::new);
     public static Message getMessage(String id) {
         try{
             IMessage iMessage = DiscordClient.getAny(client -> client.getMessageByID(Long.parseLong(id)));
             if (iMessage == null) return null;
-            return CACHE.getUnchecked(iMessage);
+            return CACHE.get(iMessage);
         } catch (NumberFormatException e) {
             return null;
         }
     }
     public static Message getMessage(IMessage iMessage) {
         if (iMessage == null) return null;
-        return CACHE.getUnchecked(iMessage);
+        return CACHE.get(iMessage);
     }
     static List<Message> getMessages(List<IMessage> iMessages) {
         List<Message> messages = new ArrayList<>(iMessages.size());

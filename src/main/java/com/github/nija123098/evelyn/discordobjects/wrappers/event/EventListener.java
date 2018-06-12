@@ -14,4 +14,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface EventListener {
+    int queueSize() default 50;
+    int minThreads() default 1;
+    int maxThreads() default 2;
 }

@@ -1,7 +1,6 @@
 package com.github.nija123098.evelyn.discordobjects.wrappers;
 
 import com.github.nija123098.evelyn.discordobjects.ExceptionWrapper;
-import com.github.nija123098.evelyn.util.FormatHelper;
 import sx.blah.discord.handle.obj.IVoiceChannel;
 
 import java.util.ArrayList;
@@ -57,7 +56,7 @@ public class VoiceChannel extends Channel {
     }
 
     public void leave() {
-        channel().leave();
+        ExceptionWrapper.wrap(() -> channel().leave());
     }
 
     public boolean isConnected() {
