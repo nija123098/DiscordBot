@@ -249,7 +249,7 @@ public class DiscordAdapter {
             if (MESSAGE_PARSE_FUTURES.size() > MIN_MESSAGE_PARSE_THREADS) {
                 Log.log("Starting shutdown for blocking processes over 330_000 millis");// mirror value below, should be easy enough
                 MESSAGE_PARSE_FUTURES.forEach((iMessage, future) -> {
-                    if (System.currentTimeMillis() - iMessage.getCreationDate().toEpochMilli() < 330_000) {
+                    if (System.currentTimeMillis() - iMessage.getCreationDate().toEpochMilli() > 330_000) {
                         future.cancel(true);
                         Log.log("Shutting down thread parsing message " + iMessage.getContent());
                         MESSAGE_PARSE_FUTURES.remove(iMessage);
