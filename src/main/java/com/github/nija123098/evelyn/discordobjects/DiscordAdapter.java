@@ -73,7 +73,7 @@ import java.util.stream.Collectors;
 public class DiscordAdapter {
     private static final int MIN_MESSAGE_PARSE_THREADS = Runtime.getRuntime().availableProcessors();
     private static final ThreadPoolExecutor MESSAGE_PARSE_EXECUTOR = new ThreadPoolExecutor(MIN_MESSAGE_PARSE_THREADS, MIN_MESSAGE_PARSE_THREADS * 2, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<>(), r -> ThreadHelper.getDemonThread(r, "Message-Parse"));
-    private static final Map<IMessage, Future<?>> MESSAGE_PARSE_FUTURES = new HashMap<>();
+    private static final Map<IMessage, Future<?>> MESSAGE_PARSE_FUTURES = new ConcurrentHashMap<>();
     private static final ScheduledExecutorService PLAY_TEXT_EXECUTOR = Executors.newSingleThreadScheduledExecutor(r -> ThreadHelper.getDemonThreadSingle(r, "Play-Text-Changer-Thread"));
     private static final Map<Class<? extends Event>, Constructor<? extends BotEvent>> EVENT_MAP;
     private static final long PLAY_TEXT_SPEED = 60_000, GUILD_SAVE_SPEED = 3_600_000;// 1 hour
@@ -247,9 +247,12 @@ public class DiscordAdapter {
             EventDistributor.distribute(receivedEvent);
             MESSAGE_PARSE_FUTURES.remove(event.getMessage());
             if (MESSAGE_PARSE_FUTURES.size() > MIN_MESSAGE_PARSE_THREADS) {
-                new HashMap<>(MESSAGE_PARSE_FUTURES).forEach((iMessage, future) -> {
+                Log.log("Starting shutdown for blocking processes over 330_000 millis");// mirror value below, should be easy enough
+                MESSAGE_PARSE_FUTURES.forEach((iMessage, future) -> {
                     if (System.currentTimeMillis() - iMessage.getCreationDate().toEpochMilli() < 330_000) {
                         future.cancel(true);
+                        Log.log("Shutting down thread parsing message " + iMessage.getContent());
+                        MESSAGE_PARSE_FUTURES.remove(iMessage);
                     }
                 });
             }

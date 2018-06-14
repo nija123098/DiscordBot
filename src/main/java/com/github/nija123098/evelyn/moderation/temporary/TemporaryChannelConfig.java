@@ -25,7 +25,7 @@ public class TemporaryChannelConfig extends AbstractConfig<Long, Channel> {
     private static final Set<VoiceChannel> DELETE_ON_NO_USERS = new HashSet<>();
     public TemporaryChannelConfig() {
         super("temporary_channel_time", "", ConfigCategory.GAME_TEMPORARY_CHANNELS, 0L, "This channel will be deleted after a certan amount of time");
-        Launcher.registerAsyncStartup(() -> this.getNonDefaultSettings().forEach((channel, aLong) -> {
+        Launcher.registerPostStartup(() -> this.getNonDefaultSettings().forEach((channel, aLong) -> {
             if (aLong <= System.currentTimeMillis()) attemptDelete(channel);
             else EXECUTOR_SERVICE.schedule(() -> attemptDelete(channel), aLong - System.currentTimeMillis(), TimeUnit.MILLISECONDS);
         }));

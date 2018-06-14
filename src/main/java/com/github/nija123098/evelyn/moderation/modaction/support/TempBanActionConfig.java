@@ -20,7 +20,7 @@ public class TempBanActionConfig extends AbstractConfig<Long, GuildUser> {
     public static final ScheduledExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadScheduledExecutor(r -> ThreadHelper.getDemonThreadSingle(r, "Temp-Ban-Pardon-Thread"));
     public TempBanActionConfig() {
         super("temp_ban", "", ConfigCategory.STAT_TRACKING, (Long) null, "The time they are unbanned");
-        Launcher.registerAsyncStartup(() -> ConfigHandler.getNonDefaultSettings(TempBanActionConfig.class).forEach((guildUser, val) -> {
+        Launcher.registerPostStartup(() -> ConfigHandler.getNonDefaultSettings(TempBanActionConfig.class).forEach((guildUser, val) -> {
             if (val < System.currentTimeMillis()) TempBanModActionCommand.unban(guildUser.getGuild(), guildUser.getUser());
             EXECUTOR_SERVICE.schedule(() -> TempBanModActionCommand.unban(guildUser.getGuild(), guildUser.getUser()), val - System.currentTimeMillis(), TimeUnit.MILLISECONDS);
         }));

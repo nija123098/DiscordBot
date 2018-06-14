@@ -23,7 +23,7 @@ public class MuteActionConfig extends AbstractConfig<Pair<Long, Set<Role>>, Guil
     private static final ScheduledExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadScheduledExecutor(r -> ThreadHelper.getDemonThreadSingle(r, "Mute-Action-Config-Thread"));
     public MuteActionConfig() {
         super("temp_bans", "", ConfigCategory.STAT_TRACKING, (Pair<Long, Set<Role>>) null, "The temp bans and time they are unbanned");
-        Launcher.registerAsyncStartup(() -> ConfigHandler.getNonDefaultSettings(MuteActionConfig.class).forEach((guildUser, pair) -> EXECUTOR_SERVICE.schedule(() -> {
+        Launcher.registerPostStartup(() -> ConfigHandler.getNonDefaultSettings(MuteActionConfig.class).forEach((guildUser, pair) -> EXECUTOR_SERVICE.schedule(() -> {
             if (!(pair.getKey() - 10_000 < System.currentTimeMillis())) return;
             MuteModActionCommand.unmute(guildUser.getGuild(), guildUser.getUser());
         }, pair.getKey(), TimeUnit.MILLISECONDS)));

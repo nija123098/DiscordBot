@@ -15,7 +15,7 @@ import java.util.List;
 public class TodoListConfig extends AbstractConfig<List<TodoItem>, User> {
     public TodoListConfig() {
         super("todo_list", "", ConfigCategory.STAT_TRACKING, new ArrayList<>(0), "The list of todo items for a user");
-        Launcher.registerAsyncStartup(() -> {
+        Launcher.registerPostStartup(() -> {
             long current = System.currentTimeMillis();
             this.getNonDefaultSettings().forEach((user, todoItems) -> todoItems.forEach(todoItem -> TodoListCommand.remind(todoItem.getScheduledTime() - current, user, todoItem)));
         });

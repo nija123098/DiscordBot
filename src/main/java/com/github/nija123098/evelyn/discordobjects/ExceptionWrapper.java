@@ -55,8 +55,12 @@ public class ExceptionWrapper {
             RequestBuffer.request(() -> {// initial attempt failed likely due to rate limiting, retrying.
                 try {
                     objectReference.set(request.request());
+                } catch (RateLimitException e) {
+                    throw e;
                 } catch (RuntimeException e) {
-                    if (e instanceof RateLimitException) throw e;
+                    if (e instanceof DiscordException && ((DiscordException) e).getErrorMessage().endsWith("(Discord didn't return a response).")) {
+                        throw new RateLimitException("(Discord didn't return a response).", 1_000, "No Response", false);
+                    }
                     exceptionReference.set(e);
                 }
                 synchronized (request) {

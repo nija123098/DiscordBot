@@ -70,7 +70,7 @@ public class EventDistributor {
             this.m = m;
             this.o = o;
             EventListener eventListener = m.getAnnotation(EventListener.class);
-            this.executorService = new ThreadPoolExecutor(eventListener.minThreads(), eventListener.maxThreads(), 1, TimeUnit.MINUTES, new LinkedBlockingQueue<>(eventListener.queueSize()), r -> ThreadHelper.getDemonThreadSingle(r, this.m.getDeclaringClass().getSimpleName() + "#" + this.m.getName() + "-Listener-Thread"), (r, executor) -> Log.log("Event of type " + this.m.getParameterTypes()[0].getSimpleName() + " rejected from " + this.m.getDeclaringClass().getSimpleName() + "#" + this.m.getName(), new Exception()));
+            this.executorService = new ThreadPoolExecutor(eventListener.minThreads(), eventListener.maxThreads(), 1, TimeUnit.MINUTES, new LinkedBlockingQueue<>(eventListener.queueSize()), r -> ThreadHelper.getDemonThreadSingle(r, this.m.getDeclaringClass().getSimpleName() + "#" + this.m.getName() + "-Listener-Thread"), (r, executor) -> Log.log("Event of type " + this.m.getParameterTypes()[0].getSimpleName() + " rejected from " + this.m.getDeclaringClass().getSimpleName() + "#" + this.m.getName(), new Exception("Stack Trace Helper")));
         }
         void handle(E event) {
             this.executorService.execute(() -> {

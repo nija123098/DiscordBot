@@ -21,11 +21,9 @@ import java.awt.*;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -43,8 +41,8 @@ public class Launcher {
     public static final String EVELYN_VERSION = "1.0.0";
     public static final String BASE_PACKAGE = "com.github.nija123098.evelyn";
     private static final CacheHelper.ContainmentCache<User> SYSTEM_PERM_USERS = new CacheHelper.ContainmentCache<>(300_000);// 5 min
-    private static final Set<Runnable> STARTUPS = new HashSet<>();
-    private static final Set<Runnable> ASYNC_STARTUPS = new HashSet<>();
+    private static final Map<Runnable, Exception> STARTUPS = new ConcurrentHashMap<>();// the alternative is a set backed by a concurrent hash map
+    private static final Set<Runnable> POST_STARTUPS = new HashSet<>();
     private static final Set<Runnable> SHUTDOWNS = new HashSet<>();
     private static final AtomicBoolean IS_READY = new AtomicBoolean(), IS_STARTING_UP = new AtomicBoolean();
     private static final AtomicReference<ScheduledFuture<?>> SHUTDOWN_TASK = new AtomicReference<>();
@@ -56,8 +54,10 @@ public class Launcher {
      * @param runnable the {@link Runnable} to run on startup.
      */
     public static void registerStartup(Runnable runnable) {
-        if (IS_STARTING_UP.get()) runnable.run();
-        else STARTUPS.add(runnable);
+        if (IS_STARTING_UP.get()) {
+            runnable.run();
+            Log.log("Running startup after started up on registration", new Exception("Stack Trace Helper"));
+        } else STARTUPS.put(runnable, new Exception("Stack Trace Helper"));
     }
 
     /**
@@ -66,9 +66,11 @@ public class Launcher {
      *
      * @param runnable the {@link Runnable} to run on startup.
      */
-    public static void registerAsyncStartup(Runnable runnable) {
-        if (IS_STARTING_UP.get()) runnable.run();
-        else ASYNC_STARTUPS.add(runnable);
+    public static void registerPostStartup(Runnable runnable) {
+        if (IS_STARTING_UP.get()) {
+            runnable.run();
+            Log.log("Running post startup after started up on registration", new Exception("Stack Trace Helper"));
+        } else POST_STARTUPS.add(runnable);
     }
     /**
      * Registers a shutdown {@link Runnable} which will be
@@ -184,12 +186,29 @@ public class Launcher {
         ShiftChangeManager.waitForPredecessorShutdown();
         DiscordAdapter.initialize();// EVERYTHING
         IS_STARTING_UP.set(true);
-        STARTUPS.forEach(Runnable::run);
-        ExecutorService executorService = new ThreadPoolExecutor(0, ASYNC_STARTUPS.size(), 0, TimeUnit.MILLISECONDS, new BlockingArrayQueue<>(ASYNC_STARTUPS.size()), r -> ThreadHelper.getDemonThread(r, "Async-Startup-Thread"));
-        ASYNC_STARTUPS.forEach(runnable -> executorService.submit(() -> {
+        Object startupLock = new Object();
+        STARTUPS.forEach((runnable, e) -> ThreadHelper.getDemonThread(() -> {
+            long time = System.currentTimeMillis();
             runnable.run();
-            ASYNC_STARTUPS.remove(runnable);
-            if (ASYNC_STARTUPS.isEmpty()) {
+            if (System.currentTimeMillis() - time > 10_000) Log.log("Startup took longer then 10_000 millis, showing registration stack trace", e);
+            STARTUPS.remove(runnable);
+            if (STARTUPS.isEmpty()) synchronized (startupLock) {
+                CareLess.lessSleep(10);// wait for lock
+                startupLock.notifyAll();
+            }
+        }, "Pre-Startup-Task").start());
+        synchronized (startupLock) {
+            try {
+                startupLock.wait();
+            } catch (InterruptedException e) {
+                Log.log("Wait interrupted for startups, current complete: " + STARTUPS.size() + " resuming", e);
+            }
+        }
+        ExecutorService executorService = new ThreadPoolExecutor(0, POST_STARTUPS.size(), 0, TimeUnit.MILLISECONDS, new BlockingArrayQueue<>(POST_STARTUPS.size()), r -> ThreadHelper.getDemonThread(r, "Async-Startup-Thread"));
+        POST_STARTUPS.forEach(runnable -> executorService.submit(() -> {
+            runnable.run();
+            POST_STARTUPS.remove(runnable);
+            if (POST_STARTUPS.isEmpty()) {
                 Log.log("All async start ups completed");
                 executorService.shutdown();
             }

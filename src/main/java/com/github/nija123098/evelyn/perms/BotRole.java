@@ -69,8 +69,8 @@ public enum BotRole {// todo make more efficient
         this.isTrueRank = isTrueRank;
         this.isGlobalFlag = isGlobalFlag;
         this.isGuildFlag = isGuildFlag;
-        this.detect = (user, guild) -> (this.isGlobalFlag && ConfigHandler.getSetting(GlobalBotRoleConfig.class, user).contains(this)) || (this.isGuildFlag && guild != null && ConfigHandler.getSetting(GuildBotRoleConfig.class, GuildUser.getGuildUser(guild, user)).contains(this));
-        this.change = (user, guild) -> required.get().hasRequiredRole(user, guild);// method reference doesn't work
+        this.detect = (user, guild) -> (this.isGlobalFlag && ConfigHandler.getSetting(GlobalBotRoleConfig.class, user).contains(this)) || (this.isGuildFlag && guild != null && guild.getUsers().contains(user) && ConfigHandler.getSetting(GuildBotRoleConfig.class, GuildUser.getGuildUser(guild, user)).contains(this));
+        this.change = (user, guild) -> required.get().hasRequiredRole(user, guild);
     }
     BotRole() {
         if (this.guildImportant) {

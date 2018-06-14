@@ -24,7 +24,7 @@ import java.util.Set;
 public class StreamingAssignRoleConfig extends AbstractConfig<Role, Guild> {
     public StreamingAssignRoleConfig() {
         super("streaming_role", "Streaming Role", ConfigCategory.MODERATION, (Role) null, "The role to assign a streaming user");
-        Launcher.registerAsyncStartup(() -> ConfigHandler.getNonDefaultSettings(StreamerConfig.class).keySet().forEach(user -> check(user, user.getPresence(), null)));
+        Launcher.registerPostStartup(() -> ConfigHandler.getNonDefaultSettings(StreamerConfig.class).keySet().forEach(user -> check(user, user.getPresence(), null)));
         Launcher.registerStartup(() -> this.getNonDefaultSettings().keySet().forEach(DiscordAdapter::managePresences));
     }
 

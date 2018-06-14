@@ -16,6 +16,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.*;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventDistributor;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordVoiceLeave;
+import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordVoiceMove;
 import com.github.nija123098.evelyn.exception.ArgumentException;
 import com.github.nija123098.evelyn.exception.GhostException;
 import com.github.nija123098.evelyn.launcher.Launcher;
@@ -64,7 +65,7 @@ public class GuildAudioManager extends AudioEventAdapter{
         PLAYER_MANAGER.registerSourceManager(new LocalAudioSourceManager());
         AbstractConfig<List<Track>, VoiceChannel> queueConfig = ConfigHandler.getConfig(RebootPlayQueueConfig.class);
         AbstractConfig<VoiceChannel, Guild> presenceConfig = ConfigHandler.getConfig(RebootInVoiceChannelConfig.class);
-        Launcher.registerAsyncStartup(() -> presenceConfig.getNonDefaultSettings().forEach((guild, channel) -> {
+        Launcher.registerPostStartup(() -> presenceConfig.getNonDefaultSettings().forEach((guild, channel) -> {
             presenceConfig.reset(guild);
             if (channel == null) {
                 Log.log("Channel skipped due to being null for rejoin in " + guild.getName() + " " + guild.getID());
@@ -107,6 +108,7 @@ public class GuildAudioManager extends AudioEventAdapter{
         if (ConfigProvider.BOT_SETTINGS.ghostModeEnabled()) throw new GhostException();
         GuildAudioManager current = getManager(channel.getGuild());
         if (current != null) {
+            if (DiscordClient.getOurUser().isMuted(channel.getGuild())) throw new ArgumentException("I won't join the channel until I am no longer server muted");
             if (!current.voiceChannel().isConnected()) MAP.replace(channel.getID(), new GuildAudioManager(channel));
             if (!current.channel.equals(channel)) {
                 if (make) throw new ArgumentException("You must be in the voice channel with me to use that command");
@@ -146,10 +148,10 @@ public class GuildAudioManager extends AudioEventAdapter{
     private final AudioProvider audioProvider;
     private final VoiceChannel channel;
     private final AudioPlayer lavaPlayer;
-    private final List<Message> currentDisplays = new ArrayList<>(3);
+    private final List<Message> currentDisplays = new LinkedList<>();
     private final Set<User> skipSet = ConcurrentHashMap.newKeySet();
     private final List<LangString> speeches = new CopyOnWriteArrayList<>();
-    private final List<Track> queue = new CopyOnWriteArrayList<>();
+    private final List<Track> queue = new CopyOnWriteArrayList<>();// need concurrent linked list
     private final List<LangString> interrupts = new CopyOnWriteArrayList<>();
     private Track current, paused, next;
     private long pausePosition;
@@ -294,7 +296,10 @@ public class GuildAudioManager extends AudioEventAdapter{
                 CurrentCommand.command(this.getGuild(), maker, current);
                 maker.send();
                 this.currentDisplays.add(maker.sentMessage());
-                if (this.currentDisplays.size() > 2) this.currentDisplays.remove(0).delete();
+                if (this.currentDisplays.size() > 2) {
+                    Message message = this.currentDisplays.remove(0);
+                    if (message != null) message.delete();// safety for message fail
+                }
             }
         }
     }
@@ -501,6 +506,15 @@ public class GuildAudioManager extends AudioEventAdapter{
         }
         manager.skipSet.remove(event.getUser());
         manager.checkSkip();
+    }
+    @EventListener
+    public static void handle(DiscordVoiceMove event) {
+        GuildAudioManager manager = MAP.get(event.getGuild().getID());
+        if (manager == null) return;
+        if (event.getUser().equals(DiscordClient.getOurUser())) {
+            manager.leaving = true;
+            manager.leave();
+        }
     }
     private static final AudioFrame NULL = new ImmutableAudioFrame(0, new byte[0], 0, null);
     public class AudioProvider implements IAudioProvider {

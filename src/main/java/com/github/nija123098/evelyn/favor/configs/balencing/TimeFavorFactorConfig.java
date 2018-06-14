@@ -27,7 +27,7 @@ public class TimeFavorFactorConfig extends AbstractConfig<Float, Guild> {
     private static final AtomicReference<ScheduledFuture> SCHEDULE_FUTURE = new AtomicReference<>();
     public TimeFavorFactorConfig() {
         super("time_favor_factor", "Time Favor Factor", ConfigCategory.FAVOR, 0F, "The time per 15min a user has been in the server without leaving");// .007F
-        Launcher.registerAsyncStartup(() -> {
+        Launcher.registerPostStartup(() -> {
             this.getNonDefaultSettings().forEach((guild, val) -> guild.getUsers().stream().map(user -> GuildUser.getGuildUser(guild, user)).forEach(DEPENDENTS::add));
             calculateFuture();
         });

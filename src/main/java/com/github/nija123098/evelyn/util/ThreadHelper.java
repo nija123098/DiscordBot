@@ -6,7 +6,6 @@ import sun.nio.ch.Interruptible;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,8 +24,8 @@ public class ThreadHelper {
         thread.setDaemon(true);
         return thread;
     }
-    private static final Set<Thread> SETUP_THREADS = new HashSet<>();
-    private static final Set<Thread> ENABLED_THREADS = new HashSet<>();
+    private static final Set<Thread> SETUP_THREADS = ConcurrentHashMap.newKeySet();
+    private static final Set<Thread> ENABLED_THREADS = ConcurrentHashMap.newKeySet();
     public static void enableInterruptLogging(Thread thread) {
         if (!ConfigProvider.BOT_SETTINGS.interruptLogging()) return;
         if (!SETUP_THREADS.contains(thread)) {
@@ -60,9 +59,9 @@ public class ThreadHelper {
         @Override
         public void interrupt(Thread thread) {
             if (ENABLED_THREADS.contains(thread)) {
-                Log.log("Thread " + thread.getName() + " being interrupted by " + Thread.currentThread().getName(), new Exception());
+                Log.log("Thread " + thread.getName() + " being interrupted by " + Thread.currentThread().getName(), new Exception("Stack Trace Helper"));
             }
-            this.interruptible.interrupt(thread);
+            if (this.interruptible != null) this.interruptible.interrupt(thread);
         }
     }
 }

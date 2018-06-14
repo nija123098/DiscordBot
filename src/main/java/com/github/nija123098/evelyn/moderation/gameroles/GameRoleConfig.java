@@ -25,7 +25,7 @@ public class GameRoleConfig extends AbstractConfig<Boolean, Role> {
     private Map<Guild, Set<Role>> roles = new ConcurrentHashMap<>();
     public GameRoleConfig() {
         super("game_role", "", ConfigCategory.GAME_TEMPORARY_CHANNELS, false, "Automatically assigns the role to users playing the Role's title game");
-        Launcher.registerAsyncStartup(() -> ConfigHandler.getNonDefaultSettings(UserHasGameRoleConfig.class).keySet().forEach(user -> check(user, user.getPresence(), null)));
+        Launcher.registerPostStartup(() -> ConfigHandler.getNonDefaultSettings(UserHasGameRoleConfig.class).keySet().forEach(user -> check(user, user.getPresence(), null)));
         Launcher.registerStartup(() -> this.getNonDefaultSettings().forEach((role, aBoolean) -> this.roles.computeIfAbsent(role.getGuild(), guild -> new HashSet<>()).add(role)));
         Launcher.registerStartup(() -> this.getNonDefaultSettings().keySet().stream().map(Role::getGuild).distinct().forEach(DiscordAdapter::managePresences));
     }// concurrency of roles makes the roles set concurrency safe

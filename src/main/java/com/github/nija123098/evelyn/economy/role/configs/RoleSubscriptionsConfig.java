@@ -22,7 +22,7 @@ public class RoleSubscriptionsConfig extends AbstractConfig<Map<Role, Long>, Gui
     private static final ScheduledExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadScheduledExecutor(r -> ThreadHelper.getDemonThreadSingle(r, "Role-Subscriptions-Config-Thread"));
     public RoleSubscriptionsConfig() {
         super("role_subscriptions", "", ConfigCategory.STAT_TRACKING, new HashMap<>(), "The subscriptions for subscribed roles for a guild user.");
-        Launcher.registerAsyncStartup(() -> {
+        Launcher.registerPostStartup(() -> {
             long current = System.currentTimeMillis();
             this.getNonDefaultSettings().forEach((guildUser, map) -> map.forEach((role, expiration) -> scheduleRemoval(expiration - current, guildUser, role)));
         });

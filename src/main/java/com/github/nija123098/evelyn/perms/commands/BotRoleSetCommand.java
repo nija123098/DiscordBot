@@ -8,8 +8,6 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.perms.BotRole;
 
-import static com.github.nija123098.evelyn.perms.BotRole.setRole;
-
 /**
  * @author nija123098
  * @since 1.0.0
@@ -21,7 +19,7 @@ public class BotRoleSetCommand extends AbstractCommand {
 
     @Command
     public void command(User setter, @Argument User user, @Argument Boolean add, @Argument BotRole role, Guild guild, MessageMaker maker) {
-        setRole(role, add, user, setter, guild);
+        BotRole.setRole(role, add, user, setter, guild);
         BotRoleCommand.command(user, guild, maker);
     }
 }
