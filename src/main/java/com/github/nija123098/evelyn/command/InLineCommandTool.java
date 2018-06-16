@@ -1,6 +1,5 @@
 package com.github.nija123098.evelyn.command;
 
-import com.github.nija123098.evelyn.discordobjects.DiscordAdapter;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Message;
@@ -20,7 +19,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class InLineCommandTool {
-    private static final long TIMEOUT = 300_000;
+    private static final long TIMEOUT = 180_000;
     private static final Map<Channel, Map<User, InLineCommandTool>> map = new ConcurrentHashMap<>();
     static {
         EventDistributor.register(InLineCommandTool.class);
@@ -39,7 +38,6 @@ public class InLineCommandTool {
     private final AtomicBoolean didFind = new AtomicBoolean(), allowDefault = new AtomicBoolean(), usingDefault = new AtomicBoolean();
     private MessageMaker messageMaker;
     public InLineCommandTool(ContextPack contextPack) {
-        DiscordAdapter.increaseParserPoolSize();
         Map<User, InLineCommandTool> userMap = map.computeIfAbsent(contextPack.getChannel(), c -> new ConcurrentHashMap<>());
         if (userMap.containsKey(contextPack.getUser())) throw new ArgumentException("You can not be in two command sessions at once per server");
         userMap.put(contextPack.getUser(), this);
@@ -104,7 +102,6 @@ public class InLineCommandTool {
         Message message = this.messageMaker.sentMessage();
         if (message != null) message.delete();
         if (map.get(this.contextPack.getChannel()).size() == 1) map.remove(this.contextPack.getChannel());
-        DiscordAdapter.decreaseParserPoolSize();
     }
 
     public MessageMaker getMaker() {

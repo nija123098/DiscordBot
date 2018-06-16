@@ -71,9 +71,8 @@ import java.util.stream.Collectors;
  * @since 1.0.0
  */
 public class DiscordAdapter {
-    private static final int MIN_MESSAGE_PARSE_THREADS = Runtime.getRuntime().availableProcessors();
-    private static final ThreadPoolExecutor MESSAGE_PARSE_EXECUTOR = new ThreadPoolExecutor(MIN_MESSAGE_PARSE_THREADS, MIN_MESSAGE_PARSE_THREADS * 2, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<>(), r -> ThreadHelper.getDemonThread(r, "Message-Parse"));
-    private static final Map<IMessage, Future<?>> MESSAGE_PARSE_FUTURES = new ConcurrentHashMap<>();
+    private static final ScheduledExecutorService MESSAGE_PARSE_INTERRUPTER = Executors.newSingleThreadScheduledExecutor(r -> ThreadHelper.getDemonThreadSingle(r, "Message-Parse-Interrupter"));
+    private static final BlockingQueue<MessageReceivedEvent> MESSAGE_RECEIVED_QUEUE = new ArrayBlockingQueue<>(20);// threads should remove from this immediately
     private static final ScheduledExecutorService PLAY_TEXT_EXECUTOR = Executors.newSingleThreadScheduledExecutor(r -> ThreadHelper.getDemonThreadSingle(r, "Play-Text-Changer-Thread"));
     private static final Map<Class<? extends Event>, Constructor<? extends BotEvent>> EVENT_MAP;
     private static final long PLAY_TEXT_SPEED = 60_000, GUILD_SAVE_SPEED = 3_600_000;// 1 hour
@@ -199,7 +198,6 @@ public class DiscordAdapter {
         EventDistributor.distribute(new DiscordReactionEvent(event));
     }
 
-
     private static final Map<IUser, Boolean> MANAGE_PRESENCE_CACHE = new ConcurrentHashMap<>();
     private static boolean shouldManagePresence(IUser iUser) {
         return !iUser.isBot() && User.getUser(iUser).getGuilds().stream().anyMatch(guild -> !ConfigHandler.getSetting(GuildIgnoredConfig.class, guild));
@@ -222,41 +220,57 @@ public class DiscordAdapter {
      * then invoked if it is read as a command,
      * then distributed to other {@link MessageReceivedEvent} listeners.
      *
-     * @param event the Discord4J event to listen for.
+     * @param e the Discord4J event to listen for.
      */
     @EventSubscriber
-    public static void handle(MessageReceivedEvent event){
-        if (!Launcher.isReady() || event.getMessage().getContent() == null || (event.getAuthor().isBot() && event.getAuthor().getLongID() != ConfigProvider.BOT_SETTINGS.managementBot())) return;
-        MESSAGE_PARSE_FUTURES.put(event.getMessage(), MESSAGE_PARSE_EXECUTOR.submit(() -> {
-            if (event.getMessage().getContent().isEmpty()) DeletePinNotificationConfig.handle(new DiscordMessageReceived(event));
-            DiscordMessageReceived receivedEvent = new DiscordMessageReceived(event);
-            if (MessageMonitor.monitor(receivedEvent)) return;
-            Boolean isCommand = CommandHandler.handle(receivedEvent);
-            if (isCommand == null){
-                String thought = receivedEvent.getMessage().getContent();
-                if (ChatBot.mayChat(receivedEvent.getChannel(), receivedEvent.getMessage().getContent())) {
-                    new MessageMaker(receivedEvent.getChannel()).appendRaw(ChatBot.getChatBot(receivedEvent.getChannel()).think(thought)).send();
-                    receivedEvent.setCommand(true);
-                    isCommand = true;
-                } else isCommand = false;
-            }
-            receivedEvent.setCommand(isCommand);
-            if (!isCommand && event.getMessage().getMentions().contains(DiscordClient.getOurUser().user()) && !event.getMessage().mentionsEveryone() && !event.getMessage().mentionsHere()) {
-                ExceptionWrapper.wrap(() -> event.getMessage().addReaction(ReactionEmoji.of(EmoticonHelper.getChars("eyes", false))));
-            }// This does the :eyes: on mention now.
-            EventDistributor.distribute(receivedEvent);
-            MESSAGE_PARSE_FUTURES.remove(event.getMessage());
-            if (MESSAGE_PARSE_FUTURES.size() > MIN_MESSAGE_PARSE_THREADS) {
-                Log.log("Starting shutdown for blocking processes over 330_000 millis");// mirror value below, should be easy enough
-                MESSAGE_PARSE_FUTURES.forEach((iMessage, future) -> {
-                    if (System.currentTimeMillis() - iMessage.getCreationDate().toEpochMilli() > 330_000) {
-                        future.cancel(true);
-                        Log.log("Shutting down thread parsing message " + iMessage.getContent());
-                        MESSAGE_PARSE_FUTURES.remove(iMessage);
+    public static void handle(MessageReceivedEvent e){
+        if (!Launcher.isReady() || e.getMessage().getContent() == null || (e.getAuthor().isBot() && e.getAuthor().getLongID() != ConfigProvider.BOT_SETTINGS.managementBot())) return;
+        MESSAGE_RECEIVED_QUEUE.add(e);
+        if (!MESSAGE_RECEIVED_QUEUE.isEmpty()) {
+            ThreadHelper.getDemonThread(() -> {// though this won't offer back pressure due to request amount
+                MessageReceivedEvent event = null;// resource monitoring will be sufficient
+                while (true) try {// so long as threads are terminated on time out and reported properly
+                    try {// and sharding and resource scaling are done correctly
+                        event = MESSAGE_RECEIVED_QUEUE.poll(5, TimeUnit.MINUTES);// won't interrupt
+                    } catch (InterruptedException ex) {
+                        Log.log("Unexpected interruption waiting for message");
                     }
-                });
-            }
-        }));
+                    if (event == null) return;// kill
+                    Thread thread = Thread.currentThread();
+                    Future<?> future = MESSAGE_PARSE_INTERRUPTER.schedule(thread::interrupt, 3, TimeUnit.MINUTES);
+                    if (event.getMessage().getContent().isEmpty()) DeletePinNotificationConfig.handle(new DiscordMessageReceived(event));
+                    DiscordMessageReceived receivedEvent = new DiscordMessageReceived(event);
+                    if (MessageMonitor.monitor(receivedEvent)) return;
+                    Boolean isCommand = CommandHandler.handle(receivedEvent);
+                    if (isCommand == null){
+                        String thought = receivedEvent.getMessage().getContent();
+                        if (ChatBot.mayChat(receivedEvent.getChannel(), receivedEvent.getMessage().getContent())) {
+                            new MessageMaker(receivedEvent.getChannel()).appendRaw(ChatBot.getChatBot(receivedEvent.getChannel()).think(thought)).send();
+                            receivedEvent.setCommand(true);
+                            isCommand = true;
+                        } else isCommand = false;
+                    }
+                    receivedEvent.setCommand(isCommand);
+                    if (!isCommand && event.getMessage().getMentions().contains(DiscordClient.getOurUser().user()) && !event.getMessage().mentionsEveryone() && !event.getMessage().mentionsHere()) {
+                        IMessage message = event.getMessage();
+                        ExceptionWrapper.wrap(() -> message.addReaction(ReactionEmoji.of(EmoticonHelper.getChars("eyes", false))));
+                    }// This does the :eyes: on mention now.
+                    EventDistributor.distribute(receivedEvent);
+                    future.cancel(false);
+                } catch (Exception ex) {
+                    if (event != null) {
+                        Throwable cause;
+                        while ((cause = ex.getCause()) != null) {
+                            if (cause instanceof InterruptedException) {
+                                Log.log("Message blocked too long while processing for command: " + event.getMessage().getContent());
+                            }
+                        }
+                    }
+                    Log.log("Unexpected exception thrown reading message", ex);
+                    return;
+                }
+            }, "Message-Parse").start();
+        }
     }
 
     /**
@@ -274,14 +288,5 @@ public class DiscordAdapter {
                 throw new RuntimeException("Improperly built BotEvent constructor", e);
             }
         }
-    }
-
-    public static void increaseParserPoolSize() {
-        MESSAGE_PARSE_EXECUTOR.setCorePoolSize(MESSAGE_PARSE_EXECUTOR.getCorePoolSize() + 1);
-        MESSAGE_PARSE_EXECUTOR.setMaximumPoolSize(MESSAGE_PARSE_EXECUTOR.getMaximumPoolSize() + 1);
-    }
-    public static void decreaseParserPoolSize() {
-        MESSAGE_PARSE_EXECUTOR.setCorePoolSize(MESSAGE_PARSE_EXECUTOR.getCorePoolSize() - 1);
-        MESSAGE_PARSE_EXECUTOR.setMaximumPoolSize(MESSAGE_PARSE_EXECUTOR.getMaximumPoolSize() - 1);
     }
 }
