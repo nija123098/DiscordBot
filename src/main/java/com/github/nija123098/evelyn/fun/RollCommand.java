@@ -10,6 +10,7 @@ import com.github.nija123098.evelyn.command.annotations.Context;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
+import com.github.nija123098.evelyn.util.CareLess;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
 import com.github.nija123098.evelyn.util.Log;
 import com.github.nija123098.evelyn.util.Rand;
@@ -83,7 +84,9 @@ public class RollCommand extends AbstractCommand {
             }
         }
         GuildAudioManager manager = GuildAudioManager.getManager(guild);
-        if (manager != null && manager.currentTrack() == null && Rand.getRand(1000) == 0) manager.queueTrack(new YoutubeTrack("dQw4w9WgXcQ"));
+        if (manager != null && manager.currentTrack() == null && Rand.getRand(1000) == 0){
+            CareLess.something(() -> manager.queueTrack(new YoutubeTrack("dQw4w9WgXcQ")));
+        }
     }
 
     private static String multiDice(int dices, int sides, int bonus) {

@@ -18,6 +18,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordVoiceLeave;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordVoiceMove;
 import com.github.nija123098.evelyn.exception.ArgumentException;
+import com.github.nija123098.evelyn.exception.ContextException;
 import com.github.nija123098.evelyn.exception.GhostException;
 import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.moderation.logging.MusicChannelConfig;
@@ -46,7 +47,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * The manager for a single guild for a single voice connection.
@@ -57,7 +57,7 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class GuildAudioManager extends AudioEventAdapter{
     private static final int BUFFER_SIZE = 40;
-    private static final Map<String, GuildAudioManager> MAP = new ConcurrentHashMap<>();
+    private static final Map<Guild, GuildAudioManager> MAP = new ConcurrentHashMap<>();
     public static final DefaultAudioPlayerManager PLAYER_MANAGER = new DefaultAudioPlayerManager();
     static {
         PLAYER_MANAGER.registerSourceManager(new YoutubeAudioSourceManager(false));
@@ -75,7 +75,7 @@ public class GuildAudioManager extends AudioEventAdapter{
             queueConfig.reset(channel);
             if (!hasValidListeners(channel)) return;
             GuildAudioManager manager = getManager(channel);
-            if (tracks == null || tracks.isEmpty()) manager.queueSpeech(new LangString(true, "I am back, just as I promised"));
+            if (tracks == null || tracks.isEmpty()) CareLess.something(() -> manager.queueSpeech(new LangString(true, "I am back, just as I promised")));
             else {
                 tracks = new LinkedList<>(tracks);
                 manager.queueTrack(tracks.remove(0));
@@ -108,8 +108,7 @@ public class GuildAudioManager extends AudioEventAdapter{
         if (ConfigProvider.BOT_SETTINGS.ghostModeEnabled()) throw new GhostException();
         GuildAudioManager current = getManager(channel.getGuild());
         if (current != null) {
-            if (DiscordClient.getOurUser().isMuted(channel.getGuild())) throw new ArgumentException("I won't join the channel until I am no longer server muted");
-            if (!current.voiceChannel().isConnected()) MAP.replace(channel.getID(), new GuildAudioManager(channel));
+            if (!current.voiceChannel().isConnected()) MAP.replace(channel.getGuild(), new GuildAudioManager(channel));
             if (!current.channel.equals(channel)) {
                 if (make) throw new ArgumentException("You must be in the voice channel with me to use that command");
                 else return null;
@@ -118,8 +117,7 @@ public class GuildAudioManager extends AudioEventAdapter{
         }
         if (make) {
             if (!hasValidListeners(channel)) throw new ArgumentException("Someone has to be able to hear me in that voice channel");
-            AtomicReference<VoiceChannel> reference = new AtomicReference<>(channel);
-            return MAP.computeIfAbsent(channel.getGuild().getID(), s -> new GuildAudioManager(reference.get()));
+            return MAP.computeIfAbsent(channel.getGuild(), s -> new GuildAudioManager(channel));
         }
         return null;
     }
@@ -143,7 +141,7 @@ public class GuildAudioManager extends AudioEventAdapter{
      */
     public static GuildAudioManager getManager(Guild guild) {
         if (guild == null) return null;
-        return MAP.get(guild.getID());
+        return MAP.get(guild);
     }
     private final AudioProvider audioProvider;
     private final VoiceChannel channel;
@@ -172,7 +170,7 @@ public class GuildAudioManager extends AudioEventAdapter{
         ConfigHandler.reset(RebootPlayQueueConfig.class, this.channel);
         if (this.leaving || !hasValidListeners(this.channel) || ConfigHandler.getSetting(GreetingsVoiceConfig.class, channel.getGuild())) {
             this.leaving = true;
-            MAP.remove(this.channel.getGuild().getID());
+            MAP.remove(this.channel.getGuild());
             this.channel.leave();
             this.audioProvider.run.set(false);
             this.lavaPlayer.setPaused(true);
@@ -215,6 +213,7 @@ public class GuildAudioManager extends AudioEventAdapter{
      * @param string the thing the bot should say.
      */
     public void queueSpeech(LangString string) {
+        if (DiscordClient.getOurUser().isMuted(channel.getGuild())) throw new ContextException("I can not say anything until I am no longer server muted");
         if (this.current == null) this.queueTrack(new SpeechTrack(string, MessageMaker.getLang(null, this.channel)));
         else this.speeches.add(string);
     }
@@ -226,6 +225,7 @@ public class GuildAudioManager extends AudioEventAdapter{
      * @param track the track to queue or play next.
      */
     public void queueTrack(Track track) {
+        if (DiscordClient.getOurUser().isMuted(channel.getGuild())) throw new ContextException("I can not play music until I am no longer server muted");
         if (track == null) this.current = null;
         else {
             if (!track.isAvailable()) throw new ArgumentException("That track is no longer available, likely due to copyright claim");
@@ -275,6 +275,10 @@ public class GuildAudioManager extends AudioEventAdapter{
     }
 
     private void start(Track track, int position) {
+        if (DiscordClient.getOurUser().isMuted(this.getGuild())) {
+            this.clearQueue();
+            this.onFinish();
+        }
         if (!track.isAvailable()) this.onFinish();
         if (!this.loop) this.updateTrackBack(track);
         this.skipped = false;
@@ -498,7 +502,7 @@ public class GuildAudioManager extends AudioEventAdapter{
     }
     @EventListener
     public static void handle(DiscordVoiceLeave event) {
-        GuildAudioManager manager = MAP.get(event.getGuild().getID());
+        GuildAudioManager manager = MAP.get(event.getGuild());
         if (manager == null || !manager.channel.equals(event.getChannel())) return;
         if (!hasValidListeners(event.getChannel())) {
             manager.leaving = true;
@@ -509,11 +513,13 @@ public class GuildAudioManager extends AudioEventAdapter{
     }
     @EventListener
     public static void handle(DiscordVoiceMove event) {
-        GuildAudioManager manager = MAP.get(event.getGuild().getID());
+        GuildAudioManager manager = MAP.get(event.getGuild());
         if (manager == null) return;
         if (event.getUser().equals(DiscordClient.getOurUser())) {
             manager.leaving = true;
             manager.leave();
+            MAP.remove(manager.getGuild());// in case
+            if (event.getGuild().getConnectedVoiceChannel() != null) event.getGuild().getConnectedVoiceChannel().leave();
         }
     }
     private static final AudioFrame NULL = new ImmutableAudioFrame(0, new byte[0], 0, null);

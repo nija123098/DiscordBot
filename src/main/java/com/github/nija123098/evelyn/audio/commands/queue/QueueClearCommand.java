@@ -2,6 +2,7 @@ package com.github.nija123098.evelyn.audio.commands.queue;
 
 import com.github.nija123098.evelyn.command.AbstractCommand;
 import com.github.nija123098.evelyn.command.annotations.Command;
+import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.helpers.guildaudiomanager.GuildAudioManager;
 
 /**
@@ -14,7 +15,7 @@ public class QueueClearCommand extends AbstractCommand {
     }
 
     @Command
-    public void command(GuildAudioManager manager) {
+    public void command(GuildAudioManager manager, MessageMaker messageMaker) {
         manager.clearQueue();
     }
 }

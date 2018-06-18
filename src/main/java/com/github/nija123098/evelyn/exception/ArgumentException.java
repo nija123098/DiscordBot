@@ -57,10 +57,13 @@ public class ArgumentException extends UserIssueException {
         if (args == null) {
             return super.getMessage();
         }
-        StringBuilder s = new StringBuilder("Argument " + (this.parameter + 1) + " - " + super.getMessage() + "\nExpected arguments:  ");
-        for (Parameter arg : this.args) {
-            if (!arg.isAnnotationPresent(Argument.class)) continue;
-            s.append(arg.getClass().isAnnotationPresent(LaymanName.class) ? arg.getAnnotation(LaymanName.class).value() : arg.getType().getSimpleName() + ", ");
+        StringBuilder s = new StringBuilder("Argument " + (this.parameter + 1) + " - " + super.getMessage());
+        if (this.args != null) {
+            s.append("\nExpected arguments:  ");
+            for (Parameter arg : this.args) {
+                if (!arg.isAnnotationPresent(Argument.class)) continue;
+                s.append(arg.getClass().isAnnotationPresent(LaymanName.class) ? arg.getAnnotation(LaymanName.class).value() : arg.getType().getSimpleName() + ", ");
+            }
         }
         return s.substring(0, s.length() - 2);
     }

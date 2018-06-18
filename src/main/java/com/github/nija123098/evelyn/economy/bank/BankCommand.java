@@ -15,6 +15,7 @@ import com.github.nija123098.evelyn.economy.configs.*;
 import com.github.nija123098.evelyn.economy.event.configs.*;
 import com.github.nija123098.evelyn.tag.Tag;
 import com.github.nija123098.evelyn.tag.Tags;
+import com.github.nija123098.evelyn.util.CareLess;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
 import com.github.nija123098.evelyn.util.Time;
 
@@ -83,7 +84,7 @@ public class BankCommand extends AbstractCommand {
             if ((day - (currentMillis % day)) < 60000L) {
                 GuildAudioManager manager = GuildAudioManager.getManager(guild);
                 if (manager != null && manager.currentTrack() == null) {
-                    manager.queueTrack(new YoutubeTrack("9jK-NcRmVcw"));
+                    CareLess.something(() -> manager.queueTrack(new YoutubeTrack("9jK-NcRmVcw")));
                 }
                 maker.withImage(ConfigProvider.URLS.bankGif());
                 return;

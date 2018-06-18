@@ -62,7 +62,7 @@ public class AbstractCommand implements Tagable {
     private Set<AbstractCommand> subCommands;
     private final List<Tag> tags;
     private boolean prefixRequired = true;
-    private boolean okOnSuccess = false;
+    private boolean okOnSuccess = true;
     private boolean hasInLineTool = false;
 
     /**
@@ -575,6 +575,7 @@ public class AbstractCommand implements Tagable {
         try {
             Object object = this.method.invoke(this, objects);
             if (!this.okOnSuccess) Stream.of(objects).filter(MessageMaker.class::isInstance).map(o -> ((MessageMaker) o)).forEach(o -> (this.getTags().isEmpty() ? o : o.withColor(this.getTags().get(0).getColor())).send(true));
+            else if (Stream.of(objects).filter(MessageMaker.class::isInstance).count() == 0 && message != null) message.addReactionByName("ok_hand");
             if (this.hasInLineTool) Stream.of(objects).filter(InLineCommandTool.class::isInstance).map(o -> ((InLineCommandTool) o)).forEach(InLineCommandTool::release);
             return object;
         } catch (IllegalAccessException e) {
