@@ -12,6 +12,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.util.ExecuteShellCommand;
 import com.github.nija123098.evelyn.util.PastebinUtil;
 import com.github.nija123098.evelyn.util.PlatformDetector;
+import com.vdurmont.emoji.EmojiParser;
 
 import java.awt.*;
 
@@ -39,6 +40,7 @@ public class UpdateBotCommand extends AbstractCommand {
             } else {
                 if (PlatformDetector.isUnix() || PlatformDetector.isWindows()) {
                     ExecuteShellCommand.commandToExecute("cp " + ConfigProvider.UPDATE_SETTINGS.updateFolder() + "target/Evelyn.jar " + ConfigProvider.BOT_SETTINGS.botFolder() + "Evelyn.jar", ConfigProvider.BOT_SETTINGS.botFolder());
+                    ExecuteShellCommand.commandToExecute("chmod +x Evelyn.jar", ConfigProvider.BOT_SETTINGS.botFolder());
                     maker.append("The bot has been updated. Please allow 1-2 minutes for changes to take effect.");
                     ConfigHandler.setSetting(LastBotUpdaterUseConfig.class, GlobalConfigurable.GLOBAL, System.currentTimeMillis());
 
