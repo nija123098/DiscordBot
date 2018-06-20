@@ -38,7 +38,7 @@ public class UpdateBotCommand extends AbstractCommand {
                 maker.appendRaw("**The update was unsuccessful. Please view the build results here:**\n" + PastebinUtil.postToPastebin("Maven Compile Log", out));
             } else {
                 if (PlatformDetector.isUnix() || PlatformDetector.isWindows()) {
-                    ExecuteShellCommand.commandToExecute("cp " + ConfigProvider.UPDATE_SETTINGS.updateFolder() + "target/DiscordBot-1.0.0.jar " + ConfigProvider.BOT_SETTINGS.botFolder() + "Evelyn.jar", ConfigProvider.BOT_SETTINGS.botFolder());
+                    ExecuteShellCommand.commandToExecute("cp " + ConfigProvider.UPDATE_SETTINGS.updateFolder() + "target/Evelyn.jar " + ConfigProvider.BOT_SETTINGS.botFolder() + "Evelyn.jar", ConfigProvider.BOT_SETTINGS.botFolder());
                     maker.append("The bot has been updated. Please allow 1-2 minutes for changes to take effect.");
                     ConfigHandler.setSetting(LastBotUpdaterUseConfig.class, GlobalConfigurable.GLOBAL, System.currentTimeMillis());
 

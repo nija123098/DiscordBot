@@ -21,6 +21,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.*;
@@ -178,6 +179,9 @@ public class Launcher {
      * @param args the program arguments.
      */
     public static void main(String[] args) {
+        if (Locale.getDefault().getCountry().isEmpty()) {
+            Locale.setDefault(Locale.US);
+        }
         TemplateHandler.initialize();
         InvocationObjectGetter.initialize();
         ConfigHandler.initialize();//  changing
