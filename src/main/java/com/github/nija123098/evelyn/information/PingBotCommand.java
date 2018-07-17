@@ -22,6 +22,6 @@ public class PingBotCommand extends AbstractCommand {
         Instant sysTime = Instant.now();
         Instant messageTime = message.getCreationDate();
         long timeDiff = ChronoUnit.MILLIS.between(messageTime, sysTime);
-        maker.appendRaw(String.valueOf(timeDiff));
+        maker.shouldEmbed(false).appendRaw(String.valueOf(timeDiff));
     }
 }
