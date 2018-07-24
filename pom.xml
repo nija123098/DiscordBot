@@ -156,12 +156,12 @@
         <dependency><!-- https://mvnrepository.com/artifact/com.zaxxer/HikariCP -->
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
-            <version>3.1.0</version>
+            <version>3.2.0</version>
         </dependency>
         <dependency><!-- https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client -->
             <groupId>org.mariadb.jdbc</groupId>
             <artifactId>mariadb-java-client</artifactId>
-            <version>2.2.4</version>
+            <version>2.2.6</version>
         </dependency>
         <dependency>
             <groupId>net.swisstech</groupId>
