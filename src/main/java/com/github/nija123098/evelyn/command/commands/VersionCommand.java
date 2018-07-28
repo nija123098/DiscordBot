@@ -22,11 +22,17 @@ public class VersionCommand extends AbstractCommand {
     }
     @Command
     public void command(MessageMaker maker) {
-        String out = ExecuteShellCommand.commandToExecute("git rev-parse --short HEAD", ConfigProvider.UPDATE_SETTINGS.updateFolder());
-        maker.withColor(new Color(175, 30,5));
-        maker.getTitle().clear().appendRaw("\uD83D\uDEE0 Bot Version \uD83D\uDEE0");
-        maker.getNote().clear().appendRaw("Last Update");
-        maker.withTimestamp(ConfigHandler.getSetting(LastBotUpdaterUseConfig.class, GlobalConfigurable.GLOBAL));
-        maker.appendRaw("**" + out + "**");
+        if (ConfigProvider.BOT_SETTINGS.isRunningInContainer()) {
+            maker.withColor(new Color(175, 30,5));
+            maker.getTitle().clear().appendRaw("\uD83D\uDEE0 Bot Version \uD83D\uDEE0");
+            maker.appendRaw("This command will not work when Evelyn is running in a container. Sorry for the inconvenience.");
+        } else {
+            String out = ExecuteShellCommand.commandToExecute("git rev-parse --short HEAD", ConfigProvider.UPDATE_SETTINGS.updateFolder());
+            maker.withColor(new Color(175, 30,5));
+            maker.getTitle().clear().appendRaw("\uD83D\uDEE0 Bot Version \uD83D\uDEE0");
+            maker.getNote().clear().appendRaw("Last Update");
+            maker.withTimestamp(ConfigHandler.getSetting(LastBotUpdaterUseConfig.class, GlobalConfigurable.GLOBAL));
+            maker.appendRaw("**" + out + "**");
+        }
     }
 }

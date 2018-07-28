@@ -6,6 +6,7 @@ package com.github.nija123098.evelyn.botconfiguration.configinterfaces.botconfig
  */
 public interface BotSettings {
     String botToken();
+    Boolean isRunningInContainer();
     Boolean testModeEnabled();
     Integer numberOfShards();
     Integer evelynShardNumber();

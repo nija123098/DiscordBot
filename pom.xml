@@ -179,11 +179,6 @@
             <version>1.3</version>
         </dependency>
         <dependency>
-            <groupId>com.github.kennedyoliveira</groupId>
-            <artifactId>pastebin4j</artifactId>
-            <version>1.2.1</version><!-- or v1.2.1 -->
-        </dependency>
-        <dependency>
             <groupId>com.github.linkedin</groupId>
             <artifactId>URL-Detector</artifactId>
             <version>a8dec18cd7</version>
@@ -198,21 +193,6 @@
             </resource>
         </resources>
         <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>2.0.3.RELEASE</version>
-                <configuration>
-                    <executable>true</executable>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>

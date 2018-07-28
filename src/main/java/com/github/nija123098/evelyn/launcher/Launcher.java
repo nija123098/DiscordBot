@@ -230,7 +230,7 @@ public class Launcher {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        maker.getHeader().clear().append("Startup Log:\n" + PastebinUtil.postToPastebin("Startup Log", slog));
+        maker.getHeader().clear().append("Startup Log:\n" + HasteBin.post(slog));
         maker.getTitle().clear().append("⚠ Evelyn Started ⚠");
         maker.withTimestamp(System.currentTimeMillis());
         maker.withImage(ConfigProvider.URLS.startupGif());
