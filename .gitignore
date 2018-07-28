@@ -10,6 +10,7 @@ src/main/java/META-INF/MANIFEST.MF
 *.png
 *.sh
 *.yaml
+*.keep
 logs/
 sound/
 badges/
