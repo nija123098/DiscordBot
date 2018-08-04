@@ -8,10 +8,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Role;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.exception.ArgumentException;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.github.nija123098.evelyn.perms.BotRole.BOT_ADMIN;
@@ -24,7 +21,7 @@ import static java.util.Collections.emptySet;
  * @since 1.0.0
  */
 public class SpecialPermsContainer {
-    private Guild guild;
+    private final Guild guild;
     private Channel channel;
     private final Map<Channel, Map<Role, Set<String>>> allowCommandMap = new HashMap<>();
     private final Map<Channel, Map<Role, Set<String>>> denyCommandMap = new HashMap<>();
@@ -34,9 +31,6 @@ public class SpecialPermsContainer {
 
     public SpecialPermsContainer(Guild guild) {
         this.guild = guild;
-    }
-
-    protected SpecialPermsContainer() {
     }
 
     public Boolean getSpecialPermission(AbstractCommand command, Channel channel, User user) {
@@ -88,17 +82,17 @@ public class SpecialPermsContainer {
 
     public void addCommand(boolean allow, Channel channel, Role role, AbstractCommand command) {
         if (command.getBotRole().ordinal() >= BOT_ADMIN.ordinal())
-            throw new ArgumentException("That command is not able to be disabled");
+            throw new ArgumentException("You can not disable that command");
         Map<Channel, Map<Role, Set<String>>> first = allow ? this.allowCommandMap : this.denyCommandMap, second = allow ? this.denyCommandMap : this.allowCommandMap;
-        first.computeIfAbsent(channel, chan -> new ConcurrentHashMap<>()).get(role).add(command.getName());
-        second.get(channel).get(role).remove(command.getName());
+        first.computeIfAbsent(channel, chan -> new ConcurrentHashMap<>()).computeIfAbsent(role, r -> new HashSet<>()).add(command.getName());
+        second.getOrDefault(channel, Collections.emptyMap()).getOrDefault(role, Collections.emptySet()).remove(command.getName());
         clean();
     }
 
     public void addModule(boolean allow, Channel channel, Role role, ModuleLevel module) {
         Map<Channel, Map<Role, Set<ModuleLevel>>> first = allow ? this.allowModuleMap : this.denyModuleMap, second = allow ? this.allowModuleMap : this.denyModuleMap;
-        first.computeIfAbsent(channel, chan -> new ConcurrentHashMap<>()).get(role).add(module);
-        second.get(channel).get(role).remove(module);
+        first.computeIfAbsent(channel, chan -> new ConcurrentHashMap<>()).computeIfAbsent(role, r -> new HashSet<>()).add(module);
+        second.getOrDefault(channel, Collections.emptyMap()).getOrDefault(role, Collections.emptySet()).remove(module);
         clean();
     }
 
