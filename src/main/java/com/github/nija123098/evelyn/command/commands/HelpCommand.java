@@ -50,7 +50,7 @@ public class HelpCommand extends AbstractCommand {
                     commands.clear();
                 }
             }
-            maker.getNote().clear().appendRaw("For more details about a command use ").appendRaw((guild == null ? "" : ConfigHandler.getSetting(GuildPrefixConfig.class, guild)) + "help <command>");
+            maker.getNote().clear().appendRaw("For general help do \"@Evelyn guide\".  For more details about a command use ").appendRaw((guild == null ? "" : ConfigHandler.getSetting(GuildPrefixConfig.class, guild)) + "help <command>");
             ModuleLevel.getGeneralApproved(user, guild).stream().filter(level -> level != ModuleLevel.NONE).forEach(level -> maker.withReactionBehavior(level.getIconName(), (add, reaction, u) -> {
                 if (!u.equals(user)) return;
                 maker.getHeader().clear();

@@ -16,7 +16,7 @@ import com.github.nija123098.evelyn.moderation.messagefiltering.configs.*;
  */
 public class MessageMonitoringUrlBlacklistCommand extends AbstractCommand {
     public MessageMonitoringUrlBlacklistCommand() {
-        super("urlwhitelist", ModuleLevel.ADMINISTRATIVE, "mmurlbl, urlblack, linkblacklist, linkblack", null, "Displays a list of blacklisted URLs");
+        super("urlblacklist", ModuleLevel.ADMINISTRATIVE, "mmurlbl, urlblack, linkblacklist, linkblack", null, "Displays a list of blacklisted URLs");
     }
     @Command
     public static void command(Guild guild, Channel channel, String in, MessageMaker maker) {
