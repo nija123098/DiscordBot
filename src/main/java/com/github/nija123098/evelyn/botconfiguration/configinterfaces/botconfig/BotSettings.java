@@ -25,4 +25,5 @@ public interface BotSettings {
     String feedbackChannel();
     Boolean interruptLogging();
     Long managementBot();
+    Integer instanceId();
 }

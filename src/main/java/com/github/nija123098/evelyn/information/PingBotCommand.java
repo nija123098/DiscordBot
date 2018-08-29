@@ -1,9 +1,12 @@
 package com.github.nija123098.evelyn.information;
 
+import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.command.AbstractCommand;
+import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
-import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Message;
+import sx.blah.discord.util.RequestBuffer;
+
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
@@ -18,10 +21,11 @@ public class PingBotCommand extends AbstractCommand {
     }
 
     @Command
-    public void command(MessageMaker maker, Message message) {
+    public void command(Message message, @Argument(optional = true) Integer integer) {
+        if (integer == null ? ConfigProvider.BOT_SETTINGS.ghostModeEnabled() : !integer.equals(ConfigProvider.BOT_SETTINGS.instanceId())) return;
         Instant sysTime = Instant.now();
         Instant messageTime = message.getCreationDate();
         long timeDiff = ChronoUnit.MILLIS.between(messageTime, sysTime);
-        maker.shouldEmbed(false).appendRaw(String.valueOf(timeDiff));
+        RequestBuffer.request(() -> message.getChannel().channel().sendMessage(String.valueOf(timeDiff)));
     }
 }
