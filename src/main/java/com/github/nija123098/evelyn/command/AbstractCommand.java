@@ -84,7 +84,6 @@ public class AbstractCommand implements Tagable {
         this.aAliases = absoluteAliases;
         this.eAliases = emoticonAliases;
         this.rAliases = relativeAliases;
-        this.name = name;
         this.help = help != null ? help : "No provided help for this command";
         Tags tags = this.getClass().getAnnotation(Tags.class);
         this.tags = tags == null ? Collections.emptyList() : Arrays.asList(tags.value());
@@ -436,6 +435,15 @@ public class AbstractCommand implements Tagable {
      */
     public boolean shouldLog() {
         return true;
+    }
+
+    /**
+     * Sets if this command should use an OK hand on success if no other output is given.
+     *
+     * @param okOnSuccess if OK hand should be used.
+     */
+    protected void setOkOnSuccess(boolean okOnSuccess) {
+        this.okOnSuccess = okOnSuccess;
     }
 
     /**

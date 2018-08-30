@@ -1,11 +1,9 @@
 package com.github.nija123098.evelyn.information;
 
-import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
 import com.github.nija123098.evelyn.command.AbstractCommand;
-import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
+import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Message;
-import sx.blah.discord.util.RequestBuffer;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -18,14 +16,14 @@ public class PingBotCommand extends AbstractCommand {
 
     public PingBotCommand() {
         super(PingCommand.class, "bot", null, null, null, "A plain version of the ping command for bots.");
+        this.setOkOnSuccess(false);
     }
 
     @Command
-    public void command(Message message, @Argument(optional = true) Integer integer) {
-        if (integer == null ? ConfigProvider.BOT_SETTINGS.ghostModeEnabled() : !integer.equals(ConfigProvider.BOT_SETTINGS.instanceId())) return;
+    public void command(MessageMaker messageMaker, Message message) {
         Instant sysTime = Instant.now();
         Instant messageTime = message.getCreationDate();
         long timeDiff = ChronoUnit.MILLIS.between(messageTime, sysTime);
-        RequestBuffer.request(() -> message.getChannel().channel().sendMessage(String.valueOf(timeDiff)));
+        messageMaker.shouldEmbed(false).appendRaw(String.valueOf(timeDiff));
     }
 }

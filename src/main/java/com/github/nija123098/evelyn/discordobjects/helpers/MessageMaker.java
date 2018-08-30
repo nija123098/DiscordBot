@@ -1,6 +1,7 @@
 package com.github.nija123098.evelyn.discordobjects.helpers;
 
 import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
+import com.github.nija123098.evelyn.command.InvokeInstanceCommand;
 import com.github.nija123098.evelyn.command.ProcessingHandler;
 import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.configs.guild.GuildLanguageConfig;
@@ -70,7 +71,7 @@ public class MessageMaker {
     private final Set<String> reactions = new HashSet<>(1);
     private Long deleteDelay;
     private File file;//                        by default embed
-    private boolean okHand, maySend, mustEmbed, shouldEmbed = true, forceCompile, compiled, colored, messageError, autoSend = true, translate;
+    private boolean okHand, maySend, mustEmbed, shouldEmbed = true, forceCompile, compiled, colored, messageError, autoSend = true, translate, ignoreGhostMode;
 
     /**
      * Builds the message maker and sets it up.
@@ -98,6 +99,7 @@ public class MessageMaker {
     }
     public MessageMaker(User user, Message origin) {
         this(user, origin.getChannel(), origin);
+        if (InvokeInstanceCommand.MESSAGES.contains(origin)) this.ignoreGhostMode = true;
     }
     public MessageMaker(Message message) {
         this(message.getAuthor(), message.getChannel(), message);
@@ -710,6 +712,15 @@ public class MessageMaker {
         return this.withPage(page - 1);
     }
 
+    /**
+     * Sets if this instance should send the message described regardless of ghost mode settings.
+     *
+     * @param ignoreGhostMode if this should send the message despite ghost mode settings.
+     */
+    public void setIgnoreGhostMode(boolean ignoreGhostMode) {
+        this.ignoreGhostMode = ignoreGhostMode;
+    }
+
     // getting
 
     /**
@@ -767,7 +778,7 @@ public class MessageMaker {
      * @param page the page to sent.
      */
     private void send(int page) {
-        if (ConfigProvider.BOT_SETTINGS.ghostModeEnabled() && !DiscordClient.getApplicationOwner().equals(this.user)) return;
+        if (ConfigProvider.BOT_SETTINGS.ghostModeEnabled() && !this.ignoreGhostMode) return;
         if (!this.maySend) {
             if (this.origin != null && this.origin.getChannel().getModifiedPermissions(DiscordClient.getOurUser().user()).contains(Permissions.ADD_REACTIONS)) ExceptionWrapper.wrap(() -> this.origin.addReaction(ReactionEmoji.of(EmoticonHelper.getChars("ok_hand", false))));
             return;

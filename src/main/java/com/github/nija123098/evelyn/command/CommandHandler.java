@@ -253,7 +253,7 @@ public class CommandHandler {
                         }
                     }catch(Exception ignored) {}
                     return false;
-                }else if (string.toLowerCase().startsWith("@evelyn")) string = string.substring(6);
+                }else if (string.toLowerCase().startsWith("@evelyn")) string = string.substring(7);
                 else if (DiscordClient.getOurUser().getNickname(message.getGuild()) != null && string.toLowerCase().startsWith("@" + DiscordClient.getOurUser().getNickname(message.getGuild()).toLowerCase())) {
                     string = string.substring(1 + DiscordClient.getOurUser().getNickname(message.getGuild()).length());
                 }else if (string.startsWith(MENTION.get())) {
