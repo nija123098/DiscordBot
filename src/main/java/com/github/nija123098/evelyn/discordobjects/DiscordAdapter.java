@@ -72,7 +72,7 @@ import java.util.stream.Collectors;
  */
 public class DiscordAdapter {
     private static final ScheduledExecutorService MESSAGE_PARSE_INTERRUPTER = Executors.newSingleThreadScheduledExecutor(r -> ThreadHelper.getDemonThreadSingle(r, "Message-Parse-Interrupter"));
-    private static final BlockingQueue<MessageReceivedEvent> MESSAGE_RECEIVED_QUEUE = new ArrayBlockingQueue<>(20);// threads should remove from this immediately
+    private static final BlockingQueue<MessageReceivedEvent> MESSAGE_RECEIVED_QUEUE = new LinkedBlockingDeque<>(100);// threads should remove from this immediately
     private static final ScheduledExecutorService PLAY_TEXT_EXECUTOR = Executors.newSingleThreadScheduledExecutor(r -> ThreadHelper.getDemonThreadSingle(r, "Play-Text-Changer-Thread"));
     private static final Map<Class<? extends Event>, Constructor<? extends BotEvent>> EVENT_MAP;
     private static final long PLAY_TEXT_SPEED = 60_000, GUILD_SAVE_SPEED = 3_600_000;// 1 hour
@@ -218,8 +218,8 @@ public class DiscordAdapter {
     @EventSubscriber
     public static void handle(MessageReceivedEvent e){
         if (!Launcher.isReady() || e.getMessage().getContent() == null || (e.getAuthor().isBot() && e.getAuthor().getLongID() != ConfigProvider.BOT_SETTINGS.managementBot())) return;
-        MESSAGE_RECEIVED_QUEUE.add(e);
-        if (!MESSAGE_RECEIVED_QUEUE.isEmpty()) {
+        if (!MESSAGE_RECEIVED_QUEUE.offer(e)) Log.log("Message from author " + e.getAuthor().getStringID() + " saying \"" + e.getMessage().getContent() + "\" passed up due failing on offer");
+        else if (!MESSAGE_RECEIVED_QUEUE.isEmpty()) {
             ThreadHelper.getDemonThread(() -> {// though this won't offer back pressure due to request amount
                 MessageReceivedEvent event = null;// resource monitoring will be sufficient
                 while (true) try {// so long as threads are terminated on time out and reported properly
@@ -228,12 +228,12 @@ public class DiscordAdapter {
                     } catch (InterruptedException ex) {
                         Log.log("Unexpected interruption waiting for message");
                     }
-                    if (event == null) return;// kill
+                    if (event == null) return;// kill due to time out, must not be needed anymore.
                     Thread thread = Thread.currentThread();
                     Future<?> future = MESSAGE_PARSE_INTERRUPTER.schedule(thread::interrupt, 3, TimeUnit.MINUTES);
                     if (event.getMessage().getContent().isEmpty()) DeletePinNotificationConfig.handle(new DiscordMessageReceived(event));
                     DiscordMessageReceived receivedEvent = new DiscordMessageReceived(event);
-                    if (MessageMonitor.monitor(receivedEvent)) return;
+                    if (MessageMonitor.monitor(receivedEvent)) continue;
                     Boolean isCommand = CommandHandler.handle(receivedEvent);
                     if (isCommand == null){
                         String thought = receivedEvent.getMessage().getContent();
@@ -260,7 +260,6 @@ public class DiscordAdapter {
                         }
                     }
                     Log.log("Unexpected exception thrown reading message", ex);
-                    return;
                 }
             }, "Message-Parse").start();
         }
