@@ -41,6 +41,7 @@ import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.Reactio
 import sx.blah.discord.handle.impl.events.guild.member.UserLeaveEvent;
 import sx.blah.discord.handle.impl.events.guild.role.RoleUpdateEvent;
 import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelMoveEvent;
+import sx.blah.discord.handle.impl.events.shard.DisconnectedEvent;
 import sx.blah.discord.handle.impl.events.shard.ReconnectSuccessEvent;
 import sx.blah.discord.handle.impl.events.shard.ShardReadyEvent;
 import sx.blah.discord.handle.impl.events.user.PresenceUpdateEvent;
@@ -62,6 +63,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 /**
@@ -72,13 +74,14 @@ import java.util.stream.Collectors;
  */
 public class DiscordAdapter {
     private static final ScheduledExecutorService MESSAGE_PARSE_INTERRUPTER = Executors.newSingleThreadScheduledExecutor(r -> ThreadHelper.getDemonThreadSingle(r, "Message-Parse-Interrupter"));
-    private static final BlockingQueue<MessageReceivedEvent> MESSAGE_RECEIVED_QUEUE = new LinkedBlockingDeque<>(100);// threads should remove from this immediately
+    private static final BlockingQueue<MessageReceivedEvent> MESSAGE_RECEIVED_QUEUE = new LinkedBlockingDeque<>(Runtime.getRuntime().availableProcessors() * 2);// threads should remove from this immediately
     private static final ScheduledExecutorService PLAY_TEXT_EXECUTOR = Executors.newSingleThreadScheduledExecutor(r -> ThreadHelper.getDemonThreadSingle(r, "Play-Text-Changer-Thread"));
     private static final Map<Class<? extends Event>, Constructor<? extends BotEvent>> EVENT_MAP;
     private static final long PLAY_TEXT_SPEED = 60_000, GUILD_SAVE_SPEED = 3_600_000;// 1 hour
     private static final CacheHelper.ContainmentCache<Template> PREVIOUS_TEXTS = new CacheHelper.ContainmentCache<>(PLAY_TEXT_SPEED + 1000);// a second for execution time
     private static final ScheduledExecutorService GUILD_SAVE_EXECUTOR = Executors.newSingleThreadScheduledExecutor(r -> ThreadHelper.getDemonThreadSingle(r, "Guild-Number-Save"));
     public static final AtomicBoolean PLAY_TEXT_UPDATE = new AtomicBoolean();
+    private static final AtomicLong RESUME_MESSAGE_OPERATION_TIME = new AtomicLong();// Anti-reload message spam
 
     static {
         MessageMonitor.init();
@@ -154,7 +157,12 @@ public class DiscordAdapter {
         event.getShard().changePresence(StatusType.IDLE, ActivityType.PLAYING, "with the loading screen!");
     }
     @EventSubscriber
+    public static void handle(DisconnectedEvent event) {
+        RESUME_MESSAGE_OPERATION_TIME.set(System.currentTimeMillis() + 10_000);
+    }
+    @EventSubscriber
     public static void handle(ReconnectSuccessEvent event) {
+        RESUME_MESSAGE_OPERATION_TIME.set(System.currentTimeMillis() + 10_000);
         DiscordClient.changePresence(Presence.Status.ONLINE, Presence.Activity.PLAYING, "with users!");
     }
     @EventSubscriber
@@ -217,7 +225,7 @@ public class DiscordAdapter {
      */
     @EventSubscriber
     public static void handle(MessageReceivedEvent e){
-        if (!Launcher.isReady() || e.getMessage().getContent() == null || (e.getAuthor().isBot() && e.getAuthor().getLongID() != ConfigProvider.BOT_SETTINGS.managementBot())) return;
+        if (!Launcher.isReady() || e.getMessage().getContent() == null || (e.getAuthor().isBot() && e.getAuthor().getLongID() != ConfigProvider.BOT_SETTINGS.managementBot()) || RESUME_MESSAGE_OPERATION_TIME.get() > e.getMessage().getTimestamp().toEpochMilli()) return;
         if (!MESSAGE_RECEIVED_QUEUE.offer(e)) Log.log("Message from author " + e.getAuthor().getStringID() + " saying \"" + e.getMessage().getContent() + "\" passed up due failing on offer");
         else if (!MESSAGE_RECEIVED_QUEUE.isEmpty()) {
             ThreadHelper.getDemonThread(() -> {// though this won't offer back pressure due to request amount
@@ -272,6 +280,7 @@ public class DiscordAdapter {
      */
     @EventSubscriber
     public static void handle(Event event) {
+        if (RESUME_MESSAGE_OPERATION_TIME.get() > System.currentTimeMillis()) return;
         Constructor<? extends BotEvent> constructor = EVENT_MAP.get(event.getClass());
         if (constructor != null) {
             try{EventDistributor.distribute(constructor.newInstance(event));
