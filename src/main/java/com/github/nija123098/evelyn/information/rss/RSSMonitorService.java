@@ -7,6 +7,7 @@ import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.launcher.Launcher;
 import com.github.nija123098.evelyn.service.AbstractService;
 import com.github.nija123098.evelyn.util.EmoticonHelper;
+import com.github.nija123098.evelyn.util.Log;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.FeedException;
@@ -53,7 +54,10 @@ public class RSSMonitorService extends AbstractService {
             }
             LAST_UPDATED.get(url).setTime(feed.getEntries().get(0).getPublishedDate().getTime());
             return notes;
-        } catch (FeedException | IOException ignored) {}// todo send a notification that a feed is corrupted
+        } catch (FeedException | IOException | NullPointerException e) {
+            Log.log("Possibly failed feed, will be removed from rotation during this session: " + url);
+            LAST_UPDATED.remove(url);
+        }// todo add automatic/manual review and post notice to subscribed channels
         return Collections.emptyList();
     }
     private static final String SAT = EmoticonHelper.getChars("satellite", false) + " ";
