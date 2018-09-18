@@ -8,6 +8,12 @@ import sx.blah.discord.util.MissingPermissionsException;
 import sx.blah.discord.util.RateLimitException;
 import sx.blah.discord.util.RequestBuffer;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -28,6 +34,11 @@ import java.util.concurrent.atomic.AtomicReference;
  * @see DException
  */
 public class ExceptionWrapper {
+    private static final Map<String, AtomicLong> RATE_LIMIT_TIME = new HashMap<>();
+    private static final AtomicLong GLOBAL_RATE_LIMIT_TIME = new AtomicLong();
+
+    private static final ScheduledExecutorService SCHEDULED_EXECUTOR_SERVICE = Executors.newSingleThreadScheduledExecutor();
+
     public static <E> E wrap(Request<E> request) {
         return innerWrap(request);
     }
@@ -52,26 +63,19 @@ public class ExceptionWrapper {
             AtomicReference<E> objectReference = new AtomicReference<>();
             AtomicReference<RuntimeException> exceptionReference = new AtomicReference<>();
             CareLess.lessSleep(100);
-            RequestBuffer.request(() -> {// initial attempt failed likely due to rate limiting, retrying.
-                try {
-                    objectReference.set(request.request());
-                } catch (RateLimitException e) {
-                    throw e;
-                } catch (RuntimeException e) {
-                    if (e instanceof DiscordException && ((DiscordException) e).getErrorMessage().endsWith("(Discord didn't return a response).")) {
-                        throw new RateLimitException("(Discord didn't return a response).", 1_000, "No Response", false);
-                    }
-                    exceptionReference.set(e);
-                }
-                synchronized (request) {
-                    request.notify();
-                }
-            }).get();
             try {
-                synchronized (request) {
-                    Thread.currentThread().wait();
+                objectReference.set(request.request());
+            } catch (RateLimitException e) {
+                SCHEDULED_EXECUTOR_SERVICE.schedule(() -> objectReference.set(request.request()), getRetryDelay(e), TimeUnit.MILLISECONDS);
+            } catch (RuntimeException e) {
+                if (e instanceof DiscordException && ((DiscordException) e).getErrorMessage().endsWith("(Discord didn't return a response).")) {
+                    throw new RateLimitException("(Discord didn't return a response).", 1_000, "No Response", false);
                 }
-            } catch (InterruptedException | IllegalMonitorStateException ignored) {}// took long enough
+                exceptionReference.set(e);
+            }
+            synchronized (request) {
+                request.notify();
+            }
             if (exceptionReference.get() == null) return objectReference.get();
             if (MissingPermissionsException.class.isAssignableFrom(exceptionReference.get().getClass())) {// handle cases where wrapping is necessary
                 throw new PermissionsException((MissingPermissionsException) exceptionReference.get());
@@ -85,6 +89,18 @@ public class ExceptionWrapper {
             throw exceptionReference.get();
         }
     }
+
+    private static long getRetryDelay(RateLimitException e) {
+        long currentTime = System.currentTimeMillis();
+        AtomicLong delay = e.isGlobal() ? GLOBAL_RATE_LIMIT_TIME : RATE_LIMIT_TIME.computeIfAbsent(e.getMethod(), s -> new AtomicLong());
+        if (delay.get() < currentTime) {
+            delay.set(e.getRetryDelay() + currentTime);
+            return e.getRetryDelay();
+        } else {
+            return delay.addAndGet(e.getRetryDelay()) - currentTime;
+        }
+    }
+
     @FunctionalInterface
     public interface Request<T> {
         T request();
