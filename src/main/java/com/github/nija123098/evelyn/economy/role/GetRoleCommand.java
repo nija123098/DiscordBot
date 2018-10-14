@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
  */
 public class GetRoleCommand extends AbstractCommand {
     public GetRoleCommand() {
-        super("getrole", ModuleLevel.ECONOMY, "buyrole, roleme", null, "Allows the buying of roles with guild based money.");
+        super("getrole", ModuleLevel.ECONOMY, "buyrole, roleme, role me", null, "Allows the buying of roles with guild based money.");
     }
     @Command
     public void command(@Argument(optional = true, replacement = ContextType.NONE) Role role, GuildUser guildUser, MessageMaker maker) {
@@ -48,5 +48,10 @@ public class GetRoleCommand extends AbstractCommand {
             guildUser.getUser().addRole(role);
             ConfigHandler.setSetting(CurrentCurrencyConfig.class, guildUser, c - f);
         }
+    }
+
+    @Override
+    public boolean isTemplateCommand() {
+        return true;
     }
 }

@@ -152,7 +152,7 @@ public class Template {
                 if (command.getParameters()[i].isAnnotationPresent(Argument.class)) {
                     ++arg;
                 }else continue;
-                if (!command.getParameters()[i].getType().isAssignableFrom(this.args[i].getReturnType()) || command.getParameters()[i].getAnnotation(Argument.class).optional()) {
+                if (!command.getParameters()[i].getType().isAssignableFrom(this.args[i].getReturnType())) {
                     throw new ArgumentException("Incorrect argument type for arg: " + arg + (this.args[i] instanceof CombinedArg ? "  Make sure you have argument splitters" : ""));
                 }
             }

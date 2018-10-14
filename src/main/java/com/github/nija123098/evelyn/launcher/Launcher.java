@@ -222,6 +222,7 @@ public class Launcher {
         Log.log(LogColor.blue("Bot finished initializing.") + LogColor.yellow(" Burn the heretic. Kill the Mee6. Purge the unclean."));
 
         //post message in logging channel
+        /*
         MessageMaker maker = new MessageMaker(Channel.getChannel(ConfigProvider.BOT_SETTINGS.loggingChannel()));
         maker.withColor(new Color(175, 30,5));
         String slog = null;
@@ -235,5 +236,6 @@ public class Launcher {
         maker.withTimestamp(System.currentTimeMillis());
         maker.withImage(ConfigProvider.URLS.startupGif());
         maker.send();
+        */
     }
 }
