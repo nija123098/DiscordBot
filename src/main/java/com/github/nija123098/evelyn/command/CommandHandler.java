@@ -55,6 +55,7 @@ public class CommandHandler {
         classes.forEach(clazz -> {
             AbstractCommand command = null;
             try {
+                Log.log("Initializing command instance for " + clazz.getName());
                 command = clazz.newInstance();
             } catch (InstantiationException e) {
                 Log.log("Exception attempting to initialize command: " + clazz.getName(), e);
@@ -117,6 +118,7 @@ public class CommandHandler {
      *                is the key and the value is a set of sub-command objects.
      */
     private static void load(AbstractCommand superCommand, Map<Class<? extends AbstractCommand>, Set<AbstractCommand>> typeMap) {
+        Log.log("Loading command instance for " + superCommand.getClass().getName());
         superCommand.load();
         if (typeMap.containsKey(superCommand.getClass())) typeMap.get(superCommand.getClass()).forEach(command -> load(command, typeMap));
     }
