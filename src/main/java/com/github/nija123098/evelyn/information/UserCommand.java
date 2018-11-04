@@ -49,9 +49,14 @@ public class UserCommand extends AbstractCommand {
         withText(maker, (guild == null ? EmoticonHelper.getChars("cookie", false) : (ConfigHandler.getSetting(CurrencySymbolConfig.class, guild))) + " Currency", " " + ConfigHandler.getSetting(CurrentCurrencyConfig.class, user));
         if (guild != null) {
             GuildUser guildUser = GuildUser.getGuildUser(guild, user);
-            maker.getNewFieldPart().withInline(true).withBoth(EmoticonHelper.getChars( "date", false) +  " Joined server", " " + Time.getAbbreviated(System.currentTimeMillis() - GuildUserJoinTimeConfig.get(guildUser)) + " ago");
+            maker.getNewFieldPart().withInline(true).withBoth(EmoticonHelper.getChars( "date", false) +  " Joined server", " " + Time.getDate(GuildUserJoinTimeConfig.get(guildUser)) + " ago");
         }
-        withText(maker, EmoticonHelper.getChars("calendar_spiral", false) + " Joined discord ", Time.getAbbreviated(System.currentTimeMillis() - user.getJoinDate()) + " ago");
+        withText(maker, EmoticonHelper.getChars("calendar_spiral", false) + " Joined discord ", Time.getDate(user.getJoinDate()) + " ago");
+        StringBuilder builder = new StringBuilder();
+        user.getRolesForGuild(guild).forEach(role -> {
+            builder.append(role.mention() + " ");
+        });
+        withText(maker, EmoticonHelper.getChars("", false) + " Roles", builder.toString());
         if (guild != null && (invoker.getPermissionsForGuild(guild).contains(DiscordPermission.ADMINISTRATOR) || invoker.getPermissionsForGuild(guild).contains(DiscordPermission.MANAGE_ROLES) || invoker.getPermissionsForGuild(guild).contains(DiscordPermission.MANAGE_SERVER))) {
             maker.getNewFieldPart().withInline(false).withBoth("Key permissions", FormatHelper.makeUserPermissionsTable(user, guild, true));
             maker.getNote().appendRaw("use `" + ConfigHandler.getSetting(GuildPrefixConfig.class, guild) + "user permissions` to see a detailed view of user permissions");

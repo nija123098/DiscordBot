@@ -3,6 +3,7 @@ package com.github.nija123098.evelyn.discordobjects.wrappers.event.events;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.BotEvent;
+import com.github.nija123098.evelyn.util.Log;
 import sx.blah.discord.handle.impl.events.guild.member.NicknameChangedEvent;
 
 /**
@@ -20,10 +21,10 @@ public class DiscordNicknameChange implements BotEvent {
     public User getUser() {
         return User.getUser(this.event.getUser());
     }
-    public String getOldUsername() {
-        return this.event.getOldNickname().orElse(null);
+    public String getOldNickname() {
+        return this.event.getOldNickname().orElse(User.getUser(this.event.getUser()).getName());
     }
-    public String getNewUsername() {
-        return this.event.getNewNickname().orElse(null);
+    public String getNewNickname() {
+        return this.event.getNewNickname().orElse(User.getUser(this.event.getUser()).getName());
     }
 }

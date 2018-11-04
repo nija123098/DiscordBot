@@ -25,7 +25,7 @@ public class DiscordMessageEditEvent implements BotEvent {
     public Message getNewMessage() {
         return Message.getMessage(this.event.getNewMessage());
     }
-    public String getNewMessageCleanedString() {
+    public String getNewMessageCleanedContent() {
         return Message.getCleanContent(this.event.getNewMessage());
     }
     public User getAuthor() {

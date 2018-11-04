@@ -86,7 +86,7 @@ public class MapCommand extends AbstractCommand {
                 throw new DevelopmentException("Issue making map", e);
             }
         }
-        maker.withFile(FILE);
+        maker.shouldEmbed(false).withFile(FILE);
     }
 
     @Override

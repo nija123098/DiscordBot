@@ -21,6 +21,7 @@ import com.github.nija123098.evelyn.exception.ContextException;
 import com.github.nija123098.evelyn.exception.DevelopmentException;
 import com.github.nija123098.evelyn.exception.UserIssueException;
 import com.github.nija123098.evelyn.moderation.logging.BotLogConfig;
+import com.github.nija123098.evelyn.moderation.logging.Logging;
 import com.github.nija123098.evelyn.perms.BotRole;
 import com.github.nija123098.evelyn.perms.configs.specialperms.GuildSpecialPermsConfig;
 import com.github.nija123098.evelyn.perms.configs.specialperms.SpecialPermsContainer;
@@ -135,13 +136,13 @@ public class AbstractCommand implements Tagable {
         this.allNames.add(this.name);
         if (aAliases != null) {
             Collections.addAll(this.allNames, aAliases.split(", "));
-            if (this.allNames.remove("")) Log.log("Extra coma in " + this.getClass().getName());
+            if (this.allNames.remove("")) Log.log("Extra comma in " + this.getClass().getName());
         }
         if (eAliases != null) {
             String[] eAliases = this.eAliases.split(", ");
             this.emoticonAliases = new HashSet<>(eAliases.length);
             Collections.addAll(this.emoticonAliases, eAliases);
-            if (this.emoticonAliases.remove("")) Log.log("Extra coma in " + this.getClass().getName());
+            if (this.emoticonAliases.remove("")) Log.log("Extra comma in " + this.getClass().getName());
         }else{
             this.emoticonAliases = new HashSet<>(0);
         }
@@ -149,7 +150,7 @@ public class AbstractCommand implements Tagable {
         this.emoticonAliases.stream().map(s -> EmoticonHelper.getChars(s, false)).forEach(this.allNames::add);
         if (rAliases != null && superCommand != null) {
             for (String rel : rAliases.split(", ")) {
-                if (rel.isEmpty()) Log.log("Extra coma in " + this.getClass().getName());
+                if (rel.isEmpty()) Log.log("Extra comma in " + this.getClass().getName());
                 else superCommand.getNames().forEach(s -> this.allNames.add(s + " " + rel));
             }
         }
@@ -527,7 +528,8 @@ public class AbstractCommand implements Tagable {
             if (this.shouldLog() && !message.getChannel().isPrivate()) {
                 Channel chan = ConfigHandler.getSetting(BotLogConfig.class, message.getGuild());
                 if (chan == null || !chan.canPost()) return;
-                new MessageMaker(chan).withAuthorIcon(user.getAvatarURL()).getAuthorName().appendRaw(message.getAuthor().getDisplayName(message.getGuild()) + (message.getAuthor().getNickname(message.getGuild()) == null ? "" : " AKA " + message.getAuthor().getNameAndDiscrim())).getMaker().append(message.getChannel().mention() + " - used command ***" + this.name + "***").appendRaw("\n" + message.getMentionCleanedContent()).getNote().appendRaw("ID: " + message.getID()).getMaker().withTimestamp(System.currentTimeMillis()).send();
+                MessageMaker maker = new MessageMaker(chan);
+                Logging.COMMAND_USED.commandLog(maker, channel, user, message, this.name);
             }
         }
     }

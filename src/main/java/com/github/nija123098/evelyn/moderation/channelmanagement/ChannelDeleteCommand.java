@@ -21,7 +21,7 @@ public class ChannelDeleteCommand extends AbstractCommand {
 
     @Command
     public void command(@Argument Channel channel, MessageMaker maker, Channel invokeChannel) {
-        maker.getTitle().appendRaw("Channel Deletion");
+        maker.getTitle().appendRaw("Channel Deletion").getMaker().withTimestamp(System.currentTimeMillis());
         maker.appendRaw("The " + channel.mention() + " channel will be deleted, this is an irreversible action and all messages in this channel will be deleted, use at your own risk");
 
         maker.withReactionBehavior("red_tick", ((add, reaction, u) -> {
@@ -47,7 +47,7 @@ public class ChannelDeleteCommand extends AbstractCommand {
             try {
                 channel.delete();
             } catch (PermissionsException e) {
-                maker2.appendRaw("I couldn't delete the `" + channel.getName() + "` channel, check your discord permissions to ensure I have permission to edit that channel.");
+                maker2.appendRaw("I could not delete the `" + channel.mention() + "` channel, check your discord permissions to ensure I have permission to edit that channel.");
             }
             maker2.forceCompile().send();
         }));

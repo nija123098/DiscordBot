@@ -60,7 +60,7 @@ public class SetupCommand extends AbstractCommand {
                 maker.appendRaw("You do not appear to have any roles, I need to be able to add one of your roles to the permissions of the channel.");
             }
             for (Role role : DiscordClient.getOurUser().getRolesForGuild(guild)) {
-                if (role.getName().equals("Evelyn")) botRole = role;
+                if (role.getName().equals(DiscordClient.getOurUser().getName())) botRole = role;
             }
             EnumSet<DiscordPermission> fullPermissions = EnumSet.noneOf(DiscordPermission.class);
             EnumSet<DiscordPermission> emptyPermissions = EnumSet.noneOf(DiscordPermission.class);
@@ -100,6 +100,9 @@ public class SetupCommand extends AbstractCommand {
                     ConfigHandler.setSetting(MessageDeleteLogConfig.class, guild, guild.getChannelByID(modLogChannelID));
                     ConfigHandler.setSetting(MessageEditLogConfig.class, guild, guild.getChannelByID(modLogChannelID));
                     ConfigHandler.setSetting(JoinLeaveLogConfig.class, guild, guild.getChannelByID(logChannelID));
+                    ConfigHandler.setSetting(GuildLogConfig.class, guild, guild.getChannelByID(modLogChannelID));
+                    ConfigHandler.setSetting(ChannelLogConfig.class, guild, guild.getChannelByID(modLogChannelID));
+                    ConfigHandler.setSetting(RoleLogConfig.class, guild,guild.getChannelByID(modLogChannelID));
                     //ConfigHandler.setSetting(ServerLogConfig.class, guild, guild.getChannelByID(logChannelID));
 
                     maker2.appendRaw("it would appear that the channels were created successfully, well done");
@@ -142,6 +145,5 @@ public class SetupCommand extends AbstractCommand {
         }));
 
         maker.forceCompile().send();
-
     }
 }

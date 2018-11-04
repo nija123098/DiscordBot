@@ -22,13 +22,12 @@ public class RoleHoistCommand extends AbstractCommand {
         try {
             role.changeHoist(!role.isHoisted());
             if (role.isHoisted()) {
-                maker.appendRaw("Successfully hoisted role " + role.getName());
+                maker.appendRaw("Successfully hoisted the ").appendEmbedLink(role.getName(),"").appendRaw(" role");
             } else {
-                maker.appendRaw("Successfully dehoisted role " + role.getName());
+                maker.appendRaw("Successfully dehoisted the ").appendEmbedLink(role.getName(),"").appendRaw(" role");
             }
         } catch (PermissionsException e) {
             throw new PermissionsException("I could not hoist the `" + role.getName() + "` role, check your discord permissions to ensure my role is higher than the role I'm trying to hoist");
         }
-
     }
 }

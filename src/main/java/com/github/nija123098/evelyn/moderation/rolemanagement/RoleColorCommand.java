@@ -6,6 +6,7 @@ import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Role;
 import com.github.nija123098.evelyn.exception.PermissionsException;
+import com.github.nija123098.evelyn.util.FormatHelper;
 
 import java.awt.*;
 
@@ -23,10 +24,10 @@ public class RoleColorCommand extends AbstractCommand {
     public void command(@Argument Role role, @Argument(info = "RGB/HEX") Color color, MessageMaker maker) {
         try {
             role.changeColor(color);
-            maker.appendRaw("Changed the colour of `" + role.getName() + "`");
+            maker.appendRaw("Successfully changed the colour of the ").appendEmbedLink(role.getName(),"").appendRaw(" role.");
             maker.withColor(color);
         } catch (PermissionsException e) {
-            throw new PermissionsException("I could not change the colour of the `" + role.getName() + "` role, check your discord permissions to ensure my role is higher than the role I'm trying to change the colour of");
+            throw new PermissionsException("I could not change the colour of the " + FormatHelper.embedLink(role.getName(),"") + "` role, check your discord permissions to ensure my role is higher than the role I'm trying to change the colour of.");
         }
     }
 }

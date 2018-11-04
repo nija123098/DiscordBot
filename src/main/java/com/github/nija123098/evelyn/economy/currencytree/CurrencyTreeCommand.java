@@ -13,10 +13,6 @@ import com.github.nija123098.evelyn.economy.configs.CurrencySymbolConfig;
 import com.github.nija123098.evelyn.economy.configs.CurrentCurrencyConfig;
 import com.github.nija123098.evelyn.economy.lootcrate.LootCrateConfig;
 import com.github.nija123098.evelyn.economy.lootcrate.LootCrateEmotes;
-import com.github.nija123098.evelyn.economy.plantation.configs.CoffeeEmotes;
-import com.github.nija123098.evelyn.economy.plantation.configs.CurrentBeansConfig;
-import com.github.nija123098.evelyn.economy.plantation.configs.CurrentGroundsConfig;
-import com.github.nija123098.evelyn.economy.plantation.configs.CurrentRoastedBeansConfig;
 import com.github.nija123098.evelyn.exception.ArgumentException;
 import com.github.nija123098.evelyn.fun.slot.SlotJackpotConfig;
 import com.github.nija123098.evelyn.perms.BotRole;
@@ -72,25 +68,6 @@ public class CurrencyTreeCommand extends AbstractCommand {// todo clean and opti
                 ConfigHandler.setSetting(SlotJackpotConfig.class, guild, amount + ConfigHandler.getSetting(SlotJackpotConfig.class, guild));
                 if (maker != null) maker.appendRaw(guild.getName() + "'s Jackpot balance has been incremented by: `\u200B " + ConfigHandler.getSetting(CurrencySymbolConfig.class, guild) + " " + amount + " \u200B`");
                 break;
-
-            //set coffee beans
-            case "beans":
-                ConfigHandler.setSetting(CurrentBeansConfig.class, user, amount + ConfigHandler.getSetting(CurrentBeansConfig.class, user));
-                if (maker != null) maker.appendRaw(user.getDisplayName(guild) + "'s coffee beans have been incremented by: " + CoffeeEmotes.BEANS + " `\u200B " + amount + " \u200B`");
-                break;
-
-            //set roasted beans
-            case "roasted":
-                ConfigHandler.setSetting(CurrentRoastedBeansConfig.class, user, amount + ConfigHandler.getSetting(CurrentRoastedBeansConfig.class, user));
-                if (maker != null) maker.appendRaw(user.getDisplayName(guild) + "'s roasted beans have been incremented by: " + CoffeeEmotes.ROASTBEANS + " `\u200B " + amount + " \u200B`");
-                break;
-
-            //set coffee grounds
-            case "grounds":
-                ConfigHandler.setSetting(CurrentGroundsConfig.class, user, amount + ConfigHandler.getSetting(CurrentGroundsConfig.class, user));
-                if (maker != null) maker.appendRaw(user.getDisplayName(guild) + "'s coffee grounds have been incremented by: " + CoffeeEmotes.GROUNDS + " `\u200B " + amount + " \u200B`");
-                break;
-
 
             //no type found
             default:

@@ -5,7 +5,11 @@ import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.config.ConfigHandler;
+import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
+import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
+import com.github.nija123098.evelyn.moderation.logging.Logging;
+import com.github.nija123098.evelyn.moderation.logging.ModLogConfig;
 import com.github.nija123098.evelyn.perms.configs.specialperms.GuildSpecialPermsConfig;
 import com.github.nija123098.evelyn.perms.configs.specialperms.SpecialPermsContainer;
 
@@ -18,11 +22,13 @@ public class RestrictCommand extends AbstractCommand {
         super("restrict", ModuleLevel.ADMINISTRATIVE, null, null, "Restricts the bot to a single text channel for command invocation");
     }
     @Command
-    public void command(@Argument(optional = true) Channel channel) {
+    public void command(@Argument(optional = true) Channel channel, Guild guild) {
+        MessageMaker maker2 = new MessageMaker(ConfigHandler.getSetting(ModLogConfig.class, guild));
         ConfigHandler.changeSetting(GuildSpecialPermsConfig.class, channel.getGuild(), container -> {
             if (container == null) container = new SpecialPermsContainer(channel.getGuild());
             container.restrict(channel);
             return container;
         });
+        Logging.GUILD_RESTRICTION_UPDATE.guildLog(maker2, guild, channel.getName(), channel.getID());
     }
 }

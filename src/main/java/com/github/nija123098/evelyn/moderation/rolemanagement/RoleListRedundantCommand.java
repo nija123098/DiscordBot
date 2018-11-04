@@ -22,9 +22,7 @@ public class RoleListRedundantCommand extends AbstractCommand {
 
     @Command
     public void command(Guild guild, MessageMaker maker) {
-
         List<Role> roles = guild.getRoles().stream().filter(role -> role.getUsers().size() == 0).collect(Collectors.toList());
-
         final int[] counter = {0};
         maker.getTitle().appendRaw(guild.getName() + " | " + roles.size() + " roles");
         maker.getNewListPart().appendRaw("\u200b");

@@ -5,11 +5,11 @@ import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
+import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordUserJoin;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordUserLeave;
-
-import java.awt.*;
+import com.github.nija123098.evelyn.util.Log;
 
 /**
  * @author nija123098
@@ -24,20 +24,17 @@ public class JoinLeaveLogConfig extends AbstractConfig<Channel, Guild> {
     public void handle(DiscordUserJoin join) {
         Channel channel;
         if ((channel = this.getValue(join.getGuild())) == null) return;
-        MessageMaker maker = new MessageMaker(channel).withColor(Color.MAGENTA).appendRaw(join.getUser().getNameAndDiscrim());
-        maker.getTitle().appendRaw("User joined");
-        maker.getFooter().appendRaw("ID: " + join.getUser().getID());
-        maker.withTimestamp(System.currentTimeMillis());
-        maker.send();
+        User user = join.getUser();
+        MessageMaker maker = new MessageMaker(channel);
+        Logging.USER_JOIN.userJoinLeaveLog(maker, user);
     }
-    @EventListener// log rewrite soon
+    @EventListener
     public void handle(DiscordUserLeave leave) {
+        Log.log("over here");
         Channel channel;
         if ((channel = this.getValue(leave.getGuild())) == null) return;
-        MessageMaker maker = new MessageMaker(channel).withColor(Color.MAGENTA).appendRaw(leave.getUser().getNameAndDiscrim());
-        maker.getTitle().appendRaw("User left");
-        maker.getFooter().appendRaw("ID: " + leave.getUser().getID());
-        maker.withTimestamp(System.currentTimeMillis());
-        maker.send();
+        User user = leave.getUser();
+        MessageMaker maker = new MessageMaker(channel).appendRaw(leave.getUser().getNameAndDiscrim());
+        Logging.USER_LEAVE.userJoinLeaveLog(maker, user);
     }
 }

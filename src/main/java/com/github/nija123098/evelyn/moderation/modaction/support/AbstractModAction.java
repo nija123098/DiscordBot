@@ -10,7 +10,6 @@ import com.github.nija123098.evelyn.exception.ArgumentException;
 import com.github.nija123098.evelyn.moderation.logging.ModLogConfig;
 
 import java.awt.*;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -54,7 +53,7 @@ public class AbstractModAction {
                     .withColor(level.color)
                     .getAuthorName().append(level.name()).getMaker()
                     .withAuthorIcon(offender.getAvatarURL());
-            this.logMaker.getNote().append("case " + cas + " | Time: " + new Date(System.currentTimeMillis()));
+            this.logMaker.getNote().append("Case: " + cas).getMaker().withTimestamp(System.currentTimeMillis());
             this.logMaker.send();
             this.warningMaker = new MessageMaker(offender).withColor(Color.RED);
             this.update(reason);

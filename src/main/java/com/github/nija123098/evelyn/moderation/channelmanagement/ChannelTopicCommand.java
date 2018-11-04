@@ -19,20 +19,19 @@ public class ChannelTopicCommand extends AbstractCommand {
 
     @Command
     public void command(@Argument(optional = true) Channel channel, @Argument String newTopic, Channel invokeChannel, MessageMaker maker) {
-        maker.getTitle().appendRaw("Channel Topic Change");
-        maker.getHeader().appendRaw("\u200b");
+        maker.getTitle().appendRaw("Channel Topic Change").getMaker().withTimestamp(System.currentTimeMillis());
         try {
-            if (channel != null) {
-                String previous = channel.getTopic();
-                if (previous.equals("")) previous = "no prior topic set";
-                if (!previous.equals(newTopic)) {
-                    channel.changeTopic(newTopic);
-                    maker.getNewFieldPart().withInline(false).withBoth("Previous", previous);
-                    maker.getNewFieldPart().withInline(false).withBoth("New", newTopic);
-                } else {
-                    maker.appendRaw("No change performed, topics were the same");
-                }
+            if (channel == null) channel = invokeChannel;
+            String previous = channel.getTopic();
+            if (previous.equals("")) previous = "no prior topic set";
+            if (!previous.equals(newTopic)) {
+                channel.changeTopic(newTopic);
+                maker.getNewFieldPart().withBoth("Previous Topic", previous);
+                maker.getNewFieldPart().withBoth("Current Topic", newTopic);
+            } else {
+                maker.appendRaw("No change performed, topics were the same");
             }
+            maker.getNote().appendRaw("Channel: " + channel.getID());
         } catch (PermissionsException e) {
             throw new PermissionsException("I could not change the topic for the `" + channel.getName() + "` channel, check your discord permissions to ensure I have permission to edit that channel.");
         }

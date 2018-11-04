@@ -6,6 +6,7 @@ import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Attachment;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Channel;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
+import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordMessageDelete;
 
@@ -20,14 +21,12 @@ public class MessageDeleteLogConfig extends AbstractConfig<Channel, Guild> {
         super("message_delete_log", "Message Delete Log", ConfigCategory.LOGGING, (Channel) null, "The location logs should be made for messages that are deleted");
     }
     @EventListener(queueSize = 150)
-    public void handle(DiscordMessageDelete delete) {
+    public void handle(DiscordMessageDelete message) {
         Channel channel;
-        if (delete.getMessage() == null || delete.getChannel().isPrivate() || delete.getMessage().getAuthor().isBot() || (channel = this.getValue(delete.getGuild())) == null) return;
-        MessageMaker maker = new MessageMaker(channel).withColor(Color.GRAY).withAuthor(delete.getMessage().getAuthor()).append("Message deleted from ").appendRaw(delete.getAuthor().getDisplayName(delete.getGuild())).appendRaw(" ").append("in ").appendRaw(delete.getChannel().mention()).appendRaw("\n" + delete.getMessage().getMentionCleanedContent());
-        maker.getNote().appendRaw("ID: " + delete.getMessage().getID());
-        maker.withTimestamp(System.currentTimeMillis());
-        Attachment attachment = delete.getMessage().getAttachments().stream().filter(att -> att.getUrl().endsWith("gif") || att.getUrl().endsWith("webv")).findFirst().orElse(null);
-        if (attachment != null) maker.withImage(attachment.getUrl());
-        maker.send();
+        User user = message.getAuthor();
+        Channel messageChannel = message.getChannel();
+        if (message.getMessage() == null || message.getChannel().isPrivate() || message.getMessage().getAuthor().isBot() || (channel = this.getValue(message.getGuild())) == null) return;
+        MessageMaker maker = new MessageMaker(channel);
+        Logging.MESSAGE_DELETED.messageLog(maker, messageChannel, user, message.getMessage());
     }
 }

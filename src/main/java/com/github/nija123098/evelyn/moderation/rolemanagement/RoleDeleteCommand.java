@@ -17,14 +17,15 @@ import java.util.ConcurrentModificationException;
 public class RoleDeleteCommand extends AbstractCommand {
 
     public RoleDeleteCommand() {
-        super(RoleCommand.class, "delete", "delrole", null, null, "Delete a role from the server");
+        super(RoleCommand.class, "delete", "rdelete", null, null, "Delete a role from the server");
     }
 
     @Command
     public void command(@Argument Role role, MessageMaker maker, Channel invokeChannel) {
 
         maker.getTitle().appendRaw("Role Deletion");
-        maker.appendRaw("The `" + role.getName() + "` role will be deleted, this is an irreversible action and all permissions associated with the role will be deleted, use at your own risk");
+        maker.appendRaw("The ").appendEmbedLink(role.getName(),"").appendRaw(" role will be deleted, this is an irreversible action and all permissions associated with the role will be deleted, use at your own risk");
+        maker.withAutoSend(false);
 
         maker.withReactionBehavior("red_tick", ((add, reaction, u) -> {
             //remove reactions
@@ -49,14 +50,13 @@ public class RoleDeleteCommand extends AbstractCommand {
             try {
                 String roleName = role.getName();
                 role.delete();
-                maker.appendRaw(roleName + " deleted successfully");
+                maker2.appendRaw("Successfully deleted the ").appendEmbedLink(roleName,"").appendRaw(" role");
             } catch (PermissionsException e) {
-                maker2.appendRaw("I couldn't delete the `" + role.getName() + "` role, check your discord permissions to ensure my role is higher than the role I'm trying to delete.");
+                maker2.appendRaw("I could not delete the ").appendEmbedLink(role.getName(),"").appendRaw(" role, check your discord permissions to ensure my role is higher than the role I'm trying to delete.");
             }
+            maker.sentMessage().delete();
             maker2.forceCompile().send();
         }));
         maker.forceCompile().send();
-
-
     }
 }

@@ -62,15 +62,15 @@ public class GuildLeaveJoinConfig extends AbstractConfig<List<Pair<Long, Long>>,
         maker.getNote().appendRaw(guild.getID());
         maker.appendRaw("Total Guilds: " + DiscordClient.getGuilds().size());
         CareLess.something(() -> maker.getNewFieldPart().withBoth("Users", String.valueOf(guild.getUsers().size())));// behavior here is not guaranteed
-        maker.appendRaw("\nGuild Age: " + Time.getAbbreviated(System.currentTimeMillis() - guild.getCreationDate()));
-        if (!join) CareLess.something(() -> maker.appendRaw("\nTime in Guild: " + Time.getAbbreviated(System.currentTimeMillis() - guild.getJoinTimeForUser(DiscordClient.getOurUser()))));
+        maker.appendRaw("\nGuild Created: " + Time.getDate(guild.getCreationDate()));
+        if (!join) CareLess.something(() -> maker.appendRaw("\nTime in Guild: " + Time.getDate(guild.getJoinTimeForUser(DiscordClient.getOurUser()))));
         List<User> bots = guild.getUsers().stream().filter(User::isBot).collect(Collectors.toList());
         if (!bots.isEmpty()) {
             if (bots.size() > 10) maker.appendRaw("\nBots: " + bots.size());
             else {
                 StringBuilder botLists = new StringBuilder(500);
                 for (User user : bots) {
-                    botLists.append("```\n").append(user.getNameAndDiscrim()).append("\nSince: ").append(Time.getAbbreviated(System.currentTimeMillis() - guild.getJoinTimeForUser(user))).append("\n```");
+                    botLists.append("```\n").append(user.getNameAndDiscrim()).append("\nSince: ").append(Time.getDate(guild.getJoinTimeForUser(user))).append("\n```");
                 }
                 botLists.append(botLists);
             }

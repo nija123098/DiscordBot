@@ -43,8 +43,8 @@ public class UserNameMonitor {
     @EventListener
     public static void handler(DiscordNicknameChange change) {
         Set<String> set = MAP.computeIfAbsent(change.getGuild(), guild -> ConcurrentHashMap.newKeySet());
-        if (change.getNewUsername() != null) set.add(change.getNewUsername());
-        if (change.getOldUsername() != null) set.remove(change.getOldUsername());
+        if (change.getNewNickname() != null) set.add(change.getNewNickname());
+        if (change.getOldNickname() != null) set.remove(change.getOldNickname());
     }
     private static void loadGuild(Guild guild) {
         Set<String> strings = ConcurrentHashMap.newKeySet();

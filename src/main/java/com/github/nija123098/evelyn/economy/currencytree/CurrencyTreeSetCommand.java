@@ -12,10 +12,6 @@ import com.github.nija123098.evelyn.economy.configs.CurrencySymbolConfig;
 import com.github.nija123098.evelyn.economy.configs.CurrentCurrencyConfig;
 import com.github.nija123098.evelyn.economy.lootcrate.LootCrateConfig;
 import com.github.nija123098.evelyn.economy.lootcrate.LootCrateEmotes;
-import com.github.nija123098.evelyn.economy.plantation.configs.CoffeeEmotes;
-import com.github.nija123098.evelyn.economy.plantation.configs.CurrentBeansConfig;
-import com.github.nija123098.evelyn.economy.plantation.configs.CurrentGroundsConfig;
-import com.github.nija123098.evelyn.economy.plantation.configs.CurrentRoastedBeansConfig;
 import com.github.nija123098.evelyn.exception.ArgumentException;
 import com.github.nija123098.evelyn.fun.slot.SlotJackpotConfig;
 
@@ -65,28 +61,6 @@ public class CurrencyTreeSetCommand extends AbstractCommand {
                 maker.appendRaw(guild.getName() + "'s Jackpot balance has been set to: `\u200B " + ConfigHandler.getSetting(CurrencySymbolConfig.class, guild) + " " + amount + " \u200B`");
                 maker.send();
                 break;
-
-            //set coffee beans
-            case "beans":
-                ConfigHandler.setSetting(CurrentBeansConfig.class, user, amount);
-                maker.appendRaw(user.getDisplayName(guild) + "'s coffee beans have been set to: " + CoffeeEmotes.BEANS + " `\u200B " + amount + " \u200B`");
-                maker.send();
-                break;
-
-            //set roasted beans
-            case "roasted":
-                ConfigHandler.setSetting(CurrentRoastedBeansConfig.class, user, amount);
-                maker.appendRaw(user.getDisplayName(guild) + "'s roasted beans have been set to: " + CoffeeEmotes.ROASTBEANS + " `\u200B " + amount + " \u200B`");
-                maker.send();
-                break;
-
-            //set coffee grounds
-            case "grounds":
-                ConfigHandler.setSetting(CurrentGroundsConfig.class, user, amount);
-                maker.appendRaw(user.getDisplayName(guild) + "'s coffee grounds have been set to: " + CoffeeEmotes.GROUNDS + " `\u200B " + amount + " \u200B`");
-                maker.send();
-                break;
-
 
             //no type found
             default:

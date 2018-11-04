@@ -29,9 +29,9 @@ public class RoleAddCommand extends AbstractCommand {
         if (user != null) {
             try {
                 user.addRole(role);
-                maker.appendRaw("Successfully added the ").appendEmbedLink(role.getName(),"").append(" role to ").appendRaw(user.getDisplayName(guild));
+                maker.appendRaw("Successfully added the ").appendEmbedLink(role.getName(),"").appendRaw(" role to ").appendRaw(user.getDisplayName(guild));
             } catch (PermissionsException e) {
-                throw new PermissionsException("I could not add the " + FormatHelper.embedLink(role.getName(),"") + " role to " + user.getDisplayName(guild) + ", check your discord permissions to ensure my role is higher than the role I'm trying to add.");
+                throw new PermissionsException("I could not add the " + FormatHelper.embedLink(role.getName(),"") + " role to " + user.mention() + ", check your discord permissions to ensure my role is higher than the role I'm trying to add.");
             }
         } else if (targetRole != null) {
             List<User> users = targetRole.getUsers().stream().filter(user1 -> user1.getRolesForGuild(guild).contains(targetRole)).collect(Collectors.toList());

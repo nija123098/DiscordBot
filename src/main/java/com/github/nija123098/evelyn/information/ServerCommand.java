@@ -6,12 +6,15 @@ import com.github.nija123098.evelyn.command.ModuleLevel;
 import com.github.nija123098.evelyn.command.annotations.Argument;
 import com.github.nija123098.evelyn.command.annotations.Command;
 import com.github.nija123098.evelyn.config.ConfigHandler;
+import com.github.nija123098.evelyn.config.Database;
 import com.github.nija123098.evelyn.config.configs.guild.GuildPrefixConfig;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
+import com.github.nija123098.evelyn.discordobjects.wrappers.DiscordClient;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Guild;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Presence;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.exception.ContextException;
+import com.github.nija123098.evelyn.perms.BotRole;
 import com.github.nija123098.evelyn.util.Time;
 import sx.blah.discord.handle.obj.VerificationLevel;
 
@@ -26,7 +29,7 @@ public class ServerCommand extends AbstractCommand {
         super("server", ModuleLevel.INFO, "guild", null, "Displays information about the server");
     }
     @Command
-    public void command(@Argument(optional = true) Guild guild, MessageMaker maker) {
+    public void command(@Argument(optional = true) Guild guild, MessageMaker maker, User invoker, @Argument(optional = true) String optional) {
         String discord_white = ConfigProvider.URLS.discordWhitePng();
         if (guild == null) throw new ContextException("You have to be in a server to use that command!");
         if (guild.getIconURL().contains("null")) {
@@ -34,16 +37,21 @@ public class ServerCommand extends AbstractCommand {
         } else {
             maker.withAuthorIcon(guild.getIconURL()).getAuthorName().appendRaw(guild.getName()).getMaker().withThumb(guild.getIconURL()).withColor(guild.getIconURL());
         }
+        long previous = guild.getJoinTimeForUser(DiscordClient.getOurUser());
+        String timeInGuild = Time.getAbbreviated(System.currentTimeMillis() - previous);
         List<User> users = guild.getUsers();
         withText(maker, "Users", users.stream().filter(user -> user.getPresence().getStatus() != Presence.Status.OFFLINE).count() + " online\n" + (users.size() - users.stream().filter(User::isBot).count()) + " total");
         withText(maker, "Bots", users.stream().filter(User::isBot).count() + "");
         withText(maker, "Verification Level", verificationText(guild.guild().getVerificationLevel()));
         withText(maker, "Channels", guild.getChannels().size() + " text channels\n" + guild.getVoiceChannels().size() + " voice channels");
         withText(maker, "Guild Owner", guild.getOwner().getNameAndDiscrim());
-        withText(maker, "Made", Time.getAbbreviated(System.currentTimeMillis() - guild.getCreationDate()) + " ago");
+        withText(maker, "Made", Time.getDate(guild.getCreationDate()) + " ago");
         withText(maker, "My prefix", ConfigHandler.getSetting(GuildPrefixConfig.class, guild));
         withText(maker, "Region", guild.getRegion().getName());
         withText(maker, "ID", guild.getID());
+        if (BotRole.getSet(invoker, guild).contains(BotRole.BOT_ADMIN)) {
+            withText(maker, "Time in guild", timeInGuild);
+        }
     }
 
     private static void withText(MessageMaker maker, String key, String value) {
@@ -69,7 +77,7 @@ public class ServerCommand extends AbstractCommand {
                 ret = "┻━┻ ﾐヽ(ಠ益ಠ)ノ彡┻━┻\n*Verified phone*";
                 break;
             case UNKNOWN:
-                ret = "*this really shouldn't happen*";
+                ret = "*this really should not happen*";
                 break;
         }
         return ret;

@@ -14,7 +14,7 @@ import com.github.nija123098.evelyn.util.CareLess;
  */
 public class SystemCommand extends AbstractCommand {
     public SystemCommand() {
-        super("system", ModuleLevel.INFO, "sys", null, "Shows memory usage and Evelyn's version");
+        super("system", ModuleLevel.BOT_ADMINISTRATIVE, "sys", null, "Shows memory usage and Evelyn's version");
     }
     @Command
     public void command(MessageMaker maker) {

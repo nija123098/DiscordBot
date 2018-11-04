@@ -29,15 +29,15 @@ public class RoleRemoveCommand extends AbstractCommand {
         if (user != null) {
             try {
                 user.removeRole(role);
-                maker.appendRaw("Successfully removed the role ").appendEmbedLink(role.getName(),"").appendRaw(" from " + user.getDisplayName(guild));
+                maker.appendRaw("Successfully removed the ").appendEmbedLink(role.getName(),"").appendRaw(" role from " + user.mention());
             } catch (PermissionsException e) {
-                throw new PermissionsException("I'm could not remove the " + FormatHelper.embedLink(role.getName(),"") + " role from " + user.getDisplayName(guild) + ", check your permissions and ensure my role is higher than the " + role.getName() + " role.");
+                throw new PermissionsException("I could not remove the " + FormatHelper.embedLink(role.getName(),"") + " role from " + user.mention() + ", check your permissions and ensure my role is higher than the " + role.getName() + " role.");
             }
         } else if (targetRole != null) {
             List<User> users = targetRole.getUsers().stream().filter(user1 -> user1.getRolesForGuild(guild).contains(targetRole)).collect(Collectors.toList());
             try {
                 users.forEach(user1 -> user1.removeRole(role));
-                maker.appendRaw("Successfully removed the ").appendEmbedLink(role.getName(),"").append(" role from the users with the ").appendEmbedLink(targetRole.getName(),"").append(" role");
+                maker.appendRaw("Successfully removed the ").appendEmbedLink(role.getName(),"").appendRaw(" role from the users with the ").appendEmbedLink(targetRole.getName(),"").append(" role");
             } catch (PermissionsException e) {
                 throw new PermissionsException("I could not remove the " + FormatHelper.embedLink(role.getName(),"") + " role from the users with the " + FormatHelper.embedLink(targetRole.getName(),"") + " role, check your discord permissions to ensure my role is higher than the role I'm trying to remove.");
             }

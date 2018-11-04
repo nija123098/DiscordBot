@@ -40,7 +40,6 @@ public class RoleCommand extends AbstractCommand {
             maker.getTitle().appendRaw(role.getName());
             maker.withColor(role);
             if (role.getPermissions().contains(DiscordPermission.ADMINISTRATOR)) maker.appendRaw(EmoticonHelper.getChars("oncoming_police_car", false) + " Administrator");
-            maker.getHeader().appendRaw("\u200b");
             maker.getNewFieldPart().withInline(true).withBoth("Role Position", "" + (guild.getRoles().size() - role.getPosition()));
             maker.getNewFieldPart().withInline(true).withBoth("Users", "" + role.getUsers().size());
             maker.getNewFieldPart().withInline(true).withBoth("ID", role.getID());
