@@ -38,7 +38,11 @@ public class GuildLeaveLogConfig extends AbstractConfig<Long, Guild> {
         maker.getAuthorName().appendRaw(guild.getName());
         maker.withThumb(guild.getIconURL().contains("null") ? ConfigProvider.URLS.discordWhitePng() : guild.getIconURL());
         maker.withAuthorIcon(ConfigProvider.URLS.redArrowPng()).withColor(new Color(255, 0 ,0));
-        maker.appendRaw("\u200b                                           \u200b\nDate created: " + Time.getDate(guild.getCreationDate()) + "\nUsers: " + (guild.getUsers().stream().filter(user -> !user.isBot()).collect(Collectors.toList()).size() - 1) + "\nTime in guild: " + timeInGuild + "\nTotal guilds: " + DiscordClient.getGuilds().size());
+        maker.appendRaw("\u200b                                           \u200b\nDate created: " + Time.getDate(guild.getCreationDate()) + "\nUsers: " + (guild.getUsers().stream().filter(user -> !user.isBot()).collect(Collectors.toList()).size()) + "\nTime in guild: " + timeInGuild + "\nTotal guilds: " + DiscordClient.getGuilds().size());
+        maker.getNewFieldPart().withInline(true).withBoth("Channels", String.valueOf(guild.getChannels().size()));
+        maker.getNewFieldPart().withInline(true).withBoth("Categories", String.valueOf(guild.getCategories().size()));
+        maker.getNewFieldPart().withInline(true).withBoth("Roles", String.valueOf(guild.getRoles().size()));
+        maker.getNewFieldPart().withInline(true).withBoth("Region", guild.getRegion().getName());
         maker.withTimestamp(System.currentTimeMillis());
         List<User> bots = guild.getUsers().stream().filter(User::isBot).collect(Collectors.toList());
         if (bots.size() > 0) {
@@ -53,7 +57,7 @@ public class GuildLeaveLogConfig extends AbstractConfig<Long, Guild> {
             if (botList.toString().length() > 1000) {
                 maker.getNewFieldPart().withBoth("Bots", "" + bots.size());
             } else {
-                maker.getNewFieldPart().withBoth("Bots: " + bots.size(), botList.toString());
+                maker.getNewFieldPart().withBoth("Bots: " + (bots.size() - 1), botList.toString());
             }
         }
         maker.send();
