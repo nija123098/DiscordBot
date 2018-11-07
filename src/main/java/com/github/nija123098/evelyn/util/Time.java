@@ -5,6 +5,7 @@ import com.github.nija123098.evelyn.exception.ArgumentException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
@@ -58,6 +59,10 @@ public class Time {// TODO CLEAN
 
     public long timeUntil() {
         return this.time - System.currentTimeMillis();
+    }
+
+    public static String getDate(long time) {
+        return Instant.ofEpochMilli(time).atZone(ZoneId.of("UTC")).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z"));
     }
 
     public static String getAbbreviated(long time) {
