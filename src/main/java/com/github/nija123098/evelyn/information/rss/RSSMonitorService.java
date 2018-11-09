@@ -38,8 +38,9 @@ public class RSSMonitorService extends AbstractService {
         Map<String, Set<Channel>> reverse = new HashMap<>();
         ConfigHandler.getNonDefaultSettings(RSSSubscriptionsConfig.class).forEach((channel, strings) -> strings.forEach(s -> reverse.computeIfAbsent(s, st -> new HashSet<>()).add(channel)));
         reverse.forEach((s, channels) -> {
+            if (LAST_UPDATED.get(s) == null) return;
             List<RSSNote> notes = getRSSNode(s);
-            if (!notes.isEmpty()) notes.forEach(note -> channels.forEach(note::send));
+            notes.forEach(note -> channels.forEach(note::send));
         });
     }
     private static List<RSSNote> getRSSNode(String url) {
@@ -47,16 +48,16 @@ public class RSSMonitorService extends AbstractService {
         try {
             SyndFeed feed = new SyndFeedInput().build(new XmlReader(new URL(url)));
             if (feed.getEntries().isEmpty()) return Collections.emptyList();
-            List<RSSNote> notes = new ArrayList<>();
+            List<RSSNote> notes = new LinkedList<>();
             for (SyndEntry entry : feed.getEntries()) {
                 if (!entry.getPublishedDate().after(LAST_UPDATED.get(url))) break;
                 notes.add(new RSSNote(entry));
             }
             LAST_UPDATED.get(url).setTime(feed.getEntries().get(0).getPublishedDate().getTime());
             return notes;
-        } catch (FeedException | IOException | NullPointerException e) {
-            Log.log("Possibly failed feed, will be removed from rotation during this session: " + url);
-            LAST_UPDATED.remove(url);
+        } catch (Exception e) {
+            Log.log("Possibly failed feed, will be removed from rotation during this session: " + url, e);
+            LAST_UPDATED.put(url, null);
         }// todo add automatic/manual review and post notice to subscribed channels
         return Collections.emptyList();
     }

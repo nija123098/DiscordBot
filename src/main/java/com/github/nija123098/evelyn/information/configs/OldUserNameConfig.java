@@ -5,7 +5,10 @@ import com.github.nija123098.evelyn.config.ConfigCategory;
 import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.EventListener;
 import com.github.nija123098.evelyn.discordobjects.wrappers.event.events.DiscordUserNameChangeEvent;
+import com.github.nija123098.evelyn.exception.DevelopmentException;
+import com.github.nija123098.evelyn.util.Log;
 
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,9 +22,14 @@ public class OldUserNameConfig extends AbstractConfig<Set<String>, User> {
     }
     @EventListener
     public void handle(DiscordUserNameChangeEvent event) {
-        this.alterSetting(event.getUser(), strings -> {
-            strings.add(event.getOldName());
-            strings.add(event.getNewName());
-        });
+        try {
+            this.alterSetting(event.getUser(), strings -> {
+                strings.add(event.getOldName());
+                strings.add(event.getNewName());
+            });
+        } catch (DevelopmentException e) {
+            if (!(e.getCause() instanceof SQLException)) throw e;
+            Log.log("Unable to insert username change for user " + event.getUser().getID() + " from " + event.getOldName() + " to " + event.getNewName());
+        }
     }
 }
