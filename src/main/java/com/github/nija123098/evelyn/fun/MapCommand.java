@@ -26,14 +26,22 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
+ * Builds a map representing the location of guilds with congenital precision.
+ *
+ * A base map is loaded on startup and it's color regions are read and put into a list,
+ * all of which are put into a map who's key is the color of that region.
+ * Region names are also mapped as keys to colors.
+ * When a map is requested all guilds are mapped to region, then color, then counted.
+ * These counts are then used to place that number of dots randomly in the corresponding region.
+ *
  * @author nija123098
  * @since 1.0.0
  */
 public class MapCommand extends AbstractCommand {
     private static final int DOT_SIZE = 2;
     private static final File FILE = FileHelper.getTempFile("map", "png", "map");
-    private static final Map<String, Integer> REGION_MAP = new HashMap<>();
-    private static final Map<Integer, List<Point>> POINT_MAP = new HashMap<>();
+    private static final Map<String, Integer> REGION_MAP = new TreeMap<>();
+    private static final Map<Integer, List<Point>> POINT_MAP = new TreeMap<>();
     private static final AtomicInteger GUILD_COUNT = new AtomicInteger();
     private static final int[] COLOR_ARRAY = new int[DOT_SIZE * 2];
     static {
@@ -47,8 +55,9 @@ public class MapCommand extends AbstractCommand {
         } catch (IOException e) {
             throw new DevelopmentException("Unable to read map template", e);
         }
-        Arrays.fill(COLOR_ARRAY, 0xFFFFFFFF);
-        // AF -76498 AN -16760577
+        Arrays.fill(COLOR_ARRAY, 0xFFFFFFFF);// The color of the dots
+        // AN -16760577
+        registerColor(-76498, "South Africa");
         registerColor(-16724992, "US Central", "US East", "US West", "US South");
         registerColor(-16744448, "Brazil");
         registerColor(-4128768, "Central Europe", "Western Europe", "Amsterdam", "London", "Frankfurt");
@@ -74,9 +83,11 @@ public class MapCommand extends AbstractCommand {
                 Map<Integer, Integer> regionGuildCountMap = guilds.stream().collect(Collectors.toMap(g -> REGION_MAP.get(g.getRegion().getName()), g -> 1, (one, two) -> one + two));
                 BufferedImage img = ImageIO.read(Paths.get(ConfigProvider.RESOURCE_FILES.finalMap()).toFile());
                 regionGuildCountMap.forEach((color, count) -> {
-                    Set<Point> use = new HashSet<>(200, 1);
+                    List<Point> points = new LinkedList<>(POINT_MAP.get(color));
+                    List<Point> use = new ArrayList<>(count);
+                    count = Math.min(count, points.size());// If there are not enough points just fill all available.
                     for (int i = 0; i < count; i++) {
-                        if (use.add(Rand.getRand(POINT_MAP.get(color), false))) --count;
+                        use.add(Rand.getRand(points, true));
                     }
                     use.forEach(point -> img.setRGB(point.x, point.y, DOT_SIZE, DOT_SIZE, COLOR_ARRAY, 0, 1));
                 });
