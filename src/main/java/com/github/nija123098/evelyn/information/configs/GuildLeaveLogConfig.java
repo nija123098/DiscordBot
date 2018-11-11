@@ -44,6 +44,7 @@ public class GuildLeaveLogConfig extends AbstractConfig<Long, Guild> {
         maker.getNewFieldPart().withInline(true).withBoth("Roles", String.valueOf(guild.getRoles().size()));
         maker.getNewFieldPart().withInline(true).withBoth("Region", guild.getRegion().getName());
         maker.withTimestamp(System.currentTimeMillis());
+        maker.getNote().appendRaw("ID: " + guild.getID());
         List<User> bots = guild.getUsers().stream().filter(User::isBot).collect(Collectors.toList());
         if (bots.size() > 0) {
             StringBuilder botList = new StringBuilder();
@@ -56,6 +57,8 @@ public class GuildLeaveLogConfig extends AbstractConfig<Long, Guild> {
             }
             if (botList.toString().length() > 1000) {
                 maker.getNewFieldPart().withBoth("Bots", "" + bots.size());
+            } else if (botList.toString().isEmpty()) {
+                maker.getNewFieldPart().withBoth("Bots", "none");
             } else {
                 maker.getNewFieldPart().withBoth("Bots: " + (bots.size() - 1), botList.toString());
             }

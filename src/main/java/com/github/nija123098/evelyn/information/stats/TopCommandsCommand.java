@@ -27,10 +27,10 @@ public class TopCommandsCommand extends AbstractCommand {
     public void command(MessageMaker maker, @Argument(optional = true, replacement = ContextType.NONE) Integer count) {
         if (count == null) count = 5;
         Map<User, Integer> sortedMap = TopStatsCommand.getStats("commands_used_count_user", count).entrySet().stream().sorted(Map.Entry.<User, Integer>comparingByValue().reversed())
-                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
         List<Map.Entry<User, Integer>> list = new LinkedList<>(sortedMap.entrySet());
         maker.getTitle().appendRaw("Top 5 Users: Commands");
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < (list.size() > 10 ? count : list.size()); i++) {
             maker.getNewListPart().appendRaw(list.get(i).getKey().getNameAndDiscrim() + " | " + list.get(i).getKey().getID() + "\n" + list.get(i).getValue() + " commands");
         }
     }

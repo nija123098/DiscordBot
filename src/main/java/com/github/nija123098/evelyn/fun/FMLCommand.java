@@ -35,8 +35,10 @@ public class FMLCommand extends AbstractCommand {
     }
     @Command
     public void command(MessageMaker maker, Channel channel) {
-        if (channel.isNSFW() || channel.isPrivate()) {
-            throw new ContextException("This command needs to be used within an NSFW or private channel due to its possible content.");
+        if (channel.isPrivate()) {
+            //order important since isNSFW throws Unsupported Action Exception on DMs
+        } else if (!channel.isNSFW()) {
+            throw new ContextException("This command needs to be used within an NSFW channel or DM due to its possible content.");
         }
         if (this.items.size() < 10) EXECUTOR_SERVICE.submit(this::getItems);
         if (this.items.isEmpty()) {

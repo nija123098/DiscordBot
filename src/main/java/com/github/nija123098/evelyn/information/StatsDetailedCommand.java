@@ -20,12 +20,15 @@ public class StatsDetailedCommand extends AbstractCommand {
     @Command
     public void command(MessageMaker maker, String s) {
         maker.getTitle().clear().appendRaw(EmoticonHelper.getChars("chart_with_upwards_trend",false) + " Evelyn Stats");
-        maker.appendRaw(StatsCommand.getTotalTable(s.startsWith("mini")));
+        maker.getNewFieldPart().withInline(true).withBoth("Total commands", "" + getCommandsUsed());
+        maker.getNewFieldPart().withInline(true).withBoth("Total cookies", "" + getTotalCookies());
+        maker.getNewFieldPart().withBoth("Guild stats", (StatsCommand.getTotalTable(s.startsWith("mini"))));
         long aMonthAgo = System.currentTimeMillis() - 2_592_000_000L, aWeekAgo = System.currentTimeMillis() - 604_800_000, oneDayAgo = System.currentTimeMillis() - 86_400_000;
-        maker.appendRaw("\nActive Guilds: " + getGuildActiveStats(aMonthAgo));
-        maker.appendRaw("  Recent users: " + getUserActiveStats(oneDayAgo));
-        maker.appendRaw("  Active users: " + getUserActiveStats(aWeekAgo));
-        maker.appendRaw("  Monthly users: " + getUserActiveStats(aMonthAgo));
+        maker.getNewFieldPart().withBoth("Activity", ("\nActive Guilds: " + getGuildActiveStats(aMonthAgo))
+                + ("  Recent users: " + getUserActiveStats(oneDayAgo))
+                + ("  Active users: " + getUserActiveStats(aWeekAgo))
+                + ("  Monthly users: " + getUserActiveStats(aMonthAgo)));
+
     }
 
     @Override
@@ -44,6 +47,20 @@ public class StatsDetailedCommand extends AbstractCommand {
         return Database.select("SELECT COUNT(*) FROM last_command_time_user WHERE value >= " + time, resultSet -> {
             resultSet.next();
             return resultSet.getInt(1);
+        });
+    }
+
+    private int getCommandsUsed() {
+        return Database.select("SELECT SUM(value) FROM `commands_used_count_user` WHERE id NOT LIKE '484445339764523009' AND id NOT LIKE '453676619601543169'", resultSet -> {
+            resultSet.next();
+            return resultSet.getInt(1);
+        });
+    }
+
+    private int getTotalCookies() {
+        return Database.select("SELECT SUM(value) FROM `current_currency_user`", resultSet -> {
+           resultSet.next();
+           return resultSet.getInt(1);
         });
     }
 }
