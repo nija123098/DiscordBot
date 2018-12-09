@@ -1,19 +1,19 @@
 package com.github.nija123098.evelyn.util;
 
 import com.github.nija123098.evelyn.botconfiguration.ConfigProvider;
+import com.github.nija123098.evelyn.exception.ArgumentException;
 import com.google.api.client.util.Joiner;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author nija123098
@@ -74,31 +74,13 @@ public class GraphicsHelper {
         graphics.setColor(oldColor);
         graphics.setFont(oldFont);
     }
-    private static final Map<String, Color> URL_COLOR_MAP = new ConcurrentHashMap<>();
-    public static Color getColor(String url) {
+    public static BufferedImage loadImage(String url) {
         try {
-            return URL_COLOR_MAP.computeIfAbsent(url, s -> {
-                try {
-                    HttpURLConnection connection = ((HttpURLConnection) new URL(s.replace(".webp", ".png")).openConnection());
-                    connection.setRequestProperty("User-Agent", ConfigProvider.BOT_SETTINGS.userAgent());
-                    BufferedImage image = ImageIO.read(connection.getInputStream());
-                    int r = 0, g = 0, b = 0;
-                    for (int i = 0; i < image.getHeight(); ++i) {
-                        for (int j = 0; j < image.getWidth(); ++j) {
-                            int val = image.getRGB(i, j);
-                            r += (val >> 16) & 0xFF;
-                            g += (val >> 8) & 0xFF;
-                            b += val & 0xFF;
-                        }
-                    }
-                    int pixels = image.getHeight() * image.getWidth();
-                    return new Color(r / pixels, g / pixels, b / pixels);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            });
-        } catch (RuntimeException e) {
-            return Color.BLACK;
+            HttpURLConnection connection = ((HttpURLConnection) new URL(url.replace(".webp", ".png")).openConnection());
+            connection.setRequestProperty("User-Agent", ConfigProvider.BOT_SETTINGS.userAgent());
+            return ImageIO.read(connection.getInputStream());
+        } catch (IOException e) {
+            throw new ArgumentException("Unable to load image for URL: " + url, e);
         }
     }
     public static Color getGradient(float grade, Color first, Color second) {

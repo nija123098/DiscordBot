@@ -34,11 +34,14 @@ public class GuildJoinLogConfig extends AbstractConfig<Long, Guild> {
         User owner = guild.getOwner();
         MessageMaker maker = new MessageMaker(Channel.getChannel(ConfigProvider.BOT_SETTINGS.guildLogChannel()));
         this.setValue(guild, System.currentTimeMillis());
+        maker.withAuthorIcon(ConfigProvider.URLS.greenArrowPng()).withColor(new Color(39, 209, 110));
+        maker.appendRaw("\u200b                                           \u200b\nDate created: " + Time.getDate(guild.getCreationDate()) + "\nUsers: " + (guild.getUsers().stream().filter(user -> !user.isBot()).collect(Collectors.toList()).size()) + "\nTotal guilds: " + DiscordClient.getGuilds().size());
+        formatMessage(guild, owner, maker);
+    }
+    static void formatMessage(Guild guild, User owner, MessageMaker maker) {
         maker.getHeader().appendRaw("Owner: " + owner.getNameAndDiscrim() + " | " + owner.getID());
         maker.getAuthorName().appendRaw(guild.getName());
         maker.withThumb(guild.getIconURL().contains("null") ? ConfigProvider.URLS.discordWhitePng() : guild.getIconURL());
-        maker.withAuthorIcon(ConfigProvider.URLS.greenArrowPng()).withColor(new Color(39, 209, 110));
-        maker.appendRaw("\u200b                                           \u200b\nDate created: " + Time.getDate(guild.getCreationDate()) + "\nUsers: " + (guild.getUsers().stream().filter(user -> !user.isBot()).collect(Collectors.toList()).size()) + "\nTotal guilds: " + DiscordClient.getGuilds().size());
         maker.getNewFieldPart().withInline(true).withBoth("Channels", String.valueOf(guild.getChannels().size()));
         maker.getNewFieldPart().withInline(true).withBoth("Categories", String.valueOf(guild.getCategories().size()));
         maker.getNewFieldPart().withInline(true).withBoth("Roles", String.valueOf(guild.getRoles().size()));

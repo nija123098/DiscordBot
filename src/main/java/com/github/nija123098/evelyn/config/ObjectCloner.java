@@ -2,6 +2,7 @@ package com.github.nija123098.evelyn.config;
 
 import com.github.nija123098.evelyn.discordobjects.wrappers.Message;
 import com.github.nija123098.evelyn.exception.DevelopmentException;
+import com.github.nija123098.evelyn.util.ColorSummery;
 import com.github.nija123098.evelyn.perms.configs.specialperms.SpecialPermsContainer;
 import com.github.nija123098.evelyn.util.ReflectionHelper;
 import javafx.util.Pair;
@@ -31,7 +32,7 @@ public class ObjectCloner {
         add(List.class, CopyOnWriteArrayList::new);
         add(Set.class, ObjectCloner::getSet);
         add(Map.class, ObjectCloner::getMap);
-        add(Pair.class, or -> new Pair(or.getKey(), or.getValue()));
+        add(Pair.class, or -> new Pair<>(or.getKey(), or.getValue()));
         add(SpecialPermsContainer.class, SpecialPermsContainer::copy);
     }
     private static <T> void add(Class<T> clazz, Function<T, T> function) {

@@ -34,35 +34,8 @@ public class GuildLeaveLogConfig extends AbstractConfig<Long, Guild> {
         String timeInGuild = Time.getAbbreviated(System.currentTimeMillis() - previous);
         this.setValue(guild, System.currentTimeMillis());
         MessageMaker maker = new MessageMaker(Channel.getChannel(ConfigProvider.BOT_SETTINGS.guildLogChannel()));
-        maker.getHeader().appendRaw("Owner: " + owner.getNameAndDiscrim() + " | " + owner.getID());
-        maker.getAuthorName().appendRaw(guild.getName());
-        maker.withThumb(guild.getIconURL().contains("null") ? ConfigProvider.URLS.discordWhitePng() : guild.getIconURL());
         maker.withAuthorIcon(ConfigProvider.URLS.redArrowPng()).withColor(new Color(255, 0 ,0));
         maker.appendRaw("\u200b                                           \u200b\nDate created: " + Time.getDate(guild.getCreationDate()) + "\nUsers: " + (guild.getUsers().stream().filter(user -> !user.isBot()).collect(Collectors.toList()).size()) + "\nTime in guild: " + timeInGuild + "\nTotal guilds: " + DiscordClient.getGuilds().size());
-        maker.getNewFieldPart().withInline(true).withBoth("Channels", String.valueOf(guild.getChannels().size()));
-        maker.getNewFieldPart().withInline(true).withBoth("Categories", String.valueOf(guild.getCategories().size()));
-        maker.getNewFieldPart().withInline(true).withBoth("Roles", String.valueOf(guild.getRoles().size()));
-        maker.getNewFieldPart().withInline(true).withBoth("Region", guild.getRegion().getName());
-        maker.withTimestamp(System.currentTimeMillis());
-        maker.getNote().appendRaw("ID: " + guild.getID());
-        List<User> bots = guild.getUsers().stream().filter(User::isBot).collect(Collectors.toList());
-        if (bots.size() > 0) {
-            StringBuilder botList = new StringBuilder();
-            for (User user : bots) {
-                try {
-                    if (!user.equals(DiscordClient.getOurUser())) {
-                        botList.append("```\n" + user.getNameAndDiscrim()).append("\nSince: ").append(Time.getDate(guild.getJoinTimeForUser(user))).append("\n```");
-                    }
-                } catch (DiscordException ignored) {}
-            }
-            if (botList.toString().length() > 1000) {
-                maker.getNewFieldPart().withBoth("Bots", "" + bots.size());
-            } else if (botList.toString().isEmpty()) {
-                maker.getNewFieldPart().withBoth("Bots", "none");
-            } else {
-                maker.getNewFieldPart().withBoth("Bots: " + (bots.size() - 1), botList.toString());
-            }
-        }
-        maker.send();
+        GuildJoinLogConfig.formatMessage(guild, owner, maker);
     }
 }

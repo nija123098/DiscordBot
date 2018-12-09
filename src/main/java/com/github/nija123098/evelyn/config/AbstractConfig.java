@@ -285,7 +285,7 @@ public class AbstractConfig<V, T extends Configurable> implements Tagable {
      */
     public V setValue(T configurable, V value) {
         if (configurable == null) throw new DevelopmentException("Attempted to reset value for null configurable on config " + this.name);
-        if (!this.valueType.isInstance(value)) throw new ArgumentException("Attempted passing incorrect type of argument");
+        if (!this.valueType.isInstance(value) && value != null) throw new ArgumentException("Attempted passing incorrect type of argument");
         value = validateInput(configurable, value);
         if (this.cache != null) {
             if (value == null) this.nullCache.add(configurable);

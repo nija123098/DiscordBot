@@ -24,6 +24,7 @@ import sx.blah.discord.util.MessageBuilder;
 import sx.blah.discord.util.PermissionUtils;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
@@ -540,8 +541,8 @@ public class MessageMaker {
      * @return the instance.
      */
     public MessageMaker withColor(String url) {
-        this.withColor(GraphicsHelper.getColor(url));
-        return this;
+        BufferedImage image = GraphicsHelper.loadImage(url);
+        return this.withColor(new ColorSummery(image));
     }
 
     /**
@@ -551,6 +552,16 @@ public class MessageMaker {
      */
     public MessageMaker withColor() {
         return withColor(this.user);
+    }
+
+    /**
+     * Sets the embed's {@link Color} as the value represented by {@link ColorSummery}.
+     *
+     * @param color the {@link ColorSummery} to set the embed {@link Color} value to.
+     * @return the instance.
+     */
+    public MessageMaker withColor(ColorSummery color) {
+        return this.withColor(new Color(color.getRed(), color.getGreen(), color.getBlue()));
     }
 
     /**

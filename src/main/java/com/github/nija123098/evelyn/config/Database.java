@@ -130,6 +130,6 @@ public class Database {
         }
     }
     public static String quote(String id) {
-        return Character.isDigit(id.charAt(0)) ? id : "'" + id + "'";
+        return "'" + id + "'";
     }
 }

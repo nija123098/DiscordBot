@@ -10,4 +10,5 @@ public interface FolderSettings {
     String logsFolder();
     String neuralNetFolder();
     String tempFolder();
+    String profileIconsFolder();
 }

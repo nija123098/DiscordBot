@@ -20,7 +20,7 @@ public class CallBuffer {
     /**
      * Builds a instance with the specified callDifference.
      *
-     * @param callDifference the deference in
+     * @param callDifference the deference in.
      */
     public CallBuffer(String name, long callDifference) {
         this.callDifference = callDifference;
@@ -34,11 +34,17 @@ public class CallBuffer {
     /**
      * Does not guarantee the Runnable is ever ran.
      *
-     * @param runnable the thing to eventually run
+     * @param runnable the thing to eventually run.
+     * @return the amount of time in millis that it will take to complete.
      */
-    public void call(Runnable runnable) {
-        long val = this.time.get();
-        this.time.set(val > System.currentTimeMillis() ? val + this.callDifference : System.currentTimeMillis());
-        this.scheduledExecutorService.schedule(runnable, this.time.get() - System.currentTimeMillis(), TimeUnit.MILLISECONDS);
+    public long call(Runnable runnable) {
+        long val = this.time.get(), current = System.currentTimeMillis();
+        this.time.set(val > current ? val + this.callDifference : current);
+        this.scheduledExecutorService.schedule(runnable, this.time.get() - current, TimeUnit.MILLISECONDS);
+        return current - this.time.get();
+    }
+
+    public long getDelay() {
+        return System.currentTimeMillis() - this.time.get();
     }
 }
