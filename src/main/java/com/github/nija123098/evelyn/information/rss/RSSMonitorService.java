@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * @author nija123098
@@ -38,8 +39,8 @@ public class RSSMonitorService extends AbstractService {
         Map<String, Set<Channel>> reverse = new HashMap<>();
         ConfigHandler.getNonDefaultSettings(RSSSubscriptionsConfig.class).forEach((channel, strings) -> strings.forEach(s -> reverse.computeIfAbsent(s, st -> new HashSet<>()).add(channel)));
         reverse.forEach((s, channels) -> {
-            if (LAST_UPDATED.get(s) == null) return;
             List<RSSNote> notes = getRSSNode(s);
+            Collections.reverse(notes);
             notes.forEach(note -> channels.forEach(note::send));
         });
     }
@@ -47,17 +48,14 @@ public class RSSMonitorService extends AbstractService {
         LAST_UPDATED.computeIfAbsent(url, s -> new Date());
         try {
             SyndFeed feed = new SyndFeedInput().build(new XmlReader(new URL(url)));
-            if (feed.getEntries().isEmpty()) return Collections.emptyList();
-            List<RSSNote> notes = new LinkedList<>();
-            for (SyndEntry entry : feed.getEntries()) {
-                if (!entry.getPublishedDate().after(LAST_UPDATED.get(url))) break;
-                notes.add(new RSSNote(entry));
-            }
-            LAST_UPDATED.get(url).setTime(feed.getEntries().get(0).getPublishedDate().getTime());
-            return notes;
+            List<SyndEntry> entries = feed.getEntries();
+            if (entries.isEmpty()) return Collections.emptyList();
+            List<RSSNote> notes = entries.stream().filter(syndEntry -> syndEntry.getPublishedDate().after(LAST_UPDATED.get(url))).map(RSSNote::new).collect(Collectors.toList());
+            LAST_UPDATED.get(url).setTime(entries.get(0).getPublishedDate().getTime());
+            return notes;//               0 is the most recent.
         } catch (Exception e) {
-            Log.log("Possibly failed feed, will be removed from rotation during this session: " + url, e);
-            LAST_UPDATED.put(url, null);
+            Log.log("Possibly failed feed, disabled for 1 day: " + url, e);
+            LAST_UPDATED.get(url).setTime(System.currentTimeMillis() + 86_400_000);
         }// todo add automatic/manual review and post notice to subscribed channels
         return Collections.emptyList();
     }
