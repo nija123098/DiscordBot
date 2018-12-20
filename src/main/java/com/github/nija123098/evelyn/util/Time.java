@@ -90,10 +90,6 @@ public class Time {// TODO CLEAN
         return Instant.ofEpochMilli(time).atZone(ZoneId.systemDefault()).toLocalDateTime();
     }
 
-    public static Instant toInstant(long time) {
-        return Instant.ofEpochMilli(time);
-    }
-
     public static String getAbbreviatedMusic(long time) {
         int hours = (int) (time / 3_600_000);
         time -= hours * 3_600_000;

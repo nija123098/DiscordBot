@@ -3,6 +3,7 @@ package com.github.nija123098.evelyn.util;
 import com.google.common.base.Joiner;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.text.similarity.JaroWinklerDistance;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 
@@ -132,5 +133,10 @@ public class StringHelper {
         if (name.isEmpty()) return s;
 
         return FormatHelper.filtering(name.replace("_", " ").trim(), Character::isLetterOrDigit);
+    }
+
+
+    public static String unescapeHtml5(String s) {
+        return StringEscapeUtils.unescapeHtml4(s).replace("&apos;", "'");
     }
 }

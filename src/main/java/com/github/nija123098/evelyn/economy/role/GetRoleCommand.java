@@ -9,6 +9,7 @@ import com.github.nija123098.evelyn.config.ConfigHandler;
 import com.github.nija123098.evelyn.config.GuildUser;
 import com.github.nija123098.evelyn.discordobjects.helpers.MessageMaker;
 import com.github.nija123098.evelyn.discordobjects.wrappers.Role;
+import com.github.nija123098.evelyn.discordobjects.wrappers.User;
 import com.github.nija123098.evelyn.economy.configs.CurrencySymbolConfig;
 import com.github.nija123098.evelyn.economy.configs.CurrentCurrencyConfig;
 import com.github.nija123098.evelyn.economy.role.configs.RoleBuyConfig;
@@ -28,7 +29,7 @@ public class GetRoleCommand extends AbstractCommand {
         super("getrole", ModuleLevel.ECONOMY, "buyrole, roleme, role me", null, "Allows the buying of roles with guild based money.");
     }
     @Command
-    public void command(@Argument(optional = true, replacement = ContextType.NONE) Role role, GuildUser guildUser, MessageMaker maker) {
+    public void command(@Argument(optional = true, replacement = ContextType.NONE) Role role, User user, GuildUser guildUser, MessageMaker maker) {
         if (role == null) {
             String icon = ConfigHandler.getSetting(CurrencySymbolConfig.class, guildUser.getGuild());
             List<String> list = guildUser.getGuild().getRoles().stream().map(role1 -> {
@@ -43,10 +44,12 @@ public class GetRoleCommand extends AbstractCommand {
         } else {
             Integer f = ConfigHandler.getSetting(RoleBuyConfig.class, role);
             if (f == null) throw new ArgumentException("You can not buy that role");
-            Integer c = ConfigHandler.getSetting(CurrentCurrencyConfig.class, guildUser);
-            if (c < f) throw new ArgumentException("You must have " + f + " currency to buy that role.  Current: " + c);
-            guildUser.getUser().addRole(role);
-            ConfigHandler.setSetting(CurrentCurrencyConfig.class, guildUser, c - f);
+            if (f == 0) {
+                Integer c = ConfigHandler.getSetting(CurrentCurrencyConfig.class, guildUser);
+                if (c < f) throw new ArgumentException("You must have " + f + " currency to buy that role.  Current: " + c);
+                ConfigHandler.setSetting(CurrentCurrencyConfig.class, guildUser, c - f);
+            }
+            user.addRole(role);
         }
     }
 

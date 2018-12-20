@@ -828,6 +828,10 @@ public class MessageMaker {
             }
             if (this.deleteDelay != null) EXECUTOR_SERVICE.schedule(() -> ExceptionWrapper.wrap(this.message::delete), this.deleteDelay, TimeUnit.MILLISECONDS);
         } else {
+            if (this.message.isDeleted()) {
+                Log.log("Message deleted before edit", new Exception("Stack Trace Helper"));
+                return;
+            }
             if (this.embed == null) ExceptionWrapper.wrap(() -> this.message.edit(this.builder.getContent()));
             else ExceptionWrapper.wrap(() -> this.message.edit(this.embed.build()));
         }

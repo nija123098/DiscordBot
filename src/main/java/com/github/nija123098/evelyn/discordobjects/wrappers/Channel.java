@@ -15,6 +15,7 @@ import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IPrivateChannel;
 import sx.blah.discord.handle.obj.IVoiceChannel;
 
+import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -238,7 +239,7 @@ public class Channel implements Configurable {
     }
 
     public List<Message> getMessagesTo(long date) {
-        return Message.getMessages(channel().getMessageHistoryTo(Time.toInstant(date)));
+        return Message.getMessages(channel().getMessageHistoryTo(Instant.ofEpochMilli(date)));
     }
 
     public void pin(Message message) {

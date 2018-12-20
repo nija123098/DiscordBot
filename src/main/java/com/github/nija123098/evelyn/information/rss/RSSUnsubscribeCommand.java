@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class RSSUnsubscribeCommand extends AbstractCommand {
     public RSSUnsubscribeCommand() {
-        super(RSSCommand.class, "unsubscribe", "unsub", null, null, "Unsubs from an RSS feed");
+        super(RSSCommand.class, "unsubscribe", null, null, "unsub", "Unsubs from an RSS feed");
     }
     @Command
     public void command(@Argument(optional = true, replacement = ContextType.NONE) Integer integer, @Argument(optional = true) String s, Channel channel, MessageMaker maker) {
